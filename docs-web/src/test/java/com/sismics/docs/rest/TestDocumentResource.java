@@ -55,11 +55,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
         
         // Get a document
-        documentResource = resource().path("/document");
+        documentResource = resource().path("/document/" + document1Id);
         documentResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("id", document1Id);
-        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        response = documentResource.get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         Assert.assertEquals(document1Id, json.getString("id"));
@@ -76,11 +74,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals("ok", json.getString("status"));
         
         // Get a document
-        documentResource = resource().path("/document");
+        documentResource = resource().path("/document/" + document1Id);
         documentResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("id", document1Id);
-        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        response = documentResource.get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         Assert.assertTrue(json.getString("title").contains("new"));
@@ -95,11 +91,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals("ok", json.getString("status"));
         
         // Get a document (KO)
-        documentResource = resource().path("/document");
+        documentResource = resource().path("/document/" + document1Id);
         documentResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("id", document1Id);
-        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        response = documentResource.get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
     }

@@ -3,7 +3,7 @@
 /**
  * Trackino application.
  */
-var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'restangular'])
+var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.keypress', 'restangular', 'ngSanitize'])
 
 /**
  * Configuring modules.
@@ -22,10 +22,19 @@ var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'restangular'])
   })
   .state('document', {
     url: '/document',
+    abstract: true,
     views: {
       'page': {
         templateUrl: 'partial/document.html',
         controller: 'Document'
+      }
+    }
+  })
+  .state('document.default', {
+    url: '',
+    views: {
+      'document': {
+        templateUrl: 'partial/document.default.html'
       }
     }
   })
@@ -54,6 +63,18 @@ var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'restangular'])
         templateUrl: 'partial/document.view.html',
         controller: 'DocumentView'
       }
+    }
+  })
+  .state('document.view.file', {
+    url: '/file/:fileId',
+    onEnter: function($stateParams, $state, $dialog) {
+      $dialog.dialog({
+        keyboard: true,
+        templateUrl: 'partial/file.view.html',
+        controller: 'FileView'
+      }).open().then(function(result) {
+        $state.transitionTo('document.view', { id: $stateParams.id });
+      });
     }
   })
   .state('login', {

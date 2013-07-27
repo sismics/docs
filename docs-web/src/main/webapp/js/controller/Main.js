@@ -8,7 +8,7 @@ App.controller('Main', function($scope, $state, User) {
     if (data.anonymous) {
       $state.transitionTo('login');
     } else {
-      $state.transitionTo('document');
+      $state.transitionTo('document.default');
     }
   });
 });

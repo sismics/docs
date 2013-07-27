@@ -5,17 +5,59 @@
  */
 App.controller('Document', function($scope, $state, Restangular) {
   /**
-   * Load documents.
+   * Documents table sort status.
    */
-  $scope.loadDocuments = function() {
+  $scope.sortColumn = 3;
+  $scope.asc = false;
+  $scope.offset = 0;
+  $scope.currentPage = 1;
+  $scope.limit = 10;
+  
+  /**
+   * Load new documents page.
+   */
+  $scope.pageDocuments = function() {
     Restangular.one('document')
     .getList('list', {
-      offset: 0,
-      limit: 30
+      offset: $scope.offset,
+      limit: $scope.limit,
+      sort_column: $scope.sortColumn,
+      asc: $scope.asc
     })
     .then(function(data) {
-      $scope.documents = data.documents;
+      $scope.documents = data;
+      $scope.numPages = Math.ceil(data.total / $scope.limit);
     });
+  };
+  
+  /**
+   * Reload documents.
+   */
+  $scope.loadDocuments = function() {
+    $scope.offset = 0;
+    $scope.currentPage = 1;
+    $scope.pageDocuments();
+  };
+  
+  /**
+   * Watch for current page change.
+   */
+  $scope.$watch('currentPage', function() {
+    $scope.offset = ($scope.currentPage - 1) * $scope.limit;
+    $scope.pageDocuments();
+  });
+  
+  /**
+   * Sort documents.
+   */
+  $scope.sortDocuments = function(sortColumn) {
+    if (sortColumn == $scope.sortColumn) {
+      $scope.asc = !$scope.asc;
+    } else {
+      $scope.asc = true;
+    }
+    $scope.sortColumn = sortColumn;
+    $scope.loadDocuments();
   };
   
   /**
@@ -25,10 +67,17 @@ App.controller('Document', function($scope, $state, Restangular) {
     $state.transitionTo('document.add');
   };
   
+  /**
+   * Go to edit document form.
+   */
+  $scope.editDocument = function(id) {
+    $state.transitionTo('document.edit', { id: id });
+  };
+  
+  /**
+   * Display a document.
+   */
   $scope.viewDocument = function(id) {
     $state.transitionTo('document.view', { id: id });
   };
-  
-  // Initial documents loading
-  $scope.loadDocuments();
 });

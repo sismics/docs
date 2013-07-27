@@ -1,25 +1,28 @@
 <div class="container-fluid">
   <div class="row-fluid">
-    <div class="span5 well">
+    <div class="span4 well">
       <p class="text-center">
         <button class="btn btn-primary" type="button" ng-click="addDocument()">Add a document</button>
       </p>
-      <table class="table table-striped table-hover">
+      <table class="table table-striped table-hover table-documents">
         <thead>
           <tr>
-            <th>Title</th>
-            <th>Creation date</th>
+            <th ng-click="sortDocuments(1)"><span class="icon-chevron-{{ sortColumn == 1 ? (asc ? 'down' : 'up') : '' }}"></span> Title</th>
+            <th ng-click="sortDocuments(3)"><span class="icon-chevron-{{ sortColumn == 3 ? (asc ? 'down' : 'up') : '' }}"></span> Creation date</th>
           </tr>
         </thead>
         <tbody>
-          <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents">
+          <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents.documents">
             <td>{{ document.title }}</td>
             <td>{{ document.create_date | date: 'short' }}</td>
           </tr>
         </tbody>
       </table>
+      <div class="text-center">
+        <pagination num-pages="numPages" max-size="5" current-page="currentPage"></pagination>
+      </div>
     </div>
-    <div class="span7 well">
+    <div class="span8 well">
       <div ui-view="document"></div>
     </div>
   </div>

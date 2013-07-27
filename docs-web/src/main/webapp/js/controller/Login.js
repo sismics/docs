@@ -6,7 +6,7 @@
 App.controller('Login', function($scope, $state, $dialog, User) {
   $scope.login = function() {
     User.login($scope.user).then(function() {
-      $state.transitionTo('browse');
+      $state.transitionTo('document.default');
     }, function() {
       var title = 'Login failed';
       var msg = 'Username or password invalid';

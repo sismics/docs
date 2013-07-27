@@ -1,7 +1,6 @@
 package com.sismics.util.mime;
 
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 
 /**
  * Utility to check MIME types.
@@ -18,9 +17,9 @@ public class MimeTypeUtil {
      */
     public static String guessMimeType(InputStream is) throws Exception {
         byte[] headerBytes = new byte[64];
-        PushbackInputStream pb = new PushbackInputStream(is, headerBytes.length);
-        int readCount = pb.read(headerBytes);
-        pb.unread(headerBytes);
+        is.mark(headerBytes.length);
+        int readCount = is.read(headerBytes);
+        is.reset();
         
         if (readCount <= 0) {
             throw new Exception("Cannot read input file");

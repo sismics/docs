@@ -1,18 +1,24 @@
-<form class="form-horizontal">
-  <div class="control-group">
+<form class="form-horizontal" name="documentForm">
+  <div class="control-group" ng-class="{ error: !documentForm.title.$valid }">
     <label class="control-label" for="inputTitle">Title</label>
     <div class="controls">
-      <input class="input-block-level" type="text" id="inputTitle" placeholder="Title" ng-model="document.title" />
+      <input required ng-maxlength="100" class="input-block-level" type="text" id="inputTitle" placeholder="Title" name="title" ng-model="document.title" />
+    </div>
+  </div>
+  <div class="control-group" ng-class="{ error: !documentForm.description.$valid }">
+    <label class="control-label" for="inputDescription">Description</label>
+    <div class="controls">
+      <textarea ng-maxlength="4000" class="input-block-level" rows="5" id="inputDescription" name="description" ng-model="document.description"></textarea>
     </div>
   </div>
   <div class="control-group">
-    <label class="control-label" for="inputDescription">Description</label>
+    <label class="control-label" for="inputFiles">New files</label>
     <div class="controls">
-      <textarea class="input-block-level" rows="5" id="inputDescription" ng-model="document.description"></textarea>
+      <file class="input-block-level" id="inputFiles" multiple="multiple" ng-model="files" accept="image/png,image/jpg,image/jpeg,image/gif" />
     </div>
   </div>
   <div class="form-actions">
-    <button type="submit" class="btn btn-primary" ng-click="edit()">{{ isEdit() ? 'Edit' : 'Add' }}</button>
+    <button type="submit" class="btn btn-primary" ng-disabled="!documentForm.$valid" ng-click="edit()">{{ isEdit() ? 'Edit' : 'Add' }}</button>
     <button type="submit" class="btn" ng-click="cancel()">Cancel</button>
   </div>
 </form>

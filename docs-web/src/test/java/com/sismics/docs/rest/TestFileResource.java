@@ -93,13 +93,15 @@ public class TestFileResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
-        // Get a file (KO)
-        documentResource = resource().path("/file");
-        documentResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        // Get all files from a document
+        fileResource = resource().path("/file/list");
+        fileResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
         getParams = new MultivaluedMapImpl();
-        getParams.putSingle("id", file1Id);
-        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        getParams.putSingle("id", document1Id);
+        response = fileResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        files = json.getJSONArray("files");
+        Assert.assertEquals(0, files.length());
     }
 }

@@ -46,9 +46,10 @@ public class DocumentResource extends BaseResource {
      * @throws JSONException
      */
     @GET
+    @Path("{id: [a-z0-9\\-]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(
-            @QueryParam("id") String id) throws JSONException {
+            @PathParam("id") String id) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -190,7 +191,7 @@ public class DocumentResource extends BaseResource {
         
         // Always return ok
         JSONObject response = new JSONObject();
-        response.put("status", "ok");
+        response.put("id", id);
         return Response.ok().entity(response).build();
     }
     

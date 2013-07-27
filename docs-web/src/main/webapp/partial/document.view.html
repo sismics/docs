@@ -1,1 +1,26 @@
-View doc
+<div class="text-right">
+  <div class="btn-group">
+    <button class="btn btn-primary" ng-click="editDocument(document.id)"><span class="icon-pencil icon-white"></span> Edit</button>
+  </div>
+</div>
+
+<div class="page-header">
+  <h1>{{ document.title }} <small>{{ document.create_date | date: 'short' }}</small></h1>
+</div>
+
+<p ng-bind-html="document.description | newline"></p>
+
+<ul class="thumbnails" ng-show="files.length > 0">
+  <li class="span2" ng-repeat="file in files" ng-style="{ 'margin-left': $index % 6 == 0 ? '0' : '' }">
+    <div class="thumbnail">
+      <a ng-click="openFile(file)">
+        <img ng-src="api/file/{{ file.id }}/data" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
+      </a>
+      <div class="caption">
+        <p class="text-right">
+          <button class="btn btn-danger" ng-click="deleteFile(file.id)"><span class="icon-trash icon-white"></span></button>
+        </p>
+      </div>
+    </div>
+  </li>
+</ul>
