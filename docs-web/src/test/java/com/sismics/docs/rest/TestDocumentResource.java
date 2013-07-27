@@ -71,7 +71,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         response = documentResource.post(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
-        Assert.assertEquals("ok", json.getString("status"));
+        Assert.assertEquals(document1Id, json.getString("id"));
         
         // Get a document
         documentResource = resource().path("/document/" + document1Id);
