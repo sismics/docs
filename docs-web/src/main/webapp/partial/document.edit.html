@@ -1,0 +1,18 @@
+<form class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label" for="inputTitle">Title</label>
+    <div class="controls">
+      <input class="input-block-level" type="text" id="inputTitle" placeholder="Title" ng-model="document.title" />
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="inputDescription">Description</label>
+    <div class="controls">
+      <textarea class="input-block-level" rows="5" id="inputDescription" ng-model="document.description"></textarea>
+    </div>
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary" ng-click="edit()">{{ isEdit() ? 'Edit' : 'Add' }}</button>
+    <button type="submit" class="btn" ng-click="cancel()">Cancel</button>
+  </div>
+</form>

@@ -1,0 +1,26 @@
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span5 well">
+      <p class="text-center">
+        <button class="btn btn-primary" type="button" ng-click="addDocument()">Add a document</button>
+      </p>
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Creation date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents">
+            <td>{{ document.title }}</td>
+            <td>{{ document.create_date | date: 'short' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="span7 well">
+      <div ui-view="document"></div>
+    </div>
+  </div>
+</div>

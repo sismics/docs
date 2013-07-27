@@ -1,0 +1,27 @@
+<div class="row-fluid">
+  <div class="span4 offset4">
+    <h1 class="text-center">Sismics Docs</h1>
+    <form class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label" for="inputUsername">Username</label>
+        <div class="controls">
+          <input type="text" id="inputUsername" placeholder="Username" ng-model="user.username" />
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inputPassword">Password</label>
+        <div class="controls">
+          <input type="password" id="inputPassword" placeholder="Password" ng-model="user.password" />
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <label class="checkbox">
+            <input type="checkbox" ng-model="user.remember" /> Remember me
+          </label>
+          <button type="submit" class="btn" ng-click="login()">Sign in</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
