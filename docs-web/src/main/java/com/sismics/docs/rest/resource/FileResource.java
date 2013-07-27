@@ -1,11 +1,8 @@
 package com.sismics.docs.rest.resource;
 
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -23,12 +20,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.model.jpa.Document;
@@ -57,9 +52,10 @@ public class FileResource extends BaseResource {
      * @throws JSONException
      */
     @GET
+    @Path("{id: [a-z0-9\\-]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(
-            @QueryParam("id") String id) throws JSONException {
+            @PathParam("id") String id) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -241,15 +237,7 @@ public class FileResource extends BaseResource {
         });
         final java.io.File storageFile = matchingFiles[0];
 
-        // Stream the file to the response
-        StreamingOutput stream = new StreamingOutput() {
-            @Override
-            public void write(OutputStream os) throws IOException {
-                ByteStreams.copy(new FileInputStream(storageFile), os);
-            }
-        };
-        return Response.ok(stream)
-                .header("Content-Disposition", MessageFormat.format("attachment; filename=\"{0}\"", storageFile.getName()))
+        return Response.ok(storageFile)
                 .build();
     }
 }

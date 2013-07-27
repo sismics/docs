@@ -8,10 +8,10 @@ import javax.ws.rs.core.MediaType;
 import junit.framework.Assert;
 
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 
+import com.google.common.io.ByteStreams;
 import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
 import com.sismics.util.mime.MimeType;
 import com.sun.jersey.api.client.ClientResponse;
@@ -30,10 +30,10 @@ public class TestFileResource extends BaseJerseyTest {
     /**
      * Test the document resource.
      * 
-     * @throws JSONException
+     * @throws Exception
      */
     @Test
-    public void testFileResource() throws JSONException {
+    public void testFileResource() throws Exception {
         // Login admin
         String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
         
@@ -63,21 +63,28 @@ public class TestFileResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         String file1Id = json.getString("id");
         
-        // Get a file
-        fileResource = resource().path("/file");
+        // Get the file
+        fileResource = resource().path("/file/" + file1Id);
         fileResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
-        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
-        getParams.putSingle("id", file1Id);
-        response = fileResource.queryParams(getParams).get(ClientResponse.class);
+        response = fileResource.get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         Assert.assertEquals(MimeType.IMAGE_JPEG, json.getString("mimetype"));
         Assert.assertEquals(file1Id, json.getString("id"));
         
+        // Get the file data
+        fileResource = resource().path("/file/" + file1Id + "/data");
+        fileResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        response = fileResource.get(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        InputStream is = response.getEntityInputStream();
+        byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(163510, fileBytes.length);
+        
         // Get all files from a document
         fileResource = resource().path("/file/list");
         fileResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
-        getParams = new MultivaluedMapImpl();
+        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
         getParams.putSingle("id", document1Id);
         response = fileResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
