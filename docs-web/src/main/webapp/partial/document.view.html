@@ -10,16 +10,20 @@
 
 <p ng-bind-html="document.description | newline"></p>
 
-<ul class="thumbnails" ng-show="files.length > 0">
-  <li class="span2" ng-repeat="file in files" ng-style="{ 'margin-left': $index % 6 == 0 ? '0' : '' }">
+<ul class="thumbnails thumbnails-file" ui-sortable="fileSortableOptions" ng-model="files" ng-show="files.length > 0">
+  <li class="span2 thumbnail-container" ng-repeat="file in files">
     <div class="thumbnail">
       <a ng-click="openFile(file)">
-        <img ng-src="api/file/{{ file.id }}/data?thumbnail=true" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
+        <img class="thumbnail-file" ng-src="api/file/{{ file.id }}/data?thumbnail=true" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
       </a>
       <div class="caption">
-        <p class="text-right">
+        <div class="pull-left">
+          <div class="btn handle"><span class="icon-resize-horizontal"></span></div>
+        </div>
+        <p class="pull-right">
           <button class="btn btn-danger" ng-click="deleteFile(file)"><span class="icon-trash icon-white"></span></button>
         </p>
+        <div class="clearfix"></div>
       </div>
     </div>
   </li>

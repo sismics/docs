@@ -8,6 +8,19 @@ App.controller('DocumentView', function($rootScope, $scope, $state, $stateParams
   $scope.document = Restangular.one('document', $stateParams.id).get();
   
   /**
+   * Configuration for file sorting.
+   */
+  $scope.fileSortableOptions = {
+    forceHelperSize: true,
+    forcePlaceholderSize: true,
+    tolerance: 'pointer',
+    handle: '.handle',
+    update: function(event, ui) {
+      // TODO Send new positions to server
+    }
+  };
+  
+  /**
    * Load files from server.
    */
   $scope.loadFiles = function() {
