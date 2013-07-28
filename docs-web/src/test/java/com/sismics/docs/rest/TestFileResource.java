@@ -34,12 +34,13 @@ public class TestFileResource extends BaseJerseyTest {
      */
     @Test
     public void testFileResource() throws Exception {
-        // Login admin
-        String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
+        // Login file1
+        clientUtil.createUser("file1");
+        String file1AuthenticationToken = clientUtil.login("file1");
         
         // Create a document
         WebResource documentResource = resource().path("/document");
-        documentResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        documentResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
         MultivaluedMapImpl postParams = new MultivaluedMapImpl();
         postParams.add("title", "File test document 1");
         ClientResponse response = documentResource.put(ClientResponse.class, postParams);
@@ -50,7 +51,7 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Add a file
         WebResource fileResource = resource().path("/file");
-        fileResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
         FormDataMultiPart form = new FormDataMultiPart();
         InputStream file = this.getClass().getResourceAsStream("/file/PIA00452.jpg");
         FormDataBodyPart fdp = new FormDataBodyPart("file",
@@ -65,7 +66,7 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Get the file
         fileResource = resource().path("/file/" + file1Id);
-        fileResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
         response = fileResource.get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -74,7 +75,7 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Get the file data
         fileResource = resource().path("/file/" + file1Id + "/data");
-        fileResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
         response = fileResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         InputStream is = response.getEntityInputStream();
@@ -83,7 +84,7 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Get all files from a document
         fileResource = resource().path("/file/list");
-        fileResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
         MultivaluedMapImpl getParams = new MultivaluedMapImpl();
         getParams.putSingle("id", document1Id);
         response = fileResource.queryParams(getParams).get(ClientResponse.class);
@@ -94,7 +95,7 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Deletes a file
         documentResource = resource().path("/file/" + file1Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        documentResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
         response = documentResource.delete(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
@@ -102,7 +103,7 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Get all files from a document
         fileResource = resource().path("/file/list");
-        fileResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
         getParams = new MultivaluedMapImpl();
         getParams.putSingle("id", document1Id);
         response = fileResource.queryParams(getParams).get(ClientResponse.class);

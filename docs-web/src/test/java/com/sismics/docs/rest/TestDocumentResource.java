@@ -26,12 +26,13 @@ public class TestDocumentResource extends BaseJerseyTest {
      */
     @Test
     public void testDocumentResource() throws JSONException {
-        // Login admin
-        String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
+        // Login document1
+        clientUtil.createUser("document1");
+        String document1Token = clientUtil.login("document1");
         
         // Create a document
         WebResource documentResource = resource().path("/document");
-        documentResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         MultivaluedMapImpl postParams = new MultivaluedMapImpl();
         postParams.add("title", "My super document 1");
         postParams.add("description", "My super description for document 1");
@@ -43,7 +44,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         
         // List all documents
         documentResource = resource().path("/document/list");
-        documentResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         MultivaluedMapImpl getParams = new MultivaluedMapImpl();
         getParams.putSingle("sort_column", 3);
         getParams.putSingle("asc", false);
@@ -56,7 +57,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         
         // Get a document
         documentResource = resource().path("/document/" + document1Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         response = documentResource.get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -64,7 +65,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         
         // Update a document
         documentResource = resource().path("/document/" + document1Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("title", "My new super document 1");
         postParams.add("description", "My new super description for document 1");
@@ -75,7 +76,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         
         // Get a document
         documentResource = resource().path("/document/" + document1Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         response = documentResource.get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -84,7 +85,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         
         // Deletes a document
         documentResource = resource().path("/document/" + document1Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         response = documentResource.delete(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
@@ -92,7 +93,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         
         // Get a document (KO)
         documentResource = resource().path("/document/" + document1Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         response = documentResource.get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
