@@ -14,7 +14,7 @@
   <li class="span2" ng-repeat="file in files" ng-style="{ 'margin-left': $index % 6 == 0 ? '0' : '' }">
     <div class="thumbnail">
       <a ng-click="openFile(file)">
-        <img ng-src="api/file/{{ file.id }}/data" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
+        <img ng-src="api/file/{{ file.id }}/data?thumbnail=true" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
       </a>
       <div class="caption">
         <p class="text-right">
@@ -24,3 +24,5 @@
     </div>
   </li>
 </ul>
+
+<div ui-view="file"></div>

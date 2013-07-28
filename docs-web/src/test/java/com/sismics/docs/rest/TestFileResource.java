@@ -76,16 +76,29 @@ public class TestFileResource extends BaseJerseyTest {
         // Get the file data
         fileResource = resource().path("/file/" + file1Id + "/data");
         fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        response = fileResource.get(ClientResponse.class);
+        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
+        getParams.putSingle("thumbnail", false);
+        response = fileResource.queryParams(getParams).get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         InputStream is = response.getEntityInputStream();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(163510, fileBytes.length);
         
+        // Get the thumbnail data
+        fileResource = resource().path("/file/" + file1Id + "/data");
+        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("thumbnail", true);
+        response = fileResource.queryParams(getParams).get(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = response.getEntityInputStream();
+        fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(41935, fileBytes.length);
+        
         // Get all files from a document
         fileResource = resource().path("/file/list");
         fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
+        getParams = new MultivaluedMapImpl();
         getParams.putSingle("id", document1Id);
         response = fileResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);

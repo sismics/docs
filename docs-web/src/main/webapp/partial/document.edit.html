@@ -14,7 +14,7 @@
   <div class="control-group">
     <label class="control-label" for="inputFiles">New files</label>
     <div class="controls">
-      <file class="input-block-level" id="inputFiles" multiple="multiple" ng-model="files" accept="image/png,image/jpg,image/jpeg,image/gif" />
+      <file class="input-block-level" id="inputFiles" multiple="multiple" ng-model="newFiles" accept="image/png,image/jpg,image/jpeg,image/gif" />
     </div>
   </div>
   <div class="form-actions">
@@ -22,3 +22,7 @@
     <button type="submit" class="btn" ng-click="cancel()">Cancel</button>
   </div>
 </form>
+
+<div class="row-fluid">
+  <div class="span12"><progress percent="fileProgress" class="progress-info active"></progress></div>
+</div>

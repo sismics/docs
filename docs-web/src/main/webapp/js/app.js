@@ -67,14 +67,10 @@ var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.keypress', 're
   })
   .state('document.view.file', {
     url: '/file/:fileId',
-    onEnter: function($stateParams, $state, $dialog) {
-      $dialog.dialog({
-        keyboard: true,
-        templateUrl: 'partial/file.view.html',
+    views: {
+      'file': {
         controller: 'FileView'
-      }).open().then(function(result) {
-        $state.transitionTo('document.view', { id: $stateParams.id });
-      });
+      }
     }
   })
   .state('login', {

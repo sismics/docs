@@ -113,8 +113,8 @@
     </dependency>
     
     <dependency>
-      <groupId>org.bitlet</groupId>
-      <artifactId>weupnp</artifactId>
+      <groupId>org.imgscalr</groupId>
+      <artifactId>imgscalr-lib</artifactId>
     </dependency>
     
     <!-- Test dependencies -->

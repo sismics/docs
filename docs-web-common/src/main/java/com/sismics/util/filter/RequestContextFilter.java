@@ -105,21 +105,24 @@ public class RequestContextFilter implements Filter {
         } catch (Exception e) {
             ThreadLocalContext.cleanup();
             
-            log.error("An exception occured, rolling back current transaction", e);
+            // IOException are thrown if the client closes the connection before completion
+            if (!(e instanceof IOException)) {
+                log.error("An exception occured, rolling back current transaction", e);
 
-            // If an unprocessed error comes up from the application layers (Jersey...), rollback the transaction (should not happen)
-            if (em.isOpen()) {
-                if (em.getTransaction() != null && em.getTransaction().isActive()) {
-                    em.getTransaction().rollback();
+                // If an unprocessed error comes up from the application layers (Jersey...), rollback the transaction (should not happen)
+                if (em.isOpen()) {
+                    if (em.getTransaction() != null && em.getTransaction().isActive()) {
+                        em.getTransaction().rollback();
+                    }
+                    
+                    try {
+                        em.close();
+                    } catch (Exception ce) {
+                        log.error("Error closing entity manager", ce);
+                    }
                 }
-                
-                try {
-                    em.close();
-                } catch (Exception ce) {
-                    log.error("Error closing entity manager", ce);
-                }
+                throw new ServletException(e);
             }
-            throw new ServletException(e);
         }
         
         ThreadLocalContext.cleanup();

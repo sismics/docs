@@ -37,6 +37,8 @@ public class MimeTypeUtil {
             return MimeType.IMAGE_PNG;
         } else if (headerBytes[0] == ((byte) 0x00) && headerBytes[1] == ((byte) 0x00) && headerBytes[2] == ((byte) 0x01) && headerBytes[3] == ((byte) 0x00)) {
             return MimeType.IMAGE_X_ICON;
+        } else if (headerBytes[0] == ((byte) 0x25) && headerBytes[1] == ((byte) 0x50) && headerBytes[2] == ((byte) 0x44) && headerBytes[3] == ((byte) 0x46)) {
+            return MimeType.APPLICATION_PDF;
         }
         
         return null;

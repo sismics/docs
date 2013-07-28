@@ -1,9 +1,7 @@
 package com.sismics.docs.rest.resource;
 
 import java.io.BufferedInputStream;
-import java.io.FilenameFilter;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -33,6 +31,8 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.FileUtil;
+import com.sismics.util.ImageUtil;
 import com.sismics.util.mime.MimeTypeUtil;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
@@ -129,8 +129,8 @@ public class FileResource extends BaseResource {
             file.setMimeType(mimeType);
             String fileId = fileDao.create(file);
             
-            // Copy the incoming stream content into the storage directory
-            Files.copy(is, Paths.get(DirectoryUtil.getStorageDirectory().getPath(), fileId));
+            // Save the file
+            FileUtil.save(is, file);
 
             // Always return ok
             JSONObject response = new JSONObject();
@@ -222,22 +222,36 @@ public class FileResource extends BaseResource {
     @Path("{id: [a-z0-9\\-]+}/data")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response data(
-            @PathParam("id") final String id) throws JSONException {
+            @PathParam("id") final String id,
+            @QueryParam("thumbnail") boolean thumbnail) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         
         // Get the file
-        java.io.File storageDirectory = DirectoryUtil.getStorageDirectory();
-        java.io.File[] matchingFiles = storageDirectory.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(java.io.File dir, String name) {
-                return name.startsWith(id);
-            }
-        });
-        final java.io.File storageFile = matchingFiles[0];
+        FileDao fileDao = new FileDao();
+        File file = null;
+        try {
+            file = fileDao.getFile(id);
+        } catch (NoResultException e) {
+            throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", id));
+        }
 
-        return Response.ok(storageFile)
+        
+        // Get the stored file
+        java.io.File storedfile = null;
+        if (thumbnail) {
+            if (ImageUtil.isImage(file.getMimeType())) {
+                storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), id + "_thumb").toFile();
+            } else {
+                storedfile = new java.io.File(getClass().getResource("/image/file.png").getFile());
+            }
+        } else {
+            storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), id).toFile();
+        }
+
+        return Response.ok(storedfile)
+                .header("Content-Type", file.getMimeType())
                 .build();
     }
 }

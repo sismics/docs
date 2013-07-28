@@ -34,7 +34,7 @@
     <com.googlecode.owasp-java-html-sanitizer.owasp-java-html-sanitizer.version>r156</com.googlecode.owasp-java-html-sanitizer.owasp-java-html-sanitizer.version>
     <org.apache.lucene.version>4.2.0</org.apache.lucene.version>
     <jgoodies.forms.version>1.0.5</jgoodies.forms.version>
-    <org.bitlet.weupnp.version>0.1.2</org.bitlet.weupnp.version>
+    <org.imgscalr.imgscalr-lib.version>4.2</org.imgscalr.imgscalr-lib.version>
 
     <com.sun.grizzly.version>1.9.18-m</com.sun.grizzly.version>
     <org.hibernate.hibernate.version>4.1.0.Final</org.hibernate.hibernate.version>
@@ -430,9 +430,9 @@
       </dependency>
       
       <dependency>
-        <groupId>org.bitlet</groupId>
-        <artifactId>weupnp</artifactId>
-        <version>${org.bitlet.weupnp.version}</version>
+        <groupId>org.imgscalr</groupId>
+        <artifactId>imgscalr-lib</artifactId>
+        <version>${org.imgscalr.imgscalr-lib.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
