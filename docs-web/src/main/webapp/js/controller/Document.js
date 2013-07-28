@@ -22,7 +22,8 @@ App.controller('Document', function($scope, $state, Restangular) {
       offset: $scope.offset,
       limit: $scope.limit,
       sort_column: $scope.sortColumn,
-      asc: $scope.asc
+      asc: $scope.asc,
+      search: $scope.search
     })
     .then(function(data) {
       $scope.documents = data;
@@ -46,6 +47,12 @@ App.controller('Document', function($scope, $state, Restangular) {
     $scope.offset = ($scope.currentPage - 1) * $scope.limit;
     $scope.pageDocuments();
   });
+  
+  $scope.$watch('search', function(prev, next) {
+    if (next) {
+      $scope.loadDocuments();
+    }
+  })
   
   /**
    * Sort documents.

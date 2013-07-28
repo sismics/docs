@@ -13,6 +13,11 @@ public class DocumentCriteria {
     private String userId;
     
     /**
+     * Search query.
+     */
+    private String search;
+    
+    /**
      * Getter of userId.
      *
      * @return userId
@@ -28,5 +33,23 @@ public class DocumentCriteria {
      */
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    /**
+     * Getter of search.
+     *
+     * @return the search
+     */
+    public String getSearch() {
+        return search;
+    }
+
+    /**
+     * Setter of search.
+     *
+     * @param search search
+     */
+    public void setSearch(String search) {
+        this.search = search;
     }
 }

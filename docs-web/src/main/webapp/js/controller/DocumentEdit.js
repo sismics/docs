@@ -41,41 +41,58 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
       var promises = [];
       $scope.fileProgress = 0;
       
-      _.each($scope.newFiles, function(file) {
-        // Build the payload
-        var formData = new FormData();
-        formData.append('id', data.id);
-        formData.append('file', file);
-        
-        // Send the file
-        var promiseFile = $http.put('api/file',
-          formData, {
-          headers: { 'Content-Type': false },
-          transformRequest: function(data) { return data; }
-        });
-        
-        // TODO Handle progression when $q.notify will be released
-        
-        promiseFile.then(function() {
-          $scope.fileProgress += 100 / _.size($scope.newFiles);
-        });
-        
-        // Store the promise for later
-        promises.push(promiseFile);
-      });
-      
       // When all files upload are over, move on
-      var promiseAll = $q.all(promises);
-      if ($scope.isEdit()) {
-        promiseAll.then(function(data) {
+      var navigateNext = function() {
+        if ($scope.isEdit()) {
           $scope.loadDocuments();
           $state.transitionTo('document.view', { id: $stateParams.id });
-        });
-      } else {
-        promiseAll.then(function(data) {
+        } else {
           $scope.document = {};
           $scope.loadDocuments();
-        });
+        }
+      }
+      
+      if (_.size($scope.newFiles) == 0) {
+        navigateNext();
+      } else {
+        $scope.fileIsUploading = true;
+        
+        // Send a file from the input file array and return a promise
+        var sendFile = function(key) {
+          // Build the payload
+          var file = $scope.newFiles[key];
+          var formData = new FormData();
+          formData.append('id', data.id);
+          formData.append('file', file);
+          
+          // Send the file
+          var promiseFile = $http.put('api/file',
+            formData, {
+            headers: { 'Content-Type': false },
+            transformRequest: function(data) { return data; }
+          });
+          
+          // TODO Handle progression when $q.notify will be released
+          
+          promiseFile.then(function() {
+            $scope.fileProgress += 100 / _.size($scope.newFiles);
+          });
+          
+          return promiseFile;
+        };
+        
+        // Upload files sequentially
+        var key = 0;
+        var then = function() {
+          key++;
+          if ($scope.newFiles[key]) {
+            sendFile(key).then(then);
+          } else {
+            $scope.fileIsUploading = false;
+            navigateNext();
+          }
+        };
+        sendFile(key).then(then);
       }
     });
   };

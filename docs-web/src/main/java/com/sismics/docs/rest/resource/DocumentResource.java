@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.google.common.base.Strings;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
@@ -86,7 +87,8 @@ public class DocumentResource extends BaseResource {
             @QueryParam("limit") Integer limit,
             @QueryParam("offset") Integer offset,
             @QueryParam("sort_column") Integer sortColumn,
-            @QueryParam("asc") Boolean asc) throws JSONException {
+            @QueryParam("asc") Boolean asc,
+            @QueryParam("search") String search) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -99,6 +101,9 @@ public class DocumentResource extends BaseResource {
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
         DocumentCriteria documentCriteria = new DocumentCriteria();
         documentCriteria.setUserId(principal.getId());
+        if (!Strings.isNullOrEmpty(search)) {
+            documentCriteria.setSearch(search);
+        }
         documentDao.findByCriteria(paginatedList, documentCriteria, sortCriteria);
 
         for (DocumentDto documentDto : paginatedList.getResultList()) {

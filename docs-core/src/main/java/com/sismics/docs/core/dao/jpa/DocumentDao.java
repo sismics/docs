@@ -116,9 +116,15 @@ public class DocumentDao {
         
         // Adds search criteria
         List<String> criteriaList = new ArrayList<String>();
+        
         if (criteria.getUserId() != null) {
             criteriaList.add("d.DOC_IDUSER_C = :userId");
             parameterMap.put("userId", criteria.getUserId());
+        }
+        
+        if (criteria.getSearch() != null) {
+            criteriaList.add("(d.DOC_TITLE_C LIKE :search OR d.DOC_DESCRIPTION_C LIKE :search)");
+            parameterMap.put("search", "%" + criteria.getSearch() + "%");
         }
         
         if (!criteriaList.isEmpty()) {

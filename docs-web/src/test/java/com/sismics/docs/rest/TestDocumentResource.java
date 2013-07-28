@@ -55,6 +55,29 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertTrue(documents.length() == 1);
         Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
         
+        // Search documents
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("search", "Sup");
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 1);
+        Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
+        
+        // Search documents (nothing)
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("search", "random");
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 0);
+        
         // Get a document
         documentResource = resource().path("/document/" + document1Id);
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
