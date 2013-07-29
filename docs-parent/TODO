@@ -1,0 +1,7 @@
+- Client side tags creation/deletion (new settings page)
+- Client side edition of tags on documents
+- Client side displaying of tags on documents
+- Client/server side edition of created date
+- Client/server side search on tags
+- Client/server side search on creation date
+- Server side reordering files
