@@ -2,7 +2,9 @@ package com.sismics.docs.rest.resource;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.NoResultException;
 import javax.ws.rs.DELETE;
@@ -22,9 +24,12 @@ import org.codehaus.jettison.json.JSONObject;
 
 import com.google.common.base.Strings;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
+import com.sismics.docs.core.dao.jpa.TagDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.model.jpa.Document;
+import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -68,6 +73,18 @@ public class DocumentResource extends BaseResource {
         document.put("title", documentDb.getTitle());
         document.put("description", documentDb.getDescription());
         document.put("create_date", documentDb.getCreateDate().getTime());
+        
+        // Get tags
+        TagDao tagDao = new TagDao();
+        List<TagDto> tagDtoList = tagDao.getByDocumentId(id);
+        List<JSONObject> tags = new ArrayList<JSONObject>();
+        for (TagDto tagDto : tagDtoList) {
+            JSONObject tag = new JSONObject();
+            tag.put("id", tagDto.getId());
+            tag.put("name", tagDto.getName());
+            tags.add(tag);
+        }
+        document.put("tags", tags);
         
         return Response.ok().entity(document).build();
     }
@@ -132,7 +149,8 @@ public class DocumentResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response add(
             @FormParam("title") String title,
-            @FormParam("description") String description) throws JSONException {
+            @FormParam("description") String description,
+            @FormParam("tags[]") List<String> tagList) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -148,6 +166,9 @@ public class DocumentResource extends BaseResource {
         document.setTitle(title);
         document.setDescription(description);
         String documentId = documentDao.create(document);
+        
+        // Update tags
+        updateTagList(documentId, tagList);
         
         JSONObject response = new JSONObject();
         response.put("id", documentId);
@@ -168,7 +189,8 @@ public class DocumentResource extends BaseResource {
     public Response update(
             @PathParam("id") String id,
             @FormParam("title") String title,
-            @FormParam("description") String description) throws JSONException {
+            @FormParam("description") String description,
+            @FormParam("tags[]") List<String> tagList) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -194,10 +216,39 @@ public class DocumentResource extends BaseResource {
             document.setDescription(description);
         }
         
+        // Update tags
+        updateTagList(id, tagList);
+        
         // Always return ok
         JSONObject response = new JSONObject();
         response.put("id", id);
         return Response.ok().entity(response).build();
+    }
+
+    /**
+     * Update tags list on a document.
+     * 
+     * @param documentId
+     * @param tagList
+     * @throws JSONException
+     */
+    private void updateTagList(String documentId, List<String> tagList) throws JSONException {
+        if (tagList != null) {
+            TagDao tagDao = new TagDao();
+            Set<String> tagSet = new HashSet<String>();
+            Set<String> tagIdSet = new HashSet<String>();
+            List<Tag> tagDbList = tagDao.getByUserId(principal.getId());
+            for (Tag tagDb : tagDbList) {
+                tagIdSet.add(tagDb.getId());
+            }
+            for (String tagId : tagList) {
+                if (!tagIdSet.contains(tagId)) {
+                    throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", tagId));
+                }
+                tagSet.add(tagId);
+            }
+            tagDao.updateTagList(documentId, tagSet);
+        }
     }
     
     /**

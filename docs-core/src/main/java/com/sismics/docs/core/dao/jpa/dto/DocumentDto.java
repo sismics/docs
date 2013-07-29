@@ -5,7 +5,7 @@ import javax.persistence.Id;
 /**
  * Document DTO.
  *
- * @author jtremeaux 
+ * @author bgamard 
  */
 public class DocumentDto {
     /**

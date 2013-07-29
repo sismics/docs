@@ -127,6 +127,8 @@ public class DocumentDao {
             parameterMap.put("search", "%" + criteria.getSearch() + "%");
         }
         
+        criteriaList.add("d.DOC_DELETEDATE_D is null");
+        
         if (!criteriaList.isEmpty()) {
             sb.append(" where ");
             sb.append(Joiner.on(" and ").join(criteriaList));

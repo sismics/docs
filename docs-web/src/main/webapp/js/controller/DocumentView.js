@@ -38,6 +38,26 @@ App.controller('DocumentView', function($rootScope, $scope, $state, $stateParams
   };
   
   /**
+   * Delete a document.
+   */
+  $scope.deleteDocument = function(document) {
+    var title = 'Delete document';
+    var msg = 'Do you really want to delete this document?';
+    var btns = [{result:'cancel', label: 'Cancel'}, {result:'ok', label: 'OK', cssClass: 'btn-primary'}];
+
+    $dialog.messageBox(title, msg, btns)
+    .open()
+    .then(function(result) {
+      if (result == 'ok') {
+        Restangular.one('document', document.id).remove().then(function() {
+          $scope.loadDocuments();
+          $state.transitionTo('document.default');
+        });
+      }
+    });
+  };
+  
+  /**
    * Delete a file.
    */
   $scope.deleteFile = function(file) {

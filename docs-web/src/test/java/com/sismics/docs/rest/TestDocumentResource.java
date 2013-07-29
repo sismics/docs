@@ -30,15 +30,27 @@ public class TestDocumentResource extends BaseJerseyTest {
         clientUtil.createUser("document1");
         String document1Token = clientUtil.login("document1");
         
+        // Create a tag
+        WebResource tagResource = resource().path("/tag");
+        tagResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        MultivaluedMapImpl postParams = new MultivaluedMapImpl();
+        postParams.add("name", "Super tag");
+        ClientResponse response = tagResource.put(ClientResponse.class, postParams);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        JSONObject json = response.getEntity(JSONObject.class);
+        String tag1Id = json.optString("id");
+        Assert.assertNotNull(tag1Id);
+
         // Create a document
         WebResource documentResource = resource().path("/document");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
-        MultivaluedMapImpl postParams = new MultivaluedMapImpl();
+        postParams = new MultivaluedMapImpl();
         postParams.add("title", "My super document 1");
         postParams.add("description", "My super description for document 1");
-        ClientResponse response = documentResource.put(ClientResponse.class, postParams);
+        postParams.add("tags[]", tag1Id);
+        response = documentResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        JSONObject json = response.getEntity(JSONObject.class);
+        json = response.getEntity(JSONObject.class);
         String document1Id = json.optString("id");
         Assert.assertNotNull(document1Id);
         
@@ -85,6 +97,20 @@ public class TestDocumentResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         Assert.assertEquals(document1Id, json.getString("id"));
+        JSONArray tags = json.getJSONArray("tags");
+        Assert.assertEquals(1, tags.length());
+        Assert.assertEquals(tag1Id, tags.getJSONObject(0).getString("id"));
+        
+        // Create a tag
+        tagResource = resource().path("/tag");
+        tagResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        postParams = new MultivaluedMapImpl();
+        postParams.add("name", "Super tag 2");
+        response = tagResource.put(ClientResponse.class, postParams);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        String tag2Id = json.optString("id");
+        Assert.assertNotNull(tag1Id);
         
         // Update a document
         documentResource = resource().path("/document/" + document1Id);
@@ -92,6 +118,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         postParams = new MultivaluedMapImpl();
         postParams.add("title", "My new super document 1");
         postParams.add("description", "My new super description for document 1");
+        postParams.add("tags[]", tag2Id);
         response = documentResource.post(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
@@ -105,6 +132,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         Assert.assertTrue(json.getString("title").contains("new"));
         Assert.assertTrue(json.getString("description").contains("new"));
+        tags = json.getJSONArray("tags");
+        Assert.assertEquals(1, tags.length());
+        Assert.assertEquals(tag2Id, tags.getJSONObject(0).getString("id"));
         
         // Deletes a document
         documentResource = resource().path("/document/" + document1Id);

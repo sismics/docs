@@ -13,5 +13,7 @@
     <class>com.sismics.docs.core.model.jpa.User</class>
     <class>com.sismics.docs.core.model.jpa.RoleBaseFunction</class>
     <class>com.sismics.docs.core.model.jpa.Document</class>
+    <class>com.sismics.docs.core.model.jpa.Tag</class>
+    <class>com.sismics.docs.core.model.jpa.DocumentTag</class>
   </persistence-unit>
 </persistence>

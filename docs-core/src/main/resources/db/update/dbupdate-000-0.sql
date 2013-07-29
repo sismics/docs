@@ -8,11 +8,16 @@ create cached table T_DOCUMENT ( DOC_ID_C varchar(36) not null, DOC_IDUSER_C var
 create memory table T_USER ( USE_ID_C varchar(36) not null, USE_IDLOCALE_C varchar(10) not null, USE_IDROLE_C varchar(36) not null, USE_USERNAME_C varchar(50) not null, USE_PASSWORD_C varchar(60) not null, USE_EMAIL_C varchar(100) not null, USE_THEME_C varchar(100) not null, USE_FIRSTCONNECTION_B bit not null, USE_CREATEDATE_D datetime not null, USE_DELETEDATE_D datetime, primary key (USE_ID_C) );
 create memory table T_ROLE ( ROL_ID_C varchar(36) not null, ROL_NAME_C varchar(36) not null, ROL_CREATEDATE_D datetime not null, ROL_DELETEDATE_D datetime, primary key (ROL_ID_C) );
 create memory table T_ROLE_BASE_FUNCTION ( RBF_ID_C varchar(36) not null, RBF_IDROLE_C varchar(36) not null, RBF_IDBASEFUNCTION_C varchar(20) not null, RBF_CREATEDATE_D datetime not null, RBF_DELETEDATE_D datetime, primary key (RBF_ID_C) );
+create cached table T_TAG ( TAG_ID_C varchar(36) not null, TAG_IDUSER_C varchar(36) not null, TAG_NAME_C varchar(36) not null, TAG_CREATEDATE_D datetime, TAG_DELETEDATE_D datetime, primary key (TAG_ID_C) );
+create cached table T_DOCUMENT_TAG ( DOT_ID_C varchar(36) not null, DOT_IDDOCUMENT_C varchar(36) not null, DOT_IDTAG_C varchar(36) not null, primary key (DOT_ID_C) );
 alter table T_AUTHENTICATION_TOKEN add constraint FK_AUT_IDUSER_C foreign key (AUT_IDUSER_C) references T_USER (USE_ID_C) on delete restrict on update restrict;
 alter table T_DOCUMENT add constraint FK_DOC_IDUSER_C foreign key (DOC_IDUSER_C) references T_USER (USE_ID_C) on delete restrict on update restrict;
 alter table T_FILE add constraint FK_FIL_IDDOC_C foreign key (FIL_IDDOC_C) references T_DOCUMENT (DOC_ID_C) on delete restrict on update restrict;
 alter table T_USER add constraint FK_USE_IDLOCALE_C foreign key (USE_IDLOCALE_C) references T_LOCALE (LOC_ID_C) on delete restrict on update restrict;
 alter table T_USER add constraint FK_USE_IDROLE_C foreign key (USE_IDROLE_C) references T_ROLE (ROL_ID_C) on delete restrict on update restrict;
+alter table T_TAG add constraint FK_TAG_IDUSER_C foreign key (TAG_IDUSER_C) references T_USER (USE_ID_C) on delete restrict on update restrict;
+alter table T_DOCUMENT_TAG add constraint FK_DOT_IDDOCUMENT_C foreign key (DOT_IDDOCUMENT_C) references T_DOCUMENT (DOC_ID_C) on delete restrict on update restrict;
+alter table T_DOCUMENT_TAG add constraint FK_DOT_IDTAG_C foreign key (DOT_IDTAG_C) references T_TAG (TAG_ID_C) on delete restrict on update restrict;
 alter table T_ROLE_BASE_FUNCTION add constraint FK_RBF_IDROLE_C foreign key (RBF_IDROLE_C) references T_ROLE (ROL_ID_C) on delete restrict on update restrict;
 alter table T_ROLE_BASE_FUNCTION add constraint FK_RBF_IDBASEFUNCTION_C foreign key (RBF_IDBASEFUNCTION_C) references T_BASE_FUNCTION (BAF_ID_C) on delete restrict on update restrict;
 insert into T_CONFIG(CFG_ID_C, CFG_VALUE_C) values('DB_VERSION', '0');
