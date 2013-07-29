@@ -51,6 +51,7 @@ public class TagResource extends BaseResource {
         for (Tag tag : tagList) {
             JSONObject item = new JSONObject();
             item.put("id", tag.getId());
+            item.put("name", tag.getName());
             items.add(item);
         }
         response.put("tags", items);

@@ -32,7 +32,9 @@
     <script src="js/controller/DocumentView.js" type="text/javascript"></script>
     <script src="js/controller/FileView.js" type="text/javascript"></script>
     <script src="js/controller/Login.js" type="text/javascript"></script>
+    <script src="js/controller/Tag.js" type="text/javascript"></script>
     <script src="js/service/User.js" type="text/javascript"></script>
+    <script src="js/service/Tag.js" type="text/javascript"></script>
     <script src="js/filter/Newline.js" type="text/javascript"></script>
     <script src="js/directive/File.js" type="text/javascript"></script>
   </head>
@@ -40,6 +42,10 @@
     <div class="navbar">
       <div class="navbar-inner">
         <a class="brand" href="#">Sismics Docs</a>
+        <ul class="nav">
+          <li ng-class="{active: $uiRoute}" ui-route="/document"><a href="#/document">Documents</a></li>
+          <li ng-class="{active: $uiRoute}" ui-route="/tag"><a href="#/tag">Tags</a></li>
+        </ul>
       </div>
     </div>
     
