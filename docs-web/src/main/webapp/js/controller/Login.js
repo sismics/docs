@@ -3,9 +3,10 @@
 /**
  * Login controller.
  */
-App.controller('Login', function($scope, $state, $dialog, User) {
+App.controller('Login', function($scope, $rootScope, $state, $dialog, User) {
   $scope.login = function() {
     User.login($scope.user).then(function() {
+      $rootScope.userInfo = User.userInfo(true);
       $state.transitionTo('document.default');
     }, function() {
       var title = 'Login failed';

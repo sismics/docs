@@ -2,6 +2,7 @@ package com.sismics.docs.rest.resource;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -105,10 +106,16 @@ public class DocumentResource extends BaseResource {
             @QueryParam("offset") Integer offset,
             @QueryParam("sort_column") Integer sortColumn,
             @QueryParam("asc") Boolean asc,
-            @QueryParam("search") String search) throws JSONException {
+            @QueryParam("search") String search,
+            @QueryParam("create_date_min") String createDateMinStr,
+            @QueryParam("create_date_max") String createDateMaxStr) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
+        
+        // Validate input data
+        Date createDateMin = ValidationUtil.validateDate(createDateMinStr, "create_date_min", true);
+        Date createDateMax = ValidationUtil.validateDate(createDateMaxStr, "create_date_max", true);
         
         JSONObject response = new JSONObject();
         List<JSONObject> documents = new ArrayList<JSONObject>();
@@ -118,6 +125,8 @@ public class DocumentResource extends BaseResource {
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
         DocumentCriteria documentCriteria = new DocumentCriteria();
         documentCriteria.setUserId(principal.getId());
+        documentCriteria.setCreateDateMin(createDateMin);
+        documentCriteria.setCreateDateMax(createDateMax);
         if (!Strings.isNullOrEmpty(search)) {
             documentCriteria.setSearch(search);
         }
@@ -150,7 +159,8 @@ public class DocumentResource extends BaseResource {
     public Response add(
             @FormParam("title") String title,
             @FormParam("description") String description,
-            @FormParam("tags[]") List<String> tagList) throws JSONException {
+            @FormParam("tags[]") List<String> tagList,
+            @FormParam("create_date") String createDateStr) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -158,6 +168,7 @@ public class DocumentResource extends BaseResource {
         // Validate input data
         title = ValidationUtil.validateLength(title, "title", 1, 100, false);
         description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
+        Date createDate = ValidationUtil.validateDate(createDateStr, "create_date", true);
         
         // Create the document
         DocumentDao documentDao = new DocumentDao();
@@ -165,6 +176,11 @@ public class DocumentResource extends BaseResource {
         document.setUserId(principal.getId());
         document.setTitle(title);
         document.setDescription(description);
+        if (createDate == null) {
+            document.setCreateDate(new Date());
+        } else {
+            document.setCreateDate(createDate);
+        }
         String documentId = documentDao.create(document);
         
         // Update tags
@@ -190,7 +206,8 @@ public class DocumentResource extends BaseResource {
             @PathParam("id") String id,
             @FormParam("title") String title,
             @FormParam("description") String description,
-            @FormParam("tags[]") List<String> tagList) throws JSONException {
+            @FormParam("tags[]") List<String> tagList,
+            @FormParam("create_date") String createDateStr) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -198,6 +215,7 @@ public class DocumentResource extends BaseResource {
         // Validate input data
         title = ValidationUtil.validateLength(title, "title", 1, 100, false);
         description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
+        Date createDate = ValidationUtil.validateDate(createDateStr, "create_date", true);
         
         // Get the document
         DocumentDao documentDao = new DocumentDao();
@@ -214,6 +232,9 @@ public class DocumentResource extends BaseResource {
         }
         if (description != null) {
             document.setDescription(description);
+        }
+        if (createDate != null) {
+            document.setCreateDate(createDate);
         }
         
         // Update tags

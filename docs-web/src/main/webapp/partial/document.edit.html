@@ -12,6 +12,12 @@
     </div>
   </div>
   <div class="control-group">
+    <label class="control-label" for="inputCreateDate">Creation date</label>
+    <div class="controls">
+      <input type="text" id="inputCreateDate" datepicker-popup="yyyy-MM-dd" ng-model="document.create_date" starting-day="1" show-weeks="false" />
+    </div>
+  </div>
+  <div class="control-group">
     <label class="control-label" for="inputFiles">New files</label>
     <div class="controls">
       <file class="input-block-level" id="inputFiles" multiple="multiple" ng-model="newFiles" accept="image/png,image/jpg,image/jpeg,image/gif" />

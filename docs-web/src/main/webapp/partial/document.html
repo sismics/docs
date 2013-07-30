@@ -18,7 +18,7 @@
         <tbody>
           <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents.documents">
             <td>{{ document.title }}</td>
-            <td>{{ document.create_date | date: 'short' }}</td>
+            <td>{{ document.create_date | date: 'yyyy-MM-dd' }}</td>
           </tr>
         </tbody>
       </table>

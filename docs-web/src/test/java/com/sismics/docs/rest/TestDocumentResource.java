@@ -1,5 +1,8 @@
 package com.sismics.docs.rest;
 
+
+import java.util.Date;
+
 import junit.framework.Assert;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -48,6 +51,8 @@ public class TestDocumentResource extends BaseJerseyTest {
         postParams.add("title", "My super document 1");
         postParams.add("description", "My super description for document 1");
         postParams.add("tags[]", tag1Id);
+        long create1Date = new Date().getTime();
+        postParams.add("create_date", create1Date);
         response = documentResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
@@ -67,11 +72,25 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertTrue(documents.length() == 1);
         Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
         
-        // Search documents
+        // Search documents by query
         documentResource = resource().path("/document/list");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
         getParams.putSingle("search", "Sup");
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 1);
+        Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
+        Assert.assertEquals(create1Date, documents.getJSONObject(0).getLong("create_date"));
+        
+        // Search documents by date
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("create_date_min", create1Date - 3600000);
+        getParams.putSingle("create_date_max", create1Date + 1800000);
         response = documentResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));

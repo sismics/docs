@@ -1,5 +1,7 @@
 package com.sismics.docs.core.dao.jpa.criteria;
 
+import java.util.Date;
+
 
 /**
  * Document criteria.
@@ -16,6 +18,16 @@ public class DocumentCriteria {
      * Search query.
      */
     private String search;
+    
+    /**
+     * Minimum creation date.
+     */
+    private Date createDateMin;
+    
+    /**
+     * Maximum creation date.
+     */
+    private Date createDateMax;
     
     /**
      * Getter of userId.
@@ -51,5 +63,41 @@ public class DocumentCriteria {
      */
     public void setSearch(String search) {
         this.search = search;
+    }
+
+    /**
+     * Getter of createDateMin.
+     *
+     * @return the createDateMin
+     */
+    public Date getCreateDateMin() {
+        return createDateMin;
+    }
+
+    /**
+     * Setter of createDateMin.
+     *
+     * @param createDateMin createDateMin
+     */
+    public void setCreateDateMin(Date createDateMin) {
+        this.createDateMin = createDateMin;
+    }
+
+    /**
+     * Getter of createDateMax.
+     *
+     * @return the createDateMax
+     */
+    public Date getCreateDateMax() {
+        return createDateMax;
+    }
+
+    /**
+     * Setter of createDateMax.
+     *
+     * @param createDateMax createDateMax
+     */
+    public void setCreateDateMax(Date createDateMax) {
+        this.createDateMax = createDateMax;
     }
 }

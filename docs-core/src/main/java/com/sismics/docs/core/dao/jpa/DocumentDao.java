@@ -41,7 +41,6 @@ public class DocumentDao {
         
         // Create the document
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        document.setCreateDate(new Date());
         em.persist(document);
         
         return document.getId();
@@ -121,10 +120,17 @@ public class DocumentDao {
             criteriaList.add("d.DOC_IDUSER_C = :userId");
             parameterMap.put("userId", criteria.getUserId());
         }
-        
         if (criteria.getSearch() != null) {
             criteriaList.add("(d.DOC_TITLE_C LIKE :search OR d.DOC_DESCRIPTION_C LIKE :search)");
             parameterMap.put("search", "%" + criteria.getSearch() + "%");
+        }
+        if (criteria.getCreateDateMin() != null) {
+            criteriaList.add("d.DOC_CREATEDATE_D >= :createDateMin");
+            parameterMap.put("createDateMin", criteria.getCreateDateMin());
+        }
+        if (criteria.getCreateDateMax() != null) {
+            criteriaList.add("d.DOC_CREATEDATE_D <= :createDateMax");
+            parameterMap.put("createDateMax", criteria.getCreateDateMax());
         }
         
         criteriaList.add("d.DOC_DELETEDATE_D is null");

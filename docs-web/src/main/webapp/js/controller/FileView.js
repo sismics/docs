@@ -7,23 +7,28 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
   var dialog = $dialog.dialog({
     keyboard: true,
     templateUrl: 'partial/file.view.html',
-    controller: function($rootScope, $scope, $state, $stateParams) {
+    controller: function($scope, $state, $stateParams, Restangular) {
       $scope.id = $stateParams.fileId;
       
-      // Search current file
-      _.each($rootScope.files, function(value, key, list) {
-        if (value.id == $scope.id) {
-          $scope.file = value;
-        }
+      // Load files
+      Restangular.one('file').getList('list', { id: $stateParams.id }).then(function(data) {
+        $scope.files = data.files;
+        
+        // Search current file
+        _.each($scope.files, function(value, key, list) {
+          if (value.id == $scope.id) {
+            $scope.file = value;
+          }
+        });
       });
       
       /**
        * Navigate to the next file.
        */
       $scope.nextFile = function() {
-        _.each($rootScope.files, function(value, key, list) {
+        _.each($scope.files, function(value, key, list) {
           if (value.id == $scope.id) {
-            var next = $rootScope.files[key + 1];
+            var next = $scope.files[key + 1];
             if (next) {
               dialog.close({});
               $state.transitionTo('document.view.file', { id: $stateParams.id, fileId: next.id });
@@ -36,9 +41,9 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
        * Navigate to the previous file.
        */
       $scope.previousFile = function() {
-        _.each($rootScope.files, function(value, key, list) {
+        _.each($scope.files, function(value, key, list) {
           if (value.id == $scope.id) {
-            var previous = $rootScope.files[key - 1];
+            var previous = $scope.files[key - 1];
             if (previous) {
               dialog.close({});
               $state.transitionTo('document.view.file', { id: $stateParams.id, fileId: previous.id });

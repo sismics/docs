@@ -26,6 +26,9 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
   $scope.edit = function() {
     var promise = null;
     var document = angular.copy($scope.document);
+    if (document.create_date instanceof Date) {
+      document.create_date = document.create_date.getTime();
+    }
     
     // Extract ids from tags
     document.tags = _.pluck(document.tags, 'id');

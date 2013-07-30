@@ -3,7 +3,7 @@
 /**
  * Document view controller.
  */
-App.controller('DocumentView', function($rootScope, $scope, $state, $stateParams, $dialog, Restangular) {
+App.controller('DocumentView', function($scope, $state, $stateParams, $dialog, Restangular) {
   // Load data from server
   $scope.document = Restangular.one('document', $stateParams.id).get();
   
@@ -25,7 +25,7 @@ App.controller('DocumentView', function($rootScope, $scope, $state, $stateParams
    */
   $scope.loadFiles = function() {
     Restangular.one('file').getList('list', { id: $stateParams.id }).then(function(data) {
-      $rootScope.files = data.files;
+      $scope.files = data.files;
     });
   };
   $scope.loadFiles();
