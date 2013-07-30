@@ -3,7 +3,7 @@
 /**
  * Document edition controller.
  */
-App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams, Restangular) {
+App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams, Restangular, Tag) {
   /**
    * Returns true if in edit mode (false in add mode).
    */
@@ -25,15 +25,19 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
    */
   $scope.edit = function() {
     var promise = null;
+    var document = angular.copy($scope.document);
+    
+    // Extract ids from tags
+    document.tags = _.pluck(document.tags, 'id');
     
     if ($scope.isEdit()) {
       promise = Restangular
       .one('document', $stateParams.id)
-      .post('', $scope.document);
+      .post('', document);
     } else {
       promise = Restangular
       .one('document')
-      .put($scope.document);
+      .put(document);
     }
     
     // Upload files after edition

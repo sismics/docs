@@ -33,16 +33,18 @@
     <script src="js/controller/FileView.js" type="text/javascript"></script>
     <script src="js/controller/Login.js" type="text/javascript"></script>
     <script src="js/controller/Tag.js" type="text/javascript"></script>
+    <script src="js/controller/Navigation.js" type="text/javascript"></script>
     <script src="js/service/User.js" type="text/javascript"></script>
     <script src="js/service/Tag.js" type="text/javascript"></script>
     <script src="js/filter/Newline.js" type="text/javascript"></script>
     <script src="js/directive/File.js" type="text/javascript"></script>
+    <script src="js/directive/SelectTag.js" type="text/javascript"></script>
   </head>
   <body>
-    <div class="navbar">
+    <div class="navbar" ng-controller="Navigation">
       <div class="navbar-inner">
         <a class="brand" href="#">Sismics Docs</a>
-        <ul class="nav">
+        <ul class="nav" ng-show="!userInfo.anonymous">
           <li ng-class="{active: $uiRoute}" ui-route="/document"><a href="#/document">Documents</a></li>
           <li ng-class="{active: $uiRoute}" ui-route="/tag"><a href="#/tag">Tags</a></li>
         </ul>

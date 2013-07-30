@@ -7,6 +7,9 @@
 
 <div class="page-header">
   <h1>{{ document.title }} <small>{{ document.create_date | date: 'short' }}</small></h1>
+  <ul class="inline">
+    <li ng-repeat="tag in document.tags"><span class="label label-info">{{ tag.name }}</span></li>
+  </ul>
 </div>
 
 <p ng-bind-html="document.description | newline"></p>
