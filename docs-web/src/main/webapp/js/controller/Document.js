@@ -12,6 +12,19 @@ App.controller('Document', function($scope, $state, Restangular) {
   $scope.offset = 0;
   $scope.currentPage = 1;
   $scope.limit = 10;
+  $scope.isAdvancedSearchCollapsed = true;
+  
+  /**
+   * Initialize search criterias.
+   */
+  $scope.initSearch = function() {
+    $scope.search = {
+      query: '',
+      createDateMin: null,
+      createDateMax: null,
+    };
+  };
+  $scope.initSearch();
   
   /**
    * Load new documents page.
@@ -23,10 +36,13 @@ App.controller('Document', function($scope, $state, Restangular) {
       limit: $scope.limit,
       sort_column: $scope.sortColumn,
       asc: $scope.asc,
-      search: $scope.search
+      search: $scope.search.query,
+      create_date_min: $scope.isAdvancedSearchCollapsed || !$scope.search.createDateMin ? null : $scope.search.createDateMin.getTime(),
+      create_date_max: $scope.isAdvancedSearchCollapsed || !$scope.search.createDateMax ? null : $scope.search.createDateMax.getTime()
     })
     .then(function(data) {
-      $scope.documents = data;
+      $scope.documents = data.documents;
+      $scope.totalDocuments = data.total;
       $scope.numPages = Math.ceil(data.total / $scope.limit);
     });
   };
@@ -43,16 +59,20 @@ App.controller('Document', function($scope, $state, Restangular) {
   /**
    * Watch for current page change.
    */
-  $scope.$watch('currentPage', function() {
+  $scope.$watch('currentPage', function(prev, next) {
+    if (prev == next) {
+      return;
+    }
     $scope.offset = ($scope.currentPage - 1) * $scope.limit;
     $scope.pageDocuments();
   });
   
+  /**
+   * Watch for search change.
+   */
   $scope.$watch('search', function(prev, next) {
-    if (next) {
-      $scope.loadDocuments();
-    }
-  })
+    $scope.loadDocuments();
+  }, true);
   
   /**
    * Sort documents.
