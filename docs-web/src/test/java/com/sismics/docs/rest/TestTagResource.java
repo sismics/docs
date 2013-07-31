@@ -51,6 +51,26 @@ public class TestTagResource extends BaseJerseyTest {
         JSONArray tags = json.getJSONArray("tags");
         Assert.assertTrue(tags.length() > 0);
         
+        // Update a document
+        tagResource = resource().path("/tag/" + tag3Id);
+        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
+        postParams = new MultivaluedMapImpl();
+        postParams.add("name", "Updated name");
+        response = tagResource.post(ClientResponse.class, postParams);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(tag3Id, json.getString("id"));
+        
+        // Get all tags
+        tagResource = resource().path("/tag/list");
+        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
+        response = tagResource.get(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        tags = json.getJSONArray("tags");
+        Assert.assertTrue(tags.length() > 0);
+        Assert.assertEquals("Updated name", tags.getJSONObject(0).getString("name"));
+        
         // Deletes a tag
         tagResource = resource().path("/tag/" + tag3Id);
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));

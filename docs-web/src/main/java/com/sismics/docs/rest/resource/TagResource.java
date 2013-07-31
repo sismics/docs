@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -74,7 +75,7 @@ public class TagResource extends BaseResource {
         }
         
         // Validate input data
-        name = ValidationUtil.validateLength(name, "title", 1, 36, false);
+        name = ValidationUtil.validateLength(name, "name", 1, 36, false);
         
         // Get the tag
         TagDao tagDao = new TagDao();
@@ -91,6 +92,41 @@ public class TagResource extends BaseResource {
         
         JSONObject response = new JSONObject();
         response.put("id", tagId);
+        return Response.ok().entity(response).build();
+    }
+    
+    /**
+     * Update a tag tag.
+     * 
+     * @param name Name
+     * @return Response
+     * @throws JSONException
+     */
+    @POST
+    @Path("{id: [a-z0-9\\-]+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(
+            @PathParam("id") String id,
+            @FormParam("name") String name) throws JSONException {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        
+        // Validate input data
+        name = ValidationUtil.validateLength(name, "name", 1, 36, false);
+        
+        // Get the tag
+        TagDao tagDao = new TagDao();
+        Tag tag = tagDao.getByUserIdAndTagId(principal.getId(), id);
+        if (tag == null) {
+            throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", id));
+        }
+        
+        // Update the tag
+        tag.setName(name);
+        
+        JSONObject response = new JSONObject();
+        response.put("id", id);
         return Response.ok().entity(response).build();
     }
     
