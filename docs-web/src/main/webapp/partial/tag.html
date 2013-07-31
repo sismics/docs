@@ -18,7 +18,7 @@
       <table class="table table-striped table-hover table-tags">
         <tbody>
           <tr ng-repeat="tag in tags | filter:search">
-            <td>{{ tag.name }}</td>
+            <td><inline-edit value="tag.name" on-edit="updateTag(tag)" /></td>
             <td><button class="btn btn-danger pull-right" ng-click="deleteTag(tag)"><span class="icon-trash icon-white"></span></button></td>
           </tr>
         </tbody>

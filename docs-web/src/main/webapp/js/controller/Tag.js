@@ -30,4 +30,11 @@ App.controller('Tag', function($scope, $state, Tag, Restangular) {
       });
     });
   };
+  
+  /**
+   * Update a tag name.
+   */
+  $scope.updateTag = function(tag) {
+    Restangular.one('tag', tag.id).post('', tag);
+  };
 });
