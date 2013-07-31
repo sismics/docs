@@ -55,7 +55,7 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
       // When all files upload are over, move on
       var navigateNext = function() {
         if ($scope.isEdit()) {
-          $scope.loadDocuments();
+          $scope.pageDocuments();
           $state.transitionTo('document.view', { id: $stateParams.id });
         } else {
           $scope.document = {};
