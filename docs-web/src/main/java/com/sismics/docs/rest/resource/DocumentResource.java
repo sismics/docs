@@ -108,7 +108,8 @@ public class DocumentResource extends BaseResource {
             @QueryParam("asc") Boolean asc,
             @QueryParam("search") String search,
             @QueryParam("create_date_min") String createDateMinStr,
-            @QueryParam("create_date_max") String createDateMaxStr) throws JSONException {
+            @QueryParam("create_date_max") String createDateMaxStr,
+            @QueryParam("tags[]") List<String> tagIdList) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -127,6 +128,7 @@ public class DocumentResource extends BaseResource {
         documentCriteria.setUserId(principal.getId());
         documentCriteria.setCreateDateMin(createDateMin);
         documentCriteria.setCreateDateMax(createDateMax);
+        documentCriteria.setTagIdList(tagIdList);
         if (!Strings.isNullOrEmpty(search)) {
             documentCriteria.setSearch(search);
         }

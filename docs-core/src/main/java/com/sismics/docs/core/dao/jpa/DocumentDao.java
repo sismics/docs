@@ -112,6 +112,9 @@ public class DocumentDao {
         
         StringBuilder sb = new StringBuilder("select d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3");
         sb.append(" from T_DOCUMENT d ");
+        if (criteria.getTagIdList() != null && !criteria.getTagIdList().isEmpty()) {
+            sb.append(" left join T_DOCUMENT_TAG dt on dt.DOT_IDDOCUMENT_C = d.DOC_ID_C ");
+        }
         
         // Adds search criteria
         List<String> criteriaList = new ArrayList<String>();
@@ -131,6 +134,10 @@ public class DocumentDao {
         if (criteria.getCreateDateMax() != null) {
             criteriaList.add("d.DOC_CREATEDATE_D <= :createDateMax");
             parameterMap.put("createDateMax", criteria.getCreateDateMax());
+        }
+        if (criteria.getTagIdList() != null && !criteria.getTagIdList().isEmpty()) {
+            criteriaList.add("dt.DOT_IDTAG_C in :tagIdList");
+            parameterMap.put("tagIdList", criteria.getTagIdList());
         }
         
         criteriaList.add("d.DOC_DELETEDATE_D is null");

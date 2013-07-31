@@ -1,6 +1,7 @@
 package com.sismics.docs.core.dao.jpa.criteria;
 
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -28,6 +29,11 @@ public class DocumentCriteria {
      * Maximum creation date.
      */
     private Date createDateMax;
+    
+    /**
+     * Tag IDs.
+     */
+    private List<String> tagIdList;
     
     /**
      * Getter of userId.
@@ -99,5 +105,23 @@ public class DocumentCriteria {
      */
     public void setCreateDateMax(Date createDateMax) {
         this.createDateMax = createDateMax;
+    }
+
+    /**
+     * Getter of tagIdList.
+     *
+     * @return the tagIdList
+     */
+    public List<String> getTagIdList() {
+        return tagIdList;
+    }
+
+    /**
+     * Setter of tagIdList.
+     *
+     * @param tagIdList tagIdList
+     */
+    public void setTagIdList(List<String> tagIdList) {
+        this.tagIdList = tagIdList;
     }
 }
