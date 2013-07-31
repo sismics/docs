@@ -1,1 +1,2 @@
 - Server side reordering files
+- GET /app/stats to display general data (server/client)

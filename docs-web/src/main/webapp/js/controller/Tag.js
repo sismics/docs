@@ -15,6 +15,7 @@ App.controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
   $scope.addTag = function() {
     var name = $scope.tag.name;
     $scope.tag.name = '';
+    // TODO Check if the tag don't already exists
     Restangular.one('tag').put({ name: name }).then(function(data) {
       $scope.tags.push({ id: data.id, name: name });
     });

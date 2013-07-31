@@ -59,6 +59,7 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
           $state.transitionTo('document.view', { id: $stateParams.id });
         } else {
           $scope.document = {};
+          $scope.newFiles = [];
           $scope.loadDocuments();
         }
       }
@@ -100,6 +101,7 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
             sendFile(key).then(then);
           } else {
             $scope.fileIsUploading = false;
+            $scope.fileProgress = 0;
             navigateNext();
           }
         };
