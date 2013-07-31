@@ -109,16 +109,21 @@ public class DocumentDao {
      */
     public void findByCriteria(PaginatedList<DocumentDto> paginatedList, DocumentCriteria criteria, SortCriteria sortCriteria) {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
+        List<String> criteriaList = new ArrayList<String>();
         
         StringBuilder sb = new StringBuilder("select d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3");
         sb.append(" from T_DOCUMENT d ");
         if (criteria.getTagIdList() != null && !criteria.getTagIdList().isEmpty()) {
-            sb.append(" left join T_DOCUMENT_TAG dt on dt.DOT_IDDOCUMENT_C = d.DOC_ID_C ");
+            int index = 0;
+            for (String tagId : criteria.getTagIdList()) {
+                sb.append(" left join T_DOCUMENT_TAG dt" + index + " on dt" + index + ".DOT_IDDOCUMENT_C = d.DOC_ID_C and dt" + index + ".DOT_IDTAG_C = :tagId" + index + " ");
+                criteriaList.add("dt" + index + ".DOT_ID_C is not null");
+                parameterMap.put("tagId" + index, tagId);
+                index++;
+            }
         }
         
         // Adds search criteria
-        List<String> criteriaList = new ArrayList<String>();
-        
         if (criteria.getUserId() != null) {
             criteriaList.add("d.DOC_IDUSER_C = :userId");
             parameterMap.put("userId", criteria.getUserId());
@@ -134,10 +139,6 @@ public class DocumentDao {
         if (criteria.getCreateDateMax() != null) {
             criteriaList.add("d.DOC_CREATEDATE_D <= :createDateMax");
             parameterMap.put("createDateMax", criteria.getCreateDateMax());
-        }
-        if (criteria.getTagIdList() != null && !criteria.getTagIdList().isEmpty()) {
-            criteriaList.add("dt.DOT_IDTAG_C in :tagIdList");
-            parameterMap.put("tagIdList", criteria.getTagIdList());
         }
         
         criteriaList.add("d.DOC_DELETEDATE_D is null");

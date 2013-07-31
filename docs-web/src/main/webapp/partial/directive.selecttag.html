@@ -2,8 +2,5 @@
   <ul class="inline">
     <li ng-repeat="tag in tags"><span class="label label-info">{{ tag.name }} <span class="icon-remove icon-white" ng-click="deleteTag(tag)"></span></span></li>
   </ul>
-  <p class="input-append">
-    <input type="text" id="{{ ref }}" placeholder="Type a tag" ng-model="input" typeahead="tag.name for tag in allTags | filter: $viewValue" typeahead-on-select="addTag()" />
-    <button type="submit" class="btn" ng-click="addTag()">Add</button>
-  </p>
+  <input type="text" id="{{ ref }}" placeholder="Type a tag" ng-model="input" typeahead="tag.name for tag in allTags | filter: $viewValue" typeahead-on-select="addTag()" />
 </div>

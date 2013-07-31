@@ -20,6 +20,12 @@
                 <input class="span4" ng-readonly="true" ng-change="loadDocuments()" type="text" id="inputCreateDateMax" datepicker-popup="yyyy-MM-dd" ng-model="search.createDateMax" starting-day="1" show-weeks="false" />
               </div>
             </div>
+            <div class="control-group">
+              <label class="control-label" for="inputTags">Tags</label>
+              <div class="controls">
+                <select-tag tags="search.tags" class="input-block-level" ref="inputTags" />
+              </div>
+            </div>
             <div class="form-actions">
               <button ng-click="initSearch()" class="btn btn-warning" type="submit">Reset search</button>
             </div>
