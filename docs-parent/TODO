@@ -1,2 +1,6 @@
 - Reordering files (server)
-- Autocomplete on document title
+- Autocomplete on document title (client/server)
+- Cache headers on /file/:id/data (server)
+- Display logs (client)
+- Users administration (client)
+- Tag stats (client/server)
