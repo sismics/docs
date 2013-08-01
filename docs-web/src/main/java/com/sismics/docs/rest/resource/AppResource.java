@@ -17,9 +17,13 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.sismics.docs.core.dao.jpa.DocumentDao;
+import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
+import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
+import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
@@ -42,16 +46,32 @@ public class AppResource extends BaseResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response version() throws JSONException {
+    public Response info() throws JSONException {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        
         ResourceBundle configBundle = ConfigUtil.getConfigBundle();
         String currentVersion = configBundle.getString("api.current_version");
         String minVersion = configBundle.getString("api.min_version");
 
         JSONObject response = new JSONObject();
+        
+        // Specific data
+        DocumentDao documentDao = new DocumentDao();
+        PaginatedList<DocumentDto> paginatedList = PaginatedLists.create(1, 0);
+        SortCriteria sortCriteria = new SortCriteria(0, true);
+        DocumentCriteria documentCriteria = new DocumentCriteria();
+        documentCriteria.setUserId(principal.getId());
+        documentDao.findByCriteria(paginatedList, documentCriteria, sortCriteria);
+        response.put("document_count", paginatedList.getResultCount());
+        
+        // General data
         response.put("current_version", currentVersion.replace("-SNAPSHOT", ""));
         response.put("min_version", minVersion);
         response.put("total_memory", Runtime.getRuntime().totalMemory());
         response.put("free_memory", Runtime.getRuntime().freeMemory());
+        
         return Response.ok().entity(response).build();
     }
     

@@ -26,8 +26,13 @@ public class TestAppResource extends BaseJerseyTest {
      */
     @Test
     public void testAppResource() throws JSONException {
+        // Login app1
+        clientUtil.createUser("app1");
+        String app1Token = clientUtil.login("app1");
+        
         // Check the application info
         WebResource appResource = resource().path("/app");
+        appResource.addFilter(new CookieAuthenticationFilter(app1Token));
         ClientResponse response = appResource.get(ClientResponse.class);
         response = appResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -40,6 +45,7 @@ public class TestAppResource extends BaseJerseyTest {
         Assert.assertTrue(freeMemory > 0);
         Long totalMemory = json.getLong("total_memory");
         Assert.assertTrue(totalMemory > 0 && totalMemory > freeMemory);
+        Assert.assertEquals(0, json.getInt("document_count"));
     }
 
     /**

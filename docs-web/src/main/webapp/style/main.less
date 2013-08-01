@@ -1,3 +1,4 @@
+// Documents list
 .table-documents {
 	thead th {
     cursor: pointer;
@@ -9,6 +10,7 @@
 	}
 }
 
+// File thumbnails
 .thumbnail-file {
 	cursor: pointer;
 }
@@ -21,6 +23,7 @@
 	overflow: visible;
 }
 
+// Fields bound to datepicker
 input[readonly][datepicker-popup] {
 	cursor: pointer;
 }
@@ -29,21 +32,30 @@ input[readonly][datepicker-popup] {
 .inline-edit {
 	cursor: pointer;
 	display: block;
+	
+	span {
+    display: block;
+	}
+	
+	input {
+	  display: none;
+	  margin-bottom: 0;
+	}
+	
+	&.active {
+    span {
+		  display: none;
+		}
+		
+		input {
+		  display: inline-block;
+		}
+	}
 }
 
-.inline-edit span {
-	display: block;
-}
-
-.inline-edit input {
-  display: none;
-  margin-bottom: 0;
-}
-
-.inline-edit.active span {
-  display: none;
-}
-
-.inline-edit.active input {
-  display: inline-block;
+// Pagination
+.pagination {
+	ul > li {
+    cursor: pointer;
+	}
 }
