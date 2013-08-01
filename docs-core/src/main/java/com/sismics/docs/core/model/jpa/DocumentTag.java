@@ -96,6 +96,44 @@ public class DocumentTag implements Serializable {
     public void setTagId(String tagId) {
         this.tagId = tagId;
     }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((documentId == null) ? 0 : documentId.hashCode());
+        result = prime * result + ((tagId == null) ? 0 : tagId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        DocumentTag other = (DocumentTag) obj;
+        if (documentId == null) {
+            if (other.documentId != null) {
+                return false;
+            }
+        } else if (!documentId.equals(other.documentId)) {
+            return false;
+        }
+        if (tagId == null) {
+            if (other.tagId != null) {
+                return false;
+            }
+        } else if (!tagId.equals(other.tagId)) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public String toString() {
