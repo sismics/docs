@@ -45,7 +45,7 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
     }
     
     // Extract ids from tags
-    document['tags[]'] = _.pluck(document.tags, 'id');
+    document.tags = _.pluck(document.tags, 'id');
     
     if ($scope.isEdit()) {
       promise = Restangular

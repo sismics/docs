@@ -50,7 +50,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         postParams = new MultivaluedMapImpl();
         postParams.add("title", "My super document 1");
         postParams.add("description", "My super description for document 1");
-        postParams.add("tags[]", tag1Id);
+        postParams.add("tags", tag1Id);
         long create1Date = new Date().getTime();
         postParams.add("create_date", create1Date);
         response = documentResource.put(ClientResponse.class, postParams);
@@ -102,7 +102,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         documentResource = resource().path("/document/list");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
-        getParams.putSingle("tags[]", tag1Id);
+        getParams.putSingle("tags", tag1Id);
         response = documentResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -149,7 +149,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         postParams = new MultivaluedMapImpl();
         postParams.add("title", "My new super document 1");
         postParams.add("description", "My new super description for document 1");
-        postParams.add("tags[]", tag2Id);
+        postParams.add("tags", tag2Id);
         response = documentResource.post(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);

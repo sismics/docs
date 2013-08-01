@@ -109,7 +109,7 @@ public class DocumentResource extends BaseResource {
             @QueryParam("search") String search,
             @QueryParam("create_date_min") String createDateMinStr,
             @QueryParam("create_date_max") String createDateMaxStr,
-            @QueryParam("tags[]") List<String> tagIdList) throws JSONException {
+            @QueryParam("tags") List<String> tagIdList) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -161,7 +161,7 @@ public class DocumentResource extends BaseResource {
     public Response add(
             @FormParam("title") String title,
             @FormParam("description") String description,
-            @FormParam("tags[]") List<String> tagList,
+            @FormParam("tags") List<String> tagList,
             @FormParam("create_date") String createDateStr) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -208,7 +208,7 @@ public class DocumentResource extends BaseResource {
             @PathParam("id") String id,
             @FormParam("title") String title,
             @FormParam("description") String description,
-            @FormParam("tags[]") List<String> tagList,
+            @FormParam("tags") List<String> tagList,
             @FormParam("create_date") String createDateStr) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();

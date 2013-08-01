@@ -107,6 +107,7 @@ var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.ke
   
   // Configuring $http
   $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+  $httpProvider.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
   $httpProvider.defaults.transformRequest = [function(data) {
     var param = function(obj) {
       var query = '';
@@ -118,7 +119,7 @@ var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.ke
         if(value instanceof Array) {
           for(i=0; i<value.length; ++i) {
             subValue = value[i];
-            fullSubName = name + '[]';
+            fullSubName = name;
             innerObj = {};
             innerObj[fullSubName] = subValue;
             query += param(innerObj) + '&';

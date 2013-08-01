@@ -40,7 +40,7 @@ App.controller('Document', function($scope, $state, Restangular) {
       search: $scope.search.query,
       create_date_min: $scope.isAdvancedSearchCollapsed || !$scope.search.createDateMin ? null : $scope.search.createDateMin.getTime(),
       create_date_max: $scope.isAdvancedSearchCollapsed || !$scope.search.createDateMax ? null : $scope.search.createDateMax.getTime(),
-      'tags[]': $scope.isAdvancedSearchCollapsed ? null : _.pluck($scope.search.tags, 'id')
+      'tags': $scope.isAdvancedSearchCollapsed ? null : _.pluck($scope.search.tags, 'id')
     })
     .then(function(data) {
       $scope.documents = data.documents;
