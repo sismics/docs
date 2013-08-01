@@ -29,9 +29,7 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
       $scope.document = data;
     });
   } else {
-    $scope.document = {
-      tags: []
-    };
+    $scope.document = { tags: [] };
   }
   
   /**
@@ -68,7 +66,7 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
           $scope.pageDocuments();
           $state.transitionTo('document.view', { id: $stateParams.id });
         } else {
-          $scope.document = {};
+          $scope.document = { tags: [] };
           $scope.newFiles = [];
           $scope.loadDocuments();
           $scope.alerts.push({ type: 'success', msg: 'Document successfully added' });
