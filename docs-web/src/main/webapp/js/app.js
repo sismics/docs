@@ -43,7 +43,8 @@ var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.ke
     url: '',
     views: {
       'document': {
-        templateUrl: 'partial/document.default.html'
+        templateUrl: 'partial/document.default.html',
+        controller: 'DocumentDefault'
       }
     }
   })

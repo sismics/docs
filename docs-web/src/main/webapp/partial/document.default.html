@@ -1,8 +1,17 @@
 <h1>
-  {{ totalDocuments }} <small>document{{ totalDocuments > 1 ? 's' : '' }} in the database</small>
+  {{ app.document_count }} <small>document{{ app.document_count > 1 ? 's' : '' }} in the database</small>
 </h1>
 
 <blockquote class="pull-right">
-  <p>There seems to be a kind of order in the universe, in the movement of the stars and the turning of the earth and the changing of the seasons, and even in the cycle of human life. But human life itself is almost pure chaos. Everyone takes his stance, asserts his own rights and feelings, mistaking the motives of others, and his own.</p>
+  <p>There seems to be a kind of order in the universe, but human life itself is almost pure chaos.</p>
   <small>Katherine Anne Porter</small>
 </blockquote>
+
+<div class="clearfix"></div>
+
+<div class="muted">
+  <ul class="inline">
+    <li><strong>Version:</strong> {{ app.current_version }}</li>
+    <li><strong>Memory:</strong> {{ app.free_memory / 1000000 | number: 0 }}/{{ app.total_memory / 1000000 | number: 0 }} MB</li>
+  </ul>
+</div>
