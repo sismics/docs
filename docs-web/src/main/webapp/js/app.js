@@ -3,7 +3,7 @@
 /**
  * Trackino application.
  */
-var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.keypress', 'ui.sortable', 'restangular', 'ngSanitize'])
+var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.keypress', 'ui.validate', 'ui.sortable', 'restangular', 'ngSanitize'])
 
 /**
  * Configuring modules.
@@ -26,6 +26,15 @@ var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.ke
       'page': {
         templateUrl: 'partial/tag.html',
         controller: 'Tag'
+      }
+    }
+  })
+  .state('settings', {
+    url: '/settings',
+    views: {
+      'page': {
+        templateUrl: 'partial/settings.html',
+        controller: 'Settings'
       }
     }
   })

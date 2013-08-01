@@ -39,3 +39,5 @@
   <h4>Uploading files...</h4>
   <div class="span6"><progress percent="fileProgress" class="progress-info active"></progress></div>
 </div>
+
+<alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{ alert.msg }}</alert>

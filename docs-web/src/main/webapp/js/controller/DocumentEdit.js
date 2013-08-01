@@ -4,6 +4,16 @@
  * Document edition controller.
  */
 App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams, Restangular, Tag) {
+  // Alerts
+  $scope.alerts = [];
+  
+  /**
+   * Close an alert.
+   */
+  $scope.closeAlert = function(index) {
+    $scope.alerts.splice(index, 1);
+  };
+  
   /**
    * Returns true if in edit mode (false in add mode).
    */
@@ -61,6 +71,7 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
           $scope.document = {};
           $scope.newFiles = [];
           $scope.loadDocuments();
+          $scope.alerts.push({ type: 'success', msg: 'Document successfully added' });
         }
       }
       

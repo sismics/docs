@@ -3,8 +3,8 @@
 /**
  * Main controller.
  */
-App.controller('Main', function($scope, $state, User) {
-  User.userInfo(true).then(function(data) {
+App.controller('Main', function($scope, $rootScope, $state, User) {
+  User.userInfo().then(function(data) {
     if (data.anonymous) {
       $state.transitionTo('login');
     } else {

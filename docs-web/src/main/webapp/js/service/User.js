@@ -23,6 +23,13 @@ App.factory('User', function(Restangular) {
      */
     login: function(user) {
       return Restangular.one('user').post('login', user);
+    },
+    
+    /**
+     * Logout the current user.
+     */
+    logout: function() {
+      return Restangular.one('user').post('logout', {});
     }
   }
 });
