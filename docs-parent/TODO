@@ -4,3 +4,4 @@
 - Display logs (client)
 - Users administration (client)
 - Tag stats (client/server)
+- List opened sessions and ability to close them (client/server)
