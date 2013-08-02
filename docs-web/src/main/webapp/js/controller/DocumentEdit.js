@@ -66,10 +66,14 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
           $scope.pageDocuments();
           $state.transitionTo('document.view', { id: $stateParams.id });
         } else {
+          var fileUploadCount = _.size($scope.newFiles);
+          $scope.alerts.unshift({
+            type: 'success',
+            msg: 'Document successfully added (with ' + fileUploadCount + ' file' + (fileUploadCount > 1 ? 's' :  '') + ')'
+          });
           $scope.document = { tags: [] };
           $scope.newFiles = [];
           $scope.loadDocuments();
-          $scope.alerts.push({ type: 'success', msg: 'Document successfully added' });
         }
       }
       

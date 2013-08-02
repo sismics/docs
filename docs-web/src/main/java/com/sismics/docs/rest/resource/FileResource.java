@@ -4,7 +4,9 @@ import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.NoResultException;
@@ -252,6 +254,7 @@ public class FileResource extends BaseResource {
 
         return Response.ok(storedfile)
                 .header("Content-Type", file.getMimeType())
+                .header("Expires", new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z").format(new Date().getTime() + 3600000 * 24 * 7))
                 .build();
     }
 }
