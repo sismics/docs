@@ -2,7 +2,10 @@
   <div class="control-group" ng-class="{ error: !documentForm.title.$valid }">
     <label class="control-label" for="inputTitle">Title</label>
     <div class="controls">
-      <input required ng-maxlength="100" class="input-block-level" type="text" id="inputTitle" placeholder="Title" name="title" ng-model="document.title" />
+      <input required ng-maxlength="100" class="input-block-level" type="text" id="inputTitle"
+        placeholder="Title" name="title" ng-model="document.title" autocomplete="off"
+        typeahead="document for document in getTitleTypeahead($viewValue) | filter: $viewValue"
+        typeahead-wait-ms="200" />
     </div>
   </div>
   <div class="control-group" ng-class="{ error: !documentForm.description.$valid }">

@@ -1,4 +1,3 @@
-- Autocomplete on document title (client/server)
 - List opened sessions and ability to close them (client/server)
 - Display logs (client)
 - Reordering files and add new files to the end (server)

@@ -15,6 +15,23 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
   };
   
   /**
+   * Returns a promise for typeahead title.
+   */
+  $scope.getTitleTypeahead = function($viewValue) {
+    var deferred = $q.defer();
+    Restangular.one('document')
+    .getList('list', {
+      limit: 5,
+      sort_column: 1,
+      asc: true,
+      search: $viewValue
+    }).then(function(data) {
+      deferred.resolve(_.pluck(data.documents, 'title'));
+    });
+    return deferred.promise;
+  };
+  
+  /**
    * Returns true if in edit mode (false in add mode).
    */
   $scope.isEdit = function() {
@@ -38,6 +55,8 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
   $scope.edit = function() {
     var promise = null;
     var document = angular.copy($scope.document);
+    
+    // Transform date to timestamp
     if (document.create_date instanceof Date) {
       document.create_date = document.create_date.getTime();
     }
@@ -57,7 +76,6 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
     
     // Upload files after edition
     promise.then(function(data) {
-      var promises = [];
       $scope.fileProgress = 0;
       
       // When all files upload are over, move on
