@@ -417,6 +417,7 @@ public class UserResource extends BaseResource {
         response.put("status", "ok");
         return Response.ok().entity(response).build();
     }
+    
     /**
      * Returns the information about the connected user.
      * 
@@ -530,6 +531,72 @@ public class UserResource extends BaseResource {
         response.put("total", paginatedList.getResultCount());
         response.put("users", users);
         
+        return Response.ok().entity(response).build();
+    }
+    
+    /**
+     * Returns all active sessions.
+     * 
+     * @return Response
+     * @throws JSONException
+     */
+    @GET
+    @Path("session")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response session() throws JSONException {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        
+        JSONObject response = new JSONObject();
+        List<JSONObject> sessions = new ArrayList<JSONObject>();
+        
+        AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
+
+        for (AuthenticationToken authenticationToken : authenticationTokenDao.getByUserId(principal.getId())) {
+            JSONObject session = new JSONObject();
+            session.put("create_date", authenticationToken.getCreationDate().getTime());
+            if (authenticationToken.getLastConnectionDate() != null) {
+                session.put("last_connection_date", authenticationToken.getLastConnectionDate().getTime());
+            }
+            sessions.add(session);
+        }
+        response.put("sessions", sessions);
+        
+        return Response.ok().entity(response).build();
+    }
+    
+    /**
+     * Deletes all active sessions except the one used for this request.
+     * 
+     * @return Response
+     * @throws JSONException
+     */
+    @DELETE
+    @Path("session")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteSession() throws JSONException {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        
+        // Get the value of the session token
+        String authToken = null;
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
+                    authToken = cookie.getValue();
+                }
+            }
+        }
+        
+        // Remove other tokens
+        AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
+        authenticationTokenDao.deleteByUserId(principal.getId(), authToken);
+        
+        // Always return ok
+        JSONObject response = new JSONObject();
+        response.put("status", "ok");
         return Response.ok().entity(response).build();
     }
 }

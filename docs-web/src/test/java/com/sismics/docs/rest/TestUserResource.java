@@ -137,9 +137,32 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         String aliceAuthToken = clientUtil.getAuthenticationCookie(response);
 
-        // Login user bob
+        // Login user bob twice
         String bobAuthToken = clientUtil.login("bob");
+        String bobAuthToken2 = clientUtil.login("bob");
 
+        // List sessions
+        userResource = resource().path("/user/session");
+        userResource.addFilter(new CookieAuthenticationFilter(bobAuthToken));
+        response = userResource.get(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        Assert.assertTrue(json.getJSONArray("sessions").length() > 0);
+        
+        // Delete all sessions
+        userResource = resource().path("/user/session");
+        userResource.addFilter(new CookieAuthenticationFilter(bobAuthToken));
+        response = userResource.delete(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+
+        // Check bob user information with token 2 (just deleted)
+        userResource = resource().path("/user");
+        userResource.addFilter(new CookieAuthenticationFilter(bobAuthToken2));
+        response = userResource.get(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(true, json.getBoolean("anonymous"));
+        
         // Check alice user information
         userResource = resource().path("/user");
         userResource.addFilter(new CookieAuthenticationFilter(aliceAuthToken));

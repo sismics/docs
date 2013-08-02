@@ -1,6 +1,7 @@
 package com.sismics.docs.core.dao.jpa;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.EntityManager;
@@ -93,6 +94,33 @@ public class AuthenticationTokenDao {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createNativeQuery(sb.toString());
         q.setParameter("currentDate", new Date());
+        q.setParameter("id", id);
+        q.executeUpdate();
+    }
+    
+    /**
+     * Returns all authentication tokens of an user.
+     * 
+     * @param userId
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public List<AuthenticationToken> getByUserId(String userId) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select a from AuthenticationToken a where a.userId = :userId");
+        q.setParameter("userId", userId);
+        return q.getResultList();
+    }
+    
+    /**
+     * Deletes all authentication tokens of an user.
+     * 
+     * @param userId
+     */
+    public void deleteByUserId(String userId, String id) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("delete AuthenticationToken a where a.userId = :userId and a.id != :id");
+        q.setParameter("userId", userId);
         q.setParameter("id", id);
         q.executeUpdate();
     }

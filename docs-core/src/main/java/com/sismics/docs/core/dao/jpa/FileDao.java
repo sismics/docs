@@ -91,12 +91,8 @@ public class FileDao {
     @SuppressWarnings("unchecked")
     public List<File> getByDocumentId(String documentId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        
-        // Get the files
         Query q = em.createQuery("select f from File f where f.documentId = :documentId and f.deleteDate is null");
         q.setParameter("documentId", documentId);
-        List<File> files = (List<File>) q.getResultList();
-        
-        return files;
+        return q.getResultList();
     }
 }
