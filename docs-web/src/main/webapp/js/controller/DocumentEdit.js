@@ -26,7 +26,7 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
       asc: true,
       search: $viewValue
     }).then(function(data) {
-      deferred.resolve(_.pluck(data.documents, 'title'));
+      deferred.resolve(_.uniq(_.pluck(data.documents, 'title'), true));
     });
     return deferred.promise;
   };
