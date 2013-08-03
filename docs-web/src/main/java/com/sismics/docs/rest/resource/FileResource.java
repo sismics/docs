@@ -175,6 +175,14 @@ public class FileResource extends BaseResource {
         ValidationUtil.validateRequired(documentId, "id");
         ValidationUtil.validateRequired(idList, "order");
         
+        // Get the document
+        DocumentDao documentDao = new DocumentDao();
+        try {
+            documentDao.getDocument(documentId, principal.getId());
+        } catch (NoResultException e) {
+            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
+        }
+        
         // Reorder files
         FileDao fileDao = new FileDao();
         for (File file : fileDao.getByDocumentId(documentId)) {

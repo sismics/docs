@@ -66,6 +66,15 @@ var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.ke
       }
     }
   })
+  .state('settings.log', {
+    url: '/log',
+    views: {
+      'settings': {
+        templateUrl: 'partial/settings.log.html',
+        controller: 'SettingsLog'
+      }
+    }
+  })
   .state('document', {
     url: '/document',
     abstract: true,
