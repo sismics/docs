@@ -31,10 +31,38 @@ var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.ke
   })
   .state('settings', {
     url: '/settings',
+    abstract: true,
     views: {
       'page': {
         templateUrl: 'partial/settings.html',
         controller: 'Settings'
+      }
+    }
+  })
+  .state('settings.default', {
+    url: '',
+    views: {
+      'settings': {
+        templateUrl: 'partial/settings.default.html',
+        controller: 'SettingsDefault'
+      }
+    }
+  })
+  .state('settings.account', {
+    url: '/account',
+    views: {
+      'settings': {
+        templateUrl: 'partial/settings.account.html',
+        controller: 'SettingsAccount'
+      }
+    }
+  })
+  .state('settings.session', {
+    url: '/session',
+    views: {
+      'settings': {
+        templateUrl: 'partial/settings.session.html',
+        controller: 'SettingsSession'
       }
     }
   })

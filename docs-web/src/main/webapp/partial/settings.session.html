@@ -1,0 +1,20 @@
+<h1>Opened <small>sessions</small></h1>
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>Created date</th>
+      <th>Last connection date</th>
+      <th>Current</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="session in sessions | orderBy: '-current'" ng-class="{ 'info': session.current, 'warning': !session.current }">
+      <td>{{ session.create_date | date: 'yyyy-MM-dd HH:mm' }}</td>
+      <td>{{ session.last_connection_date | date: 'yyyy-MM-dd HH:mm' }}</td>
+      <td><span ng-show="session.current" class="icon-ok"></span></td>
+    </tr>
+  </tbody>
+</table>
+<div class="form-actions">
+  <button type="submit" class="btn btn-warning" ng-click="deleteSession()">Clear all other sessions</button>
+</div>

@@ -1,4 +1,3 @@
-- List opened sessions and ability to close them (client)
 - Display logs (client)
 - Reordering files and add new files to the end (server)
 - Tag stats (client/server)

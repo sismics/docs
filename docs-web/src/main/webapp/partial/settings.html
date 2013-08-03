@@ -3,39 +3,13 @@
     <div class="span4 well">
       <ul class="nav nav-list">
         <li class="nav-header">Personal settings</li>
-        <li class="active"><a href="#/settings">User account</a></li>
+        <li ng-class="{active: $uiRoute}" ui-route="/settings/account"><a href="#/settings/account">User account</a></li>
+        <li ng-class="{active: $uiRoute}" ui-route="/settings/session"><a href="#/settings/session">Opened sessions</a></li>
       </ul>
     </div>
     
     <div class="span8 well">
-      <h1>User <small>account</small></h1>
-      <form class="form-horizontal" name="editUserForm" novalidate>
-        <div class="control-group" ng-class="{ error: !editUserForm.password.$valid, success: editUserForm.password.$valid }">
-          <label class="control-label" for="inputPassword">Password</label>
-          <div class="controls">
-            <input name="password" type="password" id="inputPassword" required
-              ng-minlength="8" ng-maxlength="50" placeholder="Password" ng-model="user.password" />
-            <span class="help-inline" ng-show="editUserForm.password.$error.required">Required</span>
-            <span class="help-inline" ng-show="editUserForm.password.$error.minlength">Too short</span>
-            <span class="help-inline" ng-show="editUserForm.password.$error.maxlength">Too long</span>
-          </div>
-        </div>
-        <div class="control-group" ng-class="{ error: !editUserForm.passwordconfirm.$valid, success: editUserForm.passwordconfirm.$valid }">
-          <label class="control-label" for="inputPasswordConfirm">Password (confirm)</label>
-          <div class="controls">
-            <input name="passwordconfirm" type="password" id="inputPasswordConfirm" required
-              ui-validate="'$value == user.password'" ui-validate-watch="'user.password'"
-              placeholder="Password (confirm)" ng-model="user.passwordconfirm" />
-            <span class="help-inline" ng-show="editUserForm.passwordconfirm.$error.validator">Password and password confirmation must match</span>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary" ng-click="editUser()" ng-disabled="!editUserForm.$valid">
-            <span class="icon-pencil icon-white"></span> Edit
-          </button>
-        </div>
-      </form>
-      <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{ alert.msg }}</alert>
+      <div ui-view="settings"></div>
     </div>
   </div>
 </div>

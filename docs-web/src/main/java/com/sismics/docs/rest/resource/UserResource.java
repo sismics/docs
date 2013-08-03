@@ -548,6 +548,16 @@ public class UserResource extends BaseResource {
             throw new ForbiddenClientException();
         }
         
+        // Get the value of the session token
+        String authToken = null;
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
+                    authToken = cookie.getValue();
+                }
+            }
+        }
+        
         JSONObject response = new JSONObject();
         List<JSONObject> sessions = new ArrayList<JSONObject>();
         
@@ -559,6 +569,7 @@ public class UserResource extends BaseResource {
             if (authenticationToken.getLastConnectionDate() != null) {
                 session.put("last_connection_date", authenticationToken.getLastConnectionDate().getTime());
             }
+            session.put("current", authenticationToken.getId().equals(authToken));
             sessions.add(session);
         }
         response.put("sessions", sessions);
