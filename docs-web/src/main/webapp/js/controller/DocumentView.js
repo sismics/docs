@@ -15,8 +15,14 @@ App.controller('DocumentView', function($scope, $state, $stateParams, $dialog, R
     forcePlaceholderSize: true,
     tolerance: 'pointer',
     handle: '.handle',
-    update: function(event, ui) {
-      // TODO Send new positions to server
+    stop: function(e, ui) {
+      // Send new positions to server
+      $scope.$apply(function() {
+        Restangular.one('file').post('reorder', {
+          id: $stateParams.id,
+          order: _.pluck($scope.files, 'id')
+        });
+      });
     }
   };
   

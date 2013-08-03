@@ -49,6 +49,12 @@ public class File {
     private Date deleteDate;
     
     /**
+     * Display order of this file.
+     */
+    @Column(name = "FIL_ORDER_N")
+    private Integer order;
+    
+    /**
      * Getter of id.
      *
      * @return the id
@@ -136,6 +142,24 @@ public class File {
      */
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
+    }
+    
+    /**
+     * Getter of order.
+     *
+     * @return the order
+     */
+    public Integer getOrder() {
+        return order;
+    }
+
+    /**
+     * Setter of order.
+     *
+     * @param order order
+     */
+    public void setOrder(Integer order) {
+        this.order = order;
     }
 
     @Override

@@ -12,7 +12,9 @@ import java.util.List;
 import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -125,8 +127,15 @@ public class FileResource extends BaseResource {
         }
         
         try {
+            // Get files of this document
+            int order = 0;
+            for (File file : fileDao.getByDocumentId(documentId)) {
+                file.setOrder(order++);
+            }
+            
             // Create the file
             File file = new File();
+            file.setOrder(order);
             file.setDocumentId(document.getId());
             file.setMimeType(mimeType);
             String fileId = fileDao.create(file);
@@ -142,6 +151,43 @@ public class FileResource extends BaseResource {
         } catch (Exception e) {
             throw new ServerException("FileError", "Error adding a file", e);
         }
+    }
+    
+    /**
+     * Reorder files.
+     * 
+     * @param id Document ID
+     * @param order List of files ID in the new order
+     * @return Response
+     * @throws JSONException
+     */
+    @POST
+    @Path("reorder")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response reorder(
+            @FormParam("id") String documentId,
+            @FormParam("order") List<String> idList) throws JSONException {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        
+        // Validate input data
+        ValidationUtil.validateRequired(documentId, "id");
+        ValidationUtil.validateRequired(idList, "order");
+        
+        // Reorder files
+        FileDao fileDao = new FileDao();
+        for (File file : fileDao.getByDocumentId(documentId)) {
+            int order = idList.lastIndexOf(file.getId());
+            if (order != -1) {
+                file.setOrder(order);
+            }
+        }
+        
+        // Always return ok
+        JSONObject response = new JSONObject();
+        response.put("status", "ok");
+        return Response.ok().entity(response).build();
     }
     
     /**
