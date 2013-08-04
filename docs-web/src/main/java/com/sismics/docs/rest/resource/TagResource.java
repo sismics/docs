@@ -126,7 +126,7 @@ public class TagResource extends BaseResource {
     }
     
     /**
-     * Update a tag tag.
+     * Update a tag.
      * 
      * @param name Name
      * @return Response
