@@ -19,6 +19,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.sismics.docs.core.dao.jpa.TagDao;
+import com.sismics.docs.core.dao.jpa.dto.TagStatDto;
 import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
@@ -56,6 +57,35 @@ public class TagResource extends BaseResource {
             items.add(item);
         }
         response.put("tags", items);
+        return Response.ok().entity(response).build();
+    }
+    
+    /**
+     * Returns stats on tags.
+     * 
+     * @return Response
+     * @throws JSONException
+     */
+    @GET
+    @Path("/stats")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response stats() throws JSONException {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        
+        TagDao tagDao = new TagDao();
+        List<TagStatDto> tagStatDtoList = tagDao.getStats(principal.getId());
+        JSONObject response = new JSONObject();
+        List<JSONObject> items = new ArrayList<JSONObject>();
+        for (TagStatDto tagStatDto : tagStatDtoList) {
+            JSONObject item = new JSONObject();
+            item.put("id", tagStatDto.getId());
+            item.put("name", tagStatDto.getName());
+            item.put("count", tagStatDto.getCount());
+            items.add(item);
+        }
+        response.put("stats", items);
         return Response.ok().entity(response).build();
     }
     

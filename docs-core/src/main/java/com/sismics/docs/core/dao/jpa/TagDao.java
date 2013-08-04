@@ -11,6 +11,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.dao.jpa.dto.TagStatDto;
 import com.sismics.docs.core.model.jpa.DocumentTag;
 import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.util.context.ThreadLocalContext;
@@ -84,6 +85,7 @@ public class TagDao {
         StringBuilder sb = new StringBuilder("select t.TAG_ID_C, t.TAG_NAME_C from T_DOCUMENT_TAG dt ");
         sb.append(" join T_TAG t on t.TAG_ID_C = dt.DOT_IDTAG_C ");
         sb.append(" where dt.DOT_IDDOCUMENT_C = :documentId and t.TAG_DELETEDATE_D is null ");
+        sb.append(" order by t.TAG_NAME_C ");
         
         // Perform the query
         Query q = em.createNativeQuery(sb.toString());
@@ -100,6 +102,39 @@ public class TagDao {
             tagDtoList.add(tagDto);
         }
         return tagDtoList;
+    }
+    
+    /**
+     * Returns stats on tags.
+     * @param documentId
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public List<TagStatDto> getStats(String userId) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        StringBuilder sb = new StringBuilder("select t.TAG_ID_C, t.TAG_NAME_C, count(d.DOC_ID_C) ");
+        sb.append(" from T_DOCUMENT_TAG dt ");
+        sb.append(" join T_TAG t on t.TAG_ID_C = dt.DOT_IDTAG_C ");
+        sb.append(" join T_DOCUMENT d on d.DOC_ID_C = dt.DOT_IDDOCUMENT_C ");
+        sb.append(" where d.DOC_IDUSER_C = :userId and t.TAG_DELETEDATE_D is null and d.DOC_DELETEDATE_D is null ");
+        sb.append(" group by t.TAG_ID_C ");
+        
+        // Perform the query
+        Query q = em.createNativeQuery(sb.toString());
+        q.setParameter("userId", userId);
+        List<Object[]> l = q.getResultList();
+        
+        // Assemble results
+        List<TagStatDto> tagStatDtoList = new ArrayList<TagStatDto>();
+        for (Object[] o : l) {
+            int i = 0;
+            TagStatDto tagDto = new TagStatDto();
+            tagDto.setId((String) o[i++]);
+            tagDto.setName((String) o[i++]);
+            tagDto.setCount(((Number) o[i++]).intValue());
+            tagStatDtoList.add(tagDto);
+        }
+        return tagStatDtoList;
     }
     
     /**
