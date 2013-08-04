@@ -45,7 +45,7 @@ public class TagDao {
     @SuppressWarnings("unchecked")
     public List<Tag> getByUserId(String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select t from Tag t where t.userId = :userId and t.deleteDate is null order by t.id");
+        Query q = em.createQuery("select t from Tag t where t.userId = :userId and t.deleteDate is null order by t.name");
         q.setParameter("userId", userId);
         return q.getResultList();
     }
@@ -118,6 +118,7 @@ public class TagDao {
         sb.append(" left join T_DOCUMENT d on d.DOC_ID_C = dt.DOT_IDDOCUMENT_C and d.DOC_DELETEDATE_D is null and d.DOC_IDUSER_C = :userId ");
         sb.append(" where t.TAG_DELETEDATE_D is null ");
         sb.append(" group by t.TAG_ID_C ");
+        sb.append(" order by t.TAG_NAME_C ");
         
         // Perform the query
         Query q = em.createNativeQuery(sb.toString());

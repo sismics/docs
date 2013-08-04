@@ -110,7 +110,7 @@ public class TestTagResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         tags = json.getJSONArray("tags");
         Assert.assertTrue(tags.length() > 0);
-        Assert.assertEquals("Updated name", tags.getJSONObject(0).getString("name"));
+        Assert.assertEquals("Updated name", tags.getJSONObject(1).getString("name"));
         
         // Deletes a tag
         tagResource = resource().path("/tag/" + tag4Id);
