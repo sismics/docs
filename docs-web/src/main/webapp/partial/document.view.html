@@ -15,7 +15,7 @@
 <p ng-bind-html="document.description | newline"></p>
 
 <ul class="thumbnails thumbnails-file" ui-sortable="fileSortableOptions" ng-model="files" ng-show="files.length > 0">
-  <li class="span2 thumbnail-container" ng-repeat="file in files">
+  <li class="span2 text-center thumbnail-container" ng-repeat="file in files">
     <div class="thumbnail">
       <a ng-click="openFile(file)">
         <img class="thumbnail-file" ng-src="api/file/{{ file.id }}/data?thumbnail=true" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
