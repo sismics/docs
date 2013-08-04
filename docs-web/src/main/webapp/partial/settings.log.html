@@ -12,7 +12,7 @@
       ng-class="{ info: log.level == 'INFO' || log.level == 'DEBUG', warn: log.level == 'WARN', error: log.level == 'ERROR' || log.level == 'FATAL' }">
       <td>{{ log.date | date: 'yyyy-MM-dd HH:mm' }}</td>
       <td>{{ log.tag }}</td>
-      <td>{{ log.message }}</td>
+      <td class="cell-message">{{ log.message }}</td>
     </tr>
   </tbody>
 </table>

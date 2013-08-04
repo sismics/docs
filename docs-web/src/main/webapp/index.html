@@ -53,7 +53,7 @@
     <div class="navbar" ng-controller="Navigation">
       <div class="navbar-inner">
         <div class="container">
-          <a class="brand" href="#">Sismics Docs</a>
+          <a class="brand hidden-phone" href="#">Sismics Docs</a>
           
           <ul class="nav" ng-show="!userInfo.anonymous">
             <li ng-class="{active: $uiRoute}" ui-route="/document.*"><a href="#/document"><span class="icon-book"></span> Documents</a></li>
@@ -61,8 +61,8 @@
           </ul>
           
           <ul class="nav pull-right" ng-show="!userInfo.anonymous">
-            <li ng-class="{active: $uiRoute}" ui-route="/settings.*"><a href="#/settings/account"><span class="icon-cog"></span> Settings</a></li>
-            <li><a href="#" ng-click="logout($event)"><span class="icon-off"></span> Logout</a></li>
+            <li ng-class="{active: $uiRoute}" ui-route="/settings.*"><a href="#/settings/account"><span class="icon-cog"></span><span class="hidden-phone"> Settings</span></a></li>
+            <li><a href="#" ng-click="logout($event)"><span class="icon-off"></span><span class="hidden-phone"> Logout</span></a></li>
           </ul>
         </div>
       </div>
