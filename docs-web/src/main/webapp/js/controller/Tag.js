@@ -15,6 +15,15 @@ App.controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
   })
   
   /**
+   * Returns total number of document from tag stats.
+   */
+  $scope.getStatCount = function() {
+    return _.reduce($scope.stats, function(memo, stat) {
+      return memo + stat.count
+    }, 0);
+  };
+  
+  /**
    * Add a tag.
    */
   $scope.addTag = function() {
