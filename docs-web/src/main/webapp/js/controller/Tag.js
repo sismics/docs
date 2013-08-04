@@ -9,6 +9,11 @@ App.controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
     $scope.tags = data.tags;
   });
   
+  // Retrieve tag stats
+  Restangular.one('tag/stats').get().then(function(data) {
+    $scope.stats = data.stats;
+  })
+  
   /**
    * Add a tag.
    */

@@ -113,10 +113,10 @@ public class TagDao {
     public List<TagStatDto> getStats(String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         StringBuilder sb = new StringBuilder("select t.TAG_ID_C, t.TAG_NAME_C, count(d.DOC_ID_C) ");
-        sb.append(" from T_DOCUMENT_TAG dt ");
-        sb.append(" join T_TAG t on t.TAG_ID_C = dt.DOT_IDTAG_C ");
-        sb.append(" join T_DOCUMENT d on d.DOC_ID_C = dt.DOT_IDDOCUMENT_C ");
-        sb.append(" where d.DOC_IDUSER_C = :userId and t.TAG_DELETEDATE_D is null and d.DOC_DELETEDATE_D is null ");
+        sb.append(" from T_TAG t ");
+        sb.append(" left join T_DOCUMENT_TAG dt on t.TAG_ID_C = dt.DOT_IDTAG_C ");
+        sb.append(" left join T_DOCUMENT d on d.DOC_ID_C = dt.DOT_IDDOCUMENT_C and d.DOC_DELETEDATE_D is null and d.DOC_IDUSER_C = :userId ");
+        sb.append(" where t.TAG_DELETEDATE_D is null ");
         sb.append(" group by t.TAG_ID_C ");
         
         // Perform the query
