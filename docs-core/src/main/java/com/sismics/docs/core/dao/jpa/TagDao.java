@@ -116,7 +116,7 @@ public class TagDao {
         sb.append(" from T_TAG t ");
         sb.append(" left join T_DOCUMENT_TAG dt on t.TAG_ID_C = dt.DOT_IDTAG_C ");
         sb.append(" left join T_DOCUMENT d on d.DOC_ID_C = dt.DOT_IDDOCUMENT_C and d.DOC_DELETEDATE_D is null and d.DOC_IDUSER_C = :userId ");
-        sb.append(" where t.TAG_DELETEDATE_D is null ");
+        sb.append(" where t.TAG_IDUSER_C = :userId and t.TAG_DELETEDATE_D is null ");
         sb.append(" group by t.TAG_ID_C ");
         sb.append(" order by t.TAG_NAME_C ");
         
