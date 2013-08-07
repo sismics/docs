@@ -82,7 +82,7 @@ public class TagDao {
     @SuppressWarnings("unchecked")
     public List<TagDto> getByDocumentId(String documentId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select t.TAG_ID_C, t.TAG_NAME_C from T_DOCUMENT_TAG dt ");
+        StringBuilder sb = new StringBuilder("select t.TAG_ID_C, t.TAG_NAME_C, t.TAG_COLOR_C from T_DOCUMENT_TAG dt ");
         sb.append(" join T_TAG t on t.TAG_ID_C = dt.DOT_IDTAG_C ");
         sb.append(" where dt.DOT_IDDOCUMENT_C = :documentId and t.TAG_DELETEDATE_D is null ");
         sb.append(" order by t.TAG_NAME_C ");
@@ -99,6 +99,7 @@ public class TagDao {
             TagDto tagDto = new TagDto();
             tagDto.setId((String) o[i++]);
             tagDto.setName((String) o[i++]);
+            tagDto.setColor((String) o[i++]);
             tagDtoList.add(tagDto);
         }
         return tagDtoList;
@@ -112,7 +113,7 @@ public class TagDao {
     @SuppressWarnings("unchecked")
     public List<TagStatDto> getStats(String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select t.TAG_ID_C, t.TAG_NAME_C, count(d.DOC_ID_C) ");
+        StringBuilder sb = new StringBuilder("select t.TAG_ID_C, t.TAG_NAME_C, t.TAG_COLOR_C, count(d.DOC_ID_C) ");
         sb.append(" from T_TAG t ");
         sb.append(" left join T_DOCUMENT_TAG dt on t.TAG_ID_C = dt.DOT_IDTAG_C ");
         sb.append(" left join T_DOCUMENT d on d.DOC_ID_C = dt.DOT_IDDOCUMENT_C and d.DOC_DELETEDATE_D is null and d.DOC_IDUSER_C = :userId ");
@@ -132,6 +133,7 @@ public class TagDao {
             TagStatDto tagDto = new TagStatDto();
             tagDto.setId((String) o[i++]);
             tagDto.setName((String) o[i++]);
+            tagDto.setColor((String) o[i++]);
             tagDto.setCount(((Number) o[i++]).intValue());
             tagStatDtoList.add(tagDto);
         }

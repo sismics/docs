@@ -38,6 +38,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         tagResource.addFilter(new CookieAuthenticationFilter(document1Token));
         MultivaluedMapImpl postParams = new MultivaluedMapImpl();
         postParams.add("name", "Super tag");
+        postParams.add("color", "ffff00");
         ClientResponse response = tagResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         JSONObject json = response.getEntity(JSONObject.class);
@@ -75,6 +76,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(1, tags.length());
         Assert.assertEquals(tag1Id, tags.getJSONObject(0).getString("id"));
         Assert.assertEquals("Super tag", tags.getJSONObject(0).getString("name"));
+        Assert.assertEquals("ffff00", tags.getJSONObject(0).getString("color"));
         
         // Search documents by query
         documentResource = resource().path("/document/list");
@@ -141,6 +143,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         tagResource.addFilter(new CookieAuthenticationFilter(document1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("name", "Super tag 2");
+        postParams.add("color", "00ffff");
         response = tagResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);

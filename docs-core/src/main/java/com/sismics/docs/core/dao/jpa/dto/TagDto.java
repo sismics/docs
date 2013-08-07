@@ -18,6 +18,11 @@ public class TagDto {
      * Name.
      */
     private String name;
+    
+    /**
+     * Color.
+     */
+    private String color;
 
     /**
      * Getter of id.
@@ -53,5 +58,23 @@ public class TagDto {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Getter of color.
+     *
+     * @return the color
+     */
+    public String getColor() {
+        return color;
+    }
+
+    /**
+     * Setter of color.
+     *
+     * @param color color
+     */
+    public void setColor(String color) {
+        this.color = color;
     }
 }

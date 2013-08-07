@@ -20,6 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -83,6 +84,7 @@ public class DocumentResource extends BaseResource {
             JSONObject tag = new JSONObject();
             tag.put("id", tagDto.getId());
             tag.put("name", tagDto.getName());
+            tag.put("color", tagDto.getColor());
             tags.add(tag);
         }
         document.put("tags", tags);
@@ -149,6 +151,7 @@ public class DocumentResource extends BaseResource {
                 JSONObject tag = new JSONObject();
                 tag.put("id", tagDto.getId());
                 tag.put("name", tagDto.getName());
+                tag.put("color", tagDto.getColor());
                 tags.add(tag);
             }
             document.put("tags", tags);
@@ -228,7 +231,7 @@ public class DocumentResource extends BaseResource {
         }
         
         // Validate input data
-        title = ValidationUtil.validateLength(title, "title", 1, 100, false);
+        title = ValidationUtil.validateLength(title, "title", 1, 100, true);
         description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
         Date createDate = ValidationUtil.validateDate(createDateStr, "create_date", true);
         
@@ -242,10 +245,10 @@ public class DocumentResource extends BaseResource {
         }
         
         // Update the document
-        if (title != null) {
+        if (!StringUtils.isEmpty(title)) {
             document.setTitle(title);
         }
-        if (description != null) {
+        if (!StringUtils.isEmpty(description)) {
             document.setDescription(description);
         }
         if (createDate != null) {

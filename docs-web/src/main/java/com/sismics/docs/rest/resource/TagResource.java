@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -54,6 +55,7 @@ public class TagResource extends BaseResource {
             JSONObject item = new JSONObject();
             item.put("id", tag.getId());
             item.put("name", tag.getName());
+            item.put("color", tag.getColor());
             items.add(item);
         }
         response.put("tags", items);
@@ -82,6 +84,7 @@ public class TagResource extends BaseResource {
             JSONObject item = new JSONObject();
             item.put("id", tagStatDto.getId());
             item.put("name", tagStatDto.getName());
+            item.put("color", tagStatDto.getColor());
             item.put("count", tagStatDto.getCount());
             items.add(item);
         }
@@ -99,13 +102,15 @@ public class TagResource extends BaseResource {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response add(
-            @FormParam("name") String name) throws JSONException {
+            @FormParam("name") String name,
+            @FormParam("color") String color) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 36, false);
+        color = ValidationUtil.validateLength(color, "color", 6, 6, false);
         
         // Get the tag
         TagDao tagDao = new TagDao();
@@ -117,6 +122,7 @@ public class TagResource extends BaseResource {
         // Create the tag
         tag = new Tag();
         tag.setName(name);
+        tag.setColor(color);
         tag.setUserId(principal.getId());
         String tagId = tagDao.create(tag);
         
@@ -137,13 +143,15 @@ public class TagResource extends BaseResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(
             @PathParam("id") String id,
-            @FormParam("name") String name) throws JSONException {
+            @FormParam("name") String name,
+            @FormParam("color") String color) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         
         // Validate input data
-        name = ValidationUtil.validateLength(name, "name", 1, 36, false);
+        name = ValidationUtil.validateLength(name, "name", 1, 36, true);
+        color = ValidationUtil.validateLength(color, "color", 6, 6, true);
         
         // Get the tag
         TagDao tagDao = new TagDao();
@@ -153,7 +161,12 @@ public class TagResource extends BaseResource {
         }
         
         // Update the tag
-        tag.setName(name);
+        if (!StringUtils.isEmpty(name)) {
+            tag.setName(name);
+        }
+        if (!StringUtils.isEmpty(color)) {
+            tag.setColor(color);
+        }
         
         JSONObject response = new JSONObject();
         response.put("id", id);

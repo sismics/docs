@@ -47,6 +47,12 @@ public class Tag {
      */
     @Column(name = "TAG_DELETEDATE_D")
     private Date deleteDate;
+    
+    /**
+     * Tag name.
+     */
+    @Column(name = "TAG_COLOR_C", nullable = false, length = 6)
+    private String color;
 
     /**
      * Getter of id.
@@ -118,6 +124,24 @@ public class Tag {
      */
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+    
+    /**
+     * Getter of color.
+     *
+     * @return the color
+     */
+    public String getColor() {
+        return color;
+    }
+
+    /**
+     * Setter of color.
+     *
+     * @param color color
+     */
+    public void setColor(String color) {
+        this.color = color;
     }
 
     /**
