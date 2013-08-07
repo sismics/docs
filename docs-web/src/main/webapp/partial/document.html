@@ -1,14 +1,17 @@
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="span4 well">
+      
       <p class="text-center">
         <button class="btn btn-primary" type="button" ng-click="addDocument()"><span class="icon-plus icon-white"></span> Add a document</button>
       </p>
+      
       <p class="input-prepend input-append text-center input-block-level">
         <span class="add-on"><span class="icon-search"></span></span>
         <input type="text" placeholder="Search" ng-model="search.query" />
         <button class="btn" ng-click="isAdvancedSearchCollapsed = !isAdvancedSearchCollapsed">More <span class="caret"></span></button>
       </p>
+      
       <div collapse="isAdvancedSearchCollapsed">
         <div class="well well-small">
           <form class="form-horizontal">
@@ -32,26 +35,34 @@
           </form>
         </div> 
       </div>
+      
       <table class="table table-striped table-hover table-documents">
         <thead>
           <tr>
-            <th ng-click="sortDocuments(1)"><span class="icon-chevron-{{ sortColumn == 1 ? (asc ? 'down' : 'up') : '' }}"></span> Title</th>
-            <th ng-click="sortDocuments(3)"><span class="icon-chevron-{{ sortColumn == 3 ? (asc ? 'down' : 'up') : '' }}"></span> Creation date</th>
+            <th class="span6" ng-click="sortDocuments(1)"><span class="icon-chevron-{{ sortColumn == 1 ? (asc ? 'down' : 'up') : '' }}"></span> Title</th>
+            <th class="span3" ng-click="sortDocuments(3)"><span class="icon-chevron-{{ sortColumn == 3 ? (asc ? 'down' : 'up') : '' }}"></span> Creation date</th>
+            <th class="span3 hidden-phone">Tags</th>
           </tr>
         </thead>
         <tbody>
           <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents">
             <td>{{ document.title }}</td>
             <td>{{ document.create_date | date: 'yyyy-MM-dd' }}</td>
+            <td class="hidden-phone cell-tags">
+              <span class="label label-info" ng-repeat="tag in document.tags">{{ tag.name }}</span>
+            </td>
           </tr>
         </tbody>
       </table>
+      
       <div class="text-center">
         <pagination num-pages="numPages" max-size="5" current-page="currentPage"></pagination>
       </div>
+      
       <div class="text-right">
         {{ totalDocuments }} document{{ totalDocuments > 1 ? 's' : '' }} found
       </div>
+      
     </div>
     <div class="span8 well">
       <div ui-view="document"></div>
