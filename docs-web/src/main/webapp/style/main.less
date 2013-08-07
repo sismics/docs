@@ -18,6 +18,27 @@
     
     .label {
       margin-left: 2px;
+      
+      .full {
+        display: none;
+      }
+    }
+    
+    &:hover {
+      .tags {
+        position: absolute;
+        margin-top: -10px;
+        
+        .label {
+          .full {
+            display: inline;
+          }
+          
+          .shorten {
+            display: none;
+          }
+        }
+      }
     }
 	}
 }

@@ -49,7 +49,9 @@
             <td>{{ document.title }}</td>
             <td>{{ document.create_date | date: 'yyyy-MM-dd' }}</td>
             <td class="hidden-phone cell-tags">
-              <span class="label label-info" ng-repeat="tag in document.tags">{{ tag.name }}</span>
+              <div class="tags">
+                <span class="label label-info" ng-repeat="tag in document.tags"><span class="shorten">{{ tag.name | shorten }}</span><span class="full">{{ tag.name }}</span></span>
+              </div>
             </td>
           </tr>
         </tbody>
