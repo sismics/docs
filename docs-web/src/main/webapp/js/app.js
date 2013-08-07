@@ -3,7 +3,7 @@
 /**
  * Trackino application.
  */
-var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.keypress', 'ui.validate', 'ui.sortable', 'restangular', 'ngSanitize'])
+var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.keypress', 'ui.validate', 'ui.sortable', 'restangular', 'ngSanitize', 'colorpicker.module'])
 
 /**
  * Configuring modules.

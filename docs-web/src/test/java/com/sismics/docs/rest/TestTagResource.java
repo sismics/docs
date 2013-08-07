@@ -35,7 +35,7 @@ public class TestTagResource extends BaseJerseyTest {
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         MultivaluedMapImpl postParams = new MultivaluedMapImpl();
         postParams.add("name", "Tag 3");
-        postParams.add("color", "ff0000");
+        postParams.add("color", "#ff0000");
         ClientResponse response = tagResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         JSONObject json = response.getEntity(JSONObject.class);
@@ -47,7 +47,7 @@ public class TestTagResource extends BaseJerseyTest {
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("name", "Tag 4");
-        postParams.add("color", "00ff00");
+        postParams.add("color", "#00ff00");
         response = tagResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
@@ -94,14 +94,14 @@ public class TestTagResource extends BaseJerseyTest {
         JSONArray tags = json.getJSONArray("tags");
         Assert.assertTrue(tags.length() > 0);
         Assert.assertEquals("Tag 4", tags.getJSONObject(1).getString("name"));
-        Assert.assertEquals("00ff00", tags.getJSONObject(1).getString("color"));
+        Assert.assertEquals("#00ff00", tags.getJSONObject(1).getString("color"));
         
         // Update a tag
         tagResource = resource().path("/tag/" + tag4Id);
         tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         postParams = new MultivaluedMapImpl();
         postParams.add("name", "Updated name");
-        postParams.add("color", "0000ff");
+        postParams.add("color", "#0000ff");
         response = tagResource.post(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
@@ -116,7 +116,7 @@ public class TestTagResource extends BaseJerseyTest {
         tags = json.getJSONArray("tags");
         Assert.assertTrue(tags.length() > 0);
         Assert.assertEquals("Updated name", tags.getJSONObject(1).getString("name"));
-        Assert.assertEquals("0000ff", tags.getJSONObject(1).getString("color"));
+        Assert.assertEquals("#0000ff", tags.getJSONObject(1).getString("color"));
         
         // Deletes a tag
         tagResource = resource().path("/tag/" + tag4Id);

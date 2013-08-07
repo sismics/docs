@@ -4,6 +4,8 @@
  * Tag controller.
  */
 App.controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
+  $scope.tag = { name: '', color: '#3a87ad' };
+  
   // Retrieve tags
   Tag.tags().then(function(data) {
     $scope.tags = data.tags;
@@ -27,11 +29,10 @@ App.controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
    * Add a tag.
    */
   $scope.addTag = function() {
-    var name = $scope.tag.name;
-    $scope.tag.name = '';
     // TODO Check if the tag don't already exists
-    Restangular.one('tag').put({ name: name }).then(function(data) {
-      $scope.tags.push({ id: data.id, name: name });
+    Restangular.one('tag').put($scope.tag).then(function(data) {
+      $scope.tags.push({ id: data.id, name: $scope.tag.name, color: $scope.tag.color });
+      $scope.tag = { name: '', color: '#3a87ad' };
     });
   };
   
@@ -57,7 +58,7 @@ App.controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
   };
   
   /**
-   * Update a tag name.
+   * Update a tag.
    */
   $scope.updateTag = function(tag) {
     Restangular.one('tag', tag.id).post('', tag);

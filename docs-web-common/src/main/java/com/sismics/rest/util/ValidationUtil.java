@@ -63,7 +63,7 @@ public class ValidationUtil {
             throw new ClientException("ValidationError", MessageFormat.format("{0} must be more than {1} characters", name, lengthMin));
         }
         if (lengthMax != null && s.length() > lengthMax) {
-            throw new ClientException("ValidationError", MessageFormat.format("{0} must be more than {1} characters", name, lengthMax));
+            throw new ClientException("ValidationError", MessageFormat.format("{0} must be less than {1} characters", name, lengthMax));
         }
         return s;
     }
@@ -92,6 +92,19 @@ public class ValidationUtil {
      */
     public static String validateStringNotBlank(String s, String name) throws JSONException {
         return validateLength(s, name, 1, null, false);
+    }
+    
+    /**
+     * Checks if the string is a hexadecimal color.
+     * 
+     * @param s String to validate
+     * @param name Name of the parameter
+     * @param nullable True if the string can be empty or null
+     * @throws JSONException
+     */
+    public static void validateHexColor(String s, String name, boolean nullable) throws JSONException {
+        // TODO Do a real check
+        ValidationUtil.validateLength(s, "name", 7, 7, nullable);
     }
     
     /**

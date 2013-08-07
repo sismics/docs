@@ -110,7 +110,7 @@ public class TagResource extends BaseResource {
         
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 36, false);
-        color = ValidationUtil.validateLength(color, "color", 6, 6, false);
+        ValidationUtil.validateHexColor(color, "color", true);
         
         // Get the tag
         TagDao tagDao = new TagDao();
@@ -151,7 +151,7 @@ public class TagResource extends BaseResource {
         
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 36, true);
-        color = ValidationUtil.validateLength(color, "color", 6, 6, true);
+        ValidationUtil.validateHexColor(color, "color", true);
         
         // Get the tag
         TagDao tagDao = new TagDao();

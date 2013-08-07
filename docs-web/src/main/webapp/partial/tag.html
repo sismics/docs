@@ -1,9 +1,8 @@
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="span4 well text-center">
-      
       <div class="input-prepend input-append input-block-level">
-        <span class="add-on"><span class="icon-plus"></span></span>
+        <span colorpicker class="btn" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
         <input type="text" placeholder="Tag name" ng-model="tag.name" ui-keyup="{'enter':'addTag()'}">
         <button type="submit" class="btn btn-primary" ng-click="addTag()">Add</button>
       </div>
@@ -17,7 +16,8 @@
         <tbody>
           <tr ng-repeat="tag in tags | filter:search">
             <td><inline-edit value="tag.name" on-edit="updateTag(tag)" /></td>
-            <td><button class="btn btn-danger pull-right" ng-click="deleteTag(tag)"><span class="icon-trash icon-white"></span></button></td>
+            <td class="span1"><span colorpicker class="btn" on-hide="updateTag(tag)" data-color="" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span></td>
+            <td class="span1"><button class="btn btn-danger pull-right" ng-click="deleteTag(tag)"><span class="icon-trash icon-white"></span></button></td>
           </tr>
         </tbody>
       </table>
@@ -27,7 +27,7 @@
     <div class="span8 well">
       <h1>{{ tags.length }} <small>tag{{ tags.length > 1 ? 's' : '' }}</small></h1>
       <dl class="dl-horizontal" ng-repeat="stat in stats | orderBy: '-count'">
-        <dt>{{ stat.name }} <span class="badge badge-info">{{ stat.count }}</span></dt>
+        <dt>{{ stat.name }} <span class="badge badge-info" ng-style="{ 'background': stat.color }">{{ stat.count }}</span></dt>
         <dd><progress percent="stat.count / getStatCount() * 100" class="progress-info"></progress></dd>
       </dl>
     </div>

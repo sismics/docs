@@ -1,6 +1,6 @@
 <div>
   <ul class="inline">
-    <li ng-repeat="tag in tags"><span class="label label-info">{{ tag.name }} <span class="icon-remove icon-white" ng-click="deleteTag(tag)"></span></span></li>
+    <li ng-repeat="tag in tags"><span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }} <span class="icon-remove icon-white" ng-click="deleteTag(tag)"></span></span></li>
   </ul>
   <input class="span12" type="text" id="{{ ref }}" placeholder="Type a tag" ng-model="input"
     autocomplete="off" typeahead="tag.name for tag in allTags | filter: $viewValue" typeahead-on-select="addTag()" />
