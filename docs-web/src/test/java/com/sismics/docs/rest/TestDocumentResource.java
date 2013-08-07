@@ -69,8 +69,12 @@ public class TestDocumentResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         JSONArray documents = json.getJSONArray("documents");
+        JSONArray tags = documents.getJSONObject(0).getJSONArray("tags");
         Assert.assertTrue(documents.length() == 1);
         Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
+        Assert.assertEquals(1, tags.length());
+        Assert.assertEquals(tag1Id, tags.getJSONObject(0).getString("id"));
+        Assert.assertEquals("Super tag", tags.getJSONObject(0).getString("name"));
         
         // Search documents by query
         documentResource = resource().path("/document/list");
@@ -128,7 +132,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         Assert.assertEquals(document1Id, json.getString("id"));
-        JSONArray tags = json.getJSONArray("tags");
+        tags = json.getJSONArray("tags");
         Assert.assertEquals(1, tags.length());
         Assert.assertEquals(tag1Id, tags.getJSONObject(0).getString("id"));
         

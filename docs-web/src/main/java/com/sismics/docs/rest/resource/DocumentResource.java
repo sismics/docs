@@ -122,6 +122,7 @@ public class DocumentResource extends BaseResource {
         List<JSONObject> documents = new ArrayList<JSONObject>();
         
         DocumentDao documentDao = new DocumentDao();
+        TagDao tagDao = new TagDao();
         PaginatedList<DocumentDto> paginatedList = PaginatedLists.create(limit, offset);
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
         DocumentCriteria documentCriteria = new DocumentCriteria();
@@ -140,6 +141,18 @@ public class DocumentResource extends BaseResource {
             document.put("title", documentDto.getTitle());
             document.put("description", documentDto.getDescription());
             document.put("create_date", documentDto.getCreateTimestamp());
+            
+            // Get tags
+            List<TagDto> tagDtoList = tagDao.getByDocumentId(documentDto.getId());
+            List<JSONObject> tags = new ArrayList<JSONObject>();
+            for (TagDto tagDto : tagDtoList) {
+                JSONObject tag = new JSONObject();
+                tag.put("id", tagDto.getId());
+                tag.put("name", tagDto.getName());
+                tags.add(tag);
+            }
+            document.put("tags", tags);
+            
             documents.add(document);
         }
         response.put("total", paginatedList.getResultCount());
