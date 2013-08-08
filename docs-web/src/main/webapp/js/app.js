@@ -85,7 +85,16 @@ var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.ke
     }
   })
   .state('settings.user.edit', {
-    url: '/:username',
+    url: '/edit/:username',
+    views: {
+      'user': {
+        templateUrl: 'partial/settings.user.edit.html',
+        controller: 'SettingsUserEdit'
+      }
+    }
+  })
+  .state('settings.user.add', {
+    url: '/add',
     views: {
       'user': {
         templateUrl: 'partial/settings.user.edit.html',

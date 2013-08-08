@@ -39,5 +39,5 @@ public class Constants {
     /**
      * Default generic user role.
      */
-    public static final String DEFAULT_USER_ROLE = "admin";
+    public static final String DEFAULT_USER_ROLE = "user";
 }

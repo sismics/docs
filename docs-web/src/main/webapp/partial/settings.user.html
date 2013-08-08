@@ -1,9 +1,9 @@
-<h1>Users <small>management</small></h1>
+<h1>Users <small>management</small> <a class="btn btn-primary" href="#/settings/user/add">Add</a></h1>
 
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="span4 well">
-      <table class="table table-striped table-hover">
+      <table class="table table-striped table-hover table-users">
         <thead>
           <tr>
             <th>Username</th>
@@ -11,7 +11,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="user in users" ng-click="editUser(user)">
+          <tr ng-repeat="user in users | orderBy: 'username'" ng-click="editUser(user)">
             <td>{{ user.username }}</td>
             <td>{{ user.create_date | date: 'yyyy-MM-dd' }}</td>
           </tr>

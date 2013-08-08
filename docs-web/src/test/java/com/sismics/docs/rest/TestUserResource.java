@@ -238,7 +238,7 @@ public class TestUserResource extends BaseJerseyTest {
      */
     @Test
     public void testUserResourceAdmin() throws JSONException {
-        // Create admin_user1 user
+     // Create admin_user1 user
         clientUtil.createUser("admin_user1");
 
         // Login admin
@@ -275,14 +275,34 @@ public class TestUserResource extends BaseJerseyTest {
         userResource = resource().path("/user");
         userResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
         postParams = new MultivaluedMapImpl();
-        postParams.add("email", " alice2@docs.com ");
+        postParams.add("email", " alice2@reader.com ");
         postParams.add("theme", " default.less");
         postParams.add("locale", " en ");
+        postParams.add("display_title_web", true);
+        postParams.add("display_title_mobile", false);
+        postParams.add("display_unread_web", false);
+        postParams.add("display_unread_mobile", false);
         response = userResource.post(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
+        // User admin deletes himself: forbidden
+        userResource = resource().path("/user");
+        userResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        response = userResource.delete(ClientResponse.class);
+        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals("ForbiddenError", json.getString("type"));
+
+        // User admin deletes himself: forbidden
+        userResource = resource().path("/user/admin");
+        userResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        response = userResource.delete(ClientResponse.class);
+        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals("ForbiddenError", json.getString("type"));
+
         // User admin deletes user admin_user1
         userResource = resource().path("/user/admin_user1");
         userResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
