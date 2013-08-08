@@ -75,6 +75,24 @@ var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.ke
       }
     }
   })
+  .state('settings.user', {
+    url: '/user',
+    views: {
+      'settings': {
+        templateUrl: 'partial/settings.user.html',
+        controller: 'SettingsUser'
+      }
+    }
+  })
+  .state('settings.user.edit', {
+    url: '/:username',
+    views: {
+      'user': {
+        templateUrl: 'partial/settings.user.edit.html',
+        controller: 'SettingsUserEdit'
+      }
+    }
+  })
   .state('document', {
     url: '/document',
     abstract: true,
