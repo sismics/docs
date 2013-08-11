@@ -7,7 +7,7 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
   var dialog = $dialog.dialog({
     keyboard: true,
     templateUrl: 'partial/file.view.html',
-    controller: function($scope, $state, $stateParams, Restangular) {
+    controller: function($scope, $state, $stateParams, Restangular, dialog) {
       $scope.id = $stateParams.fileId;
       
       // Load files
@@ -58,9 +58,17 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
       $scope.openFile = function() {
         window.open('api/file/' + $scope.id + '/data');
       };
+
+      /**
+       * Close the file preview.
+       */
+      $scope.closeFile = function () {
+        dialog.close();
+      };
     }
   });
-  
+
+  // Returns to document view on file close
   dialog.open().then(function(result) {
     if (result == null) {
       $state.transitionTo('document.view', { id: $stateParams.id });

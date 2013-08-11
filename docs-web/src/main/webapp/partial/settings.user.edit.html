@@ -54,7 +54,7 @@
     <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editUserForm.$valid">
       <span class="icon-pencil icon-white"></span> {{ isEdit() ? 'Edit' : 'Add' }}
     </button>
-    <button type="button" class="btn btn-danger" ng-click="remove()">
+    <button type="button" class="btn btn-danger" ng-click="remove()" ng-show="isEdit()">
       <span class="icon-trash icon-white"></span> Delete
     </button>
   </div>
