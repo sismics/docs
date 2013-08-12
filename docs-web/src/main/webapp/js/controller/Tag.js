@@ -61,6 +61,13 @@ App.controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
    * Update a tag.
    */
   $scope.updateTag = function(tag) {
-    Restangular.one('tag', tag.id).post('', tag);
+    // Update the server
+    Restangular.one('tag', tag.id).post('', tag).then(function () {
+      // Update the stat object
+      var stat = _.find($scope.stats, function (t) {
+        return tag.id == t.id;
+      });
+      _.extend(stat, tag);
+    });
   };
 });
