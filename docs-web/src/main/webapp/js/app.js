@@ -3,7 +3,11 @@
 /**
  * Trackino application.
  */
-var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.keypress', 'ui.validate', 'ui.sortable', 'restangular', 'ngSanitize', 'colorpicker.module'])
+var App = angular.module('docs',
+    // Dependencies
+    ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.keypress', 'ui.validate',
+      'ui.sortable', 'restangular', 'ngSanitize', 'ngMobile', 'colorpicker.module']
+  )
 
 /**
  * Configuring modules.
@@ -39,69 +43,69 @@ var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.ke
       }
     }
   })
-  .state('settings.default', {
-    url: '',
-    views: {
-      'settings': {
-        templateUrl: 'partial/settings.default.html',
-        controller: 'SettingsDefault'
+    .state('settings.default', {
+      url: '',
+      views: {
+        'settings': {
+          templateUrl: 'partial/settings.default.html',
+          controller: 'SettingsDefault'
+        }
       }
-    }
-  })
-  .state('settings.account', {
-    url: '/account',
-    views: {
-      'settings': {
-        templateUrl: 'partial/settings.account.html',
-        controller: 'SettingsAccount'
+    })
+    .state('settings.account', {
+      url: '/account',
+      views: {
+        'settings': {
+          templateUrl: 'partial/settings.account.html',
+          controller: 'SettingsAccount'
+        }
       }
-    }
-  })
-  .state('settings.session', {
-    url: '/session',
-    views: {
-      'settings': {
-        templateUrl: 'partial/settings.session.html',
-        controller: 'SettingsSession'
+    })
+    .state('settings.session', {
+      url: '/session',
+      views: {
+        'settings': {
+          templateUrl: 'partial/settings.session.html',
+          controller: 'SettingsSession'
+        }
       }
-    }
-  })
-  .state('settings.log', {
-    url: '/log',
-    views: {
-      'settings': {
-        templateUrl: 'partial/settings.log.html',
-        controller: 'SettingsLog'
+    })
+    .state('settings.log', {
+      url: '/log',
+      views: {
+        'settings': {
+          templateUrl: 'partial/settings.log.html',
+          controller: 'SettingsLog'
+        }
       }
-    }
-  })
-  .state('settings.user', {
-    url: '/user',
-    views: {
-      'settings': {
-        templateUrl: 'partial/settings.user.html',
-        controller: 'SettingsUser'
+    })
+    .state('settings.user', {
+      url: '/user',
+      views: {
+        'settings': {
+          templateUrl: 'partial/settings.user.html',
+          controller: 'SettingsUser'
+        }
       }
-    }
-  })
-  .state('settings.user.edit', {
-    url: '/edit/:username',
-    views: {
-      'user': {
-        templateUrl: 'partial/settings.user.edit.html',
-        controller: 'SettingsUserEdit'
-      }
-    }
-  })
-  .state('settings.user.add', {
-    url: '/add',
-    views: {
-      'user': {
-        templateUrl: 'partial/settings.user.edit.html',
-        controller: 'SettingsUserEdit'
-      }
-    }
-  })
+    })
+      .state('settings.user.edit', {
+        url: '/edit/:username',
+        views: {
+          'user': {
+            templateUrl: 'partial/settings.user.edit.html',
+            controller: 'SettingsUserEdit'
+          }
+        }
+      })
+      .state('settings.user.add', {
+        url: '/add',
+        views: {
+          'user': {
+            templateUrl: 'partial/settings.user.edit.html',
+            controller: 'SettingsUserEdit'
+          }
+        }
+      })
   .state('document', {
     url: '/document',
     abstract: true,
@@ -112,50 +116,50 @@ var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.ke
       }
     }
   })
-  .state('document.default', {
-    url: '',
-    views: {
-      'document': {
-        templateUrl: 'partial/document.default.html',
-        controller: 'DocumentDefault'
+    .state('document.default', {
+      url: '',
+      views: {
+        'document': {
+          templateUrl: 'partial/document.default.html',
+          controller: 'DocumentDefault'
+        }
       }
-    }
-  })
-  .state('document.add', {
-    url: '/add',
-    views: {
-      'document': {
-        templateUrl: 'partial/document.edit.html',
-        controller: 'DocumentEdit'
+    })
+    .state('document.add', {
+      url: '/add',
+      views: {
+        'document': {
+          templateUrl: 'partial/document.edit.html',
+          controller: 'DocumentEdit'
+        }
       }
-    }
-  })
-  .state('document.edit', {
-    url: '/edit/:id',
-    views: {
-      'document': {
-        templateUrl: 'partial/document.edit.html',
-        controller: 'DocumentEdit'
+    })
+    .state('document.edit', {
+      url: '/edit/:id',
+      views: {
+        'document': {
+          templateUrl: 'partial/document.edit.html',
+          controller: 'DocumentEdit'
+        }
       }
-    }
-  })
-  .state('document.view', {
-    url: '/view/:id',
-    views: {
-      'document': {
-        templateUrl: 'partial/document.view.html',
-        controller: 'DocumentView'
+    })
+    .state('document.view', {
+      url: '/view/:id',
+      views: {
+        'document': {
+          templateUrl: 'partial/document.view.html',
+          controller: 'DocumentView'
+        }
       }
-    }
-  })
-  .state('document.view.file', {
-    url: '/file/:fileId',
-    views: {
-      'file': {
-        controller: 'FileView'
-      }
-    }
-  })
+    })
+      .state('document.view.file', {
+        url: '/file/:fileId',
+        views: {
+          'file': {
+            controller: 'FileView'
+          }
+        }
+      })
   .state('login', {
     url: '/login',
     views: {
@@ -169,7 +173,7 @@ var App = angular.module('docs', ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.ke
   // Configuring Restangular
   RestangularProvider.setBaseUrl('api');
   
-  // Configuring $http
+  // Configuring $http to act like jQuery.ajax
   $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
   $httpProvider.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
   $httpProvider.defaults.transformRequest = [function(data) {
