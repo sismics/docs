@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.sun.grizzly:grizzly-portunif:1.9.18-m">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/sun/grizzly/grizzly-portunif/1.9.18-m/grizzly-portunif-1.9.18-m.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/sun/grizzly/grizzly-portunif/1.9.18-m/grizzly-portunif-1.9.18-m-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/sun/grizzly/grizzly-portunif/1.9.18-m/grizzly-portunif-1.9.18-m-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.sismics.docs:docs-web-common:test-jar:tests:1.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/sismics/docs/docs-web-common/1.0-SNAPSHOT/docs-web-common-1.0-SNAPSHOT-tests.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/sismics/docs/docs-web-common/1.0-SNAPSHOT/docs-web-common-1.0-SNAPSHOT-test-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/sismics/docs/docs-web-common/1.0-SNAPSHOT/docs-web-common-1.0-SNAPSHOT-test-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

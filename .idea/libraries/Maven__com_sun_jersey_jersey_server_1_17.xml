@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.sun.jersey:jersey-server:1.17">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/sun/jersey/jersey-server/1.17/jersey-server-1.17.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/sun/jersey/jersey-server/1.17/jersey-server-1.17-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/sun/jersey/jersey-server/1.17/jersey-server-1.17-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,75 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="docs-web:war exploded">
+    <output-path>$PROJECT_DIR$/docs-web/target/docs-web-1.0-SNAPSHOT</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="docs-web/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="docs-web" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="archive" name="docs-core-1.0-SNAPSHOT.jar">
+            <element id="module-output" name="docs-core" />
+          </element>
+          <element id="library" level="project" name="Maven: org.hibernate:hibernate-core:4.1.0.Final" />
+          <element id="library" level="project" name="Maven: commons-collections:commons-collections:3.2.1" />
+          <element id="library" level="project" name="Maven: antlr:antlr:2.7.7" />
+          <element id="library" level="project" name="Maven: org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec:1.0.0.Final" />
+          <element id="library" level="project" name="Maven: dom4j:dom4j:1.6.1" />
+          <element id="library" level="project" name="Maven: xml-apis:xml-apis:1.0.b2" />
+          <element id="library" level="project" name="Maven: org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final" />
+          <element id="library" level="project" name="Maven: org.jboss.logging:jboss-logging:3.1.0.CR2" />
+          <element id="library" level="project" name="Maven: org.javassist:javassist:3.15.0-GA" />
+          <element id="library" level="project" name="Maven: org.hibernate.common:hibernate-commons-annotations:4.0.1.Final" />
+          <element id="library" level="project" name="Maven: org.hibernate:hibernate-entitymanager:4.1.0.Final" />
+          <element id="library" level="project" name="Maven: joda-time:joda-time:2.2" />
+          <element id="library" level="project" name="Maven: com.google.guava:guava:14.0" />
+          <element id="library" level="project" name="Maven: org.apache.commons:commons-compress:1.5" />
+          <element id="library" level="project" name="Maven: org.tukaani:xz:1.2" />
+          <element id="library" level="project" name="Maven: commons-lang:commons-lang:2.6" />
+          <element id="library" level="project" name="Maven: log4j:log4j:1.2.16" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-log4j12:1.6.4" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.6.4" />
+          <element id="library" level="project" name="Maven: org.slf4j:jcl-over-slf4j:1.6.6" />
+          <element id="library" level="project" name="Maven: org.mindrot:jbcrypt:0.3m" />
+          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-core-asl:1.7.1" />
+          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.7.1" />
+          <element id="library" level="project" name="Maven: org.ccil.cowan.tagsoup:tagsoup:1.2.1" />
+          <element id="library" level="project" name="Maven: com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:r156" />
+          <element id="library" level="project" name="Maven: com.google.code.findbugs:jsr305:2.0.1" />
+          <element id="library" level="project" name="Maven: org.apache.lucene:lucene-core:4.2.0" />
+          <element id="library" level="project" name="Maven: org.apache.lucene:lucene-analyzers-common:4.2.0" />
+          <element id="library" level="project" name="Maven: org.apache.lucene:lucene-queryparser:4.2.0" />
+          <element id="library" level="project" name="Maven: org.apache.lucene:lucene-queries:4.2.0" />
+          <element id="library" level="project" name="Maven: org.apache.lucene:lucene-sandbox:4.2.0" />
+          <element id="library" level="project" name="Maven: jakarta-regexp:jakarta-regexp:1.4" />
+          <element id="library" level="project" name="Maven: org.apache.lucene:lucene-highlighter:4.2.0" />
+          <element id="library" level="project" name="Maven: org.apache.lucene:lucene-memory:4.2.0" />
+          <element id="library" level="project" name="Maven: org.imgscalr:imgscalr-lib:4.2" />
+          <element id="archive" name="docs-web-common-1.0-SNAPSHOT.jar">
+            <element id="module-output" name="docs-web-common" />
+          </element>
+          <element id="library" level="project" name="Maven: com.sun.jersey:jersey-server:1.17" />
+          <element id="library" level="project" name="Maven: asm:asm:3.1" />
+          <element id="library" level="project" name="Maven: com.sun.jersey:jersey-core:1.17" />
+          <element id="library" level="project" name="Maven: com.sun.jersey:jersey-bundle:1.17" />
+          <element id="library" level="project" name="Maven: javax.ws.rs:jsr311-api:1.1.1" />
+          <element id="library" level="project" name="Maven: com.sun.jersey:jersey-json:1.17" />
+          <element id="library" level="project" name="Maven: org.codehaus.jettison:jettison:1.1" />
+          <element id="library" level="project" name="Maven: com.sun.xml.bind:jaxb-impl:2.2.3-1" />
+          <element id="library" level="project" name="Maven: javax.xml.bind:jaxb-api:2.2.2" />
+          <element id="library" level="project" name="Maven: javax.xml.stream:stax-api:1.0-2" />
+          <element id="library" level="project" name="Maven: javax.activation:activation:1.1" />
+          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-jaxrs:1.9.2" />
+          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-xc:1.9.2" />
+          <element id="library" level="project" name="Maven: com.sun.jersey.contribs:jersey-multipart:1.17" />
+          <element id="library" level="project" name="Maven: org.jvnet:mimepull:1.6" />
+          <element id="library" level="project" name="Maven: commons-io:commons-io:2.1" />
+          <element id="library" level="project" name="Maven: commons-dbcp:commons-dbcp:1.4" />
+          <element id="library" level="project" name="Maven: commons-pool:commons-pool:1.5.4" />
+          <element id="library" level="project" name="Maven: org.hsqldb:hsqldb:2.3.0" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
