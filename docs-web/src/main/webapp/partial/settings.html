@@ -6,9 +6,9 @@
         <li ng-class="{active: $uiRoute}" ui-route="/settings/account"><a href="#/settings/account">User account</a></li>
         <li ng-class="{active: $uiRoute}" ui-route="/settings/session"><a href="#/settings/session">Opened sessions</a></li>
         
-        <li class="nav-header">General settings</li>
-        <li ng-class="{active: $uiRoute}" ui-route="/settings/user.*" ng-show="userInfo.base_functions.indexOf('ADMIN') != -1"><a href="#/settings/user">Users</a></li>
-        <li ng-class="{active: $uiRoute}" ui-route="/settings/log"><a href="#/settings/log">Server logs</a></li>
+        <li class="nav-header" ng-show="isAdmin">General settings</li>
+        <li ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/user.*"><a href="#/settings/user">Users</a></li>
+        <li ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/log"><a href="#/settings/log">Server logs</a></li>
       </ul>
     </div>
     
