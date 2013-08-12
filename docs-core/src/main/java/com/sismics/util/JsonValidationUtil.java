@@ -14,9 +14,9 @@ public class JsonValidationUtil {
     /**
      * Checks if the JSON node contains the properties (not null).
      * 
-     * @param s JSON node to check
+     * @param n JSON node to check
      * @param name Name of the property
-     * @throws JSONException
+     * @throws Exception
      */
     public static void validateJsonRequired(JsonNode n, String name) throws Exception {
         if (!n.has(name)) {
@@ -27,10 +27,10 @@ public class JsonValidationUtil {
     /**
      * Checks that the property is a JSON object.
      * 
-     * @param s JSON node to check
+     * @param n JSON node to check
      * @param name Name of the property
      * @param required Property required
-     * @throws JSONException
+     * @throws Exception
      */
     public static void validateJsonObject(JsonNode n, String name, boolean required) throws Exception {
         if (required && !n.has(name)) {
@@ -44,10 +44,10 @@ public class JsonValidationUtil {
     /**
      * Checks that the property is a number.
      * 
-     * @param s JSON node to check
+     * @param n JSON node to check
      * @param name Name of the property
      * @param required Property required
-     * @throws JSONException
+     * @throws Exception
      */
     public static void validateJsonNumber(JsonNode n, String name, boolean required) throws Exception {
         if (required && !n.has(name)) {
@@ -61,10 +61,10 @@ public class JsonValidationUtil {
     /**
      * Checks that the property is a long.
      * 
-     * @param s JSON node to check
+     * @param n JSON node to check
      * @param name Name of the property
      * @param required Property required
-     * @throws JSONException
+     * @throws Exception
      */
     public static void validateJsonLong(JsonNode n, String name, boolean required) throws Exception {
         if (required && !n.has(name)) {
@@ -78,10 +78,10 @@ public class JsonValidationUtil {
     /**
      * Checks that the property is a string.
      * 
-     * @param s JSON node to check
+     * @param n JSON node to check
      * @param name Name of the property
      * @param required Property required
-     * @throws JSONException
+     * @throws Exception
      */
     public static void validateJsonString(JsonNode n, String name, boolean required) throws Exception {
         if (required && !n.has(name)) {
@@ -95,10 +95,10 @@ public class JsonValidationUtil {
     /**
      * Checks that the property is an array.
      * 
-     * @param s JSON node to check
+     * @param n JSON node to check
      * @param name Name of the property
      * @param required Property required
-     * @throws JSONException
+     * @throws Exception
      */
     public static void validateJsonArray(JsonNode n, String name, boolean required) throws Exception {
         if (required && !n.has(name)) {

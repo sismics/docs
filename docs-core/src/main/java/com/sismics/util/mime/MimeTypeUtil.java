@@ -11,7 +11,7 @@ public class MimeTypeUtil {
     /**
      * Try to guess the MIME type of a file by its magic number (header).
      * 
-     * @param file File to inspect
+     * @param is Stream to inspect
      * @return MIME type
      * @throws Exception
      */

@@ -36,7 +36,7 @@ public class LocaleUtil {
     /**
      * Extracts the ID of the locale from the HTTP Accept-Language header.
      * 
-     * @param HTTP header
+     * @param acceptLanguageHeader header
      * @return Locale ID
      */
     public static String getLocaleIdFromAcceptLanguage(String acceptLanguageHeader) {
