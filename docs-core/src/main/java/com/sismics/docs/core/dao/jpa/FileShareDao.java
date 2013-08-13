@@ -46,7 +46,11 @@ public class FileShareDao {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select fs from FileShare fs where fs.id = :id and fs.deleteDate is null");
         q.setParameter("id", id);
-        return (FileShare) q.getSingleResult();
+        try {
+            return (FileShare) q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
     
     /**

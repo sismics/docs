@@ -1,9 +1,37 @@
 package com.sismics.docs.rest.resource;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.NoResultException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
+import com.sismics.docs.core.dao.jpa.FileShareDao;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.model.jpa.FileShare;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
@@ -14,21 +42,6 @@ import com.sismics.util.ImageUtil;
 import com.sismics.util.mime.MimeTypeUtil;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
-import javax.persistence.NoResultException;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.nio.file.Paths;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * File REST resources.
@@ -54,6 +67,7 @@ public class FileResource extends BaseResource {
         }
         
         FileDao fileDao = new FileDao();
+        FileShareDao fileShareDao = new FileShareDao();
         DocumentDao documentDao = new DocumentDao();
         File fileDb;
         try {
@@ -68,6 +82,16 @@ public class FileResource extends BaseResource {
         file.put("mimetype", fileDb.getMimeType());
         file.put("document_id", fileDb.getDocumentId());
         file.put("create_date", fileDb.getCreateDate().getTime());
+        
+        // Add file shares
+        List<FileShare> fileShareDbList = fileShareDao.getByFileId(id);
+        List<JSONObject> fileShareList = new ArrayList<>();
+        for (FileShare fileShareDb : fileShareDbList) {
+            JSONObject fileShare = new JSONObject();
+            fileShare.put("id", fileShareDb.getId());
+            fileShareList.add(fileShare);
+        }
+        file.put("shares", fileShareList);
         
         return Response.ok().entity(file).build();
     }
@@ -264,7 +288,7 @@ public class FileResource extends BaseResource {
     /**
      * Returns a file.
      * 
-     * @param id File ID
+     * @param fileId File ID
      * @return Response
      * @throws JSONException
      */
@@ -272,9 +296,20 @@ public class FileResource extends BaseResource {
     @Path("{id: [a-z0-9\\-]+}/data")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response data(
-            @PathParam("id") final String id,
+            @PathParam("id") final String fileId,
+            @QueryParam("share") String fileShareId,
             @QueryParam("thumbnail") boolean thumbnail) throws JSONException {
-        if (!authenticate()) {
+        // Handle file sharing
+        FileShareDao fileShareDao = new FileShareDao();
+        if (fileShareId != null) {
+            FileShare fileShare = fileShareDao.getFileShare(fileShareId);
+            if (fileShare == null) {
+                throw new ClientException("FileShareNotFound", "File share not found");
+            }
+            if (!fileShare.getFileId().equals(fileId)) {
+                throw new ClientException("InvalidFile", "This file share is not linked to this file");
+            }
+        } else if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         
@@ -283,10 +318,12 @@ public class FileResource extends BaseResource {
         DocumentDao documentDao = new DocumentDao();
         File file;
         try {
-            file = fileDao.getFile(id);
-            documentDao.getDocument(file.getDocumentId(), principal.getId());
+            file = fileDao.getFile(fileId);
+            if (fileShareId == null) {
+                documentDao.getDocument(file.getDocumentId(), principal.getId());
+            }
         } catch (NoResultException e) {
-            throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", id));
+            throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", fileId));
         }
 
         
@@ -294,12 +331,12 @@ public class FileResource extends BaseResource {
         java.io.File storedfile;
         if (thumbnail) {
             if (ImageUtil.isImage(file.getMimeType())) {
-                storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), id + "_thumb").toFile();
+                storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), fileId + "_thumb").toFile();
             } else {
                 storedfile = new java.io.File(getClass().getResource("/image/file.png").getFile());
             }
         } else {
-            storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), id).toFile();
+            storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), fileId).toFile();
         }
 
         return Response.ok(storedfile)

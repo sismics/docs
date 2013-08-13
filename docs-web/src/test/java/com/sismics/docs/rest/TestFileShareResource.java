@@ -10,6 +10,7 @@ import junit.framework.Assert;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 
+import com.google.common.io.ByteStreams;
 import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
@@ -71,6 +72,27 @@ public class TestFileShareResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         String fileShare1Id = json.getString("id");
 
+        // Get the file data anonymously
+        fileResource = resource().path("/file/" + file1Id + "/data");
+        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
+        getParams.putSingle("thumbnail", false);
+        getParams.putSingle("share", fileShare1Id);
+        response = fileResource.queryParams(getParams).get(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        InputStream is = response.getEntityInputStream();
+        byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(163510, fileBytes.length);
+        
+        // Get the file
+        fileResource = resource().path("/file/" + file1Id);
+        fileResource.addFilter(new CookieAuthenticationFilter(fileShare1AuthenticationToken));
+        response = fileResource.get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(file1Id, json.getString("id"));
+        Assert.assertEquals(1, json.getJSONArray("shares").length());
+        Assert.assertEquals(fileShare1Id, json.getJSONArray("shares").getJSONObject(0).getString("id"));
+        
         // Deletes the share
         fileShareResource = resource().path("/fileshare/" + fileShare1Id);
         fileShareResource.addFilter(new CookieAuthenticationFilter(fileShare1AuthenticationToken));

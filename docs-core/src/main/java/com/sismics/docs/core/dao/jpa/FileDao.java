@@ -64,6 +64,12 @@ public class FileDao {
         // Delete the file
         Date dateNow = new Date();
         fileDb.setDeleteDate(dateNow);
+        
+        // Delete linked data
+        q = em.createQuery("update FileShare fs set fs.deleteDate = :dateNow where fs.fileId = :fileId and fs.deleteDate is null");
+        q.setParameter("fileId", id);
+        q.setParameter("dateNow", dateNow);
+        q.executeUpdate();
     }
     
     /**
