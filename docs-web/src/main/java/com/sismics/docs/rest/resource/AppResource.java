@@ -81,7 +81,7 @@ public class AppResource extends BaseResource {
      * @param message Filter on message
      * @param limit Page limit
      * @param offset Page offset
-     * @return
+     * @return Response
      * @throws JSONException
      */
     @GET
@@ -115,7 +115,7 @@ public class AppResource extends BaseResource {
         PaginatedList<LogEntry> paginatedList = PaginatedLists.create(limit, offset);
         memoryAppender.find(logCriteria, paginatedList);
         JSONObject response = new JSONObject();
-        List<JSONObject> logs = new ArrayList<JSONObject>();
+        List<JSONObject> logs = new ArrayList<>();
         for (LogEntry logEntry : paginatedList.getResultList()) {
             JSONObject log = new JSONObject();
             log.put("date", logEntry.getTimestamp());

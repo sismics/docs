@@ -146,36 +146,11 @@
             <extraClasspath>target/classes;../docs-core/target/classes</extraClasspath>
             <overrideDescriptor>src/dev/main/webapp/web-override.xml</overrideDescriptor>
           </webAppConfig>
+          <stopKey>STOPKEY</stopKey>
+          <stopPort>1099</stopPort>
         </configuration>
       </plugin>
 
-      <!-- Cargo Plugin -->
-      <plugin>
-        <groupId>org.codehaus.cargo</groupId>
-        <artifactId>cargo-maven2-plugin</artifactId>
-        <configuration>
-          <container>
-            <containerId>jetty8x</containerId>
-            <type>remote</type>
-          </container>
-
-          <deployer>
-            <type>remote</type>
-          </deployer>
-
-          <deployables>
-            <deployable>
-              <groupId>com.sismics.docs</groupId>
-              <artifactId>docs-web</artifactId>
-              <type>war</type>
-              <properties>
-                <context>/docs</context>
-              </properties>
-              <pingURL>http://localhost:8080/docs/index.html</pingURL>
-            </deployable>
-          </deployables>
-        </configuration>
-      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -251,6 +226,8 @@
                 <extraClasspath>target/classes;../docs-core/target/classes</extraClasspath>
                 <overrideDescriptor>src/dev/main/webapp/web-override.xml</overrideDescriptor>
               </webAppConfig>
+              <stopKey>STOPKEY</stopKey>
+              <stopPort>1099</stopPort>
             </configuration>
           </plugin>
         </plugins>

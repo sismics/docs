@@ -109,10 +109,6 @@ public class UserResource extends BaseResource {
      * @param email E-Mail
      * @param themeId Theme
      * @param localeId Locale ID
-     * @param displayTitleWeb Display only article titles (web application).
-     * @param displayTitleMobile Display only article titles (mobile application).
-     * @param displayUnreadWeb Display only unread titles (web application).
-     * @param displayUnreadMobile Display only unread titles (mobile application).
      * @param firstConnection True if the user hasn't acknowledged the first connection wizard yet.
      * @return Response
      * @throws JSONException
@@ -156,7 +152,7 @@ public class UserResource extends BaseResource {
         
         if (StringUtils.isNotBlank(password)) {
             user.setPassword(password);
-            user = userDao.updatePassword(user);
+            userDao.updatePassword(user);
         }
         
         // Always return "ok"
@@ -173,10 +169,6 @@ public class UserResource extends BaseResource {
      * @param email E-Mail
      * @param themeId Theme
      * @param localeId Locale ID
-     * @param displayTitleWeb Display only article titles (web application).
-     * @param displayTitleMobile Display only article titles (mobile application).
-     * @param displayUnreadWeb Display only unread titles (web application).
-     * @param displayUnreadMobile Display only unread titles (mobile application).
      * @return Response
      * @throws JSONException
      */
@@ -224,7 +216,7 @@ public class UserResource extends BaseResource {
         if (StringUtils.isNotBlank(password)) {
             // Change the password
             user.setPassword(password);
-            user = userDao.updatePassword(user);
+            userDao.updatePassword(user);
         }
         
         // Always return "ok"
@@ -511,7 +503,7 @@ public class UserResource extends BaseResource {
         checkBaseFunction(BaseFunction.ADMIN);
         
         JSONObject response = new JSONObject();
-        List<JSONObject> users = new ArrayList<JSONObject>();
+        List<JSONObject> users = new ArrayList<>();
         
         PaginatedList<UserDto> paginatedList = PaginatedLists.create(limit, offset);
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
@@ -557,7 +549,7 @@ public class UserResource extends BaseResource {
         }
         
         JSONObject response = new JSONObject();
-        List<JSONObject> sessions = new ArrayList<JSONObject>();
+        List<JSONObject> sessions = new ArrayList<>();
         
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
 

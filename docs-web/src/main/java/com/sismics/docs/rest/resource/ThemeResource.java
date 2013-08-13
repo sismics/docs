@@ -31,7 +31,7 @@ public class ThemeResource extends BaseResource {
         ThemeDao themeDao = new ThemeDao();
         List<String> themeList = themeDao.findAll();
         JSONObject response = new JSONObject();
-        List<JSONObject> items = new ArrayList<JSONObject>();
+        List<JSONObject> items = new ArrayList<>();
         for (String theme : themeList) {
             JSONObject item = new JSONObject();
             item.put("id", theme);

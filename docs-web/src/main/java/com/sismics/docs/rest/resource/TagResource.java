@@ -41,7 +41,7 @@ public class TagResource extends BaseResource {
         TagDao tagDao = new TagDao();
         List<Tag> tagList = tagDao.getByUserId(principal.getId());
         JSONObject response = new JSONObject();
-        List<JSONObject> items = new ArrayList<JSONObject>();
+        List<JSONObject> items = new ArrayList<>();
         for (Tag tag : tagList) {
             JSONObject item = new JSONObject();
             item.put("id", tag.getId());
@@ -70,7 +70,7 @@ public class TagResource extends BaseResource {
         TagDao tagDao = new TagDao();
         List<TagStatDto> tagStatDtoList = tagDao.getStats(principal.getId());
         JSONObject response = new JSONObject();
-        List<JSONObject> items = new ArrayList<JSONObject>();
+        List<JSONObject> items = new ArrayList<>();
         for (TagStatDto tagStatDto : tagStatDtoList) {
             JSONObject item = new JSONObject();
             item.put("id", tagStatDto.getId());
@@ -167,7 +167,7 @@ public class TagResource extends BaseResource {
     /**
      * Delete a tag.
      * 
-     * @param name Name
+     * @param tagId Tag ID
      * @return Response
      * @throws JSONException
      */

@@ -65,7 +65,7 @@ public class DocumentResource extends BaseResource {
         // Get tags
         TagDao tagDao = new TagDao();
         List<TagDto> tagDtoList = tagDao.getByDocumentId(id);
-        List<JSONObject> tags = new ArrayList<JSONObject>();
+        List<JSONObject> tags = new ArrayList<>();
         for (TagDto tagDto : tagDtoList) {
             JSONObject tag = new JSONObject();
             tag.put("id", tagDto.getId());
@@ -107,7 +107,7 @@ public class DocumentResource extends BaseResource {
         Date createDateMax = ValidationUtil.validateDate(createDateMaxStr, "create_date_max", true);
         
         JSONObject response = new JSONObject();
-        List<JSONObject> documents = new ArrayList<JSONObject>();
+        List<JSONObject> documents = new ArrayList<>();
         
         DocumentDao documentDao = new DocumentDao();
         TagDao tagDao = new TagDao();
@@ -132,7 +132,7 @@ public class DocumentResource extends BaseResource {
             
             // Get tags
             List<TagDto> tagDtoList = tagDao.getByDocumentId(documentDto.getId());
-            List<JSONObject> tags = new ArrayList<JSONObject>();
+            List<JSONObject> tags = new ArrayList<>();
             for (TagDto tagDto : tagDtoList) {
                 JSONObject tag = new JSONObject();
                 tag.put("id", tagDto.getId());
@@ -260,8 +260,8 @@ public class DocumentResource extends BaseResource {
     private void updateTagList(String documentId, List<String> tagList) throws JSONException {
         if (tagList != null) {
             TagDao tagDao = new TagDao();
-            Set<String> tagSet = new HashSet<String>();
-            Set<String> tagIdSet = new HashSet<String>();
+            Set<String> tagSet = new HashSet<>();
+            Set<String> tagIdSet = new HashSet<>();
             List<Tag> tagDbList = tagDao.getByUserId(principal.getId());
             for (Tag tagDb : tagDbList) {
                 tagIdSet.add(tagDb.getId());

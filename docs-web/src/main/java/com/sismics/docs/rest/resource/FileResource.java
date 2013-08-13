@@ -54,7 +54,7 @@ public class FileResource extends BaseResource {
         }
         
         FileDao fileDao = new FileDao();
-        File fileDb = null;
+        File fileDb;
         try {
             fileDb = fileDao.getFile(id);
         } catch (NoResultException e) {
@@ -73,7 +73,7 @@ public class FileResource extends BaseResource {
     /**
      * Add a file to a document.
      * 
-     * @param id Document ID
+     * @param documentId Document ID
      * @param fileBodyPart File to add
      * @return Response
      * @throws JSONException
@@ -94,7 +94,7 @@ public class FileResource extends BaseResource {
 
         // Get the document
         DocumentDao documentDao = new DocumentDao();
-        Document document = null;
+        Document document;
         try {
             document = documentDao.getDocument(documentId, principal.getId());
         } catch (NoResultException e) {
@@ -105,7 +105,7 @@ public class FileResource extends BaseResource {
         
         // Validate mime type
         InputStream is = new BufferedInputStream(fileBodyPart.getValueAs(InputStream.class));
-        String mimeType = null;
+        String mimeType;
         try {
             mimeType = MimeTypeUtil.guessMimeType(is);
         } catch (Exception e) {
@@ -145,8 +145,8 @@ public class FileResource extends BaseResource {
     /**
      * Reorder files.
      * 
-     * @param id Document ID
-     * @param order List of files ID in the new order
+     * @param documentId Document ID
+     * @param idList List of files ID in the new order
      * @return Response
      * @throws JSONException
      */
@@ -190,7 +190,7 @@ public class FileResource extends BaseResource {
     /**
      * Returns files linked to a document.
      * 
-     * @param id Document ID
+     * @param documentId Document ID
      * @return Response
      * @throws JSONException
      */
@@ -207,7 +207,7 @@ public class FileResource extends BaseResource {
         List<File> fileList = fileDao.getByDocumentId(documentId);
 
         JSONObject response = new JSONObject();
-        List<JSONObject> files = new ArrayList<JSONObject>();
+        List<JSONObject> files = new ArrayList<>();
         
         for (File fileDb : fileList) {
             JSONObject file = new JSONObject();
@@ -240,7 +240,7 @@ public class FileResource extends BaseResource {
 
         // Get the file
         FileDao fileDao = new FileDao();
-        File file = null;
+        File file;
         try {
             file = fileDao.getFile(id);
         } catch (NoResultException e) {
@@ -275,7 +275,7 @@ public class FileResource extends BaseResource {
         
         // Get the file
         FileDao fileDao = new FileDao();
-        File file = null;
+        File file;
         try {
             file = fileDao.getFile(id);
         } catch (NoResultException e) {
@@ -284,7 +284,7 @@ public class FileResource extends BaseResource {
 
         
         // Get the stored file
-        java.io.File storedfile = null;
+        java.io.File storedfile;
         if (thumbnail) {
             if (ImageUtil.isImage(file.getMimeType())) {
                 storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), id + "_thumb").toFile();

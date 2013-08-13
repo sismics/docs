@@ -32,7 +32,7 @@ public class LocaleResource extends BaseResource {
         LocaleDao localeDao = new LocaleDao();
         List<Locale> localeList = localeDao.findAll();
         JSONObject response = new JSONObject();
-        List<JSONObject> items = new ArrayList<JSONObject>();
+        List<JSONObject> items = new ArrayList<>();
         for (Locale locale : localeList) {
             JSONObject item = new JSONObject();
             item.put("id", locale.getId());
