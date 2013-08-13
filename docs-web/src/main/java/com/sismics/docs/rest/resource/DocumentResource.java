@@ -63,7 +63,7 @@ public class DocumentResource extends BaseResource {
         }
         
         DocumentDao documentDao = new DocumentDao();
-        Document documentDb = null;
+        Document documentDb;
         try {
             documentDb = documentDao.getDocument(id, principal.getId());
         } catch (NoResultException e) {
@@ -237,7 +237,7 @@ public class DocumentResource extends BaseResource {
         
         // Get the document
         DocumentDao documentDao = new DocumentDao();
-        Document document = null;
+        Document document;
         try {
             document = documentDao.getDocument(id, principal.getId());
         } catch (NoResultException e) {
@@ -267,8 +267,8 @@ public class DocumentResource extends BaseResource {
     /**
      * Update tags list on a document.
      * 
-     * @param documentId
-     * @param tagList
+     * @param documentId Document ID
+     * @param tagList Tag ID list
      * @throws JSONException
      */
     private void updateTagList(String documentId, List<String> tagList) throws JSONException {
@@ -308,7 +308,7 @@ public class DocumentResource extends BaseResource {
 
         // Get the document
         DocumentDao documentDao = new DocumentDao();
-        Document document = null;
+        Document document;
         try {
             document = documentDao.getDocument(id, principal.getId());
         } catch (NoResultException e) {
