@@ -56,12 +56,12 @@ public class FileDao {
     public void delete(String id) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
             
-        // Get the document
+        // Get the file
         Query q = em.createQuery("select f from File f where f.id = :id and f.deleteDate is null");
         q.setParameter("id", id);
         File fileDb = (File) q.getSingleResult();
         
-        // Delete the document
+        // Delete the file
         Date dateNow = new Date();
         fileDb.setDeleteDate(dateNow);
     }
@@ -69,8 +69,8 @@ public class FileDao {
     /**
      * Gets a file by its ID.
      * 
-     * @param id Document ID
-     * @return Document
+     * @param id File ID
+     * @return File
      */
     public File getById(String id) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();

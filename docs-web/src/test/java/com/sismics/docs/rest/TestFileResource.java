@@ -19,13 +19,13 @@ import java.io.BufferedInputStream;
 import java.io.InputStream;
 
 /**
- * Exhaustive test of the document resource.
+ * Exhaustive test of the file resource.
  * 
  * @author bgamard
  */
 public class TestFileResource extends BaseJerseyTest {
     /**
-     * Test the document resource.
+     * Test the file resource.
      * 
      * @throws Exception
      */
@@ -144,9 +144,9 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(file1Id, files.getJSONObject(1).getString("id"));
         
         // Deletes a file
-        documentResource = resource().path("/file/" + file1Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        response = documentResource.delete(ClientResponse.class);
+        fileResource = resource().path("/file/" + file1Id);
+        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
+        response = fileResource.delete(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals("ok", json.getString("status"));

@@ -54,10 +54,11 @@ public class FileResource extends BaseResource {
         }
         
         FileDao fileDao = new FileDao();
+        DocumentDao documentDao = new DocumentDao();
         File fileDb;
         try {
             fileDb = fileDao.getFile(id);
-            // TODO Check that the current user owns the document linked to this file
+            documentDao.getDocument(fileDb.getDocumentId(), principal.getId());
         } catch (NoResultException e) {
             throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", id));
         }
@@ -241,15 +242,17 @@ public class FileResource extends BaseResource {
 
         // Get the file
         FileDao fileDao = new FileDao();
+        DocumentDao documentDao = new DocumentDao();
         File file;
         try {
             file = fileDao.getFile(id);
-            // TODO Check that the current user owns the document linked to this file
+            documentDao.getDocument(file.getDocumentId(), principal.getId());
         } catch (NoResultException e) {
             throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", id));
         }
         
-        // Delete the document
+        // Delete the file
+        // TODO Delete the file from storage too
         fileDao.delete(file.getId());
         
         // Always return ok
@@ -277,10 +280,11 @@ public class FileResource extends BaseResource {
         
         // Get the file
         FileDao fileDao = new FileDao();
+        DocumentDao documentDao = new DocumentDao();
         File file;
         try {
             file = fileDao.getFile(id);
-            // TODO Check that the current user owns the document linked to this file
+            documentDao.getDocument(file.getDocumentId(), principal.getId());
         } catch (NoResultException e) {
             throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", id));
         }
