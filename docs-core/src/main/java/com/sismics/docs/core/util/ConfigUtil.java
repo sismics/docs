@@ -1,10 +1,10 @@
 package com.sismics.docs.core.util;
 
-import java.util.ResourceBundle;
-
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.dao.jpa.ConfigDao;
 import com.sismics.docs.core.model.jpa.Config;
+
+import java.util.ResourceBundle;
 
 /**
  * Configuration parameter utilities.

@@ -1,9 +1,9 @@
 package com.sismics.security;
 
+import org.joda.time.DateTimeZone;
+
 import java.security.Principal;
 import java.util.Locale;
-
-import org.joda.time.DateTimeZone;
 
 /**
  * Interface of principals.

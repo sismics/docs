@@ -1,17 +1,15 @@
 package com.sismics.util;
 
+import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.util.DirectoryUtil;
+import org.imgscalr.Scalr;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import javax.imageio.ImageIO;
-
-import org.imgscalr.Scalr;
-
-import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.util.DirectoryUtil;
 
 /**
  * File utilities.

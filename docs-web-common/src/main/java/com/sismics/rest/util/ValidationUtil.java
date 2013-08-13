@@ -1,19 +1,18 @@
 package com.sismics.rest.util;
 
-import java.text.MessageFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.jettison.json.JSONException;
-import org.joda.time.DateTime;
-
 import com.google.common.base.Strings;
 import com.sismics.docs.core.dao.file.theme.ThemeDao;
 import com.sismics.docs.core.dao.jpa.LocaleDao;
 import com.sismics.docs.core.model.jpa.Locale;
 import com.sismics.rest.exception.ClientException;
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.joda.time.DateTime;
+
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Utility class to validate parameters.

@@ -1,9 +1,9 @@
 package com.sismics.security;
 
+import org.joda.time.DateTimeZone;
+
 import java.util.Locale;
 import java.util.Set;
-
-import org.joda.time.DateTimeZone;
 
 /**
  * Authenticated users principal.

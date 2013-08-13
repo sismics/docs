@@ -1,11 +1,11 @@
 package com.sismics.docs.core.dao.jpa;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.util.context.ThreadLocalContext;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 /**
  * Configuration parameter DAO.

@@ -25,10 +25,6 @@
 
 package com.sismics.util.jpa;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Properties;
-
 import org.hibernate.cfg.Environment;
 import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.hibernate.internal.util.config.ConfigurationHelper;
@@ -36,6 +32,10 @@ import org.hibernate.service.ServiceRegistryBuilder;
 import org.hibernate.service.internal.StandardServiceRegistryImpl;
 import org.hibernate.service.jdbc.connections.spi.ConnectionProvider;
 import org.hibernate.tool.hbm2ddl.ConnectionHelper;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * A {@link ConnectionHelper} implementation based on an internally

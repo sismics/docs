@@ -1,12 +1,12 @@
 package com.sismics.docs.core.dao.file.theme;
 
+import com.google.common.collect.Lists;
+import com.sismics.docs.core.util.DirectoryUtil;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
-import com.sismics.docs.core.util.DirectoryUtil;
 
 /**
  * Theme DAO.

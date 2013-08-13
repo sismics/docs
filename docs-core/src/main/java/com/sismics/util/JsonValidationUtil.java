@@ -1,8 +1,8 @@
 package com.sismics.util;
 
-import java.text.MessageFormat;
-
 import org.codehaus.jackson.JsonNode;
+
+import java.text.MessageFormat;
 
 /**
  * JSON validation utilities.

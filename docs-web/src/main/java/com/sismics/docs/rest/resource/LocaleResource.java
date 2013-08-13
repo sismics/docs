@@ -1,19 +1,17 @@
 package com.sismics.docs.rest.resource;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.sismics.docs.core.dao.jpa.LocaleDao;
+import com.sismics.docs.core.model.jpa.Locale;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
-import com.sismics.docs.core.dao.jpa.LocaleDao;
-import com.sismics.docs.core.model.jpa.Locale;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Locale REST resources.

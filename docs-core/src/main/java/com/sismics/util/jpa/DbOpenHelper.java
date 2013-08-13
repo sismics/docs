@@ -1,21 +1,9 @@
 package com.sismics.util.jpa;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Writer;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ResourceBundle;
-
+import com.google.common.base.Strings;
+import com.google.common.io.CharStreams;
+import com.sismics.docs.core.util.ConfigUtil;
+import com.sismics.util.ResourceUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 import org.hibernate.engine.jdbc.internal.FormatStyle;
@@ -27,10 +15,16 @@ import org.hibernate.tool.hbm2ddl.ConnectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-import com.google.common.io.CharStreams;
-import com.sismics.docs.core.util.ConfigUtil;
-import com.sismics.util.ResourceUtil;
+import java.io.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * A helper to update the database incrementally.

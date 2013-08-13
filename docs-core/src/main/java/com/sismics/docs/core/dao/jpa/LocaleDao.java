@@ -1,13 +1,12 @@
 package com.sismics.docs.core.dao.jpa;
 
-import java.util.List;
+import com.sismics.docs.core.model.jpa.Locale;
+import com.sismics.util.context.ThreadLocalContext;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-
-import com.sismics.docs.core.model.jpa.Locale;
-import com.sismics.util.context.ThreadLocalContext;
+import java.util.List;
 
 /**
  * Locale DAO.

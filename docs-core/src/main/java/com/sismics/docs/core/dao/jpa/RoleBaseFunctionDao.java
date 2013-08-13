@@ -1,12 +1,11 @@
 package com.sismics.docs.core.dao.jpa;
 
-import java.util.Set;
+import com.google.common.collect.Sets;
+import com.sismics.util.context.ThreadLocalContext;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-
-import com.google.common.collect.Sets;
-import com.sismics.util.context.ThreadLocalContext;
+import java.util.Set;
 
 /**
  * Role base functions DAO.

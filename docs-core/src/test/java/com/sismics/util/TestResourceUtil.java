@@ -1,10 +1,9 @@
 package com.sismics.util;
 
-import java.util.List;
-
 import junit.framework.Assert;
-
 import org.junit.Test;
+
+import java.util.List;
 
 /**
  * Test of the resource utils.

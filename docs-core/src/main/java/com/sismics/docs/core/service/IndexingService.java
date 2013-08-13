@@ -1,9 +1,10 @@
 package com.sismics.docs.core.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.util.concurrent.AbstractScheduledService;
+import com.sismics.docs.core.constant.Constants;
+import com.sismics.docs.core.model.context.AppContext;
+import com.sismics.docs.core.util.DirectoryUtil;
+import com.sismics.docs.core.util.TransactionUtil;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
@@ -11,11 +12,9 @@ import org.apache.lucene.store.SimpleFSLockFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.util.concurrent.AbstractScheduledService;
-import com.sismics.docs.core.constant.Constants;
-import com.sismics.docs.core.model.context.AppContext;
-import com.sismics.docs.core.util.DirectoryUtil;
-import com.sismics.docs.core.util.TransactionUtil;
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Indexing service.

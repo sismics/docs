@@ -1,11 +1,9 @@
 package com.sismics.docs.rest.util;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
-
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.util.ValidationUtil;
+import junit.framework.Assert;
+import org.junit.Test;
 
 /**
  * Test the validations.

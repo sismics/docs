@@ -1,17 +1,16 @@
 package com.sismics.util.log4j;
 
+import com.google.common.collect.Lists;
+import com.sismics.docs.core.util.jpa.PaginatedList;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.helpers.LogLog;
+import org.apache.log4j.spi.LoggingEvent;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.helpers.LogLog;
-import org.apache.log4j.spi.LoggingEvent;
-
-import com.google.common.collect.Lists;
-import com.sismics.docs.core.util.jpa.PaginatedList;
 
 /**
  * Memory appender for Log4J.

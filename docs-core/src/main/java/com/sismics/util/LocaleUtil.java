@@ -1,11 +1,10 @@
 package com.sismics.util;
 
-import java.util.Locale;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.LocaleDao;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Locale;
 
 /**
  * Locale utilities.

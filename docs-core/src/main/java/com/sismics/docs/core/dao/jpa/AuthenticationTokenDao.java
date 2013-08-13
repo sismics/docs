@@ -1,16 +1,14 @@
 package com.sismics.docs.core.dao.jpa;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import com.sismics.docs.core.model.jpa.AuthenticationToken;
+import com.sismics.util.context.ThreadLocalContext;
+import org.joda.time.DateTime;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-
-import org.joda.time.DateTime;
-
-import com.sismics.docs.core.model.jpa.AuthenticationToken;
-import com.sismics.util.context.ThreadLocalContext;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Authentication token DAO.

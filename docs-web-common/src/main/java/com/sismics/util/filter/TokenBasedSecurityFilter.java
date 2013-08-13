@@ -1,24 +1,5 @@
 package com.sismics.util.filter;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
-import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.AuthenticationTokenDao;
 import com.sismics.docs.core.dao.jpa.RoleBaseFunctionDao;
@@ -28,6 +9,18 @@ import com.sismics.docs.core.model.jpa.User;
 import com.sismics.security.AnonymousPrincipal;
 import com.sismics.security.UserPrincipal;
 import com.sismics.util.LocaleUtil;
+import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.*;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * This filter is used to authenticate the user having an active session via an authentication token stored in database.

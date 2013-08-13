@@ -1,16 +1,5 @@
 package com.sismics.docs.rest;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-
-import javax.ws.rs.core.MediaType;
-
-import junit.framework.Assert;
-
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
-import org.junit.Test;
-
 import com.google.common.io.ByteStreams;
 import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
 import com.sismics.util.mime.MimeType;
@@ -20,6 +9,14 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
+import junit.framework.Assert;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
+import org.junit.Test;
+
+import javax.ws.rs.core.MediaType;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 
 /**
  * Exhaustive test of the document resource.

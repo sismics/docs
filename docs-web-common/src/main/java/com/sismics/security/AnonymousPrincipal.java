@@ -1,8 +1,8 @@
 package com.sismics.security;
 
-import java.util.Locale;
-
 import org.joda.time.DateTimeZone;
+
+import java.util.Locale;
 
 /**
  * Anonymous principal.

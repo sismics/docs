@@ -1,13 +1,10 @@
 package com.sismics.docs.core.dao.jpa;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
-
 import com.sismics.docs.BaseTransactionalTest;
-import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.TransactionUtil;
+import junit.framework.Assert;
+import org.junit.Test;
 
 /**
  * Tests the persistance layer.

@@ -1,13 +1,12 @@
 package com.sismics.docs;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-
+import com.sismics.util.context.ThreadLocalContext;
+import com.sismics.util.jpa.EMF;
 import org.junit.After;
 import org.junit.Before;
 
-import com.sismics.util.context.ThreadLocalContext;
-import com.sismics.util.jpa.EMF;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 
 /**
  * Base class of tests with a transactional context.

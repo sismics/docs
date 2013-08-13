@@ -1,18 +1,16 @@
 package com.sismics.docs.rest.resource;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.sismics.docs.core.dao.file.theme.ThemeDao;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
-import com.sismics.docs.core.dao.file.theme.ThemeDao;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Theme REST resources.

@@ -25,12 +25,12 @@
 
 package com.sismics.util.jpa;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.hibernate.service.jdbc.connections.spi.ConnectionProvider;
 import org.hibernate.tool.hbm2ddl.ConnectionHelper;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * A {@link ConnectionHelper} implementation based on a provided

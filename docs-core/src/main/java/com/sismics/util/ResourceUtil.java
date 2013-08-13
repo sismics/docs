@@ -1,5 +1,7 @@
 package com.sismics.util;
 
+import com.google.common.collect.Lists;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -7,15 +9,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import com.google.common.collect.Lists;
 
 /**
  * Resource utilities.

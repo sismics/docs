@@ -1,10 +1,9 @@
 package com.sismics.docs.core.util;
 
-import java.io.File;
-
+import com.sismics.util.EnvironmentUtil;
 import org.apache.commons.lang.StringUtils;
 
-import com.sismics.util.EnvironmentUtil;
+import java.io.File;
 
 /**
  * Utilities to gain access to the storage directories used by the application.

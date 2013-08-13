@@ -1,7 +1,7 @@
 package com.sismics.docs.core.util;
 
-import java.io.IOException;
-
+import com.sismics.docs.core.dao.lucene.DocsStandardAnalyzer;
+import com.sismics.docs.core.model.context.AppContext;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.SerialMergeScheduler;
@@ -10,8 +10,7 @@ import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sismics.docs.core.dao.lucene.DocsStandardAnalyzer;
-import com.sismics.docs.core.model.context.AppContext;
+import java.io.IOException;
 
 /**
  * Lucene utils.

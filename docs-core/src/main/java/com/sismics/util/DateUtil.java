@@ -1,8 +1,8 @@
 package com.sismics.util;
 
-import java.util.Map.Entry;
-
 import com.google.common.collect.ImmutableMap;
+
+import java.util.Map.Entry;
 
 /**
  * Date utilities.

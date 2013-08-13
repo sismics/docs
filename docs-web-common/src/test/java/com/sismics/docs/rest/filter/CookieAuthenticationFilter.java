@@ -1,15 +1,14 @@
 package com.sismics.docs.rest.filter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ws.rs.core.Cookie;
-
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientRequest;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.filter.ClientFilter;
+
+import javax.ws.rs.core.Cookie;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Filter to add the authentication token into a cookie.

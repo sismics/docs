@@ -1,11 +1,10 @@
 package com.sismics.docs.core.util.jpa;
 
-import java.util.Map.Entry;
+import com.sismics.util.context.ThreadLocalContext;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-
-import com.sismics.util.context.ThreadLocalContext;
+import java.util.Map.Entry;
 
 /**
  * Query utilities.

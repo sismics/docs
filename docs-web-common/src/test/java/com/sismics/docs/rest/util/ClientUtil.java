@@ -1,16 +1,15 @@
 package com.sismics.docs.rest.util;
 
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.NewCookie;
-
-import junit.framework.Assert;
-
 import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import junit.framework.Assert;
+
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.NewCookie;
 
 /**
  * REST client utilities.

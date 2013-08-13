@@ -1,10 +1,10 @@
 package com.sismics.docs.rest.descriptor;
 
-import java.io.File;
-
 import com.sismics.util.filter.RequestContextFilter;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 import com.sun.jersey.test.framework.WebAppDescriptor;
+
+import java.io.File;
 
 /**
  * Jersey tests Webapp descriptor.

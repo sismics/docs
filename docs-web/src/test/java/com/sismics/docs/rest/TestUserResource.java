@@ -1,22 +1,18 @@
 package com.sismics.docs.rest;
 
-import java.util.Locale;
-
-import javax.ws.rs.core.MultivaluedMap;
-
-import junit.framework.Assert;
-
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.junit.Test;
-
-import com.sismics.docs.rest.BaseJerseyTest;
 import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import junit.framework.Assert;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.junit.Test;
+
+import javax.ws.rs.core.MultivaluedMap;
+import java.util.Locale;
 
 /**
  * Exhaustive test of the user resource.

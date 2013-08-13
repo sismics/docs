@@ -1,8 +1,7 @@
 package com.sismics.docs.core.util.jpa;
 
-import java.util.List;
-
 import javax.persistence.Query;
+import java.util.List;
 
 /**
  * Utilities for paginated lists.

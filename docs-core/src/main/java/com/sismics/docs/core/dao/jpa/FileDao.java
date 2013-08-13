@@ -1,15 +1,14 @@
 package com.sismics.docs.core.dao.jpa;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import com.sismics.docs.core.model.jpa.File;
+import com.sismics.util.context.ThreadLocalContext;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-
-import com.sismics.docs.core.model.jpa.File;
-import com.sismics.util.context.ThreadLocalContext;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * File DAO.

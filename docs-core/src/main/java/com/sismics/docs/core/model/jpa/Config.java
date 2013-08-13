@@ -1,14 +1,9 @@
 package com.sismics.docs.core.model.jpa;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.google.common.base.Objects;
 import com.sismics.docs.core.constant.ConfigType;
+
+import javax.persistence.*;
 
 /**
  * Configuration parameter entity.
