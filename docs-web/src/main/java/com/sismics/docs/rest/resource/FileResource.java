@@ -57,6 +57,7 @@ public class FileResource extends BaseResource {
         File fileDb;
         try {
             fileDb = fileDao.getFile(id);
+            // TODO Check that the current user owns the document linked to this file
         } catch (NoResultException e) {
             throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", id));
         }
@@ -243,6 +244,7 @@ public class FileResource extends BaseResource {
         File file;
         try {
             file = fileDao.getFile(id);
+            // TODO Check that the current user owns the document linked to this file
         } catch (NoResultException e) {
             throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", id));
         }
@@ -278,6 +280,7 @@ public class FileResource extends BaseResource {
         File file;
         try {
             file = fileDao.getFile(id);
+            // TODO Check that the current user owns the document linked to this file
         } catch (NoResultException e) {
             throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", id));
         }

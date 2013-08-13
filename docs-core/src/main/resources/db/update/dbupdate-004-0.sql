@@ -1,0 +1,1 @@
+create cached table T_FILESHARE ( FSH_ID_C varchar(36) not null, FSH_IDFILE_C varchar(36) not null, FSH_CREATEDATE_D datetime, FSH_DELETEDATE_D datetime, primary key (FSH_ID_C) );

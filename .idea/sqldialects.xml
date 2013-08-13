@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/docs-core/src/main/resources/db/update/dbupdate-000-0.sql" dialect="HSQLDB" />
+    <file url="file://$PROJECT_DIR$/docs-core/src/main/resources/db/update/dbupdate-001-0.sql" dialect="HSQLDB" />
+    <file url="file://$PROJECT_DIR$/docs-core/src/main/resources/db/update/dbupdate-002-0.sql" dialect="HSQLDB" />
+    <file url="file://$PROJECT_DIR$/docs-core/src/main/resources/db/update/dbupdate-003-0.sql" dialect="HSQLDB" />
+    <file url="file://$PROJECT_DIR$/docs-core/src/main/resources/db/update/dbupdate-004-0.sql" dialect="HSQLDB" />
+  </component>
+</project>
+
