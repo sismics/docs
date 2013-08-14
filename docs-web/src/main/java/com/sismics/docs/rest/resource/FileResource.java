@@ -28,10 +28,9 @@ import org.codehaus.jettison.json.JSONObject;
 
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
-import com.sismics.docs.core.dao.jpa.FileShareDao;
+import com.sismics.docs.core.dao.jpa.ShareDao;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.model.jpa.FileShare;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
@@ -50,52 +49,6 @@ import com.sun.jersey.multipart.FormDataParam;
  */
 @Path("/file")
 public class FileResource extends BaseResource {
-    /**
-     * Returns a file.
-     * 
-     * @param id Document ID
-     * @return Response
-     * @throws JSONException
-     */
-    @GET
-    @Path("{id: [a-z0-9\\-]+}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response get(
-            @PathParam("id") String id) throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
-        
-        FileDao fileDao = new FileDao();
-        FileShareDao fileShareDao = new FileShareDao();
-        DocumentDao documentDao = new DocumentDao();
-        File fileDb;
-        try {
-            fileDb = fileDao.getFile(id);
-            documentDao.getDocument(fileDb.getDocumentId(), principal.getId());
-        } catch (NoResultException e) {
-            throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", id));
-        }
-
-        JSONObject file = new JSONObject();
-        file.put("id", fileDb.getId());
-        file.put("mimetype", fileDb.getMimeType());
-        file.put("document_id", fileDb.getDocumentId());
-        file.put("create_date", fileDb.getCreateDate().getTime());
-        
-        // Add file shares
-        List<FileShare> fileShareDbList = fileShareDao.getByFileId(id);
-        List<JSONObject> fileShareList = new ArrayList<>();
-        for (FileShare fileShareDb : fileShareDbList) {
-            JSONObject fileShare = new JSONObject();
-            fileShare.put("id", fileShareDb.getId());
-            fileShareList.add(fileShare);
-        }
-        file.put("shares", fileShareList);
-        
-        return Response.ok().entity(file).build();
-    }
-    
     /**
      * Add a file to a document.
      * 
@@ -224,8 +177,15 @@ public class FileResource extends BaseResource {
     @Path("list")
     @Produces(MediaType.APPLICATION_JSON)
     public Response list(
-            @QueryParam("id") String documentId) throws JSONException {
-        if (!authenticate()) {
+            @QueryParam("id") String documentId,
+            @QueryParam("share") String shareId) throws JSONException {
+        authenticate();
+        
+        // Check document visibility
+        DocumentDao documentDao = new DocumentDao();
+        Document document = documentDao.getDocument(documentId);
+        ShareDao shareDao = new ShareDao();
+        if (!shareDao.checkVisibility(document, principal.getId(), shareId)) {
             throw new ForbiddenClientException();
         }
         
@@ -297,21 +257,9 @@ public class FileResource extends BaseResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response data(
             @PathParam("id") final String fileId,
-            @QueryParam("share") String fileShareId,
+            @QueryParam("share") String shareId,
             @QueryParam("thumbnail") boolean thumbnail) throws JSONException {
-        // Handle file sharing
-        FileShareDao fileShareDao = new FileShareDao();
-        if (fileShareId != null) {
-            FileShare fileShare = fileShareDao.getFileShare(fileShareId);
-            if (fileShare == null) {
-                throw new ClientException("FileShareNotFound", "File share not found");
-            }
-            if (!fileShare.getFileId().equals(fileId)) {
-                throw new ClientException("InvalidFile", "This file share is not linked to this file");
-            }
-        } else if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        authenticate();
         
         // Get the file
         FileDao fileDao = new FileDao();
@@ -319,8 +267,12 @@ public class FileResource extends BaseResource {
         File file;
         try {
             file = fileDao.getFile(fileId);
-            if (fileShareId == null) {
-                documentDao.getDocument(file.getDocumentId(), principal.getId());
+            Document document = documentDao.getDocument(file.getDocumentId());
+            
+            // Check document visibility
+            ShareDao shareDao = new ShareDao();
+            if (!shareDao.checkVisibility(document, principal.getId(), shareId)) {
+                throw new ForbiddenClientException();
             }
         } catch (NoResultException e) {
             throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", fileId));

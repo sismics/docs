@@ -44,6 +44,19 @@ public class DocumentDao {
      * Returns an active document.
      * 
      * @param id Document ID
+     * @return Document
+     */
+    public Document getDocument(String id) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select d from Document d where d.id = :id and d.deleteDate is null");
+        q.setParameter("id", id);
+        return (Document) q.getSingleResult();
+    }
+    
+    /**
+     * Returns an active document.
+     * 
+     * @param id Document ID
      * @param userId User ID
      * @return Document
      */
@@ -74,7 +87,12 @@ public class DocumentDao {
 
         // Delete linked data
         q = em.createQuery("update File f set f.deleteDate = :dateNow where f.documentId = :documentId and f.deleteDate is null");
-        q.setParameter("documentId", documentDb.getId());
+        q.setParameter("documentId", id);
+        q.setParameter("dateNow", dateNow);
+        q.executeUpdate();
+        
+        q = em.createQuery("update Share s set s.deleteDate = :dateNow where s.documentId = :documentId and s.deleteDate is null");
+        q.setParameter("documentId", id);
         q.setParameter("dateNow", dateNow);
         q.executeUpdate();
     }

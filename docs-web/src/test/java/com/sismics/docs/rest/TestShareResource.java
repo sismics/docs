@@ -7,6 +7,7 @@ import javax.ws.rs.core.MediaType;
 
 import junit.framework.Assert;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 
@@ -20,25 +21,25 @@ import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
 
 /**
- * Exhaustive test of the file share resource.
+ * Exhaustive test of the share resource.
  * 
  * @author bgamard
  */
-public class TestFileShareResource extends BaseJerseyTest {
+public class TestShareResource extends BaseJerseyTest {
     /**
-     * Test the file share resource.
+     * Test the share resource.
      * 
      * @throws Exception
      */
     @Test
-    public void testFileShareResource() throws Exception {
-        // Login fileshare1
-        clientUtil.createUser("fileshare1");
-        String fileShare1AuthenticationToken = clientUtil.login("fileshare1");
+    public void testShareResource() throws Exception {
+        // Login share1
+        clientUtil.createUser("share1");
+        String share1AuthenticationToken = clientUtil.login("share1");
         
         // Create a document
         WebResource documentResource = resource().path("/document");
-        documentResource.addFilter(new CookieAuthenticationFilter(fileShare1AuthenticationToken));
+        documentResource.addFilter(new CookieAuthenticationFilter(share1AuthenticationToken));
         MultivaluedMapImpl postParams = new MultivaluedMapImpl();
         postParams.add("title", "File test document 1");
         ClientResponse response = documentResource.put(ClientResponse.class, postParams);
@@ -49,7 +50,7 @@ public class TestFileShareResource extends BaseJerseyTest {
         
         // Add a file
         WebResource fileResource = resource().path("/file");
-        fileResource.addFilter(new CookieAuthenticationFilter(fileShare1AuthenticationToken));
+        fileResource.addFilter(new CookieAuthenticationFilter(share1AuthenticationToken));
         FormDataMultiPart form = new FormDataMultiPart();
         InputStream file = this.getClass().getResourceAsStream("/file/PIA00452.jpg");
         FormDataBodyPart fdp = new FormDataBodyPart("file",
@@ -62,40 +63,54 @@ public class TestFileShareResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         String file1Id = json.getString("id");
         
-        // Share this file
-        WebResource fileShareResource = resource().path("/fileshare");
-        fileShareResource.addFilter(new CookieAuthenticationFilter(fileShare1AuthenticationToken));
+        // Share this document
+        WebResource fileShareResource = resource().path("/share");
+        fileShareResource.addFilter(new CookieAuthenticationFilter(share1AuthenticationToken));
         postParams = new MultivaluedMapImpl();
-        postParams.add("id", file1Id);
+        postParams.add("id", document1Id);
+        postParams.add("name", "4 All");
         response = fileShareResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
-        String fileShare1Id = json.getString("id");
+        String share1Id = json.getString("id");
+        
+        // Get the document anonymously
+        documentResource = resource().path("/document/" + document1Id);
+        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
+        getParams.putSingle("share", share1Id);
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(document1Id, json.getString("id"));
+        Assert.assertEquals(1, json.getJSONArray("shares").length());
+        Assert.assertEquals(share1Id, json.getJSONArray("shares").getJSONObject(0).getString("id"));
+        Assert.assertEquals("4 All", json.getJSONArray("shares").getJSONObject(0).getString("name"));
 
+        // Get all files from this document anonymously
+        fileResource = resource().path("/file/list");
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("id", document1Id);
+        getParams.putSingle("share", share1Id);
+        response = fileResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        JSONArray files = json.getJSONArray("files");
+        Assert.assertEquals(1, files.length());
+        
         // Get the file data anonymously
         fileResource = resource().path("/file/" + file1Id + "/data");
-        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
+        getParams = new MultivaluedMapImpl();
         getParams.putSingle("thumbnail", false);
-        getParams.putSingle("share", fileShare1Id);
+        getParams.putSingle("share", share1Id);
         response = fileResource.queryParams(getParams).get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         InputStream is = response.getEntityInputStream();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(163510, fileBytes.length);
         
-        // Get the file
-        fileResource = resource().path("/file/" + file1Id);
-        fileResource.addFilter(new CookieAuthenticationFilter(fileShare1AuthenticationToken));
-        response = fileResource.get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        Assert.assertEquals(file1Id, json.getString("id"));
-        Assert.assertEquals(1, json.getJSONArray("shares").length());
-        Assert.assertEquals(fileShare1Id, json.getJSONArray("shares").getJSONObject(0).getString("id"));
-        
         // Deletes the share
-        fileShareResource = resource().path("/fileshare/" + fileShare1Id);
-        fileShareResource.addFilter(new CookieAuthenticationFilter(fileShare1AuthenticationToken));
+        fileShareResource = resource().path("/share/" + share1Id);
+        fileShareResource.addFilter(new CookieAuthenticationFilter(share1AuthenticationToken));
         response = fileShareResource.delete(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);

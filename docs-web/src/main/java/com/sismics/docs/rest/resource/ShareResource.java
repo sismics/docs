@@ -17,67 +17,65 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.sismics.docs.core.dao.jpa.DocumentDao;
-import com.sismics.docs.core.dao.jpa.FileDao;
-import com.sismics.docs.core.dao.jpa.FileShareDao;
-import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.model.jpa.FileShare;
+import com.sismics.docs.core.dao.jpa.ShareDao;
+import com.sismics.docs.core.model.jpa.Share;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
 
 /**
- * File share REST resources.
+ * Share REST resources.
  * 
  * @author bgamard
  */
-@Path("/fileshare")
-public class FileShareResource extends BaseResource {
+@Path("/share")
+public class ShareResource extends BaseResource {
     /**
-     * Add a file share to a file.
+     * Add a share to a document.
      *
-     * @param fileId File ID
-     * @param fileBodyPart File to add
+     * @param documentId Document ID
      * @return Response
      * @throws JSONException
      */
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response add(
-            @FormParam("id") String fileId) throws JSONException {
+            @FormParam("id") String documentId,
+            @FormParam("name") String name) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
 
         // Validate input data
-        ValidationUtil.validateRequired(fileId, "id");
+        ValidationUtil.validateRequired(documentId, "id");
+        name = ValidationUtil.validateLength(name, "name", 1, 36, true);
 
-        // Get the file
-        FileDao fileDao = new FileDao();
+        // Get the document
         DocumentDao documentDao = new DocumentDao();
         try {
-            File file = fileDao.getFile(fileId);
-            documentDao.getDocument(file.getDocumentId(), principal.getId());
+            documentDao.getDocument(documentId, principal.getId());
         } catch (NoResultException e) {
-            throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", fileId));
+            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
         }
         
-        // Create the file share
-        FileShareDao fileShareDao = new FileShareDao();
-        FileShare fileShare = new FileShare();
-        fileShare.setFileId(fileId);
-        fileShareDao.create(fileShare);
+        // Create the share
+        ShareDao shareDao = new ShareDao();
+        Share share = new Share();
+        share.setDocumentId(documentId);
+        share.setName(name);
+        shareDao.create(share);
 
         // Always return ok
         JSONObject response = new JSONObject();
         response.put("status", "ok");
-        response.put("id", fileShare.getId());
+        response.put("id", share.getId());
         return Response.ok().entity(response).build();
     }
 
     /**
-     * Deletes a file share.
+     * Deletes a share.
      *
-     * @param id File share ID
+     * @param id Share ID
      * @return Response
      * @throws JSONException
      */
@@ -90,21 +88,19 @@ public class FileShareResource extends BaseResource {
             throw new ForbiddenClientException();
         }
 
-        // Get the file share
-        FileShareDao fileShareDao = new FileShareDao();
-        FileDao fileDao = new FileDao();
+        // Get the share
+        ShareDao shareDao = new ShareDao();
         DocumentDao documentDao = new DocumentDao();
-        FileShare fileShare;
+        Share share;
         try {
-            fileShare = fileShareDao.getFileShare(id);
-            File file = fileDao.getFile(fileShare.getFileId());
-            documentDao.getDocument(file.getDocumentId(), principal.getId());
+            share = shareDao.getShare(id);
+            documentDao.getDocument(share.getDocumentId(), principal.getId());
         } catch (NoResultException e) {
-            throw new ClientException("FileShareNotFound", MessageFormat.format("File share not found: {0}", id));
+            throw new ClientException("ShareNotFound", MessageFormat.format("Share not found: {0}", id));
         }
 
-        // Delete the file share
-        fileShareDao.delete(fileShare.getId());
+        // Delete the share
+        shareDao.delete(share.getId());
         
         // Always return ok
         JSONObject response = new JSONObject();

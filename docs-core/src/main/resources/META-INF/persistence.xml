@@ -15,6 +15,6 @@
     <class>com.sismics.docs.core.model.jpa.Document</class>
     <class>com.sismics.docs.core.model.jpa.Tag</class>
     <class>com.sismics.docs.core.model.jpa.DocumentTag</class>
-    <class>com.sismics.docs.core.model.jpa.FileShare</class>
+    <class>com.sismics.docs.core.model.jpa.Share</class>
   </persistence-unit>
 </persistence>
