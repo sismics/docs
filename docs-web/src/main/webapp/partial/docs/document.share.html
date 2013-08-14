@@ -1,0 +1,13 @@
+<div class="modal-header">
+  <h3>Share document</h3>
+</div>
+<div class="modal-body">
+  <p>
+    <label for="share-result">Name the sharing if you want to share multiple times the same document.</label>
+    <input type="text" id="share-result" ng-model="name" />
+  </p>
+</div>
+<div class="modal-footer">
+  <button ng-click="close(name)" class="btn btn-primary"><span class="icon-share icon-white"></span> Share</button>
+  <button ng-click="close(null)" class="btn">Cancel</button>
+</div>

@@ -6,7 +6,7 @@
 App.controller('FileView', function($dialog, $state, $stateParams) {
   var dialog = $dialog.dialog({
     keyboard: true,
-    templateUrl: 'partial/file.view.html',
+    templateUrl: 'partial/docs/file.view.html',
     controller: function($scope, $state, $stateParams, Restangular, dialog) {
       $scope.id = $stateParams.fileId;
       

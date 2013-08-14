@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Trackino application.
+ * Sismics Docs application.
  */
 var App = angular.module('docs',
     // Dependencies
@@ -19,7 +19,7 @@ var App = angular.module('docs',
     url: '',
     views: {
       'page': {
-        templateUrl: 'partial/main.html',
+        templateUrl: 'partial/docs/main.html',
         controller: 'Main'
       }
     }
@@ -28,7 +28,7 @@ var App = angular.module('docs',
     url: '/tag',
     views: {
       'page': {
-        templateUrl: 'partial/tag.html',
+        templateUrl: 'partial/docs/tag.html',
         controller: 'Tag'
       }
     }
@@ -38,7 +38,7 @@ var App = angular.module('docs',
     abstract: true,
     views: {
       'page': {
-        templateUrl: 'partial/settings.html',
+        templateUrl: 'partial/docs/settings.html',
         controller: 'Settings'
       }
     }
@@ -47,7 +47,7 @@ var App = angular.module('docs',
       url: '',
       views: {
         'settings': {
-          templateUrl: 'partial/settings.default.html',
+          templateUrl: 'partial/docs/settings.default.html',
           controller: 'SettingsDefault'
         }
       }
@@ -56,7 +56,7 @@ var App = angular.module('docs',
       url: '/account',
       views: {
         'settings': {
-          templateUrl: 'partial/settings.account.html',
+          templateUrl: 'partial/docs/settings.account.html',
           controller: 'SettingsAccount'
         }
       }
@@ -65,7 +65,7 @@ var App = angular.module('docs',
       url: '/session',
       views: {
         'settings': {
-          templateUrl: 'partial/settings.session.html',
+          templateUrl: 'partial/docs/settings.session.html',
           controller: 'SettingsSession'
         }
       }
@@ -74,7 +74,7 @@ var App = angular.module('docs',
       url: '/log',
       views: {
         'settings': {
-          templateUrl: 'partial/settings.log.html',
+          templateUrl: 'partial/docs/settings.log.html',
           controller: 'SettingsLog'
         }
       }
@@ -83,7 +83,7 @@ var App = angular.module('docs',
       url: '/user',
       views: {
         'settings': {
-          templateUrl: 'partial/settings.user.html',
+          templateUrl: 'partial/docs/settings.user.html',
           controller: 'SettingsUser'
         }
       }
@@ -92,7 +92,7 @@ var App = angular.module('docs',
         url: '/edit/:username',
         views: {
           'user': {
-            templateUrl: 'partial/settings.user.edit.html',
+            templateUrl: 'partial/docs/settings.user.edit.html',
             controller: 'SettingsUserEdit'
           }
         }
@@ -101,7 +101,7 @@ var App = angular.module('docs',
         url: '/add',
         views: {
           'user': {
-            templateUrl: 'partial/settings.user.edit.html',
+            templateUrl: 'partial/docs/settings.user.edit.html',
             controller: 'SettingsUserEdit'
           }
         }
@@ -111,7 +111,7 @@ var App = angular.module('docs',
     abstract: true,
     views: {
       'page': {
-        templateUrl: 'partial/document.html',
+        templateUrl: 'partial/docs/document.html',
         controller: 'Document'
       }
     }
@@ -120,7 +120,7 @@ var App = angular.module('docs',
       url: '',
       views: {
         'document': {
-          templateUrl: 'partial/document.default.html',
+          templateUrl: 'partial/docs/document.default.html',
           controller: 'DocumentDefault'
         }
       }
@@ -129,7 +129,7 @@ var App = angular.module('docs',
       url: '/add',
       views: {
         'document': {
-          templateUrl: 'partial/document.edit.html',
+          templateUrl: 'partial/docs/document.edit.html',
           controller: 'DocumentEdit'
         }
       }
@@ -138,7 +138,7 @@ var App = angular.module('docs',
       url: '/edit/:id',
       views: {
         'document': {
-          templateUrl: 'partial/document.edit.html',
+          templateUrl: 'partial/docs/document.edit.html',
           controller: 'DocumentEdit'
         }
       }
@@ -147,7 +147,7 @@ var App = angular.module('docs',
       url: '/view/:id',
       views: {
         'document': {
-          templateUrl: 'partial/document.view.html',
+          templateUrl: 'partial/docs/document.view.html',
           controller: 'DocumentView'
         }
       }
@@ -164,7 +164,7 @@ var App = angular.module('docs',
     url: '/login',
     views: {
       'page': {
-        templateUrl: 'partial/login.html',
+        templateUrl: 'partial/docs/login.html',
         controller: 'Login'
       }
     }

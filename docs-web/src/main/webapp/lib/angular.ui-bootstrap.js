@@ -3288,7 +3288,7 @@ angular.module("template/dialog/message.html", []).run(["$templateCache", functi
     "   <h3>{{ title }}</h3>\n" +
     "</div>\n" +
     "<div class=\"modal-body\">\n" +
-    "   <p>{{ message }}</p>\n" +
+    "   <p ng-bind-html-unsafe=\"message\"></p>\n" +
     "</div>\n" +
     "<div class=\"modal-footer\">\n" +
     "   <button ng-repeat=\"btn in buttons\" ng-click=\"close(btn.result)\" class=\"btn\" ng-class=\"btn.cssClass\">{{ btn.label }}</button>\n" +

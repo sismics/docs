@@ -42,7 +42,10 @@ App.controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
   $scope.deleteTag = function(tag) {
     var title = 'Delete tag';
     var msg = 'Do you really want to delete this tag?';
-    var btns = [{result:'cancel', label: 'Cancel'}, {result:'ok', label: 'OK', cssClass: 'btn-primary'}];
+    var btns = [
+      {result: 'cancel', label: 'Cancel'},
+      {result: 'ok', label: 'OK', cssClass: 'btn-primary'}
+    ];
 
     $dialog.messageBox(title, msg, btns)
     .open()
@@ -67,7 +70,10 @@ App.controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
       var stat = _.find($scope.stats, function (t) {
         return tag.id == t.id;
       });
-      _.extend(stat, tag);
+
+      if (stat) {
+        _.extend(stat, tag);
+      }
     });
   };
 });

@@ -6,7 +6,7 @@
 App.directive('selectTag', function() {
   return {
     restrict: 'E',
-    templateUrl: 'partial/directive.selecttag.html',
+    templateUrl: 'partial/docs/directive.selecttag.html',
     replace: true,
     scope: {
       tags: '=',

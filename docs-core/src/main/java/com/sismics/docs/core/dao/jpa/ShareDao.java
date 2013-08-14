@@ -103,7 +103,7 @@ public class ShareDao {
         // The share is linked to the document
         if (shareId != null) {
             Share share = getShare(shareId);
-            if (share.getDocumentId().equals(document.getId())) {
+            if (share != null && share.getDocumentId().equals(document.getId())) {
                 return true;
             }
         }
