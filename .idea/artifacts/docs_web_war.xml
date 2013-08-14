@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="docs-web:war">
-    <output-path>$PROJECT_DIR$/docs-web/target</output-path>
-    <root id="archive" name="docs-web-1.0-SNAPSHOT.war">
-      <element id="artifact" artifact-name="docs-web:war exploded" />
-    </root>
-  </artifact>
-</component>
