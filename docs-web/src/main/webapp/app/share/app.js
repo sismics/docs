@@ -31,6 +31,22 @@ var App = angular.module('share',
         controller: 'Share'
       }
     }
+  })
+    .state('share.file', {
+      url: '/file/:fileId',
+      views: {
+        'file': {
+          controller: 'FileView'
+        }
+      }
+    })
+  .state('403', {
+    url: '/403',
+    views: {
+      'page': {
+        templateUrl: 'partial/share/403.html'
+      }
+    }
   });
   
   // Configuring Restangular

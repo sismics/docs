@@ -10,7 +10,7 @@ App.controller('Share', function($scope, $state, $stateParams, Restangular) {
         $scope.document = data;
       }, function (response) {
         if (response.data.status == 403) {
-          // TODO Sharing no more valid
+          $state.transitionTo('403');
         }
       });
 
@@ -19,4 +19,11 @@ App.controller('Share', function($scope, $state, $stateParams, Restangular) {
       .then(function (data) {
         $scope.files = data.files;
       });
+
+  /**
+   * Navigate to the selected file.
+   */
+  $scope.openFile = function (file) {
+    $state.transitionTo('share.file', { documentId: $stateParams.documentId, shareId: $stateParams.shareId, fileId: file.id })
+  };
 });

@@ -14,8 +14,8 @@
 </div>
 
 
-<img ng-show="file.mimetype == 'image/png' || file.mimetype == 'image/jpeg' || file.mimetype == 'image/gif'" ng-src="api/file/{{ id }}/data" />
+<img ng-if="$stateParams.fileId && (file.mimetype == 'image/png' || file.mimetype == 'image/jpeg' || file.mimetype == 'image/gif')" ng-src="api/file/{{ $stateParams.fileId }}/data" />
 
-<div class="text-center" ng-show="file.mimetype == 'application/pdf'">
-  <img ng-src="api/file/{{ id }}/data?thumbnail=true" />
+<div class="text-center" ng-if="$stateParams.fileId && file.mimetype == 'application/pdf'">
+  <img ng-src="api/file/{{ $stateParams.fileId }}/data?thumbnail=true" />
 </div>

@@ -182,11 +182,15 @@ public class FileResource extends BaseResource {
         authenticate();
         
         // Check document visibility
-        DocumentDao documentDao = new DocumentDao();
-        Document document = documentDao.getDocument(documentId);
-        ShareDao shareDao = new ShareDao();
-        if (!shareDao.checkVisibility(document, principal.getId(), shareId)) {
-            throw new ForbiddenClientException();
+        try {
+            DocumentDao documentDao = new DocumentDao();
+            Document document = documentDao.getDocument(documentId);
+            ShareDao shareDao = new ShareDao();
+            if (!shareDao.checkVisibility(document, principal.getId(), shareId)) {
+                throw new ForbiddenClientException();
+            }
+        } catch (NoResultException e) {
+            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
         }
         
         FileDao fileDao = new FileDao();

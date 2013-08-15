@@ -8,15 +8,13 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
     keyboard: true,
     templateUrl: 'partial/docs/file.view.html',
     controller: function($scope, $state, $stateParams, Restangular, dialog) {
-      $scope.id = $stateParams.fileId;
-      
       // Load files
       Restangular.one('file').getList('list', { id: $stateParams.id }).then(function(data) {
         $scope.files = data.files;
         
         // Search current file
-        _.each($scope.files, function(value, key, list) {
-          if (value.id == $scope.id) {
+        _.each($scope.files, function(value) {
+          if (value.id == $stateParams.fileId) {
             $scope.file = value;
           }
         });
@@ -26,8 +24,8 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
        * Navigate to the next file.
        */
       $scope.nextFile = function() {
-        _.each($scope.files, function(value, key, list) {
-          if (value.id == $scope.id) {
+        _.each($scope.files, function(value, key) {
+          if (value.id == $stateParams.fileId) {
             var next = $scope.files[key + 1];
             if (next) {
               dialog.close({});
@@ -41,8 +39,8 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
        * Navigate to the previous file.
        */
       $scope.previousFile = function() {
-        _.each($scope.files, function(value, key, list) {
-          if (value.id == $scope.id) {
+        _.each($scope.files, function(value, key) {
+          if (value.id == $stateParams.fileId) {
             var previous = $scope.files[key - 1];
             if (previous) {
               dialog.close({});
@@ -56,7 +54,7 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
        * Open the file in a new window.
        */
       $scope.openFile = function() {
-        window.open('api/file/' + $scope.id + '/data');
+        window.open('api/file/' + $stateParams.fileId + '/data');
       };
 
       /**
@@ -65,6 +63,14 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
       $scope.closeFile = function () {
         dialog.close();
       };
+
+      // Close the dialog when the user exits this state
+      var off = $scope.$on('$stateChangeStart', function(event, toState){
+        if (dialog.isOpen()) {
+          dialog.close(toState.name == 'document.view.file' ? {} : null);
+        }
+        off();
+      });
     }
   });
 

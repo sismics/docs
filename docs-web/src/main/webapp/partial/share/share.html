@@ -1,1 +1,24 @@
-Shared document
+<div class="row-fluid">
+  <div class="well span12">
+    <div class="page-header">
+      <h1>{{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }}</small></h1>
+      <ul class="inline">
+        <li ng-repeat="tag in document.tags"><span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span></li>
+      </ul>
+    </div>
+
+    <p ng-bind-html="document.description | newline"></p>
+
+    <ul class="thumbnails thumbnails-file" ui-sortable="fileSortableOptions" ng-model="files" ng-show="files.length > 0">
+      <li class="span2 text-center thumbnail-container" ng-repeat="file in files">
+        <div class="thumbnail">
+          <a ng-click="openFile(file)">
+            <img class="thumbnail-file" ng-src="api/file/{{ file.id }}/data?thumbnail=true&share={{ $stateParams.shareId }}" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
+          </a>
+        </div>
+      </li>
+    </ul>
+
+    <div ui-view="file"></div>
+  </div>
+</div>
