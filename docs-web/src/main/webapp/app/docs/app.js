@@ -5,14 +5,14 @@
  */
 var App = angular.module('docs',
     // Dependencies
-    ['ui.state', 'ui.bootstrap', 'ui.route', 'ui.keypress', 'ui.validate',
+    ['ui.state', 'ui.bootstrap', 'ui.keypress', 'ui.validate',
       'ui.sortable', 'restangular', 'ngSanitize', 'ngMobile', 'colorpicker.module']
   )
 
 /**
  * Configuring modules.
  */
-.config(function($stateProvider, $httpProvider, $routeProvider, RestangularProvider) {
+.config(function($stateProvider, $httpProvider, RestangularProvider) {
   // Configuring UI Router
   $stateProvider
   .state('main', {

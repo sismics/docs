@@ -58,6 +58,15 @@ public class TestDocumentResource extends BaseJerseyTest {
         String document1Id = json.optString("id");
         Assert.assertNotNull(document1Id);
         
+        // Share this document
+        WebResource fileShareResource = resource().path("/share");
+        fileShareResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        postParams = new MultivaluedMapImpl();
+        postParams.add("id", document1Id);
+        response = fileShareResource.put(ClientResponse.class, postParams);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        
         // List all documents
         documentResource = resource().path("/document/list");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
@@ -113,6 +122,19 @@ public class TestDocumentResource extends BaseJerseyTest {
         documents = json.getJSONArray("documents");
         Assert.assertTrue(documents.length() == 1);
         Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
+        
+        // Search documents by shared status
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("shared", true);
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 1);
+        Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
+        Assert.assertEquals(true, documents.getJSONObject(0).getBoolean("shared"));
         
         // Search documents (nothing)
         documentResource = resource().path("/document/list");

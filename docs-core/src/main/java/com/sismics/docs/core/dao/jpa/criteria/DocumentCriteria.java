@@ -36,6 +36,11 @@ public class DocumentCriteria {
     private List<String> tagIdList;
     
     /**
+     * Shared status.
+     */
+    private Boolean shared;
+    
+    /**
      * Getter of userId.
      *
      * @return userId
@@ -123,5 +128,23 @@ public class DocumentCriteria {
      */
     public void setTagIdList(List<String> tagIdList) {
         this.tagIdList = tagIdList;
+    }
+
+    /**
+     * Getter of shared.
+     *
+     * @return the shared
+     */
+    public Boolean getShared() {
+        return shared;
+    }
+
+    /**
+     * Setter of shared.
+     *
+     * @param shared shared
+     */
+    public void setShared(Boolean shared) {
+        this.shared = shared;
     }
 }

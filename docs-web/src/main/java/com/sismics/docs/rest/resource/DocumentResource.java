@@ -129,7 +129,8 @@ public class DocumentResource extends BaseResource {
             @QueryParam("search") String search,
             @QueryParam("create_date_min") String createDateMinStr,
             @QueryParam("create_date_max") String createDateMaxStr,
-            @QueryParam("tags") List<String> tagIdList) throws JSONException {
+            @QueryParam("tags") List<String> tagIdList,
+            @QueryParam("shared") Boolean shared) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -150,6 +151,7 @@ public class DocumentResource extends BaseResource {
         documentCriteria.setCreateDateMin(createDateMin);
         documentCriteria.setCreateDateMax(createDateMax);
         documentCriteria.setTagIdList(tagIdList);
+        documentCriteria.setShared(shared);
         if (!Strings.isNullOrEmpty(search)) {
             documentCriteria.setSearch(search);
         }
@@ -161,6 +163,7 @@ public class DocumentResource extends BaseResource {
             document.put("title", documentDto.getTitle());
             document.put("description", documentDto.getDescription());
             document.put("create_date", documentDto.getCreateTimestamp());
+            document.put("shared", documentDto.getShared());
             
             // Get tags
             List<TagDto> tagDtoList = tagDao.getByDocumentId(documentDto.getId());

@@ -28,6 +28,11 @@ public class DocumentDto {
      * Creation date.
      */
     private Long createTimestamp;
+    
+    /**
+     * Shared status.
+     */
+    private Boolean shared;
 
     /**
      * Getter de id.
@@ -99,5 +104,23 @@ public class DocumentDto {
      */
     public void setCreateTimestamp(Long createTimestamp) {
         this.createTimestamp = createTimestamp;
+    }
+
+    /**
+     * Getter of shared.
+     *
+     * @return the shared
+     */
+    public Boolean getShared() {
+        return shared;
+    }
+
+    /**
+     * Setter of shared.
+     *
+     * @param shared shared
+     */
+    public void setShared(Boolean shared) {
+        this.shared = shared;
     }
 }

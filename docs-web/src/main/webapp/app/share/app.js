@@ -5,13 +5,13 @@
  */
 var App = angular.module('share',
     // Dependencies
-    ['ui.state', 'ui.bootstrap', 'ui.route', 'restangular', 'ngSanitize', 'ngMobile']
+    ['ui.state', 'ui.bootstrap', 'restangular', 'ngSanitize', 'ngMobile']
   )
 
 /**
  * Configuring modules.
  */
-.config(function($stateProvider, $httpProvider, $routeProvider, RestangularProvider) {
+.config(function($stateProvider, $httpProvider, RestangularProvider) {
   // Configuring UI Router
   $stateProvider
   .state('main', {

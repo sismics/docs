@@ -1,0 +1,21 @@
+<div class="text-center">
+  <div class="btn-group pull-left">
+    <button type="button" class="btn" ng-click="closeFile()"><span class="icon-remove"></span></button>
+  </div>
+
+  <div class="btn-group">
+    <button type="button" class="btn" ng-click="previousFile()">Previous</button>
+    <button type="button" class="btn" ng-click="nextFile()">Next</button>
+  </div>
+  
+  <div class="btn-group pull-right">
+    <button type="button" class="btn" ng-click="openFile()"><span class="icon-share"></span></button>
+  </div>
+</div>
+
+
+<img ng-if="$stateParams.fileId && (file.mimetype == 'image/png' || file.mimetype == 'image/jpeg' || file.mimetype == 'image/gif')" ng-src="api/file/{{ $stateParams.fileId }}/data?share={{ $stateParams.shareId }}" />
+
+<div class="text-center" ng-if="$stateParams.fileId && file.mimetype == 'application/pdf'">
+  <img ng-src="api/file/{{ $stateParams.fileId }}/data?thumbnail=true&share={{ $stateParams.shareId }}" />
+</div>

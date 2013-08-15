@@ -123,17 +123,9 @@ public class DocumentDao {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
         List<String> criteriaList = new ArrayList<String>();
         
-        StringBuilder sb = new StringBuilder("select d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3");
+        StringBuilder sb = new StringBuilder("select d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, s.SHA_ID_C is not null c4 ");
         sb.append(" from T_DOCUMENT d ");
-        if (criteria.getTagIdList() != null && !criteria.getTagIdList().isEmpty()) {
-            int index = 0;
-            for (String tagId : criteria.getTagIdList()) {
-                sb.append(" left join T_DOCUMENT_TAG dt" + index + " on dt" + index + ".DOT_IDDOCUMENT_C = d.DOC_ID_C and dt" + index + ".DOT_IDTAG_C = :tagId" + index + " ");
-                criteriaList.add("dt" + index + ".DOT_ID_C is not null");
-                parameterMap.put("tagId" + index, tagId);
-                index++;
-            }
-        }
+        sb.append(" left join T_SHARE s on s.SHA_IDDOCUMENT_C = d.DOC_ID_C and s.SHA_DELETEDATE_D is null ");
         
         // Adds search criteria
         if (criteria.getUserId() != null) {
@@ -151,6 +143,18 @@ public class DocumentDao {
         if (criteria.getCreateDateMax() != null) {
             criteriaList.add("d.DOC_CREATEDATE_D <= :createDateMax");
             parameterMap.put("createDateMax", criteria.getCreateDateMax());
+        }
+        if (criteria.getTagIdList() != null && !criteria.getTagIdList().isEmpty()) {
+            int index = 0;
+            for (String tagId : criteria.getTagIdList()) {
+                sb.append(" left join T_DOCUMENT_TAG dt" + index + " on dt" + index + ".DOT_IDDOCUMENT_C = d.DOC_ID_C and dt" + index + ".DOT_IDTAG_C = :tagId" + index + " ");
+                criteriaList.add("dt" + index + ".DOT_ID_C is not null");
+                parameterMap.put("tagId" + index, tagId);
+                index++;
+            }
+        }
+        if (criteria.getShared() != null && criteria.getShared()) {
+            criteriaList.add("s.SHA_ID_C is not null");
         }
         
         criteriaList.add("d.DOC_DELETEDATE_D is null");
@@ -173,6 +177,7 @@ public class DocumentDao {
             documentDto.setTitle((String) o[i++]);
             documentDto.setDescription((String) o[i++]);
             documentDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
+            documentDto.setShared((Boolean) o[i++]);
             documentDtoList.add(documentDto);
         }
 

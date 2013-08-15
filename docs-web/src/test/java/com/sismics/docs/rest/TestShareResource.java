@@ -64,12 +64,12 @@ public class TestShareResource extends BaseJerseyTest {
         String file1Id = json.getString("id");
         
         // Share this document
-        WebResource fileShareResource = resource().path("/share");
-        fileShareResource.addFilter(new CookieAuthenticationFilter(share1AuthenticationToken));
+        WebResource shareResource = resource().path("/share");
+        shareResource.addFilter(new CookieAuthenticationFilter(share1AuthenticationToken));
         postParams = new MultivaluedMapImpl();
         postParams.add("id", document1Id);
         postParams.add("name", "4 All");
-        response = fileShareResource.put(ClientResponse.class, postParams);
+        response = shareResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         String share1Id = json.getString("id");
@@ -109,9 +109,9 @@ public class TestShareResource extends BaseJerseyTest {
         Assert.assertEquals(163510, fileBytes.length);
         
         // Deletes the share
-        fileShareResource = resource().path("/share/" + share1Id);
-        fileShareResource.addFilter(new CookieAuthenticationFilter(share1AuthenticationToken));
-        response = fileShareResource.delete(ClientResponse.class);
+        shareResource = resource().path("/share/" + share1Id);
+        shareResource.addFilter(new CookieAuthenticationFilter(share1AuthenticationToken));
+        response = shareResource.delete(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals("ok", json.getString("status"));
