@@ -5756,6 +5756,7 @@ function LocationHtml5Url(appBase, basePrefix) {
  */
 function LocationHashbangUrl(appBase, hashPrefix) {
   var appBaseNoFile = stripFile(appBase);
+  appBaseNoFile = appBase;
 
   /**
    * Parse given hashbang url into properties
