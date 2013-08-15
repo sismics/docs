@@ -9,7 +9,7 @@ App.controller('Share', function($scope, $state, $stateParams, Restangular) {
       .then(function (data) {
         $scope.document = data;
       }, function (response) {
-        if (response.data.status == 403) {
+        if (response.status == 403) {
           $state.transitionTo('403');
         }
       });
