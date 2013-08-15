@@ -1,1 +1,2 @@
-- Remove advanced search form and put it in an unified search field (client/server)
+- Remove advanced search form and put it in an unified search field (eg. tag:assurance tag:other before:2012 after:2011-09 shared:yes thing) (client/server)
+- Loading feedback for document (list), document.view, tag.default
