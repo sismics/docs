@@ -29,6 +29,12 @@
                 <select-tag tags="search.tags" class="input-block-level" ref="inputTags" />
               </div>
             </div>
+            <div class="control-group">
+              <label class="control-label" for="inputShared">Shared</label>
+              <div class="controls">
+                <input type="checkbox" ng-model="search.shared" />
+              </div>
+            </div>
             <div class="form-actions">
               <button ng-click="initSearch()" class="btn btn-warning" type="submit">Reset search</button>
             </div>
@@ -46,7 +52,7 @@
         </thead>
         <tbody>
           <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents">
-            <td>{{ document.title }}</td>
+            <td>{{ document.title }} <span class="icon-share" ng-if="document.shared" tooltip="Shared"></span></td>
             <td>{{ document.create_date | date: 'yyyy-MM-dd' }}</td>
             <td class="hidden-phone cell-tags">
               <div class="tags">
