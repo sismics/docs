@@ -26,9 +26,9 @@ App.controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
   };
   
   /**
-   * Validate a tag.
+   * Validate a tag name for duplicate.
    */
-  $scope.validateTag = function(name) {
+  $scope.validateDuplicate = function(name) {
     return !_.find($scope.tags, function(tag) {
       return tag.name == name;
     });

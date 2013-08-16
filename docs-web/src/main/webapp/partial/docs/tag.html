@@ -2,11 +2,15 @@
   <div class="row-fluid">
     <div class="span4 well text-center">
       <form name="tagForm" novalidate>
-	      <div class="control-group input-prepend input-append input-block-level" ng-class="{ error: !tagForm.name.$valid }">
-	        <span colorpicker class="btn" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
-	        <input type="text" name="name" placeholder="New tag"
-            ng-maxlength="36" required ng-model="tag.name" ui-validate="'validateTag($value)'">
-	        <button type="submit" class="btn btn-primary" ng-disabled="!tagForm.$valid" ng-click="addTag()">Add</button>
+        <div class="control-group" ng-class="{ error: !tagForm.name.$valid }">
+		      <div class="input-prepend input-append input-block-level">
+		        <span colorpicker class="btn" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
+		        <input type="text" name="name" placeholder="New tag"
+	            ng-maxlength="36" required ng-model="tag.name" ui-validate="{duplicate: 'validateDuplicate($value)', space: '!$value || $value.indexOf(\' \') == -1' }">
+		        <button type="submit" class="btn btn-primary" ng-disabled="!tagForm.$valid" ng-click="addTag()">Add</button>
+		      </div>
+		      <span class="help-inline" ng-show="tagForm.name.$error.duplicate">This tag already exists</span>
+		      <span class="help-inline" ng-show="tagForm.name.$error.space">Space are not allowed</span>
 	      </div>
       </form>
       
