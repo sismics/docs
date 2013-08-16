@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.NoResultException;
 import javax.ws.rs.DELETE;
@@ -23,6 +24,11 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+import org.joda.time.format.DateTimeParser;
 
 import com.google.common.base.Strings;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
@@ -126,18 +132,10 @@ public class DocumentResource extends BaseResource {
             @QueryParam("offset") Integer offset,
             @QueryParam("sort_column") Integer sortColumn,
             @QueryParam("asc") Boolean asc,
-            @QueryParam("search") String search,
-            @QueryParam("create_date_min") String createDateMinStr,
-            @QueryParam("create_date_max") String createDateMaxStr,
-            @QueryParam("tags") List<String> tagIdList,
-            @QueryParam("shared") Boolean shared) throws JSONException {
+            @QueryParam("search") String search) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
-        // Validate input data
-        Date createDateMin = ValidationUtil.validateDate(createDateMinStr, "create_date_min", true);
-        Date createDateMax = ValidationUtil.validateDate(createDateMaxStr, "create_date_max", true);
         
         JSONObject response = new JSONObject();
         List<JSONObject> documents = new ArrayList<>();
@@ -146,15 +144,8 @@ public class DocumentResource extends BaseResource {
         TagDao tagDao = new TagDao();
         PaginatedList<DocumentDto> paginatedList = PaginatedLists.create(limit, offset);
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
-        DocumentCriteria documentCriteria = new DocumentCriteria();
+        DocumentCriteria documentCriteria = parseSearchQuery(search);
         documentCriteria.setUserId(principal.getId());
-        documentCriteria.setCreateDateMin(createDateMin);
-        documentCriteria.setCreateDateMax(createDateMax);
-        documentCriteria.setTagIdList(tagIdList);
-        documentCriteria.setShared(shared);
-        if (!Strings.isNullOrEmpty(search)) {
-            documentCriteria.setSearch(search);
-        }
         documentDao.findByCriteria(paginatedList, documentCriteria, sortCriteria);
 
         for (DocumentDto documentDto : paginatedList.getResultList()) {
@@ -185,6 +176,72 @@ public class DocumentResource extends BaseResource {
         return Response.ok().entity(response).build();
     }
     
+    /**
+     * Parse a query according to the specified syntax, eg.:
+     * tag:assurance tag:other before:2012 after:2011-09 shared:yes thing
+     * 
+     * @param search Search query
+     * @return DocumentCriteria
+     */
+    private DocumentCriteria parseSearchQuery(String search) {
+        DocumentCriteria documentCriteria = new DocumentCriteria();
+        if (Strings.isNullOrEmpty(search)) {
+            return documentCriteria;
+        }
+        
+        TagDao tagDao = new TagDao();
+        DateTimeParser[] parsers = { 
+                DateTimeFormat.forPattern("yyyy").getParser(),
+                DateTimeFormat.forPattern("yyyy-MM").getParser(),
+                DateTimeFormat.forPattern("yyyy-MM-dd").getParser() };
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder().append( null, parsers ).toFormatter();
+        
+        String[] criteriaList = search.split("  *");
+        StringBuilder query = new StringBuilder();
+        for (String criteria : criteriaList) {
+            String[] params = criteria.split(":");
+            if (params.length != 2 || Strings.isNullOrEmpty(params[0]) || Strings.isNullOrEmpty(params[1])) {
+                // This is not a special criteria
+                query.append(criteria);
+                continue;
+            }
+            
+            if (params[0].equals("tag")) {
+                // New tag criteria
+                List<Tag> tagList = tagDao.findByName(principal.getId(), params[1]);
+                if (documentCriteria.getTagIdList() == null) {
+                    documentCriteria.setTagIdList(new ArrayList<String>());
+                }
+                if (tagList.size() == 0) {
+                    // No tag found, the request must returns nothing
+                    documentCriteria.getTagIdList().add(UUID.randomUUID().toString());
+                }
+                for (Tag tag : tagList) {
+                    documentCriteria.getTagIdList().add(tag.getId());
+                }
+            } else if (params[0].equals("after") || params[0].equals("before")) {
+                // New date criteria
+                try {
+                    DateTime date = formatter.parseDateTime(params[1]);
+                    if (params[0].equals("before")) documentCriteria.setCreateDateMax(date.toDate());
+                    else documentCriteria.setCreateDateMin(date.toDate());
+                } catch (IllegalArgumentException e) {
+                    // NOP
+                }
+            } else if (params[0].equals("shared")) {
+                // New shared state criteria
+                if (params[1].equals("yes")) {
+                    documentCriteria.setShared(true);
+                }
+            } else {
+                query.append(criteria);
+            }
+        }
+        
+        documentCriteria.setSearch(query.toString());
+        return documentCriteria;
+    }
+
     /**
      * Creates a new document.
      * 

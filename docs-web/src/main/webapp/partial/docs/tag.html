@@ -1,11 +1,14 @@
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="span4 well text-center">
-      <div class="input-prepend input-append input-block-level">
-        <span colorpicker class="btn" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
-        <input type="text" placeholder="Tag name" ng-model="tag.name" ui-keyup="{'enter':'addTag()'}">
-        <button type="submit" class="btn btn-primary" ng-click="addTag()">Add</button>
-      </div>
+      <form name="tagForm" novalidate>
+	      <div class="control-group input-prepend input-append input-block-level" ng-class="{ error: !tagForm.name.$valid }">
+	        <span colorpicker class="btn" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
+	        <input type="text" name="name" placeholder="New tag"
+            ng-maxlength="36" required ng-model="tag.name" ui-validate="'validateTag($value)'">
+	        <button type="submit" class="btn btn-primary" ng-disabled="!tagForm.$valid" ng-click="addTag()">Add</button>
+	      </div>
+      </form>
       
       <div class="input-prepend input-block-level">
         <span class="add-on"><span class="icon-search"></span></span>

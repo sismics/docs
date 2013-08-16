@@ -26,6 +26,15 @@ App.controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
   };
   
   /**
+   * Validate a tag.
+   */
+  $scope.validateTag = function(name) {
+    return !_.find($scope.tags, function(tag) {
+      return tag.name == name;
+    });
+  };
+  
+  /**
    * Add a tag.
    */
   $scope.addTag = function() {
@@ -65,7 +74,7 @@ App.controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
    */
   $scope.updateTag = function(tag) {
     // Update the server
-    Restangular.one('tag', tag.id).post('', tag).then(function () {
+    return Restangular.one('tag', tag.id).post('', tag).then(function () {
       // Update the stat object
       var stat = _.find($scope.stats, function (t) {
         return tag.id == t.id;

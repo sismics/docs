@@ -12,21 +12,7 @@ App.controller('Document', function($scope, $state, Restangular) {
   $scope.offset = 0;
   $scope.currentPage = 1;
   $scope.limit = 10;
-  $scope.isAdvancedSearchCollapsed = true;
-  
-  /**
-   * Initialize search criterias.
-   */
-  $scope.initSearch = function() {
-    $scope.search = {
-      query: '',
-      createDateMin: null,
-      createDateMax: null,
-      tags: [],
-      shared: false
-    };
-  };
-  $scope.initSearch();
+  $scope.search = '';
   
   /**
    * Load new documents page.
@@ -38,11 +24,7 @@ App.controller('Document', function($scope, $state, Restangular) {
       limit: $scope.limit,
       sort_column: $scope.sortColumn,
       asc: $scope.asc,
-      search: $scope.search.query,
-      create_date_min: $scope.isAdvancedSearchCollapsed || !$scope.search.createDateMin ? null : $scope.search.createDateMin.getTime(),
-      create_date_max: $scope.isAdvancedSearchCollapsed || !$scope.search.createDateMax ? null : $scope.search.createDateMax.getTime(),
-      'tags': $scope.isAdvancedSearchCollapsed ? null : _.pluck($scope.search.tags, 'id'),
-      'shared': $scope.isAdvancedSearchCollapsed ? null : $scope.search.shared
+      search: $scope.search
     })
     .then(function(data) {
       $scope.documents = data.documents;

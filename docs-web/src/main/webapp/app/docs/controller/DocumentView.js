@@ -95,7 +95,6 @@ App.controller('DocumentView', function ($scope, $state, $stateParams, $location
    */
   $scope.share = function () {
     $dialog.dialog({
-      backdrop: false,
       keyboard: true,
       templateUrl: 'partial/docs/document.share.html',
       controller: function ($scope, dialog) {

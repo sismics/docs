@@ -47,7 +47,13 @@ App.directive('inlineEdit', function() {
         // Invoke parent scope callback
         if (scope.editCallback && scope.oldValue != el.value) {
           scope.$apply(function() {
-            scope.editCallback();
+            if (scope.value) {
+              scope.editCallback().then(null, function() {
+                scope.value = scope.oldValue;
+              });
+            } else {
+              scope.value = scope.oldValue;
+            }
           });
         }
       });

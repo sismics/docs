@@ -6,41 +6,10 @@
         <button class="btn btn-primary" type="button" ng-click="addDocument()"><span class="icon-plus icon-white"></span> Add a document</button>
       </p>
       
-      <p class="input-prepend input-append text-center input-block-level">
+      <p class="input-prepend text-center input-block-level">
         <span class="add-on"><span class="icon-search"></span></span>
-        <input type="text" placeholder="Search" ng-model="search.query" />
-        <button class="btn" ng-click="isAdvancedSearchCollapsed = !isAdvancedSearchCollapsed">More <span class="caret"></span></button>
+        <input type="text" placeholder="Search" ng-model="search" />
       </p>
-      
-      <div collapse="isAdvancedSearchCollapsed">
-        <div class="well well-small">
-          <form class="form-horizontal">
-            <div class="control-group">
-              <label class="control-label" for="inputCreateDateMin">Creation date</label>
-              <div class="controls">
-                <input class="span5" ng-readonly="true" ng-change="loadDocuments()" type="text" id="inputCreateDateMin" datepicker-popup="yyyy-MM-dd" ng-model="search.createDateMin" starting-day="1" show-weeks="false" />
-                 to 
-                <input class="span5" ng-readonly="true" ng-change="loadDocuments()" type="text" id="inputCreateDateMax" datepicker-popup="yyyy-MM-dd" ng-model="search.createDateMax" starting-day="1" show-weeks="false" />
-              </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label" for="inputTags">Tags</label>
-              <div class="controls">
-                <select-tag tags="search.tags" class="input-block-level" ref="inputTags" />
-              </div>
-            </div>
-            <div class="control-group">
-              <label class="control-label" for="inputShared">Shared</label>
-              <div class="controls">
-                <input type="checkbox" ng-model="search.shared" />
-              </div>
-            </div>
-            <div class="form-actions">
-              <button ng-click="initSearch()" class="btn btn-warning" type="submit">Reset search</button>
-            </div>
-          </form>
-        </div> 
-      </div>
       
       <table class="table table-striped table-hover table-documents">
         <thead>

@@ -35,7 +35,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         WebResource tagResource = resource().path("/tag");
         tagResource.addFilter(new CookieAuthenticationFilter(document1Token));
         MultivaluedMapImpl postParams = new MultivaluedMapImpl();
-        postParams.add("name", "Super tag");
+        postParams.add("name", "SuperTag");
         postParams.add("color", "#ffff00");
         ClientResponse response = tagResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -82,7 +82,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
         Assert.assertEquals(1, tags.length());
         Assert.assertEquals(tag1Id, tags.getJSONObject(0).getString("id"));
-        Assert.assertEquals("Super tag", tags.getJSONObject(0).getString("name"));
+        Assert.assertEquals("SuperTag", tags.getJSONObject(0).getString("name"));
         Assert.assertEquals("#ffff00", tags.getJSONObject(0).getString("color"));
         
         // Search documents by query
@@ -102,8 +102,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         documentResource = resource().path("/document/list");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
-        getParams.putSingle("create_date_min", create1Date - 3600000);
-        getParams.putSingle("create_date_max", create1Date + 1800000);
+        getParams.putSingle("search", "after:2010 before:2040-08");
         response = documentResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -115,7 +114,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         documentResource = resource().path("/document/list");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
-        getParams.putSingle("tags", tag1Id);
+        getParams.putSingle("search", "tag:super");
         response = documentResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -127,7 +126,20 @@ public class TestDocumentResource extends BaseJerseyTest {
         documentResource = resource().path("/document/list");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
-        getParams.putSingle("shared", true);
+        getParams.putSingle("search", "shared:yes");
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 1);
+        Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
+        Assert.assertEquals(true, documents.getJSONObject(0).getBoolean("shared"));
+        
+        // Search documents with multiple criteria
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("search", "after:2010 before:2040-08 tag:super shared:yes for");
         response = documentResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -141,6 +153,28 @@ public class TestDocumentResource extends BaseJerseyTest {
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
         getParams.putSingle("search", "random");
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 0);
+        
+        // Search documents (nothing)
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("search", "after:2010 before:2011-05-20");
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 0);
+        
+        // Search documents (nothing)
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("search", "tag:Nop");
         response = documentResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -162,7 +196,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         tagResource = resource().path("/tag");
         tagResource.addFilter(new CookieAuthenticationFilter(document1Token));
         postParams = new MultivaluedMapImpl();
-        postParams.add("name", "Super tag 2");
+        postParams.add("name", "SuperTag2");
         postParams.add("color", "#00ffff");
         response = tagResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));

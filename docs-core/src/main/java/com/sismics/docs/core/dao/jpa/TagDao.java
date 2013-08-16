@@ -155,12 +155,12 @@ public class TagDao {
     }
 
     /**
-     * Returns a tag by user ID and name.
+     * Returns a tag by name.
      * @param userId User ID
      * @param name Name
      * @return Tag
      */
-    public Tag getByUserIdAndName(String userId, String name) {
+    public Tag getByName(String userId, String name) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select t from Tag t where t.name = :name and t.userId = :userId and t.deleteDate is null");
         q.setParameter("userId", userId);
@@ -173,12 +173,12 @@ public class TagDao {
     }
     
     /**
-     * Returns a tag by user ID and name.
+     * Returns a tag by ID.
      * @param userId User ID
      * @param tagId Tag ID
      * @return Tag
      */
-    public Tag getByUserIdAndTagId(String userId, String tagId) {
+    public Tag getByTagId(String userId, String tagId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select t from Tag t where t.id = :tagId and t.userId = :userId and t.deleteDate is null");
         q.setParameter("userId", userId);
@@ -211,5 +211,20 @@ public class TagDao {
         q = em.createQuery("delete DocumentTag dt where dt.tagId = :tagId");
         q.setParameter("tagId", tagId);
         q.executeUpdate();
+    }
+
+    /**
+     * Search tags by name.
+     * 
+     * @param name Tag name
+     * @return List of found tags
+     */
+    @SuppressWarnings("unchecked")
+    public List<Tag> findByName(String userId, String name) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select t from Tag t where t.name like :name and t.userId = :userId and t.deleteDate is null");
+        q.setParameter("userId", userId);
+        q.setParameter("name", "%" + name + "%");
+        return q.getResultList();
     }
 }
