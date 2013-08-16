@@ -1,17 +1,21 @@
-<h1>
-  {{ app.document_count }} <small>document{{ app.document_count > 1 ? 's' : '' }} in the database</small>
-</h1>
+<img src="img/loader.gif" ng-show="!app" />
 
-<blockquote class="pull-right">
-  <p>There seems to be a kind of order in the universe, but human life itself is almost pure chaos.</p>
-  <small>Katherine Anne Porter</small>
-</blockquote>
-
-<div class="clearfix"></div>
-
-<div class="muted">
-  <ul class="inline">
-    <li><strong>Version:</strong> {{ app.current_version }}</li>
-    <li><strong>Memory:</strong> {{ app.free_memory / 1000000 | number: 0 }}/{{ app.total_memory / 1000000 | number: 0 }} MB</li>
-  </ul>
+<div ng-show="app">
+	<h1>
+	  {{ app.document_count }} <small>document{{ app.document_count > 1 ? 's' : '' }} in the database</small>
+	</h1>
+	
+	<blockquote class="pull-right">
+	  <p>There seems to be a kind of order in the universe, but human life itself is almost pure chaos.</p>
+	  <small>Katherine Anne Porter</small>
+	</blockquote>
+	
+	<div class="clearfix"></div>
+	
+	<div class="muted">
+	  <ul class="inline">
+	    <li><strong>Version:</strong> {{ app.current_version }}</li>
+	    <li><strong>Memory:</strong> {{ app.free_memory / 1000000 | number: 0 }}/{{ app.total_memory / 1000000 | number: 0 }} MB</li>
+	  </ul>
+	</div>
 </div>
