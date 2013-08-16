@@ -42,6 +42,7 @@ public class TestFileResource extends BaseJerseyTest {
         documentResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
         MultivaluedMapImpl postParams = new MultivaluedMapImpl();
         postParams.add("title", "File test document 1");
+        postParams.add("language", "eng");
         ClientResponse response = documentResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         JSONObject json = response.getEntity(JSONObject.class);
@@ -52,7 +53,7 @@ public class TestFileResource extends BaseJerseyTest {
         WebResource fileResource = resource().path("/file");
         fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
         FormDataMultiPart form = new FormDataMultiPart();
-        InputStream file = this.getClass().getResourceAsStream("/file/PIA00452.jpg");
+        InputStream file = this.getClass().getResourceAsStream("/file/Einstein-Roosevelt-letter.png");
         FormDataBodyPart fdp = new FormDataBodyPart("file",
                 new BufferedInputStream(file),
                 MediaType.APPLICATION_OCTET_STREAM_TYPE);
@@ -87,7 +88,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         InputStream is = response.getEntityInputStream();
         byte[] fileBytes = ByteStreams.toByteArray(is);
-        Assert.assertEquals(163510, fileBytes.length);
+        Assert.assertEquals(292641, fileBytes.length);
         
         // Get the thumbnail data
         fileResource = resource().path("/file/" + file1Id + "/data");
@@ -98,7 +99,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         is = response.getEntityInputStream();
         fileBytes = ByteStreams.toByteArray(is);
-        Assert.assertEquals(41935, fileBytes.length);
+        Assert.assertEquals(34050, fileBytes.length);
         
         // Get all files from a document
         fileResource = resource().path("/file/list");

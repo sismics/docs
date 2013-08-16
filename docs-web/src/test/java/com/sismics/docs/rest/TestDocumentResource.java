@@ -50,6 +50,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         postParams.add("title", "My super document 1");
         postParams.add("description", "My super description for document 1");
         postParams.add("tags", tag1Id);
+        postParams.add("language", "eng");
         long create1Date = new Date().getTime();
         postParams.add("create_date", create1Date);
         response = documentResource.put(ClientResponse.class, postParams);
@@ -80,6 +81,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         JSONArray tags = documents.getJSONObject(0).getJSONArray("tags");
         Assert.assertTrue(documents.length() == 1);
         Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
+        Assert.assertEquals("eng", documents.getJSONObject(0).getString("language"));
         Assert.assertEquals(1, tags.length());
         Assert.assertEquals(tag1Id, tags.getJSONObject(0).getString("id"));
         Assert.assertEquals("SuperTag", tags.getJSONObject(0).getString("name"));
@@ -135,18 +137,30 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
         Assert.assertEquals(true, documents.getJSONObject(0).getBoolean("shared"));
         
-        // Search documents with multiple criteria
+        // Search documents by language
         documentResource = resource().path("/document/list");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
-        getParams.putSingle("search", "after:2010 before:2040-08 tag:super shared:yes for");
+        getParams.putSingle("search", "lang:eng");
         response = documentResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         documents = json.getJSONArray("documents");
         Assert.assertTrue(documents.length() == 1);
         Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
-        Assert.assertEquals(true, documents.getJSONObject(0).getBoolean("shared"));
+        Assert.assertEquals("eng", documents.getJSONObject(0).getString("language"));
+        
+        // Search documents with multiple criteria
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("search", "after:2010 before:2040-08 tag:super shared:yes lang:eng for");
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 1);
+        Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
         
         // Search documents (nothing)
         documentResource = resource().path("/document/list");
@@ -175,6 +189,17 @@ public class TestDocumentResource extends BaseJerseyTest {
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
         getParams.putSingle("search", "tag:Nop");
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 0);
+        
+        // Search documents (nothing)
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("search", "lang:fra");
         response = documentResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));

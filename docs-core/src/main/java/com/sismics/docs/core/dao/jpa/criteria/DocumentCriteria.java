@@ -41,6 +41,11 @@ public class DocumentCriteria {
     private Boolean shared;
     
     /**
+     * Language.
+     */
+    private String language;
+    
+    /**
      * Getter of userId.
      *
      * @return userId
@@ -146,5 +151,23 @@ public class DocumentCriteria {
      */
     public void setShared(Boolean shared) {
         this.shared = shared;
+    }
+
+    /**
+     * Getter of language.
+     *
+     * @return the language
+     */
+    public String getLanguage() {
+        return language;
+    }
+
+    /**
+     * Setter of language.
+     *
+     * @param language language
+     */
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }

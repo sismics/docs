@@ -1,21 +1,23 @@
 package com.sismics.docs.core.model.context;
 
-import com.google.common.eventbus.AsyncEventBus;
-import com.google.common.eventbus.EventBus;
-import com.sismics.docs.core.constant.ConfigType;
-import com.sismics.docs.core.dao.jpa.ConfigDao;
-import com.sismics.docs.core.listener.sync.DeadEventListener;
-import com.sismics.docs.core.model.jpa.Config;
-import com.sismics.docs.core.service.IndexingService;
-import com.sismics.util.EnvironmentUtil;
-import org.apache.lucene.store.Directory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.lucene.store.Directory;
+
+import com.google.common.eventbus.AsyncEventBus;
+import com.google.common.eventbus.EventBus;
+import com.sismics.docs.core.constant.ConfigType;
+import com.sismics.docs.core.dao.jpa.ConfigDao;
+import com.sismics.docs.core.listener.async.FileCreatedAsyncListener;
+import com.sismics.docs.core.listener.sync.DeadEventListener;
+import com.sismics.docs.core.model.jpa.Config;
+import com.sismics.docs.core.service.IndexingService;
+import com.sismics.util.EnvironmentUtil;
 
 /**
  * Global application context.
@@ -77,6 +79,7 @@ public class AppContext {
         asyncExecutorList = new ArrayList<ExecutorService>();
         
         asyncEventBus = newAsyncEventBus();
+        asyncEventBus.register(new FileCreatedAsyncListener());
     }
 
     /**

@@ -5,6 +5,7 @@ import com.google.common.base.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.util.Date;
 
@@ -30,10 +31,17 @@ public class File {
     private String documentId;
     
     /**
-     * Document ID.
+     * MIME type.
      */
     @Column(name = "FIL_MIMETYPE_C", length = 100)
     private String mimeType;
+    
+    /**
+     * OCR-ized content.
+     */
+    @Lob
+    @Column(name = "FIL_CONTENT_C")
+    private String content;
     
     /**
      * Creation date.
@@ -143,6 +151,24 @@ public class File {
         this.deleteDate = deleteDate;
     }
     
+    /**
+     * Getter of content.
+     *
+     * @return the content
+     */
+    public String getContent() {
+        return content;
+    }
+
+    /**
+     * Setter of content.
+     *
+     * @param content content
+     */
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     /**
      * Getter of order.
      *

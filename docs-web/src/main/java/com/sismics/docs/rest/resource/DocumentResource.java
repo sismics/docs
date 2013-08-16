@@ -31,6 +31,7 @@ import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.DateTimeParser;
 
 import com.google.common.base.Strings;
+import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.ShareDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
@@ -155,6 +156,7 @@ public class DocumentResource extends BaseResource {
             document.put("description", documentDto.getDescription());
             document.put("create_date", documentDto.getCreateTimestamp());
             document.put("shared", documentDto.getShared());
+            document.put("language", documentDto.getLanguage());
             
             // Get tags
             List<TagDto> tagDtoList = tagDao.getByDocumentId(documentDto.getId());
@@ -178,7 +180,7 @@ public class DocumentResource extends BaseResource {
     
     /**
      * Parse a query according to the specified syntax, eg.:
-     * tag:assurance tag:other before:2012 after:2011-09 shared:yes thing
+     * tag:assurance tag:other before:2012 after:2011-09 shared:yes lang:fra thing
      * 
      * @param search Search query
      * @return DocumentCriteria
@@ -233,6 +235,11 @@ public class DocumentResource extends BaseResource {
                 if (params[1].equals("yes")) {
                     documentCriteria.setShared(true);
                 }
+            } else if (params[0].equals("lang")) {
+                // New shared state criteria
+                if (Constants.SUPPORTED_LANGUAGES.contains(params[1])) {
+                    documentCriteria.setLanguage(params[1]);
+                }
             } else {
                 query.append(criteria);
             }
@@ -256,6 +263,7 @@ public class DocumentResource extends BaseResource {
             @FormParam("title") String title,
             @FormParam("description") String description,
             @FormParam("tags") List<String> tagList,
+            @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -263,8 +271,12 @@ public class DocumentResource extends BaseResource {
         
         // Validate input data
         title = ValidationUtil.validateLength(title, "title", 1, 100, false);
+        language = ValidationUtil.validateLength(language, "language", 3, 3, false);
         description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
         Date createDate = ValidationUtil.validateDate(createDateStr, "create_date", true);
+        if (!Constants.SUPPORTED_LANGUAGES.contains(language)) {
+            throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", language));
+        }
         
         // Create the document
         DocumentDao documentDao = new DocumentDao();
@@ -272,6 +284,7 @@ public class DocumentResource extends BaseResource {
         document.setUserId(principal.getId());
         document.setTitle(title);
         document.setDescription(description);
+        document.setLanguage(language);
         if (createDate == null) {
             document.setCreateDate(new Date());
         } else {
@@ -303,6 +316,7 @@ public class DocumentResource extends BaseResource {
             @FormParam("title") String title,
             @FormParam("description") String description,
             @FormParam("tags") List<String> tagList,
+            @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -310,8 +324,12 @@ public class DocumentResource extends BaseResource {
         
         // Validate input data
         title = ValidationUtil.validateLength(title, "title", 1, 100, true);
+        language = ValidationUtil.validateLength(language, "language", 3, 3, true);
         description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
         Date createDate = ValidationUtil.validateDate(createDateStr, "create_date", true);
+        if (language != null && !Constants.SUPPORTED_LANGUAGES.contains(language)) {
+            throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", language));
+        }
         
         // Get the document
         DocumentDao documentDao = new DocumentDao();
@@ -331,6 +349,9 @@ public class DocumentResource extends BaseResource {
         }
         if (createDate != null) {
             document.setCreateDate(createDate);
+        }
+        if (language != null) {
+            document.setLanguage(language);
         }
         
         // Update tags

@@ -42,6 +42,7 @@ public class TestShareResource extends BaseJerseyTest {
         documentResource.addFilter(new CookieAuthenticationFilter(share1AuthenticationToken));
         MultivaluedMapImpl postParams = new MultivaluedMapImpl();
         postParams.add("title", "File test document 1");
+        postParams.add("language", "eng");
         ClientResponse response = documentResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         JSONObject json = response.getEntity(JSONObject.class);

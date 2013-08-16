@@ -117,6 +117,22 @@
       <artifactId>imgscalr-lib</artifactId>
     </dependency>
     
+    <!-- OCR dependencies -->
+    <dependency>
+      <groupId>jna</groupId>
+      <artifactId>jna</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>jai</groupId>
+      <artifactId>imageio</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>tess4j</groupId>
+      <artifactId>tess4j</artifactId>
+    </dependency>
+    
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>

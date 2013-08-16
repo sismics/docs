@@ -159,6 +159,7 @@
         <artifactId>osxappbundle-maven-plugin</artifactId>
         <version>${org.codehaus.mojo.osxappbundle-maven-plugin.version}</version>
       </plugin>
+      
     </plugins>
   </build>
         
@@ -434,6 +435,25 @@
         <artifactId>imgscalr-lib</artifactId>
         <version>${org.imgscalr.imgscalr-lib.version}</version>
       </dependency>
+      
+      <!-- OCR dependencies -->
+      <dependency>
+	      <groupId>jna</groupId>
+	      <artifactId>jna</artifactId>
+	      <version>1.0</version>
+	    </dependency>
+	    
+	    <dependency>
+	      <groupId>jai</groupId>
+	      <artifactId>imageio</artifactId>
+	      <version>1.0</version>
+	    </dependency>
+	    
+	    <dependency>
+	      <groupId>tess4j</groupId>
+	      <artifactId>tess4j</artifactId>
+	      <version>1.0</version>
+	    </dependency>
     </dependencies>
   </dependencyManagement>
   
@@ -450,4 +470,74 @@
       </releases>
     </pluginRepository>
   </pluginRepositories>
+  
+  <profiles>
+    <profile>
+      <id>init</id>
+      
+      <build>
+        <plugins>
+          <plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-install-plugin</artifactId>
+		        <version>2.3.1</version>
+		        <executions>
+		        
+		          <execution>
+		            <id>install-jna</id>
+		            <phase>validate</phase>
+		            <configuration>
+		              <file>${project.basedir}/lib/jna.jar</file>
+		              <repositoryLayout>default</repositoryLayout>
+		              <groupId>jna</groupId>
+		              <artifactId>jna</artifactId>
+		              <version>1.0</version>
+		              <packaging>jar</packaging>
+		              <generatePom>true</generatePom>
+		            </configuration>
+		            <goals>
+		              <goal>install-file</goal>
+		            </goals>
+		          </execution>
+		          
+		          <execution>
+		            <id>install-jai-imageio</id>
+		            <phase>validate</phase>
+		            <configuration>
+		              <file>${project.basedir}/lib/jai_imageio.jar</file>
+		              <repositoryLayout>default</repositoryLayout>
+		              <groupId>jai</groupId>
+		              <artifactId>imageio</artifactId>
+		              <version>1.0</version>
+		              <packaging>jar</packaging>
+		              <generatePom>true</generatePom>
+		            </configuration>
+		            <goals>
+		              <goal>install-file</goal>
+		            </goals>
+		          </execution>
+		          
+		          <execution>
+		            <id>install-tess4j</id>
+		            <phase>validate</phase>
+		            <configuration>
+		              <file>${project.basedir}/lib/tess4j.jar</file>
+		              <repositoryLayout>default</repositoryLayout>
+		              <groupId>tess4j</groupId>
+		              <artifactId>tess4j</artifactId>
+		              <version>1.0</version>
+		              <packaging>jar</packaging>
+		              <generatePom>true</generatePom>
+		            </configuration>
+		            <goals>
+		              <goal>install-file</goal>
+		            </goals>
+		          </execution>
+		          
+		        </executions>
+		      </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

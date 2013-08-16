@@ -30,6 +30,12 @@ public class Document {
     private String userId;
     
     /**
+     * Language (ISO 639-9).
+     */
+    @Column(name = "DOC_LANGUAGE_C", nullable = false, length = 3)
+    private String language;
+    
+    /**
      * Title.
      */
     @Column(name = "DOC_TITLE_C", length = 100)
@@ -69,6 +75,24 @@ public class Document {
      */
     public void setId(String id) {
         this.id = id;
+    }
+    
+    /**
+     * Getter of language.
+     *
+     * @return the language
+     */
+    public String getLanguage() {
+        return language;
+    }
+
+    /**
+     * Setter of language.
+     *
+     * @param language language
+     */
+    public void setLanguage(String language) {
+        this.language = language;
     }
     
     /**

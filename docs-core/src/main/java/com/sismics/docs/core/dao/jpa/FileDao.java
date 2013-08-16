@@ -1,14 +1,15 @@
 package com.sismics.docs.core.dao.jpa;
 
-import com.sismics.docs.core.model.jpa.File;
-import com.sismics.util.context.ThreadLocalContext;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+
+import com.sismics.docs.core.model.jpa.File;
+import com.sismics.util.context.ThreadLocalContext;
 
 /**
  * File DAO.
@@ -64,6 +65,26 @@ public class FileDao {
         // Delete the file
         Date dateNow = new Date();
         fileDb.setDeleteDate(dateNow);
+    }
+    
+    /**
+     * Updates the content of a file.
+     * 
+     * @param file File to update
+     * @return Updated file
+     */
+    public File updateContent(File file) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        
+        // Get the file
+        Query q = em.createQuery("select f from File f where f.id = :id and f.deleteDate is null");
+        q.setParameter("id", file.getId());
+        File fileFromDb = (File) q.getSingleResult();
+
+        // Update the user
+        fileFromDb.setContent(file.getContent());
+        
+        return file;
     }
     
     /**

@@ -66,6 +66,7 @@ public class TestTagResource extends BaseJerseyTest {
         postParams = new MultivaluedMapImpl();
         postParams.add("title", "My super document 1");
         postParams.add("tags", tag3Id);
+        postParams.add("language", "eng");
         response = documentResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
@@ -76,6 +77,7 @@ public class TestTagResource extends BaseJerseyTest {
         postParams = new MultivaluedMapImpl();
         postParams.add("title", "My super document 1");
         postParams.add("tags", tag4Id);
+        postParams.add("language", "eng");
         response = documentResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);

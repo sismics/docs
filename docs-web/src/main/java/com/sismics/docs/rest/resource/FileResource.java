@@ -29,6 +29,8 @@ import org.codehaus.jettison.json.JSONObject;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.ShareDao;
+import com.sismics.docs.core.event.FileCreatedAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.DirectoryUtil;
@@ -110,6 +112,12 @@ public class FileResource extends BaseResource {
             
             // Save the file
             FileUtil.save(is, file);
+            
+            // Raise a new file created event
+            FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
+            fileCreatedAsyncEvent.setDocument(document);
+            fileCreatedAsyncEvent.setFile(file);
+            AppContext.getInstance().getAsyncEventBus().post(fileCreatedAsyncEvent);
 
             // Always return ok
             JSONObject response = new JSONObject();

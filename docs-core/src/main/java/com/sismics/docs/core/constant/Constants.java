@@ -1,5 +1,9 @@
 package com.sismics.docs.core.constant;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 /**
  * Application constants.
  * 
@@ -40,4 +44,9 @@ public class Constants {
      * Default generic user role.
      */
     public static final String DEFAULT_USER_ROLE = "user";
+    
+    /**
+     * Supported document languages.
+     */
+    public static final List<String> SUPPORTED_LANGUAGES = Lists.newArrayList("eng", "fra");
 }
