@@ -27,12 +27,16 @@
       
     </div>
     
-    <div class="span8 well">
+    <div class="span8 well" ng-if="stats.length >= 0">
       <h1>{{ tags.length }} <small>tag{{ tags.length > 1 ? 's' : '' }}</small></h1>
       <dl class="dl-horizontal" ng-repeat="stat in stats | orderBy: '-count'">
         <dt>{{ stat.name }} <span class="badge badge-info" ng-style="{ 'background': stat.color }">{{ stat.count }}</span></dt>
         <dd><progress percent="stat.count / getStatCount() * 100" class="progress-info"></progress></dd>
       </dl>
+    </div>
+    
+    <div class="span8 well" ng-if="!stats">
+      <img src="img/loader.gif" />
     </div>
   </div>
 </div>

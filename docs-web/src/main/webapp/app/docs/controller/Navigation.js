@@ -3,7 +3,7 @@
 /**
  * Navigation controller.
  */
-App.controller('Navigation', function($scope, $state, $rootScope, User, Restangular) {
+App.controller('Navigation', function($scope, $http, $state, $rootScope, User, Restangular) {
   $rootScope.userInfo = User.userInfo();
   
   /**
@@ -15,5 +15,9 @@ App.controller('Navigation', function($scope, $state, $rootScope, User, Restangu
       $state.transitionTo('main');
     });
     $event.preventDefault();
+  };
+  
+  $scope.isLoading = function() {
+    return $http.pendingRequests.length > 0;
   };
 });

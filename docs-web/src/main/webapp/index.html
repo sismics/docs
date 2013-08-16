@@ -60,6 +60,10 @@
     <div class="navbar" ng-controller="Navigation">
       <div class="navbar-inner">
         <div class="container">
+          <div class="brand loader" ng-class="{hide: !isLoading() }">
+            <img src="img/loader.gif" />
+          </div>
+          
           <a class="brand hidden-phone" href="#">Sismics Docs</a>
           
           <ul class="nav" ng-show="!userInfo.anonymous">
