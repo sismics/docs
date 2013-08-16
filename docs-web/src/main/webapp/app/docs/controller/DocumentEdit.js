@@ -46,7 +46,10 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
       $scope.document = data;
     });
   } else {
-    $scope.document = { tags: [] };
+    $scope.document = {
+      tags: [],
+      language: 'fra'
+    };
   }
   
   /**

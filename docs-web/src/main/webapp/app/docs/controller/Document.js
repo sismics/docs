@@ -3,7 +3,7 @@
 /**
  * Document controller.
  */
-App.controller('Document', function($scope, $state, Restangular) {
+App.controller('Document', function($scope, $timeout, $state, Restangular) {
   /**
    * Documents table sort status.
    */
@@ -13,24 +13,28 @@ App.controller('Document', function($scope, $state, Restangular) {
   $scope.currentPage = 1;
   $scope.limit = 10;
   $scope.search = '';
+
+  // A timeout promise is used to slow down search requests to the server
+  // We keep track of it for cancellation purpose
+  var timeoutPromise;
   
   /**
    * Load new documents page.
    */
   $scope.pageDocuments = function() {
     Restangular.one('document')
-    .getList('list', {
-      offset: $scope.offset,
-      limit: $scope.limit,
-      sort_column: $scope.sortColumn,
-      asc: $scope.asc,
-      search: $scope.search
-    })
-    .then(function(data) {
-      $scope.documents = data.documents;
-      $scope.totalDocuments = data.total;
-      $scope.numPages = Math.ceil(data.total / $scope.limit);
-    });
+        .getList('list', {
+          offset: $scope.offset,
+          limit: $scope.limit,
+          sort_column: $scope.sortColumn,
+          asc: $scope.asc,
+          search: $scope.search
+        })
+        .then(function (data) {
+          $scope.documents = data.documents;
+          $scope.totalDocuments = data.total;
+          $scope.numPages = Math.ceil(data.total / $scope.limit);
+        });
   };
   
   /**
@@ -57,7 +61,15 @@ App.controller('Document', function($scope, $state, Restangular) {
    * Watch for search scope change.
    */
   $scope.$watch('search', function(prev, next) {
-    $scope.loadDocuments();
+    if (timeoutPromise) {
+      // Cancel previous timeout
+      $timeout.cancel(timeoutPromise);
+    }
+
+    // Call API later
+    timeoutPromise = $timeout(function () {
+      $scope.loadDocuments();
+    }, 200);
   }, true);
   
   /**

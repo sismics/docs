@@ -1,4 +1,3 @@
-- Add language on document (client)
 - Index title and description (server)
 - Use Lucene for title and description searching (server)
 - Index OCR-ized content (server)

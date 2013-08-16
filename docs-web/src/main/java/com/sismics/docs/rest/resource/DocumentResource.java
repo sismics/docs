@@ -89,6 +89,7 @@ public class DocumentResource extends BaseResource {
         document.put("title", documentDb.getTitle());
         document.put("description", documentDb.getDescription());
         document.put("create_date", documentDb.getCreateDate().getTime());
+        document.put("language", documentDb.getLanguage());
         
         // Add tags
         TagDao tagDao = new TagDao();

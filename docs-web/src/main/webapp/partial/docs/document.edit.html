@@ -21,6 +21,15 @@
     </div>
   </div>
   <div class="control-group">
+    <label class="control-label" for="inputCreateDate">Language</label>
+    <div class="controls">
+      <select id="inputLanguage" ng-model="document.language">
+        <option value="fra">French</option>
+        <option value="eng">English</option>
+      </select>
+    </div>
+  </div>
+  <div class="control-group">
     <label class="control-label" for="inputFiles">New files</label>
     <div class="controls">
       <file class="input-block-level" id="inputFiles" multiple="multiple" ng-model="newFiles" accept="image/png,image/jpg,image/jpeg,image/gif" />
