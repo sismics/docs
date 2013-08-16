@@ -1,9 +1,31 @@
 package com.sismics.docs.rest.resource;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Appender;
+import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
 import com.sismics.docs.core.dao.jpa.DocumentDao;
+import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.model.jpa.Document;
+import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.ConfigUtil;
+import com.sismics.docs.core.util.FileUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -13,21 +35,6 @@ import com.sismics.rest.exception.ServerException;
 import com.sismics.util.log4j.LogCriteria;
 import com.sismics.util.log4j.LogEntry;
 import com.sismics.util.log4j.MemoryAppender;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Appender;
-import org.apache.log4j.Logger;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * General app REST resource.
@@ -127,6 +134,34 @@ public class AppResource extends BaseResource {
         response.put("total", paginatedList.getResultCount());
         response.put("logs", logs);
         
+        return Response.ok().entity(response).build();
+    }
+    
+    /**
+     * OCR-ize all files again.
+     * 
+     * @return Response
+     * @throws JSONException
+     */
+    @POST
+    @Path("batch/ocr")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response batchReindex() throws JSONException {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        
+        FileDao fileDao = new FileDao();
+        DocumentDao documentDao = new DocumentDao();
+        List<File> fileList = fileDao.findAll();
+        for (File file : fileList) {
+            Document document = documentDao.getById(file.getDocumentId());
+            FileUtil.ocrFile(document, file);
+        }
+        
+        JSONObject response = new JSONObject();
+        response.put("status", "ok");
         return Response.ok().entity(response).build();
     }
 }

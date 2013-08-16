@@ -2,6 +2,4 @@
 - Index title and description (server)
 - Use Lucene for title and description searching (server)
 - Index OCR-ized content (server)
-- Search in OCR-ized files (server)
-- Batch to OCR all documents (server)
 - Batch to rebuild Lucene index (server)

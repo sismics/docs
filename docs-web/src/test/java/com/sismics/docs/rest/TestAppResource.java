@@ -23,13 +23,12 @@ public class TestAppResource extends BaseJerseyTest {
      */
     @Test
     public void testAppResource() throws JSONException {
-        // Login app1
-        clientUtil.createUser("app1");
-        String app1Token = clientUtil.login("app1");
+        // Login admin
+        String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
         
         // Check the application info
         WebResource appResource = resource().path("/app");
-        appResource.addFilter(new CookieAuthenticationFilter(app1Token));
+        appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
         ClientResponse response = appResource.get(ClientResponse.class);
         response = appResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -43,6 +42,13 @@ public class TestAppResource extends BaseJerseyTest {
         Long totalMemory = json.getLong("total_memory");
         Assert.assertTrue(totalMemory > 0 && totalMemory > freeMemory);
         Assert.assertEquals(0, json.getInt("document_count"));
+        
+        // OCR-ize all files
+        appResource = resource().path("/app/batch/ocr");
+        appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        response = appResource.post(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
     }
 
     /**

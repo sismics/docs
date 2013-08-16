@@ -37,6 +37,18 @@ public class FileDao {
     }
     
     /**
+     * Returns the list of all files.
+     * 
+     * @return List of files
+     */
+    @SuppressWarnings("unchecked")
+    public List<File> findAll() {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select f from File f where f.deleteDate is null");
+        return q.getResultList();
+    }
+    
+    /**
      * Returns an active file.
      * 
      * @param id File ID

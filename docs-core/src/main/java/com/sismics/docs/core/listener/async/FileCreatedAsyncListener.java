@@ -28,7 +28,7 @@ public class FileCreatedAsyncListener {
      * @throws Exception
      */
     @Subscribe
-    public void onArticleCreated(final FileCreatedAsyncEvent fileCreatedAsyncEvent) throws Exception {
+    public void onFileCreated(final FileCreatedAsyncEvent fileCreatedAsyncEvent) throws Exception {
         if (log.isInfoEnabled()) {
             log.info("File created event: " + fileCreatedAsyncEvent.toString());
         }

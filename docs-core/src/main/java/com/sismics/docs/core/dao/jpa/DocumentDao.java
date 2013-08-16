@@ -126,6 +126,7 @@ public class DocumentDao {
         StringBuilder sb = new StringBuilder("select d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, s.SHA_ID_C is not null c5 ");
         sb.append(" from T_DOCUMENT d ");
         sb.append(" left join T_SHARE s on s.SHA_IDDOCUMENT_C = d.DOC_ID_C and s.SHA_DELETEDATE_D is null ");
+        sb.append(" left join T_FILE f on f.FIL_IDDOC_C = d.DOC_ID_C and f.FIL_DELETEDATE_D is null ");
         
         // Adds search criteria
         if (criteria.getUserId() != null) {
@@ -133,7 +134,7 @@ public class DocumentDao {
             parameterMap.put("userId", criteria.getUserId());
         }
         if (criteria.getSearch() != null) {
-            criteriaList.add("(d.DOC_TITLE_C LIKE :search OR d.DOC_DESCRIPTION_C LIKE :search)");
+            criteriaList.add("(d.DOC_TITLE_C LIKE :search OR d.DOC_DESCRIPTION_C LIKE :search OR f.FIL_CONTENT_C LIKE :search)");
             parameterMap.put("search", "%" + criteria.getSearch() + "%");
         }
         if (criteria.getCreateDateMin() != null) {

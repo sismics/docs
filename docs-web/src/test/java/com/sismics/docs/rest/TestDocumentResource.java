@@ -6,13 +6,20 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.multipart.FormDataMultiPart;
+
 import junit.framework.Assert;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.util.Date;
+
+import javax.ws.rs.core.MediaType;
 
 /**
  * Exhaustive test of the document resource.
@@ -59,6 +66,20 @@ public class TestDocumentResource extends BaseJerseyTest {
         String document1Id = json.optString("id");
         Assert.assertNotNull(document1Id);
         
+        // Add a file
+        WebResource fileResource = resource().path("/file");
+        fileResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        FormDataMultiPart form = new FormDataMultiPart();
+        InputStream file = this.getClass().getResourceAsStream("/file/Einstein-Roosevelt-letter.png");
+        FormDataBodyPart fdp = new FormDataBodyPart("file",
+                new BufferedInputStream(file),
+                MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        form.bodyPart(fdp);
+        form.field("id", document1Id);
+        response = fileResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        
         // Share this document
         WebResource fileShareResource = resource().path("/share");
         fileShareResource.addFilter(new CookieAuthenticationFilter(document1Token));
@@ -91,7 +112,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         documentResource = resource().path("/document/list");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
-        getParams.putSingle("search", "Sup");
+        getParams.putSingle("search", "uranium");
         response = documentResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -154,7 +175,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         documentResource = resource().path("/document/list");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
-        getParams.putSingle("search", "after:2010 before:2040-08 tag:super shared:yes lang:eng for");
+        getParams.putSingle("search", "after:2010 before:2040-08 tag:super shared:yes lang:eng uranium");
         response = documentResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
