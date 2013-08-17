@@ -1,0 +1,2 @@
+- New image rescale between thumbnail and original (client/server)
+- Batch to regenerate all thumbnails (server)

@@ -6,10 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
+import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.lucene.LuceneDao;
 import com.sismics.docs.core.event.FileCreatedAsyncEvent;
+import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.FileUtil;
-import com.sismics.util.ImageUtil;
+import com.sismics.docs.core.util.TransactionUtil;
 
 /**
  * Listener on file created.
@@ -34,12 +36,21 @@ public class FileCreatedAsyncListener {
             log.info("File created event: " + fileCreatedAsyncEvent.toString());
         }
 
-        // OCR the file if it is an image
-        if (ImageUtil.isImage(fileCreatedAsyncEvent.getFile().getMimeType())) {
-            long startTime = System.currentTimeMillis();
-            FileUtil.ocrFile(fileCreatedAsyncEvent.getDocument(), fileCreatedAsyncEvent.getFile());
-            log.info(MessageFormat.format("File OCR-ized in {0}ms", System.currentTimeMillis() - startTime));
-        }
+        // OCR the file
+        final File file = fileCreatedAsyncEvent.getFile();
+        long startTime = System.currentTimeMillis();
+        final String content = FileUtil.ocrFile(fileCreatedAsyncEvent.getDocument(), file);
+        log.info(MessageFormat.format("File OCR-ized in {0}ms", System.currentTimeMillis() - startTime));
+        
+        // Store the OCR-ization result in the database
+        TransactionUtil.handle(new Runnable() {
+            @Override
+            public void run() {
+                FileDao fileDao = new FileDao();
+                file.setContent(content);
+                fileDao.updateContent(file);
+            }
+        });
         
         // Update Lucene index
         LuceneDao luceneDao = new LuceneDao();

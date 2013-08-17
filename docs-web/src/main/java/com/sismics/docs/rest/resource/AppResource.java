@@ -19,14 +19,11 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.sismics.docs.core.dao.jpa.DocumentDao;
-import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.event.OcrFileAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
-import com.sismics.docs.core.model.jpa.Document;
-import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.ConfigUtil;
-import com.sismics.docs.core.util.FileUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -157,13 +154,9 @@ public class AppResource extends BaseResource {
         }
         checkBaseFunction(BaseFunction.ADMIN);
         
-        FileDao fileDao = new FileDao();
-        DocumentDao documentDao = new DocumentDao();
-        List<File> fileList = fileDao.findAll();
-        for (File file : fileList) {
-            Document document = documentDao.getById(file.getDocumentId());
-            FileUtil.ocrFile(document, file);
-        }
+        // Raise a OCR file event
+        OcrFileAsyncEvent ocrFileAsyncEvent = new OcrFileAsyncEvent();
+        AppContext.getInstance().getAsyncEventBus().post(ocrFileAsyncEvent);
         
         JSONObject response = new JSONObject();
         response.put("status", "ok");

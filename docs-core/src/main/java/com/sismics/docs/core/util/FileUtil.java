@@ -16,9 +16,9 @@ import org.imgscalr.Scalr.Mode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
+import com.sismics.util.ImageUtil;
 
 /**
  * File entity utilities.
@@ -36,8 +36,14 @@ public class FileUtil {
      * 
      * @param document Document linked to the file
      * @param file File to OCR
+     * @return OCR-ized content
      */
-    public static void ocrFile(Document document, final File file) {
+    public static String ocrFile(Document document, final File file) {
+        if (!ImageUtil.isImage(file.getMimeType())) {
+            // The file is not OCR-izable
+            return null;
+        }
+        
         Tesseract instance = Tesseract.getInstance();
         java.io.File storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId()).toFile();
         String content = null;
@@ -63,15 +69,6 @@ public class FileUtil {
             log.error("Error while OCR-izing the file " + storedfile, e);
         }
         
-        file.setContent(content);
-        
-        // Store the OCR-ization result in the database
-        TransactionUtil.handle(new Runnable() {
-            @Override
-            public void run() {
-                FileDao fileDao = new FileDao();
-                fileDao.updateContent(file);
-            }
-        });
+        return content;
     }
 }

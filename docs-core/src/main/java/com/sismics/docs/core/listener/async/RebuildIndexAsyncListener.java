@@ -1,4 +1,4 @@
-package com.sismics.docs.core.event;
+package com.sismics.docs.core.listener.async;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.lucene.LuceneDao;
+import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.TransactionUtil;
