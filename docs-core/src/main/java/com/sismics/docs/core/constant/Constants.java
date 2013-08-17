@@ -48,5 +48,5 @@ public class Constants {
     /**
      * Supported document languages.
      */
-    public static final List<String> SUPPORTED_LANGUAGES = Lists.newArrayList("eng", "fra");
+    public static final List<String> SUPPORTED_LANGUAGES = Lists.newArrayList("eng", "fra", "jpn");
 }

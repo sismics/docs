@@ -1,7 +1,9 @@
 package com.sismics.docs.core.dao.lucene;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -100,7 +102,7 @@ public class LuceneDao {
      * @return List of file IDs
      * @throws Exception
      */
-    public List<String> search(String userId, String searchQuery, int limit) throws Exception {
+    public Set<String> search(String userId, String searchQuery, int limit) throws Exception {
         // Escape query and add quotes so QueryParser generate a PhraseQuery
         searchQuery = "\"" + QueryParserUtil.escape(searchQuery) + "\"";
         
@@ -125,7 +127,7 @@ public class LuceneDao {
         ScoreDoc[] docs = topDocs.scoreDocs;
         
         // Extract file IDs
-        List<String> fileIdList = new ArrayList<String>();
+        Set<String> fileIdList = new HashSet<String>();
         for (int i = 0; i < docs.length; i++) {
             String id = searcher.doc(docs[i].doc).get("id");
             fileIdList.add(id);
