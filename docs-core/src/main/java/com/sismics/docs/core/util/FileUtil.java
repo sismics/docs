@@ -56,6 +56,7 @@ public class FileUtil {
 
         // OCR the file
         try {
+            log.info("Starting OCR with TESSDATA_PREFIX=" + System.getenv("TESSDATA_PREFIX") + ";LC_NUMERIC=" + System.getenv("LC_NUMERIC"));
             instance.setLanguage(document.getLanguage());
             content = instance.doOCR(image);
         } catch (Exception e) {
