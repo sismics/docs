@@ -23,6 +23,8 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Document;
@@ -36,6 +38,10 @@ import com.sismics.docs.core.util.LuceneUtil.LuceneRunnable;
  * @author bgamard
  */
 public class LuceneDao {
+    /**
+     * Logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(LuceneDao.class);
 
     /**
      * Destroy and rebuild index.
@@ -172,13 +178,17 @@ public class LuceneDao {
         TermsFilter userFilter = new TermsFilter(terms);
         
         // Search
+        Set<String> documentIdList = new HashSet<String>();
+        if (!DirectoryReader.indexExists(AppContext.getInstance().getLuceneDirectory())) {
+            log.warn("Lucene directory not yet initialized");
+            return documentIdList;
+        }
         IndexReader reader = DirectoryReader.open(AppContext.getInstance().getLuceneDirectory());
         IndexSearcher searcher = new IndexSearcher(reader);
         TopDocs topDocs = searcher.search(query, userFilter, Integer.MAX_VALUE);
         ScoreDoc[] docs = topDocs.scoreDocs;
         
         // Extract document IDs
-        Set<String> documentIdList = new HashSet<String>();
         for (int i = 0; i < docs.length; i++) {
             org.apache.lucene.document.Document document = searcher.doc(docs[i].doc);
             String type = document.get("type");
@@ -205,8 +215,12 @@ public class LuceneDao {
         luceneDocument.add(new StringField("id", document.getId(), Field.Store.YES));
         luceneDocument.add(new StringField("user_id", document.getUserId(), Field.Store.YES));
         luceneDocument.add(new StringField("type", "document", Field.Store.YES));
-        luceneDocument.add(new TextField("title", document.getTitle(), Field.Store.NO));
-        luceneDocument.add(new TextField("description", document.getDescription(), Field.Store.NO));
+        if (document.getTitle() != null) {
+            luceneDocument.add(new TextField("title", document.getTitle(), Field.Store.NO));
+        }
+        if (document.getDescription() != null) {
+            luceneDocument.add(new TextField("description", document.getDescription(), Field.Store.NO));
+        }
         
         return luceneDocument;
     }
@@ -224,7 +238,9 @@ public class LuceneDao {
         luceneDocument.add(new StringField("user_id", document.getUserId(), Field.Store.YES));
         luceneDocument.add(new StringField("type", "file", Field.Store.YES));
         luceneDocument.add(new StringField("document_id", file.getDocumentId(), Field.Store.YES));
-        luceneDocument.add(new TextField("content", file.getContent(), Field.Store.NO));
+        if (file.getContent() != null) {
+            luceneDocument.add(new TextField("content", file.getContent(), Field.Store.NO));
+        }
         
         return luceneDocument;
     }

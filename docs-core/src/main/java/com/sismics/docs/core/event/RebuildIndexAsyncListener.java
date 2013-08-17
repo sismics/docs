@@ -31,7 +31,7 @@ public class RebuildIndexAsyncListener {
      * @throws Exception
      */
     @Subscribe
-    public void onArticleCreated(final RebuildIndexAsyncEvent rebuildIndexAsyncEvent) throws Exception {
+    public void on(final RebuildIndexAsyncEvent rebuildIndexAsyncEvent) throws Exception {
         if (log.isInfoEnabled()) {
             log.info("Rebuild index event: " + rebuildIndexAsyncEvent.toString());
         }

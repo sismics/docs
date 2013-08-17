@@ -145,10 +145,9 @@ public class DocumentDao {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
         List<String> criteriaList = new ArrayList<String>();
         
-        StringBuilder sb = new StringBuilder("select d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, s.SHA_ID_C is not null c5 ");
+        StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, s.SHA_ID_C is not null c5 ");
         sb.append(" from T_DOCUMENT d ");
         sb.append(" left join T_SHARE s on s.SHA_IDDOCUMENT_C = d.DOC_ID_C and s.SHA_DELETEDATE_D is null ");
-        sb.append(" left join T_FILE f on f.FIL_IDDOC_C = d.DOC_ID_C and f.FIL_DELETEDATE_D is null ");
         
         // Adds search criteria
         if (criteria.getUserId() != null) {
