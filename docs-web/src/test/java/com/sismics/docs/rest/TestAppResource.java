@@ -49,6 +49,12 @@ public class TestAppResource extends BaseJerseyTest {
         response = appResource.post(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
+        
+        // Rebuild Lucene index
+        appResource = resource().path("/app/batch/reindex");
+        appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        response = appResource.post(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
     }
 
     /**

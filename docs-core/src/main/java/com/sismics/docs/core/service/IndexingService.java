@@ -1,10 +1,9 @@
 package com.sismics.docs.core.service;
 
-import com.google.common.util.concurrent.AbstractScheduledService;
-import com.sismics.docs.core.constant.Constants;
-import com.sismics.docs.core.model.context.AppContext;
-import com.sismics.docs.core.util.DirectoryUtil;
-import com.sismics.docs.core.util.TransactionUtil;
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
@@ -12,9 +11,12 @@ import org.apache.lucene.store.SimpleFSLockFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import com.google.common.util.concurrent.AbstractScheduledService;
+import com.sismics.docs.core.constant.Constants;
+import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
+import com.sismics.docs.core.util.DirectoryUtil;
+import com.sismics.docs.core.util.TransactionUtil;
 
 /**
  * Indexing service.
@@ -83,6 +85,16 @@ public class IndexingService extends AbstractScheduledService {
     @Override
     protected Scheduler scheduler() {
         return Scheduler.newFixedDelaySchedule(0, 1, TimeUnit.HOURS);
+    }
+    
+    /**
+     * Destroy and rebuild Lucene index.
+     * 
+     * @throws Exception 
+     */
+    public void rebuildIndex() throws Exception {
+        RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
+        AppContext.getInstance().getAsyncEventBus().post(rebuildIndexAsyncEvent);
     }
     
     /**

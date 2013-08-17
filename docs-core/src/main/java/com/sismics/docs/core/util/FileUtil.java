@@ -1,6 +1,8 @@
 package com.sismics.docs.core.util;
 
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorConvertOp;
 import java.io.IOException;
 import java.nio.file.Paths;
 
@@ -46,12 +48,11 @@ public class FileUtil {
             log.error("Error reading the image " + storedfile, e);
         }
         
-        // Upscale the image if it is too small
-        if (image.getWidth() < 2500 || image.getHeight() < 2500) {
-            BufferedImage resizedImage = Scalr.resize(image, Method.AUTOMATIC, Mode.AUTOMATIC, 3500);
-            image.flush();
-            image = resizedImage;
-        }
+        // Upscale and grayscale the image
+        BufferedImage resizedImage = Scalr.resize(image, Method.AUTOMATIC, Mode.AUTOMATIC, 3500,
+                new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null));
+        image.flush();
+        image = resizedImage;
 
         // OCR the file
         try {

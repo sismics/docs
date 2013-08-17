@@ -54,7 +54,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         WebResource documentResource = resource().path("/document");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         postParams = new MultivaluedMapImpl();
-        postParams.add("title", "My super document 1");
+        postParams.add("title", "My super title document 1");
         postParams.add("description", "My super description for document 1");
         postParams.add("tags", tag1Id);
         postParams.add("language", "eng");
@@ -120,6 +120,28 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertTrue(documents.length() == 1);
         Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
         Assert.assertEquals(create1Date, documents.getJSONObject(0).getLong("create_date"));
+        
+        // Search documents by query
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("search", "title");
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 1);
+
+        // Search documents by query
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("search", "description");
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 1);
         
         // Search documents by date
         documentResource = resource().path("/document/list");

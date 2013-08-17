@@ -38,6 +38,10 @@ import com.sismics.docs.core.dao.jpa.TagDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
+import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
+import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.Share;
 import com.sismics.docs.core.model.jpa.Tag;
@@ -46,6 +50,7 @@ import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.ValidationUtil;
 
 /**
@@ -148,7 +153,11 @@ public class DocumentResource extends BaseResource {
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
         DocumentCriteria documentCriteria = parseSearchQuery(search);
         documentCriteria.setUserId(principal.getId());
-        documentDao.findByCriteria(paginatedList, documentCriteria, sortCriteria);
+        try {
+            documentDao.findByCriteria(paginatedList, documentCriteria, sortCriteria);
+        } catch (Exception e) {
+            throw new ServerException("SearchError", "Error searching in documents", e);
+        }
 
         for (DocumentDto documentDto : paginatedList.getResultList()) {
             JSONObject document = new JSONObject();
@@ -296,6 +305,11 @@ public class DocumentResource extends BaseResource {
         // Update tags
         updateTagList(documentId, tagList);
         
+        // Raise a document created event
+        DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
+        documentCreatedAsyncEvent.setDocument(document);
+        AppContext.getInstance().getAsyncEventBus().post(documentCreatedAsyncEvent);
+        
         JSONObject response = new JSONObject();
         response.put("id", documentId);
         return Response.ok().entity(response).build();
@@ -358,6 +372,11 @@ public class DocumentResource extends BaseResource {
         // Update tags
         updateTagList(id, tagList);
         
+        // Raise a document updated event
+        DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
+        documentUpdatedAsyncEvent.setDocument(document);
+        AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
+        
         // Always return ok
         JSONObject response = new JSONObject();
         response.put("id", id);
@@ -414,6 +433,11 @@ public class DocumentResource extends BaseResource {
         } catch (NoResultException e) {
             throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", id));
         }
+        
+        // Raise a document deleted event
+        DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
+        documentDeletedAsyncEvent.setDocument(document);
+        AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
         
         // Delete the document
         documentDao.delete(document.getId());

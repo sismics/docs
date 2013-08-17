@@ -22,6 +22,7 @@ import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.ConfigUtil;
@@ -68,7 +69,11 @@ public class AppResource extends BaseResource {
         SortCriteria sortCriteria = new SortCriteria(0, true);
         DocumentCriteria documentCriteria = new DocumentCriteria();
         documentCriteria.setUserId(principal.getId());
-        documentDao.findByCriteria(paginatedList, documentCriteria, sortCriteria);
+        try {
+            documentDao.findByCriteria(paginatedList, documentCriteria, sortCriteria);
+        } catch (Exception e) {
+            throw new ServerException("SearchError", "Error searching in documents", e);
+        }
         response.put("document_count", paginatedList.getResultCount());
         
         // General data
@@ -146,7 +151,7 @@ public class AppResource extends BaseResource {
     @POST
     @Path("batch/ocr")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response batchReindex() throws JSONException {
+    public Response batchOcr() throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -161,6 +166,31 @@ public class AppResource extends BaseResource {
         }
         
         JSONObject response = new JSONObject();
+        response.put("status", "ok");
+        return Response.ok().entity(response).build();
+    }
+    
+    /**
+     * Destroy and rebuild Lucene index.
+     * 
+     * @return Response
+     * @throws JSONException
+     */
+    @POST
+    @Path("batch/reindex")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response batchReindex() throws JSONException {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        
+        JSONObject response = new JSONObject();
+        try {
+            AppContext.getInstance().getIndexingService().rebuildIndex();
+        } catch (Exception e) {
+            throw new ServerException("IndexingError", "Error rebuilding index", e);
+        }
         response.put("status", "ok");
         return Response.ok().entity(response).build();
     }

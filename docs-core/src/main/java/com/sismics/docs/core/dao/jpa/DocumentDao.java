@@ -1,20 +1,29 @@
 package com.sismics.docs.core.dao.jpa;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.dao.lucene.LuceneDao;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.QueryParam;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.sql.Timestamp;
-import java.util.*;
 
 /**
  * Document DAO.
@@ -38,6 +47,18 @@ public class DocumentDao {
         em.persist(document);
         
         return document.getId();
+    }
+    
+    /**
+     * Returns the list of all documents.
+     * 
+     * @return List of documents
+     */
+    @SuppressWarnings("unchecked")
+    public List<Document> findAll() {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select d from Document d where d.deleteDate is null");
+        return q.getResultList();
     }
     
     /**
@@ -118,8 +139,9 @@ public class DocumentDao {
      * @param paginatedList List of documents (updated by side effects)
      * @param criteria Search criteria
      * @return List of document
+     * @throws Exception 
      */
-    public void findByCriteria(PaginatedList<DocumentDto> paginatedList, DocumentCriteria criteria, SortCriteria sortCriteria) {
+    public void findByCriteria(PaginatedList<DocumentDto> paginatedList, DocumentCriteria criteria, SortCriteria sortCriteria) throws Exception {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
         List<String> criteriaList = new ArrayList<String>();
         
@@ -133,9 +155,15 @@ public class DocumentDao {
             criteriaList.add("d.DOC_IDUSER_C = :userId");
             parameterMap.put("userId", criteria.getUserId());
         }
-        if (criteria.getSearch() != null) {
-            criteriaList.add("(d.DOC_TITLE_C LIKE :search OR d.DOC_DESCRIPTION_C LIKE :search OR f.FIL_CONTENT_C LIKE :search)");
-            parameterMap.put("search", "%" + criteria.getSearch() + "%");
+        if (!Strings.isNullOrEmpty(criteria.getSearch())) {
+            LuceneDao luceneDao = new LuceneDao();
+            Set<String> documentIdList = luceneDao.search(criteria.getUserId(), criteria.getSearch());
+            if (documentIdList.size() == 0) {
+                // If the search doesn't find any document, the request should return nothing
+                documentIdList.add(UUID.randomUUID().toString());
+            }
+            criteriaList.add("d.DOC_ID_C in :documentIdList");
+            parameterMap.put("documentIdList", documentIdList);
         }
         if (criteria.getCreateDateMin() != null) {
             criteriaList.add("d.DOC_CREATEDATE_D >= :createDateMin");

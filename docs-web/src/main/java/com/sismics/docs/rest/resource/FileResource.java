@@ -30,6 +30,7 @@ import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.ShareDao;
 import com.sismics.docs.core.event.FileCreatedAsyncEvent;
+import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
@@ -247,8 +248,12 @@ public class FileResource extends BaseResource {
             throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", id));
         }
         
+        // Raise a new file deleted event
+        FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
+        fileDeletedAsyncEvent.setFile(file);
+        AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
+        
         // Delete the file
-        // TODO Delete the file from storage too
         fileDao.delete(file.getId());
         
         // Always return ok
