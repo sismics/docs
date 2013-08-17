@@ -201,6 +201,8 @@ public class LuceneDao {
             documentIdList.add(documentId);
         }
         
+        reader.close();
+        
         return documentIdList;
     }
     
