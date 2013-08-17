@@ -2,6 +2,7 @@ package com.sismics.docs.rest;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.nio.file.Paths;
 
 import javax.ws.rs.core.MediaType;
 
@@ -12,6 +13,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 
 import com.google.common.io.ByteStreams;
+import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
@@ -144,6 +146,12 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals("ok", json.getString("status"));
+        
+        // Check that files are deleted from FS
+        java.io.File thumbnailFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id + "_thumb").toFile();
+        java.io.File storedFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id).toFile();
+        Assert.assertFalse(thumbnailFile.exists());
+        Assert.assertFalse(storedFile.exists());
         
         // Get all files from a document
         fileResource = resource().path("/file/list");

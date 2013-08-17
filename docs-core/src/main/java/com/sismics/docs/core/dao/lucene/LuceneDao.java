@@ -10,8 +10,6 @@ import java.util.Set;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.TermsFilter;
@@ -23,8 +21,6 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Version;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Document;
@@ -38,11 +34,6 @@ import com.sismics.docs.core.util.LuceneUtil.LuceneRunnable;
  * @author bgamard
  */
 public class LuceneDao {
-    /**
-     * Logger.
-     */
-    private static final Logger log = LoggerFactory.getLogger(LuceneDao.class);
-
     /**
      * Destroy and rebuild index.
      * 
@@ -178,17 +169,12 @@ public class LuceneDao {
         TermsFilter userFilter = new TermsFilter(terms);
         
         // Search
-        Set<String> documentIdList = new HashSet<String>();
-        if (!DirectoryReader.indexExists(AppContext.getInstance().getLuceneDirectory())) {
-            log.warn("Lucene directory not yet initialized");
-            return documentIdList;
-        }
-        IndexReader reader = DirectoryReader.open(AppContext.getInstance().getLuceneDirectory());
-        IndexSearcher searcher = new IndexSearcher(reader);
+        IndexSearcher searcher = new IndexSearcher(AppContext.getInstance().getIndexingService().getDirectoryReader());
         TopDocs topDocs = searcher.search(query, userFilter, Integer.MAX_VALUE);
         ScoreDoc[] docs = topDocs.scoreDocs;
         
         // Extract document IDs
+        Set<String> documentIdList = new HashSet<String>();
         for (int i = 0; i < docs.length; i++) {
             org.apache.lucene.document.Document document = searcher.doc(docs[i].doc);
             String type = document.get("type");
@@ -200,8 +186,6 @@ public class LuceneDao {
             }
             documentIdList.add(documentId);
         }
-        
-        reader.close();
         
         return documentIdList;
     }

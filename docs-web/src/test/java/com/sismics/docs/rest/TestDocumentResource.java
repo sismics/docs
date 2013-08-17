@@ -284,6 +284,15 @@ public class TestDocumentResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(document1Id, json.getString("id"));
         
+        // Search documents by query
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("search", "super");
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        
         // Get a document
         documentResource = resource().path("/document/" + document1Id);
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));

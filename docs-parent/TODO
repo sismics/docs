@@ -1,7 +1,6 @@
 - New image rescale between thumbnail and original (client/server)
 - Batch to regenerate all thumbnails (server)
-- Delete files on FS when a file in database is deleted (server)
-- Batch to delete unused files on FS (server)
 - Special criteria to search inside OCR-ed content (eg. full:uranium) (server)
 - Special criteria to search on a specific time span (eg. at:2013-06) (server)
 - Show help on special criterias (client)
+- Disable Add/Edit button while uploading (client)

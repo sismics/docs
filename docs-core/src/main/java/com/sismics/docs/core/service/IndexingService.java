@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
@@ -35,6 +36,11 @@ public class IndexingService extends AbstractScheduledService {
     private Directory directory;
     
     /**
+     * Directory reader.
+     */
+    private DirectoryReader directoryReader;
+    
+    /**
      * Lucene storage config.
      */
     private String luceneStorageConfig;
@@ -62,10 +68,16 @@ public class IndexingService extends AbstractScheduledService {
 
     @Override
     protected void shutDown() {
-        Directory luceneIndex = AppContext.getInstance().getLuceneDirectory();
-        if (luceneIndex != null) {
+        if (directoryReader != null) {
             try {
-                luceneIndex.close();
+                directoryReader.close();
+            } catch (IOException e) {
+                log.error("Error closing the index reader", e);
+            }
+        }
+        if (directory != null) {
+            try {
+                directory.close();
             } catch (IOException e) {
                 log.error("Error closing Lucene index", e);
             }
@@ -104,5 +116,37 @@ public class IndexingService extends AbstractScheduledService {
      */
     public Directory getDirectory() {
         return directory;
+    }
+
+    /**
+     * Returns a valid directory reader.
+     * Take care of reopening the reader if the index has changed
+     * and closing the previous one.
+     *
+     * @return the directoryReader
+     */
+    public DirectoryReader getDirectoryReader() {
+        if (directoryReader == null) {
+            if (!DirectoryReader.indexExists(directory)) {
+                log.info("Lucene directory not yet created");
+                return null;
+            }
+            try {
+                directoryReader = DirectoryReader.open(directory);
+            } catch (IOException e) {
+                log.error("Error creating the directory reader", e);
+            }
+        } else {
+            try {
+                DirectoryReader newReader = DirectoryReader.openIfChanged(directoryReader);
+                if (newReader != null) {
+                    directoryReader.close();
+                    directoryReader = newReader;
+                }
+            } catch (IOException e) {
+                log.error("Error while reopening the directory reader", e);
+            }
+        }
+        return directoryReader;
     }
 }

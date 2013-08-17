@@ -37,7 +37,7 @@ public class LuceneUtil {
         config.setMergeScheduler(new SerialMergeScheduler());
         
         // Creating index writer
-        Directory directory = AppContext.getInstance().getLuceneDirectory();
+        Directory directory = AppContext.getInstance().getIndexingService().getDirectory();
         IndexWriter indexWriter = null;
         try {
             indexWriter = new IndexWriter(directory, config);

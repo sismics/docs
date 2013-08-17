@@ -55,6 +55,12 @@ public class TestAppResource extends BaseJerseyTest {
         appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
         response = appResource.post(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        
+        // Clean storage
+        appResource = resource().path("/app/batch/clean_storage");
+        appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        response = appResource.post(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
     }
 
     /**

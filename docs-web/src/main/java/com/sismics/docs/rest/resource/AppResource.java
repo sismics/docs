@@ -1,7 +1,9 @@
 package com.sismics.docs.rest.resource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.ws.rs.GET;
@@ -19,11 +21,14 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.sismics.docs.core.dao.jpa.DocumentDao;
+import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.event.OcrFileAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
+import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.ConfigUtil;
+import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -177,12 +182,53 @@ public class AppResource extends BaseResource {
         }
         checkBaseFunction(BaseFunction.ADMIN);
         
-        JSONObject response = new JSONObject();
         try {
             AppContext.getInstance().getIndexingService().rebuildIndex();
         } catch (Exception e) {
             throw new ServerException("IndexingError", "Error rebuilding index", e);
         }
+        
+        JSONObject response = new JSONObject();
+        response.put("status", "ok");
+        return Response.ok().entity(response).build();
+    }
+    
+    /**
+     * Destroy and rebuild Lucene index.
+     * 
+     * @return Response
+     * @throws JSONException
+     */
+    @POST
+    @Path("batch/clean_storage")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response batchCleanStorage() throws JSONException {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        
+        // Get all files
+        FileDao fileDao = new FileDao();
+        List<File> fileList = fileDao.findAll();
+        Map<String, File> fileMap = new HashMap<>();
+        for (File file : fileList) {
+            fileMap.put(file.getId(), file);
+        }
+        
+        // Check if each stored file is valid
+        java.io.File[] storedFileList = DirectoryUtil.getStorageDirectory().listFiles();
+        for (java.io.File storedFile : storedFileList) {
+            String fileName = storedFile.getName();
+            if (fileName.endsWith("_thumb")) {
+                fileName = fileName.replace("_thumb", "");
+            }
+            if (!fileMap.containsKey(fileName)) {
+                storedFile.delete();
+            }
+        }
+        
+        JSONObject response = new JSONObject();
         response.put("status", "ok");
         return Response.ok().entity(response).build();
     }
