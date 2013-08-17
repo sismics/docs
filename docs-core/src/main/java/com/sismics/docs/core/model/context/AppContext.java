@@ -13,12 +13,12 @@ import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.dao.jpa.ConfigDao;
-import com.sismics.docs.core.event.OcrFileAsyncEvent;
 import com.sismics.docs.core.listener.async.DocumentCreatedAsyncListener;
 import com.sismics.docs.core.listener.async.DocumentDeletedAsyncListener;
 import com.sismics.docs.core.listener.async.DocumentUpdatedAsyncListener;
 import com.sismics.docs.core.listener.async.FileCreatedAsyncListener;
 import com.sismics.docs.core.listener.async.FileDeletedAsyncListener;
+import com.sismics.docs.core.listener.async.OcrFileAsyncListener;
 import com.sismics.docs.core.listener.async.RebuildIndexAsyncListener;
 import com.sismics.docs.core.listener.sync.DeadEventListener;
 import com.sismics.docs.core.model.jpa.Config;
@@ -91,7 +91,7 @@ public class AppContext {
         asyncEventBus.register(new DocumentUpdatedAsyncListener());
         asyncEventBus.register(new DocumentDeletedAsyncListener());
         asyncEventBus.register(new RebuildIndexAsyncListener());
-        asyncEventBus.register(new OcrFileAsyncEvent());
+        asyncEventBus.register(new OcrFileAsyncListener());
     }
 
     /**

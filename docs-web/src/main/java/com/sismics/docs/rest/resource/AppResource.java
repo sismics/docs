@@ -155,8 +155,7 @@ public class AppResource extends BaseResource {
         checkBaseFunction(BaseFunction.ADMIN);
         
         // Raise a OCR file event
-        OcrFileAsyncEvent ocrFileAsyncEvent = new OcrFileAsyncEvent();
-        AppContext.getInstance().getAsyncEventBus().post(ocrFileAsyncEvent);
+        AppContext.getInstance().getAsyncEventBus().post(new OcrFileAsyncEvent());
         
         JSONObject response = new JSONObject();
         response.put("status", "ok");
