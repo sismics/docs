@@ -30,6 +30,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.DateTimeParser;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
@@ -209,12 +210,12 @@ public class DocumentResource extends BaseResource {
         DateTimeFormatter formatter = new DateTimeFormatterBuilder().append( null, parsers ).toFormatter();
         
         String[] criteriaList = search.split("  *");
-        StringBuilder query = new StringBuilder();
+        List<String> query = new ArrayList<>();
         for (String criteria : criteriaList) {
             String[] params = criteria.split(":");
             if (params.length != 2 || Strings.isNullOrEmpty(params[0]) || Strings.isNullOrEmpty(params[1])) {
                 // This is not a special criteria
-                query.append(criteria);
+                query.add(criteria);
                 continue;
             }
             
@@ -251,11 +252,11 @@ public class DocumentResource extends BaseResource {
                     documentCriteria.setLanguage(params[1]);
                 }
             } else {
-                query.append(criteria);
+                query.add(criteria);
             }
         }
         
-        documentCriteria.setSearch(query.toString());
+        documentCriteria.setSearch(Joiner.on(" ").join(query));
         return documentCriteria;
     }
 
