@@ -1,9 +1,10 @@
 package com.sismics.docs.core.util;
 
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
@@ -55,8 +56,7 @@ public class FileUtil {
         }
         
         // Upscale and grayscale the image
-        BufferedImage resizedImage = Scalr.resize(image, Method.AUTOMATIC, Mode.AUTOMATIC, 3500,
-                new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null));
+        BufferedImage resizedImage = Scalr.resize(image, Method.AUTOMATIC, Mode.AUTOMATIC, 3500, Scalr.OP_ANTIALIAS, Scalr.OP_GRAYSCALE);
         image.flush();
         image = resizedImage;
 
@@ -70,5 +70,27 @@ public class FileUtil {
         }
         
         return content;
+    }
+    
+    /**
+     * Save a file on the storage filesystem.
+     * 
+     * @param is InputStream
+     * @param file File to save
+     * @throws Exception
+     */
+    public static void save(InputStream is, File file) throws Exception {
+        Path path = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId());
+        Files.copy(is, path);
+        
+        // In case of image, save thumbnails
+        if (ImageUtil.isImage(file.getMimeType())) {
+            BufferedImage image = ImageIO.read(path.toFile());
+            BufferedImage web = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 1280, Scalr.OP_ANTIALIAS);
+            BufferedImage thumbnail = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 256, Scalr.OP_ANTIALIAS);
+            image.flush();
+            ImageUtil.writeJpeg(web, Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_web").toFile());
+            ImageUtil.writeJpeg(thumbnail, Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_thumb").toFile());
+        }
     }
 }

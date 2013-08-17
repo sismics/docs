@@ -84,9 +84,7 @@ public class TestFileResource extends BaseJerseyTest {
         // Get the file data
         fileResource = resource().path("/file/" + file1Id + "/data");
         fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
-        getParams.putSingle("thumbnail", false);
-        response = fileResource.queryParams(getParams).get(ClientResponse.class);
+        response = fileResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         InputStream is = response.getEntityInputStream();
         byte[] fileBytes = ByteStreams.toByteArray(is);
@@ -95,13 +93,24 @@ public class TestFileResource extends BaseJerseyTest {
         // Get the thumbnail data
         fileResource = resource().path("/file/" + file1Id + "/data");
         fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("thumbnail", true);
+        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
+        getParams.putSingle("size", "thumb");
         response = fileResource.queryParams(getParams).get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         is = response.getEntityInputStream();
         fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(41935, fileBytes.length);
+        
+        // Get the web data
+        fileResource = resource().path("/file/" + file1Id + "/data");
+        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("size", "web");
+        response = fileResource.queryParams(getParams).get(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = response.getEntityInputStream();
+        fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(551084, fileBytes.length);
         
         // Get all files from a document
         fileResource = resource().path("/file/list");
@@ -148,10 +157,12 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals("ok", json.getString("status"));
         
         // Check that files are deleted from FS
-        java.io.File thumbnailFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id + "_thumb").toFile();
         java.io.File storedFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id).toFile();
-        Assert.assertFalse(thumbnailFile.exists());
+        java.io.File webFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id + "_web").toFile();
+        java.io.File thumbnailFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id + "_thumb").toFile();
         Assert.assertFalse(storedFile.exists());
+        Assert.assertFalse(webFile.exists());
+        Assert.assertFalse(thumbnailFile.exists());
         
         // Get all files from a document
         fileResource = resource().path("/file/list");

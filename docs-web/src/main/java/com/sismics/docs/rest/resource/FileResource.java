@@ -26,6 +26,7 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.google.common.collect.Lists;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.ShareDao;
@@ -35,11 +36,11 @@ import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.DirectoryUtil;
+import com.sismics.docs.core.util.FileUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.ValidationUtil;
-import com.sismics.util.FileUtil;
 import com.sismics.util.ImageUtil;
 import com.sismics.util.mime.MimeTypeUtil;
 import com.sun.jersey.multipart.FormDataBodyPart;
@@ -275,8 +276,14 @@ public class FileResource extends BaseResource {
     public Response data(
             @PathParam("id") final String fileId,
             @QueryParam("share") String shareId,
-            @QueryParam("thumbnail") boolean thumbnail) throws JSONException {
+            @QueryParam("size") String size) throws JSONException {
         authenticate();
+        
+        if (size != null) {
+            if (!Lists.newArrayList("web", "thumb").contains(size)) {
+                throw new ClientException("SizeError", "Size must be web or thumb");
+            }
+        }
         
         // Get the file
         FileDao fileDao = new FileDao();
@@ -298,9 +305,9 @@ public class FileResource extends BaseResource {
         
         // Get the stored file
         java.io.File storedfile;
-        if (thumbnail) {
+        if (size != null) {
             if (ImageUtil.isImage(file.getMimeType())) {
-                storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), fileId + "_thumb").toFile();
+                storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), fileId + "_" + size).toFile();
             } else {
                 storedfile = new java.io.File(getClass().getResource("/image/file.png").getFile());
             }

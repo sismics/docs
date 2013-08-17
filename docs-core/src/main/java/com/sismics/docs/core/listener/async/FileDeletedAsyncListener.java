@@ -36,14 +36,18 @@ public class FileDeletedAsyncListener {
 
         // Delete the file from storage
         File file = fileDeletedAsyncEvent.getFile();
-        java.io.File thumbnailFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_thumb").toFile();
         java.io.File storedFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId()).toFile();
+        java.io.File webFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_web").toFile();
+        java.io.File thumbnailFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_thumb").toFile();
         
-        if (thumbnailFile.exists()) {
-            thumbnailFile.delete();
-        }
         if (storedFile.exists()) {
             storedFile.delete();
+        }
+        if (webFile.exists()) {
+            webFile.delete();
+        }
+        if (thumbnailFile.exists()) {
+            thumbnailFile.delete();
         }
         
         // Update Lucene index

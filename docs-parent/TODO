@@ -1,6 +1,9 @@
-- New image rescale between thumbnail and original (client/server)
+- New image rescale between thumbnail and original (client)
 - Batch to regenerate all thumbnails (server)
 - Special criteria to search inside OCR-ed content (eg. full:uranium) (server)
 - Special criteria to search on a specific time span (eg. at:2013-06) (server)
 - Show help on special criterias (client)
 - Disable Add/Edit button while uploading (client)
+
+- Extract text from PDF for indexing, see PDFBox (server)
+- Make thumbnail of the first page of PDF, see PDFBox (server)

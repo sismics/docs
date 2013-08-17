@@ -220,6 +220,9 @@ public class AppResource extends BaseResource {
         java.io.File[] storedFileList = DirectoryUtil.getStorageDirectory().listFiles();
         for (java.io.File storedFile : storedFileList) {
             String fileName = storedFile.getName();
+            if (fileName.endsWith("_web")) {
+                fileName = fileName.replace("_web", "");
+            }
             if (fileName.endsWith("_thumb")) {
                 fileName = fileName.replace("_thumb", "");
             }
