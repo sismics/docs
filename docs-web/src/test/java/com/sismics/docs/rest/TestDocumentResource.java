@@ -416,6 +416,6 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         InputStream is = response.getEntityInputStream();
         byte[] fileBytes = ByteStreams.toByteArray(is);
-        Assert.assertEquals(3457, fileBytes.length);
+        Assert.assertEquals(33691, fileBytes.length);
     }
 }

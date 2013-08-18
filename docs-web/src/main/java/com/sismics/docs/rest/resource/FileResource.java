@@ -41,7 +41,6 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.ValidationUtil;
-import com.sismics.util.ImageUtil;
 import com.sismics.util.mime.MimeTypeUtil;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
@@ -306,9 +305,8 @@ public class FileResource extends BaseResource {
         // Get the stored file
         java.io.File storedfile;
         if (size != null) {
-            if (ImageUtil.isImage(file.getMimeType())) {
-                storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), fileId + "_" + size).toFile();
-            } else {
+            storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), fileId + "_" + size).toFile();
+            if (!storedfile.exists()) {
                 storedfile = new java.io.File(getClass().getResource("/image/file.png").getFile());
             }
         } else {
