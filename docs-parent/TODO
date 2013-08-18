@@ -1,0 +1,2 @@
+- Search criterias: if a date do not parse, returns no documents (server)
+- Raise file deleted event on document deletion (server)
