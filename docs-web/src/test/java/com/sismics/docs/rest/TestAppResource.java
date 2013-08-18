@@ -44,7 +44,7 @@ public class TestAppResource extends BaseJerseyTest {
         Assert.assertEquals(0, json.getInt("document_count"));
         
         // OCR-ize all files
-        appResource = resource().path("/app/batch/ocr");
+        appResource = resource().path("/app/batch/extract");
         appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
         response = appResource.post(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));

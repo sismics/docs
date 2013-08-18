@@ -103,7 +103,7 @@ public class FileUtil {
         java.io.File storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId()).toFile();
         try {
             PDFTextStripper stripper = new PDFTextStripper();
-            pdfDocument = PDDocument.load(storedfile);
+            pdfDocument = PDDocument.load(storedfile.getAbsolutePath(), true);
             content = stripper.getText(pdfDocument);
         } catch (IOException e) {
             log.error("Error while extracting text from the PDF " + storedfile, e);
@@ -153,7 +153,7 @@ public class FileUtil {
             image = ImageIO.read(originalFile);
         } else if(file.getMimeType().equals(MimeType.APPLICATION_PDF)) {
             // Generate preview from the first page of the PDF
-            PDDocument pdfDocument = PDDocument.load(originalFile);
+            PDDocument pdfDocument = PDDocument.load(originalFile.getAbsolutePath(), true);
             @SuppressWarnings("unchecked")
             List<PDPage> pageList = pdfDocument.getDocumentCatalog().getAllPages();
             if (pageList.size() > 0) {

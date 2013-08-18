@@ -148,21 +148,21 @@ public class AppResource extends BaseResource {
     }
     
     /**
-     * OCR-ize all files again.
+     * Extract content from all files again.
      * 
      * @return Response
      * @throws JSONException
      */
     @POST
-    @Path("batch/ocr")
+    @Path("batch/extract")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response batchOcr() throws JSONException {
+    public Response batchExtract() throws JSONException {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);
         
-        // Raise a OCR file event
+        // Raise an extract file content event
         AppContext.getInstance().getAsyncEventBus().post(new ExtractFileAsyncEvent());
         
         JSONObject response = new JSONObject();
