@@ -1,7 +1,6 @@
 - New image rescale between thumbnail and original (client)
-- Batch to regenerate all thumbnails (server)
-- Special criteria to search inside OCR-ed content (eg. full:uranium) (server)
-- Special criteria to search on a specific time span (eg. at:2013-06) (server)
+- Criteria to search inside OCR-ed content (eg. full:uranium) (server)
+- Criteria to search on a specific time span (eg. at:2013-06) (server)
 - Show help on special criterias (client)
 - Disable Add/Edit button while uploading (client)
 

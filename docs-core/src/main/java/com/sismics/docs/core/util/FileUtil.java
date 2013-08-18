@@ -77,20 +77,52 @@ public class FileUtil {
      * 
      * @param is InputStream
      * @param file File to save
-     * @throws Exception
+     * @throws IOException
      */
-    public static void save(InputStream is, File file) throws Exception {
+    public static void save(InputStream is, File file) throws IOException {
         Path path = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId());
         Files.copy(is, path);
         
-        // In case of image, save thumbnails
+        // Generate file variations
+        saveVariations(file, path.toFile());
+    }
+
+    /**
+     * Generate file variations.
+     * 
+     * @param file File from database
+     * @param originalFile Original file
+     * @throws IOException
+     */
+    public static void saveVariations(File file, java.io.File originalFile) throws IOException {
         if (ImageUtil.isImage(file.getMimeType())) {
-            BufferedImage image = ImageIO.read(path.toFile());
+            BufferedImage image = ImageIO.read(originalFile);
             BufferedImage web = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 1280, Scalr.OP_ANTIALIAS);
             BufferedImage thumbnail = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 256, Scalr.OP_ANTIALIAS);
             image.flush();
             ImageUtil.writeJpeg(web, Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_web").toFile());
             ImageUtil.writeJpeg(thumbnail, Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_thumb").toFile());
+        }
+    }
+
+    /**
+     * Remove a file from the storage filesystem.
+     * 
+     * @param file File to delete
+     */
+    public static void delete(File file) {
+        java.io.File storedFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId()).toFile();
+        java.io.File webFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_web").toFile();
+        java.io.File thumbnailFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_thumb").toFile();
+        
+        if (storedFile.exists()) {
+            storedFile.delete();
+        }
+        if (webFile.exists()) {
+            webFile.delete();
+        }
+        if (thumbnailFile.exists()) {
+            thumbnailFile.delete();
         }
     }
 }

@@ -1,7 +1,5 @@
 package com.sismics.docs.core.listener.async;
 
-import java.nio.file.Paths;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +7,7 @@ import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.dao.lucene.LuceneDao;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.util.DirectoryUtil;
+import com.sismics.docs.core.util.FileUtil;
 
 /**
  * Listener on file deleted.
@@ -36,19 +34,7 @@ public class FileDeletedAsyncListener {
 
         // Delete the file from storage
         File file = fileDeletedAsyncEvent.getFile();
-        java.io.File storedFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId()).toFile();
-        java.io.File webFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_web").toFile();
-        java.io.File thumbnailFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_thumb").toFile();
-        
-        if (storedFile.exists()) {
-            storedFile.delete();
-        }
-        if (webFile.exists()) {
-            webFile.delete();
-        }
-        if (thumbnailFile.exists()) {
-            thumbnailFile.delete();
-        }
+        FileUtil.delete(file);
         
         // Update Lucene index
         LuceneDao luceneDao = new LuceneDao();

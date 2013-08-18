@@ -112,6 +112,44 @@ public class TestFileResource extends BaseJerseyTest {
         fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(551084, fileBytes.length);
         
+        // Regenerate file variations
+        String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
+        WebResource appResource = resource().path("/app/batch/file_variations");
+        appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
+        response = appResource.post(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        
+        // Get the file data
+        fileResource = resource().path("/file/" + file1Id + "/data");
+        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
+        response = fileResource.get(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = response.getEntityInputStream();
+        fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(163510, fileBytes.length);
+        
+        // Get the thumbnail data
+        fileResource = resource().path("/file/" + file1Id + "/data");
+        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("size", "thumb");
+        response = fileResource.queryParams(getParams).get(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = response.getEntityInputStream();
+        fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(41935, fileBytes.length);
+        
+        // Get the web data
+        fileResource = resource().path("/file/" + file1Id + "/data");
+        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("size", "web");
+        response = fileResource.queryParams(getParams).get(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = response.getEntityInputStream();
+        fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(551084, fileBytes.length);
+        
         // Get all files from a document
         fileResource = resource().path("/file/list");
         fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
