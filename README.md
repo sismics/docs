@@ -32,7 +32,7 @@ information or see <http://opensource.org/licenses/GPL-2.0>.
 How to build Docs from the sources
 ------------------------------------
 
-Prerequisites: JDK 7, Maven 3
+Prerequisites: JDK 7, Maven 3, Tesseract 3.02
 
 Docs is organized in several Maven modules:
 
@@ -48,6 +48,7 @@ or download the sources from GitHub.
 
 From the `docs-parent` directory:
 
+    mvn -Pinit validate -N
     mvn clean -DskipTests install
 
 #### Run a stand-alone version
