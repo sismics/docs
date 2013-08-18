@@ -9,13 +9,13 @@
   </div>
   
   <div class="btn-group pull-right">
-    <button type="button" class="btn" ng-click="openFile()"><span class="icon-share"></span></button>
+    <button type="button" class="btn" ng-click="openFile()"><span class="icon-download-alt"></span></button>
   </div>
 </div>
 
 
-<img ng-if="$stateParams.fileId && (file.mimetype == 'image/png' || file.mimetype == 'image/jpeg' || file.mimetype == 'image/gif')" ng-src="api/file/{{ $stateParams.fileId }}/data?share={{ $stateParams.shareId }}" />
+<img ng-if="$stateParams.fileId && (file.mimetype == 'image/png' || file.mimetype == 'image/jpeg' || file.mimetype == 'image/gif')" ng-src="api/file/{{ $stateParams.fileId }}/data?size=web&share={{ $stateParams.shareId }}" />
 
 <div class="text-center" ng-if="$stateParams.fileId && file.mimetype == 'application/pdf'">
-  <img ng-src="api/file/{{ $stateParams.fileId }}/data?thumbnail=true&share={{ $stateParams.shareId }}" />
+  <img ng-src="api/file/{{ $stateParams.fileId }}/data?size=web&share={{ $stateParams.shareId }}" />
 </div>

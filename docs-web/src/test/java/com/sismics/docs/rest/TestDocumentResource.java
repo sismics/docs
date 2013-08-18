@@ -1,6 +1,20 @@
 package com.sismics.docs.rest;
 
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.util.Date;
+
+import javax.ws.rs.core.MediaType;
+
+import junit.framework.Assert;
+
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.joda.time.format.DateTimeFormat;
+import org.junit.Test;
+
 import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
@@ -8,18 +22,6 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
-
-import junit.framework.Assert;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.junit.Test;
-
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.util.Date;
-
-import javax.ws.rs.core.MediaType;
 
 /**
  * Exhaustive test of the document resource.
@@ -108,20 +110,29 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals("SuperTag", tags.getJSONObject(0).getString("name"));
         Assert.assertEquals("#ffff00", tags.getJSONObject(0).getString("color"));
         
-        // Search documents by query
+        // Search documents by query in full content
         documentResource = resource().path("/document/list");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
-        getParams.putSingle("search", "uranium");
+        getParams.putSingle("search", "full:uranium");
         response = documentResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         documents = json.getJSONArray("documents");
         Assert.assertTrue(documents.length() == 1);
-        Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
-        Assert.assertEquals(create1Date, documents.getJSONObject(0).getLong("create_date"));
         
-        // Search documents by query
+        // Search documents by query in full content
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("search", "full:title");
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 1);
+        
+        // Search documents by query in title/description
         documentResource = resource().path("/document/list");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
@@ -132,7 +143,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         documents = json.getJSONArray("documents");
         Assert.assertTrue(documents.length() == 1);
 
-        // Search documents by query
+        // Search documents by query in title/description
         documentResource = resource().path("/document/list");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
@@ -143,7 +154,19 @@ public class TestDocumentResource extends BaseJerseyTest {
         documents = json.getJSONArray("documents");
         Assert.assertTrue(documents.length() == 1);
         
-        // Search documents by date
+        // Search documents by specific date
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("search", "at:" + DateTimeFormat.forPattern("yyyy-MM").print(new Date().getTime()));
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 1);
+        Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
+        
+        // Search documents by date span
         documentResource = resource().path("/document/list");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
@@ -197,7 +220,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         documentResource = resource().path("/document/list");
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
-        getParams.putSingle("search", "after:2010 before:2040-08 tag:super shared:yes lang:eng uranium");
+        getParams.putSingle("search", "after:2010 before:2040-08 tag:super shared:yes lang:eng title description full:uranium");
         response = documentResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -210,6 +233,17 @@ public class TestDocumentResource extends BaseJerseyTest {
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         getParams = new MultivaluedMapImpl();
         getParams.putSingle("search", "random");
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 0);
+        
+        // Search documents (nothing)
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("search", "full:random");
         response = documentResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));

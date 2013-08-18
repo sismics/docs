@@ -143,13 +143,15 @@ public class LuceneDao {
      * Search files.
      * 
      * @param userId User ID to filter on
-     * @param searchQuery Search query
+     * @param searchQuery Search query on title and description
+     * @param fullSearchQuery Search query on all fields
      * @return List of document IDs
      * @throws Exception
      */
-    public Set<String> search(String userId, String searchQuery) throws Exception {
+    public Set<String> search(String userId, String searchQuery, String fullSearchQuery) throws Exception {
         // Escape query and add quotes so QueryParser generate a PhraseQuery
-        searchQuery = "\"" + QueryParserUtil.escape(searchQuery) + "\"";
+        searchQuery = "\"" + QueryParserUtil.escape(searchQuery + " " + fullSearchQuery) + "\"";
+        fullSearchQuery = "\"" + QueryParserUtil.escape(fullSearchQuery) + "\"";
         
         // Build search query
         StandardQueryParser qpHelper = new StandardQueryParser(new DocsStandardAnalyzer(Version.LUCENE_42));
@@ -157,9 +159,9 @@ public class LuceneDao {
         
         // Search on documents and files
         BooleanQuery query = new BooleanQuery();
-        query.add(qpHelper.parse(searchQuery, "content"), Occur.SHOULD);
         query.add(qpHelper.parse(searchQuery, "title"), Occur.SHOULD);
         query.add(qpHelper.parse(searchQuery, "description"), Occur.SHOULD);
+        query.add(qpHelper.parse(fullSearchQuery, "content"), Occur.SHOULD);
         
         // Filter on provided user ID
         List<Term> terms = new ArrayList<Term>();

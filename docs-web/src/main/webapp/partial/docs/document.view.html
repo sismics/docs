@@ -25,7 +25,7 @@
 	  <li class="span2 text-center thumbnail-container" ng-repeat="file in files">
 	    <div class="thumbnail">
 	      <a ng-click="openFile(file)">
-	        <img class="thumbnail-file" ng-src="api/file/{{ file.id }}/data?thumbnail=true" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
+	        <img class="thumbnail-file" ng-src="api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
 	      </a>
 	      <div class="caption">
 	        <div class="pull-left">

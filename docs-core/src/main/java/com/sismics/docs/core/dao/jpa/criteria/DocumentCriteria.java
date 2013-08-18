@@ -21,6 +21,11 @@ public class DocumentCriteria {
     private String search;
     
     /**
+     * Full content search query.
+     */
+    private String fullSearch;
+    
+    /**
      * Minimum creation date.
      */
     private Date createDateMin;
@@ -79,6 +84,24 @@ public class DocumentCriteria {
      */
     public void setSearch(String search) {
         this.search = search;
+    }
+
+    /**
+     * Getter of fullSearch.
+     *
+     * @return the fullSearch
+     */
+    public String getFullSearch() {
+        return fullSearch;
+    }
+
+    /**
+     * Setter of fullSearch.
+     *
+     * @param fullSearch fullSearch
+     */
+    public void setFullSearch(String fullSearch) {
+        this.fullSearch = fullSearch;
     }
 
     /**

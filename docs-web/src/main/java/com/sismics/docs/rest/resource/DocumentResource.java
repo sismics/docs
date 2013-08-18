@@ -207,10 +207,14 @@ public class DocumentResource extends BaseResource {
                 DateTimeFormat.forPattern("yyyy").getParser(),
                 DateTimeFormat.forPattern("yyyy-MM").getParser(),
                 DateTimeFormat.forPattern("yyyy-MM-dd").getParser() };
+        DateTimeFormatter yearFormatter = new DateTimeFormatter(null, parsers[0]);
+        DateTimeFormatter monthFormatter = new DateTimeFormatter(null, parsers[1]);
+        DateTimeFormatter dayFormatter = new DateTimeFormatter(null, parsers[2]);
         DateTimeFormatter formatter = new DateTimeFormatterBuilder().append( null, parsers ).toFormatter();
         
         String[] criteriaList = search.split("  *");
         List<String> query = new ArrayList<>();
+        List<String> fullQuery = new ArrayList<>();
         for (String criteria : criteriaList) {
             String[] params = criteria.split(":");
             if (params.length != 2 || Strings.isNullOrEmpty(params[0]) || Strings.isNullOrEmpty(params[1])) {
@@ -233,11 +237,30 @@ public class DocumentResource extends BaseResource {
                     documentCriteria.getTagIdList().add(tag.getId());
                 }
             } else if (params[0].equals("after") || params[0].equals("before")) {
-                // New date criteria
+                // New date span criteria
                 try {
                     DateTime date = formatter.parseDateTime(params[1]);
                     if (params[0].equals("before")) documentCriteria.setCreateDateMax(date.toDate());
                     else documentCriteria.setCreateDateMin(date.toDate());
+                } catch (IllegalArgumentException e) {
+                    // NOP
+                }
+            } else if (params[0].equals("at")) {
+                // New specific date criteria
+                try {
+                    if (params[1].length() == 10) {
+                        DateTime date = dayFormatter.parseDateTime(params[1]);
+                        documentCriteria.setCreateDateMin(date.toDate());
+                        documentCriteria.setCreateDateMax(date.plusDays(1).toDate());
+                    } else if (params[1].length() == 7) {
+                        DateTime date = monthFormatter.parseDateTime(params[1]);
+                        documentCriteria.setCreateDateMin(date.toDate());
+                        documentCriteria.setCreateDateMax(date.plusMonths(1).toDate());
+                    } else if (params[1].length() == 4) {
+                        DateTime date = yearFormatter.parseDateTime(params[1]);
+                        documentCriteria.setCreateDateMin(date.toDate());
+                        documentCriteria.setCreateDateMax(date.plusYears(1).toDate());
+                    }
                 } catch (IllegalArgumentException e) {
                     // NOP
                 }
@@ -247,16 +270,20 @@ public class DocumentResource extends BaseResource {
                     documentCriteria.setShared(true);
                 }
             } else if (params[0].equals("lang")) {
-                // New shared state criteria
+                // New language criteria
                 if (Constants.SUPPORTED_LANGUAGES.contains(params[1])) {
                     documentCriteria.setLanguage(params[1]);
                 }
+            } else if (params[0].equals("full")) {
+                // New full content search criteria
+                fullQuery.add(params[1]);
             } else {
                 query.add(criteria);
             }
         }
         
         documentCriteria.setSearch(Joiner.on(" ").join(query));
+        documentCriteria.setFullSearch(Joiner.on(" ").join(fullQuery));
         return documentCriteria;
     }
 

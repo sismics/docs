@@ -154,9 +154,9 @@ public class DocumentDao {
             criteriaList.add("d.DOC_IDUSER_C = :userId");
             parameterMap.put("userId", criteria.getUserId());
         }
-        if (!Strings.isNullOrEmpty(criteria.getSearch())) {
+        if (!Strings.isNullOrEmpty(criteria.getSearch()) || !Strings.isNullOrEmpty(criteria.getFullSearch())) {
             LuceneDao luceneDao = new LuceneDao();
-            Set<String> documentIdList = luceneDao.search(criteria.getUserId(), criteria.getSearch());
+            Set<String> documentIdList = luceneDao.search(criteria.getUserId(), criteria.getSearch(), criteria.getFullSearch());
             if (documentIdList.size() == 0) {
                 // If the search doesn't find any document, the request should return nothing
                 documentIdList.add(UUID.randomUUID().toString());
