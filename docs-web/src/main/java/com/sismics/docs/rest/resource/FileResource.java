@@ -41,6 +41,7 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.mime.MimeType;
 import com.sismics.util.mime.MimeTypeUtil;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
@@ -304,17 +305,21 @@ public class FileResource extends BaseResource {
         
         // Get the stored file
         java.io.File storedfile;
+        String mimeType;
         if (size != null) {
             storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), fileId + "_" + size).toFile();
+            mimeType = MimeType.IMAGE_JPEG; // Thumbnails are JPEG
             if (!storedfile.exists()) {
                 storedfile = new java.io.File(getClass().getResource("/image/file.png").getFile());
+                mimeType = MimeType.IMAGE_PNG;
             }
         } else {
             storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), fileId).toFile();
+            mimeType = file.getMimeType();
         }
 
         return Response.ok(storedfile)
-                .header("Content-Type", file.getMimeType())
+                .header("Content-Type", mimeType)
                 .header("Expires", new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z").format(new Date().getTime() + 3600000 * 24 * 7))
                 .build();
     }
