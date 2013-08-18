@@ -251,15 +251,15 @@ public class DocumentResource extends BaseResource {
                     if (params[1].length() == 10) {
                         DateTime date = dayFormatter.parseDateTime(params[1]);
                         documentCriteria.setCreateDateMin(date.toDate());
-                        documentCriteria.setCreateDateMax(date.plusDays(1).toDate());
+                        documentCriteria.setCreateDateMax(date.plusDays(1).minusSeconds(1).toDate());
                     } else if (params[1].length() == 7) {
                         DateTime date = monthFormatter.parseDateTime(params[1]);
                         documentCriteria.setCreateDateMin(date.toDate());
-                        documentCriteria.setCreateDateMax(date.plusMonths(1).toDate());
+                        documentCriteria.setCreateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
                     } else if (params[1].length() == 4) {
                         DateTime date = yearFormatter.parseDateTime(params[1]);
                         documentCriteria.setCreateDateMin(date.toDate());
-                        documentCriteria.setCreateDateMax(date.plusYears(1).toDate());
+                        documentCriteria.setCreateDateMax(date.plusYears(1).minusSeconds(1).toDate());
                     }
                 } catch (IllegalArgumentException e) {
                     // NOP

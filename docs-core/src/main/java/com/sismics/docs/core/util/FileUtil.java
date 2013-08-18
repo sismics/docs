@@ -153,12 +153,17 @@ public class FileUtil {
             image = ImageIO.read(originalFile);
         } else if(file.getMimeType().equals(MimeType.APPLICATION_PDF)) {
             // Generate preview from the first page of the PDF
-            PDDocument pdfDocument = PDDocument.load(originalFile.getAbsolutePath(), true);
-            @SuppressWarnings("unchecked")
-            List<PDPage> pageList = pdfDocument.getDocumentCatalog().getAllPages();
-            if (pageList.size() > 0) {
-                PDPage page = pageList.get(0);
-                image = page.convertToImage();
+            PDDocument pdfDocument = null;
+            try {
+                pdfDocument = PDDocument.load(originalFile.getAbsolutePath(), true);
+                @SuppressWarnings("unchecked")
+                List<PDPage> pageList = pdfDocument.getDocumentCatalog().getAllPages();
+                if (pageList.size() > 0) {
+                    PDPage page = pageList.get(0);
+                    image = page.convertToImage();
+                }
+            } finally {
+                pdfDocument.close();
             }
         }
         
