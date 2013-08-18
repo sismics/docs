@@ -39,7 +39,7 @@ public class FileCreatedAsyncListener {
         // OCR the file
         final File file = fileCreatedAsyncEvent.getFile();
         long startTime = System.currentTimeMillis();
-        final String content = FileUtil.ocrFile(fileCreatedAsyncEvent.getDocument(), file);
+        final String content = FileUtil.extractContent(fileCreatedAsyncEvent.getDocument(), file);
         log.info(MessageFormat.format("File OCR-ized in {0}ms", System.currentTimeMillis() - startTime));
         
         // Store the OCR-ization result in the database

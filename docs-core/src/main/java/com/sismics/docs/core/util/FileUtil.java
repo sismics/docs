@@ -6,11 +6,15 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import net.sourceforge.tess4j.Tesseract;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.util.PDFTextStripper;
 import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Method;
 import org.imgscalr.Scalr.Mode;
@@ -20,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.util.ImageUtil;
+import com.sismics.util.mime.MimeType;
 
 /**
  * File entity utilities.
@@ -33,18 +38,32 @@ public class FileUtil {
     private static final Logger log = LoggerFactory.getLogger(FileUtil.class);
     
     /**
-     * OCR a file.
+     * Extract content from a file.
+     * 
+     * @param document Document linked to the file
+     * @param file File to extract
+     * @return Content extract
+     */
+    public static String extractContent(Document document, File file) {
+        String content = null;
+        
+        if (ImageUtil.isImage(file.getMimeType())) {
+            content = ocrFile(document, file);
+        } else if (file.getMimeType().equals(MimeType.APPLICATION_PDF)) {
+            content = extractPdf(file);
+        }
+        
+        return content;
+    }
+    
+    /**
+     * Optical character recognition on a file.
      * 
      * @param document Document linked to the file
      * @param file File to OCR
-     * @return OCR-ized content
+     * @return Content extracted
      */
-    public static String ocrFile(Document document, final File file) {
-        if (!ImageUtil.isImage(file.getMimeType())) {
-            // The file is not OCR-izable
-            return null;
-        }
-        
+    private static String ocrFile(Document document, File file) {
         Tesseract instance = Tesseract.getInstance();
         java.io.File storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId()).toFile();
         String content = null;
@@ -73,6 +92,35 @@ public class FileUtil {
     }
     
     /**
+     * Extract text from a PDF.
+     * 
+     * @param file File to extract
+     * @return Content extracted
+     */
+    private static String extractPdf(File file) {
+        String content = null;
+        PDDocument pdfDocument = null;
+        java.io.File storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId()).toFile();
+        try {
+            PDFTextStripper stripper = new PDFTextStripper();
+            pdfDocument = PDDocument.load(storedfile);
+            content = stripper.getText(pdfDocument);
+        } catch (IOException e) {
+            log.error("Error while extracting text from the PDF " + storedfile, e);
+        } finally {
+            if (pdfDocument != null) {
+                try {
+                    pdfDocument.close();
+                } catch (IOException e) {
+                    // NOP
+                }
+            }
+        }
+        
+        return content;
+    }
+    
+    /**
      * Save a file on the storage filesystem.
      * 
      * @param is InputStream
@@ -84,7 +132,12 @@ public class FileUtil {
         Files.copy(is, path);
         
         // Generate file variations
-        saveVariations(file, path.toFile());
+        try {
+            saveVariations(file, path.toFile());
+        } catch (IOException e) {
+            // Don't rethrow Exception from file variations generation
+            log.error("Error creating file variations", e);
+        }
     }
 
     /**
@@ -95,8 +148,22 @@ public class FileUtil {
      * @throws IOException
      */
     public static void saveVariations(File file, java.io.File originalFile) throws IOException {
+        BufferedImage image = null;
         if (ImageUtil.isImage(file.getMimeType())) {
-            BufferedImage image = ImageIO.read(originalFile);
+            image = ImageIO.read(originalFile);
+        } else if(file.getMimeType().equals(MimeType.APPLICATION_PDF)) {
+            // Generate preview from the first page of the PDF
+            PDDocument pdfDocument = PDDocument.load(originalFile);
+            @SuppressWarnings("unchecked")
+            List<PDPage> pageList = pdfDocument.getDocumentCatalog().getAllPages();
+            if (pageList.size() > 0) {
+                PDPage page = pageList.get(0);
+                image = page.convertToImage();
+            }
+        }
+        
+        if (image != null) {
+            // Generate thumbnails from image
             BufferedImage web = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 1280, Scalr.OP_ANTIALIAS);
             BufferedImage thumbnail = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 256, Scalr.OP_ANTIALIAS);
             image.flush();

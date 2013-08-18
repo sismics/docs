@@ -9,33 +9,33 @@ import org.slf4j.LoggerFactory;
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
-import com.sismics.docs.core.event.OcrFileAsyncEvent;
+import com.sismics.docs.core.event.ExtractFileAsyncEvent;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.FileUtil;
 import com.sismics.docs.core.util.TransactionUtil;
 
 /**
- * Listener on OCR all files in database.
+ * Listener on extract content from all files.
  * 
  * @author bgamard
  */
-public class OcrFileAsyncListener {
+public class ExtractFileAsyncListener {
     /**
      * Logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(OcrFileAsyncListener.class);
+    private static final Logger log = LoggerFactory.getLogger(ExtractFileAsyncListener.class);
 
     /**
-     * OCR all files.
+     * Extract content from all files.
      * 
-     * @param ocrFileAsyncEvent OCR all files in database event
+     * @param extractFileAsyncEvent Extract file content event
      * @throws Exception
      */
     @Subscribe
-    public void on(final OcrFileAsyncEvent ocrFileAsyncEvent) throws Exception {
+    public void on(final ExtractFileAsyncEvent extractFileAsyncEvent) throws Exception {
         if (log.isInfoEnabled()) {
-            log.info("OCR all files in database event: " + ocrFileAsyncEvent.toString());
+            log.info("Extract file content event: " + extractFileAsyncEvent.toString());
         }
 
         TransactionUtil.handle(new Runnable() {
@@ -47,10 +47,9 @@ public class OcrFileAsyncListener {
                 for (File file : fileList) {
                     long startTime = System.currentTimeMillis();
                     Document document = documentDao.getById(file.getDocumentId());
-                    String content = FileUtil.ocrFile(document, file);
-                    file.setContent(content);
+                    file.setContent(FileUtil.extractContent(document, file));
                     TransactionUtil.commit();
-                    log.info(MessageFormat.format("File OCR-ized in {0}ms", System.currentTimeMillis() - startTime));
+                    log.info(MessageFormat.format("File content extracted in {0}ms", System.currentTimeMillis() - startTime));
                 }
             }
         });

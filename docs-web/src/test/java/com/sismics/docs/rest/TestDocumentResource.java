@@ -15,6 +15,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.Test;
 
+import com.google.common.io.ByteStreams;
 import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
@@ -353,5 +354,68 @@ public class TestDocumentResource extends BaseJerseyTest {
         response = documentResource.get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+    }
+    
+    /**
+     * Test PDF extraction.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testPdfExtraction() throws Exception {
+        // Login document2
+        clientUtil.createUser("document2");
+        String document2Token = clientUtil.login("document2");
+
+        // Create a document
+        WebResource documentResource = resource().path("/document");
+        documentResource.addFilter(new CookieAuthenticationFilter(document2Token));
+        MultivaluedMapImpl postParams = new MultivaluedMapImpl();
+        postParams.add("title", "My super title document 1");
+        postParams.add("description", "My super description for document 1");
+        postParams.add("language", "eng");
+        long create1Date = new Date().getTime();
+        postParams.add("create_date", create1Date);
+        ClientResponse response = documentResource.put(ClientResponse.class, postParams);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        JSONObject json = response.getEntity(JSONObject.class);
+        String document1Id = json.optString("id");
+        Assert.assertNotNull(document1Id);
+        
+        // Add a PDF file
+        WebResource fileResource = resource().path("/file");
+        fileResource.addFilter(new CookieAuthenticationFilter(document2Token));
+        FormDataMultiPart form = new FormDataMultiPart();
+        InputStream file = this.getClass().getResourceAsStream("/file/wikipedia.pdf");
+        FormDataBodyPart fdp = new FormDataBodyPart("file",
+                new BufferedInputStream(file),
+                MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        form.bodyPart(fdp);
+        form.field("id", document1Id);
+        response = fileResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        String file1Id = json.getString("id");
+        
+        // Search documents by query in full content
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document2Token));
+        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
+        getParams.putSingle("search", "full:vrandecic");
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertTrue(json.getJSONArray("documents").length() == 1);
+        
+        // Get the file thumbnail data
+        fileResource = resource().path("/file/" + file1Id + "/data");
+        fileResource.addFilter(new CookieAuthenticationFilter(document2Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("size", "thumb");
+        response = fileResource.queryParams(getParams).get(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        InputStream is = response.getEntityInputStream();
+        byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(3457, fileBytes.length);
     }
 }

@@ -26,7 +26,7 @@ import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
-import com.sismics.docs.core.event.OcrFileAsyncEvent;
+import com.sismics.docs.core.event.ExtractFileAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.ConfigUtil;
@@ -163,7 +163,7 @@ public class AppResource extends BaseResource {
         checkBaseFunction(BaseFunction.ADMIN);
         
         // Raise a OCR file event
-        AppContext.getInstance().getAsyncEventBus().post(new OcrFileAsyncEvent());
+        AppContext.getInstance().getAsyncEventBus().post(new ExtractFileAsyncEvent());
         
         JSONObject response = new JSONObject();
         response.put("status", "ok");

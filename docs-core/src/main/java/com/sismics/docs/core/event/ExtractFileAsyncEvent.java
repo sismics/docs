@@ -3,11 +3,11 @@ package com.sismics.docs.core.event;
 import com.google.common.base.Objects;
 
 /**
- * OCR all files in database event.
+ * Extract file content event.
  *
  * @author bgamard
  */
-public class OcrFileAsyncEvent {
+public class ExtractFileAsyncEvent {
     @Override
     public String toString() {
         return Objects.toStringHelper(this)

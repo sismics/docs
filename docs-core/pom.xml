@@ -117,6 +117,11 @@
       <artifactId>imgscalr-lib</artifactId>
     </dependency>
     
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox</artifactId>
+    </dependency>
+    
     <!-- OCR dependencies -->
     <dependency>
       <groupId>jna</groupId>

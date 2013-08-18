@@ -15,7 +15,7 @@
     <maven.compiler.target>1.7</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-  	<!-- Dependencies version (external) -->
+    <!-- Dependencies version (external) -->
     <org.apache.commons.commons-compress.version>1.5</org.apache.commons.commons-compress.version>
     <commons-lang.commons-lang.version>2.6</commons-lang.commons-lang.version>
     <commons-io.commons-io.version>2.1</commons-io.commons-io.version>
@@ -62,6 +62,7 @@
     <org.mortbay.jetty.jetty-maven-plugin.version>8.1.2.v20120308</org.mortbay.jetty.jetty-maven-plugin.version>
     <org.vafer.jdeb.version>1.0.1</org.vafer.jdeb.version>
     <com.samaxes.maven.minify-maven-plugin.version>1.7</com.samaxes.maven.minify-maven-plugin.version>
+    <org.apache.pdfbox.pdfbox.version>1.8.2</org.apache.pdfbox.pdfbox.version>
   </properties>
   
   <scm>
@@ -436,24 +437,30 @@
         <version>${org.imgscalr.imgscalr-lib.version}</version>
       </dependency>
       
+      <dependency>
+        <groupId>org.apache.pdfbox</groupId>
+        <artifactId>pdfbox</artifactId>
+        <version>${org.apache.pdfbox.pdfbox.version}</version>
+      </dependency>
+      
       <!-- OCR dependencies -->
       <dependency>
-	      <groupId>jna</groupId>
-	      <artifactId>jna</artifactId>
-	      <version>1.0</version>
-	    </dependency>
-	    
-	    <dependency>
-	      <groupId>jai</groupId>
-	      <artifactId>imageio</artifactId>
-	      <version>1.0</version>
-	    </dependency>
-	    
-	    <dependency>
-	      <groupId>tess4j</groupId>
-	      <artifactId>tess4j</artifactId>
-	      <version>1.0</version>
-	    </dependency>
+        <groupId>jna</groupId>
+        <artifactId>jna</artifactId>
+        <version>1.0</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>jai</groupId>
+        <artifactId>imageio</artifactId>
+        <version>1.0</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>tess4j</groupId>
+        <artifactId>tess4j</artifactId>
+        <version>1.0</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   
@@ -478,64 +485,64 @@
       <build>
         <plugins>
           <plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-install-plugin</artifactId>
-		        <version>2.3.1</version>
-		        <executions>
-		        
-		          <execution>
-		            <id>install-jna</id>
-		            <phase>validate</phase>
-		            <configuration>
-		              <file>${project.basedir}/lib/jna.jar</file>
-		              <repositoryLayout>default</repositoryLayout>
-		              <groupId>jna</groupId>
-		              <artifactId>jna</artifactId>
-		              <version>1.0</version>
-		              <packaging>jar</packaging>
-		              <generatePom>true</generatePom>
-		            </configuration>
-		            <goals>
-		              <goal>install-file</goal>
-		            </goals>
-		          </execution>
-		          
-		          <execution>
-		            <id>install-jai-imageio</id>
-		            <phase>validate</phase>
-		            <configuration>
-		              <file>${project.basedir}/lib/jai_imageio.jar</file>
-		              <repositoryLayout>default</repositoryLayout>
-		              <groupId>jai</groupId>
-		              <artifactId>imageio</artifactId>
-		              <version>1.0</version>
-		              <packaging>jar</packaging>
-		              <generatePom>true</generatePom>
-		            </configuration>
-		            <goals>
-		              <goal>install-file</goal>
-		            </goals>
-		          </execution>
-		          
-		          <execution>
-		            <id>install-tess4j</id>
-		            <phase>validate</phase>
-		            <configuration>
-		              <file>${project.basedir}/lib/tess4j.jar</file>
-		              <repositoryLayout>default</repositoryLayout>
-		              <groupId>tess4j</groupId>
-		              <artifactId>tess4j</artifactId>
-		              <version>1.0</version>
-		              <packaging>jar</packaging>
-		              <generatePom>true</generatePom>
-		            </configuration>
-		            <goals>
-		              <goal>install-file</goal>
-		            </goals>
-		          </execution>
-		          
-		        </executions>
-		      </plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <version>2.3.1</version>
+            <executions>
+            
+              <execution>
+                <id>install-jna</id>
+                <phase>validate</phase>
+                <configuration>
+                  <file>${project.basedir}/lib/jna.jar</file>
+                  <repositoryLayout>default</repositoryLayout>
+                  <groupId>jna</groupId>
+                  <artifactId>jna</artifactId>
+                  <version>1.0</version>
+                  <packaging>jar</packaging>
+                  <generatePom>true</generatePom>
+                </configuration>
+                <goals>
+                  <goal>install-file</goal>
+                </goals>
+              </execution>
+              
+              <execution>
+                <id>install-jai-imageio</id>
+                <phase>validate</phase>
+                <configuration>
+                  <file>${project.basedir}/lib/jai_imageio.jar</file>
+                  <repositoryLayout>default</repositoryLayout>
+                  <groupId>jai</groupId>
+                  <artifactId>imageio</artifactId>
+                  <version>1.0</version>
+                  <packaging>jar</packaging>
+                  <generatePom>true</generatePom>
+                </configuration>
+                <goals>
+                  <goal>install-file</goal>
+                </goals>
+              </execution>
+              
+              <execution>
+                <id>install-tess4j</id>
+                <phase>validate</phase>
+                <configuration>
+                  <file>${project.basedir}/lib/tess4j.jar</file>
+                  <repositoryLayout>default</repositoryLayout>
+                  <groupId>tess4j</groupId>
+                  <artifactId>tess4j</artifactId>
+                  <version>1.0</version>
+                  <packaging>jar</packaging>
+                  <generatePom>true</generatePom>
+                </configuration>
+                <goals>
+                  <goal>install-file</goal>
+                </goals>
+              </execution>
+              
+            </executions>
+          </plugin>
         </plugins>
       </build>
     </profile>
