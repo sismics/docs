@@ -34,6 +34,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
+import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.ShareDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
@@ -42,8 +43,10 @@ import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
+import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Document;
+import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.Share;
 import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.docs.core.util.jpa.PaginatedList;
@@ -243,7 +246,9 @@ public class DocumentResource extends BaseResource {
                     if (params[0].equals("before")) documentCriteria.setCreateDateMax(date.toDate());
                     else documentCriteria.setCreateDateMin(date.toDate());
                 } catch (IllegalArgumentException e) {
-                    // NOP
+                    // Invalid date, returns no documents
+                    if (params[0].equals("before")) documentCriteria.setCreateDateMax(new Date(0));
+                    else documentCriteria.setCreateDateMin(new Date(Long.MAX_VALUE / 2));
                 }
             } else if (params[0].equals("at")) {
                 // New specific date criteria
@@ -262,7 +267,9 @@ public class DocumentResource extends BaseResource {
                         documentCriteria.setCreateDateMax(date.plusYears(1).minusSeconds(1).toDate());
                     }
                 } catch (IllegalArgumentException e) {
-                    // NOP
+                    // Invalid date, returns no documents
+                    documentCriteria.setCreateDateMin(new Date(0));
+                    documentCriteria.setCreateDateMax(new Date(0));
                 }
             } else if (params[0].equals("shared")) {
                 // New shared state criteria
@@ -455,20 +462,30 @@ public class DocumentResource extends BaseResource {
 
         // Get the document
         DocumentDao documentDao = new DocumentDao();
+        FileDao fileDao = new FileDao();
         Document document;
+        List<File> fileList;
         try {
             document = documentDao.getDocument(id, principal.getId());
+            fileList = fileDao.getByDocumentId(id);
         } catch (NoResultException e) {
             throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", id));
+        }
+        
+        // Delete the document
+        documentDao.delete(document.getId());
+        
+        // Raise file deleted events
+        for (File file : fileList) {
+            FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
+            fileDeletedAsyncEvent.setFile(file);
+            AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
         }
         
         // Raise a document deleted event
         DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
         documentDeletedAsyncEvent.setDocument(document);
         AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
-        
-        // Delete the document
-        documentDao.delete(document.getId());
         
         // Always return ok
         JSONObject response = new JSONObject();

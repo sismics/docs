@@ -249,13 +249,13 @@ public class FileResource extends BaseResource {
             throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", id));
         }
         
+        // Delete the file
+        fileDao.delete(file.getId());
+        
         // Raise a new file deleted event
         FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
         fileDeletedAsyncEvent.setFile(file);
         AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
-        
-        // Delete the file
-        fileDao.delete(file.getId());
         
         // Always return ok
         JSONObject response = new JSONObject();
