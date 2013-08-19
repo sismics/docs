@@ -10,6 +10,7 @@ import java.util.Set;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.TermsFilter;
@@ -171,12 +172,17 @@ public class LuceneDao {
         TermsFilter userFilter = new TermsFilter(terms);
         
         // Search
-        IndexSearcher searcher = new IndexSearcher(AppContext.getInstance().getIndexingService().getDirectoryReader());
+        DirectoryReader directoryReader = AppContext.getInstance().getIndexingService().getDirectoryReader();
+        Set<String> documentIdList = new HashSet<String>();
+        if (directoryReader == null) {
+            // The directory reader is not yet initialized (probably because there is nothing indexed)
+            return documentIdList;
+        }
+        IndexSearcher searcher = new IndexSearcher(directoryReader);
         TopDocs topDocs = searcher.search(query, userFilter, Integer.MAX_VALUE);
         ScoreDoc[] docs = topDocs.scoreDocs;
         
         // Extract document IDs
-        Set<String> documentIdList = new HashSet<String>();
         for (int i = 0; i < docs.length; i++) {
             org.apache.lucene.document.Document document = searcher.doc(docs[i].doc);
             String type = document.get("type");

@@ -128,7 +128,6 @@ public class IndexingService extends AbstractScheduledService {
     public DirectoryReader getDirectoryReader() {
         if (directoryReader == null) {
             if (!DirectoryReader.indexExists(directory)) {
-                log.info("Lucene directory not yet created");
                 return null;
             }
             try {
