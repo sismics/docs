@@ -304,6 +304,7 @@ public class FileResource extends BaseResource {
 
         
         // Get the stored file
+        // TODO Decrypt file
         java.io.File storedfile;
         String mimeType;
         if (size != null) {

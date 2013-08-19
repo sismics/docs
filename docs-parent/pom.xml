@@ -63,6 +63,7 @@
     <org.vafer.jdeb.version>1.0.1</org.vafer.jdeb.version>
     <com.samaxes.maven.minify-maven-plugin.version>1.7</com.samaxes.maven.minify-maven-plugin.version>
     <org.apache.pdfbox.pdfbox.version>1.8.2</org.apache.pdfbox.pdfbox.version>
+    <org.bouncycastle.bcprov-jdk15on.version>1.49</org.bouncycastle.bcprov-jdk15on.version>
   </properties>
   
   <scm>
@@ -441,6 +442,12 @@
         <groupId>org.apache.pdfbox</groupId>
         <artifactId>pdfbox</artifactId>
         <version>${org.apache.pdfbox.pdfbox.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk15on</artifactId>
+        <version>${org.bouncycastle.bcprov-jdk15on.version}</version>
       </dependency>
       
       <!-- OCR dependencies -->
