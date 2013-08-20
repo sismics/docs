@@ -3,18 +3,11 @@ package com.sismics.docs.core.util;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 import javax.imageio.ImageIO;
 
 import net.sourceforge.tess4j.Tesseract;
@@ -28,7 +21,6 @@ import org.imgscalr.Scalr.Mode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.util.ImageUtil;
@@ -205,43 +197,6 @@ public class FileUtil {
         }
         if (thumbnailFile.exists()) {
             thumbnailFile.delete();
-        }
-    }
-    
-//    Security.insertProviderAt(new BouncyCastleProvider(), 1);
-//    String key = "pwd";
-//
-//    FileInputStream fis = new FileInputStream("plain.jpg");
-//    FileOutputStream fos = new FileOutputStream("encrypted.jpg");
-//    encrypt(key, fis, fos);
-//
-//    FileInputStream fis2 = new FileInputStream("encrypted.jpg");
-//    FileOutputStream fos2 = new FileOutputStream("decrypted.jpg");
-//    decrypt(key, fis2, fos2);
-    
-    public static void encrypt(String key, InputStream is, OutputStream os) throws Throwable {
-        encryptOrDecrypt(key, Cipher.ENCRYPT_MODE, is, os);
-    }
-
-    public static void decrypt(String key, InputStream is, OutputStream os) throws Throwable {
-        encryptOrDecrypt(key, Cipher.DECRYPT_MODE, is, os);
-    }
-
-    public static void encryptOrDecrypt(String key, int mode, InputStream is, OutputStream os) throws Throwable {
-
-        PBEKeySpec keySpec = new PBEKeySpec(key.toCharArray(), "salt".getBytes(), 2000, 256);
-        SecretKeyFactory skf = SecretKeyFactory.getInstance("PBEWITHSHA256AND256BITAES-CBC-BC");
-        SecretKey desKey = skf.generateSecret(keySpec);
-        Cipher cipher = Cipher.getInstance("AES/CTR/NOPADDING");
-
-        if (mode == Cipher.ENCRYPT_MODE) {
-            cipher.init(Cipher.ENCRYPT_MODE, desKey);
-            CipherInputStream cis = new CipherInputStream(is, cipher);
-            ByteStreams.copy(cis, os);
-        } else if (mode == Cipher.DECRYPT_MODE) {
-            cipher.init(Cipher.DECRYPT_MODE, desKey);
-            CipherOutputStream cos = new CipherOutputStream(os, cipher);
-            ByteStreams.copy(is, cos);
         }
     }
 }

@@ -48,6 +48,12 @@ public class User {
     private String password;
 
     /**
+     * User's private key.
+     */
+    @Column(name = "USE_PRIVATEKEY_C", nullable = false, length = 100)
+    private String privateKey;
+    
+    /**
      * Email address.
      */
     @Column(name = "USE_EMAIL_C", nullable = false, length = 100)
@@ -255,6 +261,22 @@ public class User {
      */
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
+    }
+    
+    /**
+     * Getter de privateKey.
+     * @return privateKey
+     */
+    public String getPrivateKey() {
+        return privateKey;
+    }
+
+    /**
+     * Setter de privateKey.
+     * @param privateKey privateKey
+     */
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
     }
 
     @Override

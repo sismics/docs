@@ -7,6 +7,7 @@ import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.dto.UserDto;
 import com.sismics.docs.core.model.jpa.AuthenticationToken;
 import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.util.EncryptionUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -28,6 +29,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -76,6 +79,11 @@ public class UserResource extends BaseResource {
         user.setUsername(username);
         user.setPassword(password);
         user.setEmail(email);
+        try {
+            user.setPrivateKey(EncryptionUtil.generatePrivateKey());
+        } catch (NoSuchAlgorithmException e) {
+            throw new ServerException("PrivateKeyError", "Error while generating a private key", e);
+        }
         user.setCreateDate(new Date());
 
         if (localeId == null) {
