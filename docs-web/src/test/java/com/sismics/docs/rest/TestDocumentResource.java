@@ -298,7 +298,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         InputStream is = response.getEntityInputStream();
         byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
-        Assert.assertEquals(33691, fileBytes.length);
     }
 }
