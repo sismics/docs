@@ -336,6 +336,7 @@ public class FileResource extends BaseResource {
             if (!storedfile.exists()) {
                 storedfile = new java.io.File(getClass().getResource("/image/file.png").getFile());
                 mimeType = MimeType.IMAGE_PNG;
+                decrypt = false;
             }
         } else {
             storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), fileId).toFile();

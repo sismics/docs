@@ -18,6 +18,8 @@ import org.junit.Test;
 import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
+import com.sismics.util.mime.MimeType;
+import com.sismics.util.mime.MimeTypeUtil;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.api.client.WebResource;
@@ -296,6 +298,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         InputStream is = response.getEntityInputStream();
         byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
         Assert.assertEquals(33691, fileBytes.length);
     }
 }
