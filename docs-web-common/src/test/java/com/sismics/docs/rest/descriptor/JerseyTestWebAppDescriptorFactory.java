@@ -30,6 +30,7 @@ public class JerseyTestWebAppDescriptorFactory {
             .addFilter(TokenBasedSecurityFilter.class, "tokenBasedSecurityFilter")
             .initParam("com.sun.jersey.spi.container.ContainerRequestFilters", "com.sun.jersey.api.container.filter.LoggingFilter")
             .initParam("com.sun.jersey.spi.container.ContainerResponseFilters", "com.sun.jersey.api.container.filter.LoggingFilter")
+            .initParam("com.sun.jersey.config.feature.logging.DisableEntitylogging", "true")
             .build();
     }
 }
