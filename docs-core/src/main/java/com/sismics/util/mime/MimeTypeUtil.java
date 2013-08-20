@@ -1,6 +1,7 @@
 package com.sismics.util.mime;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Utility to check MIME types.
@@ -24,6 +25,18 @@ public class MimeTypeUtil {
         if (readCount <= 0) {
             throw new Exception("Cannot read input file");
         }
+        
+        return guessMimeType(headerBytes);
+    }
+
+    /**
+     * Try to guess the MIME type of a file by its magic number (header).
+     * 
+     * @param headerBytes File header (first bytes)
+     * @return MIME type
+     * @throws UnsupportedEncodingException
+     */
+    public static String guessMimeType(byte[] headerBytes) throws UnsupportedEncodingException {
         String header = new String(headerBytes, "US-ASCII");
         
         if (header.startsWith("PK")) {

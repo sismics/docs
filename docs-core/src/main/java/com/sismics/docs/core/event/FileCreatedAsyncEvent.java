@@ -1,5 +1,7 @@
 package com.sismics.docs.core.event;
 
+import java.io.InputStream;
+
 import com.google.common.base.Objects;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
@@ -19,6 +21,11 @@ public class FileCreatedAsyncEvent {
      * Document linked to the file.
      */
     private Document document;
+    
+    /**
+     * Unencrypted input stream containing the file.
+     */
+    private InputStream inputStream;
     
     /**
      * Getter of file.
@@ -54,6 +61,24 @@ public class FileCreatedAsyncEvent {
      */
     public void setDocument(Document document) {
         this.document = document;
+    }
+    
+    /**
+     * Getter of inputStream.
+     *
+     * @return the inputStream
+     */
+    public InputStream getInputStream() {
+        return inputStream;
+    }
+
+    /**
+     * Setter de inputStream.
+     *
+     * @param inputStream inputStream
+     */
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
     }
 
     @Override

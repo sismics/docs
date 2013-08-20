@@ -1,7 +1,10 @@
 package com.sismics.docs.rest.resource;
 
-import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -20,22 +23,28 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.ShareDao;
+import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.DirectoryUtil;
+import com.sismics.docs.core.util.EncryptionUtil;
 import com.sismics.docs.core.util.FileUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
@@ -77,20 +86,30 @@ public class FileResource extends BaseResource {
 
         // Get the document
         DocumentDao documentDao = new DocumentDao();
+        FileDao fileDao = new FileDao();
+        UserDao userDao = new UserDao();
         Document document;
+        User user;
         try {
             document = documentDao.getDocument(documentId, principal.getId());
+            user = userDao.getById(principal.getId());
         } catch (NoResultException e) {
             throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
         }
         
-        FileDao fileDao = new FileDao();
+        // Keep unencrypted data in memory, because we will need it two times
+        byte[] fileData;
+        try {
+            fileData = ByteStreams.toByteArray(fileBodyPart.getValueAs(InputStream.class));
+        } catch (IOException e) {
+            throw new ServerException("StreamError", "Error reading the input file", e);
+        }
+        InputStream fileInputStream = new ByteArrayInputStream(fileData);
         
         // Validate mime type
-        InputStream is = new BufferedInputStream(fileBodyPart.getValueAs(InputStream.class));
         String mimeType;
         try {
-            mimeType = MimeTypeUtil.guessMimeType(is);
+            mimeType = MimeTypeUtil.guessMimeType(fileInputStream);
         } catch (Exception e) {
             throw new ServerException("ErrorGuessMime", "Error guessing mime type", e);
         }
@@ -113,12 +132,13 @@ public class FileResource extends BaseResource {
             String fileId = fileDao.create(file);
             
             // Save the file
-            FileUtil.save(is, file);
+            FileUtil.save(fileInputStream, file, user.getPrivateKey());
             
             // Raise a new file created event
             FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
             fileCreatedAsyncEvent.setDocument(document);
             fileCreatedAsyncEvent.setFile(file);
+            fileCreatedAsyncEvent.setInputStream(fileInputStream);
             AppContext.getInstance().getAsyncEventBus().post(fileCreatedAsyncEvent);
 
             // Always return ok
@@ -288,10 +308,12 @@ public class FileResource extends BaseResource {
         // Get the file
         FileDao fileDao = new FileDao();
         DocumentDao documentDao = new DocumentDao();
+        UserDao userDao = new UserDao();
         File file;
+        Document document;
         try {
             file = fileDao.getFile(fileId);
-            Document document = documentDao.getDocument(file.getDocumentId());
+            document = documentDao.getDocument(file.getDocumentId());
             
             // Check document visibility
             ShareDao shareDao = new ShareDao();
@@ -304,12 +326,13 @@ public class FileResource extends BaseResource {
 
         
         // Get the stored file
-        // TODO Decrypt file
         java.io.File storedfile;
         String mimeType;
+        boolean decrypt = false;
         if (size != null) {
             storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), fileId + "_" + size).toFile();
             mimeType = MimeType.IMAGE_JPEG; // Thumbnails are JPEG
+            decrypt = true; // Thumbnails are encrypted
             if (!storedfile.exists()) {
                 storedfile = new java.io.File(getClass().getResource("/image/file.png").getFile());
                 mimeType = MimeType.IMAGE_PNG;
@@ -317,11 +340,35 @@ public class FileResource extends BaseResource {
         } else {
             storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), fileId).toFile();
             mimeType = file.getMimeType();
+            decrypt = true; // Original files are encrypted
+        }
+        
+        // Stream the output and decrypt it if necessary
+        StreamingOutput stream;
+        User user = userDao.getById(document.getUserId());
+        try {
+            InputStream fileInputStream = new FileInputStream(storedfile);
+            final InputStream responseInputStream = decrypt ?
+                    EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey()) : fileInputStream;
+                    
+            stream = new StreamingOutput() {
+                @Override
+                public void write(OutputStream outputStream) throws IOException, WebApplicationException {
+                    try {
+                        ByteStreams.copy(responseInputStream, outputStream);
+                    } finally {
+                        responseInputStream.close();
+                        outputStream.close();
+                    }
+                }
+            };
+        } catch (Exception e) {
+            throw new ServerException("FileError", "Error while reading the file", e);
         }
 
-        return Response.ok(storedfile)
+        return Response.ok(stream)
                 .header("Content-Type", mimeType)
-                .header("Expires", new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z").format(new Date().getTime() + 3600000 * 24 * 7))
+                .header("Expires", new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z").format(new Date().getTime() + 3600000 * 24))
                 .build();
     }
 }

@@ -1,16 +1,17 @@
 package com.sismics.util;
 
-import com.sismics.util.mime.MimeType;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Iterator;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import javax.imageio.stream.FileImageOutputStream;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
+import javax.imageio.stream.ImageOutputStream;
+
+import com.sismics.util.mime.MimeType;
 
 /**
  * Image processing utilities.
@@ -23,26 +24,26 @@ public class ImageUtil {
      * Write a high quality JPEG.
      * 
      * @param image
-     * @param file
+     * @param outputStream Output stream
      * @throws IOException
      */
-    public static void writeJpeg(BufferedImage image, File file) throws IOException {
+    public static void writeJpeg(BufferedImage image, OutputStream outputStream) throws IOException {
         Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName("jpeg");
         ImageWriter writer = null;
-        FileImageOutputStream output = null;
+        ImageOutputStream imageOutputStream = null;
         try {
             writer = (ImageWriter) iter.next();
             ImageWriteParam iwp = writer.getDefaultWriteParam();
             iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             iwp.setCompressionQuality(1.f);
-            output = new FileImageOutputStream(file);
-            writer.setOutput(output);
+            imageOutputStream = ImageIO.createImageOutputStream(outputStream);
+            writer.setOutput(imageOutputStream);
             IIOImage iioImage = new IIOImage(image, null, null);
             writer.write(null, iioImage, iwp);
         } finally {
-            if (output != null) {
+            if (imageOutputStream != null) {
                 try {
-                    output.close();
+                    imageOutputStream.close();
                 } catch (Exception inner) {
                     // NOP
                 }

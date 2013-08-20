@@ -28,6 +28,11 @@ public class EncryptionUtil {
      */
     private static final String SALT = "LEpxZmm2SMu2PeKzPNrar2rhVAS6LrrgvXKeL9uyXC4vgKHg";
     
+    static {
+        // Initialize Bouncy Castle provider
+        Security.insertProviderAt(new BouncyCastleProvider(), 1);
+    }
+    
     /**
      * Generate a private key.
      * 
@@ -40,22 +45,6 @@ public class EncryptionUtil {
     }
     
     /**
-     * Encrypt an InputStream using the specified private key.
-     * 
-     * @param is InputStream to encrypt
-     * @param privateKey Private key
-     * @return Encrypted stream
-     * @throws Exception 
-     */
-    public static InputStream encryptStream(InputStream is, String privateKey) throws Exception {
-        checkBouncyCastleProvider();
-        if (Strings.isNullOrEmpty(privateKey)) {
-            throw new IllegalArgumentException("The private key is null or empty");
-        }
-        return new CipherInputStream(is, getCipher(privateKey, Cipher.ENCRYPT_MODE));
-    }
-    
-    /**
      * Decrypt an InputStream using the specified private key.
      * 
      * @param is InputStream to encrypt
@@ -63,9 +52,22 @@ public class EncryptionUtil {
      * @return Encrypted stream
      * @throws Exception 
      */
-    public static InputStream decryptStream(InputStream is, String privateKey) throws Exception {
-        checkBouncyCastleProvider();
+    public static InputStream decryptInputStream(InputStream is, String privateKey) throws Exception {
         return new CipherInputStream(is, getCipher(privateKey, Cipher.DECRYPT_MODE));
+    }
+    
+    /**
+     * Return an encryption cipher.
+     * 
+     * @param privateKey Private key
+     * @return Encryption cipher
+     * @throws Exception
+     */
+    public static Cipher getEncryptionCipher(String privateKey) throws Exception {
+        if (Strings.isNullOrEmpty(privateKey)) {
+            throw new IllegalArgumentException("The private key is null or empty");
+        }
+        return getCipher(privateKey, Cipher.ENCRYPT_MODE);
     }
     
     /**
@@ -83,14 +85,5 @@ public class EncryptionUtil {
         Cipher cipher = Cipher.getInstance("AES/CTR/NOPADDING");
         cipher.init(mode, desKey);
         return cipher;
-    }
-    
-    /**
-     * Initialize the Bouncy Castle provider if necessary.
-     */
-    private static void checkBouncyCastleProvider() {
-        if (Security.getProvider("BouncyCastleProvider") == null) {
-            Security.insertProviderAt(new BouncyCastleProvider(), 1);
-        }
     }
 }

@@ -1,6 +1,7 @@
 package com.sismics.docs.rest;
 
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Paths;
 
@@ -15,6 +16,8 @@ import org.junit.Test;
 import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
+import com.sismics.util.mime.MimeType;
+import com.sismics.util.mime.MimeTypeUtil;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.api.client.WebResource;
@@ -88,6 +91,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         InputStream is = response.getEntityInputStream();
         byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
         Assert.assertEquals(163510, fileBytes.length);
         
         // Get the thumbnail data
@@ -99,6 +103,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         is = response.getEntityInputStream();
         fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
         Assert.assertEquals(41935, fileBytes.length);
         
         // Get the web data
@@ -110,45 +115,14 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         is = response.getEntityInputStream();
         fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
         Assert.assertEquals(551084, fileBytes.length);
         
-        // Regenerate file variations
-        String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
-        WebResource appResource = resource().path("/app/batch/file_variations");
-        appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
-        response = appResource.post(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        
-        // Get the file data
-        fileResource = resource().path("/file/" + file1Id + "/data");
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        response = fileResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        is = response.getEntityInputStream();
-        fileBytes = ByteStreams.toByteArray(is);
-        Assert.assertEquals(163510, fileBytes.length);
-        
-        // Get the thumbnail data
-        fileResource = resource().path("/file/" + file1Id + "/data");
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("size", "thumb");
-        response = fileResource.queryParams(getParams).get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        is = response.getEntityInputStream();
-        fileBytes = ByteStreams.toByteArray(is);
-        Assert.assertEquals(41935, fileBytes.length);
-        
-        // Get the web data
-        fileResource = resource().path("/file/" + file1Id + "/data");
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("size", "web");
-        response = fileResource.queryParams(getParams).get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        is = response.getEntityInputStream();
-        fileBytes = ByteStreams.toByteArray(is);
-        Assert.assertEquals(551084, fileBytes.length);
+        // Check that the files are not readable directly from FS
+        java.io.File storedFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id).toFile();
+        InputStream storedFileInputStream = new BufferedInputStream(new FileInputStream(storedFile));
+        Assert.assertNull(MimeTypeUtil.guessMimeType(storedFileInputStream));
+        storedFileInputStream.close();
         
         // Get all files from a document
         fileResource = resource().path("/file/list");
@@ -195,7 +169,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals("ok", json.getString("status"));
         
         // Check that files are deleted from FS
-        java.io.File storedFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id).toFile();
+        storedFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id).toFile();
         java.io.File webFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id + "_web").toFile();
         java.io.File thumbnailFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id + "_thumb").toFile();
         Assert.assertFalse(storedFile.exists());

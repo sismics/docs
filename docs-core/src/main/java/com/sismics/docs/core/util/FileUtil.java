@@ -1,13 +1,18 @@
 package com.sismics.docs.core.util;
 
 import java.awt.image.BufferedImage;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import javax.imageio.ImageIO;
 
 import net.sourceforge.tess4j.Tesseract;
@@ -42,36 +47,36 @@ public class FileUtil {
      * 
      * @param document Document linked to the file
      * @param file File to extract
+     * @param inputStream Unencrypted input stream
      * @return Content extract
      */
-    public static String extractContent(Document document, File file) {
+    public static String extractContent(Document document, File file, InputStream inputStream) {
         String content = null;
         
         if (ImageUtil.isImage(file.getMimeType())) {
-            content = ocrFile(document, file);
+            content = ocrFile(inputStream, document);
         } else if (file.getMimeType().equals(MimeType.APPLICATION_PDF)) {
-            content = extractPdf(file);
+            content = extractPdf(inputStream);
         }
         
         return content;
     }
     
     /**
-     * Optical character recognition on a file.
+     * Optical character recognition on a stream.
      * 
+     * @param inputStream Unencrypted input stream
      * @param document Document linked to the file
-     * @param file File to OCR
      * @return Content extracted
      */
-    private static String ocrFile(Document document, File file) {
+    private static String ocrFile(InputStream inputStream, Document document) {
         Tesseract instance = Tesseract.getInstance();
-        java.io.File storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId()).toFile();
         String content = null;
         BufferedImage image = null;
         try {
-            image = ImageIO.read(storedfile);
+            image = ImageIO.read(inputStream);
         } catch (IOException e) {
-            log.error("Error reading the image " + storedfile, e);
+            log.error("Error reading the image", e);
         }
         
         // Upscale and grayscale the image
@@ -85,7 +90,7 @@ public class FileUtil {
             instance.setLanguage(document.getLanguage());
             content = instance.doOCR(image);
         } catch (Exception e) {
-            log.error("Error while OCR-izing the file " + storedfile, e);
+            log.error("Error while OCR-izing the image", e);
         }
         
         return content;
@@ -94,19 +99,18 @@ public class FileUtil {
     /**
      * Extract text from a PDF.
      * 
-     * @param file File to extract
+     * @param inputStream Unencrypted input stream
      * @return Content extracted
      */
-    private static String extractPdf(File file) {
+    private static String extractPdf(InputStream inputStream) {
         String content = null;
         PDDocument pdfDocument = null;
-        java.io.File storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId()).toFile();
         try {
             PDFTextStripper stripper = new PDFTextStripper();
-            pdfDocument = PDDocument.load(storedfile.getAbsolutePath(), true);
+            pdfDocument = PDDocument.load(inputStream, true);
             content = stripper.getText(pdfDocument);
         } catch (IOException e) {
-            log.error("Error while extracting text from the PDF " + storedfile, e);
+            log.error("Error while extracting text from the PDF", e);
         } finally {
             if (pdfDocument != null) {
                 try {
@@ -123,41 +127,39 @@ public class FileUtil {
     /**
      * Save a file on the storage filesystem.
      * 
-     * @param is InputStream
+     * @param inputStream Unencrypted input stream
      * @param file File to save
-     * @throws IOException
+     * @param privateKey Private key used for encryption
+     * @throws Exception
      */
-    public static void save(InputStream is, File file) throws IOException {
-        // TODO Encrypt file and variations
-        
+    public static void save(InputStream inputStream, File file, String privateKey) throws Exception {
+        Cipher cipher = EncryptionUtil.getEncryptionCipher(privateKey);
         Path path = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId());
-        Files.copy(is, path);
+        Files.copy(new CipherInputStream(inputStream, cipher), path);
         
         // Generate file variations
-        try {
-            saveVariations(file, path.toFile());
-        } catch (IOException e) {
-            // Don't rethrow Exception from file variations generation
-            log.error("Error creating file variations", e);
-        }
+        inputStream.reset();
+        saveVariations(file, inputStream, cipher);
+        inputStream.reset();
     }
 
     /**
      * Generate file variations.
      * 
      * @param file File from database
-     * @param originalFile Original file
-     * @throws IOException
+     * @param inputStream Unencrypted input stream
+     * @param cipher Cipher to use for encryption
+     * @throws Exception
      */
-    public static void saveVariations(File file, java.io.File originalFile) throws IOException {
+    public static void saveVariations(File file, InputStream inputStream, Cipher cipher) throws Exception {
         BufferedImage image = null;
         if (ImageUtil.isImage(file.getMimeType())) {
-            image = ImageIO.read(originalFile);
+            image = ImageIO.read(inputStream);
         } else if(file.getMimeType().equals(MimeType.APPLICATION_PDF)) {
             // Generate preview from the first page of the PDF
             PDDocument pdfDocument = null;
             try {
-                pdfDocument = PDDocument.load(originalFile.getAbsolutePath(), true);
+                pdfDocument = PDDocument.load(inputStream, true);
                 @SuppressWarnings("unchecked")
                 List<PDPage> pageList = pdfDocument.getDocumentCatalog().getAllPages();
                 if (pageList.size() > 0) {
@@ -174,8 +176,24 @@ public class FileUtil {
             BufferedImage web = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 1280, Scalr.OP_ANTIALIAS);
             BufferedImage thumbnail = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 256, Scalr.OP_ANTIALIAS);
             image.flush();
-            ImageUtil.writeJpeg(web, Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_web").toFile());
-            ImageUtil.writeJpeg(thumbnail, Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_thumb").toFile());
+            
+            // Write "web" encrypted image
+            java.io.File outputFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_web").toFile();
+            OutputStream outputStream = new CipherOutputStream(new FileOutputStream(outputFile), cipher);
+            try {
+                ImageUtil.writeJpeg(web, outputStream);
+            } finally {
+                outputStream.close();
+            }
+            
+            // Write "thumb" encrypted image
+            outputFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_thumb").toFile();
+            outputStream = new CipherOutputStream(new FileOutputStream(outputFile), cipher);
+            try {
+                ImageUtil.writeJpeg(thumbnail, outputStream);
+            } finally {
+                outputStream.close();
+            }
         }
     }
 

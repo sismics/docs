@@ -1,7 +1,5 @@
 package com.sismics.docs.rest.resource;
 
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,12 +24,10 @@ import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
-import com.sismics.docs.core.event.ExtractFileAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.DirectoryUtil;
-import com.sismics.docs.core.util.FileUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -148,29 +144,6 @@ public class AppResource extends BaseResource {
     }
     
     /**
-     * Extract content from all files again.
-     * 
-     * @return Response
-     * @throws JSONException
-     */
-    @POST
-    @Path("batch/extract")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response batchExtract() throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
-        checkBaseFunction(BaseFunction.ADMIN);
-        
-        // Raise an extract file content event
-        AppContext.getInstance().getAsyncEventBus().post(new ExtractFileAsyncEvent());
-        
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
-    }
-    
-    /**
      * Destroy and rebuild Lucene index.
      * 
      * @return Response
@@ -197,7 +170,7 @@ public class AppResource extends BaseResource {
     }
     
     /**
-     * Destroy and rebuild Lucene index.
+     * Clean storage.
      * 
      * @return Response
      * @throws JSONException
@@ -226,40 +199,6 @@ public class AppResource extends BaseResource {
             String[] fileNameArray = fileName.split("_");
             if (!fileMap.containsKey(fileNameArray[0])) {
                 storedFile.delete();
-            }
-        }
-        
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
-    }
-    
-    /**
-     * Regenerate file variations.
-     * 
-     * @return Response
-     * @throws JSONException
-     */
-    @POST
-    @Path("batch/file_variations")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response batchFileVariations() throws JSONException {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
-        checkBaseFunction(BaseFunction.ADMIN);
-        
-        // Get all files
-        FileDao fileDao = new FileDao();
-        List<File> fileList = fileDao.findAll();
-        
-        // Generate variations for each file
-        for (File file : fileList) {
-            java.io.File originalFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId()).toFile();
-            try {
-                FileUtil.saveVariations(file, originalFile);
-            } catch (IOException e) {
-                throw new ServerException("FileError", "Error generating file variations", e);
             }
         }
         

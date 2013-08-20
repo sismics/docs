@@ -1,6 +1,6 @@
-<img src="img/loader.gif" ng-if="!document && isEdit()" />
+<img src="img/loader.gif" ng-show="!document && isEdit()" />
 
-<div ng-if="document || !isEdit()">
+<div ng-show="document || !isEdit()">
   <form class="form-horizontal" name="documentForm">
     <div class="control-group" ng-class="{ error: !documentForm.title.$valid }">
       <label class="control-label" for="inputTitle">Title</label>

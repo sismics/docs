@@ -43,13 +43,6 @@ public class TestAppResource extends BaseJerseyTest {
         Assert.assertTrue(totalMemory > 0 && totalMemory > freeMemory);
         Assert.assertEquals(0, json.getInt("document_count"));
         
-        // OCR-ize all files
-        appResource = resource().path("/app/batch/extract");
-        appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
-        response = appResource.post(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        
         // Rebuild Lucene index
         appResource = resource().path("/app/batch/reindex");
         appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));

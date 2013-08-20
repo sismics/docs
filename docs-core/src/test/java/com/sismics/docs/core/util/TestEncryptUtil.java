@@ -2,9 +2,11 @@ package com.sismics.docs.core.util;
 
 import java.io.InputStream;
 
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+
 import junit.framework.Assert;
 
-import org.bouncycastle.util.io.Streams;
 import org.junit.Test;
 
 import com.google.common.base.Strings;
@@ -32,14 +34,15 @@ public class TestEncryptUtil {
     @Test
     public void encryptStreamTest() throws Exception {
         try {
-            EncryptionUtil.encryptStream(this.getClass().getResourceAsStream("/file/udhr.pdf"), "");
+            EncryptionUtil.getEncryptionCipher("");
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // NOP
         }
-        InputStream inputStream = EncryptionUtil.encryptStream(this.getClass().getResourceAsStream("/file/udhr.pdf"), pk);
-        byte[] encryptedData = Streams.readAll(inputStream);
-        byte[] assertData = Streams.readAll(this.getClass().getResourceAsStream("/file/udhr_encrypted.pdf"));
+        Cipher cipher = EncryptionUtil.getEncryptionCipher(pk);
+        InputStream inputStream = new CipherInputStream(this.getClass().getResourceAsStream("/file/udhr.pdf"), cipher);
+        byte[] encryptedData = ByteStreams.toByteArray(inputStream);
+        byte[] assertData = ByteStreams.toByteArray(this.getClass().getResourceAsStream("/file/udhr_encrypted.pdf"));
         Assert.assertTrue(ByteStreams.equal(
                 ByteStreams.newInputStreamSupplier(encryptedData),
                 ByteStreams.newInputStreamSupplier(assertData)));
@@ -47,9 +50,9 @@ public class TestEncryptUtil {
     
     @Test
     public void decryptStreamTest() throws Exception {
-        InputStream inputStream = EncryptionUtil.decryptStream(this.getClass().getResourceAsStream("/file/udhr_encrypted.pdf"), pk);
-        byte[] encryptedData = Streams.readAll(inputStream);
-        byte[] assertData = Streams.readAll(this.getClass().getResourceAsStream("/file/udhr.pdf"));
+        InputStream inputStream = EncryptionUtil.decryptInputStream(this.getClass().getResourceAsStream("/file/udhr_encrypted.pdf"), pk);
+        byte[] encryptedData = ByteStreams.toByteArray(inputStream);
+        byte[] assertData = ByteStreams.toByteArray(this.getClass().getResourceAsStream("/file/udhr.pdf"));
         Assert.assertTrue(ByteStreams.equal(
                 ByteStreams.newInputStreamSupplier(encryptedData),
                 ByteStreams.newInputStreamSupplier(assertData)));

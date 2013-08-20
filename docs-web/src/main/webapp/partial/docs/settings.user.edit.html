@@ -1,6 +1,6 @@
-<img src="img/loader.gif" ng-if="!user && isEdit()" />
+<img src="img/loader.gif" ng-show="!user && isEdit()" />
 
-<div ng-if="user || !isEdit()">
+<div ng-show="user || !isEdit()">
   <h2 ng-show="isEdit()">Edit
     <small>"{{ user.username }}"</small>
   </h2>

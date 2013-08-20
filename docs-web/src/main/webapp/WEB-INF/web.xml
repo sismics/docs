@@ -3,9 +3,11 @@
   xmlns="http://java.sun.com/xml/ns/javaee"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-  version="3.0"> 
+  version="3.0" metadata-complete="true"> 
   <display-name>Docs</display-name>
-
+  
+  <absolute-ordering></absolute-ordering>
+  
   <!-- This filter is used to secure URLs -->
   <filter>
     <filter-name>requestContextFilter</filter-name>

@@ -1,6 +1,6 @@
-<img src="img/loader.gif" ng-if="!document" />
+<img src="img/loader.gif" ng-show="!document" />
 
-<div ng-if="document">
+<div ng-show="document">
 	<div class="text-right">
 	  <div class="btn-group">
 	    <button class="btn btn-danger" ng-click="deleteDocument(document)"><span class="icon-trash icon-white"></span> Delete</button>
@@ -9,7 +9,7 @@
 	</div>
 	
 	<div class="page-header">
-	  <h1>{{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }}</small> <img ng-src="img/flag/{{ document.language }}.png" title="{{ document.language }}" /></h1>
+	  <h1>{{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }}</small> <img ng-if="document" ng-src="img/flag/{{ document.language }}.png" title="{{ document.language }}" /></h1>
 	  <p>
 	    <button class="btn btn-small btn-inverse" ng-click="share()"><span class="icon-share icon-white"></span> Share</button>
 	    <button class="btn btn-small" ng-repeat="share in document.shares" ng-click="showShare(share)"><span class="icon-ok"></span> {{ share.name ? share.name : 'shared' }}</button>
