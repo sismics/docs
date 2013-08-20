@@ -31,6 +31,12 @@ public class TestEncryptUtil {
     
     @Test
     public void encryptStreamTest() throws Exception {
+        try {
+            EncryptionUtil.encryptStream(this.getClass().getResourceAsStream("/file/udhr.pdf"), "");
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            // NOP
+        }
         InputStream inputStream = EncryptionUtil.encryptStream(this.getClass().getResourceAsStream("/file/udhr.pdf"), pk);
         byte[] encryptedData = Streams.readAll(inputStream);
         byte[] assertData = Streams.readAll(this.getClass().getResourceAsStream("/file/udhr_encrypted.pdf"));

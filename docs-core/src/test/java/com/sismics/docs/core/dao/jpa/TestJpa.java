@@ -21,6 +21,7 @@ public class TestJpa extends BaseTransactionalTest {
         user.setEmail("toto@docs.com");
         user.setLocaleId("fr");
         user.setRoleId("admin");
+        user.setPrivateKey("AwesomePrivateKey");
         String id = userDao.create(user);
         
         TransactionUtil.commit();

@@ -14,6 +14,8 @@ import javax.crypto.spec.PBEKeySpec;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import com.google.common.base.Strings;
+
 /**
  * Encryption utilities.
  * 
@@ -47,6 +49,9 @@ public class EncryptionUtil {
      */
     public static InputStream encryptStream(InputStream is, String privateKey) throws Exception {
         checkBouncyCastleProvider();
+        if (Strings.isNullOrEmpty(privateKey)) {
+            throw new IllegalArgumentException("The private key is null or empty");
+        }
         return new CipherInputStream(is, getCipher(privateKey, Cipher.ENCRYPT_MODE));
     }
     
