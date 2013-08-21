@@ -92,7 +92,10 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
             type: 'success',
             msg: 'Document successfully added (with ' + fileUploadCount + ' file' + (fileUploadCount > 1 ? 's' :  '') + ')'
           });
-          $scope.document = { tags: [] };
+          $scope.document = {
+            tags: [],
+            language: 'fra'
+          };
           $scope.newFiles = [];
           $scope.loadDocuments();
         }
