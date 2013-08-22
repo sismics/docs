@@ -30,7 +30,7 @@
         </thead>
         <tbody>
           <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents">
-            <td>{{ document.title }} <span class="icon-share" ng-if="document.shared" tooltip="Shared"></span></td>
+            <td>{{ document.title }} ({{ document.file_count }})<span class="icon-share" ng-if="document.shared" tooltip="Shared"></span></td>
             <td>{{ document.create_date | date: 'yyyy-MM-dd' }}</td>
             <td class="hidden-phone cell-tags">
               <div class="tags">
