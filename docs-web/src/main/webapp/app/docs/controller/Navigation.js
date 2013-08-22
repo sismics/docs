@@ -16,7 +16,8 @@ App.controller('Navigation', function($scope, $http, $state, $rootScope, User, R
   setInterval(function() {
     $scope.$apply(function() {
       Restangular.one('app/log').get({
-        limit: 100,
+        // Error count will be wrong if there is more than 10 errors in 10 seconds
+        limit: 10,
         level: 'ERROR'
       }).then(function(data) {
           // Add new errors

@@ -39,6 +39,8 @@ public class DocumentDto {
      */
     private Boolean shared;
 
+    private Integer fileCount;
+    
     /**
      * Getter de id.
      *
@@ -145,5 +147,21 @@ public class DocumentDto {
      */
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    /**
+     * Getter of fileCount.
+     * @return fileCount
+     */
+    public Integer getFileCount() {
+        return fileCount;
+    }
+
+    /**
+     * Setter of fileCount.
+     * @param fileCount fileCount
+     */
+    public void setFileCount(Integer fileCount) {
+        this.fileCount = fileCount;
     }
 }

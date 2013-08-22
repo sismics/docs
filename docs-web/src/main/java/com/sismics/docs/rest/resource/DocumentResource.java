@@ -171,6 +171,7 @@ public class DocumentResource extends BaseResource {
             document.put("create_date", documentDto.getCreateTimestamp());
             document.put("shared", documentDto.getShared());
             document.put("language", documentDto.getLanguage());
+            document.put("file_count", documentDto.getFileCount());
             
             // Get tags
             List<TagDto> tagDtoList = tagDao.getByDocumentId(documentDto.getId());

@@ -109,6 +109,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertTrue(documents.length() == 1);
         Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
         Assert.assertEquals("eng", documents.getJSONObject(0).getString("language"));
+        Assert.assertEquals(1, documents.getJSONObject(0).getInt("file_count"));
         Assert.assertEquals(1, tags.length());
         Assert.assertEquals(tag1Id, tags.getJSONObject(0).getString("id"));
         Assert.assertEquals("SuperTag", tags.getJSONObject(0).getString("name"));
