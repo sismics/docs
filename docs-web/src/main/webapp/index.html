@@ -72,6 +72,11 @@
           </ul>
           
           <ul class="nav pull-right" ng-show="!userInfo.anonymous">
+            <li ng-show="errorNumber > 0">
+                <a href="#/settings/log" ng-click="openLogs()" class="nav-text-error">
+                  <span class="icon-warning-sign"></span> {{ errorNumber }} new error{{ errorNumber > 1 ? 's' : '' }}
+                </a>
+            </li>
             <li ng-class="{active: $uiRoute}" ui-route="/settings.*"><a href="#/settings/account"><span class="icon-cog"></span><span class="hidden-phone"> Settings</span></a></li>
             <li><a href="#" ng-click="logout($event)"><span class="icon-off"></span><span class="hidden-phone"> Logout</span></a></li>
           </ul>

@@ -110,6 +110,7 @@ public class AppResource extends BaseResource {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);
+        // TODO Change level by minLevel (returns all logs above)
 
         // Get the memory appender
         Logger logger = Logger.getRootLogger();
