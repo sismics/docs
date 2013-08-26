@@ -54,28 +54,33 @@ public class ResourceUtil {
             // Extract the JAR path
             String jarPath = dirUrl.getPath().substring(5, dirUrl.getPath().indexOf("!"));
             JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
-            
-            Enumeration<JarEntry> entries = jar.entries();
             Set<String> fileSet = new HashSet<String>();
-            while (entries.hasMoreElements()) {
-                // Filter according to the path
-                String entryName = entries.nextElement().getName();
-                if (!entryName.startsWith(path)) {
-                    continue;
-                }
-                String name = entryName.substring(path.length());
-                if (!"".equals(name)) {
-                    // If it is a subdirectory, just return the directory name
-                    int checkSubdir = name.indexOf("/");
-                    if (checkSubdir >= 0) {
-                        name = name.substring(0, checkSubdir);
+            
+            try {
+                Enumeration<JarEntry> entries = jar.entries();
+                while (entries.hasMoreElements()) {
+                    // Filter according to the path
+                    String entryName = entries.nextElement().getName();
+                    if (!entryName.startsWith(path)) {
+                        continue;
                     }
-                    
-                    if (filter == null || filter.accept(null, name)) {
-                        fileSet.add(name);
+                    String name = entryName.substring(path.length());
+                    if (!"".equals(name)) {
+                        // If it is a subdirectory, just return the directory name
+                        int checkSubdir = name.indexOf("/");
+                        if (checkSubdir >= 0) {
+                            name = name.substring(0, checkSubdir);
+                        }
+                        
+                        if (filter == null || filter.accept(null, name)) {
+                            fileSet.add(name);
+                        }
                     }
                 }
+            } finally {
+                jar.close();
             }
+                
             return Lists.newArrayList(fileSet);
         }
         
