@@ -138,7 +138,7 @@ public class DocumentDao {
      * 
      * @param paginatedList List of documents (updated by side effects)
      * @param criteria Search criteria
-     * @return List of document
+     * @return List of documents
      * @throws Exception 
      */
     public void findByCriteria(PaginatedList<DocumentDto> paginatedList, DocumentCriteria criteria, SortCriteria sortCriteria) throws Exception {

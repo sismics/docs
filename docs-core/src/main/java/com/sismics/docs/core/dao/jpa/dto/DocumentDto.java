@@ -39,6 +39,9 @@ public class DocumentDto {
      */
     private Boolean shared;
 
+    /**
+     * File count.
+     */
     private Integer fileCount;
     
     /**
