@@ -1,0 +1,3 @@
+- Disable the whole document edit form while uploading files (client)
+- Change browser title while uploading (client)
+- Automatic backup system using Quartz (server)
