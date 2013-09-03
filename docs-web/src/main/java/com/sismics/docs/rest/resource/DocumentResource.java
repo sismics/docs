@@ -300,6 +300,9 @@ public class DocumentResource extends BaseResource {
      * 
      * @param title Title
      * @param description Description
+     * @param tags Tags
+     * @param language Language
+     * @param createDateStr Creation date
      * @return Response
      * @throws JSONException
      */

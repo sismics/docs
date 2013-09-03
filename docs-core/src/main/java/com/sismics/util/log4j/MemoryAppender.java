@@ -44,7 +44,6 @@ public class MemoryAppender extends AppenderSkeleton {
 
     @Override
     public synchronized void append(LoggingEvent event) {
-        // TODO Don't use size()
         while (logQueue.size() > size) {
             logQueue.remove();
         }

@@ -102,7 +102,6 @@ public class ValidationUtil {
      * @throws JSONException
      */
     public static void validateHexColor(String s, String name, boolean nullable) throws JSONException {
-        // TODO Do a real check
         ValidationUtil.validateLength(s, "name", 7, 7, nullable);
     }
     
