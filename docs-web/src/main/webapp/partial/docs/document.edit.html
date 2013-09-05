@@ -8,25 +8,27 @@
         <input required ng-maxlength="100" class="input-block-level" type="text" id="inputTitle"
           placeholder="Title" name="title" ng-model="document.title" autocomplete="off"
           typeahead="document for document in getTitleTypeahead($viewValue) | filter: $viewValue"
-          typeahead-wait-ms="200" />
+          typeahead-wait-ms="200" ng-disabled="fileIsUploading" />
       </div>
     </div>
     <div class="control-group" ng-class="{ error: !documentForm.description.$valid }">
       <label class="control-label" for="inputDescription">Description</label>
       <div class="controls">
-        <textarea ng-maxlength="4000" class="input-block-level" rows="5" id="inputDescription" name="description" ng-model="document.description"></textarea>
+        <textarea ng-maxlength="4000" class="input-block-level" rows="5" id="inputDescription"
+          name="description" ng-model="document.description" ng-disabled="fileIsUploading"></textarea>
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="inputCreateDate">Creation date</label>
       <div class="controls">
-        <input type="text" id="inputCreateDate" ng-readonly="true" datepicker-popup="yyyy-MM-dd" ng-model="document.create_date" starting-day="1" show-weeks="false" />
+        <input type="text" id="inputCreateDate" ng-readonly="true" datepicker-popup="yyyy-MM-dd"
+          ng-model="document.create_date" starting-day="1" show-weeks="false" ng-disabled="fileIsUploading" />
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="inputCreateDate">Language</label>
       <div class="controls">
-        <select id="inputLanguage" ng-model="document.language">
+        <select id="inputLanguage" ng-model="document.language" ng-disabled="fileIsUploading">
           <option value="fra">French</option>
           <option value="eng">English</option>
           <option value="jpn">Japanese</option>
@@ -36,18 +38,19 @@
     <div class="control-group">
       <label class="control-label" for="inputFiles">New files</label>
       <div class="controls">
-        <file class="input-block-level" id="inputFiles" multiple="multiple" ng-model="newFiles" accept="image/png,image/jpg,image/jpeg,image/gif,application/pdf" />
+        <file class="input-block-level" id="inputFiles" multiple="multiple" ng-model="newFiles"
+          accept="image/png,image/jpg,image/jpeg,image/gif,application/pdf" ng-disabled="fileIsUploading" />
       </div>
     </div>
     <div class="control-group">
       <label class="control-label" for="inputTags">Tags</label>
       <div class="controls">
-        <select-tag tags="document.tags" class="input-block-level" ref="inputTags" />
+        <select-tag tags="document.tags" class="input-block-level" ref="inputTags" ng-disabled="fileIsUploading" />
       </div>
     </div>
     <div class="form-actions">
       <button type="submit" class="btn btn-primary" ng-disabled="!documentForm.$valid || fileIsUploading" ng-click="edit()">{{ isEdit() ? 'Edit' : 'Add' }}</button>
-      <button type="submit" class="btn" ng-click="cancel()">Cancel</button>
+      <button type="submit" class="btn" ng-click="cancel()" ng-disabled="fileIsUploading">Cancel</button>
     </div>
   </form>
   

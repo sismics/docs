@@ -219,4 +219,5 @@ var App = angular.module('docs',
 .run(function($rootScope, $state, $stateParams) {
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
+  $rootScope.pageTitle = 'Sismics Docs';
 });

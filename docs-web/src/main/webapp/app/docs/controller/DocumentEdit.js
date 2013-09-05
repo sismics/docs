@@ -3,7 +3,7 @@
 /**
  * Document edition controller.
  */
-App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams, Restangular, Tag) {
+App.controller('DocumentEdit', function($rootScope, $scope, $q, $http, $state, $stateParams, Restangular, Tag) {
   // Alerts
   $scope.alerts = [];
   
@@ -37,21 +37,18 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
   $scope.isEdit = function() {
     return $stateParams.id;
   };
-  
+
   /**
-   * In edit mode, load the current document.
+   * Reset the form to add a new document.
    */
-  if ($scope.isEdit()) {
-    Restangular.one('document', $stateParams.id).get().then(function(data) {
-      $scope.document = data;
-    });
-  } else {
+  $scope.resetForm = function() {
     $scope.document = {
       tags: [],
       language: 'fra'
     };
-  }
-  
+    $scope.newFiles = [];
+  };
+
   /**
    * Edit a document.
    */
@@ -84,19 +81,17 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
       // When all files upload are over, move on
       var navigateNext = function() {
         if ($scope.isEdit()) {
+          // Go back to the edited document
           $scope.pageDocuments();
           $state.transitionTo('document.view', { id: $stateParams.id });
         } else {
+          // Reset the scope and stay here
           var fileUploadCount = _.size($scope.newFiles);
           $scope.alerts.unshift({
             type: 'success',
             msg: 'Document successfully added (with ' + fileUploadCount + ' file' + (fileUploadCount > 1 ? 's' :  '') + ')'
           });
-          $scope.document = {
-            tags: [],
-            language: 'fra'
-          };
-          $scope.newFiles = [];
+          $scope.resetForm();
           $scope.loadDocuments();
         }
       }
@@ -105,6 +100,7 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
         navigateNext();
       } else {
         $scope.fileIsUploading = true;
+        $rootScope.pageTitle = '0% - Sismics Docs';
         
         // Send a file from the input file array and return a promise
         var sendFile = function(key) {
@@ -125,6 +121,7 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
           
           promiseFile.then(function() {
             $scope.fileProgress += 100 / _.size($scope.newFiles);
+            $rootScope.pageTitle = Math.round($scope.fileProgress) + '% - Sismics Docs';
           });
           
           return promiseFile;
@@ -139,6 +136,7 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
           } else {
             $scope.fileIsUploading = false;
             $scope.fileProgress = 0;
+            $rootScope.pageTitle = 'Sismics Docs';
             navigateNext();
           }
         };
@@ -157,4 +155,15 @@ App.controller('DocumentEdit', function($scope, $q, $http, $state, $stateParams,
       $state.transitionTo('document.default');
     }
   };
+
+  /**
+   * In edit mode, load the current document.
+   */
+  if ($scope.isEdit()) {
+    Restangular.one('document', $stateParams.id).get().then(function(data) {
+      $scope.document = data;
+    });
+  } else {
+    $scope.resetForm();
+  }
 });

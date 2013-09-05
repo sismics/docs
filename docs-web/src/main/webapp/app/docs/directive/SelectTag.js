@@ -10,7 +10,8 @@ App.directive('selectTag', function() {
     replace: true,
     scope: {
       tags: '=',
-      ref: '@'
+      ref: '@',
+      ngDisabled: '='
     },
     controller: function($scope, Tag) {
       // Retrieve tags
