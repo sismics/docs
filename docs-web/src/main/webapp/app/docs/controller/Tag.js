@@ -38,7 +38,6 @@ App.controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
    * Add a tag.
    */
   $scope.addTag = function() {
-    // TODO Check if the tag don't already exists
     Restangular.one('tag').put($scope.tag).then(function(data) {
       $scope.tags.push({ id: data.id, name: $scope.tag.name, color: $scope.tag.color });
       $scope.tag = { name: '', color: '#3a87ad' };
