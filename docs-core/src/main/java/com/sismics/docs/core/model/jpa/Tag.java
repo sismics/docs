@@ -50,7 +50,7 @@ public class Tag {
     /**
      * Tag name.
      */
-    @Column(name = "TAG_COLOR_C", nullable = false, length = 6)
+    @Column(name = "TAG_COLOR_C", nullable = false, length = 7)
     private String color;
 
     /**
