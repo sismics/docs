@@ -109,7 +109,6 @@ public class AppResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        checkBaseFunction(BaseFunction.ADMIN);
         // TODO Change level by minLevel (returns all logs above)
 
         // Get the memory appender
