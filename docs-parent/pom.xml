@@ -463,11 +463,6 @@
         <version>1.0</version>
       </dependency>
       
-      <dependency>
-        <groupId>tess4j</groupId>
-        <artifactId>tess4j</artifactId>
-        <version>1.0</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
   
@@ -522,23 +517,6 @@
                   <repositoryLayout>default</repositoryLayout>
                   <groupId>jai</groupId>
                   <artifactId>imageio</artifactId>
-                  <version>1.0</version>
-                  <packaging>jar</packaging>
-                  <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                  <goal>install-file</goal>
-                </goals>
-              </execution>
-              
-              <execution>
-                <id>install-tess4j</id>
-                <phase>validate</phase>
-                <configuration>
-                  <file>${project.basedir}/lib/tess4j.jar</file>
-                  <repositoryLayout>default</repositoryLayout>
-                  <groupId>tess4j</groupId>
-                  <artifactId>tess4j</artifactId>
                   <version>1.0</version>
                   <packaging>jar</packaging>
                   <generatePom>true</generatePom>

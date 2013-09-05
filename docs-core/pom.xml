@@ -138,11 +138,6 @@
       <artifactId>imageio</artifactId>
     </dependency>
     
-    <dependency>
-      <groupId>tess4j</groupId>
-      <artifactId>tess4j</artifactId>
-    </dependency>
-    
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
