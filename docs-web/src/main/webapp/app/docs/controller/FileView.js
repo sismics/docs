@@ -6,6 +6,7 @@
 App.controller('FileView', function($dialog, $state, $stateParams) {
   var dialog = $dialog.dialog({
     keyboard: true,
+    dialogClass: 'modal modal-fileview',
     templateUrl: 'partial/docs/file.view.html',
     controller: function($scope, $state, $stateParams, Restangular, dialog) {
       // Load files
