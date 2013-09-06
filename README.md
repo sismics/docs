@@ -26,11 +26,11 @@ Features
 License
 -------
 
-Reader is released under the terms of the GPL license. See `COPYING` for more
+Docs is released under the terms of the GPL license. See `COPYING` for more
 information or see <http://opensource.org/licenses/GPL-2.0>.
 
 How to build Docs from the sources
-------------------------------------
+----------------------------------
 
 Prerequisites: JDK 7, Maven 3, Tesseract 3.02
 
