@@ -14,10 +14,11 @@ Features
 --------
 
 - Responsive user interface
-- Optical characted recognition
+- Optical character recognition
 - Support image and PDF files
 - Flexible search engine
 - Full text search in image and PDF
+- SHA-256 encryption
 - Tag system
 - Multi-users
 - Document sharing
