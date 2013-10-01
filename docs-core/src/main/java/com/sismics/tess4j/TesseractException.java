@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.sourceforge.tess4j;
+package com.sismics.tess4j;
 
 public class TesseractException extends Exception {
 

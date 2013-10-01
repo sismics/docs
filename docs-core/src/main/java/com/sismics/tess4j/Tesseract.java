@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package net.sourceforge.tess4j;
+package com.sismics.tess4j;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.imageio.IIOImage;
-
-import net.sourceforge.vietocr.ImageIOHelper;
 
 import com.sun.jna.Pointer;
 

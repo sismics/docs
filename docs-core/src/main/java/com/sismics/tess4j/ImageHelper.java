@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package net.sourceforge.vietocr;
+package com.sismics.tess4j;
 
 import java.awt.Graphics2D;
 import java.awt.Image;

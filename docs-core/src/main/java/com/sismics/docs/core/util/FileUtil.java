@@ -15,8 +15,6 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.imageio.ImageIO;
 
-import net.sourceforge.tess4j.Tesseract;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.util.PDFTextStripper;
@@ -28,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
+import com.sismics.tess4j.Tesseract;
 import com.sismics.util.ImageUtil;
 import com.sismics.util.mime.MimeType;
 

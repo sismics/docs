@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package net.sourceforge.tess4j;
+package com.sismics.tess4j;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.*;
