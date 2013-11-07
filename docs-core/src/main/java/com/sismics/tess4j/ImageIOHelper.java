@@ -28,6 +28,8 @@ import java.util.Map;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
@@ -37,6 +39,7 @@ import javax.imageio.stream.ImageOutputStream;
 import org.w3c.dom.NodeList;
 
 import com.sun.media.imageio.plugins.tiff.TIFFImageWriteParam;
+import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageWriterSpi;
 
 public class ImageIOHelper {
@@ -69,8 +72,20 @@ public class ImageIOHelper {
         writer.setOutput(ios);
         writer.write(streamMetadata, new IIOImage(image.getRenderedImage(), null, null), tiffWriteParam);
         writer.dispose();
+        
+        // Read the writed image
         ios.seek(0);
-        BufferedImage bi = ImageIO.read(ios);
+        ImageReader reader = new TIFFImageReaderSpi().createReaderInstance();
+        ImageReadParam param = reader.getDefaultReadParam();
+        reader.setInput(ios, true, true);
+        BufferedImage bi;
+        try {
+            bi = reader.read(0, param);
+        } finally {
+            reader.dispose();
+            ios.close();
+        }
+        
         return convertImageData(bi);
     }
 
