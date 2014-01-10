@@ -13,7 +13,7 @@ App.controller('Login', function($scope, $rootScope, $state, $dialog, User) {
       var msg = 'Username or password invalid';
       var btns = [{result:'ok', label: 'OK', cssClass: 'btn-primary'}];
 
-      $dialog.messageBox(title, msg, btns).open();
+      $dialog.messageBox(title, msg, btns);
     });
   };
 });

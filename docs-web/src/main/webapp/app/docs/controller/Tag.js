@@ -55,9 +55,7 @@ App.controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
       {result: 'ok', label: 'OK', cssClass: 'btn-primary'}
     ];
 
-    $dialog.messageBox(title, msg, btns)
-    .open()
-    .then(function(result) {
+    $dialog.messageBox(title, msg, btns, function(result) {
       if (result == 'ok') {
         Restangular.one('tag', tag.id).remove().then(function() {
           $scope.tags = _.reject($scope.tags, function(t) {

@@ -3,7 +3,7 @@
 /**
  * Document view controller.
  */
-App.controller('DocumentView', function ($scope, $state, $stateParams, $location, $dialog, Restangular) {
+App.controller('DocumentView', function ($scope, $state, $stateParams, $location, $dialog, $modal, Restangular) {
   // Load data from server
   Restangular.one('document', $stateParams.id).get().then(function(data) {
     $scope.document = data;
@@ -56,16 +56,14 @@ App.controller('DocumentView', function ($scope, $state, $stateParams, $location
       {result: 'ok', label: 'OK', cssClass: 'btn-primary'}
     ];
 
-    $dialog.messageBox(title, msg, btns)
-        .open()
-        .then(function (result) {
-          if (result == 'ok') {
-            Restangular.one('document', document.id).remove().then(function () {
-              $scope.loadDocuments();
-              $state.transitionTo('document.default');
-            });
-          }
+    $dialog.messageBox(title, msg, btns, function (result) {
+      if (result == 'ok') {
+        Restangular.one('document', document.id).remove().then(function () {
+          $scope.loadDocuments();
+          $state.transitionTo('document.default');
         });
+      }
+    });
   };
 
   /**
@@ -79,31 +77,28 @@ App.controller('DocumentView', function ($scope, $state, $stateParams, $location
       {result: 'ok', label: 'OK', cssClass: 'btn-primary'}
     ];
 
-    $dialog.messageBox(title, msg, btns)
-        .open()
-        .then(function (result) {
-          if (result == 'ok') {
-            Restangular.one('file', file.id).remove().then(function () {
-              $scope.loadFiles();
-            });
-          }
+    $dialog.messageBox(title, msg, btns, function (result) {
+      if (result == 'ok') {
+        Restangular.one('file', file.id).remove().then(function () {
+          $scope.loadFiles();
         });
+      }
+    });
   };
 
   /**
    * Open the share dialog.
    */
   $scope.share = function () {
-    $dialog.dialog({
-      keyboard: true,
+    $modal.open({
       templateUrl: 'partial/docs/document.share.html',
-      controller: function ($scope, dialog) {
+      controller: function ($scope, $modalInstance) {
         $scope.name = '';
         $scope.close = function (name) {
-          dialog.close(name);
+          $modalInstance.close(name);
         }
       }
-    }).open().then(function (name) {
+    }).result.then(function (name) {
           if (name == null) {
             return;
           }
@@ -140,17 +135,15 @@ App.controller('DocumentView', function ($scope, $state, $stateParams, $location
       {result: 'close', label: 'Close'}
     ];
 
-    $dialog.messageBox(title, msg, btns)
-        .open()
-        .then(function (result) {
-          if (result == 'unshare') {
-            // Unshare this document and update the local shares
-            Restangular.one('share', share.id).remove().then(function () {
-              $scope.document.shares = _.reject($scope.document.shares, function(s) {
-                return share.id == s.id;
-              });
-            });
-          }
+    $dialog.messageBox(title, msg, btns, function (result) {
+      if (result == 'unshare') {
+        // Unshare this document and update the local shares
+        Restangular.one('share', share.id).remove().then(function () {
+          $scope.document.shares = _.reject($scope.document.shares, function(s) {
+            return share.id == s.id;
+          });
         });
+      }
+    });
   };
 });

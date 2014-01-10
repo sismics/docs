@@ -3,10 +3,9 @@
 /**
  * File view controller.
  */
-App.controller('FileView', function($dialog, $state, $stateParams) {
-  var dialog = $dialog.dialog({
-    keyboard: true,
-    dialogClass: 'modal modal-fileview',
+App.controller('FileView', function($modal, $state, $stateParams) {
+  var modal = $modal.open({
+    windowClass: 'modal modal-fileview',
     templateUrl: 'partial/docs/file.view.html',
     controller: function($scope, $state, $stateParams, Restangular, dialog) {
       // Load files
@@ -65,7 +64,7 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
         dialog.close();
       };
 
-      // Close the dialog when the user exits this state
+      // Close the modal when the user exits this state
       var off = $scope.$on('$stateChangeStart', function(event, toState){
         if (dialog.isOpen()) {
           dialog.close(toState.name == 'document.view.file' ? {} : null);
@@ -76,7 +75,7 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
   });
 
   // Returns to document view on file close
-  dialog.open().then(function(result) {
+  modal.result.then(function(result) {
     if (result == null) {
       $state.transitionTo('document.view', { id: $stateParams.id });
     }

@@ -33,7 +33,6 @@ App.controller('Document', function($scope, $timeout, $state, Restangular) {
         .then(function (data) {
           $scope.documents = data.documents;
           $scope.totalDocuments = data.total;
-          $scope.numPages = Math.ceil(data.total / $scope.limit);
         });
   };
   
