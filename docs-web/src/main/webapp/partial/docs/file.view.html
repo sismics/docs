@@ -1,21 +1,23 @@
 <div class="text-center">
   <div class="btn-group pull-left">
-    <button type="button" class="btn" ng-click="closeFile()"><span class="icon-remove"></span></button>
+    <button type="button" class="btn btn-default" ng-click="closeFile()">
+      <span class="glyphicon glyphicon-remove"></span>
+    </button>
   </div>
 
   <div class="btn-group">
-    <button type="button" class="btn" ng-click="previousFile()">Previous</button>
-    <button type="button" class="btn" ng-click="nextFile()">Next</button>
+    <button type="button" class="btn btn-default" ng-click="previousFile()">Previous</button>
+    <button type="button" class="btn btn-default" ng-click="nextFile()">Next</button>
   </div>
   
   <div class="btn-group pull-right">
-    <button type="button" class="btn" ng-click="openFile()"><span class="icon-download-alt"></span></button>
+    <button type="button" class="btn btn-default" ng-click="openFile()">
+      <span class="glyphicon glyphicon-download-alt"></span>
+    </button>
   </div>
 </div>
 
 
-<img ng-if="$stateParams.fileId && (file.mimetype == 'image/png' || file.mimetype == 'image/jpeg' || file.mimetype == 'image/gif')" ng-src="api/file/{{ $stateParams.fileId }}/data?size=web" />
-
-<div class="text-center" ng-if="$stateParams.fileId && file.mimetype == 'application/pdf'">
+<div class="text-center" ng-if="$stateParams.fileId">
   <img ng-src="api/file/{{ $stateParams.fileId }}/data?size=web" />
 </div>

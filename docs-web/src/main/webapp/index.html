@@ -57,34 +57,43 @@
     <script src="app/docs/directive/InlineEdit.js" type="text/javascript"></script>
   </head>
   <body>
-    <div class="navbar" ng-controller="Navigation">
-      <div class="navbar-inner">
-        <div class="container">
-          <div class="brand loader hidden-phone" ng-class="{hide: !isLoading() }">
-            <img src="img/loader.gif" />
-          </div>
-          
-          <a class="brand hidden-phone" href="#">Sismics Docs</a>
-          
-          <ul class="nav" ng-show="!userInfo.anonymous">
-            <li ng-class="{active: $uiRoute}" ui-route="/document.*"><a href="#/document"><span class="icon-book"></span> Documents</a></li>
-            <li ng-class="{active: $uiRoute}" ui-route="/tag.*"><a href="#/tag"><span class="icon-tag"></span> Tags</a></li>
-          </ul>
-          
-          <ul class="nav pull-right" ng-show="!userInfo.anonymous">
-            <li ng-show="errorNumber > 0">
-                <a href="#/settings/log" ng-click="openLogs()" class="nav-text-error">
-                  <span class="icon-warning-sign"></span> {{ errorNumber }} new error{{ errorNumber > 1 ? 's' : '' }}
-                </a>
-            </li>
-            <li ng-class="{active: $uiRoute}" ui-route="/settings.*"><a href="#/settings/account"><span class="icon-cog"></span><span class="hidden-phone"> Settings</span></a></li>
-            <li><a href="#" ng-click="logout($event)"><span class="icon-off"></span><span class="hidden-phone"> Logout</span></a></li>
-          </ul>
+    <nav class="navbar navbar-default" role="navigation" ng-controller="Navigation">
+      <div class="navbar-header">
+        <div class="navbar-brand loader" ng-class="{'loader-hide': !isLoading() }">
+          <img src="img/loader.gif" />
         </div>
+        <a class="navbar-brand" href="#">Sismics Docs</a>
       </div>
-    </div>
+
+      <ul class="nav navbar-nav" ng-show="!userInfo.anonymous">
+        <li ng-class="{active: $uiRoute}" ui-route="/document.*">
+          <a href="#/document"><span class="glyphicon glyphicon-book"></span> Documents</a>
+        </li>
+        <li ng-class="{active: $uiRoute}" ui-route="/tag.*">
+          <a href="#/tag"><span class="glyphicon glyphicon-tags"></span> Tags</a>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right" ng-show="!userInfo.anonymous">
+        <li ng-show="errorNumber > 0">
+            <a href="#/settings/log" ng-click="openLogs()" class="nav-text-error">
+              <span class="glyphicon glyphicon-warning-sign"></span> {{ errorNumber }} new error{{ errorNumber > 1 ? 's' : '' }}
+            </a>
+        </li>
+        <li ng-class="{active: $uiRoute}" ui-route="/settings.*">
+          <a href="#/settings/account">
+            <span class="glyphicon glyphicon-cog"></span> Settings
+          </a>
+        </li>
+        <li>
+          <a href="#" ng-click="logout($event)">
+            <span class="glyphicon glyphicon-off"></span> Logout
+          </a>
+        </li>
+      </ul>
+    </nav>
     
-    <main ui-view="page">
-    </main>
+    <div ui-view="page">
+    </div>
   </body>
 </html>

@@ -1,26 +1,25 @@
-<div class="row-fluid">
-  <div class="span4 offset4">
-    <form class="form-horizontal">
-      <div class="control-group">
-        <label class="control-label" for="inputUsername">Username</label>
-        <div class="controls">
-          <input type="text" id="inputUsername" placeholder="Username" ng-model="user.username" />
-        </div>
+<div class="row">
+  <div class="col-sm-offset-5 col-sm-3">
+    <form>
+      <div class="form-group">
+        <label class="sr-only" for="inputUsername">Username</label>
+        <input class="form-control" type="text" id="inputUsername" placeholder="Username" ng-model="user.username" />
       </div>
-      <div class="control-group">
-        <label class="control-label" for="inputPassword">Password</label>
-        <div class="controls">
-          <input type="password" id="inputPassword" placeholder="Password" ng-model="user.password" />
-        </div>
+
+      <div class="form-group">
+        <label class="sr-only" for="inputPassword">Password</label>
+        <input class="form-control" type="password" id="inputPassword" placeholder="Password" ng-model="user.password" />
       </div>
-      <div class="control-group">
-        <div class="controls">
-          <label class="checkbox">
-            <input type="checkbox" ng-model="user.remember" /> Remember me
-          </label>
-          <button type="submit" class="btn btn-primary" ng-click="login()"><span class="icon-ok icon-white"></span> Sign in</button>
-        </div>
+
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" ng-model="user.remember" /> Remember me
+        </label>
       </div>
+
+      <button type="submit" class="btn btn-primary btn-block" ng-click="login()">
+        <span class="glyphicon glyphicon-ok"></span> Sign in
+      </button>
     </form>
   </div>
 </div>

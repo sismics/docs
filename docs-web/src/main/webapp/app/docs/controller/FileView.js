@@ -7,7 +7,7 @@ App.controller('FileView', function($modal, $state, $stateParams) {
   var modal = $modal.open({
     windowClass: 'modal modal-fileview',
     templateUrl: 'partial/docs/file.view.html',
-    controller: function($scope, $state, $stateParams, Restangular, dialog) {
+    controller: function($rootScope, $scope, $state, $stateParams, Restangular) {
       // Load files
       Restangular.one('file').getList('list', { id: $stateParams.id }).then(function(data) {
         $scope.files = data.files;
@@ -28,7 +28,6 @@ App.controller('FileView', function($modal, $state, $stateParams) {
           if (value.id == $stateParams.fileId) {
             var next = $scope.files[key + 1];
             if (next) {
-              dialog.close({});
               $state.transitionTo('document.view.file', { id: $stateParams.id, fileId: next.id });
             }
           }
@@ -43,7 +42,6 @@ App.controller('FileView', function($modal, $state, $stateParams) {
           if (value.id == $stateParams.fileId) {
             var previous = $scope.files[key - 1];
             if (previous) {
-              dialog.close({});
               $state.transitionTo('document.view.file', { id: $stateParams.id, fileId: previous.id });
             }
           }
@@ -61,13 +59,17 @@ App.controller('FileView', function($modal, $state, $stateParams) {
        * Close the file preview.
        */
       $scope.closeFile = function () {
-        dialog.close();
+        modal.dismiss();
       };
 
       // Close the modal when the user exits this state
-      var off = $scope.$on('$stateChangeStart', function(event, toState){
-        if (dialog.isOpen()) {
-          dialog.close(toState.name == 'document.view.file' ? {} : null);
+      var off = $rootScope.$on('$stateChangeStart', function(event, toState) {
+        if (!modal.closed) {
+          if (toState.name == 'document.view.file') {
+            modal.close();
+          } else {
+            modal.dismiss();
+          }
         }
         off();
       });
@@ -75,9 +77,11 @@ App.controller('FileView', function($modal, $state, $stateParams) {
   });
 
   // Returns to document view on file close
-  modal.result.then(function(result) {
-    if (result == null) {
-      $state.transitionTo('document.view', { id: $stateParams.id });
-    }
+  modal.closed = false;
+  modal.result.then(function() {
+    modal.closed = true;
+  }, function() {
+    modal.closed = true;
+    $state.transitionTo('document.view', { id: $stateParams.id });
   });
 });

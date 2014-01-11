@@ -1,7 +1,11 @@
 <div>
-  <ul class="inline">
-    <li ng-repeat="tag in tags"><span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }} <span class="icon-remove icon-white" ng-click="deleteTag(tag)" ng-show="!ngDisabled"></span></span></li>
+  <ul class="list-inline">
+    <li ng-repeat="tag in tags">
+      <span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}
+        <span class="glyphicon glyphicon-remove" ng-click="deleteTag(tag)" ng-show="!ngDisabled"></span>
+      </span>
+    </li>
   </ul>
-  <input class="span12" type="text" id="{{ ref }}" placeholder="Type a tag" ng-model="input" ng-disabled="ngDisabled"
+  <input class="form-control" type="text" id="{{ ref }}" placeholder="Type a tag" ng-model="input" ng-disabled="ngDisabled"
     autocomplete="off" typeahead="tag.name for tag in allTags | filter: $viewValue" typeahead-on-select="addTag()" />
 </div>
