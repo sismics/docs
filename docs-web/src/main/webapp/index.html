@@ -59,38 +59,49 @@
   <body>
     <nav class="navbar navbar-default" role="navigation" ng-controller="Navigation">
       <div class="navbar-header">
+        <button type="button" class="navbar-toggle"
+                ng-init="isCollapsed = true"
+                ng-click="isCollapsed = !isCollapsed">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+
         <div class="navbar-brand loader" ng-class="{'loader-hide': !isLoading() }">
           <img src="img/loader.gif" />
         </div>
         <a class="navbar-brand" href="#">Sismics Docs</a>
       </div>
 
-      <ul class="nav navbar-nav" ng-show="!userInfo.anonymous">
-        <li ng-class="{active: $uiRoute}" ui-route="/document.*">
-          <a href="#/document"><span class="glyphicon glyphicon-book"></span> Documents</a>
-        </li>
-        <li ng-class="{active: $uiRoute}" ui-route="/tag.*">
-          <a href="#/tag"><span class="glyphicon glyphicon-tags"></span> Tags</a>
-        </li>
-      </ul>
+      <div class="collapse navbar-collapse" collapse="isCollapsed">
+        <ul class="nav navbar-nav" ng-show="!userInfo.anonymous">
+          <li ng-class="{active: $uiRoute}" ui-route="/document.*">
+            <a href="#/document"><span class="glyphicon glyphicon-book"></span> Documents</a>
+          </li>
+          <li ng-class="{active: $uiRoute}" ui-route="/tag.*">
+            <a href="#/tag"><span class="glyphicon glyphicon-tags"></span> Tags</a>
+          </li>
+        </ul>
 
-      <ul class="nav navbar-nav navbar-right" ng-show="!userInfo.anonymous">
-        <li ng-show="errorNumber > 0">
-            <a href="#/settings/log" ng-click="openLogs()" class="nav-text-error">
-              <span class="glyphicon glyphicon-warning-sign"></span> {{ errorNumber }} new error{{ errorNumber > 1 ? 's' : '' }}
+        <ul class="nav navbar-nav navbar-right" ng-show="!userInfo.anonymous">
+          <li ng-show="errorNumber > 0">
+              <a href="#/settings/log" ng-click="openLogs()" class="nav-text-error">
+                <span class="glyphicon glyphicon-warning-sign"></span> {{ errorNumber }} new error{{ errorNumber > 1 ? 's' : '' }}
+              </a>
+          </li>
+          <li ng-class="{active: $uiRoute}" ui-route="/settings.*">
+            <a href="#/settings/account">
+              <span class="glyphicon glyphicon-cog"></span> Settings
             </a>
-        </li>
-        <li ng-class="{active: $uiRoute}" ui-route="/settings.*">
-          <a href="#/settings/account">
-            <span class="glyphicon glyphicon-cog"></span> Settings
-          </a>
-        </li>
-        <li>
-          <a href="#" ng-click="logout($event)">
-            <span class="glyphicon glyphicon-off"></span> Logout
-          </a>
-        </li>
-      </ul>
+          </li>
+          <li>
+            <a href="#" ng-click="logout($event)">
+              <span class="glyphicon glyphicon-off"></span> Logout
+            </a>
+          </li>
+        </ul>
+      </div>
     </nav>
     
     <div ui-view="page">

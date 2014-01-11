@@ -1,19 +1,23 @@
-<div class="container-fluid">
-  <div class="row-fluid">
-    <div class="span4 well">
-      <ul class="nav nav-list">
-        <li class="nav-header">Personal settings</li>
-        <li ng-class="{active: $uiRoute}" ui-route="/settings/account"><a href="#/settings/account">User account</a></li>
-        <li ng-class="{active: $uiRoute}" ui-route="/settings/session"><a href="#/settings/session">Opened sessions</a></li>
-        
-        <li class="nav-header" ng-show="isAdmin">General settings</li>
-        <li ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/user.*"><a href="#/settings/user">Users</a></li>
-        <li ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/log"><a href="#/settings/log">Server logs</a></li>
+<div class="row">
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading"><strong>Personal settings</strong></div>
+      <ul class="list-group">
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/account" href="#/settings/account">User account</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/session" href="#/settings/session">Opened sessions</a>
       </ul>
     </div>
-    
-    <div class="span8 well">
-      <div ui-view="settings"></div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading" ng-show="isAdmin"><strong>General settings</strong></div>
+      <ul class="list-group">
+        <a class="list-group-item" ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/user.*" href="#/settings/user">Users</a>
+        <a class="list-group-item" ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/log" href="#/settings/log">Server logs</a>
+      </ul>
     </div>
+  </div>
+
+  <div class="col-md-8">
+    <div class="well" ui-view="settings"></div>
   </div>
 </div>
