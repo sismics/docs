@@ -4,7 +4,9 @@
  * Navigation controller.
  */
 App.controller('Navigation', function($scope, $http, $state, $rootScope, User, Restangular) {
-  $rootScope.userInfo = User.userInfo();
+  User.userInfo().then(function(data) {
+    $rootScope.userInfo = data;
+  });
 
   // Last time when the errors logs was checked
   $scope.lastLogCheck = new Date().getTime();
@@ -47,7 +49,9 @@ App.controller('Navigation', function($scope, $http, $state, $rootScope, User, R
    */
   $scope.logout = function($event) {
     User.logout().then(function() {
-      $rootScope.userInfo = User.userInfo(true);
+      User.userInfo(true).then(function(data) {
+        $rootScope.userInfo = data;
+      });
       $state.transitionTo('main');
     });
     $event.preventDefault();

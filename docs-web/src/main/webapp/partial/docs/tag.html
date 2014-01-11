@@ -1,45 +1,46 @@
-<div class="container-fluid">
-  <div class="row-fluid">
-    <div class="span4 well text-center">
+<div class="row">
+  <div class="col-md-4">
+    <div class="well">
       <form name="tagForm" novalidate>
-        <div class="control-group" ng-class="{ error: !tagForm.name.$valid }">
-		      <div class="input-prepend input-append input-block-level">
-		        <span colorpicker class="btn" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
-		        <input type="text" name="name" placeholder="New tag"
-	            ng-maxlength="36" required ng-model="tag.name" ui-validate="{duplicate: 'validateDuplicate($value)', space: '!$value || $value.indexOf(\' \') == -1' }">
-		        <button type="submit" class="btn btn-primary" ng-disabled="!tagForm.$valid" ng-click="addTag()">Add</button>
-		      </div>
-		      <span class="help-inline" ng-show="tagForm.name.$error.duplicate">This tag already exists</span>
-		      <span class="help-inline" ng-show="tagForm.name.$error.space">Space are not allowed</span>
-	      </div>
+        <p class="input-group" ng-class="{ 'has-error': !tagForm.name.$valid }">
+          <span colorpicker class="input-group-addon btn btn-default" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
+          <input type="text" name="name" placeholder="New tag" class="form-control"
+            ng-maxlength="36" required ng-model="tag.name" ui-validate="{duplicate: 'validateDuplicate($value)', space: '!$value || $value.indexOf(\' \') == -1' }">
+          <span class="input-group-addon btn btn-primary" ng-disabled="!tagForm.$valid" ng-click="addTag()">Add</span>
+        </p>
+        <span class="help-block" ng-show="tagForm.name.$error.duplicate">This tag already exists</span>
+        <span class="help-block" ng-show="tagForm.name.$error.space">Space are not allowed</span>
       </form>
-      
-      <div class="input-prepend input-block-level">
-        <span class="add-on"><span class="icon-search"></span></span>
-        <input type="text" placeholder="Search" ng-model="search.name">
-      </div>
-      
-      <table class="table table-striped table-hover table-tags">
+
+      <p class="input-group">
+        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+        <input type="search" class="form-control" placeholder="Search" ng-model="search.name">
+      </p>
+
+      <table class="row table table-striped table-hover table-tags">
         <tbody>
           <tr ng-repeat="tag in tags | filter:search">
             <td><inline-edit value="tag.name" on-edit="updateTag(tag)" /></td>
-            <td class="span1"><span colorpicker class="btn" on-hide="updateTag(tag)" data-color="" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span></td>
-            <td class="span1"><button class="btn btn-danger pull-right" ng-click="deleteTag(tag)"><span class="icon-trash icon-white"></span></button></td>
+            <td class="col-xs-1"><span colorpicker class="btn" on-hide="updateTag(tag)" data-color="" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span></td>
+            <td class="col-xs-1"><button class="btn btn-danger pull-right" ng-click="deleteTag(tag)"><span class="glyphicon glyphicon-trash"></span></button></td>
           </tr>
         </tbody>
       </table>
-      
     </div>
-    
-    <div class="span8 well" ng-if="stats.length >= 0">
+  </div>
+
+  <div class="col-md-8" ng-if="stats.length >= 0">
+    <div class="well">
       <h1>{{ tags.length }} <small>tag{{ tags.length > 1 ? 's' : '' }}</small></h1>
       <dl class="dl-horizontal" ng-repeat="stat in stats | orderBy: '-count'">
         <dt>{{ stat.name }} <span class="badge badge-info" ng-style="{ 'background': stat.color }">{{ stat.count }}</span></dt>
-        <dd><progress percent="stat.count / getStatCount() * 100" class="progress-info"></progress></dd>
+        <dd><progressbar value="stat.count / getStatCount() * 100" class="progress-info"></progressbar></dd>
       </dl>
     </div>
-    
-    <div class="span8 well" ng-if="!stats">
+  </div>
+
+  <div class="col-md-8" ng-if="!stats">
+    <div class="well">
       <img src="img/loader.gif" />
     </div>
   </div>

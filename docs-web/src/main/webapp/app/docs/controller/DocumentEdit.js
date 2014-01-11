@@ -109,13 +109,13 @@ App.controller('DocumentEdit', function($rootScope, $scope, $q, $http, $state, $
           var formData = new FormData();
           formData.append('id', data.id);
           formData.append('file', file);
-          
+
           // Send the file
           var promiseFile = $http.put('api/file',
             formData, {
-            headers: { 'Content-Type': false },
-            transformRequest: function(data) { return data; }
-          });
+              headers: { 'Content-Type': undefined },
+              transformRequest: function(data) { return data; }
+            });
           
           // TODO Handle progression when $q.notify will be released
           

@@ -5,8 +5,8 @@
  */
 var App = angular.module('docs',
     // Dependencies
-    ['ui.state', 'ui.route', 'ui.bootstrap', 'ui.keypress', 'ui.validate',
-      'ui.sortable', 'restangular', 'ngSanitize', 'ngMobile', 'colorpicker.module']
+    ['ui.router', 'ui.route', 'ui.bootstrap', 'ui.keypress', 'ui.validate', 'dialog',
+      'ui.sortable', 'restangular', 'ngSanitize', 'ngTouch', 'colorpicker.module']
   )
 
 /**

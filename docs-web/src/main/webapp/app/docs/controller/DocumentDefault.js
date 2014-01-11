@@ -5,5 +5,7 @@
  */
 App.controller('DocumentDefault', function($scope, $state, Restangular) {
   // Load app data
-  $scope.app = Restangular.one('app').get();
+  Restangular.one('app').get().then(function(data) {
+    $scope.app = data;
+  });
 });

@@ -8,58 +8,71 @@
     <small>user</small>
   </h2>
   <form class="form-horizontal" name="editUserForm" novalidate>
-    <div class="control-group" ng-class="{ error: !editUserForm.username.$valid, success: editUserForm.username.$valid }">
-      <label class="control-label" for="inputUsername">Username</label>
+    <div class="form-group" ng-class="{ 'has-error': !editUserForm.username.$valid, success: editUserForm.username.$valid }">
+      <label class="col-sm-2 control-label" for="inputUsername">Username</label>
   
-      <div class="controls">
-        <input name="username" type="text" id="inputUsername" required ng-disabled="isEdit()"
+      <div class="col-sm-7">
+        <input name="username" type="text" id="inputUsername" required ng-disabled="isEdit()" class="form-control"
                ng-minlength="3" ng-maxlength="50" placeholder="Username" ng-model="user.username"/>
-        <span class="help-inline" ng-show="editUserForm.username.$error.required">Required</span>
-        <span class="help-inline" ng-show="editUserForm.username.$error.minlength">Too short</span>
-        <span class="help-inline" ng-show="editUserForm.username.$error.maxlength">Too long</span>
+      </div>
+
+      <div class="col-sm-3">
+        <span class="help-block" ng-show="editUserForm.username.$error.required">Required</span>
+        <span class="help-block" ng-show="editUserForm.username.$error.minlength">Too short</span>
+        <span class="help-block" ng-show="editUserForm.username.$error.maxlength">Too long</span>
       </div>
     </div>
-    <div class="control-group" ng-class="{ error: !editUserForm.email.$valid, success: editUserForm.email.$valid }">
-      <label class="control-label" for="inputEmail">E-mail</label>
+    <div class="form-group" ng-class="{ 'has-error': !editUserForm.email.$valid, success: editUserForm.email.$valid }">
+      <label class="col-sm-2 control-label" for="inputEmail">E-mail</label>
   
-      <div class="controls">
-        <input name="email" type="email" id="inputEmail" required
+      <div class="col-sm-7">
+        <input name="email" type="email" id="inputEmail" required class="form-control"
                ng-minlength="3" ng-maxlength="50" placeholder="E-mail" ng-model="user.email"/>
-        <span class="help-inline" ng-show="editUserForm.email.$error.required">Required</span>
-        <span class="help-inline" ng-show="editUserForm.email.$error.email">Must be a valid e-mail</span>
-        <span class="help-inline" ng-show="editUserForm.email.$error.minlength">Too short</span>
-        <span class="help-inline" ng-show="editUserForm.email.$error.maxlength">Too long</span>
+      </div>
+
+      <div class="col-sm-3">
+        <span class="help-block" ng-show="editUserForm.email.$error.required">Required</span>
+        <span class="help-block" ng-show="editUserForm.email.$error.email">Must be a valid e-mail</span>
+        <span class="help-block" ng-show="editUserForm.email.$error.minlength">Too short</span>
+        <span class="help-block" ng-show="editUserForm.email.$error.maxlength">Too long</span>
       </div>
     </div>
-    <div class="control-group" ng-class="{ error: !editUserForm.password.$valid, success: editUserForm.password.$valid }">
-      <label class="control-label" for="inputPassword">Password</label>
+    <div class="form-group" ng-class="{ 'has-error': !editUserForm.password.$valid, success: editUserForm.password.$valid }">
+      <label class="col-sm-2 control-label" for="inputPassword">Password</label>
   
-      <div class="controls">
-        <input name="password" type="password" id="inputPassword" ng-required="!isEdit()"
+      <div class="col-sm-7">
+        <input name="password" type="password" id="inputPassword" ng-required="!isEdit()" class="form-control"
                ng-minlength="8" ng-maxlength="50" placeholder="Password" ng-model="user.password"/>
-        <span class="help-inline" ng-show="editUserForm.password.$error.required">Required</span>
-        <span class="help-inline" ng-show="editUserForm.password.$error.minlength">Too short</span>
-        <span class="help-inline" ng-show="editUserForm.password.$error.maxlength">Too long</span>
+      </div>
+
+      <div class="col-sm-3">
+        <span class="help-block" ng-show="editUserForm.password.$error.required">Required</span>
+        <span class="help-block" ng-show="editUserForm.password.$error.minlength">Too short</span>
+        <span class="help-block" ng-show="editUserForm.password.$error.maxlength">Too long</span>
       </div>
     </div>
-    <div class="control-group"
-         ng-class="{ error: !editUserForm.passwordconfirm.$valid, success: editUserForm.passwordconfirm.$valid }">
-      <label class="control-label" for="inputPasswordConfirm">Password (confirm)</label>
+    <div class="form-group" ng-class="{ 'has-error': !editUserForm.passwordconfirm.$valid, success: editUserForm.passwordconfirm.$valid }">
+      <label class="col-sm-2 -label" for="inputPasswordConfirm">Password (confirm)</label>
   
-      <div class="controls">
-        <input name="passwordconfirm" type="password" id="inputPasswordConfirm" ng-required="!isEdit()"
+      <div class="col-sm-7">
+        <input name="passwordconfirm" type="password" id="inputPasswordConfirm" ng-required="!isEdit()" class="form-control"
                ui-validate="'$value == user.password'" ui-validate-watch="'user.password'"
                placeholder="Password (confirm)" ng-model="user.passwordconfirm"/>
-        <span class="help-inline" ng-show="editUserForm.passwordconfirm.$error.validator">Password and password confirmation must match</span>
+      </div>
+
+      <div class="col-sm-3">
+        <span class="help-block" ng-show="editUserForm.passwordconfirm.$error.validator">Password and password confirmation must match</span>
       </div>
     </div>
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editUserForm.$valid">
-        <span class="icon-pencil icon-white"></span> {{ isEdit() ? 'Edit' : 'Add' }}
-      </button>
-      <button type="button" class="btn btn-danger" ng-click="remove()" ng-show="isEdit()">
-        <span class="icon-trash icon-white"></span> Delete
-      </button>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editUserForm.$valid">
+          <span class="glyphicon glyphicon-pencil"></span> {{ isEdit() ? 'Edit' : 'Add' }}
+        </button>
+        <button type="button" class="btn btn-danger" ng-click="remove()" ng-show="isEdit()">
+          <span class="glyphicon glyphicon-trash"></span> Delete
+        </button>
+      </div>
     </div>
   </form>
   <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{ alert.msg }}</alert>

@@ -50,18 +50,16 @@ App.controller('SettingsUserEdit', function($scope, $dialog, $state, $stateParam
     var msg = 'Do you really want to delete this user? All associated documents, files and tags will be deleted';
     var btns = [{result:'cancel', label: 'Cancel'}, {result:'ok', label: 'OK', cssClass: 'btn-primary'}];
 
-    $dialog.messageBox(title, msg, btns)
-      .open()
-      .then(function(result) {
-        if (result == 'ok') {
-          Restangular.one('user', $stateParams.username).remove().then(function() {
-            $scope.loadUsers();
-            $state.transitionTo('settings.user');
-          }, function () {
-            $state.transitionTo('settings.user');
-          });
-        }
-      });
+    $dialog.messageBox(title, msg, btns, function(result) {
+      if (result == 'ok') {
+        Restangular.one('user', $stateParams.username).remove().then(function() {
+          $scope.loadUsers();
+          $state.transitionTo('settings.user');
+        }, function () {
+          $state.transitionTo('settings.user');
+        });
+      }
+    });
   };
 
 });

@@ -2,15 +2,10 @@
 .table-documents {
 	thead th {
     cursor: pointer;
-    width: 50%;
 	}
 	
 	tbody tr {
     cursor: pointer;
-	}
-	
-	tbody td {
-    vertical-align: middle;
 	}
 	
 	.cell-tags {
@@ -27,8 +22,7 @@
     &:hover {
       .tags {
         position: absolute;
-        margin-top: -10px;
-        
+
         .label {
           .full {
             display: inline;
@@ -47,16 +41,9 @@
 .loader {
 	position: relative;
 	top: -2px;
-	
-	&.hide {
-	  visibility: hidden;
-	}
-}
 
-// Tags list
-.table-tags {
-	tbody td {
-    vertical-align: middle;
+	&.loader-hide {
+	  visibility: hidden;
 	}
 }
 
@@ -84,7 +71,11 @@
 .modal-fileview {
 	top: 2%;
 	max-height: 96%;
-	overflow-y: scroll; 
+	overflow-y: scroll;
+
+  img {
+    width: 100%;
+  }
 }
 
 // File thumbnails
@@ -144,4 +135,10 @@ input[readonly].share-link {
 
 .nav-text-error {
   color: #b94a48 !important;
+}
+
+// Dirty Bootstrap 3 fix, see https://github.com/twbs/bootstrap/issues/6686
+.row { margin: 0; padding: 0 }
+.navbar-nav.navbar-right:last-child {
+  margin-right: auto;
 }
