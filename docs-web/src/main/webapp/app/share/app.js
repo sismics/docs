@@ -5,7 +5,7 @@
  */
 var App = angular.module('share',
     // Dependencies
-    ['ui.state', 'ui.bootstrap', 'restangular', 'ngSanitize', 'ngMobile']
+    ['ui.router', 'ui.bootstrap', 'restangular', 'ngSanitize', 'ngTouch']
   )
 
 /**

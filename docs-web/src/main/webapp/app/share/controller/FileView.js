@@ -3,12 +3,11 @@
 /**
  * File view controller.
  */
-App.controller('FileView', function($dialog, $state, $stateParams) {
-  var dialog = $dialog.dialog({
-    keyboard: true,
-    dialogClass: 'modal modal-fileview',
+App.controller('FileView', function($modal, $state, $stateParams) {
+  var modal = $modal.open({
+    windowClass: 'modal modal-fileview',
     templateUrl: 'partial/share/file.view.html',
-    controller: function($scope, $state, $stateParams, Restangular, dialog) {
+    controller: function($rootScope, $scope, $state, $stateParams, Restangular) {
       // Load files
       Restangular.one('file').getList('list', { id: $stateParams.documentId, share: $stateParams.shareId }).then(function(data) {
         $scope.files = data.files;
@@ -29,7 +28,6 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
           if (value.id == $stateParams.fileId) {
             var next = $scope.files[key + 1];
             if (next) {
-              dialog.close({});
               $state.transitionTo('share.file', { documentId: $stateParams.documentId, shareId: $stateParams.shareId, fileId: next.id });
             }
           }
@@ -44,7 +42,6 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
           if (value.id == $stateParams.fileId) {
             var previous = $scope.files[key - 1];
             if (previous) {
-              dialog.close({});
               $state.transitionTo('share.file', { documentId: $stateParams.documentId, shareId: $stateParams.shareId,  fileId: previous.id });
             }
           }
@@ -62,13 +59,17 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
        * Close the file preview.
        */
       $scope.closeFile = function () {
-        dialog.close();
+        modal.dismiss();
       };
 
-      // Close the dialog when the user exits this state
-      var off = $scope.$on('$stateChangeStart', function(event, toState){
-        if (dialog.isOpen()) {
-          dialog.close(toState.name == 'share.file' ? {} : null);
+      // Close the modal when the user exits this state
+      var off = $rootScope.$on('$stateChangeStart', function(event, toState){
+        if (!modal.closed) {
+          if (toState.name == 'share.file') {
+            modal.close();
+          } else {
+            modal.dismiss();
+          }
         }
         off();
       });
@@ -76,9 +77,11 @@ App.controller('FileView', function($dialog, $state, $stateParams) {
   });
 
   // Returns to share view on file close
-  dialog.open().then(function(result) {
-    if (result == null) {
-      $state.transitionTo('share', { documentId: $stateParams.documentId, shareId: $stateParams.shareId });
-    }
+  modal.closed = false;
+  modal.result.then(function() {
+    modal.closed = true;
+  },function(result) {
+    modal.closed = true;
+    $state.transitionTo('share', { documentId: $stateParams.documentId, shareId: $stateParams.shareId });
   });
 });

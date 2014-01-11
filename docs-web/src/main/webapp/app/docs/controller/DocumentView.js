@@ -129,7 +129,7 @@ App.controller('DocumentView', function ($scope, $state, $stateParams, $location
     var title = 'Shared document';
     var msg = 'You can share this document by giving this link. ' +
         'Note that everyone having this link can see the document.<br/>' +
-        '<input class="input-block-level share-link" type="text" readonly="readonly" value="' + link + '" />';
+        '<input class="form-control share-link" type="text" readonly="readonly" value="' + link + '" />';
     var btns = [
       {result: 'unshare', label: 'Unshare', cssClass: 'btn-danger'},
       {result: 'close', label: 'Close'}
