@@ -94,7 +94,7 @@ App.controller('DocumentEdit', function($rootScope, $scope, $q, $http, $state, $
           $scope.resetForm();
           $scope.loadDocuments();
         }
-      }
+      };
       
       if (_.size($scope.newFiles) == 0) {
         navigateNext();
@@ -104,6 +104,13 @@ App.controller('DocumentEdit', function($rootScope, $scope, $q, $http, $state, $
         
         // Send a file from the input file array and return a promise
         var sendFile = function(key) {
+          var deferred = $q.defer();
+          var getProgressListener = function(deferred) {
+            return function(event) {
+              deferred.notify(event);
+            };
+          };
+
           // Build the payload
           var file = $scope.newFiles[key];
           var formData = new FormData();
@@ -111,20 +118,37 @@ App.controller('DocumentEdit', function($rootScope, $scope, $q, $http, $state, $
           formData.append('file', file);
 
           // Send the file
-          var promiseFile = $http.put('api/file',
-            formData, {
-              headers: { 'Content-Type': undefined },
-              transformRequest: function(data) { return data; }
-            });
-          
-          // TODO Handle progression when $q.notify will be released
-          
-          promiseFile.then(function() {
-            $scope.fileProgress += 100 / _.size($scope.newFiles);
+          $.ajax({
+            type: 'PUT',
+            url: 'api/file',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+              deferred.resolve(response);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+              deferred.reject(errorThrown);
+            },
+            xhr: function() {
+              var myXhr = $.ajaxSettings.xhr();
+              myXhr.upload.addEventListener(
+                  'progress', getProgressListener(deferred), false);
+              return myXhr;
+            }
+          });
+
+          // Update progress bar and title on progress
+          var startProgress = $scope.fileProgress;
+          deferred.promise.then(null, null, function(e) {
+            var done = 1 - (e.total - e.position) / e.total;
+            var chunk = 100 / _.size($scope.newFiles);
+            $scope.fileProgress = startProgress + done * chunk;
             $rootScope.pageTitle = Math.round($scope.fileProgress) + '% - Sismics Docs';
           });
-          
-          return promiseFile;
+
+          return deferred.promise;
         };
         
         // Upload files sequentially
