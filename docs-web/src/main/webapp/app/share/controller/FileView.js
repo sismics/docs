@@ -56,6 +56,17 @@ App.controller('FileView', function($modal, $state, $stateParams) {
       };
 
       /**
+       * Print the file.
+       */
+      $scope.printFile = function() {
+        var popup = window.open('api/file/' + $stateParams.fileId + '/data', '_blank');
+        popup.onload = function () {
+          popup.print();
+          popup.close();
+        }
+      };
+
+      /**
        * Close the file preview.
        */
       $scope.closeFile = function () {
