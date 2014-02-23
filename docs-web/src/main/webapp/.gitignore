@@ -1,2 +1,4 @@
-/sismicsdocs
-/.idea
+sismicsdocs
+node_modules
+dist
+.idea

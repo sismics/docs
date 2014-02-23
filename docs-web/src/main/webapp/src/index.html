@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html ng-app="docs">
+  <head>
+    <title ng-bind-template="{{ pageTitle }}">Sismics Docs</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="favicon.png" />
+    <!-- ref:css style/style.min.css -->
+    <link rel="stylesheet" href="style/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="style/colorpicker.css" type="text/css" />
+    <link rel="stylesheet/less" href="style/main.less" type="text/css" />
+    <!-- endref -->
+    <!-- ref:remove -->
+    <script>
+      less = {
+        env: 'development', // or "production"
+        async: false,       // load imports async
+        fileAsync: false,   // load imports async when in a page under a file protocol
+        poll: 1000,         // when in watch mode, time in ms between polls
+        dumpLineNumbers: 'all' // or "mediaQuery" or "comments"
+      };
+    </script>
+    <!-- endref -->
+    <!-- ref:js docs.min.js -->
+    <script src="lib/jquery.js" type="text/javascript"></script>
+    <script src="lib/jquery.ui.js" type="text/javascript"></script>
+    <script src="lib/less.js" type="text/javascript"></script>
+    <script src="lib/underscore.js" type="text/javascript"></script>
+    <script src="lib/colorpicker.js" type="text/javascript"></script>
+    <script src="lib/angular.js" type="text/javascript"></script>
+    <script src="lib/angular.sanitize.js" type="text/javascript"></script>
+    <script src="lib/angular.touch.js" type="text/javascript"></script>
+    <script src="lib/angular.ui-router.js" type="text/javascript"></script>
+    <script src="lib/angular.ui-bootstrap.js" type="text/javascript"></script>
+    <script src="lib/angular.ui-utils.js" type="text/javascript"></script>
+    <script src="lib/angular.ui-sortable.js" type="text/javascript"></script>
+    <script src="lib/angular.restangular.js" type="text/javascript"></script>
+    <script src="lib/angular.colorpicker.js" type="text/javascript"></script>
+    <script src="app/docs/app.js" type="text/javascript"></script>
+    <script src="app/docs/controller/Main.js" type="text/javascript"></script>
+    <script src="app/docs/controller/Document.js" type="text/javascript"></script>
+    <script src="app/docs/controller/DocumentDefault.js" type="text/javascript"></script>
+    <script src="app/docs/controller/DocumentEdit.js" type="text/javascript"></script>
+    <script src="app/docs/controller/DocumentView.js" type="text/javascript"></script>
+    <script src="app/docs/controller/FileView.js" type="text/javascript"></script>
+    <script src="app/docs/controller/FileModalView.js" type="text/javascript"></script>
+    <script src="app/docs/controller/Login.js" type="text/javascript"></script>
+    <script src="app/docs/controller/Tag.js" type="text/javascript"></script>
+    <script src="app/docs/controller/Navigation.js" type="text/javascript"></script>
+    <script src="app/docs/controller/Settings.js" type="text/javascript"></script>
+    <script src="app/docs/controller/SettingsDefault.js" type="text/javascript"></script>
+    <script src="app/docs/controller/SettingsAccount.js" type="text/javascript"></script>
+    <script src="app/docs/controller/SettingsSession.js" type="text/javascript"></script>
+    <script src="app/docs/controller/SettingsLog.js" type="text/javascript"></script>
+    <script src="app/docs/controller/SettingsUser.js" type="text/javascript"></script>
+    <script src="app/docs/controller/SettingsUserEdit.js" type="text/javascript"></script>
+    <script src="app/docs/service/User.js" type="text/javascript"></script>
+    <script src="app/docs/service/Tag.js" type="text/javascript"></script>
+    <script src="app/docs/filter/Newline.js" type="text/javascript"></script>
+    <script src="app/docs/filter/Shorten.js" type="text/javascript"></script>
+    <script src="app/docs/directive/File.js" type="text/javascript"></script>
+    <script src="app/docs/directive/SelectTag.js" type="text/javascript"></script>
+    <script src="app/docs/directive/InlineEdit.js" type="text/javascript"></script>
+    <!-- endref -->
+  </head>
+  <body>
+    <nav class="navbar navbar-default" role="navigation" ng-controller="Navigation">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle"
+                ng-init="isCollapsed = true"
+                ng-click="isCollapsed = !isCollapsed">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+
+        <div class="navbar-brand loader" ng-class="{'loader-hide': !isLoading() }">
+          <img src="img/loader.gif" />
+        </div>
+
+        <div class="hidden-xs navbar-text navbar-logo">
+          <img src="favicon.png" />
+        </div>
+
+        <a class="navbar-brand" href="#"> Sismics Docs</a>
+      </div>
+
+      <div class="collapse navbar-collapse" collapse="isCollapsed">
+        <ul class="nav navbar-nav" ng-show="!userInfo.anonymous">
+          <li ng-class="{active: $uiRoute}" ui-route="/document.*">
+            <a href="#/document"><span class="glyphicon glyphicon-book"></span> Documents</a>
+          </li>
+          <li ng-class="{active: $uiRoute}" ui-route="/tag.*">
+            <a href="#/tag"><span class="glyphicon glyphicon-tags"></span> Tags</a>
+          </li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right" ng-show="!userInfo.anonymous">
+          <li ng-show="errorNumber > 0">
+              <a href="#/settings/log" ng-click="openLogs()" class="nav-text-error">
+                <span class="glyphicon glyphicon-warning-sign"></span> {{ errorNumber }} new error{{ errorNumber > 1 ? 's' : '' }}
+              </a>
+          </li>
+          <li ng-class="{active: $uiRoute}" ui-route="/settings.*">
+            <a href="#/settings/account">
+              <span class="glyphicon glyphicon-cog"></span> Settings
+            </a>
+          </li>
+          <li>
+            <a href="#" ng-click="logout($event)">
+              <span class="glyphicon glyphicon-off"></span> Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    
+    <div ui-view="page">
+    </div>
+  </body>
+</html>

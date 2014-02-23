@@ -1,0 +1,50 @@
+<img src="img/loader.gif" ng-show="!document" />
+
+<div ng-show="document">
+	<div class="text-right">
+	  <div class="btn-group">
+	    <button class="btn btn-danger" ng-click="deleteDocument(document)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+	    <button class="btn btn-primary" ng-click="editDocument(document.id)"><span class="glyphicon glyphicon-pencil"></span> Edit</button>
+	  </div>
+	</div>
+	
+	<div class="page-header">
+	  <h1>{{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }}</small> <img ng-if="document" ng-src="img/flag/{{ document.language }}.png" title="{{ document.language }}" /></h1>
+	  <p>
+	    <button class="btn btn-sm btn-info" ng-click="share()">
+        <span class="glyphicon glyphicon-share"></span> Share
+      </button>
+	    <button class="btn btn-default btn-sm" ng-repeat="share in document.shares" ng-click="showShare(share)">
+        <span class="glyphicon glyphicon-ok"></span> {{ share.name ? share.name : 'shared' }}
+      </button>
+	  </p>
+	  <ul class="list-inline">
+	    <li ng-repeat="tag in document.tags">
+        <span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span>
+      </li>
+	  </ul>
+	</div>
+	
+	<p ng-bind-html="document.description | newline"></p>
+	
+	<div class="row" ui-sortable="fileSortableOptions" ng-model="files" ng-show="files.length > 0">
+	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
+	    <div class="thumbnail">
+	      <a ng-click="openFile(file)">
+	        <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
+	      </a>
+	      <div class="caption">
+	        <div class="pull-left">
+	          <div class="btn btn-default handle"><span class="glyphicon glyphicon-resize-horizontal"></span></div>
+	        </div>
+	        <div class="pull-right">
+	          <button class="btn btn-danger" ng-click="deleteFile(file)"><span class="glyphicon glyphicon-trash"></span></button>
+	        </div>
+	        <div class="clearfix"></div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+	<div ui-view="file"></div>
+</div>

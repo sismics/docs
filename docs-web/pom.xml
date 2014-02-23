@@ -264,14 +264,44 @@
         
         <plugins>
         
-          <!-- Generation of the war -->
+          <!-- Launch NPM & Grunt -->
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+              <execution>
+                <phase>generate-sources</phase>
+                <configuration>
+                  <target name="building">
+                    <!-- npm install -->
+                    <exec executable="cmd" dir="${project.basedir}/src/main/webapp" osfamily="windows" failonerror="true">
+                      <arg line="/c npm install" />
+                    </exec>
+                    <exec executable="npm" dir="${project.basedir}/src/main/webapp" osfamily="unix" failonerror="true">
+                      <arg line="install" />
+                    </exec>
+                    <!-- grunt -->
+                    <exec executable="cmd" dir="${project.basedir}/src/main/webapp" osfamily="windows">
+                      <arg line="/c grunt --apiurl=api" />
+                    </exec>
+                    <exec executable="grunt" dir="${project.basedir}/src/main/webapp" osfamily="unix">
+                      <arg line="--apiurl=api" />
+                    </exec>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        
+          <!-- WAR generation -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-war-plugin</artifactId>
             <configuration>
-              <warSourceExcludes>
-                sismicsdocs/**,
-              </warSourceExcludes>
+              <warSourceDirectory>${basedir}/src/main/webapp/dist</warSourceDirectory>
               <webXml>src\main\webapp\WEB-INF\web.xml</webXml>
             </configuration>
           </plugin>
