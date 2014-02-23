@@ -56,4 +56,29 @@ public class MimeTypeUtil {
         
         return null;
     }
+    
+    /**
+     * Get a file extension linked to a MIME type.
+     * 
+     * @param mimeType MIME type
+     * @return File extension
+     */
+    public static String getFileExtension(String mimeType) {
+        switch (mimeType) {
+        case MimeType.APPLICATION_ZIP:
+            return "zip";
+        case MimeType.IMAGE_GIF:
+            return "gif";
+        case MimeType.IMAGE_JPEG:
+            return "jpg";
+        case MimeType.IMAGE_PNG:
+            return "png";
+        case MimeType.IMAGE_X_ICON:
+            return "ico";
+        case MimeType.APPLICATION_PDF:
+            return "pdf";
+        default:
+            return null;
+        }
+    }
 }

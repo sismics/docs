@@ -160,6 +160,16 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(file2Id, files.getJSONObject(0).getString("id"));
         Assert.assertEquals(file1Id, files.getJSONObject(1).getString("id"));
         
+        // Get a ZIP from all files
+        fileResource = resource().path("/file/zip");
+        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("id", document1Id);
+        response = fileResource.queryParams(getParams).get(ClientResponse.class);
+        is = response.getEntityInputStream();
+        fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(MimeType.APPLICATION_ZIP, MimeTypeUtil.guessMimeType(fileBytes));
+        
         // Deletes a file
         fileResource = resource().path("/file/" + file1Id);
         fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));

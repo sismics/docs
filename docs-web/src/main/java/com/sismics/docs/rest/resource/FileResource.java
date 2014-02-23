@@ -11,6 +11,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
@@ -370,6 +372,77 @@ public class FileResource extends BaseResource {
         return Response.ok(stream)
                 .header("Content-Type", mimeType)
                 .header("Expires", new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z").format(new Date().getTime() + 3600000 * 24))
+                .build();
+    }
+    
+    /**
+     * Returns all files from a document, zipped.
+     * 
+     * @param documentId Document ID
+     * @return Response
+     * @throws JSONException
+     */
+    @GET
+    @Path("zip")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response zip(
+            @QueryParam("id") String documentId,
+            @QueryParam("share") String shareId) throws JSONException {
+        authenticate();
+        
+        // Get the document
+        DocumentDao documentDao = new DocumentDao();
+        Document document;
+        try {
+            document = documentDao.getDocument(documentId);
+            
+            // Check document visibility
+            ShareDao shareDao = new ShareDao();
+            if (!shareDao.checkVisibility(document, principal.getId(), shareId)) {
+                throw new ForbiddenClientException();
+            }
+        } catch (NoResultException e) {
+            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
+        }
+        
+        // Get files and user associated with this document
+        FileDao fileDao = new FileDao();
+        UserDao userDao = new UserDao();
+        final List<File> fileList = fileDao.getByDocumentId(documentId);
+        final User user = userDao.getById(document.getUserId());
+        
+        // Create the ZIP stream
+        StreamingOutput stream = new StreamingOutput() {
+            @Override
+            public void write(OutputStream outputStream) throws IOException, WebApplicationException {
+                try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
+                    // Add each file to the ZIP stream
+                    int index = 0;
+                    for (File file : fileList) {
+                        java.io.File storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId()).toFile();
+                        InputStream fileInputStream = new FileInputStream(storedfile);
+                        
+                        // Add the decrypted file to the ZIP stream
+                        try (InputStream decryptedStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey())) {
+                            ZipEntry zipEntry = new ZipEntry(index + "." + MimeTypeUtil.getFileExtension(file.getMimeType()));
+                            zipOutputStream.putNextEntry(zipEntry);
+                            ByteStreams.copy(decryptedStream, zipOutputStream);
+                            zipOutputStream.closeEntry();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            throw new WebApplicationException(e);
+                        }
+                        index++;
+                    }
+                }
+                outputStream.close();
+            }
+        };
+        
+        // Write to the output
+        return Response.ok(stream)
+                .header("Content-Type", "application/zip")
+                .header("Content-Disposition", "attachment; filename=\"" + document.getTitle().replaceAll("\\W+", "_") + ".zip\"")
                 .build();
     }
 }

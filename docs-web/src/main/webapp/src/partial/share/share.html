@@ -1,7 +1,12 @@
 <div class="row">
   <div class="well col-md-12">
     <div class="page-header">
-      <h1>{{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }}</small></h1>
+      <h1>
+        {{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }}</small>
+        <a ng-href="../api/file/zip?id={{ document.id }}&share={{ $stateParams.shareId }}" class="btn btn-default" title="Download all files">
+          <span class="glyphicon glyphicon-compressed"></span>
+        </a>
+      </h1>
       <ul class="list-inline">
         <li ng-repeat="tag in document.tags"><span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span></li>
       </ul>

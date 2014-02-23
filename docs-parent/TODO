@@ -1,3 +1,2 @@
 - Automatic backup system using Quartz (server)
 - Handle error while uploading a file
-- Download all files as zip (docs & share)
