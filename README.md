@@ -1,7 +1,7 @@
 Sismics Docs
 ============
 
-![](http://www.sismics.com/docs/img/docs.jpg)
+![](http://www.bgamard.org/img/projects/sismicsdocs.jpg)
 
 What is Docs?
 ---------------
