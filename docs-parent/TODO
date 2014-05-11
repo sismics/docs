@@ -1,2 +1,3 @@
 - Automatic backup system using Quartz (server)
 - Handle error while uploading a file
+- "X" button next to the search field to clear it
