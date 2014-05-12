@@ -92,12 +92,7 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
   $scope.share = function () {
     $modal.open({
       templateUrl: 'partial/docs/document.share.html',
-      controller: function ($scope, $modalInstance) {
-        $scope.name = '';
-        $scope.close = function (name) {
-          $modalInstance.close(name);
-        }
-      }
+      controller: 'DocumentModalShare'
     }).result.then(function (name) {
           if (name == null) {
             return;

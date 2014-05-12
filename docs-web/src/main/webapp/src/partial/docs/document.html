@@ -7,7 +7,7 @@
 
       <div class="input-group">
         <span class="input-group-addon">
-          <span class="glyphicon glyphicon-search"
+          <span class="glyphicon glyphicon glyphicon-info-sign"
             tooltip-placement="bottom"
             tooltip-html-unsafe="before:2012-05<br/>
             after:2012-05<br/>
@@ -18,6 +18,10 @@
             lang:fra"></span>
         </span>
         <input type="search" class="form-control" placeholder="Search" ng-model="search" />
+        <span class="input-group-addon">
+          <span class="glyphicon glyphicon-search" ng-show="search.length == 0"></span>
+          <span class="glyphicon glyphicon-remove" ng-show="search.length > 0" ng-click="search = ''"></span>
+        </span>
       </div>
 
       <table class="row table table-striped table-hover table-documents">
