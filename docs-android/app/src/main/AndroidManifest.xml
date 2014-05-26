@@ -2,27 +2,31 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sismics.docs" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
+        android:name=".MainApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.sismics.docs.DocListActivity"
+            android:name=".activity.LoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.sismics.docs.DocDetailActivity"
-            android:label="@string/title_doc_detail"
-            android:parentActivityName="com.sismics.docs.DocListActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.sismics.docs.DocListActivity" />
+            android:name=".activity.MainActivity"
+            android:label="@string/app_name"
+            android:logo="@drawable/ic_launcher"
+            android:launchMode="singleTop">
         </activity>
     </application>
 

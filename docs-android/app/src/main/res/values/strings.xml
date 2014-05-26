@@ -2,6 +2,28 @@
 <resources>
 
     <string name="app_name">Sismics Docs</string>
-    <string name="title_doc_detail">Doc Detail</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="login_explain"><![CDATA[To start, you must download and install Sismics Docs Server on <a href="http://www.sismics.com/docs">www.sismics.com/docs</a> and enter your server URL below]]></string>
+    <string name="server">Server</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="login_fail_title">Login fail</string>
+    <string name="login_fail">Wrong username or password</string>
+    <string name="network_error_title">Network error</string>
+    <string name="network_error">Network error, please check internet connectivity and server URL</string>
+    <string name="invalid_url_title">Invalid URL</string>
+    <string name="invalid_url">Please check the server URL and try again</string>
+    <string name="crash_toast_text">A crash occurred, a report has been sent to resolve this problem</string>
+
+    <!-- Validation -->
+    <string name="validate_error_email">Invalid email</string>
+    <string name="validate_error_length_min">Too short (min. %d)</string>
+    <string name="validate_error_length_max">Too long (max. %d)</string>
+    <string name="validate_error_required">Required</string>
+    <string name="validate_error_alphanumeric">Only letters and numbers</string>
 
 </resources>
