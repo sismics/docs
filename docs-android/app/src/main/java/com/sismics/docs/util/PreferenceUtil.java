@@ -73,7 +73,7 @@ public class PreferenceUtil {
      */
     public static void setCachedJson(Context context, String key, JSONObject json) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        sharedPreferences.edit().putString(key, json != null ? json.toString() : null).commit();
+        sharedPreferences.edit().putString(key, json != null ? json.toString() : null).apply();
     }
     
     /**
@@ -98,7 +98,7 @@ public class PreferenceUtil {
      */
     public static void setServerUrl(Context context, String serverUrl) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        sharedPreferences.edit().putString(PREF_SERVER_URL, serverUrl).commit();
+        sharedPreferences.edit().putString(PREF_SERVER_URL, serverUrl).apply();
     }
     
     /**
@@ -108,8 +108,7 @@ public class PreferenceUtil {
     public static void resetUserCache(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Editor editor = sharedPreferences.edit();
-        editor.putString(PREF_CACHED_USER_INFO_JSON, null);
-        editor.commit();
+        editor.putString(PREF_CACHED_USER_INFO_JSON, null).apply();
     }
     
     /**

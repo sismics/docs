@@ -14,6 +14,7 @@ public class UserResource extends BaseResource {
 
     /**
      * POST /user/login.
+     *
      * @param context Context
      * @param username Username
      * @param password Password
@@ -31,6 +32,7 @@ public class UserResource extends BaseResource {
 
     /**
      * GET /user.
+     *
      * @param context Context
      * @param responseHandler Callback
      */
@@ -43,6 +45,7 @@ public class UserResource extends BaseResource {
     
     /**
      * POST /user/logout.
+     *
      * @param context Context
      * @param responseHandler Callback
      */

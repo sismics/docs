@@ -65,6 +65,7 @@ public class BaseResource {
     
     /**
      * Resource initialization.
+     *
      * @param context Context
      */
     protected static void init(Context context) {
@@ -122,6 +123,7 @@ public class BaseResource {
     
     /**
      * Returns cleaned API URL.
+     *
      * @param context Context
      * @return Cleaned API URL
      */

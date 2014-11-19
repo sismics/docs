@@ -8,6 +8,7 @@ import com.sismics.docs.listener.CallbackListener;
 import com.sismics.docs.resource.UserResource;
 import com.sismics.docs.util.PreferenceUtil;
 
+import org.apache.http.Header;
 import org.json.JSONObject;
 
 /**
@@ -47,7 +48,7 @@ public class ApplicationContext {
     /**
      * Returns true if current user is logged in.
      *
-     * @return
+     * @return True if the current user is logged in
      */
     public boolean isLoggedIn() {
         return userInfo != null && !userInfo.optBoolean("anonymous");
@@ -56,7 +57,7 @@ public class ApplicationContext {
     /**
      * Getter of userInfo
      *
-     * @return
+     * @return userInfo
      */
     public JSONObject getUserInfo() {
         return userInfo;
@@ -65,7 +66,7 @@ public class ApplicationContext {
     /**
      * Setter of userInfo
      *
-     * @param json
+     * @param json userInfo
      */
     public void setUserInfo(Context context, JSONObject json) {
         this.userInfo = json;
@@ -75,13 +76,13 @@ public class ApplicationContext {
     /**
      * Asynchronously get user info.
      *
-     * @param activity
-     * @param callbackListener
+     * @param activity Activity
+     * @param callbackListener CallbackListener
      */
     public void fetchUserInfo(final Activity activity, final CallbackListener callbackListener) {
         UserResource.info(activity.getApplicationContext(), new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(final JSONObject json) {
+            public void onSuccess(int statusCode, Header[] headers, final JSONObject json) {
                 // Save data in application context
                 if (!json.optBoolean("anonymous", true)) {
                     setUserInfo(activity.getApplicationContext(), json);

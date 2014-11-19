@@ -3,13 +3,11 @@ package com.sismics.docs.activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -21,7 +19,7 @@ import com.sismics.docs.model.application.ApplicationContext;
  * 
  * @author bgamard
  */
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends ActionBarActivity {
     
     private ListView drawerList;
     private ActionBarDrawerToggle drawerToggle;
@@ -38,7 +36,6 @@ public class MainActivity extends FragmentActivity {
         }
 
         // Setup the activity
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.main_activity);
 
         // Cache view references
@@ -53,30 +50,16 @@ public class MainActivity extends FragmentActivity {
         });
 
         if (drawerLayout != null) {
-            // Set a custom shadow that overlays the main content when the drawer opens
-            drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-
             // Enable ActionBar app icon to behave as action to toggle nav drawer
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-            getActionBar().setHomeButtonEnabled(true);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setHomeButtonEnabled(true);
+            }
 
             // ActionBarDrawerToggle ties together the the proper interactions
             // between the sliding drawer and the action bar app icon
-            drawerToggle = new ActionBarDrawerToggle(
-                    this,                  /* host Activity */
-                    drawerLayout,         /* DrawerLayout object */
-                    R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
-
-                @Override
-                public void onDrawerOpened(View drawerView) {
-                    invalidateOptionsMenu();
-                }
-
-                @Override
-                public void onDrawerClosed(View drawerView) {
-                    invalidateOptionsMenu();
-                }
-            };
+            drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
+                    R.string.drawer_open, R.string.drawer_close);
             drawerLayout.setDrawerListener(drawerToggle);
         }
     }

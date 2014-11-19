@@ -3,7 +3,7 @@ package com.sismics.docs.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
@@ -30,7 +30,7 @@ import org.json.JSONObject;
  * 
  * @author bgamard
  */
-public class LoginActivity extends FragmentActivity {
+public class LoginActivity extends ActionBarActivity {
 
     /**
      * User interface.
@@ -93,7 +93,7 @@ public class LoginActivity extends FragmentActivity {
                 try {
                     UserResource.login(getApplicationContext(), txtUsername.getText().toString(), txtPassword.getText().toString(), new JsonHttpResponseHandler() {
                         @Override
-                        public void onSuccess(JSONObject json) {
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject json) {
                             // Empty previous user caches
                             PreferenceUtil.resetUserCache(getApplicationContext());
 
@@ -109,11 +109,11 @@ public class LoginActivity extends FragmentActivity {
                         }
 
                         @Override
-                        public void onFailure(final int statusCode, final Header[] headers, final byte[] responseBytes, final Throwable throwable) {
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                             loginForm.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.GONE);
 
-                            if (responseBytes != null && new String(responseBytes).contains("\"ForbiddenError\"")) {
+                            if (responseString != null && responseString.contains("\"ForbiddenError\"")) {
                                 DialogUtil.showOkDialog(LoginActivity.this, R.string.login_fail_title, R.string.login_fail);
                             } else {
                                 DialogUtil.showOkDialog(LoginActivity.this, R.string.network_error_title, R.string.network_error);
@@ -153,7 +153,7 @@ public class LoginActivity extends FragmentActivity {
             // Trying to get user data
             UserResource.info(getApplicationContext(), new JsonHttpResponseHandler() {
                 @Override
-                public void onSuccess(final JSONObject json) {
+                public void onSuccess(int statusCode, Header[] headers, final JSONObject json) {
                     if (json.optBoolean("anonymous", true)) {
                         loginForm.setVisibility(View.VISIBLE);
                         return;
@@ -169,7 +169,7 @@ public class LoginActivity extends FragmentActivity {
                 }
                 
                 @Override
-                public void onFailure(final int statusCode, final Header[] headers, final byte[] responseBytes, final Throwable throwable) {
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                     DialogUtil.showOkDialog(LoginActivity.this, R.string.network_error_title, R.string.network_error);
                     loginForm.setVisibility(View.VISIBLE);
                 }
