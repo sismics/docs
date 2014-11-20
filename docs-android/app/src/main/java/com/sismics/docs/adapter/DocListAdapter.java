@@ -8,13 +8,16 @@ import android.widget.TextView;
 
 import com.sismics.docs.R;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 /**
  * Adapter of documents.
  *
  * @author bgamard
  */
 public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHolder> {
-    private String[] mDataset;
+    private JSONArray documents;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -25,12 +28,18 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
         public TextView subtitleTextView;
         public ViewHolder(View v) {
             super(v);
+            titleTextView = (TextView) v.findViewById(R.id.titleTextView);
+            subtitleTextView = (TextView) v.findViewById(R.id.subtitleTextView);
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public DocListAdapter(String[] myDataset) {
-        mDataset = myDataset;
+    public DocListAdapter() {
+    }
+
+    public void setDocuments(JSONArray documents) {
+        this.documents = documents;
+        notifyDataSetChanged();
     }
 
     // Create new views (invoked by the layout manager)
@@ -49,12 +58,17 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        // holder.mTextView.setText(mDataset[position]);
+        JSONObject document = documents.optJSONObject(position);
+        holder.titleTextView.setText(document.optString("title"));
+        holder.subtitleTextView.setText(document.optString("description"));
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        if (documents == null) {
+            return 0;
+        }
+        return documents.length();
     }
 }

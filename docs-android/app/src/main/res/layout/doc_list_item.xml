@@ -7,19 +7,19 @@
     android:padding="12dp">
 
     <TextView
+        android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
-        android:text="Facture Amazon"
         android:textColor="#212121"
         android:textSize="16sp"/>
 
     <TextView
+        android:id="@+id/subtitleTextView"
         android:layout_marginTop="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
-        android:text="Appartement, Caluire"
         android:textColor="#777777"
         android:textSize="16sp"/>
     
