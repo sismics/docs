@@ -22,6 +22,9 @@ public class DocumentResource extends BaseResource {
         init(context);
         
         RequestParams params = new RequestParams();
+        params.put("limit", 50);
+        params.put("sort_column", 3);
+        params.put("asc", false);
         client.get(getApiUrl(context) + "/document/list", params, responseHandler);
     }
 }

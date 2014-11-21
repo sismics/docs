@@ -1,26 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?android:attr/selectableItemBackground">
+
+    <ImageView
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="12dp"
+        android:id="@+id/folderImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_folder_open_grey600_48dp"/>
 
     <TextView
         android:id="@+id/titleTextView"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/folderImageView"
+        android:layout_toLeftOf="@+id/dateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
         android:textColor="#212121"
-        android:textSize="16sp"/>
+        android:text="Test"
+        android:textSize="16sp"
+        android:ellipsize="end"
+        android:maxLines="1"/>
 
     <TextView
         android:id="@+id/subtitleTextView"
+        android:layout_below="@+id/titleTextView"
+        android:layout_toRightOf="@+id/folderImageView"
         android:layout_marginTop="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
         android:textColor="#777777"
-        android:textSize="16sp"/>
+        android:text="test2"
+        android:textSize="16sp"
+        android:maxLines="1"
+        android:ellipsize="end"/>
+
+    <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2014-12-02"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:textColor="#777777"
+        android:fontFamily="sans-serif-light"/>
     
-</LinearLayout>
+</RelativeLayout>
