@@ -89,11 +89,20 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
     }
 
     /**
-     * Update the displayed documents.
+     * Add documents to display.
+     *
      * @param documents Documents
+     * @param reset Reset the list
      */
-    public void setDocuments(JSONArray documents) {
-        this.documents = documents;
+    public void addDocuments(JSONArray documents, boolean reset) {
+        if (this.documents == null || reset) {
+            this.documents = new JSONArray();
+        }
+
+        for (int i = 0; i < documents.length(); i++) {
+            this.documents.put(documents.optJSONObject(i));
+        }
+
         notifyDataSetChanged();
     }
 }

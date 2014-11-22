@@ -17,11 +17,12 @@ public class DocumentResource extends BaseResource {
      * @param context Context
      * @param responseHandler Callback
      */
-    public static void list(Context context, JsonHttpResponseHandler responseHandler) {
+    public static void list(Context context, int offset, JsonHttpResponseHandler responseHandler) {
         init(context);
         
         RequestParams params = new RequestParams();
-        params.put("limit", 50);
+        params.put("limit", 20);
+        params.put("offset", offset);
         params.put("sort_column", 3);
         params.put("asc", false);
         client.get(getApiUrl(context) + "/document/list", params, responseHandler);

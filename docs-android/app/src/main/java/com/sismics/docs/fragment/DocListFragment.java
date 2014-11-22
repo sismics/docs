@@ -24,26 +24,33 @@ import org.json.JSONObject;
  * @author bgamard.
  */
 public class DocListFragment extends Fragment {
-
+    /**
+     * Documents adapter.
+     */
     DocListAdapter adapter;
+
+    // Infinite scrolling things
+    private boolean loading = true;
+    private int previousTotal = 0;
+    int firstVisibleItem, visibleItemCount, totalItemCount;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Initialize the view
         View view = inflater.inflate(R.layout.doc_list_fragment, container, false);
+
+        // Configure the RecyclerView
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.docList);
-
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLongClickable(true);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-
         adapter = new DocListAdapter();
         recyclerView.setAdapter(adapter);
-
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLongClickable(true);
         recyclerView.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.abc_list_divider_mtrl_alpha)));
 
+        // Configure the LayoutManager
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+
+        // Document opening
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -56,8 +63,31 @@ public class DocListFragment extends Fragment {
             }
         }));
 
+        // Infinite scrolling
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                visibleItemCount = recyclerView.getChildCount();
+                totalItemCount = layoutManager.getItemCount();
+                firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
+
+                if (loading) {
+                    if (totalItemCount > previousTotal) {
+                        loading = false;
+                        previousTotal = totalItemCount;
+                    }
+                }
+                if (!loading && totalItemCount - visibleItemCount <= firstVisibleItem + 3) {
+                    loadDocuments();
+                    loading = true;
+                }
+            }
+        });
+
         // Grab the documents
-        refreshDocuments();
+        loadDocuments();
 
         return view;
     }
@@ -65,12 +95,11 @@ public class DocListFragment extends Fragment {
     /**
      * Refresh the document list.
      */
-    private void refreshDocuments() {
-        DocumentResource.list(getActivity(), new JsonHttpResponseHandler() {
+    private void loadDocuments() {
+        DocumentResource.list(getActivity(), adapter.getItemCount(), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                adapter.setDocuments(response.optJSONArray("documents"));
-
+                adapter.addDocuments(response.optJSONArray("documents"), false);
                 if (getView() != null) {
                     getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
                 }
