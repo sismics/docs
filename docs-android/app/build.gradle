@@ -35,4 +35,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:21.0.0'
     compile 'com.loopj.android:android-async-http:1.4.6'
     compile 'it.sephiroth.android.library.imagezoom:imagezoom:1.0.5'
+    compile 'de.greenrobot:eventbus:2.4.0'
 }

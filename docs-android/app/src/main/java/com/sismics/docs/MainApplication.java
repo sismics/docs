@@ -23,7 +23,6 @@ public class MainApplication extends Application {
         // TODO Fullscreen preview
         // TODO Sharing
         // TODO Error feedback
-        // TODO Searching
         // TODO Printing
 
         super.onCreate();

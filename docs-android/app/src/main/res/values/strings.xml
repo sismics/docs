@@ -30,5 +30,6 @@
     <string name="downloading_file">Downloading file number %1s</string>
     <string name="download_document">Download all files</string>
     <string name="downloading_document">Downloading document</string>
+    <string name="action_search">Search documents</string>
 
 </resources>

@@ -14,11 +14,14 @@ import com.sismics.docs.DividerItemDecoration;
 import com.sismics.docs.R;
 import com.sismics.docs.activity.DocumentActivity;
 import com.sismics.docs.adapter.DocListAdapter;
+import com.sismics.docs.event.SearchEvent;
 import com.sismics.docs.listener.RecyclerItemClickListener;
 import com.sismics.docs.resource.DocumentResource;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * @author bgamard.
@@ -27,12 +30,16 @@ public class DocListFragment extends Fragment {
     /**
      * Documents adapter.
      */
-    DocListAdapter adapter;
+    private DocListAdapter adapter;
+
+    /**
+     * Search query.
+     */
+    private String query;
 
     // Infinite scrolling things
     private boolean loading = true;
     private int previousTotal = 0;
-    int firstVisibleItem, visibleItemCount, totalItemCount;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,9 +76,9 @@ public class DocListFragment extends Fragment {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                visibleItemCount = recyclerView.getChildCount();
-                totalItemCount = layoutManager.getItemCount();
-                firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
+                int visibleItemCount = recyclerView.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
 
                 if (loading) {
                     if (totalItemCount > previousTotal) {
@@ -80,26 +87,54 @@ public class DocListFragment extends Fragment {
                     }
                 }
                 if (!loading && totalItemCount - visibleItemCount <= firstVisibleItem + 3) {
-                    loadDocuments();
+                    loadDocuments(false);
                     loading = true;
                 }
             }
         });
 
         // Grab the documents
-        loadDocuments();
+        loadDocuments(true);
 
+        EventBus.getDefault().register(this);
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroyView();
+    }
+
+    /**
+     * A search event has been fired.
+     *
+     * @param event Search event
+     */
+    public void onEvent(SearchEvent event) {
+        query = event.getQuery();
+        loadDocuments(true);
     }
 
     /**
      * Refresh the document list.
+     *
+     * @param reset If true, reload the documents
      */
-    private void loadDocuments() {
-        DocumentResource.list(getActivity(), adapter.getItemCount(), new JsonHttpResponseHandler() {
+    private void loadDocuments(final boolean reset) {
+        if (reset) {
+            loading = true;
+            previousTotal = 0;
+            adapter.clearDocuments();
+            if (getView() != null) {
+                getView().findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+            }
+        }
+
+        DocumentResource.list(getActivity(), reset ? 0 : adapter.getItemCount(), query, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                adapter.addDocuments(response.optJSONArray("documents"), false);
+                adapter.addDocuments(response.optJSONArray("documents"));
                 if (getView() != null) {
                     getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
                 }
