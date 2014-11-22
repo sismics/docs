@@ -28,6 +28,11 @@
             android:logo="@drawable/ic_launcher"
             android:launchMode="singleTop">
         </activity>
+        <activity
+            android:name=".activity.DocumentActivity"
+            android:label=""
+            android:logo="@drawable/ic_launcher">
+        </activity>
     </application>
 
 </manifest>

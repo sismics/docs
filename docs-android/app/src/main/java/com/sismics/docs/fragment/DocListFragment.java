@@ -1,5 +1,6 @@
 package com.sismics.docs.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,11 +8,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sismics.docs.DividerItemDecoration;
 import com.sismics.docs.R;
+import com.sismics.docs.activity.DocumentActivity;
 import com.sismics.docs.adapter.DocListAdapter;
 import com.sismics.docs.listener.RecyclerItemClickListener;
 import com.sismics.docs.resource.DocumentResource;
@@ -30,8 +31,8 @@ public class DocListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Initialize the view
         View view = inflater.inflate(R.layout.doc_list_fragment, container, false);
-
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.docList);
+
         recyclerView.setHasFixedSize(true);
         recyclerView.setLongClickable(true);
 
@@ -46,7 +47,12 @@ public class DocListFragment extends Fragment {
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast.makeText(getActivity(), position + " clicked", Toast.LENGTH_SHORT).show();
+                JSONObject document = adapter.getItemAt(position);
+                if (document != null) {
+                    Intent intent = new Intent(getActivity(), DocumentActivity.class);
+                    intent.putExtra("document", document.toString());
+                    startActivity(intent);
+                }
             }
         }));
 
@@ -64,6 +70,10 @@ public class DocListFragment extends Fragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 adapter.setDocuments(response.optJSONArray("documents"));
+
+                if (getView() != null) {
+                    getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
+                }
             }
         });
     }

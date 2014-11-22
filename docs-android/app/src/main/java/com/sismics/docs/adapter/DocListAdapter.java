@@ -88,7 +88,21 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
     }
 
     /**
-     * Update the displayed documents
+     * Return an item at a given position.
+     *
+     * @param position Item position
+     * @return Item
+     */
+    public JSONObject getItemAt(int position) {
+        if (documents == null) {
+            return null;
+        }
+
+        return documents.optJSONObject(position);
+    }
+
+    /**
+     * Update the displayed documents.
      * @param documents Documents
      */
     public void setDocuments(JSONArray documents) {

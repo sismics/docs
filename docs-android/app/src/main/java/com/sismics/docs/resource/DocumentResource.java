@@ -11,7 +11,6 @@ import com.loopj.android.http.RequestParams;
  * @author bgamard
  */
 public class DocumentResource extends BaseResource {
-
     /**
      * GET /document/list.
      *

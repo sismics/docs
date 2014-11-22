@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:background="#eee"
+        android:elevation="4dp">
+
+        <TextView
+            android:id="@+id/createdDateLabel"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/created_date"/>
+
+        <TextView
+            android:id="@+id/createdDateTextView"
+            android:layout_toRightOf="@id/createdDateLabel"
+            android:layout_toEndOf="@id/createdDateLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:fontFamily="sans-serif-light"
+            android:text="01/12/2014"/>
+
+        <TextView
+            android:id="@+id/languageLabel"
+            android:layout_marginTop="8dp"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/createdDateLabel"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/language"/>
+
+        <TextView
+            android:id="@+id/languageTextView"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@id/languageLabel"
+            android:layout_toEndOf="@id/languageLabel"
+            android:layout_below="@id/createdDateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:text="fr"/>
+
+        <TextView
+            android:id="@+id/descriptionTextView"
+            android:layout_marginTop="12dp"
+            android:layout_below="@id/languageLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:text="Lorem ipsum dolor sit amen lorem ipsum dolor sit amen lorem ipsum dolor sit amen lorem ipsum dolor sit amen lorem ipsum dolor sit amen."/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <com.sismics.docs.ui.view.FileViewPager
+            android:id="@+id/fileViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:indeterminate="true" />
+
+    </RelativeLayout>
+
+</LinearLayout>
