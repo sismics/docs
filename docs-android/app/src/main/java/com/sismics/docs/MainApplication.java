@@ -23,8 +23,6 @@ public class MainApplication extends Application {
         // TODO Fullscreen preview
         // TODO Downloading
         // TODO Sharing
-        // TODO Shared status
-        // TODO Tags on document
         // TODO Error feedback
         // TODO Infinite scrolling on documents
         // TODO Searching

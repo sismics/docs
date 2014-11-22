@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.format.DateFormat;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -14,8 +15,10 @@ import com.sismics.docs.R;
 import com.sismics.docs.adapter.FilePagerAdapter;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.resource.FileResource;
+import com.sismics.docs.util.TagUtil;
 
 import org.apache.http.Header;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -81,19 +84,34 @@ public class DocumentActivity extends ActionBarActivity {
         String title = document.optString("title");
         String date = DateFormat.getDateFormat(this).format(new Date(document.optLong("create_date")));
         String description = document.optString("description");
+        boolean shared = document.optBoolean("shared");
+        String language = document.optString("language");
+        JSONArray tags = document.optJSONArray("tags");
 
         // Fill the layout
         setTitle(title);
         TextView createdDateTextView = (TextView) findViewById(R.id.createdDateTextView);
         createdDateTextView.setText(date);
-        TextView languageTextView = (TextView) findViewById(R.id.languageTextView);
-        languageTextView.setText(document.optString("language"));
+
         TextView descriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
         if (description == null || description.isEmpty()) {
             descriptionTextView.setVisibility(View.GONE);
         } else {
             descriptionTextView.setText(description);
         }
+
+        TextView tagTextView = (TextView) findViewById(R.id.tagTextView);
+        if (tags.length() == 0) {
+            tagTextView.setVisibility(View.GONE);
+        } else {
+            tagTextView.setText(TagUtil.buildSpannable(tags));
+        }
+
+        ImageView languageImageView = (ImageView) findViewById(R.id.languageImageView);
+        languageImageView.setImageResource(getResources().getIdentifier(language, "drawable", getPackageName()));
+
+        ImageView sharedImageView = (ImageView) findViewById(R.id.sharedImageView);
+        sharedImageView.setVisibility(shared ? View.VISIBLE : View.GONE);
 
         // Grab the attached files
         FileResource.list(this, id, new JsonHttpResponseHandler() {

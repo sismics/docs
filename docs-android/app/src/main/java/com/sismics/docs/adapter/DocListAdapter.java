@@ -1,18 +1,14 @@
 package com.sismics.docs.adapter;
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.format.DateFormat;
-import android.text.style.BackgroundColorSpan;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sismics.docs.R;
+import com.sismics.docs.util.TagUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -64,16 +60,7 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
         holder.titleTextView.setText(document.optString("title"));
 
         JSONArray tags = document.optJSONArray("tags");
-        SpannableStringBuilder builder = new SpannableStringBuilder();
-        for (int i = 0; i < tags.length(); i++) {
-            JSONObject tag = tags.optJSONObject(i);
-            int start = builder.length();
-            builder.append(" ").append(tag.optString("name")).append(" ");
-            builder.setSpan(new ForegroundColorSpan(Color.WHITE), start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            builder.setSpan(new BackgroundColorSpan(Color.parseColor(tag.optString("color"))), start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            builder.append(" ");
-        }
-        holder.subtitleTextView.setText(builder);
+        holder.subtitleTextView.setText(TagUtil.buildSpannable(tags));
 
         String date = DateFormat.getDateFormat(holder.dateTextView.getContext()).format(new Date(document.optLong("create_date")));
         holder.dateTextView.setText(date);

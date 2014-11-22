@@ -19,7 +19,6 @@
     <string name="invalid_url">Please check the server URL and try again</string>
     <string name="crash_toast_text">A crash occurred, a report has been sent to resolve this problem</string>
     <string name="created_date">Created date</string>
-    <string name="language">Language</string>
 
     <!-- Validation -->
     <string name="validate_error_email">Invalid email</string>
