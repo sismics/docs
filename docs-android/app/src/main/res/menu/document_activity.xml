@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/download_file"
+        app:showAsAction="collapseActionView"
+        android:title="@string/download_file">
+    </item>
+
+    <item
+        android:id="@+id/download_document"
+        app:showAsAction="collapseActionView"
+        android:title="@string/download_document">
+    </item>
+
+</menu>

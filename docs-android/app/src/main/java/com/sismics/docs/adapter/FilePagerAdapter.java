@@ -89,4 +89,18 @@ public class FilePagerAdapter extends PagerAdapter {
     public boolean isViewFromObject(View view, Object object) {
         return view == object;
     }
+
+    /**
+     * Return the object at a given position.
+     *
+     * @param position Position
+     * @return Object
+     */
+    public JSONObject getObjectAt(int position) {
+        if (files == null) {
+            return null;
+        }
+
+        return files.optJSONObject(position);
+    }
 }

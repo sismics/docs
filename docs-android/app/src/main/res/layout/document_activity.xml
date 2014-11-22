@@ -15,7 +15,8 @@
         <TextView
             android:id="@+id/createdDateLabel"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="24dp"
+            android:gravity="center_vertical"
             android:layout_alignParentTop="true"
             android:layout_marginRight="8dp"
             android:layout_marginEnd="8dp"
@@ -27,7 +28,8 @@
             android:layout_toRightOf="@id/createdDateLabel"
             android:layout_toEndOf="@id/createdDateLabel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="24dp"
+            android:gravity="center_vertical"
             android:layout_alignParentTop="true"
             android:fontFamily="sans-serif-light"
             android:text="01/12/2014"/>

@@ -26,5 +26,9 @@
     <string name="validate_error_length_max">Too long (max. %d)</string>
     <string name="validate_error_required">Required</string>
     <string name="validate_error_alphanumeric">Only letters and numbers</string>
+    <string name="download_file">Download current file</string>
+    <string name="downloading_file">Downloading file number %1s</string>
+    <string name="download_document">Download all files</string>
+    <string name="downloading_document">Downloading document</string>
 
 </resources>

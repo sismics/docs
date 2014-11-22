@@ -21,7 +21,6 @@ public class MainApplication extends Application {
         ApplicationContext.getInstance().setUserInfo(getApplicationContext(), json);
 
         // TODO Fullscreen preview
-        // TODO Downloading
         // TODO Sharing
         // TODO Error feedback
         // TODO Infinite scrolling on documents
