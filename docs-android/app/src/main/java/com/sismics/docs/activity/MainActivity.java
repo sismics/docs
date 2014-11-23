@@ -13,13 +13,20 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sismics.docs.R;
+import com.sismics.docs.adapter.TagListAdapter;
 import com.sismics.docs.event.SearchEvent;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.provider.RecentSuggestionsProvider;
+import com.sismics.docs.resource.TagResource;
 
+import org.apache.http.Header;
 import org.json.JSONObject;
 
 import de.greenrobot.event.EventBus;
@@ -49,7 +56,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.main_activity);
 
         // Enable ActionBar app icon to behave as action to toggle nav drawer
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
@@ -67,6 +74,31 @@ public class MainActivity extends ActionBarActivity {
         usernameTextView.setText(userInfo.optString("username"));
         TextView emailTextView = (TextView) findViewById(R.id.emailTextView);
         emailTextView.setText(userInfo.optString("email"));
+
+        // Get tag list to fill the drawer
+        final ListView tagListView = (ListView) findViewById(R.id.tagListView);
+        TagResource.stats(this, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                tagListView.setAdapter(new TagListAdapter(response.optJSONArray("stats")));
+            }
+        });
+
+        // Click on a tag
+        tagListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TagListAdapter adapter = (TagListAdapter) tagListView.getAdapter();
+                if (adapter == null) return;
+                JSONObject tag = adapter.getItem(position);
+                if (tag == null) return;
+                SearchView searchView = (SearchView) searchItem.getActionView();
+                searchView.setQuery("tag:" + tag.optString("name"), true);
+                searchView.setIconified(false);
+                searchView.clearFocus();
+                drawerLayout.closeDrawers();
+            }
+        });
 
         handleIntent(getIntent());
     }

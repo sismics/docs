@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sismics.docs.R;
 import com.sismics.docs.adapter.FilePagerAdapter;
+import com.sismics.docs.event.DocumentFullscreenEvent;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.resource.FileResource;
 import com.sismics.docs.util.PreferenceUtil;
@@ -30,6 +31,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Document activity.
@@ -92,6 +95,8 @@ public class DocumentActivity extends ActionBarActivity {
 
         // Grab the document
         refreshDocument(document);
+
+        EventBus.getDefault().register(this);
     }
 
     /**
@@ -222,5 +227,15 @@ public class DocumentActivity extends ActionBarActivity {
         request.setTitle(title);
         request.setDescription(description);
         downloadManager.enqueue(request);
+    }
+
+    public void onEvent(DocumentFullscreenEvent event) {
+        findViewById(R.id.detailLayout).setVisibility(event.isFullscreen() ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 }

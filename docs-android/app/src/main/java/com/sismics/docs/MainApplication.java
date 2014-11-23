@@ -16,14 +16,16 @@ import org.json.JSONObject;
 public class MainApplication extends Application {
     @Override
     public void onCreate() {
-        // Fetching /user/info from cache
+        // Fetching GET /user from cache
         JSONObject json = PreferenceUtil.getCachedJson(getApplicationContext(), PreferenceUtil.PREF_CACHED_USER_INFO_JSON);
         ApplicationContext.getInstance().setUserInfo(getApplicationContext(), json);
 
-        // TODO Fullscreen preview
+        // TODO Tags in drawer & search on select
         // TODO Sharing
         // TODO Error feedback
         // TODO Printing
+        // TODO Fullscreen preview
+        // TODO Caching preferences
 
         super.onCreate();
     }
