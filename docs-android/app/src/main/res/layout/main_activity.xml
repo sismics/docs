@@ -17,10 +17,11 @@
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:gravity="center"
         android:orientation="vertical"
         android:background="#fff"
         android:elevation="5dp">
+
+        <!-- Logged in user -->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,6 +47,58 @@
                 android:fontFamily="sans-serif-light"/>
 
         </LinearLayout>
+
+        <!-- All documents -->
+
+        <RelativeLayout
+            android:id="@+id/allDocumentsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:id="@+id/allDocumentsImageView"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_work_grey600_24dp"/>
+
+            <TextView
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/allDocumentsImageView"
+                android:layout_toEndOf="@+id/allDocumentsImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:textColor="#212121"
+                android:text="@string/all_documents"
+                android:textSize="14sp"/>
+
+        </RelativeLayout>
+
+        <!-- Separator -->
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#e5e5e5"/>
+
+        <!-- All tags -->
+
+        <TextView
+            android:layout_margin="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#9f9f9f"
+            android:fontFamily="sans-serif"
+            android:textSize="14sp"
+            android:text="@string/all_tags"/>
 
         <ListView
             android:layout_weight="1"

@@ -100,6 +100,19 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        // Click on All documents
+        View allDocumentsLayout = findViewById(R.id.allDocumentsLayout);
+        allDocumentsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchView searchView = (SearchView) searchItem.getActionView();
+                searchView.setQuery(null, true);
+                searchView.setIconified(true);
+                drawerLayout.closeDrawers();
+
+            }
+        });
+
         handleIntent(getIntent());
     }
 
