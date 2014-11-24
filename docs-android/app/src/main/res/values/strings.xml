@@ -25,7 +25,9 @@
     <string name="downloading_document">Downloading document</string>
     <string name="action_search">Search documents</string>
     <string name="all_documents">All documents</string>
+    <string name="shared_documents">Shared documents</string>
     <string name="all_tags">All tags</string>
+    <string name="no_tags">No tags</string>
 
     <!-- Validation -->
     <string name="validate_error_email">Invalid email</string>
@@ -33,6 +35,5 @@
     <string name="validate_error_length_max">Too long (max. %d)</string>
     <string name="validate_error_required">Required</string>
     <string name="validate_error_alphanumeric">Only letters and numbers</string>
-    <string name="shared_documents">Shared documents</string>
 
 </resources>

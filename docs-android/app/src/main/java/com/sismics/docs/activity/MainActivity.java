@@ -78,10 +78,14 @@ public class MainActivity extends ActionBarActivity {
 
         // Get tag list to fill the drawer
         final ListView tagListView = (ListView) findViewById(R.id.tagListView);
+        final View tagProgressView = findViewById(R.id.tagProgressView);
+        final View tagEmptyView = findViewById(R.id.tagEmptyView);
+        tagListView.setEmptyView(tagProgressView);
         TagResource.stats(this, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 tagListView.setAdapter(new TagListAdapter(response.optJSONArray("stats")));
+                tagListView.setEmptyView(tagEmptyView);
             }
         });
 
