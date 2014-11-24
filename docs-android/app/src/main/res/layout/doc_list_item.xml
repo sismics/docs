@@ -36,6 +36,9 @@
         android:id="@+id/subtitleTextView"
         android:layout_below="@+id/titleTextView"
         android:layout_toRightOf="@+id/folderImageView"
+        android:layout_toEndOf="@id/folderImageView"
+        android:layout_toLeftOf="@+id/sharedImageView"
+        android:layout_toStartOf="@id/sharedImageView"
         android:layout_marginTop="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,6 +48,15 @@
         android:textSize="16sp"
         android:maxLines="1"
         android:ellipsize="end"/>
+
+    <ImageView
+        android:id="@+id/sharedImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_folder_shared_grey600_24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:id="@+id/dateTextView"

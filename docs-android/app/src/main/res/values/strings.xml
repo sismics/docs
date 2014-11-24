@@ -33,5 +33,6 @@
     <string name="validate_error_length_max">Too long (max. %d)</string>
     <string name="validate_error_required">Required</string>
     <string name="validate_error_alphanumeric">Only letters and numbers</string>
+    <string name="shared_documents">Shared documents</string>
 
 </resources>

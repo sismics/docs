@@ -40,6 +40,7 @@ public class MainActivity extends ActionBarActivity {
     
     private ActionBarDrawerToggle drawerToggle;
     private MenuItem searchItem;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(final Bundle args) {
@@ -56,7 +57,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.main_activity);
 
         // Enable ActionBar app icon to behave as action to toggle nav drawer
-        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
@@ -92,11 +93,7 @@ public class MainActivity extends ActionBarActivity {
                 if (adapter == null) return;
                 JSONObject tag = adapter.getItem(position);
                 if (tag == null) return;
-                SearchView searchView = (SearchView) searchItem.getActionView();
-                searchView.setQuery("tag:" + tag.optString("name"), true);
-                searchView.setIconified(false);
-                searchView.clearFocus();
-                drawerLayout.closeDrawers();
+                searchQuery("tag:" + tag.optString("name"));
             }
         });
 
@@ -105,11 +102,16 @@ public class MainActivity extends ActionBarActivity {
         allDocumentsLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SearchView searchView = (SearchView) searchItem.getActionView();
-                searchView.setQuery(null, true);
-                searchView.setIconified(true);
-                drawerLayout.closeDrawers();
+                searchQuery(null);
+            }
+        });
 
+        // Click on Shared documents
+        View sharedDocumentsLayout = findViewById(R.id.sharedDocumentsLayout);
+        sharedDocumentsLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchQuery("shared:yes");
             }
         });
 
@@ -199,5 +201,18 @@ public class MainActivity extends ActionBarActivity {
 
             EventBus.getDefault().post(new SearchEvent(query));
         }
+    }
+
+    /**
+     * Perform a search query.
+     *
+     * @param query Query
+     */
+    private void searchQuery(String query) {
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setQuery(query, true);
+        searchView.setIconified(query == null);
+        searchView.clearFocus();
+        drawerLayout.closeDrawers();
     }
 }

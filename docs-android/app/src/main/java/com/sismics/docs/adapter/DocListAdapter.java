@@ -5,6 +5,7 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sismics.docs.R;
@@ -33,12 +34,14 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
         public TextView titleTextView;
         public TextView subtitleTextView;
         public TextView dateTextView;
+        public ImageView sharedImageView;
 
         public ViewHolder(View v) {
             super(v);
             titleTextView = (TextView) v.findViewById(R.id.titleTextView);
             subtitleTextView = (TextView) v.findViewById(R.id.subtitleTextView);
             dateTextView = (TextView) v.findViewById(R.id.dateTextView);
+            sharedImageView = (ImageView) v.findViewById(R.id.sharedImageView);
         }
     }
 
@@ -64,6 +67,8 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
 
         String date = DateFormat.getDateFormat(holder.dateTextView.getContext()).format(new Date(document.optLong("create_date")));
         holder.dateTextView.setText(date);
+
+        holder.sharedImageView.setVisibility(document.optBoolean("shared") ? View.VISIBLE : View.GONE);
     }
 
     @Override

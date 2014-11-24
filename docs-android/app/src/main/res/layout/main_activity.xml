@@ -82,6 +82,40 @@
 
         </RelativeLayout>
 
+        <!-- Shared documents -->
+
+        <RelativeLayout
+            android:id="@+id/sharedDocumentsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:id="@+id/sharedDocumentsImageView"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_folder_shared_grey600_24dp"/>
+
+            <TextView
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/sharedDocumentsImageView"
+                android:layout_toEndOf="@+id/sharedDocumentsImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:textColor="#212121"
+                android:text="@string/shared_documents"
+                android:textSize="14sp"/>
+
+        </RelativeLayout>
+
         <!-- Separator -->
 
         <View

@@ -10,13 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.sismics.docs.DividerItemDecoration;
 import com.sismics.docs.R;
 import com.sismics.docs.activity.DocumentActivity;
 import com.sismics.docs.adapter.DocListAdapter;
 import com.sismics.docs.event.SearchEvent;
 import com.sismics.docs.listener.RecyclerItemClickListener;
 import com.sismics.docs.resource.DocumentResource;
+import com.sismics.docs.ui.view.DividerItemDecoration;
 
 import org.apache.http.Header;
 import org.json.JSONObject;

@@ -1,4 +1,4 @@
-package com.sismics.docs;
+package com.sismics.docs.ui.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
