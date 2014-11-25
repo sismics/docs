@@ -8,15 +8,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sismics.docs.R;
 import com.sismics.docs.activity.DocumentActivity;
 import com.sismics.docs.adapter.DocListAdapter;
 import com.sismics.docs.event.SearchEvent;
+import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.listener.RecyclerItemClickListener;
 import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.ui.view.DividerItemDecoration;
+import com.sismics.docs.ui.view.EmptyRecyclerView;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
@@ -27,6 +30,11 @@ import de.greenrobot.event.EventBus;
  * @author bgamard.
  */
 public class DocListFragment extends Fragment {
+    /**
+     * Recycler view.
+     */
+    private EmptyRecyclerView recyclerView;
+
     /**
      * Documents adapter.
      */
@@ -46,7 +54,7 @@ public class DocListFragment extends Fragment {
         View view = inflater.inflate(R.layout.doc_list_fragment, container, false);
 
         // Configure the RecyclerView
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.docList);
+        recyclerView = (EmptyRecyclerView) view.findViewById(R.id.docList);
         adapter = new DocListAdapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
@@ -87,14 +95,14 @@ public class DocListFragment extends Fragment {
                     }
                 }
                 if (!loading && totalItemCount - visibleItemCount <= firstVisibleItem + 3) {
-                    loadDocuments(false);
+                    loadDocuments(getView(), false);
                     loading = true;
                 }
             }
         });
 
         // Grab the documents
-        loadDocuments(true);
+        loadDocuments(view, true);
 
         EventBus.getDefault().register(this);
         return view;
@@ -113,30 +121,43 @@ public class DocListFragment extends Fragment {
      */
     public void onEvent(SearchEvent event) {
         query = event.getQuery();
-        loadDocuments(true);
+        loadDocuments(getView(), true);
     }
 
     /**
      * Refresh the document list.
      *
+     * @param view View
      * @param reset If true, reload the documents
      */
-    private void loadDocuments(final boolean reset) {
+    private void loadDocuments(final View view, final boolean reset) {
+        if (view == null) return;
+        final View progressBar = view.findViewById(R.id.progressBar);
+        final TextView documentsEmptyView = (TextView) view.findViewById(R.id.documentsEmptyView);
+
         if (reset) {
             loading = true;
             previousTotal = 0;
             adapter.clearDocuments();
-            if (getView() != null) {
-                getView().findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-            }
         }
+        recyclerView.setEmptyView(progressBar);
 
         DocumentResource.list(getActivity(), reset ? 0 : adapter.getItemCount(), query, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 adapter.addDocuments(response.optJSONArray("documents"));
-                if (getView() != null) {
-                    getView().findViewById(R.id.progressBar).setVisibility(View.GONE);
+                documentsEmptyView.setText(R.string.no_documents);
+                recyclerView.setEmptyView(documentsEmptyView);
+            }
+
+            @Override
+            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                documentsEmptyView.setText(R.string.error_loading_documents);
+                recyclerView.setEmptyView(documentsEmptyView);
+
+                if (!reset) {
+                    // We are loading a new page, so the empty view won't be visible, pop a toast
+                    Toast.makeText(getActivity(), R.string.error_loading_documents, Toast.LENGTH_SHORT).show();
                 }
             }
         });

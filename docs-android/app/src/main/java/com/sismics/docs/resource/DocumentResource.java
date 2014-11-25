@@ -2,8 +2,8 @@ package com.sismics.docs.resource;
 
 import android.content.Context;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.sismics.docs.listener.JsonHttpResponseHandler;
 
 /**
  * Access to /document API.

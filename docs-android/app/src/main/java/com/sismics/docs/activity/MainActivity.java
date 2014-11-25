@@ -18,10 +18,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sismics.docs.R;
 import com.sismics.docs.adapter.TagListAdapter;
 import com.sismics.docs.event.SearchEvent;
+import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.provider.RecentSuggestionsProvider;
 import com.sismics.docs.resource.TagResource;
@@ -79,12 +79,20 @@ public class MainActivity extends ActionBarActivity {
         // Get tag list to fill the drawer
         final ListView tagListView = (ListView) findViewById(R.id.tagListView);
         final View tagProgressView = findViewById(R.id.tagProgressView);
-        final View tagEmptyView = findViewById(R.id.tagEmptyView);
+        final TextView tagEmptyView = (TextView) findViewById(R.id.tagEmptyView);
         tagListView.setEmptyView(tagProgressView);
         TagResource.stats(this, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 tagListView.setAdapter(new TagListAdapter(response.optJSONArray("stats")));
+                tagProgressView.setVisibility(View.GONE);
+                tagListView.setEmptyView(tagEmptyView);
+            }
+
+            @Override
+            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                tagEmptyView.setText(R.string.error_loading_tags);
+                tagProgressView.setVisibility(View.GONE);
                 tagListView.setEmptyView(tagEmptyView);
             }
         });

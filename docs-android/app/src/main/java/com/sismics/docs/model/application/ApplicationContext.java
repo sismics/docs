@@ -3,8 +3,8 @@ package com.sismics.docs.model.application;
 import android.app.Activity;
 import android.content.Context;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sismics.docs.listener.CallbackListener;
+import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.resource.UserResource;
 import com.sismics.docs.util.PreferenceUtil;
 

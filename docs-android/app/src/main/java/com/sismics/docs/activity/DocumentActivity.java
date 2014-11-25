@@ -16,10 +16,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sismics.docs.R;
 import com.sismics.docs.adapter.FilePagerAdapter;
 import com.sismics.docs.event.DocumentFullscreenEvent;
+import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.resource.FileResource;
 import com.sismics.docs.util.PreferenceUtil;
@@ -139,14 +139,27 @@ public class DocumentActivity extends ActionBarActivity {
         sharedImageView.setVisibility(shared ? View.VISIBLE : View.GONE);
 
         // Grab the attached files
+        final View progressBar = findViewById(R.id.progressBar);
+        final TextView filesEmptyView = (TextView) findViewById(R.id.filesEmptyView);
+        fileViewPager = (ViewPager) findViewById(R.id.fileViewPager);
+        fileViewPager.setOffscreenPageLimit(1);
+
         FileResource.list(this, id, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                fileViewPager = (ViewPager) findViewById(R.id.fileViewPager);
-                fileViewPager.setOffscreenPageLimit(1);
-                filePagerAdapter = new FilePagerAdapter(DocumentActivity.this, response.optJSONArray("files"));
+                JSONArray files = response.optJSONArray("files");
+                filePagerAdapter = new FilePagerAdapter(DocumentActivity.this, files);
                 fileViewPager.setAdapter(filePagerAdapter);
-                findViewById(R.id.progressBar).setVisibility(View.GONE);
+
+                progressBar.setVisibility(View.GONE);
+                if (files.length() == 0) filesEmptyView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                filesEmptyView.setText(R.string.error_loading_files);
+                progressBar.setVisibility(View.GONE);
+                filesEmptyView.setVisibility(View.VISIBLE);
             }
         });
     }

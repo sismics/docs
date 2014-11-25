@@ -12,9 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.androidquery.AQuery;
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sismics.docs.R;
 import com.sismics.docs.listener.CallbackListener;
+import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.resource.UserResource;
 import com.sismics.docs.ui.form.Validator;
@@ -109,11 +109,11 @@ public class LoginActivity extends ActionBarActivity {
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
                             loginForm.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.GONE);
 
-                            if (responseString != null && responseString.contains("\"ForbiddenError\"")) {
+                            if (responseBytes != null && new String(responseBytes).contains("\"ForbiddenError\"")) {
                                 DialogUtil.showOkDialog(LoginActivity.this, R.string.login_fail_title, R.string.login_fail);
                             } else {
                                 DialogUtil.showOkDialog(LoginActivity.this, R.string.network_error_title, R.string.network_error);
@@ -167,9 +167,9 @@ public class LoginActivity extends ActionBarActivity {
                     startActivity(intent);
                     finish();
                 }
-                
+
                 @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
                     DialogUtil.showOkDialog(LoginActivity.this, R.string.network_error_title, R.string.network_error);
                     loginForm.setVisibility(View.VISIBLE);
                 }

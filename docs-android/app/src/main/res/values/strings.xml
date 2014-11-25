@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Validation -->
+    <string name="validate_error_email">Invalid email</string>
+    <string name="validate_error_length_min">Too short (min. %d)</string>
+    <string name="validate_error_length_max">Too long (max. %d)</string>
+    <string name="validate_error_required">Required</string>
+    <string name="validate_error_alphanumeric">Only letters and numbers</string>
+
+    <!-- App -->
     <string name="app_name">Sismics Docs</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
@@ -28,12 +36,10 @@
     <string name="shared_documents">Shared documents</string>
     <string name="all_tags">All tags</string>
     <string name="no_tags">No tags</string>
-
-    <!-- Validation -->
-    <string name="validate_error_email">Invalid email</string>
-    <string name="validate_error_length_min">Too short (min. %d)</string>
-    <string name="validate_error_length_max">Too long (max. %d)</string>
-    <string name="validate_error_required">Required</string>
-    <string name="validate_error_alphanumeric">Only letters and numbers</string>
+    <string name="error_loading_tags">Error loading tags</string>
+    <string name="no_documents">No documents</string>
+    <string name="error_loading_documents">Error loading documents</string>
+    <string name="no_files">No files</string>
+    <string name="error_loading_files">Error loading files</string>
 
 </resources>

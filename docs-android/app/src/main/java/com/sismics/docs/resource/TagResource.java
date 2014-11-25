@@ -2,7 +2,8 @@ package com.sismics.docs.resource;
 
 import android.content.Context;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
+import com.sismics.docs.listener.JsonHttpResponseHandler;
+
 
 /**
  * Access to /tag API.
