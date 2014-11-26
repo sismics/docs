@@ -4,12 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.sismics.docs.ui.view.EmptyRecyclerView
-        android:id="@+id/docList"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical">
-    </com.sismics.docs.ui.view.EmptyRecyclerView>
+        android:layout_height="match_parent">
+
+        <com.sismics.docs.ui.view.EmptyRecyclerView
+            android:id="@+id/docList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical">
+        </com.sismics.docs.ui.view.EmptyRecyclerView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"

@@ -20,7 +20,6 @@ public class MainApplication extends Application {
         JSONObject json = PreferenceUtil.getCachedJson(getApplicationContext(), PreferenceUtil.PREF_CACHED_USER_INFO_JSON);
         ApplicationContext.getInstance().setUserInfo(getApplicationContext(), json);
 
-        // TODO Documents list page loading feedback
         // TODO Fullscreen preview
         // TODO Caching preferences
         // TODO Edit sharing

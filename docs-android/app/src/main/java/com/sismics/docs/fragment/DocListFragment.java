@@ -3,6 +3,7 @@ package com.sismics.docs.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,11 +32,6 @@ import de.greenrobot.event.EventBus;
  */
 public class DocListFragment extends Fragment {
     /**
-     * Recycler view.
-     */
-    private EmptyRecyclerView recyclerView;
-
-    /**
      * Documents adapter.
      */
     private DocListAdapter adapter;
@@ -45,13 +41,17 @@ public class DocListFragment extends Fragment {
      */
     private String query;
 
+    // View cache
+    private EmptyRecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     // Infinite scrolling things
     private boolean loading = true;
     private int previousTotal = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.doc_list_fragment, container, false);
+        final View view = inflater.inflate(R.layout.doc_list_fragment, container, false);
 
         // Configure the RecyclerView
         recyclerView = (EmptyRecyclerView) view.findViewById(R.id.docList);
@@ -64,6 +64,19 @@ public class DocListFragment extends Fragment {
         // Configure the LayoutManager
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
+
+        // Configure the swipe refresh layout
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadDocuments(view, true);
+            }
+        });
 
         // Document opening
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
@@ -139,7 +152,10 @@ public class DocListFragment extends Fragment {
             loading = true;
             previousTotal = 0;
             adapter.clearDocuments();
+        } else {
+            swipeRefreshLayout.setRefreshing(true);
         }
+
         recyclerView.setEmptyView(progressBar);
 
         DocumentResource.list(getActivity(), reset ? 0 : adapter.getItemCount(), query, new JsonHttpResponseHandler() {
@@ -159,6 +175,11 @@ public class DocListFragment extends Fragment {
                     // We are loading a new page, so the empty view won't be visible, pop a toast
                     Toast.makeText(getActivity(), R.string.error_loading_documents, Toast.LENGTH_SHORT).show();
                 }
+            }
+
+            @Override
+            public void onFinish() {
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
