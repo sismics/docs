@@ -41,5 +41,6 @@
     <string name="error_loading_documents">Error loading documents</string>
     <string name="no_files">No files</string>
     <string name="error_loading_files">Error loading files</string>
+    <string name="new_document">New document</string>
 
 </resources>

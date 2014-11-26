@@ -9,11 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sismics.docs.R;
 import com.sismics.docs.activity.DocumentActivity;
+import com.sismics.docs.activity.DocumentEditActivity;
 import com.sismics.docs.adapter.DocListAdapter;
 import com.sismics.docs.event.SearchEvent;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
@@ -111,6 +113,16 @@ public class DocListFragment extends Fragment {
                     loadDocuments(getView(), false);
                     loading = true;
                 }
+            }
+        });
+
+        // Add document button
+        ImageButton addDocumentButton = (ImageButton) view.findViewById(R.id.addDocumentButton);
+        addDocumentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), DocumentEditActivity.class);
+                startActivityForResult(intent, 1);
             }
         });
 

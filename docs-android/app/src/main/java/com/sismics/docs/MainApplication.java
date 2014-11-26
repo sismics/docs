@@ -23,6 +23,8 @@ public class MainApplication extends Application {
         // TODO Fullscreen preview
         // TODO Caching preferences
         // TODO Edit sharing
+        // TODO Documents adding/editing
+        // TODO Files adding/deleting
 
         super.onCreate();
     }

@@ -37,6 +37,11 @@
             android:label=""
             android:logo="@drawable/ic_launcher">
         </activity>
+        <activity
+            android:name=".activity.DocumentEditActivity"
+            android:label="@string/new_document"
+            android:logo="@drawable/ic_launcher">
+        </activity>
         <provider android:name=".provider.RecentSuggestionsProvider"
             android:exported="false"
             android:authorities="com.sismics.docs.provider.RecentSuggestionsProvider" />
