@@ -20,6 +20,7 @@ import java.util.List;
 public class PreferenceUtil {
 
     public static final String PREF_CACHED_USER_INFO_JSON = "pref_cachedUserInfoJson";
+    public static final String PREF_CACHED_TAGS_JSON = "pref_cachedTagsJson";
     public static final String PREF_SERVER_URL = "pref_ServerUrl";
 
     /**
@@ -108,7 +109,10 @@ public class PreferenceUtil {
     public static void resetUserCache(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Editor editor = sharedPreferences.edit();
-        editor.putString(PREF_CACHED_USER_INFO_JSON, null).apply();
+        editor
+                .putString(PREF_CACHED_USER_INFO_JSON, null)
+                .putString(PREF_CACHED_TAGS_JSON, null)
+                .apply();
     }
     
     /**

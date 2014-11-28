@@ -25,6 +25,7 @@ import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.provider.RecentSuggestionsProvider;
 import com.sismics.docs.resource.TagResource;
+import com.sismics.docs.util.PreferenceUtil;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
@@ -81,9 +82,14 @@ public class MainActivity extends ActionBarActivity {
         final View tagProgressView = findViewById(R.id.tagProgressView);
         final TextView tagEmptyView = (TextView) findViewById(R.id.tagEmptyView);
         tagListView.setEmptyView(tagProgressView);
+        JSONObject cacheTags = PreferenceUtil.getCachedJson(this, PreferenceUtil.PREF_CACHED_TAGS_JSON);
+        if (cacheTags != null) {
+            tagListView.setAdapter(new TagListAdapter(cacheTags.optJSONArray("stats")));
+        }
         TagResource.stats(this, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                PreferenceUtil.setCachedJson(MainActivity.this, PreferenceUtil.PREF_CACHED_TAGS_JSON, response);
                 tagListView.setAdapter(new TagListAdapter(response.optJSONArray("stats")));
                 tagProgressView.setVisibility(View.GONE);
                 tagListView.setEmptyView(tagEmptyView);
