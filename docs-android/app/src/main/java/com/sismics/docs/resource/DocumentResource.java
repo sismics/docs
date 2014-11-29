@@ -30,4 +30,17 @@ public class DocumentResource extends BaseResource {
         params.put("search", query);
         client.get(getApiUrl(context) + "/document/list", params, responseHandler);
     }
+
+    /**
+     * GET /document/id.
+     *
+     * @param context Context
+     * @param id ID
+     * @param responseHandler Callback
+     */
+    public static void get(Context context, String id, JsonHttpResponseHandler responseHandler) {
+        init(context);
+
+        client.get(getApiUrl(context) + "/document/" + id, responseHandler);
+    }
 }

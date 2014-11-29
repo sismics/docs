@@ -42,5 +42,17 @@
     <string name="no_files">No files</string>
     <string name="error_loading_files">Error loading files</string>
     <string name="new_document">New document</string>
+    <string name="share">Sharing</string>
+    <string name="close">Close</string>
+    <string name="add">Add</string>
+    <string name="add_share_hint">Name the share (optional)</string>
+    <string name="document_not_shared">This document is not currently shared</string>
+    <string name="delete_share">Delete this share</string>
+    <string name="send_share">Send this share</string>
+    <string name="error_loading_shares">Error loading shares</string>
+    <string name="error_adding_share">Error adding share</string>
+    <string name="share_default_name">Share link</string>
+    <string name="error_deleting_share">Error deleting the share</string>
+    <string name="send_share_to">Send share link to</string>
 
 </resources>

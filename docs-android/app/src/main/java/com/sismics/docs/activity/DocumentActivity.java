@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.text.format.DateFormat;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import com.sismics.docs.R;
 import com.sismics.docs.adapter.FilePagerAdapter;
 import com.sismics.docs.event.DocumentFullscreenEvent;
+import com.sismics.docs.fragment.DocShareFragment;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.resource.FileResource;
@@ -180,6 +182,11 @@ public class DocumentActivity extends ActionBarActivity {
 
             case R.id.download_document:
                 downloadZip();
+                return true;
+
+            case R.id.share:
+                DialogFragment dialog = DocShareFragment.newInstance(document.optString("id"));
+                dialog.show(getSupportFragmentManager(), "DocShareFragment");
                 return true;
 
             case android.R.id.home:

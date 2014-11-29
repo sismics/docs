@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="12dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+        <ListView
+            android:id="@+id/shareListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:choiceMode="singleChoice"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0dp"/>
+
+        <TextView
+            android:id="@+id/shareEmptyView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="sans-serif-light"
+            android:visibility="gone"
+            android:textSize="16sp"
+            android:text="@string/document_not_shared"/>
+
+        <ProgressBar
+            android:id="@+id/shareProgressBar"
+            style="?android:progressBarStyle"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:indeterminate="true"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#e5e5e5"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/shareNameEditText"
+            android:hint="@string/add_share_hint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".8"/>
+
+        <Button
+            android:id="@+id/shareAddButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".2"
+            android:text="@string/add"/>
+
+    </LinearLayout>
+
+</LinearLayout>
