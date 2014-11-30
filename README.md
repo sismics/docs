@@ -7,7 +7,7 @@ _Web interface_
 
 _Android application_
 
-![Android documents list](http://sismics.com/docs/android1.png) ![Android navigation](http://sismics.com/docs/android2.png) ![Android document details](http://sismics.com/docs/android3.png) ![Android sharing](http://sismics.com/docs/android4.png)
+![Android documents list](http://sismics.com/docs/android1.png) ![Android navigation](http://sismics.com/docs/android2.png) ![Android document details](http://sismics.com/docs/android3.png)
 
 What is Docs?
 ---------------
