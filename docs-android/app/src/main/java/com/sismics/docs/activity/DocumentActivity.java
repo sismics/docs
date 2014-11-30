@@ -9,6 +9,8 @@ import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -115,8 +117,18 @@ public class DocumentActivity extends ActionBarActivity {
         String language = document.optString("language");
         JSONArray tags = document.optJSONArray("tags");
 
-        // Fill the layout
+        // Setup the title
         setTitle(title);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
+        TextView titleTextView = (TextView) toolbar.getChildAt(1);
+        if (titleTextView != null) {
+            titleTextView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+            titleTextView.setMarqueeRepeatLimit(-1);
+            titleTextView.setFocusable(true);
+            titleTextView.setFocusableInTouchMode(true);
+        }
+
+        // Fill the layout
         TextView createdDateTextView = (TextView) findViewById(R.id.createdDateTextView);
         createdDateTextView.setText(date);
 
@@ -189,6 +201,13 @@ public class DocumentActivity extends ActionBarActivity {
                 dialog.show(getSupportFragmentManager(), "DocShareFragment");
                 return true;
 
+            case R.id.upload_file:
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT)
+                    .setType("*/*")
+                    .putExtra("android.intent.extra.ALLOW_MULTIPLE", true);
+                startActivityForResult(Intent.createChooser(intent, getText(R.string.upload_from)), 1);
+                return true;
+
             case android.R.id.home:
                 finish();
                 return true;
@@ -196,6 +215,10 @@ public class DocumentActivity extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 
     /**

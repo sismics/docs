@@ -54,5 +54,7 @@
     <string name="share_default_name">Share link</string>
     <string name="error_deleting_share">Error deleting the share</string>
     <string name="send_share_to">Send share link to</string>
+    <string name="upload_file">Upload a file</string>
+    <string name="upload_from">Upload a file from</string>
 
 </resources>
