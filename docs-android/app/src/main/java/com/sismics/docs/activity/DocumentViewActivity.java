@@ -43,7 +43,7 @@ import de.greenrobot.event.EventBus;
  * 
  * @author bgamard
  */
-public class DocumentActivity extends ActionBarActivity {
+public class DocumentViewActivity extends ActionBarActivity {
     /**
      * File view pager.
      */
@@ -91,7 +91,7 @@ public class DocumentActivity extends ActionBarActivity {
         }
 
         // Setup the activity
-        setContentView(R.layout.document_activity);
+        setContentView(R.layout.document_view_activity);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
@@ -162,7 +162,7 @@ public class DocumentActivity extends ActionBarActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 JSONArray files = response.optJSONArray("files");
-                filePagerAdapter = new FilePagerAdapter(DocumentActivity.this, files);
+                filePagerAdapter = new FilePagerAdapter(DocumentViewActivity.this, files);
                 fileViewPager.setAdapter(filePagerAdapter);
 
                 progressBar.setVisibility(View.GONE);

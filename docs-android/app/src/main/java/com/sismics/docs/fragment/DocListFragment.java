@@ -14,8 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sismics.docs.R;
-import com.sismics.docs.activity.DocumentActivity;
 import com.sismics.docs.activity.DocumentEditActivity;
+import com.sismics.docs.activity.DocumentViewActivity;
 import com.sismics.docs.adapter.DocListAdapter;
 import com.sismics.docs.event.SearchEvent;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
@@ -86,7 +86,7 @@ public class DocListFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 JSONObject document = adapter.getItemAt(position);
                 if (document != null) {
-                    Intent intent = new Intent(getActivity(), DocumentActivity.class);
+                    Intent intent = new Intent(getActivity(), DocumentViewActivity.class);
                     intent.putExtra("document", document.toString());
                     startActivity(intent);
                 }
