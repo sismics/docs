@@ -92,10 +92,8 @@ public class DocumentViewActivity extends ActionBarActivity {
 
         // Setup the activity
         setContentView(R.layout.document_view_activity);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeButtonEnabled(true);
-        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         // Grab the document
         refreshDocument(document);

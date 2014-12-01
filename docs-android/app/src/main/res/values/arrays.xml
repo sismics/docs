@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="cacheSizes">
+        <item>5MB</item>
+        <item>10MB</item>
+        <item>30MB</item>
+        <item>100MB</item>
+    </string-array>
+
+    <string-array name="cacheSizesValues">
+        <item>5</item>
+        <item>10</item>
+        <item>30</item>
+        <item>100</item>
+    </string-array>
+
+</resources>

@@ -56,5 +56,21 @@
     <string name="send_share_to">Send share link to</string>
     <string name="upload_file">Upload a file</string>
     <string name="upload_from">Upload a file from</string>
+    <string name="settings">Settings</string>
+    <string name="logout">Sign Out</string>
+    <string name="version">Version</string>
+    <string name="build">Build</string>
+    <string name="pref_advanced_category">Advanced settings</string>
+    <string name="pref_about_category">About</string>
+    <string name="pref_github">GitHub</string>
+    <string name="pref_issue">Report a bug</string>
+    <string name="pref_clear_cache_title">Clear cache</string>
+    <string name="pref_clear_cache_summary">Cleanup cached files</string>
+    <string name="pref_clear_cache_success">Cache cleared</string>
+    <string name="pref_clear_history_title">Clear search history</string>
+    <string name="pref_clear_history_summary">Wipe the recent search suggestions</string>
+    <string name="pref_clear_history_success">Search history cleared</string>
+    <string name="pref_cache_size">Cache size</string>
+
 
 </resources>

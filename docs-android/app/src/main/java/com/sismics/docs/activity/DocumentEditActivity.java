@@ -27,10 +27,8 @@ public class DocumentEditActivity extends ActionBarActivity {
 
         // Setup the activity
         setContentView(R.layout.document_edit_activity);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeButtonEnabled(true);
-        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         Spinner languageSpinner = (Spinner) findViewById(R.id.languageSpinner);
         languageSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,

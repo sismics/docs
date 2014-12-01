@@ -1,3 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:key="pref_advanced_category"
+        android:title="@string/pref_advanced_category">
+
+        <ListPreference
+            android:key="pref_cacheSize"
+            android:title="@string/pref_cache_size"
+            android:dialogTitle="@string/pref_cache_size"
+            android:entries="@array/cacheSizes"
+            android:entryValues="@array/cacheSizesValues"
+            android:defaultValue="10"/>
+
+        <Preference
+            android:key="pref_clearCache"
+            android:title="@string/pref_clear_cache_title"
+            android:summary="@string/pref_clear_cache_summary">
+        </Preference>
+
+        <Preference
+            android:key="pref_clearHistory"
+            android:title="@string/pref_clear_history_title"
+            android:summary="@string/pref_clear_history_summary">
+        </Preference>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="pref_about_category"
+        android:title="@string/pref_about_category">
+
+        <Preference
+            android:key="pref_github"
+            android:title="@string/pref_github"
+            android:summary="github.com/sismics/docs">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/sismics/docs"/>
+        </Preference>
+
+        <Preference
+            android:key="pref_issue"
+            android:title="@string/pref_issue"
+            android:summary="github.com/sismics/docs/issues">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/sismics/docs/issues"/>
+        </Preference>
+
+        <Preference
+            android:key="pref_version"
+            android:title="@string/app_name"/>
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

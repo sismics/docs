@@ -38,6 +38,10 @@
             android:name=".activity.DocumentEditActivity"
             android:label="@string/new_document">
         </activity>
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/settings">
+        </activity>
         <provider android:name=".provider.RecentSuggestionsProvider"
             android:exported="false"
             android:authorities="com.sismics.docs.provider.RecentSuggestionsProvider" />

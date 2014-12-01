@@ -22,6 +22,7 @@ public class PreferenceUtil {
     public static final String PREF_CACHED_USER_INFO_JSON = "pref_cachedUserInfoJson";
     public static final String PREF_CACHED_TAGS_JSON = "pref_cachedTagsJson";
     public static final String PREF_SERVER_URL = "pref_ServerUrl";
+    public static final String PREF_CACHE_SIZE = "pref_cacheSize";
 
     /**
      * Returns a preference of boolean type.

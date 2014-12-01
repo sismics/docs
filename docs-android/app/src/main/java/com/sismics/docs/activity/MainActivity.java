@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.androidquery.util.AQUtility;
 import com.sismics.docs.R;
 import com.sismics.docs.adapter.TagListAdapter;
 import com.sismics.docs.event.SearchEvent;
@@ -25,6 +26,7 @@ import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.provider.RecentSuggestionsProvider;
 import com.sismics.docs.resource.TagResource;
+import com.sismics.docs.resource.UserResource;
 import com.sismics.docs.util.PreferenceUtil;
 
 import org.apache.http.Header;
@@ -59,10 +61,8 @@ public class MainActivity extends ActionBarActivity {
 
         // Enable ActionBar app icon to behave as action to toggle nav drawer
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeButtonEnabled(true);
-        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the sliding drawer and the action bar app icon
@@ -139,6 +139,22 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.logout:
+                UserResource.logout(getApplicationContext(), new JsonHttpResponseHandler() {
+                    @Override
+                    public void onFinish() {
+                        // Force logout in all cases, so the user is not stuck in case of network error
+                        ApplicationContext.getInstance().setUserInfo(getApplicationContext(), null);
+                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                        finish();
+                    }
+                });
+                return true;
+
+            case R.id.settings:
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                return true;
+
             case android.R.id.home:
                 // The action bar home/up action should open or close the drawer.
                 // ActionBarDrawerToggle will take care of this.
@@ -232,5 +248,14 @@ public class MainActivity extends ActionBarActivity {
         searchView.setIconified(query == null);
         searchView.clearFocus();
         drawerLayout.closeDrawers();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(isTaskRoot()) {
+            int cacheSizeMb = PreferenceUtil.getIntegerPreference(this, PreferenceUtil.PREF_CACHE_SIZE, 10);
+            AQUtility.cleanCacheAsync(this, cacheSizeMb * 1000000, cacheSizeMb * 1000000);
+        }
+        super.onDestroy();
     }
 }
