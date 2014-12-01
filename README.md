@@ -1,7 +1,13 @@
 Sismics Docs
 ============
 
-![](http://www.bgamard.org/img/projects/sismicsdocs.jpg)
+_Web interface_
+
+![Web interface](http://sismics.com/docs/screenshot1.png)
+
+_Android application_
+
+![Android documents list](http://sismics.com/docs/android1.png) ![Android navigation](http://sismics.com/docs/android2.png) ![Android document details](http://sismics.com/docs/android3.png)
 
 What is Docs?
 ---------------
@@ -24,11 +30,11 @@ Features
 - Document sharing
 - RESTful Web API
 
-License
--------
+Download
+--------
 
-Docs is released under the terms of the GPL license. See `COPYING` for more
-information or see <http://opensource.org/licenses/GPL-2.0>.
+The latest release is downloadable here: <https://github.com/sismics/docs/releases> in WAR format.
+You will need a Java webapp server to run it, like [Jetty](http://eclipse.org/jetty/) or [Tomcat](http://tomcat.apache.org/)
 
 How to build Docs from the sources
 ----------------------------------
@@ -65,3 +71,9 @@ From the `docs-web` directory:
     mvn -Pprod -DskipTests clean install
 
 You will get your deployable WAR in the `target` directory.
+
+License
+-------
+
+Docs is released under the terms of the GPL license. See `COPYING` for more
+information or see <http://opensource.org/licenses/GPL-2.0>.
