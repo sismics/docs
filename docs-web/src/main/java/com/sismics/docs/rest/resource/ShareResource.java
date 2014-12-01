@@ -91,12 +91,16 @@ public class ShareResource extends BaseResource {
         // Get the share
         ShareDao shareDao = new ShareDao();
         DocumentDao documentDao = new DocumentDao();
-        Share share;
+        Share share = shareDao.getShare(id);
+        if (share == null) {
+            throw new ClientException("ShareNotFound", MessageFormat.format("Share not found: {0}", id));
+        }
+        
+        // Check that the user is the owner of the linked document
         try {
-            share = shareDao.getShare(id);
             documentDao.getDocument(share.getDocumentId(), principal.getId());
         } catch (NoResultException e) {
-            throw new ClientException("ShareNotFound", MessageFormat.format("Share not found: {0}", id));
+            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", share.getDocumentId()));
         }
 
         // Delete the share

@@ -109,6 +109,16 @@ public class TestShareResource extends BaseJerseyTest {
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(163510, fileBytes.length);
         
+        // Deletes the share (not allowed)
+        clientUtil.createUser("share2");
+        String share2AuthenticationToken = clientUtil.login("share2");
+        shareResource = resource().path("/share/" + share1Id);
+        shareResource.addFilter(new CookieAuthenticationFilter(share2AuthenticationToken));
+        response = shareResource.delete(ClientResponse.class);
+        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals("DocumentNotFound", json.getString("type"));
+        
         // Deletes the share
         shareResource = resource().path("/share/" + share1Id);
         shareResource.addFilter(new CookieAuthenticationFilter(share1AuthenticationToken));
@@ -117,5 +127,12 @@ public class TestShareResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals("ok", json.getString("status"));
 
+        // Deletes the share again
+        shareResource = resource().path("/share/" + share1Id);
+        shareResource.addFilter(new CookieAuthenticationFilter(share1AuthenticationToken));
+        response = shareResource.delete(ClientResponse.class);
+        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals("ShareNotFound", json.getString("type"));
     }
 }
