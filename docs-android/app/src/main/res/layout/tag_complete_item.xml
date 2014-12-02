@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/edtTxt1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#ccc"
+    android:drawablePadding="2dp"
+    android:padding="8dp"
+    android:shadowColor="#FFFFFF"
+    android:shadowDy="1"
+    android:shadowRadius="0.01"
+    android:textColor="#000000"
+    android:textSize="18sp"
+    android:textStyle="bold" />

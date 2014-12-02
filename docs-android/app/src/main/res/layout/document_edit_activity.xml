@@ -58,7 +58,7 @@
         android:layout_margin="8dp"
         android:padding="16dp"/>
 
-    <MultiAutoCompleteTextView
+    <com.sismics.docs.ui.view.TagsCompleteTextView
         android:id="@+id/tagsEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

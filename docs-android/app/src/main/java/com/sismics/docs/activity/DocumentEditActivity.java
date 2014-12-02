@@ -36,8 +36,7 @@ public class DocumentEditActivity extends ActionBarActivity {
 
         MultiAutoCompleteTextView tagsEditText = (MultiAutoCompleteTextView) findViewById(R.id.tagsEditText);
         tagsEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,
-                new String[] { "Caluire", "Appartement", "Banque", "Assurance" }));
-        tagsEditText.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+                new String[]{"Caluire", "Appartement", "Banque", "Assurance"}));
     }
 
     @Override
