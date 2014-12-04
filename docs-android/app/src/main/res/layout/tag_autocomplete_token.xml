@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/tag_autocomplete_token_bg">
+
+    <TextView
+        android:id="@+id/tagTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_label_white_24dp"
+        android:drawableStart="@drawable/ic_label_white_24dp"
+        android:text="Appartement"
+        android:drawablePadding="8dp"
+        android:padding="8dp"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="#666"/>
+
+</LinearLayout>

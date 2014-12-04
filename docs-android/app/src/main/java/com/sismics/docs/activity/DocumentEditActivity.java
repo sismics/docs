@@ -4,10 +4,18 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
 
 import com.sismics.docs.R;
+import com.sismics.docs.adapter.TagAutoCompleteAdapter;
+import com.sismics.docs.ui.view.TagsCompleteTextView;
+import com.sismics.docs.util.PreferenceUtil;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Document edition activity.
@@ -34,9 +42,21 @@ public class DocumentEditActivity extends ActionBarActivity {
         languageSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,
                 new String[] { "French", "English", "Japanese" }));
 
-        MultiAutoCompleteTextView tagsEditText = (MultiAutoCompleteTextView) findViewById(R.id.tagsEditText);
-        tagsEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,
-                new String[]{"Caluire", "Appartement", "Banque", "Assurance"}));
+        JSONObject tags = PreferenceUtil.getCachedJson(this, PreferenceUtil.PREF_CACHED_TAGS_JSON);
+        if (tags == null) {
+            finish();
+            return;
+        }
+        JSONArray tagArray = tags.optJSONArray("stats");
+
+        List<JSONObject> tagList = new ArrayList<>();
+        for (int i = 0; i < tagArray.length(); i++) {
+            tagList.add(tagArray.optJSONObject(i));
+        }
+
+        TagsCompleteTextView tagsEditText = (TagsCompleteTextView) findViewById(R.id.tagsEditText);
+        tagsEditText.allowDuplicates(false);
+        tagsEditText.setAdapter(new TagAutoCompleteAdapter(this, 0, tagList));
     }
 
     @Override
