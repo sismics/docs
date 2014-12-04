@@ -2,6 +2,7 @@ package com.sismics.docs.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.sismics.docs.R;
 import com.sismics.docs.util.TagUtil;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -45,7 +47,11 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
         }
     }
 
+    /**
+     * Default constructor.
+     */
     public DocListAdapter() {
+        // Nothing
     }
 
     @Override
@@ -116,5 +122,25 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
         }
 
         notifyDataSetChanged();
+    }
+
+    /**
+     * Update a document.
+     *
+     * @param document Document
+     */
+    public void updateDocument(JSONObject document) {
+        for (int i = 0; i < documents.length(); i++) {
+            JSONObject currentDoc = documents.optJSONObject(i);
+            if (currentDoc.optString("id").equals(document.optString("id"))) {
+                // This document has been modified
+                try {
+                    documents.put(i, document);
+                    notifyDataSetChanged();
+                } catch (JSONException e) {
+                    Log.e(DocListAdapter.class.getSimpleName(), "Error while updating a document", e);
+                }
+            }
+        }
     }
 }

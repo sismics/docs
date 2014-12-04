@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.sismics.docs.R;
 import com.sismics.docs.adapter.FilePagerAdapter;
+import com.sismics.docs.event.DocumentEditEvent;
 import com.sismics.docs.event.DocumentFullscreenEvent;
 import com.sismics.docs.fragment.DocShareFragment;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
@@ -44,6 +45,16 @@ import de.greenrobot.event.EventBus;
  * @author bgamard
  */
 public class DocumentViewActivity extends ActionBarActivity {
+    /**
+     * Request code of adding file.
+     */
+    public static final int REQUEST_CODE_ADD_FILE = 1;
+
+    /**
+     * Request code of editing document.
+     */
+    public static final int REQUEST_CODE_EDIT_DOCUMENT = 2;
+
     /**
      * File view pager.
      */
@@ -95,7 +106,7 @@ public class DocumentViewActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        // Grab the document
+        // Fill the view
         refreshDocument(document);
 
         EventBus.getDefault().register(this);
@@ -134,6 +145,7 @@ public class DocumentViewActivity extends ActionBarActivity {
         if (description == null || description.isEmpty()) {
             descriptionTextView.setVisibility(View.GONE);
         } else {
+            descriptionTextView.setVisibility(View.VISIBLE);
             descriptionTextView.setText(description);
         }
 
@@ -141,6 +153,7 @@ public class DocumentViewActivity extends ActionBarActivity {
         if (tags.length() == 0) {
             tagTextView.setVisibility(View.GONE);
         } else {
+            tagTextView.setVisibility(View.VISIBLE);
             tagTextView.setText(TagUtil.buildSpannable(tags));
         }
 
@@ -203,13 +216,13 @@ public class DocumentViewActivity extends ActionBarActivity {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT)
                     .setType("*/*")
                     .putExtra("android.intent.extra.ALLOW_MULTIPLE", true);
-                startActivityForResult(Intent.createChooser(intent, getText(R.string.upload_from)), 1);
+                startActivityForResult(Intent.createChooser(intent, getText(R.string.upload_from)), REQUEST_CODE_ADD_FILE);
                 return true;
 
             case R.id.edit:
                 intent = new Intent(this, DocumentEditActivity.class);
-                intent.putExtra("document", getIntent().getStringExtra("document"));
-                startActivityForResult(intent, 2);
+                intent.putExtra("document", document.toString());
+                startActivityForResult(intent, REQUEST_CODE_EDIT_DOCUMENT);
                 return true;
 
             case android.R.id.home:
@@ -219,11 +232,6 @@ public class DocumentViewActivity extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Reload the current document from data after document edition
     }
 
     /**
@@ -277,8 +285,25 @@ public class DocumentViewActivity extends ActionBarActivity {
         downloadManager.enqueue(request);
     }
 
+    /**
+     * A document fullscreen event has been fired.
+     *
+     * @param event Document fullscreen event
+     */
     public void onEvent(DocumentFullscreenEvent event) {
         findViewById(R.id.detailLayout).setVisibility(event.isFullscreen() ? View.GONE : View.VISIBLE);
+    }
+
+    /**
+     * A document edit event has been fired.
+     *
+     * @param event Document edit event
+     */
+    public void onEvent(DocumentEditEvent event) {
+        if (event.getDocument().optString("id").equals(document.optString("id"))) {
+            // The current document has been modified, refresh it
+            refreshDocument(event.getDocument());
+        }
     }
 
     @Override

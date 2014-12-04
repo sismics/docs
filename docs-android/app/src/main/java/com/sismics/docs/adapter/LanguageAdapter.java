@@ -86,7 +86,7 @@ public class LanguageAdapter extends BaseAdapter {
     /**
      * A language.
      */
-    private static class Language {
+    public static class Language {
         private String id;
         private int name;
         private int drawable;
@@ -102,6 +102,10 @@ public class LanguageAdapter extends BaseAdapter {
             this.id = id;
             this.name = name;
             this.drawable = drawable;
+        }
+
+        public String getId() {
+            return id;
         }
     }
 }

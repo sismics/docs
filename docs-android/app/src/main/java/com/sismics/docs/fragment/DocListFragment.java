@@ -17,6 +17,7 @@ import com.sismics.docs.R;
 import com.sismics.docs.activity.DocumentEditActivity;
 import com.sismics.docs.activity.DocumentViewActivity;
 import com.sismics.docs.adapter.DocListAdapter;
+import com.sismics.docs.event.DocumentEditEvent;
 import com.sismics.docs.event.SearchEvent;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.listener.RecyclerItemClickListener;
@@ -152,6 +153,15 @@ public class DocListFragment extends Fragment {
     public void onEvent(SearchEvent event) {
         query = event.getQuery();
         loadDocuments(getView(), true);
+    }
+
+    /**
+     * A document edit event has been fired.
+     *
+     * @param event Document edit event
+     */
+    public void onEvent(DocumentEditEvent event) {
+        adapter.updateDocument(event.getDocument());
     }
 
     /**
