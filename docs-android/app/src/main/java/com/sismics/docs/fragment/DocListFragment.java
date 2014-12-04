@@ -134,6 +134,11 @@ public class DocListFragment extends Fragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Reload the documents after document creation and open it from data
+    }
+
+    @Override
     public void onDestroyView() {
         EventBus.getDefault().unregister(this);
         super.onDestroyView();

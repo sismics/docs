@@ -206,6 +206,12 @@ public class DocumentViewActivity extends ActionBarActivity {
                 startActivityForResult(Intent.createChooser(intent, getText(R.string.upload_from)), 1);
                 return true;
 
+            case R.id.edit:
+                intent = new Intent(this, DocumentEditActivity.class);
+                intent.putExtra("document", getIntent().getStringExtra("document"));
+                startActivityForResult(intent, 2);
+                return true;
+
             case android.R.id.home:
                 finish();
                 return true;
@@ -217,6 +223,7 @@ public class DocumentViewActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Reload the current document from data after document edition
     }
 
     /**

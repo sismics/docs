@@ -74,6 +74,8 @@
     <string name="language_french">French</string>
     <string name="language_english">English</string>
     <string name="language_japanese">Japanese</string>
+    <string name="save">Save</string>
+    <string name="edit_document">Edit document</string>
 
 
 </resources>

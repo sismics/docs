@@ -68,6 +68,22 @@ public class LanguageAdapter extends BaseAdapter {
     }
 
     /**
+     * Return the position of a language.
+     * 0 if it doesn't exists.
+     *
+     * @param languageId Language ID
+     * @return Position
+     */
+    public int getItemPosition(String languageId) {
+        for (Language language : languageList) {
+            if (language.id.equals(languageId)) {
+                return languageList.indexOf(language);
+            }
+        }
+        return 0;
+    }
+
+    /**
      * A language.
      */
     private static class Language {

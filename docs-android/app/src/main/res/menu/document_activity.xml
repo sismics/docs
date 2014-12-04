@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/edit"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_create_white_24dp"
+        android:title="@string/edit_document">
+    </item>
+
+    <item
         android:id="@+id/upload_file"
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_file_upload_white_24dp"

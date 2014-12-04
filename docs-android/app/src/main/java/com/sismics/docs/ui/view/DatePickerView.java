@@ -2,15 +2,25 @@ package com.sismics.docs.ui.view;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
-public class DatePickerView extends TextView implements DatePickerDialog.OnDateSetListener{
- 
+/**
+ * Date picker widget.
+ *
+ * @author bgamard
+ */
+public class DatePickerView extends TextView implements DatePickerDialog.OnDateSetListener {
+
+    private Date date;
+
     public DatePickerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
@@ -41,6 +51,17 @@ public class DatePickerView extends TextView implements DatePickerDialog.OnDateS
  
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        setText(String.format("%s/%s/%s", monthOfYear, dayOfMonth, year));
+        Date date = new GregorianCalendar(year, monthOfYear, dayOfMonth).getTime();
+        setDate(date);
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+        String formattedDate = DateFormat.getDateFormat(getContext()).format(date);
+        setText(formattedDate);
+    }
+
+    public Date getDate() {
+        return date;
     }
 }
