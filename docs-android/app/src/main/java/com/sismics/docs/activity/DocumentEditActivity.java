@@ -3,10 +3,10 @@ package com.sismics.docs.activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.sismics.docs.R;
+import com.sismics.docs.adapter.LanguageAdapter;
 import com.sismics.docs.adapter.TagAutoCompleteAdapter;
 import com.sismics.docs.ui.view.TagsCompleteTextView;
 import com.sismics.docs.util.PreferenceUtil;
@@ -39,8 +39,7 @@ public class DocumentEditActivity extends ActionBarActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
 
         Spinner languageSpinner = (Spinner) findViewById(R.id.languageSpinner);
-        languageSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,
-                new String[] { "French", "English", "Japanese" }));
+        languageSpinner.setAdapter(new LanguageAdapter(this));
 
         JSONObject tags = PreferenceUtil.getCachedJson(this, PreferenceUtil.PREF_CACHED_TAGS_JSON);
         if (tags == null) {

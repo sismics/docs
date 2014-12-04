@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/languageTextView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:drawableLeft="@drawable/fra"
+    android:drawableStart="@drawable/fra"
+    android:text="French"
+    android:drawablePadding="8dp"
+    android:padding="12dp"
+    android:gravity="center_vertical"
+    android:textSize="16sp"
+    android:textColor="#666"
+    android:singleLine="true"
+    android:ellipsize="end"/>
