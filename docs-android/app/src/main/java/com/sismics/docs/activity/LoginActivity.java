@@ -62,10 +62,10 @@ public class LoginActivity extends ActionBarActivity {
         progressBar.setVisibility(View.VISIBLE);
         
         // Form validation
-        final Validator validator = new Validator(false);
-        validator.addValidable(this, txtServer, new Required());
-        validator.addValidable(this, txtUsername, new Required());
-        validator.addValidable(this, txtPassword, new Required());
+        final Validator validator = new Validator(this, false);
+        validator.addValidable(txtServer, new Required());
+        validator.addValidable(txtUsername, new Required());
+        validator.addValidable(txtPassword, new Required());
         validator.setOnValidationChanged(new CallbackListener() {
             @Override
             public void onComplete() {

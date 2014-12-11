@@ -22,7 +22,7 @@ public class Validator {
     /**
      * List of validable elements.
      */
-    private Map<View, Validable> validables = new HashMap<View, Validable>();
+    private Map<EditText, Validable> validables = new HashMap<EditText, Validable>();
     
     /**
      * Callback when the validation of one element has changed.
@@ -33,13 +33,19 @@ public class Validator {
      * True if the validator show validation errors.
      */
     private boolean showErrors;
+
+    /**
+     * Context.
+     */
+    private Context context;
     
     /**
      * Constructor.
      *
      * @param showErrors True to display validation errors
      */
-    public Validator(boolean showErrors) {
+    public Validator(Context context, boolean showErrors) {
+        this.context = context;
         this.showErrors = showErrors;
     }
     
@@ -58,12 +64,11 @@ public class Validator {
      * @param editText Edit text
      * @param validatorTypes Validators
      */
-    public void addValidable(final Context context, final EditText editText, final ValidatorType...validatorTypes) {
-        final Validable validable = new Validable();
+    public void addValidable(final EditText editText, final ValidatorType... validatorTypes) {
+        final Validable validable = new Validable(validatorTypes);
         validables.put(editText, validable);
         
         editText.addTextChangedListener(new TextWatcher() {
-            
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // NOP
@@ -76,24 +81,7 @@ public class Validator {
             
             @Override
             public void afterTextChanged(Editable s) {
-                validable.setValidated(true);
-                for (ValidatorType validatorType : validatorTypes) {
-                    if (!validatorType.validate(s.toString())) {
-                        if (showErrors) {
-                            editText.setError(validatorType.getErrorMessage(context));
-                        }
-                        validable.setValidated(false);
-                        break;
-                    }
-                }
-                
-                if (validable.isValidated()) {
-                    editText.setError(null);
-                }
-                
-                if (onValidationChanged != null) {
-                    onValidationChanged.onComplete();
-                }
+                validate(editText, validable);
             }
         });
     }
@@ -107,7 +95,43 @@ public class Validator {
     public boolean isValidated(View view) {
         return validables.get(view).isValidated();
     }
-    
+
+    /**
+     * Validate a specific EditText.
+     *
+     * @param editText EditText
+     * @param validable Validable
+     */
+    private void validate(EditText editText, Validable validable) {
+        validable.setValidated(true);
+        for (ValidatorType validatorType : validable.getValidatorTypes()) {
+            if (!validatorType.validate(editText.getEditableText().toString())) {
+                if (showErrors) {
+                    editText.setError(validatorType.getErrorMessage(context));
+                }
+                validable.setValidated(false);
+                break;
+            }
+        }
+
+        if (validable.isValidated()) {
+            editText.setError(null);
+        }
+
+        if (onValidationChanged != null) {
+            onValidationChanged.onComplete();
+        }
+    }
+
+    /**
+     * Validate everything now.
+     */
+    public void validate() {
+        for (Map.Entry<EditText, Validable> entry : validables.entrySet()) {
+            validate(entry.getKey(), entry.getValue());
+        }
+    }
+
     /**
      * Returns true if all elements are validated.
      *

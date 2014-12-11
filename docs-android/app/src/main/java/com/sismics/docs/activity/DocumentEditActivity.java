@@ -19,6 +19,8 @@ import com.sismics.docs.event.DocumentAddEvent;
 import com.sismics.docs.event.DocumentEditEvent;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.resource.DocumentResource;
+import com.sismics.docs.ui.form.Validator;
+import com.sismics.docs.ui.form.validator.Required;
 import com.sismics.docs.ui.view.DatePickerView;
 import com.sismics.docs.ui.view.TagsCompleteTextView;
 import com.sismics.docs.util.PreferenceUtil;
@@ -45,7 +47,12 @@ public class DocumentEditActivity extends ActionBarActivity {
     /**
      * Document edited.
      */
-    JSONObject document;
+    private JSONObject document;
+
+    /**
+     * Form validator.
+     */
+    private Validator validator;
 
     // View cache
     private EditText titleEditText;
@@ -105,7 +112,10 @@ public class DocumentEditActivity extends ActionBarActivity {
         tagsEditText.allowDuplicates(false);
         tagsEditText.setAdapter(new TagAutoCompleteAdapter(this, 0, tagList));
 
-        // TODO Form validation
+        // Validation
+        validator = new Validator(this, true);
+        validator.addValidable(titleEditText, new Required());
+
         // Fill the activity
         if (document == null) {
             datePickerView.setDate(new Date());
@@ -133,6 +143,11 @@ public class DocumentEditActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save:
+                validator.validate();
+                if (!validator.isValidated()) {
+                    return true;
+                }
+
                 // Metadata
                 final String title = titleEditText.getText().toString();
                 final String description = descriptionEditText.getText().toString();
