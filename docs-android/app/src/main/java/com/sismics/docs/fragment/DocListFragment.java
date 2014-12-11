@@ -17,6 +17,7 @@ import com.sismics.docs.R;
 import com.sismics.docs.activity.DocumentEditActivity;
 import com.sismics.docs.activity.DocumentViewActivity;
 import com.sismics.docs.adapter.DocListAdapter;
+import com.sismics.docs.event.DocumentAddEvent;
 import com.sismics.docs.event.DocumentEditEvent;
 import com.sismics.docs.event.SearchEvent;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
@@ -43,6 +44,11 @@ public class DocListFragment extends Fragment {
      * Search query.
      */
     private String query;
+
+    /**
+     * Request code of adding document.
+     */
+    private static final int REQUEST_CODE_ADD_DOCUMENT = 1;
 
     // View cache
     private EmptyRecyclerView recyclerView;
@@ -87,9 +93,7 @@ public class DocListFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 JSONObject document = adapter.getItemAt(position);
                 if (document != null) {
-                    Intent intent = new Intent(getActivity(), DocumentViewActivity.class);
-                    intent.putExtra("document", document.toString());
-                    startActivity(intent);
+                    openDocument(document);
                 }
             }
         }));
@@ -123,7 +127,7 @@ public class DocListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), DocumentEditActivity.class);
-                startActivityForResult(intent, 1);
+                startActivityForResult(intent, REQUEST_CODE_ADD_DOCUMENT);
             }
         });
 
@@ -132,11 +136,6 @@ public class DocListFragment extends Fragment {
 
         EventBus.getDefault().register(this);
         return view;
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Reload the documents after document creation and open it from data
     }
 
     @Override
@@ -162,6 +161,30 @@ public class DocListFragment extends Fragment {
      */
     public void onEvent(DocumentEditEvent event) {
         adapter.updateDocument(event.getDocument());
+    }
+
+    /**
+     * A document add event has been fired.
+     *
+     * @param event Document add event
+     */
+    public void onEvent(DocumentAddEvent event) {
+        // Refresh the list, maybe the new document fit in it
+        loadDocuments(getView(), true);
+
+        // Open the newly created document
+        openDocument(event.getDocument());
+    }
+
+    /**
+     * Open a document.
+     *
+     * @param document Document to open
+     */
+    private void openDocument(JSONObject document) {
+        Intent intent = new Intent(getActivity(), DocumentViewActivity.class);
+        intent.putExtra("document", document.toString());
+        startActivity(intent);
     }
 
     /**

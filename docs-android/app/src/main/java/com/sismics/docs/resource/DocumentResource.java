@@ -5,6 +5,8 @@ import android.content.Context;
 import com.loopj.android.http.RequestParams;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 
+import java.util.Set;
+
 /**
  * Access to /document API.
  * 
@@ -42,5 +44,63 @@ public class DocumentResource extends BaseResource {
         init(context);
 
         client.get(getApiUrl(context) + "/document/" + id, responseHandler);
+    }
+
+    /**
+     * PUT /document.
+     *
+     * @param context Context
+     * @param title Title
+     * @param description Description
+     * @param tagIdList Tags ID list
+     * @param language Language
+     * @param createDate Create date
+     * @param responseHandler Callback
+     */
+    public static void add(Context context, String title, String description,
+                           Set<String> tagIdList, String language, long createDate, JsonHttpResponseHandler responseHandler) {
+        init(context);
+
+        RequestParams params = new RequestParams();
+        params.put("title", title);
+        params.put("description", description);
+        params.put("tags", tagIdList);
+        params.put("language", language);
+        params.put("create_date", createDate);
+        client.put(getApiUrl(context) + "/document", params, responseHandler);
+    }
+
+    /**
+     * POST /document/id.
+     *
+     * @param context Context
+     * @param id ID
+     * @param title Title
+     * @param description Description
+     * @param tagIdList Tags ID list
+     * @param language Language
+     * @param createDate Create date
+     * @param responseHandler Callback
+     */
+    public static void edit(Context context, String id, String title, String description,
+                           Set<String> tagIdList, String language, long createDate, JsonHttpResponseHandler responseHandler) {
+        init(context);
+
+        RequestParams params = new RequestParams();
+        params.put("title", title);
+        params.put("description", description);
+        params.put("tags", tagIdList);
+        params.put("language", language);
+        params.put("create_date", createDate);
+        client.post(getApiUrl(context) + "/document/" + id, params, responseHandler);
+    }
+
+    /**
+     * Cancel pending requests.
+     *
+     * @param context Context
+     */
+    public static void cancel(Context context) {
+        client.cancelRequests(context, true);
     }
 }

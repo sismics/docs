@@ -118,6 +118,8 @@ public class DocumentViewActivity extends ActionBarActivity {
      * @param document Document in JSON format
      */
     private void refreshDocument(JSONObject document) {
+        this.document = document;
+
         String id = document.optString("id");
         String title = document.optString("title");
         String date = DateFormat.getDateFormat(this).format(new Date(document.optLong("create_date")));

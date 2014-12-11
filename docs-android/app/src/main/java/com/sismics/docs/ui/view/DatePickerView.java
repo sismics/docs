@@ -40,6 +40,9 @@ public class DatePickerView extends TextView implements DatePickerDialog.OnDateS
             @Override
             public void onClick(View v) {
                 final Calendar calendar = Calendar.getInstance();
+                if (date != null) {
+                    calendar.setTime(date);
+                }
                 new DatePickerDialog(
                         DatePickerView.this.getContext(), DatePickerView.this,
                         calendar.get(Calendar.YEAR),

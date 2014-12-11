@@ -1,5 +1,7 @@
 package com.sismics.docs.activity;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -8,22 +10,29 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.sismics.docs.R;
 import com.sismics.docs.adapter.LanguageAdapter;
 import com.sismics.docs.adapter.TagAutoCompleteAdapter;
+import com.sismics.docs.event.DocumentAddEvent;
 import com.sismics.docs.event.DocumentEditEvent;
+import com.sismics.docs.listener.JsonHttpResponseHandler;
+import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.ui.view.DatePickerView;
 import com.sismics.docs.ui.view.TagsCompleteTextView;
 import com.sismics.docs.util.PreferenceUtil;
 
+import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.greenrobot.event.EventBus;
 
@@ -96,6 +105,7 @@ public class DocumentEditActivity extends ActionBarActivity {
         tagsEditText.allowDuplicates(false);
         tagsEditText.setAdapter(new TagAutoCompleteAdapter(this, 0, tagList));
 
+        // TODO Form validation
         // Fill the activity
         if (document == null) {
             datePickerView.setDate(new Date());
@@ -123,35 +133,83 @@ public class DocumentEditActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.save:
-                JSONObject outputDoc = new JSONObject();
-                try {
-                    if (document != null) {
-                        outputDoc.putOpt("id", document.optString("id"));
-                        outputDoc.putOpt("shared", document.optBoolean("shared"));
-                    }
-                    outputDoc.putOpt("title", titleEditText.getText().toString());
-                    outputDoc.putOpt("description", descriptionEditText.getText().toString());
-                    if (languageSpinner.getSelectedItem() != null) {
-                        LanguageAdapter.Language language = (LanguageAdapter.Language) languageSpinner.getSelectedItem();
-                        outputDoc.putOpt("language", language.getId());
-                    }
-                    if (datePickerView.getDate() != null) {
-                        outputDoc.putOpt("create_date", datePickerView.getDate().getTime());
-                    }
-                    JSONArray tags = new JSONArray();
-                    for (Object object : tagsEditText.getObjects()) {
-                        if (object instanceof JSONObject) {
-                            tags.put(object);
-                        }
-                    }
-                    outputDoc.putOpt("tags", tags);
-                } catch (JSONException e) {
-                    Log.e(DocumentEditActivity.class.getSimpleName(), "Error building JSON for document", e);
+                // Metadata
+                final String title = titleEditText.getText().toString();
+                final String description = descriptionEditText.getText().toString();
+                LanguageAdapter.Language language = (LanguageAdapter.Language) languageSpinner.getSelectedItem();
+                final String langId = language.getId();
+                final long createDate = datePickerView.getDate().getTime();
+                Set<String> tagIdList = new HashSet<>();
+                for (Object object : tagsEditText.getObjects()) {
+                    JSONObject tag = (JSONObject) object;
+                    tagIdList.add(tag.optString("id"));
                 }
 
-                EventBus.getDefault().post(new DocumentEditEvent(outputDoc));
-                setResult(RESULT_OK);
-                finish();
+                // Cancellable progress dialog
+                final ProgressDialog progressDialog = ProgressDialog.show(this,
+                        getString(R.string.document_editing_title),
+                        getString(R.string.document_editing_message), true, true,
+                        new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                DocumentResource.cancel(DocumentEditActivity.this);
+                            }
+                        });
+
+                // Server callback
+                JsonHttpResponseHandler callback = new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        // Build a fake document JSON to update the UI
+                        final JSONObject outputDoc = new JSONObject();
+                        try {
+                            if (document == null) {
+                                outputDoc.putOpt("id", response.optString("id"));
+                                outputDoc.putOpt("shared", false);
+                            } else {
+                                outputDoc.putOpt("id", document.optString("id"));
+                                outputDoc.putOpt("shared", document.optBoolean("shared"));
+                            }
+                            outputDoc.putOpt("title", title);
+                            outputDoc.putOpt("description", description);
+                            outputDoc.putOpt("language", langId);
+                            outputDoc.putOpt("create_date", createDate);
+                            JSONArray tags = new JSONArray();
+                            for (Object object : tagsEditText.getObjects()) {
+                                tags.put(object);
+                            }
+                            outputDoc.putOpt("tags", tags);
+                        } catch (JSONException e) {
+                            Log.e(DocumentEditActivity.class.getSimpleName(), "Error building JSON for document", e);
+                        }
+
+                        // Fire the right event
+                        if (document == null) {
+                            EventBus.getDefault().post(new DocumentAddEvent(outputDoc));
+                        } else {
+                            EventBus.getDefault().post(new DocumentEditEvent(outputDoc));
+                        }
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+
+                    @Override
+                    public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                        Toast.makeText(DocumentEditActivity.this, R.string.error_editing_document, Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        progressDialog.dismiss();
+                    }
+                };
+
+                // Actual server call
+                if (document == null) {
+                    DocumentResource.add(this, title, description, tagIdList, langId, createDate, callback);
+                } else {
+                    DocumentResource.edit(this, document.optString("id"), title, description, tagIdList, langId, createDate, callback);
+                }
                 return true;
 
             case android.R.id.home:
