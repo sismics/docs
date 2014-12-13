@@ -2,7 +2,6 @@ package com.sismics.docs.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +12,11 @@ import com.sismics.docs.R;
 import com.sismics.docs.util.TagUtil;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Adapter of documents.
@@ -27,7 +27,7 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
     /**
      * Displayed documents.
      */
-    private JSONArray documents;
+    private List<JSONObject> documents;
 
     /**
      * ViewHolder.
@@ -64,7 +64,7 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        JSONObject document = documents.optJSONObject(position);
+        JSONObject document = documents.get(position);
 
         holder.titleTextView.setText(document.optString("title"));
 
@@ -82,7 +82,7 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
         if (documents == null) {
             return 0;
         }
-        return documents.length();
+        return documents.size();
     }
 
     /**
@@ -96,14 +96,14 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
             return null;
         }
 
-        return documents.optJSONObject(position);
+        return documents.get(position);
     }
 
     /**
      * Clear the documents.
      */
     public void clearDocuments() {
-        documents = new JSONArray();
+        documents = new ArrayList<>();
         notifyDataSetChanged();
     }
 
@@ -114,11 +114,11 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
      */
     public void addDocuments(JSONArray documents) {
         if (this.documents == null) {
-            this.documents = new JSONArray();
+            this.documents = new ArrayList<>();
         }
 
         for (int i = 0; i < documents.length(); i++) {
-            this.documents.put(documents.optJSONObject(i));
+            this.documents.add(documents.optJSONObject(i));
         }
 
         notifyDataSetChanged();
@@ -130,16 +130,28 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
      * @param document Document
      */
     public void updateDocument(JSONObject document) {
-        for (int i = 0; i < documents.length(); i++) {
-            JSONObject currentDoc = documents.optJSONObject(i);
+        for (int i = 0; i < documents.size(); i++) {
+            JSONObject currentDoc = documents.get(i);
             if (currentDoc.optString("id").equals(document.optString("id"))) {
                 // This document has been modified
-                try {
-                    documents.put(i, document);
-                    notifyDataSetChanged();
-                } catch (JSONException e) {
-                    Log.e(DocListAdapter.class.getSimpleName(), "Error while updating a document", e);
-                }
+                documents.set(i, document);
+                notifyDataSetChanged();
+            }
+        }
+    }
+
+    /**
+     * Delete a document.
+     *
+     * @param documentId Document ID
+     */
+    public void deleteDocument(String documentId) {
+        for (int i = 0; i < documents.size(); i++) {
+            JSONObject currentDoc = documents.get(i);
+            if (currentDoc.optString("id").equals(documentId)) {
+                // This document has been deleted
+                documents.remove(i);
+                notifyDataSetChanged();
             }
         }
     }

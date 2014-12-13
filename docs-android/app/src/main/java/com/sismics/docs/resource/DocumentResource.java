@@ -47,6 +47,19 @@ public class DocumentResource extends BaseResource {
     }
 
     /**
+     * DELETE /document/id.
+     *
+     * @param context Context
+     * @param id ID
+     * @param responseHandler Callback
+     */
+    public static void delete(Context context, String id, JsonHttpResponseHandler responseHandler) {
+        init(context);
+
+        client.delete(getApiUrl(context) + "/document/" + id, responseHandler);
+    }
+
+    /**
      * PUT /document.
      *
      * @param context Context

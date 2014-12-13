@@ -79,6 +79,10 @@
     <string name="error_editing_document">Network error, please try again</string>
     <string name="document_editing_title">Please wait</string>
     <string name="document_editing_message">Sending your data</string>
+    <string name="delete_document">Delete document</string>
+    <string name="delete_document_title">Delete document</string>
+    <string name="delete_document_message">Really delete this document and all associated files?</string>
+    <string name="document_delete_failure">Network error while deleting this document</string>
 
 
 </resources>

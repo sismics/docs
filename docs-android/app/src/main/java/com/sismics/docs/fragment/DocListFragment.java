@@ -18,6 +18,7 @@ import com.sismics.docs.activity.DocumentEditActivity;
 import com.sismics.docs.activity.DocumentViewActivity;
 import com.sismics.docs.adapter.DocListAdapter;
 import com.sismics.docs.event.DocumentAddEvent;
+import com.sismics.docs.event.DocumentDeleteEvent;
 import com.sismics.docs.event.DocumentEditEvent;
 import com.sismics.docs.event.SearchEvent;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
@@ -161,6 +162,15 @@ public class DocListFragment extends Fragment {
      */
     public void onEvent(DocumentEditEvent event) {
         adapter.updateDocument(event.getDocument());
+    }
+
+    /**
+     * A document delete event has been fired.
+     *
+     * @param event Document delete event
+     */
+    public void onEvent(DocumentDeleteEvent event) {
+        adapter.deleteDocument(event.getDocumentId());
     }
 
     /**

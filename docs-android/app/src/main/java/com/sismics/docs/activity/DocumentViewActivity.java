@@ -1,7 +1,10 @@
 package com.sismics.docs.activity;
 
+import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,15 +21,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sismics.docs.R;
 import com.sismics.docs.adapter.FilePagerAdapter;
+import com.sismics.docs.event.DocumentDeleteEvent;
 import com.sismics.docs.event.DocumentEditEvent;
 import com.sismics.docs.event.DocumentFullscreenEvent;
 import com.sismics.docs.fragment.DocShareFragment;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
+import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.resource.FileResource;
+import com.sismics.docs.util.DialogUtil;
 import com.sismics.docs.util.PreferenceUtil;
 import com.sismics.docs.util.TagUtil;
 
@@ -227,6 +234,10 @@ public class DocumentViewActivity extends ActionBarActivity {
                 startActivityForResult(intent, REQUEST_CODE_EDIT_DOCUMENT);
                 return true;
 
+            case R.id.delete_document:
+                deleteDocument();
+                return true;
+
             case android.R.id.home:
                 finish();
                 return true;
@@ -288,6 +299,62 @@ public class DocumentViewActivity extends ActionBarActivity {
     }
 
     /**
+     * Delete the current document.
+     */
+    private void deleteDocument() {
+        if (document == null) return;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(R.string.delete_document_title)
+                .setMessage(R.string.delete_document_message)
+                .setCancelable(true)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Dismiss the confirmation dialog
+                        dialog.dismiss();
+
+                        // Show a progress dialog while deleting
+                        final ProgressDialog progressDialog = ProgressDialog.show(DocumentViewActivity.this,
+                                getString(R.string.document_editing_title),
+                                getString(R.string.document_editing_message), true, true,
+                                new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialog) {
+                                        DocumentResource.cancel(DocumentViewActivity.this);
+                                    }
+                                });
+
+                        // Actual delete server call
+                        final String documentId = document.optString("id");
+                        DocumentResource.delete(DocumentViewActivity.this, documentId, new JsonHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                EventBus.getDefault().post(new DocumentDeleteEvent(documentId));
+                            }
+
+                            @Override
+                            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                                Toast.makeText(DocumentViewActivity.this, R.string.document_delete_failure, Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                progressDialog.dismiss();
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create().show();
+
+    }
+
+    /**
      * A document fullscreen event has been fired.
      *
      * @param event Document fullscreen event
@@ -302,9 +369,23 @@ public class DocumentViewActivity extends ActionBarActivity {
      * @param event Document edit event
      */
     public void onEvent(DocumentEditEvent event) {
+        if (document == null) return;
         if (event.getDocument().optString("id").equals(document.optString("id"))) {
             // The current document has been modified, refresh it
             refreshDocument(event.getDocument());
+        }
+    }
+
+    /**
+     * A document delete event has been fired.
+     *
+     * @param event Document delete event
+     */
+    public void onEvent(DocumentDeleteEvent event) {
+        if (document == null) return;
+        if (event.getDocumentId().equals(document.optString("id"))) {
+            // The current document has been deleted, close this activity
+            finish();
         }
     }
 

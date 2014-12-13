@@ -34,4 +34,10 @@
         android:title="@string/download_document">
     </item>
 
+    <item
+        android:id="@+id/delete_document"
+        app:showAsAction="collapseActionView"
+        android:title="@string/delete_document">
+    </item>
+
 </menu>

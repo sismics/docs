@@ -21,7 +21,6 @@ public class MainApplication extends Application {
         ApplicationContext.getInstance().setUserInfo(getApplicationContext(), json);
 
         // TODO Fullscreen preview
-        // TODO Document deleting
         // TODO Files adding/deleting
 
         super.onCreate();
