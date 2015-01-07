@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name=".MainApplication"
@@ -45,6 +46,14 @@
         <provider android:name=".provider.RecentSuggestionsProvider"
             android:exported="false"
             android:authorities="com.sismics.docs.provider.RecentSuggestionsProvider" />
+        <service
+            android:name=".service.FileUploadService"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.sismics.docs.file.upload"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

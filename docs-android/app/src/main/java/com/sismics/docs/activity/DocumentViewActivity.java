@@ -33,7 +33,7 @@ import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.resource.FileResource;
-import com.sismics.docs.util.DialogUtil;
+import com.sismics.docs.service.FileUploadService;
 import com.sismics.docs.util.PreferenceUtil;
 import com.sismics.docs.util.TagUtil;
 
@@ -223,8 +223,9 @@ public class DocumentViewActivity extends ActionBarActivity {
 
             case R.id.upload_file:
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT)
-                    .setType("*/*")
-                    .putExtra("android.intent.extra.ALLOW_MULTIPLE", true);
+                        .setType("*/*")
+                        .putExtra("android.intent.extra.ALLOW_MULTIPLE", true)
+                        .addCategory(Intent.CATEGORY_OPENABLE);
                 startActivityForResult(Intent.createChooser(intent, getText(R.string.upload_from)), REQUEST_CODE_ADD_FILE);
                 return true;
 
@@ -317,7 +318,7 @@ public class DocumentViewActivity extends ActionBarActivity {
                         // Show a progress dialog while deleting
                         final ProgressDialog progressDialog = ProgressDialog.show(DocumentViewActivity.this,
                                 getString(R.string.document_editing_title),
-                                getString(R.string.document_editing_message), true, true,
+                                getString(R.string.document_deleting_message), true, true,
                                 new DialogInterface.OnCancelListener() {
                                     @Override
                                     public void onCancel(DialogInterface dialog) {
@@ -386,6 +387,15 @@ public class DocumentViewActivity extends ActionBarActivity {
         if (event.getDocumentId().equals(document.optString("id"))) {
             // The current document has been deleted, close this activity
             finish();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_ADD_FILE && resultCode == RESULT_OK) {
+            Intent intent = new Intent(this, FileUploadService.class)
+                    .putExtra(FileUploadService.PARAM_URI, data.getData());
+            startService(intent);
         }
     }
 
