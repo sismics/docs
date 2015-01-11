@@ -36,12 +36,12 @@ public class BaseResource {
     /**
      * User-Agent to use.
      */
-    private static String USER_AGENT = null;
+    protected static String USER_AGENT = null;
     
     /**
      * Accept-Language header.
      */
-    private static String ACCEPT_LANGUAGE = null; 
+    protected static String ACCEPT_LANGUAGE = null;
     
     /**
      * HTTP client.
@@ -69,8 +69,7 @@ public class BaseResource {
      * @param context Context
      */
     protected static void init(Context context) {
-        PersistentCookieStore cookieStore = new PersistentCookieStore(context);
-        client.setCookieStore(cookieStore);
+        client.setCookieStore(new PersistentCookieStore(context));
         
         if (USER_AGENT == null) {
             USER_AGENT = "Sismics Docs Android " + ApplicationUtil.getVersionName(context) + "/Android " + Build.VERSION.RELEASE + "/" + Build.MODEL;

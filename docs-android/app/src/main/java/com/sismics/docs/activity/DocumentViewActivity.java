@@ -3,10 +3,12 @@ package com.sismics.docs.activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
@@ -42,7 +44,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -392,10 +396,35 @@ public class DocumentViewActivity extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (document == null) return;
+
         if (requestCode == REQUEST_CODE_ADD_FILE && resultCode == RESULT_OK) {
-            Intent intent = new Intent(this, FileUploadService.class)
-                    .putExtra(FileUploadService.PARAM_URI, data.getData());
-            startService(intent);
+            List<Uri> uriList = new ArrayList<>();
+            // Single file upload
+            if (data.getData() != null) {
+                uriList.add(data.getData());
+            }
+
+            // Handle multiple file upload
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                ClipData clipData = data.getClipData();
+                if (clipData != null) {
+                    for (int i = 0; i < clipData.getItemCount(); ++i) {
+                        Uri uri = clipData.getItemAt(i).getUri();
+                        if (uri != null) {
+                            uriList.add(uri);
+                        }
+                    }
+                }
+            }
+
+            // Upload all files
+            for (Uri uri : uriList) {
+                Intent intent = new Intent(this, FileUploadService.class)
+                        .putExtra(FileUploadService.PARAM_URI, uri)
+                        .putExtra(FileUploadService.PARAM_DOCUMENT_ID, document.optString("id"));
+                startService(intent);
+            }
         }
     }
 

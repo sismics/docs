@@ -11,6 +11,11 @@ import android.support.v4.app.NotificationCompat.Builder;
 import android.util.Log;
 
 import com.sismics.docs.R;
+import com.sismics.docs.listener.JsonHttpResponseHandler;
+import com.sismics.docs.resource.FileResource;
+
+import org.apache.http.Header;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +31,7 @@ public class FileUploadService extends IntentService {
     private static final int UPLOAD_NOTIFICATION_ID = 1;
     private static final int UPLOAD_NOTIFICATION_ID_DONE = 2;
     public static final String PARAM_URI = "uri";
+    public static final String PARAM_DOCUMENT_ID = "documentId";
 
     private NotificationManager notificationManager;
     private Builder notification;
@@ -54,7 +60,7 @@ public class FileUploadService extends IntentService {
         wakeLock.acquire();
         try {
             onStart();
-            handleFileUpload((Uri) intent.getParcelableExtra(PARAM_URI));
+            handleFileUpload(intent.getStringExtra(PARAM_DOCUMENT_ID), (Uri) intent.getParcelableExtra(PARAM_URI));
         } catch (Exception e) {
             Log.e(TAG, "Error uploading the file", e);
             onError();
@@ -66,24 +72,23 @@ public class FileUploadService extends IntentService {
     /**
      * Actually uploading the file.
      *
+     * @param documentId Document ID
      * @param uri Data URI
      * @throws IOException
      */
-    private void handleFileUpload(final Uri uri) throws IOException {
-        InputStream is = null;
-        try {
-            is = getContentResolver().openInputStream(uri);
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    // Ignore
-                }
+    private void handleFileUpload(final String documentId, final Uri uri) throws Exception {
+        final InputStream is = getContentResolver().openInputStream(uri);
+        FileResource.addSync(this, documentId, is, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                FileUploadService.this.onComplete();
             }
-        }
 
-        onComplete();
+            @Override
+            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                FileUploadService.this.onError();
+            }
+        });
     }
 
     /**
@@ -93,23 +98,8 @@ public class FileUploadService extends IntentService {
         notification.setContentTitle(getString(R.string.upload_notification_title))
                 .setContentText(getString(R.string.upload_notification_message))
                 .setContentIntent(PendingIntent.getBroadcast(this, 0, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT))
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.drawable.ic_file_upload_white_24dp)
                 .setProgress(100, 0, true)
-                .setOngoing(true);
-
-        startForeground(UPLOAD_NOTIFICATION_ID, notification.build());
-    }
-
-    /**
-     * On upload progress.
-     *
-     * @param progress Progression (100 based)
-     */
-    private void onProgress(final int progress) {
-        notification.setContentTitle(getString(R.string.upload_notification_title))
-                .setContentText(getString(R.string.upload_notification_message))
-                .setSmallIcon(R.drawable.ic_launcher)
-                .setProgress(100, progress, false)
                 .setOngoing(true);
 
         startForeground(UPLOAD_NOTIFICATION_ID, notification.build());
@@ -130,7 +120,7 @@ public class FileUploadService extends IntentService {
 
         notification.setContentTitle(getString(R.string.upload_notification_title))
                 .setContentText(getString(R.string.upload_notification_error))
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.drawable.ic_file_upload_white_24dp)
                 .setProgress(0, 0, false)
                 .setOngoing(false);
 

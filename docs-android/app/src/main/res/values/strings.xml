@@ -85,9 +85,8 @@
     <string name="document_delete_failure">Network error while deleting this document</string>
     <string name="document_deleting_message">Deleting document</string>
     <string name="error_reading_file">Error while reading the file</string>
-    <string name="upload_notification_title">Adding a file</string>
+    <string name="upload_notification_title">Sismics Docs</string>
     <string name="upload_notification_message">Uploading the new file to the document</string>
-    <string name="upload_notification_completed">File upload completed</string>
     <string name="upload_notification_error">Error uploading the new file</string>
 
 

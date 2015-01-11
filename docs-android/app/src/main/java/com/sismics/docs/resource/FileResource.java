@@ -2,7 +2,13 @@ package com.sismics.docs.resource;
 
 import android.content.Context;
 
+import com.loopj.android.http.PersistentCookieStore;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.SyncHttpClient;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
+
+import java.io.InputStream;
+import java.security.KeyStore;
 
 
 /**
@@ -22,5 +28,33 @@ public class FileResource extends BaseResource {
         init(context);
 
         client.get(getApiUrl(context) + "/file/list?id=" + documentId, responseHandler);
+    }
+
+    /**
+     * PUT /file.
+     *
+     * @param context Context
+     * @param documentId Document ID
+     * @param is Input stream
+     * @param responseHandler Callback
+     * @throws Exception
+     */
+    public static void addSync(Context context, String documentId, InputStream is, JsonHttpResponseHandler responseHandler) throws Exception {
+        init(context);
+
+        SyncHttpClient client = new SyncHttpClient();
+        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        trustStore.load(null, null);
+        MySSLSocketFactory sf = new MySSLSocketFactory(trustStore);
+        sf.setHostnameVerifier(MySSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        client.setSSLSocketFactory(sf);
+        client.setCookieStore(new PersistentCookieStore(context));
+        client.setUserAgent(USER_AGENT);
+        client.addHeader("Accept-Language", ACCEPT_LANGUAGE);
+
+        RequestParams params = new RequestParams();
+        params.put("id", documentId);
+        params.put("file", is, "file", "application/octet-stream", true);
+        client.put(getApiUrl(context) + "/file", params, responseHandler);
     }
 }
