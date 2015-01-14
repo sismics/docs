@@ -30,6 +30,7 @@ import com.sismics.docs.adapter.FilePagerAdapter;
 import com.sismics.docs.event.DocumentDeleteEvent;
 import com.sismics.docs.event.DocumentEditEvent;
 import com.sismics.docs.event.DocumentFullscreenEvent;
+import com.sismics.docs.event.FileDeleteEvent;
 import com.sismics.docs.fragment.DocShareFragment;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
@@ -205,7 +206,7 @@ public class DocumentViewActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.document_activity, menu);
+        inflater.inflate(R.menu.document_view_activity, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -237,6 +238,10 @@ public class DocumentViewActivity extends ActionBarActivity {
                 intent = new Intent(this, DocumentEditActivity.class);
                 intent.putExtra("document", document.toString());
                 startActivityForResult(intent, REQUEST_CODE_EDIT_DOCUMENT);
+                return true;
+
+            case R.id.delete_file:
+                deleteCurrentFile();
                 return true;
 
             case R.id.delete_document:
@@ -271,6 +276,62 @@ public class DocumentViewActivity extends ActionBarActivity {
         // Download the file
         String fileUrl = PreferenceUtil.getServerUrl(this) + "/api/file/" + file.optString("id") + "/data";
         downloadFile(fileUrl, fileName, getTitle().toString(), getString(R.string.downloading_file, position + 1));
+    }
+
+    private void deleteCurrentFile() {
+        if (fileViewPager == null || filePagerAdapter == null) return;
+
+        final JSONObject file = filePagerAdapter.getObjectAt(fileViewPager.getCurrentItem());
+        if (file == null) return;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(R.string.delete_file_title)
+                .setMessage(R.string.delete_file_message)
+                .setCancelable(true)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Dismiss the confirmation dialog
+                        dialog.dismiss();
+
+                        // Show a progress dialog while deleting
+                        final ProgressDialog progressDialog = ProgressDialog.show(DocumentViewActivity.this,
+                                getString(R.string.please_wait),
+                                getString(R.string.file_deleting_message), true, true,
+                                new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialog) {
+                                        FileResource.cancel(DocumentViewActivity.this);
+                                    }
+                                });
+
+                        // Actual delete server call
+                        final String fileId = file.optString("id");
+                        FileResource.delete(DocumentViewActivity.this, fileId, new JsonHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                EventBus.getDefault().post(new FileDeleteEvent(fileId));
+                            }
+
+                            @Override
+                            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                                Toast.makeText(DocumentViewActivity.this, R.string.file_delete_failure, Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                progressDialog.dismiss();
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create().show();
     }
 
     /**
@@ -321,7 +382,7 @@ public class DocumentViewActivity extends ActionBarActivity {
 
                         // Show a progress dialog while deleting
                         final ProgressDialog progressDialog = ProgressDialog.show(DocumentViewActivity.this,
-                                getString(R.string.document_editing_title),
+                                getString(R.string.please_wait),
                                 getString(R.string.document_deleting_message), true, true,
                                 new DialogInterface.OnCancelListener() {
                                     @Override
@@ -392,6 +453,16 @@ public class DocumentViewActivity extends ActionBarActivity {
             // The current document has been deleted, close this activity
             finish();
         }
+    }
+
+    /**
+     * A file delete event has been fired.
+     *
+     * @param event File delete event
+     */
+    public void onEvent(FileDeleteEvent event) {
+        if (filePagerAdapter == null) return;
+        filePagerAdapter.remove(event.getFileId());
     }
 
     @Override

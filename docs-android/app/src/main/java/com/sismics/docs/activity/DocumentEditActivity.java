@@ -162,7 +162,7 @@ public class DocumentEditActivity extends ActionBarActivity {
 
                 // Cancellable progress dialog
                 final ProgressDialog progressDialog = ProgressDialog.show(this,
-                        getString(R.string.document_editing_title),
+                        getString(R.string.please_wait),
                         getString(R.string.document_editing_message), true, true,
                         new DialogInterface.OnCancelListener() {
                             @Override

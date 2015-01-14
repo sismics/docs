@@ -35,6 +35,12 @@
     </item>
 
     <item
+        android:id="@+id/delete_file"
+        app:showAsAction="collapseActionView"
+        android:title="@string/delete_file">
+    </item>
+
+    <item
         android:id="@+id/delete_document"
         app:showAsAction="collapseActionView"
         android:title="@string/delete_document">

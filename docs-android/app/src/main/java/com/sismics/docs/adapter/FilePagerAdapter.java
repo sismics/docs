@@ -103,4 +103,22 @@ public class FilePagerAdapter extends PagerAdapter {
 
         return files.optJSONObject(position);
     }
+
+    /**
+     * Remove a file.
+     *
+     * @param fileId File ID
+     */
+    public void remove(String fileId) {
+        if (files == null || fileId == null) return;
+
+        for (int i = 0; i < files.length(); i++) {
+            JSONObject file = files.optJSONObject(i);
+            if (fileId.equals(file.optString("id"))) {
+                files.remove(i);
+                notifyDataSetChanged();
+                break;
+            }
+        }
+    }
 }

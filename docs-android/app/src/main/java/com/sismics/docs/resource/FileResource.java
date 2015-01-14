@@ -31,6 +31,19 @@ public class FileResource extends BaseResource {
     }
 
     /**
+     * DELETE /file/id.
+     *
+     * @param context Context
+     * @param id ID
+     * @param responseHandler Callback
+     */
+    public static void delete(Context context, String id, JsonHttpResponseHandler responseHandler) {
+        init(context);
+
+        client.delete(getApiUrl(context) + "/file/" + id, responseHandler);
+    }
+
+    /**
      * PUT /file.
      *
      * @param context Context
@@ -56,5 +69,14 @@ public class FileResource extends BaseResource {
         params.put("id", documentId);
         params.put("file", is, "file", "application/octet-stream", true);
         client.put(getApiUrl(context) + "/file", params, responseHandler);
+    }
+
+    /**
+     * Cancel pending requests.
+     *
+     * @param context Context
+     */
+    public static void cancel(Context context) {
+        client.cancelRequests(context, true);
     }
 }
