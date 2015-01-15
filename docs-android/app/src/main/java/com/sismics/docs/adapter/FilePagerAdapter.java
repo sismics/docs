@@ -15,6 +15,9 @@ import com.sismics.docs.util.PreferenceUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
 
@@ -25,7 +28,7 @@ public class FilePagerAdapter extends PagerAdapter {
     /**
      * Files list.
      */
-    private JSONArray files;
+    private List<JSONObject> files;
 
     /**
      * AQuery.
@@ -42,8 +45,11 @@ public class FilePagerAdapter extends PagerAdapter {
      */
     private String authToken;
 
-    public FilePagerAdapter(Context context, JSONArray files) {
-        this.files = files;
+    public FilePagerAdapter(Context context, JSONArray filesArray) {
+        this.files = new ArrayList<>();
+        for (int i = 0; i < filesArray.length(); i++) {
+            files.add(filesArray.optJSONObject(i));
+        }
         this.context = context;
         this.authToken = PreferenceUtil.getAuthToken(context);
         aq = new AQuery(context);
@@ -55,7 +61,7 @@ public class FilePagerAdapter extends PagerAdapter {
 
         ImageViewTouch fileImageView = (ImageViewTouch) view.findViewById(R.id.fileImageView);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.fileProgressBar);
-        JSONObject file = files.optJSONObject(position);
+        JSONObject file = files.get(position);
         String fileUrl = PreferenceUtil.getServerUrl(context) + "/api/file/" + file.optString("id") + "/data?size=web";
         aq.id(fileImageView)
                 .image(new BitmapAjaxCallback()
@@ -82,7 +88,7 @@ public class FilePagerAdapter extends PagerAdapter {
             return 0;
         }
 
-        return files.length();
+        return files.size();
     }
 
     @Override
@@ -101,7 +107,7 @@ public class FilePagerAdapter extends PagerAdapter {
             return null;
         }
 
-        return files.optJSONObject(position);
+        return files.get(position);
     }
 
     /**
@@ -112,13 +118,17 @@ public class FilePagerAdapter extends PagerAdapter {
     public void remove(String fileId) {
         if (files == null || fileId == null) return;
 
-        for (int i = 0; i < files.length(); i++) {
-            JSONObject file = files.optJSONObject(i);
+        for (JSONObject file : files) {
             if (fileId.equals(file.optString("id"))) {
-                files.remove(i);
+                files.remove(file);
                 notifyDataSetChanged();
                 break;
             }
         }
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
     }
 }

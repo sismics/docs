@@ -30,6 +30,7 @@ import com.sismics.docs.adapter.FilePagerAdapter;
 import com.sismics.docs.event.DocumentDeleteEvent;
 import com.sismics.docs.event.DocumentEditEvent;
 import com.sismics.docs.event.DocumentFullscreenEvent;
+import com.sismics.docs.event.FileAddEvent;
 import com.sismics.docs.event.FileDeleteEvent;
 import com.sismics.docs.fragment.DocShareFragment;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
@@ -132,7 +133,6 @@ public class DocumentViewActivity extends ActionBarActivity {
     private void refreshDocument(JSONObject document) {
         this.document = document;
 
-        String id = document.optString("id");
         String title = document.optString("title");
         String date = DateFormat.getDateFormat(this).format(new Date(document.optLong("create_date")));
         String description = document.optString("description");
@@ -178,29 +178,7 @@ public class DocumentViewActivity extends ActionBarActivity {
         sharedImageView.setVisibility(shared ? View.VISIBLE : View.GONE);
 
         // Grab the attached files
-        final View progressBar = findViewById(R.id.progressBar);
-        final TextView filesEmptyView = (TextView) findViewById(R.id.filesEmptyView);
-        fileViewPager = (ViewPager) findViewById(R.id.fileViewPager);
-        fileViewPager.setOffscreenPageLimit(1);
-
-        FileResource.list(this, id, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                JSONArray files = response.optJSONArray("files");
-                filePagerAdapter = new FilePagerAdapter(DocumentViewActivity.this, files);
-                fileViewPager.setAdapter(filePagerAdapter);
-
-                progressBar.setVisibility(View.GONE);
-                if (files.length() == 0) filesEmptyView.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
-                filesEmptyView.setText(R.string.error_loading_files);
-                progressBar.setVisibility(View.GONE);
-                filesEmptyView.setVisibility(View.VISIBLE);
-            }
-        });
+        updateFiles();
     }
 
     @Override
@@ -425,7 +403,7 @@ public class DocumentViewActivity extends ActionBarActivity {
      *
      * @param event Document fullscreen event
      */
-    public void onEvent(DocumentFullscreenEvent event) {
+    public void onEventMainThread(DocumentFullscreenEvent event) {
         findViewById(R.id.detailLayout).setVisibility(event.isFullscreen() ? View.GONE : View.VISIBLE);
     }
 
@@ -434,7 +412,7 @@ public class DocumentViewActivity extends ActionBarActivity {
      *
      * @param event Document edit event
      */
-    public void onEvent(DocumentEditEvent event) {
+    public void onEventMainThread(DocumentEditEvent event) {
         if (document == null) return;
         if (event.getDocument().optString("id").equals(document.optString("id"))) {
             // The current document has been modified, refresh it
@@ -447,7 +425,7 @@ public class DocumentViewActivity extends ActionBarActivity {
      *
      * @param event Document delete event
      */
-    public void onEvent(DocumentDeleteEvent event) {
+    public void onEventMainThread(DocumentDeleteEvent event) {
         if (document == null) return;
         if (event.getDocumentId().equals(document.optString("id"))) {
             // The current document has been deleted, close this activity
@@ -460,9 +438,23 @@ public class DocumentViewActivity extends ActionBarActivity {
      *
      * @param event File delete event
      */
-    public void onEvent(FileDeleteEvent event) {
+    public void onEventMainThread(FileDeleteEvent event) {
         if (filePagerAdapter == null) return;
         filePagerAdapter.remove(event.getFileId());
+        final TextView filesEmptyView = (TextView) findViewById(R.id.filesEmptyView);
+        if (filePagerAdapter.getCount() == 0) filesEmptyView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * A file add event has been fired.
+     *
+     * @param event File add event
+     */
+    public void onEventMainThread(FileAddEvent event) {
+        if (document == null) return;
+        if (document.optString("id").equals(event.getDocumentId())) {
+            updateFiles();
+        }
     }
 
     @Override
@@ -497,6 +489,40 @@ public class DocumentViewActivity extends ActionBarActivity {
                 startService(intent);
             }
         }
+    }
+
+    /**
+     * Refresh files list.
+     */
+    private void updateFiles() {
+        if (document == null) return;
+
+        final View progressBar = findViewById(R.id.progressBar);
+        final TextView filesEmptyView = (TextView) findViewById(R.id.filesEmptyView);
+        fileViewPager = (ViewPager) findViewById(R.id.fileViewPager);
+        fileViewPager.setOffscreenPageLimit(1);
+        fileViewPager.setAdapter(null);
+        progressBar.setVisibility(View.VISIBLE);
+        filesEmptyView.setVisibility(View.GONE);
+
+        FileResource.list(this, document.optString("id"), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                JSONArray files = response.optJSONArray("files");
+                filePagerAdapter = new FilePagerAdapter(DocumentViewActivity.this, files);
+                fileViewPager.setAdapter(filePagerAdapter);
+
+                progressBar.setVisibility(View.GONE);
+                if (files.length() == 0) filesEmptyView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                filesEmptyView.setText(R.string.error_loading_files);
+                progressBar.setVisibility(View.GONE);
+                filesEmptyView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override

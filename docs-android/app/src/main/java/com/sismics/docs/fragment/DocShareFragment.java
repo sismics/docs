@@ -139,7 +139,7 @@ public class DocShareFragment extends DialogFragment {
         });
     }
 
-    public void onEvent(ShareDeleteEvent event) {
+    public void onEventMainThread(ShareDeleteEvent event) {
         ShareResource.delete(getActivity(), event.getId(), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -153,7 +153,7 @@ public class DocShareFragment extends DialogFragment {
         });
     }
 
-    public void onEvent(ShareSendEvent event) {
+    public void onEventMainThread(ShareSendEvent event) {
         if (document == null) return;
 
         // Build the share link

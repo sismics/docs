@@ -11,6 +11,7 @@ import android.support.v4.app.NotificationCompat.Builder;
 import android.util.Log;
 
 import com.sismics.docs.R;
+import com.sismics.docs.event.FileAddEvent;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.resource.FileResource;
 
@@ -19,6 +20,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Service to upload a file to a document in the background.
@@ -81,6 +84,7 @@ public class FileUploadService extends IntentService {
         FileResource.addSync(this, documentId, is, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                EventBus.getDefault().post(new FileAddEvent(documentId, response.optString("id")));
                 FileUploadService.this.onComplete();
             }
 

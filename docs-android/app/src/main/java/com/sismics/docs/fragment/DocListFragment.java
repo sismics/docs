@@ -150,7 +150,7 @@ public class DocListFragment extends Fragment {
      *
      * @param event Search event
      */
-    public void onEvent(SearchEvent event) {
+    public void onEventMainThread(SearchEvent event) {
         query = event.getQuery();
         loadDocuments(getView(), true);
     }
@@ -160,7 +160,7 @@ public class DocListFragment extends Fragment {
      *
      * @param event Document edit event
      */
-    public void onEvent(DocumentEditEvent event) {
+    public void onEventMainThread(DocumentEditEvent event) {
         adapter.updateDocument(event.getDocument());
     }
 
@@ -169,7 +169,7 @@ public class DocListFragment extends Fragment {
      *
      * @param event Document delete event
      */
-    public void onEvent(DocumentDeleteEvent event) {
+    public void onEventMainThread(DocumentDeleteEvent event) {
         adapter.deleteDocument(event.getDocumentId());
     }
 
@@ -178,7 +178,7 @@ public class DocListFragment extends Fragment {
      *
      * @param event Document add event
      */
-    public void onEvent(DocumentAddEvent event) {
+    public void onEventMainThread(DocumentAddEvent event) {
         // Refresh the list, maybe the new document fit in it
         loadDocuments(getView(), true);
 
