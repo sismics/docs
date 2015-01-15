@@ -45,6 +45,12 @@ public class FilePagerAdapter extends PagerAdapter {
      */
     private String authToken;
 
+    /**
+     * File pager adapter.
+     *
+     * @param context Context
+     * @param filesArray Files
+     */
     public FilePagerAdapter(Context context, JSONArray filesArray) {
         this.files = new ArrayList<>();
         for (int i = 0; i < filesArray.length(); i++) {

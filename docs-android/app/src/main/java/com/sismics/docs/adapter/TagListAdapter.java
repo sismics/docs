@@ -16,6 +16,11 @@ import com.sismics.docs.R;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * Tag list adapter.
  *
@@ -25,25 +30,36 @@ public class TagListAdapter extends BaseAdapter {
     /**
      * Tags.
      */
-    private JSONArray tags;
+    private List<JSONObject> tags;
 
     /**
      * Tag list adapter.
      *
-     * @param tags Tags
+     * @param tagsArray Tags
      */
-    public TagListAdapter(JSONArray tags) {
-        this.tags = tags;
+    public TagListAdapter(JSONArray tagsArray) {
+        this.tags = new ArrayList<>();
+        for (int i = 0; i < tagsArray.length(); i++) {
+            tags.add(tagsArray.optJSONObject(i));
+        }
+
+        // Sort tags by count desc
+        Collections.sort(tags, new Comparator<JSONObject>() {
+            @Override
+            public int compare(JSONObject lhs, JSONObject rhs) {
+                return lhs.optInt("count") < rhs.optInt("count") ? 1 : -1;
+            }
+        });
     }
 
     @Override
     public int getCount() {
-        return tags.length();
+        return tags.size();
     }
 
     @Override
     public JSONObject getItem(int position) {
-        return tags.optJSONObject(position);
+        return tags.get(position);
     }
 
     @Override
