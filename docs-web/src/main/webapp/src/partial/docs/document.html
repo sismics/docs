@@ -47,8 +47,14 @@
         </tbody>
       </table>
 
-      <div class="text-center">
+      <div class="text-center pagination-box">
         <pagination total-items="totalDocuments" max-size="5" page="currentPage"></pagination>
+        <label class="sr-only" for="pagesizeSelect">Page size</label>
+        <select ng-model="limit" id="pagesizeSelect" class="form-control">
+          <option value="10">10 per page</option>
+          <option value="20">20 per page</option>
+          <option value="30">30 per page</option>
+        </select>
       </div>
 
       <div class="text-right">

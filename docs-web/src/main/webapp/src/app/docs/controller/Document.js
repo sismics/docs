@@ -11,7 +11,7 @@ angular.module('docs').controller('Document', function($scope, $timeout, $state,
   $scope.asc = false;
   $scope.offset = 0;
   $scope.currentPage = 1;
-  $scope.limit = 10;
+  $scope.limit = _.isUndefined(localStorage.documentsPageSize) ? 10 : localStorage.documentsPageSize;
   $scope.search = '';
 
   // A timeout promise is used to slow down search requests to the server
@@ -59,7 +59,7 @@ angular.module('docs').controller('Document', function($scope, $timeout, $state,
   /**
    * Watch for search scope change.
    */
-  $scope.$watch('search', function(prev, next) {
+  $scope.$watch('search', function() {
     if (timeoutPromise) {
       // Cancel previous timeout
       $timeout.cancel(timeoutPromise);
@@ -83,6 +83,17 @@ angular.module('docs').controller('Document', function($scope, $timeout, $state,
     $scope.sortColumn = sortColumn;
     $scope.loadDocuments();
   };
+
+  /**
+   * Watch for page size change.
+   */
+  $scope.$watch('limit', function(next, prev) {
+    localStorage.documentsPageSize = next;
+    if (next == prev) {
+      return;
+    }
+    $scope.loadDocuments();
+  });
   
   /**
    * Go to add document form.

@@ -136,10 +136,22 @@ input[readonly].share-link {
 }
 
 // Pagination
-.pagination {
-	ul > li {
-    cursor: pointer;
-	}
+.pagination > .active > a {
+  cursor: pointer !important;
+}
+
+// Pagination box
+.pagination-box {
+  pagination {
+    vertical-align: top;
+  }
+
+  select {
+    vertical-align: top;
+    width: auto;
+    display: inline-block;
+    margin: 20px 0;
+  }
 }
 
 .nav-text-error {

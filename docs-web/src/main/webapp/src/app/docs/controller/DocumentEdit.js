@@ -3,7 +3,7 @@
 /**
  * Document edition controller.
  */
-angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $q, $http, $state, $stateParams, Restangular, Tag) {
+angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $q, $http, $state, $stateParams, Restangular) {
   // Alerts
   $scope.alerts = [];
   
@@ -156,7 +156,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
         var then = function() {
           key++;
           if ($scope.newFiles[key]) {
-            sendFile(key).then(then);
+            sendFile(key).then(then); // TODO Handle upload error
           } else {
             $scope.fileIsUploading = false;
             $scope.fileProgress = 0;
