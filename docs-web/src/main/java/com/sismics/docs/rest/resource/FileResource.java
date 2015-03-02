@@ -204,6 +204,7 @@ public class FileResource extends BaseResource {
         }
         
         // Update the file
+        // TODO Reorder files to put the new one at the end
         file.setDocumentId(documentId);
         fileDao.updateDocument(file);
         
