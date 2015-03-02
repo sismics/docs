@@ -33,6 +33,7 @@ import javax.ws.rs.core.StreamingOutput;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
@@ -65,7 +66,7 @@ import com.sun.jersey.multipart.FormDataParam;
 @Path("/file")
 public class FileResource extends BaseResource {
     /**
-     * Add a file to a document.
+     * Add a file (with or without a document).
      * 
      * @param documentId Document ID
      * @param fileBodyPart File to add
@@ -83,20 +84,23 @@ public class FileResource extends BaseResource {
         }
         
         // Validate input data
-        ValidationUtil.validateRequired(documentId, "id");
         ValidationUtil.validateRequired(fileBodyPart, "file");
 
-        // Get the document
-        DocumentDao documentDao = new DocumentDao();
-        FileDao fileDao = new FileDao();
+        // Get the current user
         UserDao userDao = new UserDao();
-        Document document;
-        User user;
-        try {
-            document = documentDao.getDocument(documentId, principal.getId());
-            user = userDao.getById(principal.getId());
-        } catch (NoResultException e) {
-            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
+        User user = userDao.getById(principal.getId());
+        
+        // Get the document
+        Document document = null;
+        if (Strings.isNullOrEmpty(documentId)) {
+            documentId = null;
+        } else {
+            DocumentDao documentDao = new DocumentDao();
+            try {
+                document = documentDao.getDocument(documentId, principal.getId());
+            } catch (NoResultException e) {
+                throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
+            }
         }
         
         // Keep unencrypted data in memory, because we will need it two times
@@ -121,27 +125,32 @@ public class FileResource extends BaseResource {
         
         try {
             // Get files of this document
+            FileDao fileDao = new FileDao();
             int order = 0;
-            for (File file : fileDao.getByDocumentId(documentId)) {
-                file.setOrder(order++);
+            if (documentId != null) {
+                for (File file : fileDao.getByDocumentId(documentId)) {
+                    file.setOrder(order++);
+                }
             }
             
             // Create the file
             File file = new File();
             file.setOrder(order);
-            file.setDocumentId(document.getId());
+            file.setDocumentId(documentId);
             file.setMimeType(mimeType);
             String fileId = fileDao.create(file);
             
             // Save the file
             FileUtil.save(fileInputStream, file, user.getPrivateKey());
             
-            // Raise a new file created event
-            FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
-            fileCreatedAsyncEvent.setDocument(document);
-            fileCreatedAsyncEvent.setFile(file);
-            fileCreatedAsyncEvent.setInputStream(fileInputStream);
-            AppContext.getInstance().getAsyncEventBus().post(fileCreatedAsyncEvent);
+            // Raise a new file created event if we have a document
+            if (documentId != null) {
+                FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
+                fileCreatedAsyncEvent.setDocument(document);
+                fileCreatedAsyncEvent.setFile(file);
+                fileCreatedAsyncEvent.setInputStream(fileInputStream);
+                AppContext.getInstance().getAsyncEventBus().post(fileCreatedAsyncEvent);
+            }
 
             // Always return ok
             JSONObject response = new JSONObject();
@@ -151,6 +160,71 @@ public class FileResource extends BaseResource {
         } catch (Exception e) {
             throw new ServerException("FileError", "Error adding a file", e);
         }
+    }
+    
+    /**
+     * Attach a file to a document.
+     * 
+     * @param id File ID
+     * @return Response
+     * @throws JSONException
+     */
+    @POST
+    @Path("{id: [a-z0-9\\-]+}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response attach(
+            @PathParam("id") String id,
+            @FormParam("id") String documentId) throws JSONException {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Validate input data
+        ValidationUtil.validateRequired(documentId, "id");
+        
+        // Get the current user
+        UserDao userDao = new UserDao();
+        User user = userDao.getById(principal.getId());
+        
+        // Get the document and the file
+        DocumentDao documentDao = new DocumentDao();
+        FileDao fileDao = new FileDao();
+        Document document;
+        File file;
+        try {
+            file = fileDao.getFile(id);
+            document = documentDao.getDocument(documentId, principal.getId());
+        } catch (NoResultException e) {
+            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
+        }
+        
+        // Check that the file is orphan
+        if (file.getDocumentId() != null) {
+            throw new ClientException("IllegalFile", MessageFormat.format("File not orphan: {0}", id));
+        }
+        
+        // Update the file
+        file.setDocumentId(documentId);
+        fileDao.updateDocument(file);
+        
+        // Raise a new file created event (it wasn't sent during file creation)
+        try {
+            java.io.File storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), id).toFile();
+            InputStream fileInputStream = new FileInputStream(storedfile);
+            final InputStream responseInputStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey());
+            FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
+            fileCreatedAsyncEvent.setDocument(document);
+            fileCreatedAsyncEvent.setFile(file);
+            fileCreatedAsyncEvent.setInputStream(responseInputStream);
+            AppContext.getInstance().getAsyncEventBus().post(fileCreatedAsyncEvent);
+        } catch (Exception e) {
+            throw new ClientException("AttachError", "Error attaching file to document", e);
+        }
+        
+        // Always return ok
+        JSONObject response = new JSONObject();
+        response.put("status", "ok");
+        return Response.ok().entity(response).build();
     }
     
     /**

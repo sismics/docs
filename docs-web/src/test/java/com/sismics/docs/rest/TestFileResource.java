@@ -197,4 +197,46 @@ public class TestFileResource extends BaseJerseyTest {
         files = json.getJSONArray("files");
         Assert.assertEquals(1, files.length());
     }
+    
+    @Test
+    public void testOrphanFile() throws Exception {
+        // Login file1
+        clientUtil.createUser("file2");
+        String file2AuthenticationToken = clientUtil.login("file2");
+        
+        // Add a file
+        WebResource fileResource = resource().path("/file");
+        fileResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
+        FormDataMultiPart form = new FormDataMultiPart();
+        InputStream file = this.getClass().getResourceAsStream("/file/PIA00452.jpg");
+        FormDataBodyPart fdp = new FormDataBodyPart("file",
+                new BufferedInputStream(file),
+                MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        form.bodyPart(fdp);
+        ClientResponse response = fileResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        JSONObject json = response.getEntity(JSONObject.class);
+        String file1Id = json.getString("id");
+        
+        // Create a document
+        WebResource documentResource = resource().path("/document");
+        documentResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
+        MultivaluedMapImpl postParams = new MultivaluedMapImpl();
+        postParams.add("title", "File test document 1");
+        postParams.add("language", "eng");
+        response = documentResource.put(ClientResponse.class, postParams);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        String document1Id = json.optString("id");
+        Assert.assertNotNull(document1Id);
+        
+        // Attach a file to a document
+        documentResource = resource().path("/file/" + file1Id);
+        documentResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
+        postParams = new MultivaluedMapImpl();
+        postParams.add("id", document1Id);
+        response = documentResource.post(ClientResponse.class, postParams);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+    }
 }

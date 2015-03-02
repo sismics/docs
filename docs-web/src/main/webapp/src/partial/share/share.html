@@ -4,7 +4,7 @@
       <h1>
         {{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }}</small>
         <a ng-href="../api/file/zip?id={{ document.id }}&share={{ $stateParams.shareId }}" class="btn btn-default" title="Download all files">
-          <span class="glyphicon glyphicon-compressed"></span>
+          <span class="glyphicon glyphicon-download-alt"></span>
         </a>
       </h1>
       <ul class="list-inline">

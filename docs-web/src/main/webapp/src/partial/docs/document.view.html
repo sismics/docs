@@ -13,7 +13,7 @@
       {{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }}</small>
       <img ng-if="document" ng-src="img/flag/{{ document.language }}.png" title="{{ document.language }}" />
       <a ng-href="../api/file/zip?id={{ document.id }}" class="btn btn-default" title="Download all files">
-        <span class="glyphicon glyphicon-compressed"></span>
+        <span class="glyphicon glyphicon-download-alt"></span>
       </a>
     </h1>
 	  <p>
