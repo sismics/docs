@@ -286,18 +286,22 @@ public class FileResource extends BaseResource {
     public Response list(
             @QueryParam("id") String documentId,
             @QueryParam("share") String shareId) throws JSONException {
-        authenticate();
+        boolean authenticated = authenticate();
         
         // Check document visibility
-        try {
-            DocumentDao documentDao = new DocumentDao();
-            Document document = documentDao.getDocument(documentId);
-            ShareDao shareDao = new ShareDao();
-            if (!shareDao.checkVisibility(document, principal.getId(), shareId)) {
-                throw new ForbiddenClientException();
+        if (documentId != null) {
+            try {
+                DocumentDao documentDao = new DocumentDao();
+                Document document = documentDao.getDocument(documentId);
+                ShareDao shareDao = new ShareDao();
+                if (!shareDao.checkVisibility(document, principal.getId(), shareId)) {
+                    throw new ForbiddenClientException();
+                }
+            } catch (NoResultException e) {
+                throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
             }
-        } catch (NoResultException e) {
-            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
+        } else if (!authenticated) {
+            throw new ForbiddenClientException();
         }
         
         FileDao fileDao = new FileDao();

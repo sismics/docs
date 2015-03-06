@@ -218,6 +218,16 @@ public class TestFileResource extends BaseJerseyTest {
         JSONObject json = response.getEntity(JSONObject.class);
         String file1Id = json.getString("id");
         
+        // Get all orphan files
+        fileResource = resource().path("/file/list");
+        fileResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
+        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
+        response = fileResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        JSONArray files = json.getJSONArray("files");
+        Assert.assertEquals(1, files.length());
+        
         // Create a document
         WebResource documentResource = resource().path("/document");
         documentResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
@@ -242,12 +252,12 @@ public class TestFileResource extends BaseJerseyTest {
         // Get all files from a document
         fileResource = resource().path("/file/list");
         fileResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
-        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
+        getParams = new MultivaluedMapImpl();
         getParams.putSingle("id", document1Id);
         response = fileResource.queryParams(getParams).get(ClientResponse.class);
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        JSONArray files = json.getJSONArray("files");
+        files = json.getJSONArray("files");
         Assert.assertEquals(1, files.length());
     }
 }
