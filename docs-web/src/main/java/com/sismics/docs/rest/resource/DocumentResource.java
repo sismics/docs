@@ -471,7 +471,7 @@ public class DocumentResource extends BaseResource {
         List<File> fileList;
         try {
             document = documentDao.getDocument(id, principal.getId());
-            fileList = fileDao.getByDocumentId(id);
+            fileList = fileDao.getByDocumentId(principal.getId(), id);
         } catch (NoResultException e) {
             throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", id));
         }

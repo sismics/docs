@@ -27,8 +27,14 @@ public class File {
     /**
      * Document ID.
      */
-    @Column(name = "FIL_IDDOC_C", nullable = false, length = 36)
+    @Column(name = "FIL_IDDOC_C", length = 36)
     private String documentId;
+    
+    /**
+     * User ID.
+     */
+    @Column(name = "FIL_IDUSER_C", length = 36)
+    private String userId;
     
     /**
      * MIME type.
@@ -185,6 +191,24 @@ public class File {
      */
     public void setOrder(Integer order) {
         this.order = order;
+    }
+    
+    /**
+     * Getter of userId.
+     * 
+     * @return the userId
+     */
+    public String getUserId() {
+        return userId;
+    }
+
+    /**
+     * Setter of userId.
+     * 
+     * @param userId userId
+     */
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     @Override

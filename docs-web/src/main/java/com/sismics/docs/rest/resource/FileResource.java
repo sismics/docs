@@ -128,7 +128,7 @@ public class FileResource extends BaseResource {
             FileDao fileDao = new FileDao();
             int order = 0;
             if (documentId != null) {
-                for (File file : fileDao.getByDocumentId(documentId)) {
+                for (File file : fileDao.getByDocumentId(principal.getId(), documentId)) {
                     file.setOrder(order++);
                 }
             }
@@ -138,6 +138,7 @@ public class FileResource extends BaseResource {
             file.setOrder(order);
             file.setDocumentId(documentId);
             file.setMimeType(mimeType);
+            file.setUserId(principal.getId());
             String fileId = fileDao.create(file);
             
             // Save the file
@@ -192,7 +193,7 @@ public class FileResource extends BaseResource {
         Document document;
         File file;
         try {
-            file = fileDao.getFile(id);
+            file = fileDao.getFile(id, principal.getId());
             document = documentDao.getDocument(documentId, principal.getId());
         } catch (NoResultException e) {
             throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
@@ -205,7 +206,7 @@ public class FileResource extends BaseResource {
         
         // Update the file
         file.setDocumentId(documentId);
-        file.setOrder(fileDao.getByDocumentId(documentId).size());
+        file.setOrder(fileDao.getByDocumentId(principal.getId(), documentId).size());
         fileDao.update(file);
         
         // Raise a new file created event (it wasn't sent during file creation)
@@ -260,7 +261,7 @@ public class FileResource extends BaseResource {
         
         // Reorder files
         FileDao fileDao = new FileDao();
-        for (File file : fileDao.getByDocumentId(documentId)) {
+        for (File file : fileDao.getByDocumentId(principal.getId(), documentId)) {
             int order = idList.lastIndexOf(file.getId());
             if (order != -1) {
                 file.setOrder(order);
@@ -274,9 +275,10 @@ public class FileResource extends BaseResource {
     }
     
     /**
-     * Returns files linked to a document.
+     * Returns files linked to a document or not linked to any document.
      * 
      * @param documentId Document ID
+     * @param shareId Sharing ID
      * @return Response
      * @throws JSONException
      */
@@ -305,7 +307,7 @@ public class FileResource extends BaseResource {
         }
         
         FileDao fileDao = new FileDao();
-        List<File> fileList = fileDao.getByDocumentId(documentId);
+        List<File> fileList = fileDao.getByDocumentId(principal.getId(), documentId);
 
         JSONObject response = new JSONObject();
         List<JSONObject> files = new ArrayList<>();
@@ -345,7 +347,15 @@ public class FileResource extends BaseResource {
         File file;
         try {
             file = fileDao.getFile(id);
-            documentDao.getDocument(file.getDocumentId(), principal.getId());
+            if (file.getDocumentId() == null) {
+                // It's an orphan file
+                if (!file.getUserId().equals(principal.getId())) {
+                    // But not ours
+                    throw new ForbiddenClientException();
+                }
+            } else {
+                documentDao.getDocument(file.getDocumentId(), principal.getId());
+            }
         } catch (NoResultException e) {
             throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", id));
         }
@@ -392,14 +402,28 @@ public class FileResource extends BaseResource {
         UserDao userDao = new UserDao();
         File file;
         Document document;
+        String userId;
         try {
             file = fileDao.getFile(fileId);
-            document = documentDao.getDocument(file.getDocumentId());
             
-            // Check document visibility
-            ShareDao shareDao = new ShareDao();
-            if (!shareDao.checkVisibility(document, principal.getId(), shareId)) {
-                throw new ForbiddenClientException();
+            if (file.getDocumentId() == null) {
+                // It's an orphan file
+                if (!file.getUserId().equals(principal.getId())) {
+                    // But not ours
+                    throw new ForbiddenClientException();
+                }
+                
+                userId = file.getUserId();
+            } else {
+                // It's a file linked to a document
+                document = documentDao.getDocument(file.getDocumentId());
+                userId = document.getUserId();
+                
+                // Check document visibility
+                ShareDao shareDao = new ShareDao();
+                if (!shareDao.checkVisibility(document, principal.getId(), shareId)) {
+                    throw new ForbiddenClientException();
+                }
             }
         } catch (NoResultException e) {
             throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", fileId));
@@ -427,7 +451,7 @@ public class FileResource extends BaseResource {
         
         // Stream the output and decrypt it if necessary
         StreamingOutput stream;
-        User user = userDao.getById(document.getUserId());
+        User user = userDao.getById(userId);
         try {
             InputStream fileInputStream = new FileInputStream(storedfile);
             final InputStream responseInputStream = decrypt ?
@@ -487,7 +511,7 @@ public class FileResource extends BaseResource {
         // Get files and user associated with this document
         FileDao fileDao = new FileDao();
         UserDao userDao = new UserDao();
-        final List<File> fileList = fileDao.getByDocumentId(documentId);
+        final List<File> fileList = fileDao.getByDocumentId(principal.getId(), documentId);
         final User user = userDao.getById(document.getUserId());
         
         // Create the ZIP stream

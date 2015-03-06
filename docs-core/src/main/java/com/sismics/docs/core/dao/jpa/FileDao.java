@@ -62,6 +62,21 @@ public class FileDao {
     }
     
     /**
+     * Returns an active file.
+     * 
+     * @param id File ID
+     * @param userId User ID
+     * @return Document
+     */
+    public File getFile(String id, String userId) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select f from File f where f.id = :id and f.userId = :userId and f.deleteDate is null");
+        q.setParameter("id", id);
+        q.setParameter("userId", userId);
+        return (File) q.getSingleResult();
+    }
+    
+    /**
      * Deletes a file.
      * 
      * @param id File ID
@@ -117,16 +132,18 @@ public class FileDao {
     }
     
     /**
-     * Get files by document ID.
+     * Get files by document ID or all orphan files of an user.
      * 
+     * @parma userId User ID
      * @param documentId Document ID
      * @return List of files
      */
     @SuppressWarnings("unchecked")
-    public List<File> getByDocumentId(String documentId) {
+    public List<File> getByDocumentId(String userId, String documentId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         if (documentId == null) {
-            Query q = em.createQuery("select f from File f where f.documentId is null and f.deleteDate is null order by f.createDate asc");
+            Query q = em.createQuery("select f from File f where f.documentId is null and f.deleteDate is null and f.userId = :userId order by f.createDate asc");
+            q.setParameter("userId", userId);
             return q.getResultList();
         }
         Query q = em.createQuery("select f from File f where f.documentId = :documentId and f.deleteDate is null order by f.order asc");

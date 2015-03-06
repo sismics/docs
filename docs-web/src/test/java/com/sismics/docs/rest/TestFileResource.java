@@ -228,6 +228,16 @@ public class TestFileResource extends BaseJerseyTest {
         JSONArray files = json.getJSONArray("files");
         Assert.assertEquals(1, files.length());
         
+        // Get the file data
+        fileResource = resource().path("/file/" + file1Id + "/data");
+        fileResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
+        response = fileResource.get(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        InputStream is = response.getEntityInputStream();
+        byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
+        Assert.assertEquals(163510, fileBytes.length);
+        
         // Create a document
         WebResource documentResource = resource().path("/document");
         documentResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
@@ -259,5 +269,27 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         files = json.getJSONArray("files");
         Assert.assertEquals(1, files.length());
+        
+        // Add a file
+        fileResource = resource().path("/file");
+        fileResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
+        form = new FormDataMultiPart();
+        file = this.getClass().getResourceAsStream("/file/PIA00452.jpg");
+        fdp = new FormDataBodyPart("file",
+                new BufferedInputStream(file),
+                MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        form.bodyPart(fdp);
+        response = fileResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        String file2Id = json.getString("id");
+        
+        // Deletes a file
+        fileResource = resource().path("/file/" + file2Id);
+        fileResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
+        response = fileResource.delete(ClientResponse.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
     }
 }
