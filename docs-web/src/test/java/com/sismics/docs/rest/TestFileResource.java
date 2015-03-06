@@ -238,5 +238,16 @@ public class TestFileResource extends BaseJerseyTest {
         response = documentResource.post(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
+        
+        // Get all files from a document
+        fileResource = resource().path("/file/list");
+        fileResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
+        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
+        getParams.putSingle("id", document1Id);
+        response = fileResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        JSONArray files = json.getJSONArray("files");
+        Assert.assertEquals(1, files.length());
     }
 }

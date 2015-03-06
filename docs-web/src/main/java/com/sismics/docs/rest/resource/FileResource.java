@@ -204,9 +204,9 @@ public class FileResource extends BaseResource {
         }
         
         // Update the file
-        // TODO Reorder files to put the new one at the end
         file.setDocumentId(documentId);
-        fileDao.updateDocument(file);
+        file.setOrder(fileDao.getByDocumentId(documentId).size());
+        fileDao.update(file);
         
         // Raise a new file created event (it wasn't sent during file creation)
         try {

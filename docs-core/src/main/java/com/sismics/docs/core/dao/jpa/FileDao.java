@@ -80,32 +80,12 @@ public class FileDao {
     }
     
     /**
-     * Updates the content of a file.
+     * Update a file.
      * 
      * @param file File to update
      * @return Updated file
      */
-    public File updateContent(File file) {
-        EntityManager em = ThreadLocalContext.get().getEntityManager();
-        
-        // Get the file
-        Query q = em.createQuery("select f from File f where f.id = :id and f.deleteDate is null");
-        q.setParameter("id", file.getId());
-        File fileFromDb = (File) q.getSingleResult();
-
-        // Update the file
-        fileFromDb.setContent(file.getContent());
-        
-        return file;
-    }
-    
-    /**
-     * Update the document of a file.
-     * 
-     * @param file File to update
-     * @return Updated file
-     */
-    public File updateDocument(File file) {
+    public File update(File file) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         
         // Get the file
@@ -115,6 +95,8 @@ public class FileDao {
 
         // Update the file
         fileFromDb.setDocumentId(file.getDocumentId());
+        fileFromDb.setContent(file.getContent());
+        fileFromDb.setOrder(file.getOrder());
         
         return file;
     }

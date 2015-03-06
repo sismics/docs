@@ -40,6 +40,7 @@ public class FileCreatedAsyncListener {
         final File file = fileCreatedAsyncEvent.getFile();
         long startTime = System.currentTimeMillis();
         final String content = FileUtil.extractContent(fileCreatedAsyncEvent.getDocument(), file, fileCreatedAsyncEvent.getInputStream());
+        fileCreatedAsyncEvent.getInputStream().close();
         log.info(MessageFormat.format("File content extracted in {0}ms", System.currentTimeMillis() - startTime));
         
         // Store the OCR-ization result in the database
@@ -48,7 +49,7 @@ public class FileCreatedAsyncListener {
             public void run() {
                 FileDao fileDao = new FileDao();
                 file.setContent(content);
-                fileDao.updateContent(file);
+                fileDao.update(file);
             }
         });
         
