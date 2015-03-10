@@ -53,7 +53,7 @@ public class Tesseract {
     private static Tesseract instance;
     private final static Rectangle EMPTY_RECTANGLE = new Rectangle();
     private String language = "eng";
-    private String datapath = "tessdata";
+    private String datapath = null;
     private int psm = TessAPI.TessPageSegMode.PSM_AUTO;
     private boolean hocr;
     private int pageNum;
