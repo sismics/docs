@@ -1,4 +1,5 @@
 #!/bin/bash
+
 docker rm -f sismics_docs
 docker run \
     -d --name=sismics_docs --restart=always \
