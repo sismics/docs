@@ -39,7 +39,7 @@ You will need a Java webapp server to run it, like [Jetty](http://eclipse.org/je
 How to build Docs from the sources
 ----------------------------------
 
-Prerequisites: JDK 7, Maven 3, Tesseract 3.02
+Prerequisites: JDK 7 with JCE, Maven 3, Tesseract 3.02
 
 Docs is organized in several Maven modules:
 
