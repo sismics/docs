@@ -5,14 +5,40 @@
 	  {{ app.document_count }} <small>document{{ app.document_count > 1 ? 's' : '' }} in the database</small>
 	</h1>
 
-  <!--<div ng-file-drop ng-model="files" style="width: 150px; height: 150px; border: 1px dashed;"
-       drag-over-class="dragover" ng-multiple="true" allow-dir="false"
-       accept="image/*,application/pdf,application/zip">Drop files here</div>
-  <p ng-no-file-drop>File Drag/Drop is not supported for this browser</p>
+  <div class="row" ng-model="dropFiles" style="min-height: 150px;" ng-file-drop drag-over-class="bg-success"
+       ng-multiple="true" allow-dir="false" accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
+    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
+      <div class="thumbnail" ng-if="file.id">
+        <a ng-click="openFile(file)">
+          <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
+        </a>
+        <div class="caption">
+          <div class="pull-right">
+            <button class="btn btn-danger" ng-click="deleteFile(file)"><span class="glyphicon glyphicon-trash"></span></button>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
 
-  {{ files }}-->
-	
-	<div class="text-muted">
+      <div class="thumbnail" ng-if="!file.id">
+        <p class="text-center lead">
+          Uploading...
+        </p>
+        <div class="caption">
+          <progressbar value="file.progress" class="progress-info active"></progressbar>
+        </div>
+      </div>
+    </div>
+
+    <p class="text-center well-lg" ng-if="files.length == 0">
+      <span class="glyphicon glyphicon-move"></span>
+      Drag &amp; drop files here to upload
+    </p>
+  </div>
+
+  <div ui-view="file"></div>
+
+	<div class="text-muted text-right">
 	  <ul class="list-inline">
 	    <li><strong>Version:</strong> {{ app.current_version }}</li>
 	    <li><strong>Memory:</strong> {{ app.free_memory / 1000000 | number: 0 }}/{{ app.total_memory / 1000000 | number: 0 }} MB</li>

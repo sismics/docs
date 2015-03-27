@@ -21,6 +21,7 @@ public class MainApplication extends Application {
         ApplicationContext.getInstance().setUserInfo(getApplicationContext(), json);
 
         // TODO Fullscreen preview
+        // TODO Provide documents to intent action get content
 
         super.onCreate();
     }

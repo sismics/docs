@@ -125,6 +125,14 @@ angular.module('docs',
         }
       }
     })
+      .state('document.default.file', {
+        url: '/file/:fileId',
+        views: {
+          'file': {
+            controller: 'FileView'
+          }
+        }
+      })
     .state('document.add', {
       url: '/add',
       views: {
