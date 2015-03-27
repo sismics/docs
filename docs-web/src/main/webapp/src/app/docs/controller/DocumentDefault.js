@@ -71,9 +71,12 @@ angular.module('docs').controller('DocumentDefault', function($scope, $state, Re
   /**
    * Delete a file.
    */
-  $scope.deleteFile = function (file) {
+  $scope.deleteFile = function ($event, file) {
+    $event.stopPropagation();
+
     Restangular.one('file', file.id).remove().then(function () {
       $scope.loadFiles();
     });
+    return false;
   };
 });

@@ -134,7 +134,7 @@ angular.module('docs',
         }
       })
     .state('document.add', {
-      url: '/add',
+      url: '/add?files',
       views: {
         'document': {
           templateUrl: 'partial/docs/document.edit.html',
@@ -143,7 +143,7 @@ angular.module('docs',
       }
     })
     .state('document.edit', {
-      url: '/edit/:id',
+      url: '/edit/:id?files',
       views: {
         'document': {
           templateUrl: 'partial/docs/document.edit.html',

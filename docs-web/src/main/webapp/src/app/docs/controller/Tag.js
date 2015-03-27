@@ -3,9 +3,9 @@
 /**
  * Tag controller.
  */
-angular.module('docs').controller('Tag', function($scope, $dialog, $state, Tag, Restangular) {
+angular.module('docs').controller('Tag', function($scope, $dialog, Tag, Restangular) {
   $scope.tag = { name: '', color: '#3a87ad' };
-  
+
   // Retrieve tags
   Tag.tags().then(function(data) {
     $scope.tags = data.tags;
@@ -14,7 +14,7 @@ angular.module('docs').controller('Tag', function($scope, $dialog, $state, Tag, 
   // Retrieve tag stats
   Restangular.one('tag/stats').get().then(function(data) {
     $scope.stats = data.stats;
-  })
+  });
   
   /**
    * Returns total number of document from tag stats.

@@ -5,16 +5,19 @@
 	  {{ app.document_count }} <small>document{{ app.document_count > 1 ? 's' : '' }} in the database</small>
 	</h1>
 
-  <div class="row" ng-model="dropFiles" style="min-height: 150px;" ng-file-drop drag-over-class="bg-success"
+  <div class="row upload-zone" ng-model="dropFiles" ng-file-drop drag-over-class="bg-success"
        ng-multiple="true" allow-dir="false" accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
     <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
-      <div class="thumbnail" ng-if="file.id">
+      <div class="thumbnail" ng-class="{ 'thumbnail-checked': file.checked }" ng-if="file.id">
         <a ng-click="openFile(file)">
           <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
         </a>
-        <div class="caption">
+        <div class="caption pointer" ng-click="file.checked = !file.checked">
+          <div class="pull-left">
+            <input type="checkbox" ng-model="file.checked" />
+          </div>
           <div class="pull-right">
-            <button class="btn btn-danger" ng-click="deleteFile(file)"><span class="glyphicon glyphicon-trash"></span></button>
+            <button class="btn btn-danger" ng-click="deleteFile($event, file)"><span class="glyphicon glyphicon-trash"></span></button>
           </div>
           <div class="clearfix"></div>
         </div>
