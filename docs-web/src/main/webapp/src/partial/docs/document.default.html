@@ -5,7 +5,7 @@
 	  {{ app.document_count }} <small>document{{ app.document_count > 1 ? 's' : '' }} in the database</small>
 	</h1>
 
-  <div class="row well" ng-file-drop ng-model="dropFiles" drag-over-class="bg-success" style="min-height: 150px;"
+  <div class="row" ng-model="dropFiles" style="min-height: 150px;" ng-file-drop drag-over-class="bg-success"
        ng-multiple="true" allow-dir="false" accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
     <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
       <div class="thumbnail" ng-if="file.id">

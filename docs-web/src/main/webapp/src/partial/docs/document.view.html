@@ -32,25 +32,42 @@
 	</div>
 	
 	<p ng-bind-html="document.description | newline"></p>
-	
-	<div class="row" ui-sortable="fileSortableOptions" ng-model="files" ng-show="files.length > 0">
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
-	    <div class="thumbnail">
-	      <a ng-click="openFile(file)">
-	        <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
-	      </a>
-	      <div class="caption">
-	        <div class="pull-left">
-	          <div class="btn btn-default handle"><span class="glyphicon glyphicon-resize-horizontal"></span></div>
-	        </div>
-	        <div class="pull-right">
-	          <button class="btn btn-danger" ng-click="deleteFile(file)"><span class="glyphicon glyphicon-trash"></span></button>
-	        </div>
-	        <div class="clearfix"></div>
-	      </div>
-	    </div>
-	  </div>
-	</div>
+
+  <div ng-file-drop drag-over-class="bg-success" ng-multiple="true" allow-dir="false" ng-model="dropFiles"
+       accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
+    <div class="row" ui-sortable="fileSortableOptions" ng-model="files" style="min-height: 150px;">
+      <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
+        <div class="thumbnail" ng-if="file.id">
+          <a ng-click="openFile(file)">
+            <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
+          </a>
+          <div class="caption">
+            <div class="pull-left">
+              <div class="btn btn-default handle"><span class="glyphicon glyphicon-resize-horizontal"></span></div>
+            </div>
+            <div class="pull-right">
+              <button class="btn btn-danger" ng-click="deleteFile(file)"><span class="glyphicon glyphicon-trash"></span></button>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+        </div>
+
+        <div class="thumbnail" ng-if="!file.id">
+          <p class="text-center lead">
+            Uploading...
+          </p>
+          <div class="caption">
+            <progressbar value="file.progress" class="progress-info active"></progressbar>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-center well-lg" ng-if="files.length == 0">
+        <span class="glyphicon glyphicon-move"></span>
+        Drag &amp; drop files here to upload
+      </p>
+    </div>
+  </div>
 	
 	<div ui-view="file"></div>
 </div>

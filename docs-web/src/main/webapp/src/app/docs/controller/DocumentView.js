@@ -3,7 +3,7 @@
 /**
  * Document view controller.
  */
-angular.module('docs').controller('DocumentView', function ($scope, $state, $stateParams, $location, $dialog, $modal, Restangular) {
+angular.module('docs').controller('DocumentView', function ($scope, $state, $stateParams, $location, $dialog, $modal, Restangular, $upload) {
   // Load data from server
   Restangular.one('document', $stateParams.id).get().then(function(data) {
     $scope.document = data;
@@ -34,6 +34,7 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
   $scope.loadFiles = function () {
     Restangular.one('file').getList('list', { id: $stateParams.id }).then(function (data) {
       $scope.files = data.files;
+      // TODO Keep currently uploading files
     });
   };
   $scope.loadFiles();
@@ -140,5 +141,49 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
         });
       }
     });
+  };
+
+  /**
+   * File has been drag & dropped.
+   * @param files
+   */
+  $scope.fileDropped = function(files) {
+    if (files && files.length) {
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        $scope.uploadFile(file);
+      }
+    }
+  };
+
+  /**
+   * Uppload a file.
+   * @param file
+   */
+  $scope.uploadFile = function(file) {
+    // Add the uploading file to the UI
+    var newfile = {
+      progress: 0,
+      name: file.name,
+      create_date: new Date().getTime(),
+      mimetype: file.type
+    };
+    $scope.files.push(newfile);
+
+    // Upload the file
+    $upload.upload({
+      method: 'PUT',
+      url: '../api/file',
+      file: file,
+      fields: {
+        id: $stateParams.id
+      }
+    })
+        .progress(function (e) {
+          newfile.progress = parseInt(100.0 * e.loaded / e.total);
+        })
+        .success(function (data) {
+          newfile.id = data.id;
+        });
   };
 });
