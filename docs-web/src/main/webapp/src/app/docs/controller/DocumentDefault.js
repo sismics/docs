@@ -71,9 +71,26 @@ angular.module('docs').controller('DocumentDefault', function($scope, $state, Re
   /**
    * Delete a file.
    */
-  $scope.deleteFile = function (file) {
+  $scope.deleteFile = function ($event, file) {
+    $event.stopPropagation();
+
     Restangular.one('file', file.id).remove().then(function () {
       $scope.loadFiles();
     });
+    return false;
+  };
+
+  /**
+   * Returns checked files.
+   */
+  $scope.checkedFiles = function() {
+    return _.where($scope.files, { checked: true });
+  };
+
+  /**
+   * Add a document with checked files.
+   */
+  $scope.addDocument = function() {
+    $state.transitionTo('document.add', { files: _.pluck($scope.checkedFiles(), 'id') });
   };
 });

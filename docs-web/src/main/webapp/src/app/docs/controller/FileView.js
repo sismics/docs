@@ -16,10 +16,6 @@ angular.module('docs').controller('FileView', function($modal, $state, $statePar
     modal.closed = true;
   }, function() {
     modal.closed = true;
-    if ($stateParams.id) {
-      $state.transitionTo('document.view', { id: $stateParams.id });
-    } else {
-      $state.transitionTo('document.default');
-    }
+    $state.go('^', { id: $stateParams.id });
   });
 });
