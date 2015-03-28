@@ -39,6 +39,10 @@
     </p>
   </div>
 
+  <div class="btn-group" ng-show="checkedFiles().length > 0">
+    <button class="btn btn-primary" ng-click="addDocument()"><span class="glyphicon glyphicon-plus"></span> Add to new document</button>
+  </div>
+
   <div ui-view="file"></div>
 
 	<div class="text-muted text-right">

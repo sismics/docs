@@ -79,4 +79,18 @@ angular.module('docs').controller('DocumentDefault', function($scope, $state, Re
     });
     return false;
   };
+
+  /**
+   * Returns checked files.
+   */
+  $scope.checkedFiles = function() {
+    return _.where($scope.files, { checked: true });
+  };
+
+  /**
+   * Add a document with checked files.
+   */
+  $scope.addDocument = function() {
+    $state.transitionTo('document.add', { files: _.pluck($scope.checkedFiles(), 'id') });
+  };
 });

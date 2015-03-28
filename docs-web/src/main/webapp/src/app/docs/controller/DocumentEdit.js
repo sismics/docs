@@ -6,7 +6,10 @@
 angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $q, $http, $state, $stateParams, Restangular) {
   // Alerts
   $scope.alerts = [];
-  
+
+  // Orphan files to add
+  $scope.orphanFiles = $stateParams.files ? $stateParams.files.split(',') : [];
+
   /**
    * Close an alert.
    */
@@ -51,6 +54,8 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
 
   /**
    * Edit a document.
+   * Workflow:
+   * Edit/add the file -> upload local files -> attach orphan files -> redirect to edited document or stay if adding
    */
   $scope.edit = function() {
     var promise = null;
@@ -65,35 +70,44 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
     document.tags = _.pluck(document.tags, 'id');
     
     if ($scope.isEdit()) {
-      promise = Restangular
-      .one('document', $stateParams.id)
-      .post('', document);
+      promise = Restangular.one('document', $stateParams.id).post('', document);
     } else {
-      promise = Restangular
-      .one('document')
-      .put(document);
+      promise = Restangular.one('document').put(document);
     }
+
+    // Attach orphan files after edition
+    var attachOrphanFiles = function(data) {
+      var promises = [];
+      _.each($scope.orphanFiles, function(fileId) {
+        promises.push(Restangular.one('file/' + fileId).post('', { id: data.id }));
+      });
+      $scope.orphanFiles = [];
+      return $q.all(promises);
+    };
     
     // Upload files after edition
     promise.then(function(data) {
       $scope.fileProgress = 0;
       
-      // When all files upload are over, move on
+      // When all files upload are over, attach orphan files and move on
       var navigateNext = function() {
-        if ($scope.isEdit()) {
-          // Go back to the edited document
-          $scope.pageDocuments();
-          $state.transitionTo('document.view', { id: $stateParams.id });
-        } else {
-          // Reset the scope and stay here
-          var fileUploadCount = _.size($scope.newFiles);
-          $scope.alerts.unshift({
-            type: 'success',
-            msg: 'Document successfully added (with ' + fileUploadCount + ' file' + (fileUploadCount > 1 ? 's' :  '') + ')'
-          });
-          $scope.resetForm();
-          $scope.loadDocuments();
-        }
+        attachOrphanFiles(data).then(function(resolve) {
+          if ($scope.isEdit()) {
+            // Go back to the edited document
+            $scope.pageDocuments();
+            $state.transitionTo('document.view', { id: $stateParams.id });
+          } else {
+            // Reset the scope and stay here
+            var fileUploadCount = _.size($scope.newFiles) + resolve.length;
+            $scope.alerts.unshift({
+              type: 'success',
+              msg: 'Document successfully added (with ' + fileUploadCount + ' file' + (fileUploadCount > 1 ? 's' :  '') + ')'
+            });
+
+            $scope.resetForm();
+            $scope.loadDocuments();
+          }
+        });
       };
       
       if (_.size($scope.newFiles) == 0) {
