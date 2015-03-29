@@ -25,7 +25,7 @@
 
       <div class="thumbnail" ng-if="!file.id">
         <p class="text-center lead">
-          Uploading...
+          {{ file.status }}
         </p>
         <div class="caption">
           <progressbar value="file.progress" class="progress-info active"></progressbar>
