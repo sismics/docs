@@ -26,29 +26,40 @@ angular.module('docs').controller('DocumentDefault', function($scope, $state, Re
    */
   $scope.fileDropped = function(files) {
     if (files && files.length) {
-      for (var i = 0; i < files.length; i++) {
-        var file = files[i];
-        $scope.uploadFile(file);
-      }
+      // Adding files to the UI
+      var newfiles = [];
+      _.each(files, function(file) {
+        var newfile = {
+          progress: 0,
+          name: file.name,
+          create_date: new Date().getTime(),
+          mimetype: file.type,
+          status: 'Pending...'
+        };
+        $scope.files.push(newfile);
+        newfiles.push(newfile);
+      });
+
+      // Uploading files sequentially
+      var key = 0;
+      var then = function() {
+        if (files[key]) {
+          $scope.uploadFile(files[key], newfiles[key++]).then(then);
+        }
+      };
+      then();
     }
   };
 
   /**
-   * Uppload a file.
+   * Upload a file.
    * @param file
+   * @param newfile
    */
-  $scope.uploadFile = function(file) {
-    // Add the uploading file to the UI
-    var newfile = {
-      progress: 0,
-      name: file.name,
-      create_date: new Date().getTime(),
-      mimetype: file.type
-    };
-    $scope.files.push(newfile);
-
+  $scope.uploadFile = function(file, newfile) {
     // Upload the file
-    $upload.upload({
+    newfile.status = 'Uploading...';
+    return $upload.upload({
       method: 'PUT',
       url: '../api/file',
       file: file
