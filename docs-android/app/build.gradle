@@ -28,6 +28,21 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
+    signingConfigs {
+        release {
+            storeFile file(System.getenv("TRACKINO_STORE_PATH"))
+            storePassword System.getenv("TRACKINO_STORE_PASS")
+            keyAlias System.getenv("TRACKINO_STORE_ALIAS")
+            keyPassword System.getenv("TRACKINO_STORE_KEYPASS")
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+
     lintOptions {
         abortOnError false
     }
@@ -35,7 +50,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
-    compile 'com.android.support:appcompat-v7:22.1.0'
+    compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.android.support:recyclerview-v7:22.0.0'
     compile 'com.loopj.android:android-async-http:1.4.6'
     compile 'it.sephiroth.android.library.imagezoom:imagezoom:1.0.5'
