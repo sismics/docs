@@ -13,7 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -57,7 +57,7 @@ import de.greenrobot.event.EventBus;
  * 
  * @author bgamard
  */
-public class DocumentViewActivity extends ActionBarActivity {
+public class DocumentViewActivity extends AppCompatActivity {
     /**
      * Request code of adding file.
      */
@@ -116,8 +116,10 @@ public class DocumentViewActivity extends ActionBarActivity {
 
         // Setup the activity
         setContentView(R.layout.document_view_activity);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
 
         // Fill the view
         refreshDocument(document);

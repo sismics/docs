@@ -35,7 +35,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
-    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:appcompat-v7:22.1.0'
     compile 'com.android.support:recyclerview-v7:22.0.0'
     compile 'com.loopj.android:android-async-http:1.4.6'
     compile 'it.sephiroth.android.library.imagezoom:imagezoom:1.0.5'

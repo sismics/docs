@@ -48,6 +48,11 @@ public class FileCreatedAsyncListener {
             @Override
             public void run() {
                 FileDao fileDao = new FileDao();
+                if (fileDao.getById(file.getId()) == null) {
+                    // The file has been deleted since the OCR-ization started, ignore the result
+                    return;
+                }
+                
                 file.setContent(content);
                 fileDao.update(file);
             }

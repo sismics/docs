@@ -96,20 +96,6 @@ angular.module('docs').controller('Document', function($scope, $timeout, $state,
   });
   
   /**
-   * Go to add document form.
-   */
-  $scope.addDocument = function() {
-    $state.transitionTo('document.add');
-  };
-  
-  /**
-   * Go to edit document form.
-   */
-  $scope.editDocument = function(id) {
-    $state.transitionTo('document.edit', { id: id });
-  };
-  
-  /**
    * Display a document.
    */
   $scope.viewDocument = function(id) {

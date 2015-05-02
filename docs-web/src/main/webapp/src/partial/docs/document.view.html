@@ -4,7 +4,7 @@
 	<div class="text-right">
 	  <div class="btn-group">
 	    <button class="btn btn-danger" ng-click="deleteDocument(document)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
-	    <button class="btn btn-primary" ng-click="editDocument(document.id)"><span class="glyphicon glyphicon-pencil"></span> Edit</button>
+	    <a href="#/document/edit/{{ document.id }}" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 	  </div>
 	</div>
 	

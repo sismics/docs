@@ -3,7 +3,7 @@ package com.sismics.docs.activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -43,7 +43,7 @@ import de.greenrobot.event.EventBus;
  *
  * @author bgamard.
  */
-public class DocumentEditActivity extends ActionBarActivity {
+public class DocumentEditActivity extends AppCompatActivity {
     /**
      * Document edited.
      */

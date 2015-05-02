@@ -7,8 +7,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,7 +39,8 @@ import de.greenrobot.event.EventBus;
  * 
  * @author bgamard
  */
-public class MainActivity extends ActionBarActivity {
+
+public class MainActivity extends AppCompatActivity {
     
     private ActionBarDrawerToggle drawerToggle;
     private MenuItem searchItem;
@@ -61,8 +62,10 @@ public class MainActivity extends ActionBarActivity {
 
         // Enable ActionBar app icon to behave as action to toggle nav drawer
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the sliding drawer and the action bar app icon
