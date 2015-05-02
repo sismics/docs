@@ -2,7 +2,7 @@
   <div class="col-md-4">
     <div class="well">
       <p class="text-center">
-        <button class="btn btn-primary" type="button" ng-click="addDocument()"><span class="glyphicon glyphicon-plus"></span> Add a document</button>
+        <a href="#/document/add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add a document</a>
       </p>
 
       <div class="input-group">
@@ -34,7 +34,11 @@
         </thead>
         <tbody>
           <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents">
-            <td>{{ document.title }} ({{ document.file_count }}) <span class="glyphicon glyphicon-share" ng-if="document.shared" tooltip="Shared"></span></td>
+            <td>
+              {{ document.title }} ({{ document.file_count }})
+              <span class="glyphicon glyphicon-share" ng-if="document.shared" tooltip="Shared"></span>
+              <a href="#/document/view/{{ document.id }}" ng-click="$event.stopPropagation()"><span class="glyphicon glyphicon-link"></span></a>
+            </td>
             <td>{{ document.create_date | date: 'yyyy-MM-dd' }}</td>
             <td class="hidden-xs cell-tags">
               <div class="tags">
