@@ -93,6 +93,12 @@
     <string name="upload_notification_message">Uploading the new file to the document</string>
     <string name="upload_notification_error">Error uploading the new file</string>
     <string name="delete_file">Delete current file</string>
+    <string name="advanced_search">Advanced Search</string>
+    <string name="search">Search</string>
+    <string name="add_tags">Add tags</string>
+    <string name="creation_date">Creation date</string>
+    <string name="description">Description</string>
+    <string name="title">Title</string>
 
 
 </resources>

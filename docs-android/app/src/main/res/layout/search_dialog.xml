@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Simple search -->
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textSize="18sp"
+            android:hint="Simple search"/>
+
+        <!-- Fulltext search -->
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textSize="18sp"
+            android:hint="Fulltext search"/>
+
+        <!-- Language -->
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:padding="16dp"/>
+
+        <!-- Shared -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="Shared documents"
+                android:textColor="#9f9f9f"
+                android:fontFamily="sans-serif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:textSize="18sp"
+                android:padding="16dp"/>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"/>
+
+        </LinearLayout>
+
+        <!-- Before date -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_weight="0.5"
+                android:text="After date"
+                android:textColor="#9f9f9f"
+                android:fontFamily="sans-serif"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:textSize="18sp"
+                android:padding="16dp"/>
+
+            <com.sismics.docs.ui.view.DatePickerView
+                style="@android:style/Widget.DeviceDefault.Light.Spinner"
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:textSize="18sp"
+                android:padding="16dp"
+                android:text="15/05/2014"/>
+
+        </LinearLayout>
+
+        <!-- After date -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_weight="0.5"
+                android:text="Before date"
+                android:textColor="#9f9f9f"
+                android:fontFamily="sans-serif"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:textSize="18sp"
+                android:padding="16dp"/>
+
+            <com.sismics.docs.ui.view.DatePickerView
+                style="@android:style/Widget.DeviceDefault.Light.Spinner"
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:textSize="18sp"
+                android:padding="16dp"
+                android:text="15/05/2014"/>
+
+        </LinearLayout>
+
+        <!-- Tags -->
+        <com.sismics.docs.ui.view.TagsCompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_margin="8dp"
+            android:hint="Search tags"/>
+
+    </LinearLayout>
+
+</ScrollView>

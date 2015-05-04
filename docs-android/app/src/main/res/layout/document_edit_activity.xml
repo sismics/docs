@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:padding="16dp"
-        android:textSize="24dp"
-        android:hint="Title"/>
+        android:textSize="24sp"
+        android:hint="@string/title"/>
 
     <EditText
         android:id="@+id/descriptionEditText"
@@ -20,7 +20,7 @@
         android:inputType="textMultiLine"
         android:layout_margin="8dp"
         android:padding="16dp"
-        android:hint="Description"
+        android:hint="@string/description"
         android:textSize="18sp"
         android:lines="2"/>
 
@@ -30,7 +30,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:text="Creation date"
+            android:text="@string/creation_date"
             android:textColor="#9f9f9f"
             android:fontFamily="sans-serif"
             android:layout_width="wrap_content"
@@ -46,7 +46,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:textSize="18sp"
-            android:text="15/11/2014"
             android:padding="16dp"/>
 
     </LinearLayout>
@@ -63,6 +62,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:hint="Add tags"
+        android:hint="@string/add_tags"
         android:layout_margin="8dp"/>
 </LinearLayout>
