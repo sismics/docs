@@ -99,6 +99,12 @@
     <string name="creation_date">Creation date</string>
     <string name="description">Description</string>
     <string name="title">Title</string>
+    <string name="simple_search">Simple search</string>
+    <string name="fulltext_search">Fulltext search</string>
+    <string name="after_date">After date</string>
+    <string name="before_date">Before date</string>
+    <string name="search_tags">Search tags</string>
+    <string name="all_languages">All languages</string>
 
 
 </resources>

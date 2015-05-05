@@ -84,8 +84,10 @@ public class DocumentEditActivity extends AppCompatActivity {
 
         // Setup the activity
         setContentView(R.layout.document_edit_activity);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
         languageSpinner = (Spinner) findViewById(R.id.languageSpinner);
         tagsEditText = (TagsCompleteTextView) findViewById(R.id.tagsEditText);
         datePickerView = (DatePickerView) findViewById(R.id.dateEditText);
@@ -93,7 +95,7 @@ public class DocumentEditActivity extends AppCompatActivity {
         descriptionEditText = (EditText) findViewById(R.id.descriptionEditText);
 
         // Language spinner
-        LanguageAdapter languageAdapter = new LanguageAdapter(this);
+        LanguageAdapter languageAdapter = new LanguageAdapter(this, false);
         languageSpinner.setAdapter(languageAdapter);
 
         // Tags auto-complete

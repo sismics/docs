@@ -8,9 +8,20 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Spinner;
 
 import com.sismics.docs.R;
+import com.sismics.docs.adapter.LanguageAdapter;
+import com.sismics.docs.adapter.TagAutoCompleteAdapter;
 import com.sismics.docs.event.SearchEvent;
+import com.sismics.docs.ui.view.TagsCompleteTextView;
+import com.sismics.docs.util.PreferenceUtil;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -38,6 +49,29 @@ public class SearchFragment extends DialogFragment {
         // Setup the view
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.search_dialog, null);
+        Spinner languageSpinner = (Spinner) view.findViewById(R.id.languageSpinner);
+        TagsCompleteTextView tagsEditText = (TagsCompleteTextView) view.findViewById(R.id.tagsEditText);
+
+        // Language spinner
+        LanguageAdapter languageAdapter = new LanguageAdapter(getActivity(), true);
+        languageSpinner.setAdapter(languageAdapter);
+
+        // Tags auto-complete
+        JSONObject tags = PreferenceUtil.getCachedJson(getActivity(), PreferenceUtil.PREF_CACHED_TAGS_JSON);
+        if (tags == null) {
+            Dialog dialog = builder.create();
+            dialog.cancel();
+            return dialog;
+        }
+        JSONArray tagArray = tags.optJSONArray("stats");
+
+        List<JSONObject> tagList = new ArrayList<>();
+        for (int i = 0; i < tagArray.length(); i++) {
+            tagList.add(tagArray.optJSONObject(i));
+        }
+
+        tagsEditText.allowDuplicates(false);
+        tagsEditText.setAdapter(new TagAutoCompleteAdapter(getActivity(), 0, tagList));
 
         // Build the dialog
         builder.setView(view)

@@ -11,112 +11,112 @@
 
         <!-- Simple search -->
         <EditText
+            android:id="@+id/searchEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:textSize="18sp"
-            android:hint="Simple search"/>
+            android:hint="@string/simple_search"/>
 
         <!-- Fulltext search -->
         <EditText
+            android:id="@+id/fulltextEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:textSize="18sp"
-            android:hint="Fulltext search"/>
+            android:hint="@string/fulltext_search"/>
 
         <!-- Language -->
         <Spinner
+            android:id="@+id/languageSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:padding="16dp"/>
+            android:layout_margin="8dp"/>
 
         <!-- Shared -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:gravity="center_vertical">
 
             <TextView
-                android:text="Shared documents"
+                android:text="@string/shared_documents"
                 android:textColor="#9f9f9f"
                 android:fontFamily="sans-serif"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:textSize="18sp"
-                android:padding="16dp"/>
+                android:textSize="18sp"/>
 
             <CheckBox
+                android:id="@+id/sharedCheckbox"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"/>
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
 
         <!-- Before date -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_margin="8dp">
 
             <TextView
                 android:layout_weight="0.5"
-                android:text="After date"
+                android:text="@string/after_date"
                 android:textColor="#9f9f9f"
                 android:fontFamily="sans-serif"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:textSize="18sp"
-                android:padding="16dp"/>
+                android:textSize="18sp"/>
 
             <com.sismics.docs.ui.view.DatePickerView
                 style="@android:style/Widget.DeviceDefault.Light.Spinner"
+                android:id="@+id/afterDatePicker"
                 android:layout_weight="0.5"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:textSize="18sp"
-                android:padding="16dp"
-                android:text="15/05/2014"/>
+                android:textSize="18sp"/>
 
         </LinearLayout>
 
         <!-- After date -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:gravity="center_vertical">
 
             <TextView
                 android:layout_weight="0.5"
-                android:text="Before date"
+                android:text="@string/before_date"
                 android:textColor="#9f9f9f"
                 android:fontFamily="sans-serif"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:textSize="18sp"
-                android:padding="16dp"/>
+                android:textSize="18sp"/>
 
             <com.sismics.docs.ui.view.DatePickerView
                 style="@android:style/Widget.DeviceDefault.Light.Spinner"
+                android:id="@+id/beforeDatePicker"
                 android:layout_weight="0.5"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:textSize="18sp"
-                android:padding="16dp"
-                android:text="15/05/2014"/>
+                android:textSize="18sp"/>
 
         </LinearLayout>
 
         <!-- Tags -->
         <com.sismics.docs.ui.view.TagsCompleteTextView
+            android:id="@+id/tagsEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:layout_margin="8dp"
-            android:hint="Search tags"/>
+            android:hint="@string/search_tags"/>
 
     </LinearLayout>
 
