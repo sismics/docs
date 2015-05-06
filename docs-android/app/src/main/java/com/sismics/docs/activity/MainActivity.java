@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.androidquery.util.AQUtility;
 import com.sismics.docs.R;
 import com.sismics.docs.adapter.TagListAdapter;
+import com.sismics.docs.event.AdvancedSearchEvent;
 import com.sismics.docs.event.SearchEvent;
 import com.sismics.docs.fragment.SearchFragment;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
@@ -138,6 +139,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         handleIntent(getIntent());
+
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -259,8 +262,18 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.closeDrawers();
     }
 
+    /**
+     * An advanced search event has been fired.
+     *
+     * @param event Advanced search event
+     */
+    public void onEventMainThread(AdvancedSearchEvent event) {
+        searchQuery(event.getQuery());
+    }
+
     @Override
     protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
         if(isTaskRoot()) {
             int cacheSizeMb = PreferenceUtil.getIntegerPreference(this, PreferenceUtil.PREF_CACHE_SIZE, 10);
             AQUtility.cleanCacheAsync(this, cacheSizeMb * 1000000, cacheSizeMb * 1000000);

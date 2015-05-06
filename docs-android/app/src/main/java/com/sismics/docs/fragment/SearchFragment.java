@@ -8,14 +8,19 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.sismics.docs.R;
 import com.sismics.docs.adapter.LanguageAdapter;
 import com.sismics.docs.adapter.TagAutoCompleteAdapter;
-import com.sismics.docs.event.SearchEvent;
+import com.sismics.docs.event.AdvancedSearchEvent;
+import com.sismics.docs.ui.view.DatePickerView;
 import com.sismics.docs.ui.view.TagsCompleteTextView;
 import com.sismics.docs.util.PreferenceUtil;
+import com.sismics.docs.util.SearchQueryBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -49,8 +54,13 @@ public class SearchFragment extends DialogFragment {
         // Setup the view
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.search_dialog, null);
-        Spinner languageSpinner = (Spinner) view.findViewById(R.id.languageSpinner);
-        TagsCompleteTextView tagsEditText = (TagsCompleteTextView) view.findViewById(R.id.tagsEditText);
+        final EditText searchEditText = (EditText) view.findViewById(R.id.searchEditText);
+        final EditText fulltextEditText = (EditText) view.findViewById(R.id.fulltextEditText);
+        final CheckBox sharedCheckbox = (CheckBox) view.findViewById(R.id.sharedCheckbox);
+        final Spinner languageSpinner = (Spinner) view.findViewById(R.id.languageSpinner);
+        final DatePickerView beforeDatePicker = (DatePickerView) view.findViewById(R.id.beforeDatePicker);
+        final DatePickerView afterDatePicker = (DatePickerView) view.findViewById(R.id.afterDatePicker);
+        final TagsCompleteTextView tagsEditText = (TagsCompleteTextView) view.findViewById(R.id.tagsEditText);
 
         // Language spinner
         LanguageAdapter languageAdapter = new LanguageAdapter(getActivity(), true);
@@ -77,7 +87,32 @@ public class SearchFragment extends DialogFragment {
         builder.setView(view)
                 .setPositiveButton(R.string.search, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        EventBus.getDefault().post(new SearchEvent(null));
+                        // Build the simple criterias
+                        SearchQueryBuilder queryBuilder = new SearchQueryBuilder()
+                                .simpleSearch(searchEditText.getText().toString())
+                                .shared(sharedCheckbox.isChecked())
+                                .language(((LanguageAdapter.Language) languageSpinner.getSelectedItem()).getId())
+                                .before(beforeDatePicker.getDate())
+                                .after(afterDatePicker.getDate());
+
+                        // Fulltext criteria
+                        String fulltextCriteria = fulltextEditText.getText().toString();
+                        if (!fulltextCriteria.trim().isEmpty()) {
+                            String[] criterias = fulltextCriteria.split(" ");
+                            for (String criteria : criterias) {
+                                queryBuilder.fulltextSearch(criteria);
+                            }
+                        }
+
+                        // Tags criteria
+                        for (Object object : tagsEditText.getObjects()) {
+                            JSONObject tag = (JSONObject) object;
+                            queryBuilder.tag(tag.optString("name"));
+                        }
+
+                        // Send the advanced search event
+                        EventBus.getDefault().post(new AdvancedSearchEvent(queryBuilder.build()));
+
                         getDialog().cancel();
                     }
                 })
@@ -86,6 +121,8 @@ public class SearchFragment extends DialogFragment {
                         getDialog().cancel();
                     }
                 });
-        return builder.create();
+        Dialog dialog = builder.create();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        return dialog;
     }
 }
