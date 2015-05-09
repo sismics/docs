@@ -71,17 +71,22 @@ public class DocumentViewActivity extends AppCompatActivity {
     /**
      * File view pager.
      */
-    ViewPager fileViewPager;
+    private ViewPager fileViewPager;
 
     /**
      * File pager adapter.
      */
-    FilePagerAdapter filePagerAdapter;
+    private FilePagerAdapter filePagerAdapter;
 
     /**
      * Document displayed.
      */
-    JSONObject document;
+    private JSONObject document;
+
+    /**
+     * Menu.
+     */
+    private Menu menu;
 
     @Override
     protected void onCreate(final Bundle args) {
@@ -181,29 +186,16 @@ public class DocumentViewActivity extends AppCompatActivity {
 
         // Grab the attached files
         updateFiles();
+
+        // Grab the full document (used for ACLs and writable status)
+        updateDocument();
     }
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.document_view_activity, menu);
-
-        // Silently get the document to know if it is writable by the current user
-        // If this call fails or is slow and the document is read-only,
-        // write actions will be allowed and will fail
-        DocumentResource.get(this, document.optString("id"), new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                boolean writable = response.optBoolean("writable");
-
-                menu.findItem(R.id.share).setVisible(writable);
-                menu.findItem(R.id.upload_file).setVisible(writable);
-                menu.findItem(R.id.edit).setVisible(writable);
-                menu.findItem(R.id.delete_file).setVisible(writable);
-                menu.findItem(R.id.delete_document).setVisible(writable);
-            }
-        });
-
+        this.menu = menu;
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -508,6 +500,33 @@ public class DocumentViewActivity extends AppCompatActivity {
                 startService(intent);
             }
         }
+    }
+
+    /**
+     * Update the document model.
+     */
+    private void updateDocument() {
+        if (document == null) return;
+
+        // Silently get the document to know if it is writable by the current user
+        // If this call fails or is slow and the document is read-only,
+        // write actions will be allowed and will fail
+        DocumentResource.get(this, document.optString("id"), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                boolean writable = response.optBoolean("writable");
+
+                if (menu != null) {
+                    menu.findItem(R.id.share).setVisible(writable);
+                    menu.findItem(R.id.upload_file).setVisible(writable);
+                    menu.findItem(R.id.edit).setVisible(writable);
+                    menu.findItem(R.id.delete_file).setVisible(writable);
+                    menu.findItem(R.id.delete_document).setVisible(writable);
+                }
+
+                // TODO Show the ACLs in a sliding panel from the right
+            }
+        });
     }
 
     /**
