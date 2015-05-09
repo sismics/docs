@@ -103,7 +103,7 @@ public class DocumentResource extends BaseResource {
         document.put("description", documentDb.getDescription());
         document.put("create_date", documentDb.getCreateDate().getTime());
         document.put("language", documentDb.getLanguage());
-        document.put("creator", userDao.getById(documentDb.getUserId()).getUsername());
+        // TODO Add "shared" and "file_count" -> rewrite the query in SQL
         
         if (principal.isAnonymous()) {
             // No tags in anonymous mode (sharing)
@@ -122,6 +122,10 @@ public class DocumentResource extends BaseResource {
             }
             document.put("tags", tags);
         }
+        
+        // Below is specific to GET /document/id
+        
+        document.put("creator", userDao.getById(documentDb.getUserId()).getUsername());
         
         // Add ACL
         List<AclDto> aclDtoList = aclDao.getBySourceId(documentId);
@@ -190,8 +194,8 @@ public class DocumentResource extends BaseResource {
             document.put("title", documentDto.getTitle());
             document.put("description", documentDto.getDescription());
             document.put("create_date", documentDto.getCreateTimestamp());
-            document.put("shared", documentDto.getShared());
             document.put("language", documentDto.getLanguage());
+            document.put("shared", documentDto.getShared());
             document.put("file_count", documentDto.getFileCount());
             
             // Get tags added by the current user on this document
