@@ -75,16 +75,18 @@ public class TagDao {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public List<TagDto> getByDocumentId(String documentId) {
+    public List<TagDto> getByDocumentId(String documentId, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         StringBuilder sb = new StringBuilder("select t.TAG_ID_C, t.TAG_NAME_C, t.TAG_COLOR_C from T_DOCUMENT_TAG dt ");
         sb.append(" join T_TAG t on t.TAG_ID_C = dt.DOT_IDTAG_C ");
         sb.append(" where dt.DOT_IDDOCUMENT_C = :documentId and t.TAG_DELETEDATE_D is null ");
+        sb.append(" and t.TAG_IDUSER_C = :userId ");
         sb.append(" order by t.TAG_NAME_C ");
         
         // Perform the query
         Query q = em.createNativeQuery(sb.toString());
         q.setParameter("documentId", documentId);
+        q.setParameter("userId", userId);
         List<Object[]> l = q.getResultList();
         
         // Assemble results

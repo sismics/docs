@@ -105,18 +105,23 @@ public class DocumentResource extends BaseResource {
         document.put("language", documentDb.getLanguage());
         document.put("creator", userDao.getById(documentDb.getUserId()).getUsername());
         
-        // Add tags
-        TagDao tagDao = new TagDao();
-        List<TagDto> tagDtoList = tagDao.getByDocumentId(documentId);
-        List<JSONObject> tags = new ArrayList<>();
-        for (TagDto tagDto : tagDtoList) {
-            JSONObject tag = new JSONObject();
-            tag.put("id", tagDto.getId());
-            tag.put("name", tagDto.getName());
-            tag.put("color", tagDto.getColor());
-            tags.add(tag);
+        if (principal.isAnonymous()) {
+            // No tags in anonymous mode (sharing)
+            document.put("tags", new ArrayList<JSONObject>());
+        } else {
+            // Add tags added by the current user on this document
+            TagDao tagDao = new TagDao();
+            List<TagDto> tagDtoList = tagDao.getByDocumentId(documentId, principal.getId());
+            List<JSONObject> tags = new ArrayList<>();
+            for (TagDto tagDto : tagDtoList) {
+                JSONObject tag = new JSONObject();
+                tag.put("id", tagDto.getId());
+                tag.put("name", tagDto.getName());
+                tag.put("color", tagDto.getColor());
+                tags.add(tag);
+            }
+            document.put("tags", tags);
         }
-        document.put("tags", tags);
         
         // Add ACL
         List<AclDto> aclDtoList = aclDao.getBySourceId(documentId);
@@ -130,7 +135,10 @@ public class DocumentResource extends BaseResource {
             acl.put("type", aclDto.getTargetType());
             aclList.add(acl);
             
-            if (aclDto.getTargetId().equals(principal.getId()) && aclDto.getPerm() == PermType.WRITE) {
+            if (!principal.isAnonymous()
+                    && aclDto.getTargetId().equals(principal.getId())
+                    && aclDto.getPerm() == PermType.WRITE) {
+                // The document is writable for the current user
                 writable = true;
             }
         }
@@ -186,8 +194,8 @@ public class DocumentResource extends BaseResource {
             document.put("language", documentDto.getLanguage());
             document.put("file_count", documentDto.getFileCount());
             
-            // Get tags
-            List<TagDto> tagDtoList = tagDao.getByDocumentId(documentDto.getId());
+            // Get tags added by the current user on this document
+            List<TagDto> tagDtoList = tagDao.getByDocumentId(documentDto.getId(), principal.getId());
             List<JSONObject> tags = new ArrayList<>();
             for (TagDto tagDto : tagDtoList) {
                 JSONObject tag = new JSONObject();
