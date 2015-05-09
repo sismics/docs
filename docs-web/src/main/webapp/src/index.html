@@ -104,6 +104,9 @@
                 <span class="glyphicon glyphicon-warning-sign"></span> {{ errorNumber }} new error{{ errorNumber > 1 ? 's' : '' }}
               </a>
           </li>
+          <li>
+            <a href="#/settings/account" title="Logged in as {{ userInfo.username }}">{{ userInfo.username }}</a>
+          </li>
           <li ng-class="{active: $uiRoute}" ui-route="/settings.*">
             <a href="#/settings/account">
               <span class="glyphicon glyphicon-cog"></span> Settings

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -20,11 +22,14 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.sismics.docs.core.constant.PermType;
+import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.model.context.AppContext;
+import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.DirectoryUtil;
@@ -34,6 +39,7 @@ import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
+import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.log4j.LogCriteria;
 import com.sismics.util.log4j.LogEntry;
 import com.sismics.util.log4j.MemoryAppender;
@@ -204,6 +210,60 @@ public class AppResource extends BaseResource {
         
         JSONObject response = new JSONObject();
         response.put("status", "ok");
+        return Response.ok().entity(response).build();
+    }
+    
+    /**
+     * Rebuild ACLs.
+     * Set Read + Write on documents' creator.
+     * Loose all sharing.
+     * 
+     * @return Response
+     * @throws JSONException
+     */
+    @POST
+    @Path("batch/rebuild_acls")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response batchRebuildAcls() throws JSONException {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        
+        AclDao aclDao = new AclDao();
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        em.createNativeQuery("truncate table T_ACL").executeUpdate();
+        em.createNativeQuery("truncate table T_SHARE").executeUpdate();
+        
+        Query q = em.createNativeQuery("select DOC_ID_C, DOC_IDUSER_C from T_DOCUMENT");
+        @SuppressWarnings("unchecked")
+        List<Object[]> l = q.getResultList();
+        for (Object[] o : l) {
+            String documentId = (String) o[0];
+            String userId = (String) o[1];
+            
+            // Create read ACL
+            Acl acl = new Acl();
+            acl.setPerm(PermType.READ);
+            acl.setSourceId(documentId);
+            acl.setTargetId(userId);
+            System.out.println(acl);
+            aclDao.create(acl);
+            
+            // Create write ACL
+            acl = new Acl();
+            acl.setPerm(PermType.WRITE);
+            acl.setSourceId(documentId);
+            acl.setTargetId(userId);
+            System.out.println(acl);
+            aclDao.create(acl);
+        }
+        
+        int mod = em.createNativeQuery("update T_FILE set FIL_IDUSER_C = (select DOC_IDUSER_C from T_DOCUMENT where DOC_ID_C = FIL_IDDOC_C) where FIL_IDDOC_C is not null").executeUpdate();
+        
+        JSONObject response = new JSONObject();
+        response.put("status", "ok");
+        response.put("file_id_user_updated", mod);
         return Response.ok().entity(response).build();
     }
 }

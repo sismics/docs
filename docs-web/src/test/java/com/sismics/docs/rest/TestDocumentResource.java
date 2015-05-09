@@ -43,6 +43,10 @@ public class TestDocumentResource extends BaseJerseyTest {
         clientUtil.createUser("document1");
         String document1Token = clientUtil.login("document1");
         
+        // Login document3
+        clientUtil.createUser("document3");
+        String document3Token = clientUtil.login("document3");
+        
         // Create a tag
         WebResource tagResource = resource().path("/tag");
         tagResource.addFilter(new CookieAuthenticationFilter(document1Token));
@@ -114,6 +118,61 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(tag1Id, tags.getJSONObject(0).getString("id"));
         Assert.assertEquals("SuperTag", tags.getJSONObject(0).getString("name"));
         Assert.assertEquals("#ffff00", tags.getJSONObject(0).getString("color"));
+        
+        // List all documents from document3
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document3Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("sort_column", 3);
+        getParams.putSingle("asc", false);
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 0);
+        
+        // Create a document with document3
+        documentResource = resource().path("/document");
+        documentResource.addFilter(new CookieAuthenticationFilter(document3Token));
+        postParams = new MultivaluedMapImpl();
+        postParams.add("title", "My super title document 1");
+        postParams.add("description", "My super description for document 1");
+        postParams.add("language", "eng");
+        create1Date = new Date().getTime();
+        postParams.add("create_date", create1Date);
+        response = documentResource.put(ClientResponse.class, postParams);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        String document3Id = json.optString("id");
+        Assert.assertNotNull(document3Id);
+        
+        // Add a file
+        fileResource = resource().path("/file");
+        fileResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        form = new FormDataMultiPart();
+        file = this.getClass().getResourceAsStream("/file/Einstein-Roosevelt-letter.png");
+        fdp = new FormDataBodyPart("file",
+                new BufferedInputStream(file),
+                MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        form.bodyPart(fdp);
+        form.field("id", document1Id);
+        response = fileResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = response.getEntity(JSONObject.class);
+        String file3Id = json.getString("id");
+        Assert.assertNotNull(file3Id);
+        
+        // List all documents from document3
+        documentResource = resource().path("/document/list");
+        documentResource.addFilter(new CookieAuthenticationFilter(document3Token));
+        getParams = new MultivaluedMapImpl();
+        getParams.putSingle("sort_column", 3);
+        getParams.putSingle("asc", false);
+        response = documentResource.queryParams(getParams).get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        documents = json.getJSONArray("documents");
+        Assert.assertTrue(documents.length() == 1);
         
         // Search documents
         Assert.assertEquals(1, searchDocuments("full:uranium full:einstein", document1Token));

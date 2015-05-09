@@ -36,9 +36,10 @@ import org.codehaus.jettison.json.JSONObject;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
+import com.sismics.docs.core.constant.PermType;
+import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
-import com.sismics.docs.core.dao.jpa.ShareDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
@@ -97,7 +98,7 @@ public class FileResource extends BaseResource {
         } else {
             DocumentDao documentDao = new DocumentDao();
             try {
-                document = documentDao.getDocument(documentId, principal.getId());
+                document = documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
             } catch (NoResultException e) {
                 throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
             }
@@ -194,7 +195,7 @@ public class FileResource extends BaseResource {
         File file;
         try {
             file = fileDao.getFile(id, principal.getId());
-            document = documentDao.getDocument(documentId, principal.getId());
+            document = documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
         } catch (NoResultException e) {
             throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
         }
@@ -254,7 +255,7 @@ public class FileResource extends BaseResource {
         // Get the document
         DocumentDao documentDao = new DocumentDao();
         try {
-            documentDao.getDocument(documentId, principal.getId());
+            documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
         } catch (NoResultException e) {
             throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
         }
@@ -293,10 +294,8 @@ public class FileResource extends BaseResource {
         // Check document visibility
         if (documentId != null) {
             try {
-                DocumentDao documentDao = new DocumentDao();
-                Document document = documentDao.getDocument(documentId);
-                ShareDao shareDao = new ShareDao();
-                if (!shareDao.checkVisibility(document, principal.getId(), shareId)) {
+                AclDao aclDao = new AclDao();
+                if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
                     throw new ForbiddenClientException();
                 }
             } catch (NoResultException e) {
@@ -354,7 +353,7 @@ public class FileResource extends BaseResource {
                     throw new ForbiddenClientException();
                 }
             } else {
-                documentDao.getDocument(file.getDocumentId(), principal.getId());
+                documentDao.getDocument(file.getDocumentId(), PermType.WRITE, principal.getId());
             }
         } catch (NoResultException e) {
             throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", id));
@@ -398,11 +397,8 @@ public class FileResource extends BaseResource {
         
         // Get the file
         FileDao fileDao = new FileDao();
-        DocumentDao documentDao = new DocumentDao();
         UserDao userDao = new UserDao();
         File file;
-        Document document;
-        String userId;
         try {
             file = fileDao.getFile(fileId);
             
@@ -412,16 +408,10 @@ public class FileResource extends BaseResource {
                     // But not ours
                     throw new ForbiddenClientException();
                 }
-                
-                userId = file.getUserId();
             } else {
-                // It's a file linked to a document
-                document = documentDao.getDocument(file.getDocumentId());
-                userId = document.getUserId();
-                
-                // Check document visibility
-                ShareDao shareDao = new ShareDao();
-                if (!shareDao.checkVisibility(document, principal.getId(), shareId)) {
+                // Check document accessibility
+                AclDao aclDao = new AclDao();
+                if (!aclDao.checkPermission(file.getDocumentId(), PermType.READ, shareId == null ? principal.getId() : shareId)) {
                     throw new ForbiddenClientException();
                 }
             }
@@ -451,7 +441,8 @@ public class FileResource extends BaseResource {
         
         // Stream the output and decrypt it if necessary
         StreamingOutput stream;
-        User user = userDao.getById(userId);
+        // A file is always encrypted by the creator of it
+        User user = userDao.getById(file.getUserId());
         try {
             InputStream fileInputStream = new FileInputStream(storedfile);
             final InputStream responseInputStream = decrypt ?
@@ -500,8 +491,8 @@ public class FileResource extends BaseResource {
             document = documentDao.getDocument(documentId);
             
             // Check document visibility
-            ShareDao shareDao = new ShareDao();
-            if (!shareDao.checkVisibility(document, principal.getId(), shareId)) {
+            AclDao aclDao = new AclDao();
+            if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
                 throw new ForbiddenClientException();
             }
         } catch (NoResultException e) {
@@ -510,9 +501,8 @@ public class FileResource extends BaseResource {
         
         // Get files and user associated with this document
         FileDao fileDao = new FileDao();
-        UserDao userDao = new UserDao();
+        final UserDao userDao = new UserDao();
         final List<File> fileList = fileDao.getByDocumentId(principal.getId(), documentId);
-        final User user = userDao.getById(document.getUserId());
         
         // Create the ZIP stream
         StreamingOutput stream = new StreamingOutput() {
@@ -526,6 +516,8 @@ public class FileResource extends BaseResource {
                         InputStream fileInputStream = new FileInputStream(storedfile);
                         
                         // Add the decrypted file to the ZIP stream
+                        // Files are encrypted by the creator of them
+                        User user = userDao.getById(file.getUserId());
                         try (InputStream decryptedStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey())) {
                             ZipEntry zipEntry = new ZipEntry(index + "." + MimeTypeUtil.getFileExtension(file.getMimeType()));
                             zipOutputStream.putNextEntry(zipEntry);

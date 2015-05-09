@@ -33,11 +33,13 @@ import org.joda.time.format.DateTimeParser;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.Constants;
+import com.sismics.docs.core.constant.PermType;
+import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
-import com.sismics.docs.core.dao.jpa.ShareDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
+import com.sismics.docs.core.dao.jpa.dto.AclDto;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
@@ -45,9 +47,9 @@ import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
+import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.model.jpa.Share;
 import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
@@ -67,7 +69,7 @@ public class DocumentResource extends BaseResource {
     /**
      * Returns a document.
      * 
-     * @param id Document ID
+     * @param documentId Document ID
      * @return Response
      * @throws JSONException
      */
@@ -75,22 +77,22 @@ public class DocumentResource extends BaseResource {
     @Path("{id: [a-z0-9\\-]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(
-            @PathParam("id") String id,
+            @PathParam("id") String documentId,
             @QueryParam("share") String shareId) throws JSONException {
         authenticate();
         
         DocumentDao documentDao = new DocumentDao();
-        ShareDao shareDao = new ShareDao();
+        AclDao aclDao = new AclDao();
         Document documentDb;
         try {
-            documentDb = documentDao.getDocument(id);
+            documentDb = documentDao.getDocument(documentId);
             
             // Check document visibility
-            if (!shareDao.checkVisibility(documentDb, principal.getId(), shareId)) {
+            if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
                 throw new ForbiddenClientException();
             }
         } catch (NoResultException e) {
-            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", id));
+            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
         }
 
         JSONObject document = new JSONObject();
@@ -99,10 +101,11 @@ public class DocumentResource extends BaseResource {
         document.put("description", documentDb.getDescription());
         document.put("create_date", documentDb.getCreateDate().getTime());
         document.put("language", documentDb.getLanguage());
+        document.put("creator", documentDb.getUserId());
         
         // Add tags
         TagDao tagDao = new TagDao();
-        List<TagDto> tagDtoList = tagDao.getByDocumentId(id);
+        List<TagDto> tagDtoList = tagDao.getByDocumentId(documentId);
         List<JSONObject> tags = new ArrayList<>();
         for (TagDto tagDto : tagDtoList) {
             JSONObject tag = new JSONObject();
@@ -113,16 +116,24 @@ public class DocumentResource extends BaseResource {
         }
         document.put("tags", tags);
         
-        // Add shares
-        List<Share> shareDbList = shareDao.getByDocumentId(id);
-        List<JSONObject> shareList = new ArrayList<>();
-        for (Share shareDb : shareDbList) {
-            JSONObject share = new JSONObject();
-            share.put("id", shareDb.getId());
-            share.put("name", shareDb.getName());
-            shareList.add(share);
+        // Add ACL
+        List<AclDto> aclDtoList = aclDao.getBySourceId(documentId);
+        List<JSONObject> aclList = new ArrayList<>();
+        boolean writable = false;
+        for (AclDto aclDto : aclDtoList) {
+            JSONObject acl = new JSONObject();
+            acl.put("perm", aclDto.getPerm().name());
+            acl.put("id", aclDto.getTargetId());
+            acl.put("name", aclDto.getTargetName());
+            acl.put("type", aclDto.getTargetType());
+            aclList.add(acl);
+            
+            if (aclDto.getTargetId().equals(principal.getId()) && aclDto.getPerm() == PermType.WRITE) {
+                writable = true;
+            }
         }
-        document.put("shares", shareList);
+        document.put("acls", aclList);
+        document.put("writable", writable);
         
         return Response.ok().entity(document).build();
     }
@@ -341,6 +352,21 @@ public class DocumentResource extends BaseResource {
         }
         String documentId = documentDao.create(document);
         
+        // Create read ACL
+        AclDao aclDao = new AclDao();
+        Acl acl = new Acl();
+        acl.setPerm(PermType.READ);
+        acl.setSourceId(documentId);
+        acl.setTargetId(principal.getId());
+        aclDao.create(acl);
+        
+        // Create write ACL
+        acl = new Acl();
+        acl.setPerm(PermType.WRITE);
+        acl.setSourceId(documentId);
+        acl.setTargetId(principal.getId());
+        aclDao.create(acl);
+        
         // Update tags
         updateTagList(documentId, tagList);
         
@@ -389,7 +415,7 @@ public class DocumentResource extends BaseResource {
         DocumentDao documentDao = new DocumentDao();
         Document document;
         try {
-            document = documentDao.getDocument(id, principal.getId());
+            document = documentDao.getDocument(id, PermType.WRITE, principal.getId());
         } catch (NoResultException e) {
             throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", id));
         }
@@ -470,7 +496,7 @@ public class DocumentResource extends BaseResource {
         Document document;
         List<File> fileList;
         try {
-            document = documentDao.getDocument(id, principal.getId());
+            document = documentDao.getDocument(id, PermType.WRITE, principal.getId());
             fileList = fileDao.getByDocumentId(principal.getId(), id);
         } catch (NoResultException e) {
             throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", id));

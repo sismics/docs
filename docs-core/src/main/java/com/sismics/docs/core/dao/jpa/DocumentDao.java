@@ -15,6 +15,7 @@ import javax.persistence.Query;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.dao.lucene.LuceneDao;
@@ -78,13 +79,17 @@ public class DocumentDao {
      * Returns an active document.
      * 
      * @param id Document ID
+     * @param perm Permission needed
      * @param userId User ID
      * @return Document
      */
-    public Document getDocument(String id, String userId) {
+    public Document getDocument(String id, PermType perm, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select d from Document d where d.id = :id and d.userId = :userId and d.deleteDate is null");
+        Query q = em.createNativeQuery("select d.* from T_DOCUMENT d "
+                + " join T_ACL a on a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_TARGETID_C = :userId and a.ACL_PERM_C = :perm and a.ACL_DELETEDATE_D is null "
+                + " where d.DOC_ID_C = :id and d.DOC_DELETEDATE_D is null", Document.class);
         q.setParameter("id", id);
+        q.setParameter("perm", perm.name());
         q.setParameter("userId", userId);
         return (Document) q.getSingleResult();
     }
@@ -112,7 +117,13 @@ public class DocumentDao {
         q.setParameter("dateNow", dateNow);
         q.executeUpdate();
         
-        q = em.createQuery("update Share s set s.deleteDate = :dateNow where s.documentId = :documentId and s.deleteDate is null");
+        // TODO Delete share from deleted ACLs
+//        q = em.createQuery("update Share s set s.deleteDate = :dateNow where s.documentId = :documentId and s.deleteDate is null");
+//        q.setParameter("documentId", id);
+//        q.setParameter("dateNow", dateNow);
+//        q.executeUpdate();
+        
+        q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.sourceId = :documentId");
         q.setParameter("documentId", id);
         q.setParameter("dateNow", dateNow);
         q.executeUpdate();
@@ -145,19 +156,20 @@ public class DocumentDao {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
         List<String> criteriaList = new ArrayList<String>();
         
-        StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, s.SHA_ID_C is not null c5, ");
+        StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, ");
+        sb.append(" (select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null) c5, ");
         sb.append(" (select count(f.FIL_ID_C) from T_FILE f where f.FIL_DELETEDATE_D is null and f.FIL_IDDOC_C = d.DOC_ID_C) c6 ");
         sb.append(" from T_DOCUMENT d ");
-        sb.append(" left join T_SHARE s on s.SHA_IDDOCUMENT_C = d.DOC_ID_C and s.SHA_DELETEDATE_D is null ");
         
         // Adds search criteria
         if (criteria.getUserId() != null) {
-            criteriaList.add("d.DOC_IDUSER_C = :userId");
+            // Read permission is enough for searching
+            sb.append(" join T_ACL a on a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_TARGETID_C = :userId and a.ACL_PERM_C = 'READ' and a.ACL_DELETEDATE_D is null ");
             parameterMap.put("userId", criteria.getUserId());
         }
         if (!Strings.isNullOrEmpty(criteria.getSearch()) || !Strings.isNullOrEmpty(criteria.getFullSearch())) {
             LuceneDao luceneDao = new LuceneDao();
-            Set<String> documentIdList = luceneDao.search(criteria.getUserId(), criteria.getSearch(), criteria.getFullSearch());
+            Set<String> documentIdList = luceneDao.search(criteria.getSearch(), criteria.getFullSearch());
             if (documentIdList.size() == 0) {
                 // If the search doesn't find any document, the request should return nothing
                 documentIdList.add(UUID.randomUUID().toString());
@@ -183,7 +195,7 @@ public class DocumentDao {
             }
         }
         if (criteria.getShared() != null && criteria.getShared()) {
-            criteriaList.add("s.SHA_ID_C is not null");
+            criteriaList.add("(select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null) > 0");
         }
         if (criteria.getLanguage() != null) {
             criteriaList.add("d.DOC_LANGUAGE_C = :language");
@@ -211,7 +223,7 @@ public class DocumentDao {
             documentDto.setDescription((String) o[i++]);
             documentDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
             documentDto.setLanguage((String) o[i++]);
-            documentDto.setShared((Boolean) o[i++]);
+            documentDto.setShared(((Number) o[i++]).intValue() > 0);
             documentDto.setFileCount(((Number) o[i++]).intValue());
             documentDtoList.add(documentDto);
         }

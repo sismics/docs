@@ -3,11 +3,21 @@
 /**
  * Document view controller.
  */
-angular.module('docs').controller('DocumentView', function ($scope, $state, $stateParams, $location, $dialog, $modal, Restangular, $upload) {
+angular.module('docs').controller('DocumentView', function ($scope, $state, $stateParams, $location, $dialog, $modal, Restangular, $upload, $q) {
   // Load data from server
   Restangular.one('document', $stateParams.id).get().then(function(data) {
     $scope.document = data;
   });
+
+  // Watch for ACLs change and group them for easy displaying
+  $scope.$watch('document.acls', function(acls) {
+    $scope.acls = _.groupBy(acls, function(acl) {
+      return acl.id;
+    });
+  });
+
+  // Initialize add ACL
+  $scope.acl = { perm: 'READ' };
 
   /**
    * Configuration for file sorting.
@@ -17,7 +27,7 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
     forcePlaceholderSize: true,
     tolerance: 'pointer',
     handle: '.handle',
-    stop: function (e, ui) {
+    stop: function () {
       // Send new positions to server
       $scope.$apply(function () {
         Restangular.one('file').post('reorder', {
@@ -103,15 +113,10 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
           Restangular.one('share').put({
             name: name,
             id: $stateParams.id
-          }).then(function (data) {
-                var share = {
-                  name: name,
-                  id: data.id
-                };
-
-                // Display the new share and add it to the local shares
-                $scope.showShare(share);
-                $scope.document.shares.push(share);
+          }).then(function (acl) {
+                // Display the new share ACL and add it to the local ACLs
+                $scope.showShare(acl);
+                $scope.document.acls.push(acl);
               })
         });
   };
@@ -135,7 +140,7 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
       if (result == 'unshare') {
         // Unshare this document and update the local shares
         Restangular.one('share', share.id).remove().then(function () {
-          $scope.document.shares = _.reject($scope.document.shares, function(s) {
+          $scope.document.acls = _.reject($scope.document.acls, function(s) {
             return share.id == s.id;
           });
         });
@@ -148,6 +153,10 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
    * @param files
    */
   $scope.fileDropped = function(files) {
+    if (!$scope.document.writable) {
+      return;
+    }
+
     if (files && files.length) {
       // Adding files to the UI
       var newfiles = [];
@@ -196,5 +205,43 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
         .success(function (data) {
           newfile.id = data.id;
         });
+  };
+
+  /**
+   * Delete an ACL.
+   * @param acl
+   */
+  $scope.deleteAcl = function(acl) {
+    Restangular.one('acl/' + $stateParams.id + '/' + acl.perm + '/' + acl.id, null).remove().then(function () {
+      $scope.document.acls = _.reject($scope.document.acls, function(s) {
+        return angular.equals(acl, s);
+      });
+    });
+  };
+
+  /**
+   * Add an ACL.
+   */
+  $scope.addAcl = function() {
+    $scope.acl.source = $stateParams.id;
+    Restangular.one('acl').put($scope.acl).then(function(acl) {
+      $scope.acl = { perm: 'READ' };
+      if (_.isUndefined(acl.id)) {
+        return;
+      }
+      $scope.document.acls.push(acl);
+      $scope.document.acls = angular.copy($scope.document.acls);
+    });
+  };
+
+  $scope.getTargetAclTypeahead = function($viewValue) {
+    var deferred = $q.defer();
+    Restangular.one('acl/target/search')
+        .get({
+          search: $viewValue
+        }).then(function(data) {
+          deferred.resolve(_.pluck(data.users, 'username'), true);
+        });
+    return deferred.promise;
   };
 });

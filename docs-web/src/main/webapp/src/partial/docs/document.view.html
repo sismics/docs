@@ -1,7 +1,7 @@
 <img src="img/loader.gif" ng-show="!document" />
 
 <div ng-show="document">
-	<div class="text-right">
+	<div class="text-right" ng-show="document.writable">
 	  <div class="btn-group">
 	    <button class="btn btn-danger" ng-click="deleteDocument(document)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
 	    <a href="#/document/edit/{{ document.id }}" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
@@ -16,11 +16,11 @@
         <span class="glyphicon glyphicon-download-alt"></span>
       </a>
     </h1>
-	  <p>
+	  <p ng-show="document.writable">
 	    <button class="btn btn-sm btn-info" ng-click="share()">
         <span class="glyphicon glyphicon-share"></span> Share
       </button>
-	    <button class="btn btn-default btn-sm" ng-repeat="share in document.shares" ng-click="showShare(share)">
+	    <button class="btn btn-default btn-sm" ng-repeat="share in document.acls | filter: { 'type': 'SHARE' }" ng-click="showShare(share)">
         <span class="glyphicon glyphicon-ok"></span> {{ share.name ? share.name : 'shared' }}
       </button>
 	  </p>
@@ -30,44 +30,112 @@
       </li>
 	  </ul>
 	</div>
-	
-	<p ng-bind-html="document.description | newline"></p>
 
-  <div ng-file-drop drag-over-class="bg-success" ng-multiple="true" allow-dir="false" ng-model="dropFiles"
-       accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
-    <div class="row upload-zone" ui-sortable="fileSortableOptions" ng-model="files">
-      <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
-        <div class="thumbnail" ng-if="file.id">
-          <a ng-click="openFile(file)">
-            <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
-          </a>
-          <div class="caption">
-            <div class="pull-left">
-              <div class="btn btn-default handle"><span class="glyphicon glyphicon-resize-horizontal"></span></div>
+  <tabset>
+    <tab>
+      <tab-heading class="pointer">
+        <span class="glyphicon glyphicon-file"></span> Content
+      </tab-heading>
+
+      <p ng-bind-html="document.description | newline"></p>
+
+      <div ng-file-drop drag-over-class="bg-success" ng-multiple="true" allow-dir="false" ng-model="dropFiles"
+           accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
+        <div class="row upload-zone" ui-sortable="fileSortableOptions" ng-model="files">
+          <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
+            <div class="thumbnail" ng-if="file.id">
+              <a ng-click="openFile(file)">
+                <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
+              </a>
+              <div class="caption" ng-show="document.writable">
+                <div class="pull-left">
+                  <div class="btn btn-default handle"><span class="glyphicon glyphicon-resize-horizontal"></span></div>
+                </div>
+                <div class="pull-right">
+                  <button class="btn btn-danger" ng-click="deleteFile(file)"><span class="glyphicon glyphicon-trash"></span></button>
+                </div>
+                <div class="clearfix"></div>
+              </div>
             </div>
-            <div class="pull-right">
-              <button class="btn btn-danger" ng-click="deleteFile(file)"><span class="glyphicon glyphicon-trash"></span></button>
+
+            <div class="thumbnail" ng-if="!file.id">
+              <p class="text-center lead">
+                {{ file.status }}
+              </p>
+              <div class="caption">
+                <progressbar value="file.progress" class="progress-info active"></progressbar>
+              </div>
             </div>
-            <div class="clearfix"></div>
           </div>
-        </div>
 
-        <div class="thumbnail" ng-if="!file.id">
-          <p class="text-center lead">
-            {{ file.status }}
+          <p class="text-center well-lg" ng-if="files.length == 0">
+            <span class="glyphicon glyphicon-move"></span>
+            Drag &amp; drop files here to upload
           </p>
-          <div class="caption">
-            <progressbar value="file.progress" class="progress-info active"></progressbar>
-          </div>
         </div>
       </div>
+    </tab>
 
-      <p class="text-center well-lg" ng-if="files.length == 0">
-        <span class="glyphicon glyphicon-move"></span>
-        Drag &amp; drop files here to upload
-      </p>
-    </div>
-  </div>
-	
+    <tab>
+      <tab-heading class="pointer">
+        <span class="glyphicon glyphicon-user"></span> Permissions
+      </tab-heading>
+
+      <table class="table">
+        <tr>
+          <th style="width: 40%">For</th>
+          <th style="width: 40%">Permission</th>
+        </tr>
+
+        <tr ng-repeat="(id, acl) in acls">
+          <td><em>{{ acl[0].type == 'SHARE' ? 'Shared' : 'User' }}</em> {{ acl[0].name }}</td>
+          <td>
+            <span class="label label-default" style="margin-right: 6px;" ng-repeat="a in acl | orderBy: 'perm'">
+              {{ a.perm }}
+              <span ng-show="document.creator != a.id && document.writable"
+                    class="glyphicon glyphicon-remove pointer"
+                    ng-click="deleteAcl(a)"></span>
+            </span>
+          </td>
+        </tr>
+      </table>
+
+      <div ng-show="document.writable">
+        <h4>Add a permission</h4>
+
+        <form name="aclForm" class="form-horizontal">
+          <div class="form-group">
+            <label class=" col-sm-2 control-label" for="inputTarget">User</label>
+            <div class="col-sm-3">
+              <input required ng-maxlength="50" class="form-control" type="text" id="inputTarget"
+                     placeholder="Type a username" name="username" ng-model="acl.username" autocomplete="off"
+                     typeahead="username for username in getTargetAclTypeahead($viewValue) | filter: $viewValue"
+                     typeahead-wait-ms="200" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class=" col-sm-2 control-label" for="inputPermission">Permission</label>
+            <div class="col-sm-3">
+              <select class="form-control" ng-model="acl.perm" id="inputPermission">
+                <option value="READ">Read</option>
+                <option value="WRITE">Write</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-primary"  ng-disabled="!aclForm.$valid" ng-click="addAcl()">
+                <span class="glyphicon glyphicon-plus"></span>
+                Add
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </tab>
+  </tabset>
+
 	<div ui-view="file"></div>
 </div>

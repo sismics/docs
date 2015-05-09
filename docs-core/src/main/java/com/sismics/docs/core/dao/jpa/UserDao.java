@@ -1,7 +1,22 @@
 package com.sismics.docs.core.dao.jpa;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
+import org.mindrot.jbcrypt.BCrypt;
+
 import com.google.common.base.Joiner;
 import com.sismics.docs.core.constant.Constants;
+import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
 import com.sismics.docs.core.dao.jpa.dto.UserDto;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.jpa.PaginatedList;
@@ -9,13 +24,6 @@ import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.QueryParam;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
-import org.mindrot.jbcrypt.BCrypt;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import java.sql.Timestamp;
-import java.util.*;
 
 /**
  * User DAO.
@@ -204,13 +212,19 @@ public class UserDao {
      * @param paginatedList List of users (updated by side effects)
      * @param sortCriteria Sort criteria
      */
-    public void findAll(PaginatedList<UserDto> paginatedList, SortCriteria sortCriteria) {
+    public void findByCriteria(PaginatedList<UserDto> paginatedList, UserCriteria criteria, SortCriteria sortCriteria) {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
+        List<String> criteriaList = new ArrayList<String>();
+        
         StringBuilder sb = new StringBuilder("select u.USE_ID_C as c0, u.USE_USERNAME_C as c1, u.USE_EMAIL_C as c2, u.USE_CREATEDATE_D as c3, u.USE_IDLOCALE_C as c4");
         sb.append(" from T_USER u ");
         
         // Add search criterias
-        List<String> criteriaList = new ArrayList<String>();
+        if (criteria.getSearch() != null) {
+            criteriaList.add("lower(u.USE_USERNAME_C) like lower(:search)");
+            parameterMap.put("search", "%" + criteria.getSearch() + "%");
+        }
+        
         criteriaList.add("u.USE_DELETEDATE_D is null");
         
         if (!criteriaList.isEmpty()) {
