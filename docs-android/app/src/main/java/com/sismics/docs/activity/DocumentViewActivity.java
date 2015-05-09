@@ -184,9 +184,26 @@ public class DocumentViewActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.document_view_activity, menu);
+
+        // Silently get the document to know if it is writable by the current user
+        // If this call fails or is slow and the document is read-only,
+        // write actions will be allowed and will fail
+        DocumentResource.get(this, document.optString("id"), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                boolean writable = response.optBoolean("writable");
+
+                menu.findItem(R.id.share).setVisible(writable);
+                menu.findItem(R.id.upload_file).setVisible(writable);
+                menu.findItem(R.id.edit).setVisible(writable);
+                menu.findItem(R.id.delete_file).setVisible(writable);
+                menu.findItem(R.id.delete_document).setVisible(writable);
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
 

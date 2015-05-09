@@ -9,20 +9,20 @@ import org.json.JSONObject;
  */
 public class ShareSendEvent {
     /**
-     * Share data.
+     * ACL data.
      */
-    private JSONObject share;
+    private JSONObject acl;
 
     /**
      * Create a share send event.
      *
-     * @param share Share data
+     * @param acl ACL data
      */
-    public ShareSendEvent(JSONObject share) {
-        this.share = share;
+    public ShareSendEvent(JSONObject acl) {
+        this.acl = acl;
     }
 
-    public JSONObject getShare() {
-        return share;
+    public JSONObject getAcl() {
+        return acl;
     }
 }
