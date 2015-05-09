@@ -9,7 +9,8 @@ import javax.persistence.Table;
 import java.util.Date;
 
 /**
- * File share.
+ * ACL target used to share a document.
+ * Can only be used on a single ACL
  * 
  * @author bgamard
  */
@@ -25,12 +26,6 @@ public class Share {
 
     @Column(name = "SHA_NAME_C", length = 36)
     private String name;
-    
-    /**
-     * Document ID.
-     */
-    @Column(name = "SHA_IDDOCUMENT_C", nullable = false, length = 36)
-    private String documentId;
     
     /**
      * Creation date.
@@ -81,24 +76,6 @@ public class Share {
     }
 
     /**
-     * Getter of documentId.
-     *
-     * @return the documentId
-     */
-    public String getDocumentId() {
-        return documentId;
-    }
-
-    /**
-     * Setter of documentId.
-     *
-     * @param documentId documentId
-     */
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
-    }
-
-    /**
      * Getter of createDate.
      *
      * @return the createDate
@@ -138,7 +115,6 @@ public class Share {
     public String toString() {
         return Objects.toStringHelper(this)
                 .add("id", id)
-                .add("tagId", documentId)
                 .toString();
     }
 }

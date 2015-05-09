@@ -1,6 +1,5 @@
 package com.sismics.docs.core.dao.lucene;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +12,6 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queries.TermsFilter;
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -143,13 +141,12 @@ public class LuceneDao {
     /**
      * Search files.
      * 
-     * @param userId User ID to filter on
      * @param searchQuery Search query on title and description
      * @param fullSearchQuery Search query on all fields
      * @return List of document IDs
      * @throws Exception
      */
-    public Set<String> search(String userId, String searchQuery, String fullSearchQuery) throws Exception {
+    public Set<String> search(String searchQuery, String fullSearchQuery) throws Exception {
         // Escape query and add quotes so QueryParser generate a PhraseQuery
         searchQuery = "\"" + QueryParserUtil.escape(searchQuery + " " + fullSearchQuery) + "\"";
         fullSearchQuery = "\"" + QueryParserUtil.escape(fullSearchQuery) + "\"";
@@ -164,13 +161,6 @@ public class LuceneDao {
         query.add(qpHelper.parse(searchQuery, "description"), Occur.SHOULD);
         query.add(qpHelper.parse(fullSearchQuery, "content"), Occur.SHOULD);
         
-        // Filter on provided user ID
-        List<Term> terms = new ArrayList<Term>();
-        if (userId != null) {
-            terms.add(new Term("user_id", userId));
-        }
-        TermsFilter userFilter = new TermsFilter(terms);
-        
         // Search
         DirectoryReader directoryReader = AppContext.getInstance().getIndexingService().getDirectoryReader();
         Set<String> documentIdList = new HashSet<String>();
@@ -179,7 +169,7 @@ public class LuceneDao {
             return documentIdList;
         }
         IndexSearcher searcher = new IndexSearcher(directoryReader);
-        TopDocs topDocs = searcher.search(query, userFilter, Integer.MAX_VALUE);
+        TopDocs topDocs = searcher.search(query, Integer.MAX_VALUE);
         ScoreDoc[] docs = topDocs.scoreDocs;
         
         // Extract document IDs
@@ -207,7 +197,6 @@ public class LuceneDao {
     private org.apache.lucene.document.Document getDocumentFromDocument(Document document) {
         org.apache.lucene.document.Document luceneDocument = new org.apache.lucene.document.Document();
         luceneDocument.add(new StringField("id", document.getId(), Field.Store.YES));
-        luceneDocument.add(new StringField("user_id", document.getUserId(), Field.Store.YES));
         luceneDocument.add(new StringField("type", "document", Field.Store.YES));
         if (document.getTitle() != null) {
             luceneDocument.add(new TextField("title", document.getTitle(), Field.Store.NO));
@@ -229,7 +218,6 @@ public class LuceneDao {
     private org.apache.lucene.document.Document getDocumentFromFile(File file, Document document) {
         org.apache.lucene.document.Document luceneDocument = new org.apache.lucene.document.Document();
         luceneDocument.add(new StringField("id", file.getId(), Field.Store.YES));
-        luceneDocument.add(new StringField("user_id", document.getUserId(), Field.Store.YES));
         luceneDocument.add(new StringField("type", "file", Field.Store.YES));
         luceneDocument.add(new StringField("document_id", file.getDocumentId(), Field.Store.YES));
         if (file.getContent() != null) {

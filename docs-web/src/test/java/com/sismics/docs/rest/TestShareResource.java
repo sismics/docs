@@ -83,9 +83,7 @@ public class TestShareResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         Assert.assertEquals(document1Id, json.getString("id"));
-        Assert.assertEquals(1, json.getJSONArray("shares").length());
-        Assert.assertEquals(share1Id, json.getJSONArray("shares").getJSONObject(0).getString("id"));
-        Assert.assertEquals("4 All", json.getJSONArray("shares").getJSONObject(0).getString("name"));
+        Assert.assertEquals(3, json.getJSONArray("acls").length()); // 2 for the creator, 1 for the share
 
         // Get all files from this document anonymously
         fileResource = resource().path("/file/list");

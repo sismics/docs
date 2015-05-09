@@ -2,6 +2,7 @@ package com.sismics.docs.rest.resource;
 
 
 import java.text.MessageFormat;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.ws.rs.DELETE;
@@ -16,8 +17,12 @@ import javax.ws.rs.core.Response;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.sismics.docs.core.constant.AclTargetType;
+import com.sismics.docs.core.constant.PermType;
+import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.ShareDao;
+import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Share;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
@@ -53,7 +58,7 @@ public class ShareResource extends BaseResource {
         // Get the document
         DocumentDao documentDao = new DocumentDao();
         try {
-            documentDao.getDocument(documentId, principal.getId());
+            documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
         } catch (NoResultException e) {
             throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
         }
@@ -61,14 +66,23 @@ public class ShareResource extends BaseResource {
         // Create the share
         ShareDao shareDao = new ShareDao();
         Share share = new Share();
-        share.setDocumentId(documentId);
         share.setName(name);
         shareDao.create(share);
+        
+        // Create the ACL
+        AclDao aclDao = new AclDao();
+        Acl acl = new Acl();
+        acl.setSourceId(documentId);
+        acl.setPerm(PermType.READ);
+        acl.setTargetId(share.getId());
+        aclDao.create(acl);
 
-        // Always return ok
+        // Returns the created ACL
         JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        response.put("id", share.getId());
+        response.put("perm", acl.getPerm().name());
+        response.put("id", acl.getTargetId());
+        response.put("name", name);
+        response.put("type", AclTargetType.SHARE);
         return Response.ok().entity(response).build();
     }
 
@@ -88,23 +102,21 @@ public class ShareResource extends BaseResource {
             throw new ForbiddenClientException();
         }
 
-        // Get the share
-        ShareDao shareDao = new ShareDao();
-        DocumentDao documentDao = new DocumentDao();
-        Share share = shareDao.getShare(id);
-        if (share == null) {
+        // Check that the user can share the linked document
+        AclDao aclDao = new AclDao();
+        List<Acl> aclList = aclDao.getByTargetId(id);
+        if (aclList.size() == 0) {
             throw new ClientException("ShareNotFound", MessageFormat.format("Share not found: {0}", id));
         }
         
-        // Check that the user is the owner of the linked document
-        try {
-            documentDao.getDocument(share.getDocumentId(), principal.getId());
-        } catch (NoResultException e) {
-            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", share.getDocumentId()));
+        Acl acl = aclList.get(0);
+        if (!aclDao.checkPermission(acl.getSourceId(), PermType.WRITE, principal.getId())) {
+            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", acl.getSourceId()));
         }
 
         // Delete the share
-        shareDao.delete(share.getId());
+        ShareDao shareDao = new ShareDao();
+        shareDao.delete(id);
         
         // Always return ok
         JSONObject response = new JSONObject();

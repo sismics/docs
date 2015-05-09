@@ -24,7 +24,6 @@ public class TestLocaleResource extends BaseJerseyTest {
     public void testLocaleResource() throws JSONException {
         WebResource localeResource = resource().path("/locale");
         ClientResponse response = localeResource.get(ClientResponse.class);
-        response = localeResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         JSONObject json = response.getEntity(JSONObject.class);
         JSONArray locale = json.getJSONArray("locales");

@@ -25,9 +25,12 @@ public class LanguageAdapter extends BaseAdapter {
 
     private List<Language> languageList;
 
-    public LanguageAdapter(Context context) {
+    public LanguageAdapter(Context context, boolean noValue) {
         this.context = context;
         this.languageList = new ArrayList<>();
+        if (noValue) {
+            languageList.add(new Language("", R.string.all_languages, 0));
+        }
         languageList.add(new Language("fra", R.string.language_french, R.drawable.fra));
         languageList.add(new Language("eng", R.string.language_english, R.drawable.eng));
         languageList.add(new Language("jpn", R.string.language_japanese, R.drawable.jpn));

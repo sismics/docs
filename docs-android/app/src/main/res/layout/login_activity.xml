@@ -2,110 +2,80 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_gravity="top|center_horizontal"
+    android:layout_gravity="center"
     android:gravity="center"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@color/colorPrimaryDark">
 
-    <ScrollView
+    <LinearLayout
         android:id="@+id/loginForm"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:padding="20dp"
-        android:scrollbarStyle="insideOverlay"
-        android:visibility="gone" >
+        android:visibility="visible"
+        android:padding="40dp"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <ImageView
+            android:contentDescription="@string/app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:id="@+id/loginExplain"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/txtServer"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:ems="10"
+            android:hint="@string/server"
+            android:inputType="textNoSuggestions">
+        </EditText>
+
+        <EditText
+            android:id="@+id/txtUsername"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:ems="10"
+            android:hint="@string/username"
+            android:inputType="textNoSuggestions">
+
+            <requestFocus />
+        </EditText>
+
+        <EditText
+            android:id="@+id/txtPassword"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:ems="10"
+            android:hint="@string/password"
+            android:inputType="textPassword">
+        </EditText>
+
+        <Button
+            android:id="@+id/btnConnect"
+            android:layout_width="fill_parent"
+            android:layout_height="50dip"
+            android:layout_marginTop="20dip"
             android:gravity="center"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/loginExplain"
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:text="@string/server" />
-
-                <EditText
-                    android:id="@+id/txtServer"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:ems="10"
-                    android:inputType="textNoSuggestions">
-                </EditText>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:text="@string/username" />
-
-                <EditText
-                    android:id="@+id/txtUsername"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:ems="10"
-                    android:inputType="textNoSuggestions" >
-
-                    <requestFocus />
-                </EditText>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:text="@string/password" />
-
-                <EditText
-                    android:id="@+id/txtPassword"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
-                    android:ems="10"
-                    android:inputType="textPassword" >
-                </EditText>
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btnConnect"
-                android:layout_width="fill_parent"
-                android:layout_height="50dip"
-                android:layout_marginTop="20dip"
-                android:gravity="center"
-                android:text="@string/login"
-                android:textColor="@android:color/black" />
-        </LinearLayout>
-    </ScrollView>
+            android:text="@string/login" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/progressBar"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"
-        android:visibility="visible" >
+        android:visibility="gone">
 
         <ProgressBar
             style="?android:attr/progressBarStyleLarge"
