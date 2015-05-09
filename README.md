@@ -26,9 +26,10 @@ Features
 - Full text search in image and PDF
 - SHA-256 encryption
 - Tag system
-- Multi-users
-- Document sharing
+- Multi-users ACL system
+- Document sharing by URL
 - RESTful Web API
+- Modern Android client
 
 Download
 --------

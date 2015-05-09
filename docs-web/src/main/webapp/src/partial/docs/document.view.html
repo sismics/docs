@@ -10,7 +10,7 @@
 	
 	<div class="page-header">
 	  <h1>
-      {{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }}</small>
+      {{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }} by {{ document.creator }}</small>
       <img ng-if="document" ng-src="img/flag/{{ document.language }}.png" title="{{ document.language }}" />
       <a ng-href="../api/file/zip?id={{ document.id }}" class="btn btn-default" title="Download all files">
         <span class="glyphicon glyphicon-download-alt"></span>
@@ -92,7 +92,7 @@
           <td>
             <span class="label label-default" style="margin-right: 6px;" ng-repeat="a in acl | orderBy: 'perm'">
               {{ a.perm }}
-              <span ng-show="document.creator != a.id && document.writable"
+              <span ng-show="document.creator != a.name && a.type == 'USER' && document.writable"
                     class="glyphicon glyphicon-remove pointer"
                     ng-click="deleteAcl(a)"></span>
             </span>

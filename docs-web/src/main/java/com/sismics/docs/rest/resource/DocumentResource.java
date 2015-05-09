@@ -38,6 +38,7 @@ import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
+import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.AclDto;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
@@ -83,6 +84,7 @@ public class DocumentResource extends BaseResource {
         
         DocumentDao documentDao = new DocumentDao();
         AclDao aclDao = new AclDao();
+        UserDao userDao = new UserDao();
         Document documentDb;
         try {
             documentDb = documentDao.getDocument(documentId);
@@ -101,7 +103,7 @@ public class DocumentResource extends BaseResource {
         document.put("description", documentDb.getDescription());
         document.put("create_date", documentDb.getCreateDate().getTime());
         document.put("language", documentDb.getLanguage());
-        document.put("creator", documentDb.getUserId());
+        document.put("creator", userDao.getById(documentDb.getUserId()).getUsername());
         
         // Add tags
         TagDao tagDao = new TagDao();

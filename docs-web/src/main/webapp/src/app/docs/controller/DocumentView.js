@@ -117,6 +117,7 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
                 // Display the new share ACL and add it to the local ACLs
                 $scope.showShare(acl);
                 $scope.document.acls.push(acl);
+                $scope.document.acls = angular.copy($scope.document.acls);
               })
         });
   };
