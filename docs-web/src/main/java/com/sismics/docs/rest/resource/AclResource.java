@@ -58,7 +58,7 @@ public class AclResource extends BaseResource {
         }
         
         // Validate input
-        sourceId = ValidationUtil.validateLength(sourceId, "source", 36, 36, false);
+        ValidationUtil.validateRequired(sourceId, "source");
         PermType perm = PermType.valueOf(ValidationUtil.validateLength(permStr, "perm", 1, 30, false));
         username = ValidationUtil.validateLength(username, "username", 1, 50, false);
         
@@ -105,7 +105,7 @@ public class AclResource extends BaseResource {
      * @throws JSONException
      */
     @DELETE
-    @Path("{sourceId: [a-z0-9\\-]+}/{perm: READ|WRITE}/{targetId: [a-z0-9\\-]+}")
+    @Path("{sourceId: [a-z0-9\\-]+}/{perm: [A-Z]+}/{targetId: [a-z0-9\\-]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
             @PathParam("sourceId") String sourceId,
@@ -116,9 +116,9 @@ public class AclResource extends BaseResource {
         }
         
         // Validate input
-        sourceId = ValidationUtil.validateLength(sourceId, "source", 36, 36, false);
+        ValidationUtil.validateRequired(sourceId, "source");
         PermType perm = PermType.valueOf(ValidationUtil.validateLength(permStr, "perm", 1, 30, false));
-        targetId = ValidationUtil.validateLength(targetId, "target", 36, 36, false);
+        ValidationUtil.validateRequired(targetId, "target");
 
         // Check permission on the source by the principal
         AclDao aclDao = new AclDao();
