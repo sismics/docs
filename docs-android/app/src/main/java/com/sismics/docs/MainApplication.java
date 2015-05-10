@@ -20,7 +20,7 @@ public class MainApplication extends Application {
         JSONObject json = PreferenceUtil.getCachedJson(getApplicationContext(), PreferenceUtil.PREF_CACHED_USER_INFO_JSON);
         ApplicationContext.getInstance().setUserInfo(getApplicationContext(), json);
 
-        // TODO Fullscreen preview
+        // TODO google docs app: right drawer with all actions, with acls, with deep metadatas
         // TODO Provide documents to intent action get content
 
         super.onCreate();

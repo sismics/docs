@@ -105,6 +105,7 @@
     <string name="before_date">Before date</string>
     <string name="search_tags">Search tags</string>
     <string name="all_languages">All languages</string>
+    <string name="toggle_informations">Toggle informations</string>
 
 
 </resources>

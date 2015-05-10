@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/info"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_info_white_24dp"
+        android:title="@string/toggle_informations">
+    </item>
+
+    <item
         android:id="@+id/edit"
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_create_white_24dp"
