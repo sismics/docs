@@ -151,7 +151,6 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
 
   /**
    * File has been drag & dropped.
-   * @param files
    */
   $scope.fileDropped = function(files) {
     if (!$scope.document.writable) {
@@ -186,8 +185,6 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
 
   /**
    * Upload a file.
-   * @param file
-   * @param newfile
    */
   $scope.uploadFile = function(file, newfile) {
     // Upload the file
@@ -210,7 +207,6 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
 
   /**
    * Delete an ACL.
-   * @param acl
    */
   $scope.deleteAcl = function(acl) {
     Restangular.one('acl/' + $stateParams.id + '/' + acl.perm + '/' + acl.id, null).remove().then(function () {
@@ -224,17 +220,45 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
    * Add an ACL.
    */
   $scope.addAcl = function() {
+    // Compute ACLs to add
     $scope.acl.source = $stateParams.id;
-    Restangular.one('acl').put($scope.acl).then(function(acl) {
-      $scope.acl = { perm: 'READ' };
-      if (_.isUndefined(acl.id)) {
-        return;
-      }
-      $scope.document.acls.push(acl);
-      $scope.document.acls = angular.copy($scope.document.acls);
+    var acls = [];
+    if ($scope.acl.perm == 'READWRITE') {
+      acls = [{
+        source: $stateParams.id,
+        username: $scope.acl.username,
+        perm: 'READ'
+      }, {
+        source: $stateParams.id,
+        username: $scope.acl.username,
+        perm: 'WRITE'
+      }];
+    } else {
+      acls = [{
+        source: $stateParams.id,
+        username: $scope.acl.username,
+        perm: $scope.acl.perm
+      }];
+    }
+
+    // Add ACLs
+    _.each(acls, function(acl) {
+      Restangular.one('acl').put(acl).then(function(acl) {
+        if (_.isUndefined(acl.id)) {
+          return;
+        }
+        $scope.document.acls.push(acl);
+        $scope.document.acls = angular.copy($scope.document.acls);
+      });
     });
+
+    // Reset form
+    $scope.acl = { perm: 'READ' };
   };
 
+  /**
+   * Auto-complete on ACL target.
+   */
   $scope.getTargetAclTypeahead = function($viewValue) {
     var deferred = $q.defer();
     Restangular.one('acl/target/search')
