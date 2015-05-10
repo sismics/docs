@@ -23,11 +23,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sismics.docs.R;
+import com.sismics.docs.adapter.AclListAdapter;
 import com.sismics.docs.adapter.FilePagerAdapter;
 import com.sismics.docs.event.DocumentDeleteEvent;
 import com.sismics.docs.event.DocumentEditEvent;
@@ -186,6 +189,58 @@ public class DocumentViewActivity extends AppCompatActivity {
         ImageView sharedImageView = (ImageView) findViewById(R.id.sharedImageView);
         sharedImageView.setVisibility(shared ? View.VISIBLE : View.GONE);
 
+        // Action edit document
+        Button button = (Button) findViewById(R.id.actionEditDocument);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DocumentViewActivity.this, DocumentEditActivity.class);
+                intent.putExtra("document", DocumentViewActivity.this.document.toString());
+                startActivityForResult(intent, REQUEST_CODE_EDIT_DOCUMENT);
+            }
+        });
+
+        // Action upload file
+        button = (Button) findViewById(R.id.actionUploadFile);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT)
+                        .setType("*/*")
+                        .putExtra("android.intent.extra.ALLOW_MULTIPLE", true)
+                        .addCategory(Intent.CATEGORY_OPENABLE);
+                startActivityForResult(Intent.createChooser(intent, getText(R.string.upload_from)), REQUEST_CODE_ADD_FILE);
+            }
+        });
+
+        // Action download document
+        button = (Button) findViewById(R.id.actionDownload);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                downloadZip();
+            }
+        });
+
+        // Action delete document
+        button = (Button) findViewById(R.id.actionDelete);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deleteDocument();
+            }
+        });
+
+        // Action share
+        button = (Button) findViewById(R.id.actionSharing);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment dialog = DocShareFragment.newInstance(DocumentViewActivity.this.document.optString("id"));
+                dialog.show(getSupportFragmentManager(), "DocShareFragment");
+            }
+        });
+
         // Grab the attached files
         updateFiles();
 
@@ -217,35 +272,8 @@ public class DocumentViewActivity extends AppCompatActivity {
                 downloadCurrentFile();
                 return true;
 
-            case R.id.download_document:
-                downloadZip();
-                return true;
-
-            case R.id.share:
-                DialogFragment dialog = DocShareFragment.newInstance(document.optString("id"));
-                dialog.show(getSupportFragmentManager(), "DocShareFragment");
-                return true;
-
-            case R.id.upload_file:
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT)
-                        .setType("*/*")
-                        .putExtra("android.intent.extra.ALLOW_MULTIPLE", true)
-                        .addCategory(Intent.CATEGORY_OPENABLE);
-                startActivityForResult(Intent.createChooser(intent, getText(R.string.upload_from)), REQUEST_CODE_ADD_FILE);
-                return true;
-
-            case R.id.edit:
-                intent = new Intent(this, DocumentEditActivity.class);
-                intent.putExtra("document", document.toString());
-                startActivityForResult(intent, REQUEST_CODE_EDIT_DOCUMENT);
-                return true;
-
             case R.id.delete_file:
                 deleteCurrentFile();
-                return true;
-
-            case R.id.delete_document:
-                deleteDocument();
                 return true;
 
             case android.R.id.home:
@@ -525,17 +553,21 @@ public class DocumentViewActivity extends AppCompatActivity {
         DocumentResource.get(this, document.optString("id"), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                boolean writable = response.optBoolean("writable");
+                document = response;
+                boolean writable = document.optBoolean("writable");
 
                 if (menu != null) {
-                    menu.findItem(R.id.share).setVisible(writable);
-                    menu.findItem(R.id.upload_file).setVisible(writable);
-                    menu.findItem(R.id.edit).setVisible(writable);
                     menu.findItem(R.id.delete_file).setVisible(writable);
-                    menu.findItem(R.id.delete_document).setVisible(writable);
                 }
 
-                // TODO Show the ACLs in a sliding panel from the right
+                findViewById(R.id.actionEditDocument).setVisibility(writable ? View.VISIBLE : View.INVISIBLE);
+                findViewById(R.id.actionUploadFile).setVisibility(writable ? View.VISIBLE : View.INVISIBLE);
+                findViewById(R.id.actionSharing).setVisibility(writable ? View.VISIBLE : View.INVISIBLE);
+                findViewById(R.id.actionDelete).setVisibility(writable ? View.VISIBLE : View.INVISIBLE);
+
+                // ACLs
+                ListView aclListView = (ListView) findViewById(R.id.aclListView);
+                aclListView.setAdapter(new AclListAdapter(document.optJSONArray("acls")));
             }
         });
     }

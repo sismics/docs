@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="0dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/peopleImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginLeft="18dp"
+        android:layout_marginStart="18dp"
+        android:src="@drawable/ic_people_grey600_24dp"/>
+
+    <TextView
+        android:id="@+id/typeTextView"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/peopleImageView"
+        android:layout_toEndOf="@id/peopleImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/primary_text_disabled_material_light"
+        android:text="USER"
+        android:layout_marginTop="12dp"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_below="@id/typeTextView"
+        android:layout_toRightOf="@id/peopleImageView"
+        android:layout_toEndOf="@id/peopleImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/primary_text_default_material_light"
+        android:text="admin"
+        android:layout_marginBottom="12dp"
+        android:ellipsize="end"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/permTextView"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/primary_text_default_material_light"
+        android:text="WRITE"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginRight="18dp"
+        android:textSize="16sp"/>
+
+</RelativeLayout>

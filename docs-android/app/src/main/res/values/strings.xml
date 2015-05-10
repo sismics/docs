@@ -29,7 +29,7 @@
     <string name="created_date">Created date</string>
     <string name="download_file">Download current file</string>
     <string name="downloading_file">Downloading file number %1s</string>
-    <string name="download_document">Download all files</string>
+    <string name="download_document">Download</string>
     <string name="downloading_document">Downloading document</string>
     <string name="action_search">Search documents</string>
     <string name="all_documents">All documents</string>
@@ -54,7 +54,7 @@
     <string name="share_default_name">Share link</string>
     <string name="error_deleting_share">Error deleting the share</string>
     <string name="send_share_to">Send share link to</string>
-    <string name="upload_file">Upload a file</string>
+    <string name="upload_file">Add file</string>
     <string name="upload_from">Upload a file from</string>
     <string name="settings">Settings</string>
     <string name="logout">Sign Out</string>
@@ -75,11 +75,11 @@
     <string name="language_english">English</string>
     <string name="language_japanese">Japanese</string>
     <string name="save">Save</string>
-    <string name="edit_document">Edit document</string>
+    <string name="edit_document">Edit</string>
     <string name="error_editing_document">Network error, please try again</string>
     <string name="please_wait">Please wait</string>
     <string name="document_editing_message">Sending your data</string>
-    <string name="delete_document">Delete document</string>
+    <string name="delete_document">Delete</string>
     <string name="delete_document_title">Delete document</string>
     <string name="delete_document_message">Really delete this document and all associated files?</string>
     <string name="document_delete_failure">Network error while deleting this document</string>
@@ -106,6 +106,7 @@
     <string name="search_tags">Search tags</string>
     <string name="all_languages">All languages</string>
     <string name="toggle_informations">Toggle informations</string>
+    <string name="who_can_access">Who can access</string>
 
 
 </resources>

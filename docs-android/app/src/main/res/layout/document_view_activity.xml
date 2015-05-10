@@ -49,6 +49,94 @@
         android:background="#fff"
         android:elevation="5dp">
 
+        <!-- Actions -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                style="?android:buttonBarStyle">
+
+                <Button
+                    android:id="@+id/actionEditDocument"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/ic_create_grey600_24dp"
+                    style="?android:buttonBarButtonStyle"
+                    android:text="@string/edit_document"
+                    android:textColor="@color/button_material_dark"
+                    android:textAllCaps="false"
+                    android:layout_margin="8dp"/>
+
+                <Button
+                    android:id="@+id/actionUploadFile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/ic_file_upload_grey600_24dp"
+                    style="?android:buttonBarButtonStyle"
+                    android:text="@string/upload_file"
+                    android:textColor="@color/button_material_dark"
+                    android:textAllCaps="false"
+                    android:layout_margin="8dp"/>
+
+                <Button
+                    android:id="@+id/actionDownload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/ic_file_download_grey600_24dp"
+                    style="?android:buttonBarButtonStyle"
+                    android:text="@string/download_document"
+                    android:textColor="@color/button_material_dark"
+                    android:textAllCaps="false"
+                    android:layout_margin="8dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                style="?android:buttonBarStyle">
+
+                <Button
+                    android:id="@+id/actionSharing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/ic_share_grey600_24dp"
+                    style="?android:buttonBarButtonStyle"
+                    android:text="@string/share"
+                    android:textColor="@color/button_material_dark"
+                    android:textAllCaps="false"
+                    android:layout_margin="8dp"/>
+
+                <Button
+                    android:id="@+id/actionDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/ic_delete_grey600_24dp"
+                    style="?android:buttonBarButtonStyle"
+                    android:text="@string/delete_document"
+                    android:textColor="@color/button_material_dark"
+                    android:textAllCaps="false"
+                    android:layout_margin="8dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginLeft="12dp"
+            android:background="#eee"/>
+
         <!-- Document metadata -->
 
         <RelativeLayout
@@ -122,8 +210,26 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginRight="12dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginLeft="12dp"
             android:background="#eee"/>
+
+        <!-- ACLs -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/primary_text_default_material_light"
+            android:text="@string/who_can_access"
+            android:layout_margin="12dp"/>
+
+        <ListView
+            android:id="@+id/aclListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:choiceMode="singleChoice"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0dp"/>
 
     </LinearLayout>
 
