@@ -68,11 +68,29 @@ public class DocumentDao {
      * @param id Document ID
      * @return Document
      */
-    public Document getDocument(String id) {
+    public DocumentDto getDocument(String id) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select d from Document d where d.id = :id and d.deleteDate is null");
+        StringBuilder sb = new StringBuilder("select d.DOC_ID_C, d.DOC_TITLE_C, d.DOC_DESCRIPTION_C, d.DOC_CREATEDATE_D, d.DOC_LANGUAGE_C, ");
+        sb.append(" (select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null), ");
+        sb.append(" (select count(f.FIL_ID_C) from T_FILE f where f.FIL_DELETEDATE_D is null and f.FIL_IDDOC_C = d.DOC_ID_C), ");
+        sb.append(" u.USE_USERNAME_C ");
+        sb.append(" from T_DOCUMENT d, T_USER u ");
+        sb.append(" where d.DOC_IDUSER_C = u.USE_ID_C and d.DOC_ID_C = :id and d.DOC_DELETEDATE_D is null ");
+        Query q = em.createNativeQuery(sb.toString());
         q.setParameter("id", id);
-        return (Document) q.getSingleResult();
+        Object[] o = (Object[]) q.getSingleResult();
+        
+        DocumentDto documentDto = new DocumentDto();
+        int i = 0;
+        documentDto.setId((String) o[i++]);
+        documentDto.setTitle((String) o[i++]);
+        documentDto.setDescription((String) o[i++]);
+        documentDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
+        documentDto.setLanguage((String) o[i++]);
+        documentDto.setShared(((Number) o[i++]).intValue() > 0);
+        documentDto.setFileCount(((Number) o[i++]).intValue());
+        documentDto.setCreator((String) o[i++]);
+        return documentDto;
     }
     
     /**

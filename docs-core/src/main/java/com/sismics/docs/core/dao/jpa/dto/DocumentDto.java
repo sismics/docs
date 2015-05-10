@@ -45,6 +45,11 @@ public class DocumentDto {
     private Integer fileCount;
     
     /**
+     * Document creator.
+     */
+    private String creator;
+    
+    /**
      * Getter de id.
      *
      * @return the id
@@ -166,5 +171,21 @@ public class DocumentDto {
      */
     public void setFileCount(Integer fileCount) {
         this.fileCount = fileCount;
+    }
+
+    /**
+     * Getter of creator.
+     * @return creator
+     */
+    public String getCreator() {
+        return creator;
+    }
+
+    /**
+     * Setter of creator.
+     * @param creator creator
+     */
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 }

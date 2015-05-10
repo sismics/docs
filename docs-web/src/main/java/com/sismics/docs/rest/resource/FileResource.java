@@ -41,6 +41,7 @@ import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
+import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
@@ -486,9 +487,9 @@ public class FileResource extends BaseResource {
         
         // Get the document
         DocumentDao documentDao = new DocumentDao();
-        Document document;
+        DocumentDto documentDto;
         try {
-            document = documentDao.getDocument(documentId);
+            documentDto = documentDao.getDocument(documentId);
             
             // Check document visibility
             AclDao aclDao = new AclDao();
@@ -537,7 +538,7 @@ public class FileResource extends BaseResource {
         // Write to the output
         return Response.ok(stream)
                 .header("Content-Type", "application/zip")
-                .header("Content-Disposition", "attachment; filename=\"" + document.getTitle().replaceAll("\\W+", "_") + ".zip\"")
+                .header("Content-Disposition", "attachment; filename=\"" + documentDto.getTitle().replaceAll("\\W+", "_") + ".zip\"")
                 .build();
     }
 }

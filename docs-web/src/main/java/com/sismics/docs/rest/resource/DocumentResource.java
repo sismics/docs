@@ -38,7 +38,6 @@ import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
-import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.AclDto;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
@@ -84,10 +83,9 @@ public class DocumentResource extends BaseResource {
         
         DocumentDao documentDao = new DocumentDao();
         AclDao aclDao = new AclDao();
-        UserDao userDao = new UserDao();
-        Document documentDb;
+        DocumentDto documentDto;
         try {
-            documentDb = documentDao.getDocument(documentId);
+            documentDto = documentDao.getDocument(documentId);
             
             // Check document visibility
             if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
@@ -98,12 +96,13 @@ public class DocumentResource extends BaseResource {
         }
 
         JSONObject document = new JSONObject();
-        document.put("id", documentDb.getId());
-        document.put("title", documentDb.getTitle());
-        document.put("description", documentDb.getDescription());
-        document.put("create_date", documentDb.getCreateDate().getTime());
-        document.put("language", documentDb.getLanguage());
-        // TODO Add "shared" and "file_count" -> rewrite the query in SQL
+        document.put("id", documentDto.getId());
+        document.put("title", documentDto.getTitle());
+        document.put("description", documentDto.getDescription());
+        document.put("create_date", documentDto.getCreateTimestamp());
+        document.put("language", documentDto.getLanguage());
+        document.put("shared", documentDto.getShared());
+        document.put("file_count", documentDto.getFileCount());
         
         if (principal.isAnonymous()) {
             // No tags in anonymous mode (sharing)
@@ -125,7 +124,7 @@ public class DocumentResource extends BaseResource {
         
         // Below is specific to GET /document/id
         
-        document.put("creator", userDao.getById(documentDb.getUserId()).getUsername());
+        document.put("creator", documentDto.getCreator());
         
         // Add ACL
         List<AclDto> aclDtoList = aclDao.getBySourceId(documentId);

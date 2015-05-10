@@ -138,8 +138,8 @@ public class TestDocumentResource extends BaseJerseyTest {
         postParams.add("title", "My super title document 1");
         postParams.add("description", "My super description for document 1");
         postParams.add("language", "eng");
-        create1Date = new Date().getTime();
-        postParams.add("create_date", create1Date);
+        long create3Date = new Date().getTime();
+        postParams.add("create_date", create3Date);
         response = documentResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
@@ -148,14 +148,14 @@ public class TestDocumentResource extends BaseJerseyTest {
         
         // Add a file
         fileResource = resource().path("/file");
-        fileResource.addFilter(new CookieAuthenticationFilter(document1Token));
+        fileResource.addFilter(new CookieAuthenticationFilter(document3Token));
         form = new FormDataMultiPart();
         file = this.getClass().getResourceAsStream("/file/Einstein-Roosevelt-letter.png");
         fdp = new FormDataBodyPart("file",
                 new BufferedInputStream(file),
                 MediaType.APPLICATION_OCTET_STREAM_TYPE);
         form.bodyPart(fdp);
-        form.field("id", document1Id);
+        form.field("id", document3Id);
         response = fileResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
@@ -206,6 +206,13 @@ public class TestDocumentResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         Assert.assertEquals(document1Id, json.getString("id"));
+        Assert.assertEquals("document1", json.getString("creator"));
+        Assert.assertEquals(1, json.getInt("file_count"));
+        Assert.assertEquals(true, json.getBoolean("shared"));
+        Assert.assertEquals("My super title document 1", json.getString("title"));
+        Assert.assertEquals("My super description for document 1", json.getString("description"));
+        Assert.assertEquals("eng", json.getString("language"));
+        Assert.assertEquals(create1Date, json.getLong("create_date"));
         tags = json.getJSONArray("tags");
         Assert.assertEquals(1, tags.length());
         Assert.assertEquals(tag1Id, tags.getJSONObject(0).getString("id"));
