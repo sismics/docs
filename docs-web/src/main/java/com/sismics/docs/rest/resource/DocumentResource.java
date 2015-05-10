@@ -38,7 +38,6 @@ import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
-import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.AclDto;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
@@ -84,10 +83,9 @@ public class DocumentResource extends BaseResource {
         
         DocumentDao documentDao = new DocumentDao();
         AclDao aclDao = new AclDao();
-        UserDao userDao = new UserDao();
-        Document documentDb;
+        DocumentDto documentDto;
         try {
-            documentDb = documentDao.getDocument(documentId);
+            documentDto = documentDao.getDocument(documentId);
             
             // Check document visibility
             if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
@@ -98,25 +96,35 @@ public class DocumentResource extends BaseResource {
         }
 
         JSONObject document = new JSONObject();
-        document.put("id", documentDb.getId());
-        document.put("title", documentDb.getTitle());
-        document.put("description", documentDb.getDescription());
-        document.put("create_date", documentDb.getCreateDate().getTime());
-        document.put("language", documentDb.getLanguage());
-        document.put("creator", userDao.getById(documentDb.getUserId()).getUsername());
+        document.put("id", documentDto.getId());
+        document.put("title", documentDto.getTitle());
+        document.put("description", documentDto.getDescription());
+        document.put("create_date", documentDto.getCreateTimestamp());
+        document.put("language", documentDto.getLanguage());
+        document.put("shared", documentDto.getShared());
+        document.put("file_count", documentDto.getFileCount());
         
-        // Add tags
-        TagDao tagDao = new TagDao();
-        List<TagDto> tagDtoList = tagDao.getByDocumentId(documentId);
-        List<JSONObject> tags = new ArrayList<>();
-        for (TagDto tagDto : tagDtoList) {
-            JSONObject tag = new JSONObject();
-            tag.put("id", tagDto.getId());
-            tag.put("name", tagDto.getName());
-            tag.put("color", tagDto.getColor());
-            tags.add(tag);
+        if (principal.isAnonymous()) {
+            // No tags in anonymous mode (sharing)
+            document.put("tags", new ArrayList<JSONObject>());
+        } else {
+            // Add tags added by the current user on this document
+            TagDao tagDao = new TagDao();
+            List<TagDto> tagDtoList = tagDao.getByDocumentId(documentId, principal.getId());
+            List<JSONObject> tags = new ArrayList<>();
+            for (TagDto tagDto : tagDtoList) {
+                JSONObject tag = new JSONObject();
+                tag.put("id", tagDto.getId());
+                tag.put("name", tagDto.getName());
+                tag.put("color", tagDto.getColor());
+                tags.add(tag);
+            }
+            document.put("tags", tags);
         }
-        document.put("tags", tags);
+        
+        // Below is specific to GET /document/id
+        
+        document.put("creator", documentDto.getCreator());
         
         // Add ACL
         List<AclDto> aclDtoList = aclDao.getBySourceId(documentId);
@@ -130,7 +138,10 @@ public class DocumentResource extends BaseResource {
             acl.put("type", aclDto.getTargetType());
             aclList.add(acl);
             
-            if (aclDto.getTargetId().equals(principal.getId()) && aclDto.getPerm() == PermType.WRITE) {
+            if (!principal.isAnonymous()
+                    && aclDto.getTargetId().equals(principal.getId())
+                    && aclDto.getPerm() == PermType.WRITE) {
+                // The document is writable for the current user
                 writable = true;
             }
         }
@@ -182,12 +193,12 @@ public class DocumentResource extends BaseResource {
             document.put("title", documentDto.getTitle());
             document.put("description", documentDto.getDescription());
             document.put("create_date", documentDto.getCreateTimestamp());
-            document.put("shared", documentDto.getShared());
             document.put("language", documentDto.getLanguage());
+            document.put("shared", documentDto.getShared());
             document.put("file_count", documentDto.getFileCount());
             
-            // Get tags
-            List<TagDto> tagDtoList = tagDao.getByDocumentId(documentDto.getId());
+            // Get tags added by the current user on this document
+            List<TagDto> tagDtoList = tagDao.getByDocumentId(documentDto.getId(), principal.getId());
             List<JSONObject> tags = new ArrayList<>();
             for (TagDto tagDto : tagDtoList) {
                 JSONObject tag = new JSONObject();

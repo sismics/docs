@@ -15,6 +15,9 @@ import com.sismics.docs.event.ShareSendEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.greenrobot.event.EventBus;
 
 /**
@@ -26,25 +29,33 @@ public class ShareListAdapter extends BaseAdapter {
     /**
      * Shares.
      */
-    private JSONArray shares;
+    private List<JSONObject> acls;
 
     /**
      * Share list adapter.
      *
-     * @param shares Shares
+     * @param acls ACLs
      */
-    public ShareListAdapter(JSONArray shares) {
-        this.shares = shares;
+    public ShareListAdapter(JSONArray acls) {
+        this.acls = new ArrayList<>();
+
+        // Extract only share ACLs
+        for (int i = 0; i < acls.length(); i++) {
+            JSONObject acl = acls.optJSONObject(i);
+            if (acl.optString("type").equals("SHARE")) {
+                this.acls.add(acl);
+            }
+        }
     }
 
     @Override
     public int getCount() {
-        return shares.length();
+        return acls.size();
     }
 
     @Override
     public JSONObject getItem(int position) {
-        return shares.optJSONObject(position);
+        return acls.get(position);
     }
 
     @Override
@@ -60,8 +71,8 @@ public class ShareListAdapter extends BaseAdapter {
         }
 
         // Fill the view
-        final JSONObject share = getItem(position);
-        String name = share.optString("name");
+        final JSONObject acl = getItem(position);
+        String name = acl.optString("name");
         TextView shareTextView = (TextView) view.findViewById(R.id.shareTextView);
         shareTextView.setText(name.isEmpty() ? parent.getContext().getString(R.string.share_default_name) : name);
 
@@ -70,7 +81,7 @@ public class ShareListAdapter extends BaseAdapter {
         shareDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventBus.getDefault().post(new ShareDeleteEvent(share.optString("id")));
+                EventBus.getDefault().post(new ShareDeleteEvent(acl.optString("id")));
             }
         });
 
@@ -79,7 +90,7 @@ public class ShareListAdapter extends BaseAdapter {
         shareSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventBus.getDefault().post(new ShareSendEvent(share));
+                EventBus.getDefault().post(new ShareSendEvent(acl));
             }
         });
 

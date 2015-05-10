@@ -125,10 +125,10 @@ public class DocShareFragment extends DialogFragment {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 document = response;
-                JSONArray shares = response.optJSONArray("shares");
+                JSONArray acls = response.optJSONArray("acls");
                 shareProgressBar.setVisibility(View.GONE);
                 shareListView.setEmptyView(shareEmptyView);
-                shareListView.setAdapter(new ShareListAdapter(shares));
+                shareListView.setAdapter(new ShareListAdapter(acls));
             }
 
             @Override
@@ -158,7 +158,7 @@ public class DocShareFragment extends DialogFragment {
 
         // Build the share link
         String serverUrl = PreferenceUtil.getServerUrl(getActivity());
-        String link = serverUrl + "/share.html#/share/" + document.optString("id") + "/" + event.getShare().optString("id");
+        String link = serverUrl + "/share.html#/share/" + document.optString("id") + "/" + event.getAcl().optString("id");
 
         // Build the intent
         Context context = getActivity();
