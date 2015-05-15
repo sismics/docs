@@ -144,6 +144,9 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
         Assert.assertTrue(json.getJSONArray("sessions").length() > 0);
+        JSONObject session = json.getJSONArray("sessions").getJSONObject(0);
+        Assert.assertEquals("127.0.0.1", session.getString("ip"));
+        Assert.assertTrue(session.getString("user_agent").startsWith("Java"));
         
         // Delete all sessions
         userResource = resource().path("/user/session");

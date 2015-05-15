@@ -1,5 +1,6 @@
 package com.sismics.docs.rest.resource;
 
+import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.AuthenticationTokenDao;
 import com.sismics.docs.core.dao.jpa.RoleBaseFunctionDao;
@@ -288,12 +289,20 @@ public class UserResource extends BaseResource {
         if (userId == null) {
             throw new ForbiddenClientException();
         }
-            
+        
+        // Get the remote IP
+        String ip = request.getHeader("x-forwarded-for");
+        if (Strings.isNullOrEmpty(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        
         // Create a new session token
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
         AuthenticationToken authenticationToken = new AuthenticationToken();
         authenticationToken.setUserId(userId);
         authenticationToken.setLongLasted(longLasted);
+        authenticationToken.setIp(ip);
+        authenticationToken.setUserAgent(StringUtils.abbreviate(request.getHeader("user-agent"), 1000));
         String token = authenticationTokenDao.create(authenticationToken);
         
         // Cleanup old session tokens
@@ -566,6 +575,8 @@ public class UserResource extends BaseResource {
         for (AuthenticationToken authenticationToken : authenticationTokenDao.getByUserId(principal.getId())) {
             JSONObject session = new JSONObject();
             session.put("create_date", authenticationToken.getCreationDate().getTime());
+            session.put("ip", authenticationToken.getIp());
+            session.put("user_agent", authenticationToken.getUserAgent());
             if (authenticationToken.getLastConnectionDate() != null) {
                 session.put("last_connection_date", authenticationToken.getLastConnectionDate().getTime());
             }

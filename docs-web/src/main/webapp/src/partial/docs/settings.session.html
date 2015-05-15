@@ -4,6 +4,7 @@
     <tr>
       <th>Created date</th>
       <th>Last connection date</th>
+      <th>From</th>
       <th>Current</th>
     </tr>
   </thead>
@@ -11,6 +12,7 @@
     <tr ng-repeat="session in sessions | orderBy: '-current'" ng-class="{ 'info': session.current, 'warning': !session.current }">
       <td>{{ session.create_date | date: 'yyyy-MM-dd HH:mm' }}</td>
       <td>{{ session.last_connection_date | date: 'yyyy-MM-dd HH:mm' }}</td>
+      <td title="{{ session.user_agent }}">{{ session.ip }}</td>
       <td><span ng-show="session.current" class="glyphicon glyphicon-ok"></span></td>
     </tr>
   </tbody>

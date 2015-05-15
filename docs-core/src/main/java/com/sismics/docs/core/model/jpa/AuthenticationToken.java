@@ -30,6 +30,18 @@ public class AuthenticationToken {
     private String userId;
     
     /**
+     * Login IP.
+     */
+    @Column(name = "AUT_IP_C", nullable = true, length = 45)
+    private String ip;
+    
+    /**
+     * Login user agent.
+     */
+    @Column(name = "AUT_UA_C", nullable = true, length = 1000)
+    private String userAgent;
+    
+    /**
      * Remember the user next time (long lasted session).
      */
     @Column(name = "AUT_LONGLASTED_B", nullable = false)
@@ -100,6 +112,38 @@ public class AuthenticationToken {
     public void setLongLasted(boolean longLasted) {
         this.longLasted = longLasted;
     }
+    
+    /**
+     * Getter of ip.
+     * @return ip
+     */
+    public String getIp() {
+        return ip;
+    }
+
+    /**
+     * Setter of ip.
+     * @param ip ip
+     */
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    /**
+     * Getter of userAgent.
+     * @return userAgent
+     */
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    /**
+     * Setter of userAgent.
+     * @param userAgent userAgent
+     */
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
 
     /**
      * Getter of creationDate.
@@ -142,6 +186,8 @@ public class AuthenticationToken {
         return Objects.toStringHelper(this)
                 .add("id", "**hidden**")
                 .add("userId", userId)
+                .add("ip", ip)
+                .add("userAgent", userAgent)
                 .add("longLasted", longLasted)
                 .toString();
     }
