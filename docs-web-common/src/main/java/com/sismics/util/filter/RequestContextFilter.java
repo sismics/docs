@@ -117,8 +117,6 @@ public class RequestContextFilter implements Filter {
                 throw new ServletException(e);
             }
         }
-        
-        ThreadLocalContext.cleanup();
 
         // No error processing the request : commit / rollback the current transaction depending on the HTTP code
         if (em.isOpen()) {
@@ -143,5 +141,7 @@ public class RequestContextFilter implements Filter {
                 }
             }
         }
+        
+        ThreadLocalContext.cleanup();
     }
 }

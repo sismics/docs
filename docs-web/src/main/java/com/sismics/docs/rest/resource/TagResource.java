@@ -175,6 +175,8 @@ public class TagResource extends BaseResource {
             tag.setColor(color);
         }
         
+        tagDao.update(tag);
+        
         JSONObject response = new JSONObject();
         response.put("id", id);
         return Response.ok().entity(response).build();

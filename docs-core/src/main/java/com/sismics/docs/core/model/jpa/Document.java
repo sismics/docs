@@ -1,11 +1,14 @@
 package com.sismics.docs.core.model.jpa;
 
 import com.google.common.base.Objects;
+import com.sismics.docs.core.util.AuditLogUtil;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 import java.util.Date;
 
 /**
@@ -14,8 +17,9 @@ import java.util.Date;
  * @author bgamard
  */
 @Entity
+@EntityListeners(AuditLogUtil.class)
 @Table(name = "T_DOCUMENT")
-public class Document {
+public class Document implements Loggable {
     /**
      * Document ID.
      */
@@ -172,6 +176,7 @@ public class Document {
      *
      * @return the deleteDate
      */
+    @Override
     public Date getDeleteDate() {
         return deleteDate;
     }
@@ -190,5 +195,10 @@ public class Document {
         return Objects.toStringHelper(this)
                 .add("id", id)
                 .toString();
+    }
+
+    @Override
+    public String toMessage() {
+        return title;
     }
 }

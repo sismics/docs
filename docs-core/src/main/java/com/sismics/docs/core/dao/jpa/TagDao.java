@@ -1,15 +1,22 @@
 package com.sismics.docs.core.dao.jpa;
 
-import com.sismics.docs.core.dao.jpa.dto.TagDto;
-import com.sismics.docs.core.dao.jpa.dto.TagStatDto;
-import com.sismics.docs.core.model.jpa.DocumentTag;
-import com.sismics.docs.core.model.jpa.Tag;
-import com.sismics.util.context.ThreadLocalContext;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import java.util.*;
+
+import com.sismics.docs.core.constant.AuditLogType;
+import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.dao.jpa.dto.TagStatDto;
+import com.sismics.docs.core.model.jpa.DocumentTag;
+import com.sismics.docs.core.model.jpa.Tag;
+import com.sismics.docs.core.util.AuditLogUtil;
+import com.sismics.util.context.ThreadLocalContext;
 
 /**
  * Tag DAO.
@@ -153,6 +160,9 @@ public class TagDao {
         tag.setCreateDate(new Date());
         em.persist(tag);
         
+        // Create audit log
+        AuditLogUtil.create(tag, AuditLogType.CREATE);
+        
         return tag.getId();
     }
 
@@ -213,6 +223,9 @@ public class TagDao {
         q = em.createQuery("delete DocumentTag dt where dt.tagId = :tagId");
         q.setParameter("tagId", tagId);
         q.executeUpdate();
+        
+        // Create audit log
+        AuditLogUtil.create(tagDb, AuditLogType.DELETE);
     }
 
     /**
@@ -228,5 +241,29 @@ public class TagDao {
         q.setParameter("userId", userId);
         q.setParameter("name", "%" + name + "%");
         return q.getResultList();
+    }
+    
+    /**
+     * Update a tag.
+     * 
+     * @param tag Tag to update
+     * @return Updated tag
+     */
+    public Tag update(Tag tag) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        
+        // Get the tag
+        Query q = em.createQuery("select t from Tag t where t.id = :id and t.deleteDate is null");
+        q.setParameter("id", tag.getId());
+        Tag tagFromDb = (Tag) q.getSingleResult();
+        
+        // Update the tag
+        tagFromDb.setName(tag.getName());
+        tagFromDb.setColor(tag.getColor());
+        
+        // Create audit log
+        AuditLogUtil.create(tagFromDb, AuditLogType.UPDATE);
+        
+        return tagFromDb;
     }
 }

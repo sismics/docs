@@ -1,10 +1,6 @@
 <img src="img/loader.gif" ng-show="!app" />
 
 <div ng-show="app">
-	<h1>
-	  {{ app.document_count }} <small>document{{ app.document_count > 1 ? 's' : '' }} in the database</small>
-	</h1>
-
   <div class="row upload-zone" ng-model="dropFiles" ng-file-drop drag-over-class="bg-success"
        ng-multiple="true" allow-dir="false" accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
     <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
@@ -44,6 +40,17 @@
   </div>
 
   <div ui-view="file"></div>
+
+  <table class="table">
+    <tr>
+      <th>Date</th>
+      <th>Message</th>
+    </tr>
+    <tr ng-repeat="log in logs">
+      <td>{{ log.create_date | date: 'yyyy-MM-dd HH:mm' }}</td>
+      <td>{{ log.class }} {{ log.type }} {{ log.message }}</td>
+    </tr>
+  </table>
 
 	<div class="text-muted text-right">
 	  <ul class="list-inline">

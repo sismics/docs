@@ -8,7 +8,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.util.AuditLogUtil;
 import com.sismics.util.context.ThreadLocalContext;
 
 /**
@@ -32,6 +34,9 @@ public class FileDao {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         file.setCreateDate(new Date());
         em.persist(file);
+        
+        // Create audit log
+        AuditLogUtil.create(file, AuditLogType.CREATE);
         
         return file.getId();
     }
@@ -92,6 +97,9 @@ public class FileDao {
         // Delete the file
         Date dateNow = new Date();
         fileDb.setDeleteDate(dateNow);
+        
+        // Create audit log
+        AuditLogUtil.create(fileDb, AuditLogType.DELETE);
     }
     
     /**
@@ -112,6 +120,9 @@ public class FileDao {
         fileFromDb.setDocumentId(file.getDocumentId());
         fileFromDb.setContent(file.getContent());
         fileFromDb.setOrder(file.getOrder());
+        
+        // Create audit log
+        AuditLogUtil.create(fileFromDb, AuditLogType.UPDATE);
         
         return file;
     }

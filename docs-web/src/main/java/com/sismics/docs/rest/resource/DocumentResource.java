@@ -447,6 +447,8 @@ public class DocumentResource extends BaseResource {
             document.setLanguage(language);
         }
         
+        document = documentDao.update(document);
+        
         // Update tags
         updateTagList(id, tagList);
         

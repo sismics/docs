@@ -15,10 +15,12 @@ import javax.persistence.Query;
 import org.mindrot.jbcrypt.BCrypt;
 
 import com.google.common.base.Joiner;
+import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
 import com.sismics.docs.core.dao.jpa.dto.UserDto;
 import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.util.AuditLogUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.QueryParam;
@@ -73,10 +75,14 @@ public class UserDao {
             throw new Exception("AlreadyExistingUsername");
         }
         
+        // Create the user
         user.setCreateDate(new Date());
         user.setPassword(hashPassword(user.getPassword()));
         user.setTheme(Constants.DEFAULT_THEME_ID);
         em.persist(user);
+        
+        // Create audit log
+        AuditLogUtil.create(user, AuditLogType.CREATE);
         
         return user.getId();
     }
@@ -101,6 +107,9 @@ public class UserDao {
         userFromDb.setTheme(user.getTheme());
         userFromDb.setFirstConnection(user.isFirstConnection());
         
+        // Create audit log
+        AuditLogUtil.create(userFromDb, AuditLogType.UPDATE);
+        
         return user;
     }
     
@@ -120,6 +129,9 @@ public class UserDao {
 
         // Update the user
         userFromDb.setPassword(hashPassword(user.getPassword()));
+        
+        // Create audit log
+        AuditLogUtil.create(userFromDb, AuditLogType.UPDATE);
         
         return user;
     }
@@ -194,6 +206,9 @@ public class UserDao {
         q = em.createQuery("delete from AuthenticationToken at where at.userId = :userId");
         q.setParameter("userId", userFromDb.getId());
         q.executeUpdate();
+        
+        // Create audit log
+        AuditLogUtil.create(userFromDb, AuditLogType.DELETE);
     }
 
     /**

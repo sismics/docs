@@ -9,6 +9,11 @@ angular.module('docs').controller('DocumentDefault', function($scope, $state, Re
     $scope.app = data;
   });
 
+  // Load user audit log
+  Restangular.one('auditlog').get().then(function(data) {
+    $scope.logs = data.logs;
+  });
+
   /**
    * Load unlinked files.
    */

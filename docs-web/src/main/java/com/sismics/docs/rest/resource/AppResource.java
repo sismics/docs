@@ -20,17 +20,13 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
-import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
-import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
-import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
@@ -64,20 +60,6 @@ public class AppResource extends BaseResource {
 
         JSONObject response = new JSONObject();
         
-        // Specific data
-        DocumentDao documentDao = new DocumentDao();
-        PaginatedList<DocumentDto> paginatedList = PaginatedLists.create(1, 0);
-        SortCriteria sortCriteria = new SortCriteria(0, true);
-        DocumentCriteria documentCriteria = new DocumentCriteria();
-        documentCriteria.setUserId(principal.getId());
-        try {
-            documentDao.findByCriteria(paginatedList, documentCriteria, sortCriteria);
-        } catch (Exception e) {
-            throw new ServerException("SearchError", "Error searching in documents", e);
-        }
-        response.put("document_count", paginatedList.getResultCount());
-        
-        // General data
         response.put("current_version", currentVersion.replace("-SNAPSHOT", ""));
         response.put("min_version", minVersion);
         response.put("total_memory", Runtime.getRuntime().totalMemory());
