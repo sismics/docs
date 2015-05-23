@@ -1,0 +1,32 @@
+<table class="table">
+  <tr ng-repeat="log in logs">
+    <td>{{ log.create_date | date: 'yyyy-MM-dd HH:mm' }}</td>
+    <td>
+      {{ log.class }}
+          <span ng-switch="log.type">
+            <span ng-switch-when="CREATE">created</span>
+            <span ng-switch-when="UPDATE">updated</span>
+            <span ng-switch-when="DELETE">deleted</span>
+          </span>
+
+          <span ng-switch="log.class">
+            :
+            <span ng-switch-when="Document">
+              <a ng-href="#/document/view/{{ log.target }}">{{ log.message }}</a>
+            </span>
+            <span ng-switch-when="File">
+              <a ng-href="#/document/view/{{ log.message }}/file/{{ log.target }}">Open</a>
+            </span>
+            <span ng-switch-when="Acl">
+              {{ log.message }}
+            </span>
+            <span ng-switch-when="Tag">
+              <a href="#/tag">{{ log.message }}</a>
+            </span>
+            <span ng-switch-when="User">
+              <a href="#/settings/account">{{ log.message }}</a>
+            </span>
+          </span>
+    </td>
+  </tr>
+</table>

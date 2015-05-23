@@ -45,7 +45,7 @@ public class AuditLogResource extends BaseResource {
         }
         
         // On a document or a user?
-        PaginatedList<AuditLogDto> paginatedList = PaginatedLists.create(100, 0);
+        PaginatedList<AuditLogDto> paginatedList = PaginatedLists.create(20, 0);
         SortCriteria sortCriteria = new SortCriteria(1, true);
         AuditLogCriteria criteria = new AuditLogCriteria();
         if (documentId == null) {

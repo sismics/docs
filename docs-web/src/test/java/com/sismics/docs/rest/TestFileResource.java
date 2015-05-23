@@ -178,6 +178,12 @@ public class TestFileResource extends BaseJerseyTest {
         json = response.getEntity(JSONObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
+        // Get the file data (not found)
+        fileResource = resource().path("/file/" + file1Id + "/data");
+        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
+        response = fileResource.get(ClientResponse.class);
+        Assert.assertEquals(Status.NOT_FOUND, Status.fromStatusCode(response.getStatus()));
+        
         // Check that files are deleted from FS
         storedFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id).toFile();
         java.io.File webFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id + "_web").toFile();

@@ -57,6 +57,7 @@ import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.mime.MimeType;
 import com.sismics.util.mime.MimeTypeUtil;
+import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
 
@@ -417,7 +418,7 @@ public class FileResource extends BaseResource {
                 }
             }
         } catch (NoResultException e) {
-            throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", fileId));
+            return Response.status(Status.NOT_FOUND).build();
         }
 
         
@@ -461,7 +462,7 @@ public class FileResource extends BaseResource {
                 }
             };
         } catch (Exception e) {
-            throw new ServerException("FileError", "Error while reading the file", e);
+            return Response.status(Status.SERVICE_UNAVAILABLE).build();
         }
 
         return Response.ok(stream)

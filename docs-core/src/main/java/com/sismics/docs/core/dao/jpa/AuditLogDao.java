@@ -75,6 +75,7 @@ public class AuditLogDao {
         if (criteria.getUserId() != null) {
             StringBuilder sb0 = new StringBuilder(" (l.LOG_IDENTITY_C = :userId and l.LOG_CLASSENTITY_C = 'User' ");
             sb0.append(" or l.LOG_IDENTITY_C in (select t.TAG_ID_C from T_TAG t where t.TAG_IDUSER_C = :userId) and l.LOG_CLASSENTITY_C = 'Tag' ");
+            // Show only logs from owned documents, ACL are lost on delete
             sb0.append(" or l.LOG_IDENTITY_C in (select d.DOC_ID_C from T_DOCUMENT d where d.DOC_IDUSER_C = :userId) and l.LOG_CLASSENTITY_C = 'Document') ");
             criteriaList.add(sb0.toString());
             parameterMap.put("userId", criteria.getUserId());

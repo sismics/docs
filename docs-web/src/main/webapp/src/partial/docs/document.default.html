@@ -1,61 +1,58 @@
 <img src="img/loader.gif" ng-show="!app" />
 
 <div ng-show="app">
-  <div class="row upload-zone" ng-model="dropFiles" ng-file-drop drag-over-class="bg-success"
-       ng-multiple="true" allow-dir="false" accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
-    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
-      <div class="thumbnail" ng-class="{ 'thumbnail-checked': file.checked }" ng-if="file.id">
-        <a ng-click="openFile(file)">
-          <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
-        </a>
-        <div class="caption pointer" ng-click="file.checked = !file.checked">
-          <div class="pull-left">
-            <input type="checkbox" ng-model="file.checked" />
+  <div class="well">
+    <h3>Quick upload</h3>
+    <div class="row upload-zone" ng-model="dropFiles" ng-file-drop drag-over-class="bg-success"
+         ng-multiple="true" allow-dir="false" accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
+      <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
+        <div class="thumbnail" ng-class="{ 'thumbnail-checked': file.checked }" ng-if="file.id">
+          <a ng-click="openFile(file)">
+            <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
+          </a>
+          <div class="caption pointer" ng-click="file.checked = !file.checked">
+            <div class="pull-left">
+              <input type="checkbox" ng-model="file.checked" />
+            </div>
+            <div class="pull-right">
+              <button class="btn btn-danger" ng-click="deleteFile($event, file)"><span class="glyphicon glyphicon-trash"></span></button>
+            </div>
+            <div class="clearfix"></div>
           </div>
-          <div class="pull-right">
-            <button class="btn btn-danger" ng-click="deleteFile($event, file)"><span class="glyphicon glyphicon-trash"></span></button>
+        </div>
+
+        <div class="thumbnail" ng-if="!file.id">
+          <p class="text-center lead">
+            {{ file.status }}
+          </p>
+          <div class="caption">
+            <progressbar value="file.progress" class="progress-info active"></progressbar>
           </div>
-          <div class="clearfix"></div>
         </div>
       </div>
 
-      <div class="thumbnail" ng-if="!file.id">
-        <p class="text-center lead">
-          {{ file.status }}
-        </p>
-        <div class="caption">
-          <progressbar value="file.progress" class="progress-info active"></progressbar>
-        </div>
-      </div>
+      <p class="text-center well-lg" ng-if="files.length == 0">
+        <span class="glyphicon glyphicon-move"></span>
+        Drag &amp; drop files here to upload
+      </p>
     </div>
 
-    <p class="text-center well-lg" ng-if="files.length == 0">
-      <span class="glyphicon glyphicon-move"></span>
-      Drag &amp; drop files here to upload
-    </p>
-  </div>
-
-  <div class="btn-group" ng-show="checkedFiles().length > 0">
-    <button class="btn btn-primary" ng-click="addDocument()"><span class="glyphicon glyphicon-plus"></span> Add to new document</button>
+    <div class="btn-group" ng-show="checkedFiles().length > 0">
+      <button class="btn btn-primary" ng-click="addDocument()"><span class="glyphicon glyphicon-plus"></span> Add to new document</button>
+    </div>
   </div>
 
   <div ui-view="file"></div>
 
-  <table class="table">
-    <tr>
-      <th>Date</th>
-      <th>Message</th>
-    </tr>
-    <tr ng-repeat="log in logs">
-      <td>{{ log.create_date | date: 'yyyy-MM-dd HH:mm' }}</td>
-      <td>{{ log.class }} {{ log.type }} {{ log.message }}</td>
-    </tr>
-  </table>
+  <div class="well">
+    <h3>Latest activity</h3>
+    <audit-log logs="logs" />
+  </div>
 
-	<div class="text-muted text-right">
-	  <ul class="list-inline">
-	    <li><strong>Version:</strong> {{ app.current_version }}</li>
-	    <li><strong>Memory:</strong> {{ app.free_memory / 1000000 | number: 0 }}/{{ app.total_memory / 1000000 | number: 0 }} MB</li>
-	  </ul>
-	</div>
+  <div class="text-muted text-right">
+    <ul class="list-inline">
+      <li><strong>Version:</strong> {{ app.current_version }}</li>
+      <li><strong>Memory:</strong> {{ app.free_memory / 1000000 | number: 0 }}/{{ app.total_memory / 1000000 | number: 0 }} MB</li>
+    </ul>
+  </div>
 </div>
