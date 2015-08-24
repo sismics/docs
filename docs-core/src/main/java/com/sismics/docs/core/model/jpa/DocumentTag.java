@@ -31,14 +31,12 @@ public class DocumentTag implements Serializable {
     /**
      * Document ID.
      */
-    @Id
     @Column(name = "DOT_IDDOCUMENT_C", length = 36)
     private String documentId;
     
     /**
      * Tag ID.
      */
-    @Id
     @Column(name = "DOT_IDTAG_C", length = 36)
     private String tagId;
 
