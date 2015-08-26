@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -55,7 +56,7 @@ public class AuditLogResource extends BaseResource {
             // Check ACL on the document
             AclDao aclDao = new AclDao();
             if (!aclDao.checkPermission(documentId, PermType.READ, principal.getId())) {
-                throw new ForbiddenClientException();
+                return Response.status(Status.NOT_FOUND).build();
             }
             criteria.setDocumentId(documentId);
         }
