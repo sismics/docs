@@ -27,9 +27,10 @@ Features
 - SHA-256 encryption
 - Tag system
 - Multi-users ACL system
+- Audit log
 - Document sharing by URL
 - RESTful Web API
-- Modern Android client
+- Fully featured Android client
 
 Download
 --------
