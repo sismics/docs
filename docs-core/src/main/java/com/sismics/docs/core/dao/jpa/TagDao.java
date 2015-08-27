@@ -1,15 +1,22 @@
 package com.sismics.docs.core.dao.jpa;
 
-import com.sismics.docs.core.dao.jpa.dto.TagDto;
-import com.sismics.docs.core.dao.jpa.dto.TagStatDto;
-import com.sismics.docs.core.model.jpa.DocumentTag;
-import com.sismics.docs.core.model.jpa.Tag;
-import com.sismics.util.context.ThreadLocalContext;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import java.util.*;
+
+import com.sismics.docs.core.constant.AuditLogType;
+import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.dao.jpa.dto.TagStatDto;
+import com.sismics.docs.core.model.jpa.DocumentTag;
+import com.sismics.docs.core.model.jpa.Tag;
+import com.sismics.docs.core.util.AuditLogUtil;
+import com.sismics.util.context.ThreadLocalContext;
 
 /**
  * Tag DAO.
@@ -48,31 +55,50 @@ public class TagDao {
     /**
      * Update tags on a document.
      * 
-     * @param documentId
-     * @param tagIdSet
+     * @param documentId Document ID
+     * @param tagIdSet Set of tag ID
      */
     public void updateTagList(String documentId, Set<String> tagIdSet) {
-        // Delete old tag links
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("delete DocumentTag dt where dt.documentId = :documentId");
-        q.setParameter("documentId", documentId);
-        q.executeUpdate();
         
-        // Create new tag links
-        for (String tagId : tagIdSet) {
-            DocumentTag documentTag = new DocumentTag();
-            documentTag.setId(UUID.randomUUID().toString());
-            documentTag.setDocumentId(documentId);
-            documentTag.setTagId(tagId);
-            em.persist(documentTag);
+        // Get current tag links
+        Query q = em.createQuery("select dt from DocumentTag dt where dt.documentId = :documentId and dt.deleteDate is null");
+        q.setParameter("documentId", documentId);
+        @SuppressWarnings("unchecked")
+        List<DocumentTag> documentTagList = q.getResultList();
+        
+        // Deleting tags no longer linked
+        for (DocumentTag documentTag : documentTagList) {
+            if (!tagIdSet.contains(documentTag.getTagId())) {
+                documentTag.setDeleteDate(new Date());
+            }
         }
-
+        
+        // Adding new tag links
+        for (String tagId : tagIdSet) {
+            boolean found = false;
+            for (DocumentTag documentTag : documentTagList) {
+                if (documentTag.getTagId().equals(tagId)) {
+                    found = true;
+                    break;
+                }
+            }
+            
+            if (!found) {
+                DocumentTag documentTag = new DocumentTag();
+                documentTag.setId(UUID.randomUUID().toString());
+                documentTag.setDocumentId(documentId);
+                documentTag.setTagId(tagId);
+                em.persist(documentTag);
+            }
+        }
     }
 
     /**
      * Returns tag list on a document.
-     * @param documentId
-     * @return
+     * 
+     * @param documentId Document ID
+     * @return List of tags
      */
     @SuppressWarnings("unchecked")
     public List<TagDto> getByDocumentId(String documentId, String userId) {
@@ -80,7 +106,7 @@ public class TagDao {
         StringBuilder sb = new StringBuilder("select t.TAG_ID_C, t.TAG_NAME_C, t.TAG_COLOR_C from T_DOCUMENT_TAG dt ");
         sb.append(" join T_TAG t on t.TAG_ID_C = dt.DOT_IDTAG_C ");
         sb.append(" where dt.DOT_IDDOCUMENT_C = :documentId and t.TAG_DELETEDATE_D is null ");
-        sb.append(" and t.TAG_IDUSER_C = :userId ");
+        sb.append(" and t.TAG_IDUSER_C = :userId and dt.DOT_DELETEDATE_D is null ");
         sb.append(" order by t.TAG_NAME_C ");
         
         // Perform the query
@@ -104,15 +130,16 @@ public class TagDao {
     
     /**
      * Returns stats on tags.
-     * @param documentId
-     * @return
+     * 
+     * @param documentId Document ID
+     * @return Stats by tag
      */
     @SuppressWarnings("unchecked")
     public List<TagStatDto> getStats(String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         StringBuilder sb = new StringBuilder("select t.TAG_ID_C, t.TAG_NAME_C, t.TAG_COLOR_C, count(d.DOC_ID_C) ");
         sb.append(" from T_TAG t ");
-        sb.append(" left join T_DOCUMENT_TAG dt on t.TAG_ID_C = dt.DOT_IDTAG_C ");
+        sb.append(" left join T_DOCUMENT_TAG dt on t.TAG_ID_C = dt.DOT_IDTAG_C and dt.DOT_DELETEDATE_D is null ");
         sb.append(" left join T_DOCUMENT d on d.DOC_ID_C = dt.DOT_IDDOCUMENT_C and d.DOC_DELETEDATE_D is null and d.DOC_IDUSER_C = :userId ");
         sb.append(" where t.TAG_IDUSER_C = :userId and t.TAG_DELETEDATE_D is null ");
         sb.append(" group by t.TAG_ID_C ");
@@ -153,11 +180,15 @@ public class TagDao {
         tag.setCreateDate(new Date());
         em.persist(tag);
         
+        // Create audit log
+        AuditLogUtil.create(tag, AuditLogType.CREATE);
+        
         return tag.getId();
     }
 
     /**
      * Returns a tag by name.
+     * 
      * @param userId User ID
      * @param name Name
      * @return Tag
@@ -176,6 +207,7 @@ public class TagDao {
     
     /**
      * Returns a tag by ID.
+     * 
      * @param userId User ID
      * @param tagId Tag ID
      * @return Tag
@@ -206,13 +238,15 @@ public class TagDao {
         Tag tagDb = (Tag) q.getSingleResult();
         
         // Delete the tag
-        Date dateNow = new Date();
-        tagDb.setDeleteDate(dateNow);
+        tagDb.setDeleteDate(new Date());
 
         // Delete linked data
         q = em.createQuery("delete DocumentTag dt where dt.tagId = :tagId");
         q.setParameter("tagId", tagId);
         q.executeUpdate();
+        
+        // Create audit log
+        AuditLogUtil.create(tagDb, AuditLogType.DELETE);
     }
 
     /**
@@ -228,5 +262,29 @@ public class TagDao {
         q.setParameter("userId", userId);
         q.setParameter("name", "%" + name + "%");
         return q.getResultList();
+    }
+    
+    /**
+     * Update a tag.
+     * 
+     * @param tag Tag to update
+     * @return Updated tag
+     */
+    public Tag update(Tag tag) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        
+        // Get the tag
+        Query q = em.createQuery("select t from Tag t where t.id = :id and t.deleteDate is null");
+        q.setParameter("id", tag.getId());
+        Tag tagFromDb = (Tag) q.getSingleResult();
+        
+        // Update the tag
+        tagFromDb.setName(tag.getName());
+        tagFromDb.setColor(tag.getColor());
+        
+        // Create audit log
+        AuditLogUtil.create(tagFromDb, AuditLogType.UPDATE);
+        
+        return tagFromDb;
     }
 }

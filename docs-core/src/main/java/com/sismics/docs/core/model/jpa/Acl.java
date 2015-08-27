@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
@@ -11,6 +12,7 @@ import javax.persistence.Table;
 
 import com.google.common.base.Objects;
 import com.sismics.docs.core.constant.PermType;
+import com.sismics.docs.core.util.AuditLogUtil;
 
 /**
  * ACL entity.
@@ -18,8 +20,9 @@ import com.sismics.docs.core.constant.PermType;
  * @author bgamard
  */
 @Entity
+@EntityListeners(AuditLogUtil.class)
 @Table(name = "T_ACL")
-public class Acl {
+public class Acl implements Loggable {
     /**
      * ACL ID.
      */
@@ -84,6 +87,7 @@ public class Acl {
         this.targetId = targetId;
     }
     
+    @Override
     public Date getDeleteDate() {
         return deleteDate;
     }
@@ -100,5 +104,10 @@ public class Acl {
                 .add("sourceId", sourceId)
                 .add("targetId", targetId)
                 .toString();
+    }
+
+    @Override
+    public String toMessage() {
+        return perm.name();
     }
 }

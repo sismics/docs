@@ -3,23 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/edit"
+        android:id="@+id/info"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_create_white_24dp"
-        android:title="@string/edit_document">
-    </item>
-
-    <item
-        android:id="@+id/upload_file"
-        app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_file_upload_white_24dp"
-        android:title="@string/upload_file">
-    </item>
-
-    <item
-        android:id="@+id/share"
-        app:showAsAction="collapseActionView"
-        android:title="@string/share">
+        android:icon="@drawable/ic_info_white_24dp"
+        android:title="@string/toggle_informations">
     </item>
 
     <item
@@ -29,21 +16,9 @@
     </item>
 
     <item
-        android:id="@+id/download_document"
-        app:showAsAction="collapseActionView"
-        android:title="@string/download_document">
-    </item>
-
-    <item
         android:id="@+id/delete_file"
         app:showAsAction="collapseActionView"
         android:title="@string/delete_file">
-    </item>
-
-    <item
-        android:id="@+id/delete_document"
-        app:showAsAction="collapseActionView"
-        android:title="@string/delete_document">
     </item>
 
 </menu>

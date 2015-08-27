@@ -4,9 +4,18 @@
  * Document view controller.
  */
 angular.module('docs').controller('DocumentView', function ($scope, $state, $stateParams, $location, $dialog, $modal, Restangular, $upload, $q) {
-  // Load data from server
+  // Load document data from server
   Restangular.one('document', $stateParams.id).get().then(function(data) {
     $scope.document = data;
+  }, function(response) {
+    $scope.error = response;
+  });
+
+  // Load audit log data from server
+  Restangular.one('auditlog').get({
+    document: $stateParams.id
+  }).then(function(data) {
+    $scope.logs = data.logs;
   });
 
   // Watch for ACLs change and group them for easy displaying

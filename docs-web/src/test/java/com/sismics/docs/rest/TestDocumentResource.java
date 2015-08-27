@@ -282,8 +282,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         documentResource = resource().path("/document/" + document1Id);
         documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
         response = documentResource.get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.NOT_FOUND, Status.fromStatusCode(response.getStatus()));
     }
     
     /**

@@ -22,5 +22,12 @@
 
 
 <div class="text-center" ng-if="$stateParams.fileId">
-  <img ng-src="../api/file/{{ $stateParams.fileId }}/data?size=web" />
+  <img ng-src="../api/file/{{ $stateParams.fileId }}/data?size=web"
+       ng-init="error = false"
+       img-error="error = true"
+       ng-show="!error" />
+  <p class="well-lg" ng-show="error">
+    <span class="glyphicon glyphicon-warning-sign"></span>
+    File not found
+  </p>
 </div>

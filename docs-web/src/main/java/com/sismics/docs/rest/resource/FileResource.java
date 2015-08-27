@@ -57,6 +57,7 @@ import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.mime.MimeType;
 import com.sismics.util.mime.MimeTypeUtil;
+import com.sun.jersey.api.client.ClientResponse.Status;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataParam;
 
@@ -101,7 +102,7 @@ public class FileResource extends BaseResource {
             try {
                 document = documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
             } catch (NoResultException e) {
-                throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
+                return Response.status(Status.NOT_FOUND).build();
             }
         }
         
@@ -198,7 +199,7 @@ public class FileResource extends BaseResource {
             file = fileDao.getFile(id, principal.getId());
             document = documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
         } catch (NoResultException e) {
-            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
+            return Response.status(Status.NOT_FOUND).build();
         }
         
         // Check that the file is orphan
@@ -258,7 +259,7 @@ public class FileResource extends BaseResource {
         try {
             documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
         } catch (NoResultException e) {
-            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
+            return Response.status(Status.NOT_FOUND).build();
         }
         
         // Reorder files
@@ -294,13 +295,9 @@ public class FileResource extends BaseResource {
         
         // Check document visibility
         if (documentId != null) {
-            try {
-                AclDao aclDao = new AclDao();
-                if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
-                    throw new ForbiddenClientException();
-                }
-            } catch (NoResultException e) {
-                throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
+            AclDao aclDao = new AclDao();
+            if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
+                return Response.status(Status.NOT_FOUND).build();
             }
         } else if (!authenticated) {
             throw new ForbiddenClientException();
@@ -357,7 +354,7 @@ public class FileResource extends BaseResource {
                 documentDao.getDocument(file.getDocumentId(), PermType.WRITE, principal.getId());
             }
         } catch (NoResultException e) {
-            throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", id));
+            return Response.status(Status.NOT_FOUND).build();
         }
         
         // Delete the file
@@ -417,7 +414,7 @@ public class FileResource extends BaseResource {
                 }
             }
         } catch (NoResultException e) {
-            throw new ClientException("FileNotFound", MessageFormat.format("File not found: {0}", fileId));
+            return Response.status(Status.NOT_FOUND).build();
         }
 
         
@@ -461,7 +458,7 @@ public class FileResource extends BaseResource {
                 }
             };
         } catch (Exception e) {
-            throw new ServerException("FileError", "Error while reading the file", e);
+            return Response.status(Status.SERVICE_UNAVAILABLE).build();
         }
 
         return Response.ok(stream)
@@ -497,7 +494,7 @@ public class FileResource extends BaseResource {
                 throw new ForbiddenClientException();
             }
         } catch (NoResultException e) {
-            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
+            return Response.status(Status.NOT_FOUND).build();
         }
         
         // Get files and user associated with this document

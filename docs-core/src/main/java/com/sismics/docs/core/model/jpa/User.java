@@ -1,12 +1,15 @@
 package com.sismics.docs.core.model.jpa;
 
-import com.google.common.base.Objects;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
+
+import com.google.common.base.Objects;
+import com.sismics.docs.core.util.AuditLogUtil;
 
 /**
  * User entity.
@@ -14,8 +17,9 @@ import java.util.Date;
  * @author jtremeaux
  */
 @Entity
+@EntityListeners(AuditLogUtil.class)
 @Table(name = "T_USER")
-public class User {
+public class User implements Loggable {
     /**
      * User ID.
      */
@@ -250,6 +254,7 @@ public class User {
      *
      * @return deleteDate
      */
+    @Override
     public Date getDeleteDate() {
         return deleteDate;
     }
@@ -285,5 +290,10 @@ public class User {
                 .add("id", id)
                 .add("username", username)
                 .toString();
+    }
+
+    @Override
+    public String toMessage() {
+        return username;
     }
 }

@@ -20,6 +20,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
@@ -92,7 +93,7 @@ public class DocumentResource extends BaseResource {
                 throw new ForbiddenClientException();
             }
         } catch (NoResultException e) {
-            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
+            return Response.status(Status.NOT_FOUND).build();
         }
 
         JSONObject document = new JSONObject();
@@ -430,7 +431,7 @@ public class DocumentResource extends BaseResource {
         try {
             document = documentDao.getDocument(id, PermType.WRITE, principal.getId());
         } catch (NoResultException e) {
-            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", id));
+            return Response.status(Status.NOT_FOUND).build();
         }
         
         // Update the document
@@ -446,6 +447,8 @@ public class DocumentResource extends BaseResource {
         if (language != null) {
             document.setLanguage(language);
         }
+        
+        document = documentDao.update(document);
         
         // Update tags
         updateTagList(id, tagList);
@@ -512,7 +515,7 @@ public class DocumentResource extends BaseResource {
             document = documentDao.getDocument(id, PermType.WRITE, principal.getId());
             fileList = fileDao.getByDocumentId(principal.getId(), id);
         } catch (NoResultException e) {
-            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", id));
+            return Response.status(Status.NOT_FOUND).build();
         }
         
         // Delete the document

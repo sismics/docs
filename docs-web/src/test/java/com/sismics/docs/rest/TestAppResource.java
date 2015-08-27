@@ -41,7 +41,6 @@ public class TestAppResource extends BaseJerseyTest {
         Assert.assertTrue(freeMemory > 0);
         Long totalMemory = json.getLong("total_memory");
         Assert.assertTrue(totalMemory > 0 && totalMemory > freeMemory);
-        Assert.assertEquals(0, json.getInt("document_count"));
         
         // Rebuild Lucene index
         appResource = resource().path("/app/batch/reindex");

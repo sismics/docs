@@ -15,11 +15,13 @@ import javax.persistence.Query;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.dao.lucene.LuceneDao;
 import com.sismics.docs.core.model.jpa.Document;
+import com.sismics.docs.core.util.AuditLogUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.QueryParam;
@@ -46,6 +48,9 @@ public class DocumentDao {
         // Create the document
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         em.persist(document);
+        
+        // Create audit log
+        AuditLogUtil.create(document, AuditLogType.CREATE);
         
         return document.getId();
     }
@@ -145,6 +150,9 @@ public class DocumentDao {
         q.setParameter("documentId", id);
         q.setParameter("dateNow", dateNow);
         q.executeUpdate();
+        
+        // Create audit log
+        AuditLogUtil.create(documentDb, AuditLogType.DELETE);
     }
     
     /**
@@ -167,6 +175,7 @@ public class DocumentDao {
      * 
      * @param paginatedList List of documents (updated by side effects)
      * @param criteria Search criteria
+     * @param sortCriteria Sort criteria
      * @return List of documents
      * @throws Exception 
      */
@@ -247,5 +256,31 @@ public class DocumentDao {
         }
 
         paginatedList.setResultList(documentDtoList);
+    }
+
+    /**
+     * Update a document.
+     * 
+     * @param document Document to update
+     * @return Updated document
+     */
+    public Document update(Document document) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        
+        // Get the document
+        Query q = em.createQuery("select d from Document d where d.id = :id and d.deleteDate is null");
+        q.setParameter("id", document.getId());
+        Document documentFromDb = (Document) q.getSingleResult();
+        
+        // Update the document
+        documentFromDb.setTitle(document.getTitle());
+        documentFromDb.setDescription(document.getDescription());
+        documentFromDb.setCreateDate(document.getCreateDate());
+        documentFromDb.setLanguage(document.getLanguage());
+        
+        // Create audit log
+        AuditLogUtil.create(documentFromDb, AuditLogType.UPDATE);
+        
+        return documentFromDb;
     }
 }

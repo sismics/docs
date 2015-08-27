@@ -1,4 +1,11 @@
-<img src="img/loader.gif" ng-show="!document" />
+<img src="img/loader.gif" ng-show="!document && !error" />
+
+<div ng-show="error" class="well-lg">
+  <p class="text-center" ng-show="error.status == 404">
+    <span class="glyphicon glyphicon-warning-sign"></span>
+    Document not found
+  </p>
+</div>
 
 <div ng-show="document">
 	<div class="text-right" ng-show="document.writable">
@@ -134,6 +141,14 @@
           </div>
         </form>
       </div>
+    </tab>
+
+    <tab>
+      <tab-heading class="pointer">
+        <span class="glyphicon glyphicon-tasks"></span> Activity
+      </tab-heading>
+
+      <audit-log logs="logs" />
     </tab>
   </tabset>
 

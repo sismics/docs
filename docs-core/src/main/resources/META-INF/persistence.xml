@@ -17,5 +17,6 @@
     <class>com.sismics.docs.core.model.jpa.DocumentTag</class>
     <class>com.sismics.docs.core.model.jpa.Share</class>
     <class>com.sismics.docs.core.model.jpa.Acl</class>
+    <class>com.sismics.docs.core.model.jpa.AuditLog</class>
   </persistence-unit>
 </persistence>

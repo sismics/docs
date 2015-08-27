@@ -75,12 +75,61 @@ public class TestTagResource extends BaseJerseyTest {
         documentResource = resource().path("/document");
         documentResource.addFilter(new CookieAuthenticationFilter(tag1Token));
         postParams = new MultivaluedMapImpl();
-        postParams.add("title", "My super document 1");
+        postParams.add("title", "My super document 2");
         postParams.add("tags", tag4Id);
         postParams.add("language", "eng");
         response = documentResource.put(ClientResponse.class, postParams);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
+        String document2Id = json.getString("id");
+        
+        // Check tags on a document
+        documentResource = resource().path("/document/" + document2Id);
+        documentResource.addFilter(new CookieAuthenticationFilter(tag1Token));
+        response = documentResource.get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        JSONArray tags = json.getJSONArray("tags");
+        Assert.assertEquals(1, tags.length());
+        Assert.assertEquals(tag4Id, tags.getJSONObject(0).getString("id"));
+        
+        // Update tags on a document
+        documentResource = resource().path("/document/" + document2Id);
+        documentResource.addFilter(new CookieAuthenticationFilter(tag1Token));
+        postParams = new MultivaluedMapImpl();
+        postParams.add("tags", tag3Id);
+        postParams.add("tags", tag4Id);
+        response = documentResource.post(ClientResponse.class, postParams);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        
+        // Check tags on a document
+        documentResource = resource().path("/document/" + document2Id);
+        documentResource.addFilter(new CookieAuthenticationFilter(tag1Token));
+        response = documentResource.get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        tags = json.getJSONArray("tags");
+        Assert.assertEquals(2, tags.length());
+        Assert.assertEquals(tag3Id, tags.getJSONObject(0).getString("id"));
+        Assert.assertEquals(tag4Id, tags.getJSONObject(1).getString("id"));
+        
+        // Update tags on a document
+        documentResource = resource().path("/document/" + document2Id);
+        documentResource.addFilter(new CookieAuthenticationFilter(tag1Token));
+        postParams = new MultivaluedMapImpl();
+        postParams.add("tags", tag4Id);
+        response = documentResource.post(ClientResponse.class, postParams);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        
+        // Check tags on a document
+        documentResource = resource().path("/document/" + document2Id);
+        documentResource.addFilter(new CookieAuthenticationFilter(tag1Token));
+        response = documentResource.get(ClientResponse.class);
+        json = response.getEntity(JSONObject.class);
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        tags = json.getJSONArray("tags");
+        Assert.assertEquals(1, tags.length());
+        Assert.assertEquals(tag4Id, tags.getJSONObject(0).getString("id"));
         
         // Get tag stats
         tagResource = resource().path("/tag/stats");
@@ -99,7 +148,7 @@ public class TestTagResource extends BaseJerseyTest {
         response = tagResource.get(ClientResponse.class);
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.getEntity(JSONObject.class);
-        JSONArray tags = json.getJSONArray("tags");
+        tags = json.getJSONArray("tags");
         Assert.assertTrue(tags.length() > 0);
         Assert.assertEquals("Tag4", tags.getJSONObject(1).getString("name"));
         Assert.assertEquals("#00ff00", tags.getJSONObject(1).getString("color"));

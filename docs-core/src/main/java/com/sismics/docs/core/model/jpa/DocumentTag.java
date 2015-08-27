@@ -6,7 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Link between a document and a tag.
@@ -31,17 +33,21 @@ public class DocumentTag implements Serializable {
     /**
      * Document ID.
      */
-    @Id
     @Column(name = "DOT_IDDOCUMENT_C", length = 36)
     private String documentId;
     
     /**
      * Tag ID.
      */
-    @Id
     @Column(name = "DOT_IDTAG_C", length = 36)
     private String tagId;
 
+    /**
+     * Deletion date.
+     */
+    @Column(name = "DOT_DELETEDATE_D")
+    private Date deleteDate;
+    
     /**
      * Getter of id.
      *
@@ -96,44 +102,24 @@ public class DocumentTag implements Serializable {
         this.tagId = tagId;
     }
     
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((documentId == null) ? 0 : documentId.hashCode());
-        result = prime * result + ((tagId == null) ? 0 : tagId.hashCode());
-        return result;
+    /**
+     * Getter of deleteDate.
+     *
+     * @return the deleteDate
+     */
+    public Date getDeleteDate() {
+        return deleteDate;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        DocumentTag other = (DocumentTag) obj;
-        if (documentId == null) {
-            if (other.documentId != null) {
-                return false;
-            }
-        } else if (!documentId.equals(other.documentId)) {
-            return false;
-        }
-        if (tagId == null) {
-            if (other.tagId != null) {
-                return false;
-            }
-        } else if (!tagId.equals(other.tagId)) {
-            return false;
-        }
-        return true;
+    /**
+     * Setter of deleteDate.
+     *
+     * @param deleteDate deleteDate
+     */
+    public void setDeleteDate(Date deleteDate) {
+        this.deleteDate = deleteDate;
     }
-
+    
     @Override
     public String toString() {
         return Objects.toStringHelper(this)

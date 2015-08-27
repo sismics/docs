@@ -9,9 +9,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.sismics.docs.core.constant.AclTargetType;
+import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.dto.AclDto;
 import com.sismics.docs.core.model.jpa.Acl;
+import com.sismics.docs.core.util.AuditLogUtil;
 import com.sismics.util.context.ThreadLocalContext;
 
 /**
@@ -34,6 +36,9 @@ public class AclDao {
         // Create the ACL
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         em.persist(acl);
+        
+        // Create audit log
+        AuditLogUtil.create(acl, AuditLogType.CREATE);
         
         return acl.getId();
     }
@@ -121,9 +126,22 @@ public class AclDao {
      * @param perm Permission
      * @param targetId Target ID
      */
+    @SuppressWarnings("unchecked")
     public void delete(String sourceId, PermType perm, String targetId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.sourceId = :sourceId and a.perm = :perm and a.targetId = :targetId");
+        
+        // Create audit log
+        Query q = em.createQuery("from Acl a where a.sourceId = :sourceId and a.perm = :perm and a.targetId = :targetId");
+        q.setParameter("sourceId", sourceId);
+        q.setParameter("perm", perm);
+        q.setParameter("targetId", targetId);
+        List<Acl> aclList = q.getResultList();
+        for (Acl acl : aclList) {
+            AuditLogUtil.create(acl, AuditLogType.DELETE);
+        }
+        
+        // Soft delete the ACLs
+        q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.sourceId = :sourceId and a.perm = :perm and a.targetId = :targetId");
         q.setParameter("sourceId", sourceId);
         q.setParameter("perm", perm);
         q.setParameter("targetId", targetId);
