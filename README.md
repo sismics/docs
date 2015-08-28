@@ -72,7 +72,7 @@ From the `docs-web` directory:
 
     mvn -Pprod -DskipTests clean install
 
-You will get your deployable WAR in the `target` directory.
+You will get your deployable WAR in the `docs-web/target` directory.
 
 License
 -------
