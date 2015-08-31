@@ -88,7 +88,7 @@ public class FileUtil {
             log.info("Starting OCR with TESSDATA_PREFIX=" + System.getenv("TESSDATA_PREFIX") + ";LC_NUMERIC=" + System.getenv("LC_NUMERIC"));
             instance.setLanguage(document.getLanguage());
             content = instance.doOCR(image);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("Error while OCR-izing the image", e);
         }
         
