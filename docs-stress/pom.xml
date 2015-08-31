@@ -21,6 +21,13 @@
       <artifactId>jersey-client</artifactId>
     </dependency>
       
+    <!-- Depenedencies to Docs -->
+    <dependency>
+      <groupId>com.sismics.docs</groupId>
+      <artifactId>docs-web-common</artifactId>
+      <type>test-jar</type>
+    </dependency>
+      
     <!-- Other external dependencies -->
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -47,11 +54,9 @@
       <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
 
-    <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>test</scope>
     </dependency>
     
   </dependencies>
