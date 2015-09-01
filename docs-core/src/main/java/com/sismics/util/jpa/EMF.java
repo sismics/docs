@@ -71,7 +71,7 @@ public final class EMF {
                 properties.load(is);
                 return properties;
             }
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             log.error("Error reading hibernate.properties", e);
         }
         

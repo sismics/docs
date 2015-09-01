@@ -24,7 +24,7 @@
     <org.slf4j.version>1.6.4</org.slf4j.version>
     <org.slf4j.jcl-over-slf4j.version>1.6.6</org.slf4j.jcl-over-slf4j.version>
     <junit.junit.version>4.7</junit.junit.version>
-    <org.hsqldb.hsqldb.version>2.3.0</org.hsqldb.hsqldb.version>
+    <org.hsqldb.hsqldb.version>2.3.3</org.hsqldb.hsqldb.version>
     <com.sun.jersey.version>1.17</com.sun.jersey.version>
     <org.mindrot.jbcrypt>0.3m</org.mindrot.jbcrypt>
     <org.subethamail.subethasmtp.version>3.1.6</org.subethamail.subethasmtp.version>

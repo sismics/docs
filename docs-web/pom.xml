@@ -203,6 +203,53 @@
       </build>
     </profile>
     
+    <!-- Stress profile -->
+    <profile>
+      <id>stress</id>
+      <activation>
+        <property>
+          <name>env</name>
+          <value>stress</value>
+        </property>
+      </activation>
+      
+      <build>
+        <resources>
+          <resource>
+            <directory>src/stress/resources</directory>
+            <filtering>false</filtering>
+            <excludes>
+              <exclude>**/config.properties</exclude>
+            </excludes>
+          </resource>
+          <resource>
+            <directory>src/stress/resources</directory>
+            <filtering>true</filtering>
+            <includes>
+              <include>**/config.properties</include>
+            </includes>
+          </resource>
+        </resources>
+
+        <plugins>
+          <plugin>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-maven-plugin</artifactId>
+            <configuration>
+              <scanIntervalSeconds>0</scanIntervalSeconds>
+              <webAppConfig>
+                <contextPath>/docs-web</contextPath>
+                <extraClasspath>target/classes;../docs-core/target/classes</extraClasspath>
+                <overrideDescriptor>src/stress/main/webapp/web-override.xml</overrideDescriptor>
+              </webAppConfig>
+              <stopKey>STOPKEY</stopKey>
+              <stopPort>1099</stopPort>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
     <!-- Production profile -->
     <profile>
       <id>prod</id>
