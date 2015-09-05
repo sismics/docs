@@ -78,10 +78,10 @@ public final class EMF {
         // Use environment parameters
         log.info("Configuring EntityManager from environment parameters");
         Map<Object, Object> props = new HashMap<Object, Object>();
-        props.put("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver");
+        props.put("hibernate.connection.driver_class", "org.h2.Driver");
         File dbDirectory = DirectoryUtil.getDbDirectory();
         String dbFile = dbDirectory.getAbsoluteFile() + File.separator + "docs";
-        props.put("hibernate.connection.url", "jdbc:hsqldb:file:" + dbFile + ";hsqldb.write_delay=false;shutdown=true");
+        props.put("hibernate.connection.url", "jdbc:h2:file:" + dbFile + ";CACHE_SIZE=65536");
         props.put("hibernate.connection.username", "sa");
         props.put("hibernate.hbm2ddl.auto", "none");
         props.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");

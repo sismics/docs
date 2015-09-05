@@ -215,8 +215,7 @@ public class DocumentDao {
         if (criteria.getTagIdList() != null && !criteria.getTagIdList().isEmpty()) {
             int index = 0;
             for (String tagId : criteria.getTagIdList()) {
-                sb.append(" left join T_DOCUMENT_TAG dt" + index + " on dt" + index + ".DOT_IDDOCUMENT_C = d.DOC_ID_C and dt" + index + ".DOT_IDTAG_C = :tagId" + index + " ");
-                criteriaList.add("dt" + index + ".DOT_ID_C is not null");
+                sb.append(" join T_DOCUMENT_TAG dt" + index + " on dt" + index + ".DOT_IDDOCUMENT_C = d.DOC_ID_C and dt" + index + ".DOT_IDTAG_C = :tagId" + index + " ");
                 parameterMap.put("tagId" + index, tagId);
                 index++;
             }
