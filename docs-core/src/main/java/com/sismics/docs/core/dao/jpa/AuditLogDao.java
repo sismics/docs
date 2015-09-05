@@ -11,6 +11,7 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.dao.jpa.criteria.AuditLogCriteria;
 import com.sismics.docs.core.dao.jpa.dto.AuditLogDto;
@@ -57,37 +58,29 @@ public class AuditLogDao {
      */
     public void findByCriteria(PaginatedList<AuditLogDto> paginatedList, AuditLogCriteria criteria, SortCriteria sortCriteria) throws Exception {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
-        List<String> criteriaList = new ArrayList<String>();
         
-        StringBuilder sb = new StringBuilder("select l.LOG_ID_C c0, l.LOG_CREATEDATE_D c1, l.LOG_IDENTITY_C c2, l.LOG_CLASSENTITY_C c3, l.LOG_TYPE_C c4, l.LOG_MESSAGE_C c5 ");
-        sb.append(" from T_AUDIT_LOG l ");
+        String baseQuery = "select l.LOG_ID_C c0, l.LOG_CREATEDATE_D c1, l.LOG_IDENTITY_C c2, l.LOG_CLASSENTITY_C c3, l.LOG_TYPE_C c4, l.LOG_MESSAGE_C c5 from T_AUDIT_LOG l ";
+        List<String> queries = Lists.newArrayList();
         
         // Adds search criteria
         if (criteria.getDocumentId() != null) {
             // ACL on document is not checked here, it's assumed
-            StringBuilder sb0 = new StringBuilder(" (l.LOG_IDENTITY_C = :documentId and l.LOG_CLASSENTITY_C = 'Document' ");
-            sb0.append(" or l.LOG_IDENTITY_C in (select f.FIL_ID_C from T_FILE f where f.FIL_IDDOC_C = :documentId) and l.LOG_CLASSENTITY_C = 'File' ");
-            sb0.append(" or l.LOG_IDENTITY_C in (select a.ACL_ID_C from T_ACL a where a.ACL_SOURCEID_C = :documentId) and l.LOG_CLASSENTITY_C = 'Acl') ");
-            criteriaList.add(sb0.toString());
+            queries.add(baseQuery + " where l.LOG_IDENTITY_C = :documentId ");
+            queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select f.FIL_ID_C from T_FILE f where f.FIL_IDDOC_C = :documentId) ");
+            queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select a.ACL_ID_C from T_ACL a where a.ACL_SOURCEID_C = :documentId) ");
             parameterMap.put("documentId", criteria.getDocumentId());
         }
         
         if (criteria.getUserId() != null) {
-            StringBuilder sb0 = new StringBuilder(" (l.LOG_IDENTITY_C = :userId and l.LOG_CLASSENTITY_C = 'User' ");
-            sb0.append(" or l.LOG_IDENTITY_C in (select t.TAG_ID_C from T_TAG t where t.TAG_IDUSER_C = :userId) and l.LOG_CLASSENTITY_C = 'Tag' ");
+            queries.add(baseQuery + " where l.LOG_IDENTITY_C = :userId ");
+            queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select t.TAG_ID_C from T_TAG t where t.TAG_IDUSER_C = :userId) ");
             // Show only logs from owned documents, ACL are lost on delete
-            sb0.append(" or l.LOG_IDENTITY_C in (select d.DOC_ID_C from T_DOCUMENT d where d.DOC_IDUSER_C = :userId) and l.LOG_CLASSENTITY_C = 'Document') ");
-            criteriaList.add(sb0.toString());
+            queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select d.DOC_ID_C from T_DOCUMENT d where d.DOC_IDUSER_C = :userId) ");
             parameterMap.put("userId", criteria.getUserId());
         }
         
-        if (!criteriaList.isEmpty()) {
-            sb.append(" where ");
-            sb.append(Joiner.on(" and ").join(criteriaList));
-        }
-        
         // Perform the search
-        QueryParam queryParam = new QueryParam(sb.toString(), parameterMap);
+        QueryParam queryParam = new QueryParam(Joiner.on(" union ").join(queries), parameterMap);
         List<Object[]> l = PaginatedLists.executePaginatedQuery(paginatedList, queryParam, sortCriteria);
         
         // Assemble results

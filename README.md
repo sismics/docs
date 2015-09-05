@@ -27,9 +27,10 @@ Features
 - SHA-256 encryption
 - Tag system
 - Multi-users ACL system
+- Audit log
 - Document sharing by URL
 - RESTful Web API
-- Modern Android client
+- Fully featured Android client
 
 Download
 --------
@@ -71,7 +72,7 @@ From the `docs-web` directory:
 
     mvn -Pprod -DskipTests clean install
 
-You will get your deployable WAR in the `target` directory.
+You will get your deployable WAR in the `docs-web/target` directory.
 
 License
 -------

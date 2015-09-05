@@ -24,7 +24,7 @@
     <org.slf4j.version>1.6.4</org.slf4j.version>
     <org.slf4j.jcl-over-slf4j.version>1.6.6</org.slf4j.jcl-over-slf4j.version>
     <junit.junit.version>4.7</junit.junit.version>
-    <org.hsqldb.hsqldb.version>2.3.0</org.hsqldb.hsqldb.version>
+    <com.h2database.h2.version>1.4.188</com.h2database.h2.version>
     <com.sun.jersey.version>1.17</com.sun.jersey.version>
     <org.mindrot.jbcrypt>0.3m</org.mindrot.jbcrypt>
     <org.subethamail.subethasmtp.version>3.1.6</org.subethamail.subethasmtp.version>
@@ -35,6 +35,8 @@
     <org.apache.lucene.version>4.2.0</org.apache.lucene.version>
     <jgoodies.forms.version>1.0.5</jgoodies.forms.version>
     <org.imgscalr.imgscalr-lib.version>4.2</org.imgscalr.imgscalr-lib.version>
+    <org.apache.pdfbox.pdfbox.version>1.8.10</org.apache.pdfbox.pdfbox.version>
+    <org.bouncycastle.bcprov-jdk15on.version>1.49</org.bouncycastle.bcprov-jdk15on.version>
 
     <com.sun.grizzly.version>1.9.18-m</com.sun.grizzly.version>
     <org.hibernate.hibernate.version>4.1.0.Final</org.hibernate.hibernate.version>
@@ -62,8 +64,6 @@
     <org.mortbay.jetty.jetty-maven-plugin.version>8.1.2.v20120308</org.mortbay.jetty.jetty-maven-plugin.version>
     <org.vafer.jdeb.version>1.0.1</org.vafer.jdeb.version>
     <com.samaxes.maven.minify-maven-plugin.version>1.7</com.samaxes.maven.minify-maven-plugin.version>
-    <org.apache.pdfbox.pdfbox.version>1.8.8</org.apache.pdfbox.pdfbox.version>
-    <org.bouncycastle.bcprov-jdk15on.version>1.49</org.bouncycastle.bcprov-jdk15on.version>
   </properties>
   
   <scm>
@@ -317,6 +317,12 @@
         <artifactId>jersey-multipart</artifactId>
         <version>${com.sun.jersey.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>com.sun.jersey</groupId>
+        <artifactId>jersey-client</artifactId>
+        <version>${com.sun.jersey.version}</version>
+      </dependency>
       
       <dependency>
         <groupId>com.sun.grizzly</groupId>
@@ -331,9 +337,9 @@
       </dependency>
 
       <dependency>
-        <groupId>org.hsqldb</groupId>
-        <artifactId>hsqldb</artifactId>
-        <version>${org.hsqldb.hsqldb.version}</version>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>${com.h2database.h2.version}</version>
       </dependency>
 
       <dependency>

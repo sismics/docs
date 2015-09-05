@@ -104,10 +104,10 @@ public class DirectoryUtil {
      */
     private static File getDataSubDirectory(String subdirectory) {
         File baseDataDir = getBaseDataDirectory();
-        File faviconDirectory = new File(baseDataDir.getPath() + File.separator + subdirectory);
-        if (!faviconDirectory.isDirectory()) {
-            faviconDirectory.mkdirs();
+        File directory = new File(baseDataDir.getPath() + File.separator + subdirectory);
+        if (!directory.isDirectory()) {
+            directory.mkdirs();
         }
-        return faviconDirectory;
+        return directory;
     }
 }

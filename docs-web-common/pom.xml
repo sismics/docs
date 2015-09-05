@@ -98,12 +98,6 @@
     </dependency>
     
     <dependency>
-      <groupId>org.hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
       <groupId>org.subethamail</groupId>
       <artifactId>subethasmtp-wiser</artifactId>
       <scope>test</scope>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>com.sismics.docs</groupId>
+    <artifactId>docs-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <relativePath>../docs-parent</relativePath>
+  </parent>
+  
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>docs-stress</artifactId>
+  <packaging>jar</packaging>
+  <name>Docs Stress</name>
+
+  <dependencies>
+    <!-- Dependencies to Jersey -->
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-client</artifactId>
+    </dependency>
+      
+    <!-- Depenedencies to Docs -->
+    <dependency>
+      <groupId>com.sismics.docs</groupId>
+      <artifactId>docs-web-common</artifactId>
+      <type>test-jar</type>
+    </dependency>
+      
+    <!-- Other external dependencies -->
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+  </build>
+</project>
