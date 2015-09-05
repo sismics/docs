@@ -121,9 +121,6 @@ public class FileDao {
         fileFromDb.setContent(file.getContent());
         fileFromDb.setOrder(file.getOrder());
         
-        // Create audit log
-        AuditLogUtil.create(fileFromDb, AuditLogType.UPDATE);
-        
         return file;
     }
     
