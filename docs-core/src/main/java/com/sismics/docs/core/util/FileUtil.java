@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -16,8 +15,8 @@ import javax.crypto.CipherOutputStream;
 import javax.imageio.ImageIO;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.rendering.PDFRenderer;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Method;
 import org.imgscalr.Scalr.Mode;
@@ -159,12 +158,8 @@ public class FileUtil {
             PDDocument pdfDocument = null;
             try {
                 pdfDocument = PDDocument.load(inputStream, true);
-                @SuppressWarnings("unchecked")
-                List<PDPage> pageList = pdfDocument.getDocumentCatalog().getAllPages();
-                if (pageList.size() > 0) {
-                    PDPage page = pageList.get(0);
-                    image = page.convertToImage();
-                }
+                PDFRenderer renderer = new PDFRenderer(pdfDocument);
+                image = renderer.renderImage(0);
             } finally {
                 pdfDocument.close();
             }
