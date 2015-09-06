@@ -115,12 +115,6 @@
       <scope>test</scope>
     </dependency>
     
-    <dependency>
-      <groupId>org.subethamail</groupId>
-      <artifactId>subethasmtp-wiser</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
   </dependencies>
 
   <build>
@@ -131,7 +125,7 @@
     </resources>
     <plugins>
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <configuration>
           <systemProperties>
@@ -186,7 +180,7 @@
 
         <plugins>
           <plugin>
-            <groupId>org.mortbay.jetty</groupId>
+            <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-maven-plugin</artifactId>
             <configuration>
               <scanIntervalSeconds>0</scanIntervalSeconds>
@@ -233,7 +227,7 @@
 
         <plugins>
           <plugin>
-            <groupId>org.mortbay.jetty</groupId>
+            <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-maven-plugin</artifactId>
             <configuration>
               <scanIntervalSeconds>0</scanIntervalSeconds>
@@ -282,8 +276,8 @@
         
           <!-- Launch NPM & Grunt -->
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.7</version>
             <executions>
               <execution>
                 <phase>generate-sources</phase>

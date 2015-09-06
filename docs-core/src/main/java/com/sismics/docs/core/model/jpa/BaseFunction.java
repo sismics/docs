@@ -1,11 +1,11 @@
 package com.sismics.docs.core.model.jpa;
 
-import com.google.common.base.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.google.common.base.MoreObjects;
 
 /**
  * Base function entity.
@@ -42,7 +42,7 @@ public class BaseFunction {
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .toString();
     }

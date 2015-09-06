@@ -9,7 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.sismics.docs.core.constant.AuditLogType;
 
 /**
@@ -168,7 +168,7 @@ public class AuditLog {
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .add("entityId", entityId)
                 .add("entityClass", entityClass)

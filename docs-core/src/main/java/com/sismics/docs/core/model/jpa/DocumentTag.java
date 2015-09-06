@@ -1,14 +1,14 @@
 package com.sismics.docs.core.model.jpa;
 
-import com.google.common.base.Objects;
+import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import java.io.Serializable;
-import java.util.Date;
+import com.google.common.base.MoreObjects;
 
 /**
  * Link between a document and a tag.
@@ -122,7 +122,7 @@ public class DocumentTag implements Serializable {
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("documentId", documentId)
                 .add("tagId", tagId)
                 .toString();

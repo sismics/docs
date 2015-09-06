@@ -1,6 +1,6 @@
 package com.sismics.docs.core.event;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.sismics.docs.core.model.jpa.File;
 
 /**
@@ -34,7 +34,7 @@ public class FileDeletedAsyncEvent {
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
             .add("file", file)
             .toString();
     }

@@ -16,10 +16,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Dependencies version (external) -->
-    <org.apache.commons.commons-compress.version>1.5</org.apache.commons.commons-compress.version>
+    <org.apache.commons.commons-compress.version>1.10</org.apache.commons.commons-compress.version>
     <commons-lang.commons-lang.version>2.6</commons-lang.commons-lang.version>
-    <commons-io.commons-io.version>2.1</commons-io.commons-io.version>
-    <com.google.guava.guava.version>14.0</com.google.guava.guava.version>
+    <commons-io.commons-io.version>2.4</commons-io.commons-io.version>
+    <commons-dbcp.version>1.4</commons-dbcp.version>
+    <com.google.guava.guava.version>18.0</com.google.guava.guava.version>
     <log4j.log4j.version>1.2.16</log4j.log4j.version>
     <org.slf4j.version>1.6.4</org.slf4j.version>
     <org.slf4j.jcl-over-slf4j.version>1.6.6</org.slf4j.jcl-over-slf4j.version>
@@ -27,43 +28,27 @@
     <com.h2database.h2.version>1.4.188</com.h2database.h2.version>
     <com.sun.jersey.version>1.17</com.sun.jersey.version>
     <org.mindrot.jbcrypt>0.3m</org.mindrot.jbcrypt>
-    <org.subethamail.subethasmtp.version>3.1.6</org.subethamail.subethasmtp.version>
-    <org.subethamail.subethasmtp-wiser.version>1.2</org.subethamail.subethasmtp-wiser.version>
-    <org.codehaus.jettison.jettison.version>1.1</org.codehaus.jettison.jettison.version>
-    <org.ccil.cowan.tagsoup.tagsoup.version>1.2.1</org.ccil.cowan.tagsoup.tagsoup.version>
-    <com.googlecode.owasp-java-html-sanitizer.owasp-java-html-sanitizer.version>r156</com.googlecode.owasp-java-html-sanitizer.owasp-java-html-sanitizer.version>
     <org.apache.lucene.version>4.2.0</org.apache.lucene.version>
-    <jgoodies.forms.version>1.0.5</jgoodies.forms.version>
     <org.imgscalr.imgscalr-lib.version>4.2</org.imgscalr.imgscalr-lib.version>
     <org.apache.pdfbox.pdfbox.version>2.0.0-SNAPSHOT</org.apache.pdfbox.pdfbox.version>
     <org.bouncycastle.bcprov-jdk15on.version>1.49</org.bouncycastle.bcprov-jdk15on.version>
-
-    <com.sun.grizzly.version>1.9.18-m</com.sun.grizzly.version>
+    <joda-time.joda-time.version>2.8.2</joda-time.joda-time.version>
     <org.hibernate.hibernate.version>4.1.0.Final</org.hibernate.hibernate.version>
-    <commons-dbcp.version>1.4</commons-dbcp.version>
-    <joda-time.joda-time.version>2.2</joda-time.joda-time.version>
-    <org.codehaus.jackson.jackson.version>1.7.1</org.codehaus.jackson.jackson.version>
+    <com.sun.grizzly.version>1.9.64</com.sun.grizzly.version>
 
-    <org.eclipse.jetty.jetty-server.version>8.1.10.v20130312</org.eclipse.jetty.jetty-server.version>
-    <org.eclipse.jetty.jetty-webapp.version>8.1.10.v20130312</org.eclipse.jetty.jetty-webapp.version>
-    <org.eclipse.jetty.jetty-servlet.version>8.1.10.v20130312</org.eclipse.jetty.jetty-servlet.version>
+    <org.eclipse.jetty.jetty-server.version>9.2.13.v20150730</org.eclipse.jetty.jetty-server.version>
+    <org.eclipse.jetty.jetty-webapp.version>9.2.13.v20150730</org.eclipse.jetty.jetty-webapp.version>
+    <org.eclipse.jetty.jetty-servlet.version>9.2.13.v20150730</org.eclipse.jetty.jetty-servlet.version>
     <org.mortbay.jetty.servlet-api.version>3.0.20100224</org.mortbay.jetty.servlet-api.version>
     
     <!-- Plugins version -->
-    <org.apache.maven.plugins.maven-antrun-plugin.version>1.7</org.apache.maven.plugins.maven-antrun-plugin.version>
-    <org.apache.maven.plugins.maven-dependency-plugin.version>2.7</org.apache.maven.plugins.maven-dependency-plugin.version>
-    <org.apache.maven.plugins.maven-eclipse-plugin.version>2.8</org.apache.maven.plugins.maven-eclipse-plugin.version>
+    <org.apache.maven.plugins.maven-antrun-plugin.version>1.8</org.apache.maven.plugins.maven-antrun-plugin.version>
+    <org.apache.maven.plugins.maven-dependency-plugin.version>2.10</org.apache.maven.plugins.maven-dependency-plugin.version>
     <org.apache.maven.plugins.maven-jar-plugin.version>2.4</org.apache.maven.plugins.maven-jar-plugin.version>
-    <org.apache.maven.plugins.maven-release-plugin.version>2.4.1</org.apache.maven.plugins.maven-release-plugin.version>
-    <org.apache.maven.plugins.maven-resources-plugin.version>2.6</org.apache.maven.plugins.maven-resources-plugin.version>
-    <org.apache.maven.plugins.maven-war-plugin.version>2.2</org.apache.maven.plugins.maven-war-plugin.version>
-    <org.codehaus.cargo.cargo-maven2-plugin.version>1.2.0</org.codehaus.cargo.cargo-maven2-plugin.version>
-    <org.codehaus.mojo.rpm-maven-plugin.version>2.1-alpha-2</org.codehaus.mojo.rpm-maven-plugin.version>
-    <org.codehaus.mojo.nsis-maven-plugin.version>1.0-SNAPSHOT</org.codehaus.mojo.nsis-maven-plugin.version>
-    <org.codehaus.mojo.osxappbundle-maven-plugin.version>1.0-alpha-2</org.codehaus.mojo.osxappbundle-maven-plugin.version>
-    <org.mortbay.jetty.jetty-maven-plugin.version>8.1.2.v20120308</org.mortbay.jetty.jetty-maven-plugin.version>
-    <org.vafer.jdeb.version>1.0.1</org.vafer.jdeb.version>
-    <com.samaxes.maven.minify-maven-plugin.version>1.7</com.samaxes.maven.minify-maven-plugin.version>
+    <org.apache.maven.plugins.maven-release-plugin.version>2.5.2</org.apache.maven.plugins.maven-release-plugin.version>
+    <org.apache.maven.plugins.maven-resources-plugin.version>2.7</org.apache.maven.plugins.maven-resources-plugin.version>
+    <org.apache.maven.plugins.maven-war-plugin.version>2.6</org.apache.maven.plugins.maven-war-plugin.version>
+    <org.eclipse.jetty.jetty-maven-plugin.version>9.2.13.v20150730</org.eclipse.jetty.jetty-maven-plugin.version>
   </properties>
   
   <scm>
@@ -101,25 +86,10 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-eclipse-plugin</artifactId>
-        <version>${org.apache.maven.plugins.maven-eclipse-plugin.version}</version>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>${org.apache.maven.plugins.maven-jar-plugin.version}</version>
       </plugin>
       
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>${org.apache.maven.plugins.maven-release-plugin.version}</version>
-        <configuration>
-          <tagNameFormat>@{project.version}</tagNameFormat>
-        </configuration>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -133,45 +103,9 @@
       </plugin>
       
       <plugin>
-        <groupId>org.codehaus.cargo</groupId>
-        <artifactId>cargo-maven2-plugin</artifactId>
-        <version>${org.codehaus.cargo.cargo-maven2-plugin.version}</version>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>${org.mortbay.jetty.jetty-maven-plugin.version}</version>
-      </plugin>
-      
-      <plugin>
-        <groupId>com.samaxes.maven</groupId>
-        <artifactId>minify-maven-plugin</artifactId>
-        <version>${com.samaxes.maven.minify-maven-plugin.version}</version>
-      </plugin>
-
-      <plugin>
-        <groupId>org.vafer</groupId>
-        <artifactId>jdeb</artifactId>
-        <version>${org.vafer.jdeb.version}</version>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>rpm-maven-plugin</artifactId>
-        <version>${org.codehaus.mojo.rpm-maven-plugin.version}</version>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>nsis-maven-plugin</artifactId>
-        <version>${org.codehaus.mojo.nsis-maven-plugin.version}</version>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>osxappbundle-maven-plugin</artifactId>
-        <version>${org.codehaus.mojo.osxappbundle-maven-plugin.version}</version>
+        <version>${org.eclipse.jetty.jetty-maven-plugin.version}</version>
       </plugin>
       
     </plugins>
@@ -256,18 +190,6 @@
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
         <version>${com.google.guava.guava.version}</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.codehaus.jackson</groupId>
-        <artifactId>jackson-core-asl</artifactId>
-        <version>${org.codehaus.jackson.jackson.version}</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.codehaus.jackson</groupId>
-        <artifactId>jackson-mapper-asl</artifactId>
-        <version>${org.codehaus.jackson.jackson.version}</version>
       </dependency>
       
       <dependency>
@@ -379,48 +301,6 @@
       </dependency>
 
       <dependency>
-        <groupId>org.subethamail</groupId>
-        <artifactId>subethasmtp-wiser</artifactId>
-        <version>${org.subethamail.subethasmtp-wiser.version}</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.codehaus.jettison</groupId>
-        <artifactId>jettison</artifactId>
-        <version>${org.codehaus.jettison.jettison.version}</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>com.google.oauth-client</groupId>
-        <artifactId>google-oauth-client</artifactId>
-        <version>${com.google.oauth-client.google-oauth-client.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.google.apis</groupId>
-        <artifactId>google-api-services-oauth2</artifactId>
-        <version>${com.google.apis.google-api-services-oauth2.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.google.http-client</groupId>
-        <artifactId>google-http-client-jackson2</artifactId>
-        <version>${com.google.http-client.google-http-client-jackson2.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.ccil.cowan.tagsoup</groupId>
-        <artifactId>tagsoup</artifactId>
-        <version>${org.ccil.cowan.tagsoup.tagsoup.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
-        <artifactId>owasp-java-html-sanitizer</artifactId>
-        <version>${com.googlecode.owasp-java-html-sanitizer.owasp-java-html-sanitizer.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.apache.lucene</groupId>
         <artifactId>lucene-core</artifactId>
         <version>${org.apache.lucene.version}</version>
@@ -442,12 +322,6 @@
         <groupId>org.apache.lucene</groupId>
         <artifactId>lucene-highlighter</artifactId>
         <version>${org.apache.lucene.version}</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>jgoodies</groupId>
-        <artifactId>forms</artifactId>
-        <version>${jgoodies.forms.version}</version>
       </dependency>
       
       <dependency>
@@ -483,20 +357,6 @@
       
     </dependencies>
   </dependencyManagement>
-  
-  <pluginRepositories>
-    <!-- Codehause Snapshots (NSIS) -->
-    <pluginRepository>
-      <id>Codehaus Snapshots</id>
-      <url>http://nexus.codehaus.org/snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled> <!-- Workaround for MNG-2974 -->
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
   
   <profiles>
     <profile>
