@@ -38,11 +38,10 @@ public class RequestContextFilter implements Filter {
         // Force the locale in order to not depend on the execution environment
         Locale.setDefault(new Locale(Constants.DEFAULT_LOCALE_ID));
 
-        // Injects the webapp root
-        String webappRoot = filterConfig.getServletContext().getRealPath("/");
-        EnvironmentUtil.setWebappRoot(webappRoot);
-        
         // Initialize the app directory
+        if (!filterConfig.getServletContext().getServerInfo().startsWith("Grizzly")) {
+            EnvironmentUtil.setWebappContext(true);
+        }
         File baseDataDirectory = null;
         try {
             baseDataDirectory = DirectoryUtil.getBaseDataDirectory();

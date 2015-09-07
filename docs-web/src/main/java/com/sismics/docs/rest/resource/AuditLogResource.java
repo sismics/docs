@@ -1,18 +1,13 @@
 package com.sismics.docs.rest.resource;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
@@ -36,11 +31,9 @@ public class AuditLogResource extends BaseResource {
      * Returns the list of all logs for a document or user.
      * 
      * @return Response
-     * @throws JSONException
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response list(@QueryParam("document") String documentId) throws JSONException {
+    public Response list(@QueryParam("document") String documentId) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -70,22 +63,21 @@ public class AuditLogResource extends BaseResource {
         }
         
         // Assemble the results
-        List<JSONObject> logs = new ArrayList<>();
-        JSONObject response = new JSONObject();
+        JsonArrayBuilder logs = Json.createArrayBuilder();
         for (AuditLogDto auditLogDto : paginatedList.getResultList()) {
-            JSONObject log = new JSONObject();
-            log.put("id", auditLogDto.getId());
-            log.put("target", auditLogDto.getEntityId());
-            log.put("class", auditLogDto.getEntityClass());
-            log.put("type", auditLogDto.getType().name());
-            log.put("message", auditLogDto.getMessage());
-            log.put("create_date", auditLogDto.getCreateTimestamp());
-            logs.add(log);
+            logs.add(Json.createObjectBuilder()
+                    .add("id", auditLogDto.getId())
+                    .add("target", auditLogDto.getEntityId())
+                    .add("class", auditLogDto.getEntityClass())
+                    .add("type", auditLogDto.getType().name())
+                    .add("message", auditLogDto.getMessage())
+                    .add("create_date", auditLogDto.getCreateTimestamp()));
         }
 
         // Send the response
-        response.put("logs", logs);
-        response.put("total", paginatedList.getResultCount());
-        return Response.ok().entity(response).build();
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("logs", logs)
+                .add("total", paginatedList.getResultCount());
+        return Response.ok().entity(response.build()).build();
     }
 }

@@ -1,13 +1,12 @@
 package com.sismics.rest.exception;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import javax.json.Json;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Jersey exception encapsulating an error from the client (INTERNAL_SERVER_ERROR).
@@ -31,9 +30,8 @@ public class ServerException extends WebApplicationException {
      * @param type Error type (e.g. DatabaseError)
      * @param message Human readable error message
      * @param e Inner exception
-     * @throws JSONException
      */
-    public ServerException(String type, String message, Exception e) throws JSONException {
+    public ServerException(String type, String message, Exception e) {
         this(type, message);
         log.error(type + ": " + message, e);
     }
@@ -43,11 +41,10 @@ public class ServerException extends WebApplicationException {
      * 
      * @param type Error type (e.g. DatabaseError)
      * @param message Human readable error message
-     * @throws JSONException
      */
-    public ServerException(String type, String message) throws JSONException {
-        super(Response.status(Status.INTERNAL_SERVER_ERROR).entity(new JSONObject()
-            .put("type", type)
-            .put("message", message)).build());
+    public ServerException(String type, String message) {
+        super(Response.status(Status.INTERNAL_SERVER_ERROR).entity(Json.createObjectBuilder()
+            .add("type", type)
+            .add("message", message).build()).build());
     }
 }

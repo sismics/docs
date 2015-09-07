@@ -1,15 +1,13 @@
 package com.sismics.docs.rest.util;
 
-import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
-import com.sismics.util.filter.TokenBasedSecurityFilter;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.ClientResponse.Status;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import junit.framework.Assert;
-
-import javax.ws.rs.core.MultivaluedMap;
+import javax.json.JsonObject;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
+
+import com.sismics.util.filter.TokenBasedSecurityFilter;
 
 /**
  * REST client utilities.
@@ -17,14 +15,14 @@ import javax.ws.rs.core.NewCookie;
  * @author jtremeaux 
  */
 public class ClientUtil {
-    private WebResource resource;
+    private WebTarget resource;
     
     /**
      * Constructor of ClientUtil.
      * 
-     * @param webResource Resource corresponding to the base URI of REST resources.
+     * @param resource Resource corresponding to the base URI of REST resources.
      */
-    public ClientUtil(WebResource resource) {
+    public ClientUtil(WebTarget resource) {
         this.resource = resource;
     }
     
@@ -38,15 +36,14 @@ public class ClientUtil {
         String adminAuthenticationToken = login("admin", "admin", false);
         
         // Create the user
-        WebResource userResource = resource.path("/user");
-        userResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
-        MultivaluedMap<String, String> postParams = new MultivaluedMapImpl();
-        postParams.putSingle("username", username);
-        postParams.putSingle("email", username + "@docs.com");
-        postParams.putSingle("password", "12345678");
-        postParams.putSingle("time_zone", "Asia/Tokyo");
-        ClientResponse response = userResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Form form = new Form();
+        form.param("username", username);
+        form.param("email", username + "@docs.com");
+        form.param("password", "12345678");
+        form.param("time_zone", "Asia/Tokyo");
+        resource.path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .put(Entity.form(form), JsonObject.class);
         
         // Logout admin
         logout(adminAuthenticationToken);
@@ -61,13 +58,12 @@ public class ClientUtil {
      * @return Authentication token
      */
     public String login(String username, String password, Boolean remember) {
-        WebResource userResource = resource.path("/user/login");
-        MultivaluedMap<String, String> postParams = new MultivaluedMapImpl();
-        postParams.putSingle("username", username);
-        postParams.putSingle("password", password);
-        postParams.putSingle("remember", remember.toString());
-        ClientResponse response = userResource.post(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Form form = new Form();
+        form.param("username", username);
+        form.param("password", password);
+        form.param("remember", remember.toString());
+        Response response = resource.path("/user/login").request()
+                .post(Entity.form(form));
         
         return getAuthenticationCookie(response);
     }
@@ -88,10 +84,9 @@ public class ClientUtil {
      * @param authenticationToken Authentication token
      */
     public void logout(String authenticationToken) {
-        WebResource userResource = resource.path("/user/logout");
-        userResource.addFilter(new CookieAuthenticationFilter(authenticationToken));
-        ClientResponse response = userResource.post(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        resource.path("/user/logout").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, authenticationToken)
+                .post(null);
     }
 
     /**
@@ -100,9 +95,9 @@ public class ClientUtil {
      * @param response Response
      * @return Authentication token
      */
-    public String getAuthenticationCookie(ClientResponse response) {
+    public String getAuthenticationCookie(Response response) {
         String authToken = null;
-        for (NewCookie cookie : response.getCookies()) {
+        for (NewCookie cookie : response.getCookies().values()) {
             if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
                 authToken = cookie.getValue();
             }

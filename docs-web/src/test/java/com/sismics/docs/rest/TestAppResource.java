@@ -1,14 +1,17 @@
 package com.sismics.docs.rest;
 
-import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.ClientResponse.Status;
-import com.sun.jersey.api.client.WebResource;
-import junit.framework.Assert;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import org.junit.Assert;
 import org.junit.Test;
+
+import com.sismics.util.filter.TokenBasedSecurityFilter;
+
 
 /**
  * Test the app resource.
@@ -22,36 +25,33 @@ public class TestAppResource extends BaseJerseyTest {
      * @throws JSONException
      */
     @Test
-    public void testAppResource() throws JSONException {
+    public void testAppResource() {
         // Login admin
         String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
         
         // Check the application info
-        WebResource appResource = resource().path("/app");
-        appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
-        ClientResponse response = appResource.get(ClientResponse.class);
-        response = appResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        JSONObject json = response.getEntity(JSONObject.class);
+        JsonObject json = target().path("/app").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .get(JsonObject.class);
         String currentVersion = json.getString("current_version");
         Assert.assertNotNull(currentVersion);
         String minVersion = json.getString("min_version");
         Assert.assertNotNull(minVersion);
-        Long freeMemory = json.getLong("free_memory");
+        Long freeMemory = json.getJsonNumber("free_memory").longValue();
         Assert.assertTrue(freeMemory > 0);
-        Long totalMemory = json.getLong("total_memory");
+        Long totalMemory = json.getJsonNumber("total_memory").longValue();
         Assert.assertTrue(totalMemory > 0 && totalMemory > freeMemory);
         
         // Rebuild Lucene index
-        appResource = resource().path("/app/batch/reindex");
-        appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
-        response = appResource.post(ClientResponse.class);
+        Response response = target().path("/app/batch/reindex").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .post(Entity.form(new Form()));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         
         // Clean storage
-        appResource = resource().path("/app/batch/clean_storage");
-        appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
-        response = appResource.post(ClientResponse.class);
+        response = target().path("/app/batch/clean_storage").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .post(Entity.form(new Form()));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
     }
 
@@ -61,39 +61,33 @@ public class TestAppResource extends BaseJerseyTest {
      * @throws JSONException
      */
     @Test
-    public void testLogResource() throws JSONException {
+    public void testLogResource() {
         // Login admin
         String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
         
         // Check the logs (page 1)
-        WebResource appResource = resource()
-                .path("/app/log")
-                .queryParam("level", "DEBUG");
-        ClientResponse response = appResource.get(ClientResponse.class);
-        appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
-        response = appResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        JSONObject json = response.getEntity(JSONObject.class);
-        JSONArray logs = json.getJSONArray("logs");
-        Assert.assertTrue(logs.length() > 0);
-        Long date1 = logs.optJSONObject(0).optLong("date");
-        Long date2 = logs.optJSONObject(9).optLong("date");
-        Assert.assertTrue(date1 > date2);
+        JsonObject json = target().path("/app/log")
+                .queryParam("level", "DEBUG")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .get(JsonObject.class);
+        JsonArray logs = json.getJsonArray("logs");
+        Assert.assertTrue(logs.size() > 0);
+        Long date1 = logs.getJsonObject(0).getJsonNumber("date").longValue();
+        Long date2 = logs.getJsonObject(9).getJsonNumber("date").longValue();
+        Assert.assertTrue(date1 >= date2);
         
         // Check the logs (page 2)
-        appResource = resource()
-                .path("/app/log")
+        json = target().path("/app/log")
                 .queryParam("offset",  "10")
-                .queryParam("level", "DEBUG");
-        response = appResource.get(ClientResponse.class);
-        appResource.addFilter(new CookieAuthenticationFilter(adminAuthenticationToken));
-        response = appResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        logs = json.getJSONArray("logs");
-        Assert.assertTrue(logs.length() > 0);
-        Long date3 = logs.optJSONObject(0).optLong("date");
-        Long date4 = logs.optJSONObject(9).optLong("date");
-        Assert.assertTrue(date3 > date4);
+                .queryParam("level", "DEBUG")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .get(JsonObject.class);
+        logs = json.getJsonArray("logs");
+        Assert.assertTrue(logs.size() > 0);
+        Long date3 = logs.getJsonObject(0).getJsonNumber("date").longValue();
+        Long date4 = logs.getJsonObject(9).getJsonNumber("date").longValue();
+        Assert.assertTrue(date3 >= date4);
     }
 }

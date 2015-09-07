@@ -1,6 +1,5 @@
 package com.sismics.docs.stress;
 
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
@@ -8,25 +7,30 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.json.JsonObject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 
 import junit.framework.Assert;
 
-import org.codehaus.jettison.json.JSONObject;
+import org.glassfish.jersey.client.ClientResponse;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
+import com.google.common.io.Resources;
 import com.sismics.docs.rest.util.ClientUtil;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.ClientResponse.Status;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import com.sun.jersey.multipart.FormDataBodyPart;
-import com.sun.jersey.multipart.FormDataMultiPart;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
 
 /**
  * Stress app for Sismics Docs.
@@ -45,7 +49,7 @@ public class Main {
     private static final int TAG_PER_USER_COUNT = 20;
     private static final int FILE_PER_DOCUMENT_COUNT = 0;
     
-    private static Client client = Client.create();
+    private static Client client = ClientBuilder.newClient();
     private static ClientUtil clientUtil;
     
     private static Set<User> userSet = Sets.newHashSet();
@@ -54,11 +58,12 @@ public class Main {
      * Entry point.
      * 
      * @param args Args
+     * @throws Exception 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         log.info("Starting stress test...");
         
-        WebResource resource = client.resource(API_URL);
+        WebTarget resource = client.target(API_URL);
         clientUtil = new ClientUtil(resource);
         
         // Create users
@@ -72,17 +77,16 @@ public class Main {
         // Create tags for each user
         int tagCreatedCount = 1;
         for (User user : userSet) {
-            WebResource tagResource = resource.path("/tag");
-            tagResource.addFilter(new CookieAuthenticationFilter(user.authToken));
+            Invocation.Builder tagResource = resource.path("/tag").request()
+                    .cookie(TokenBasedSecurityFilter.COOKIE_NAME, user.authToken);
             
             for (int j = 0; j < TAG_PER_USER_COUNT; j++) {
-                MultivaluedMapImpl postParams = new MultivaluedMapImpl();
+                Form form = new Form();
                 String name = generateString();
-                postParams.add("name", name);
-                postParams.add("color", "#ff0000");
-                ClientResponse response = tagResource.put(ClientResponse.class, postParams);
-                JSONObject json = response.getEntity(JSONObject.class);
-                user.tagList.add(json.optString("id"));
+                form.param("name", name);
+                form.param("color", "#ff0000");
+                JsonObject json = tagResource.put(Entity.form(form), JsonObject.class);
+                user.tagList.add(json.getString("id"));
                 log.info("Created tag " + (tagCreatedCount++) + "/" + TAG_PER_USER_COUNT * USER_COUNT);
             }
         }
@@ -91,33 +95,32 @@ public class Main {
         int documentCreatedCount = 1;
         for (User user : userSet) {
             for (int i = 0; i < DOCUMENT_PER_USER_COUNT; i++) {
-                WebResource documentResource = resource.path("/document");
-                documentResource.addFilter(new CookieAuthenticationFilter(user.authToken));
-                MultivaluedMapImpl postParams = new MultivaluedMapImpl();
-                postParams.add("title", generateString());
-                postParams.add("description", generateString());
-                postParams.add("tags", user.tagList.get(ThreadLocalRandom.current().nextInt(user.tagList.size()))); // Random tag
-                postParams.add("language", "eng");
                 long createDate = new Date().getTime();
-                postParams.add("create_date", createDate);
-                ClientResponse response = documentResource.put(ClientResponse.class, postParams);
-                JSONObject json = response.getEntity(JSONObject.class);
-                String documentId = json.optString("id");
+                Form form = new Form()
+                        .param("title", generateString())
+                        .param("description", generateString())
+                        .param("tags", user.tagList.get(ThreadLocalRandom.current().nextInt(user.tagList.size()))) // Random tag
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(createDate));
+                JsonObject json = resource.path("/document").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, user.authToken)
+                        .put(Entity.form(form), JsonObject.class);
+                String documentId = json.getString("id");
                 log.info("Created document " + (documentCreatedCount++) + "/" + DOCUMENT_PER_USER_COUNT * USER_COUNT + " for user: " + user.username);
                 
                 // Add files for each document
                 for (int j = 0; j < FILE_PER_DOCUMENT_COUNT; j++) {
-                    WebResource fileResource = resource.path("/file");
-                    fileResource.addFilter(new CookieAuthenticationFilter(user.authToken));
-                    FormDataMultiPart form = new FormDataMultiPart();
-                    InputStream file = Main.class.getResourceAsStream("/empty.png");
-                    FormDataBodyPart fdp = new FormDataBodyPart("file",
-                            new BufferedInputStream(file),
-                            MediaType.APPLICATION_OCTET_STREAM_TYPE);
-                    form.bodyPart(fdp);
-                    form.field("id", documentId);
-                    response = fileResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
-                    Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+                    try (InputStream is = Resources.getResource("empty.png").openStream()) {
+                        StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "empty.png");
+                        @SuppressWarnings("resource")
+                        ClientResponse response = resource
+                                .register(MultiPartFeature.class)
+                                .path("/file").request()
+                                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, user.authToken)
+                                .put(Entity.entity(new FormDataMultiPart().field("id", documentId).bodyPart(streamDataBodyPart),
+                                        MediaType.MULTIPART_FORM_DATA_TYPE), ClientResponse.class);
+                        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+                    }
                 }
             }
         }

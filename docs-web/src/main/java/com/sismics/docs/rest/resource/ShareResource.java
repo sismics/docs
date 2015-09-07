@@ -4,18 +4,15 @@ package com.sismics.docs.rest.resource;
 import java.text.MessageFormat;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 import javax.persistence.NoResultException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 
 import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.PermType;
@@ -26,6 +23,7 @@ import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Share;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 
 /**
@@ -40,13 +38,11 @@ public class ShareResource extends BaseResource {
      *
      * @param documentId Document ID
      * @return Response
-     * @throws JSONException
      */
     @PUT
-    @Produces(MediaType.APPLICATION_JSON)
     public Response add(
             @FormParam("id") String documentId,
-            @FormParam("name") String name) throws JSONException {
+            @FormParam("name") String name) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -78,12 +74,12 @@ public class ShareResource extends BaseResource {
         aclDao.create(acl);
 
         // Returns the created ACL
-        JSONObject response = new JSONObject();
-        response.put("perm", acl.getPerm().name());
-        response.put("id", acl.getTargetId());
-        response.put("name", name);
-        response.put("type", AclTargetType.SHARE);
-        return Response.ok().entity(response).build();
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("perm", acl.getPerm().name())
+                .add("id", acl.getTargetId())
+                .add("name", JsonUtil.nullable(name))
+                .add("type", AclTargetType.SHARE.toString());
+        return Response.ok().entity(response.build()).build();
     }
 
     /**
@@ -91,13 +87,11 @@ public class ShareResource extends BaseResource {
      *
      * @param id Share ID
      * @return Response
-     * @throws JSONException
      */
     @DELETE
     @Path("{id: [a-z0-9\\-]+}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
-            @PathParam("id") String id) throws JSONException {
+            @PathParam("id") String id) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -118,9 +112,9 @@ public class ShareResource extends BaseResource {
         ShareDao shareDao = new ShareDao();
         shareDao.delete(id);
         
-        // Always return ok
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
     }
 }

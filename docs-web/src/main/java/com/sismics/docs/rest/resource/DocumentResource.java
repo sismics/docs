@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import javax.persistence.NoResultException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -16,15 +19,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -58,6 +57,7 @@ import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
+import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 
 /**
@@ -72,14 +72,12 @@ public class DocumentResource extends BaseResource {
      * 
      * @param documentId Document ID
      * @return Response
-     * @throws JSONException
      */
     @GET
     @Path("{id: [a-z0-9\\-]+}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response get(
             @PathParam("id") String documentId,
-            @QueryParam("share") String shareId) throws JSONException {
+            @QueryParam("share") String shareId) {
         authenticate();
         
         DocumentDao documentDao = new DocumentDao();
@@ -96,48 +94,46 @@ public class DocumentResource extends BaseResource {
             return Response.status(Status.NOT_FOUND).build();
         }
 
-        JSONObject document = new JSONObject();
-        document.put("id", documentDto.getId());
-        document.put("title", documentDto.getTitle());
-        document.put("description", documentDto.getDescription());
-        document.put("create_date", documentDto.getCreateTimestamp());
-        document.put("language", documentDto.getLanguage());
-        document.put("shared", documentDto.getShared());
-        document.put("file_count", documentDto.getFileCount());
+        JsonObjectBuilder document = Json.createObjectBuilder()
+                .add("id", documentDto.getId())
+                .add("title", documentDto.getTitle())
+                .add("description", JsonUtil.nullable(documentDto.getDescription()))
+                .add("create_date", documentDto.getCreateTimestamp())
+                .add("language", documentDto.getLanguage())
+                .add("shared", documentDto.getShared())
+                .add("file_count", documentDto.getFileCount());
         
         if (principal.isAnonymous()) {
             // No tags in anonymous mode (sharing)
-            document.put("tags", new ArrayList<JSONObject>());
+            document.add("tags", Json.createArrayBuilder());
         } else {
             // Add tags added by the current user on this document
             TagDao tagDao = new TagDao();
             List<TagDto> tagDtoList = tagDao.getByDocumentId(documentId, principal.getId());
-            List<JSONObject> tags = new ArrayList<>();
+            JsonArrayBuilder tags = Json.createArrayBuilder();
             for (TagDto tagDto : tagDtoList) {
-                JSONObject tag = new JSONObject();
-                tag.put("id", tagDto.getId());
-                tag.put("name", tagDto.getName());
-                tag.put("color", tagDto.getColor());
-                tags.add(tag);
+                tags.add(Json.createObjectBuilder()
+                        .add("id", tagDto.getId())
+                        .add("name", tagDto.getName())
+                        .add("color", tagDto.getColor()));
             }
-            document.put("tags", tags);
+            document.add("tags", tags);
         }
         
         // Below is specific to GET /document/id
         
-        document.put("creator", documentDto.getCreator());
+        document.add("creator", documentDto.getCreator());
         
         // Add ACL
         List<AclDto> aclDtoList = aclDao.getBySourceId(documentId);
-        List<JSONObject> aclList = new ArrayList<>();
+        JsonArrayBuilder aclList = Json.createArrayBuilder();
         boolean writable = false;
         for (AclDto aclDto : aclDtoList) {
-            JSONObject acl = new JSONObject();
-            acl.put("perm", aclDto.getPerm().name());
-            acl.put("id", aclDto.getTargetId());
-            acl.put("name", aclDto.getTargetName());
-            acl.put("type", aclDto.getTargetType());
-            aclList.add(acl);
+            aclList.add(Json.createObjectBuilder()
+                    .add("perm", aclDto.getPerm().name())
+                    .add("id", aclDto.getTargetId())
+                    .add("name", JsonUtil.nullable(aclDto.getTargetName()))
+                    .add("type", aclDto.getTargetType()));
             
             if (!principal.isAnonymous()
                     && aclDto.getTargetId().equals(principal.getId())
@@ -146,10 +142,10 @@ public class DocumentResource extends BaseResource {
                 writable = true;
             }
         }
-        document.put("acls", aclList);
-        document.put("writable", writable);
+        document.add("acls", aclList)
+                .add("writable", writable);
         
-        return Response.ok().entity(document).build();
+        return Response.ok().entity(document.build()).build();
     }
     
     /**
@@ -158,23 +154,21 @@ public class DocumentResource extends BaseResource {
      * @param limit Page limit
      * @param offset Page offset
      * @return Response
-     * @throws JSONException
      */
     @GET
     @Path("list")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response list(
             @QueryParam("limit") Integer limit,
             @QueryParam("offset") Integer offset,
             @QueryParam("sort_column") Integer sortColumn,
             @QueryParam("asc") Boolean asc,
-            @QueryParam("search") String search) throws JSONException {
+            @QueryParam("search") String search) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         
-        JSONObject response = new JSONObject();
-        List<JSONObject> documents = new ArrayList<>();
+        JsonObjectBuilder response = Json.createObjectBuilder();
+        JsonArrayBuilder documents = Json.createArrayBuilder();
         
         DocumentDao documentDao = new DocumentDao();
         TagDao tagDao = new TagDao();
@@ -189,33 +183,30 @@ public class DocumentResource extends BaseResource {
         }
 
         for (DocumentDto documentDto : paginatedList.getResultList()) {
-            JSONObject document = new JSONObject();
-            document.put("id", documentDto.getId());
-            document.put("title", documentDto.getTitle());
-            document.put("description", documentDto.getDescription());
-            document.put("create_date", documentDto.getCreateTimestamp());
-            document.put("language", documentDto.getLanguage());
-            document.put("shared", documentDto.getShared());
-            document.put("file_count", documentDto.getFileCount());
-            
             // Get tags added by the current user on this document
             List<TagDto> tagDtoList = tagDao.getByDocumentId(documentDto.getId(), principal.getId());
-            List<JSONObject> tags = new ArrayList<>();
+            JsonArrayBuilder tags = Json.createArrayBuilder();
             for (TagDto tagDto : tagDtoList) {
-                JSONObject tag = new JSONObject();
-                tag.put("id", tagDto.getId());
-                tag.put("name", tagDto.getName());
-                tag.put("color", tagDto.getColor());
-                tags.add(tag);
+                tags.add(Json.createObjectBuilder()
+                        .add("id", tagDto.getId())
+                        .add("name", tagDto.getName())
+                        .add("color", tagDto.getColor()));
             }
-            document.put("tags", tags);
             
-            documents.add(document);
+            documents.add(Json.createObjectBuilder()
+                    .add("id", documentDto.getId())
+                    .add("title", documentDto.getTitle())
+                    .add("description", JsonUtil.nullable(documentDto.getDescription()))
+                    .add("create_date", documentDto.getCreateTimestamp())
+                    .add("language", documentDto.getLanguage())
+                    .add("shared", documentDto.getShared())
+                    .add("file_count", documentDto.getFileCount())
+                    .add("tags", tags));
         }
-        response.put("total", paginatedList.getResultCount());
-        response.put("documents", documents);
+        response.add("total", paginatedList.getResultCount())
+                .add("documents", documents);
         
-        return Response.ok().entity(response).build();
+        return Response.ok().entity(response.build()).build();
     }
     
     /**
@@ -329,16 +320,14 @@ public class DocumentResource extends BaseResource {
      * @param language Language
      * @param createDateStr Creation date
      * @return Response
-     * @throws JSONException
      */
     @PUT
-    @Produces(MediaType.APPLICATION_JSON)
     public Response add(
             @FormParam("title") String title,
             @FormParam("description") String description,
             @FormParam("tags") List<String> tagList,
             @FormParam("language") String language,
-            @FormParam("create_date") String createDateStr) throws JSONException {
+            @FormParam("create_date") String createDateStr) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -389,9 +378,9 @@ public class DocumentResource extends BaseResource {
         documentCreatedAsyncEvent.setDocument(document);
         AppContext.getInstance().getAsyncEventBus().post(documentCreatedAsyncEvent);
         
-        JSONObject response = new JSONObject();
-        response.put("id", documentId);
-        return Response.ok().entity(response).build();
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("id", documentId);
+        return Response.ok().entity(response.build()).build();
     }
     
     /**
@@ -400,18 +389,16 @@ public class DocumentResource extends BaseResource {
      * @param title Title
      * @param description Description
      * @return Response
-     * @throws JSONException
      */
     @POST
     @Path("{id: [a-z0-9\\-]+}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response update(
             @PathParam("id") String id,
             @FormParam("title") String title,
             @FormParam("description") String description,
             @FormParam("tags") List<String> tagList,
             @FormParam("language") String language,
-            @FormParam("create_date") String createDateStr) throws JSONException {
+            @FormParam("create_date") String createDateStr) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -458,10 +445,9 @@ public class DocumentResource extends BaseResource {
         documentUpdatedAsyncEvent.setDocument(document);
         AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
         
-        // Always return ok
-        JSONObject response = new JSONObject();
-        response.put("id", id);
-        return Response.ok().entity(response).build();
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("id", id);
+        return Response.ok().entity(response.build()).build();
     }
 
     /**
@@ -469,9 +455,8 @@ public class DocumentResource extends BaseResource {
      * 
      * @param documentId Document ID
      * @param tagList Tag ID list
-     * @throws JSONException
      */
-    private void updateTagList(String documentId, List<String> tagList) throws JSONException {
+    private void updateTagList(String documentId, List<String> tagList) {
         if (tagList != null) {
             TagDao tagDao = new TagDao();
             Set<String> tagSet = new HashSet<>();
@@ -495,13 +480,11 @@ public class DocumentResource extends BaseResource {
      * 
      * @param id Document ID
      * @return Response
-     * @throws JSONException
      */
     @DELETE
     @Path("{id: [a-z0-9\\-]+}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
-            @PathParam("id") String id) throws JSONException {
+            @PathParam("id") String id) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -533,9 +516,9 @@ public class DocumentResource extends BaseResource {
         documentDeletedAsyncEvent.setDocument(document);
         AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
         
-        // Always return ok
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
     }
 }

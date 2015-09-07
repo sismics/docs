@@ -1,24 +1,22 @@
 package com.sismics.docs.rest.resource;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.model.context.AppContext;
@@ -45,11 +43,9 @@ public class AppResource extends BaseResource {
      * Return the information about the application.
      * 
      * @return Response
-     * @throws JSONException
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response info() throws JSONException {
+    public Response info() {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -58,14 +54,13 @@ public class AppResource extends BaseResource {
         String currentVersion = configBundle.getString("api.current_version");
         String minVersion = configBundle.getString("api.min_version");
 
-        JSONObject response = new JSONObject();
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("current_version", currentVersion.replace("-SNAPSHOT", ""))
+                .add("min_version", minVersion)
+                .add("total_memory", Runtime.getRuntime().totalMemory())
+                .add("free_memory", Runtime.getRuntime().freeMemory());
         
-        response.put("current_version", currentVersion.replace("-SNAPSHOT", ""));
-        response.put("min_version", minVersion);
-        response.put("total_memory", Runtime.getRuntime().totalMemory());
-        response.put("free_memory", Runtime.getRuntime().freeMemory());
-        
-        return Response.ok().entity(response).build();
+        return Response.ok().entity(response.build()).build();
     }
     
     /**
@@ -77,17 +72,15 @@ public class AppResource extends BaseResource {
      * @param limit Page limit
      * @param offset Page offset
      * @return Response
-     * @throws JSONException
      */
     @GET
     @Path("log")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response log(
             @QueryParam("level") String level,
             @QueryParam("tag") String tag,
             @QueryParam("message") String message,
             @QueryParam("limit") Integer limit,
-            @QueryParam("offset") Integer offset) throws JSONException {
+            @QueryParam("offset") Integer offset) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -109,32 +102,30 @@ public class AppResource extends BaseResource {
         
         PaginatedList<LogEntry> paginatedList = PaginatedLists.create(limit, offset);
         memoryAppender.find(logCriteria, paginatedList);
-        JSONObject response = new JSONObject();
-        List<JSONObject> logs = new ArrayList<>();
+        JsonArrayBuilder logs = Json.createArrayBuilder();
         for (LogEntry logEntry : paginatedList.getResultList()) {
-            JSONObject log = new JSONObject();
-            log.put("date", logEntry.getTimestamp());
-            log.put("level", logEntry.getLevel());
-            log.put("tag", logEntry.getTag());
-            log.put("message", logEntry.getMessage());
-            logs.add(log);
+            logs.add(Json.createObjectBuilder()
+                    .add("date", logEntry.getTimestamp())
+                    .add("level", logEntry.getLevel())
+                    .add("tag", logEntry.getTag())
+                    .add("message", logEntry.getMessage()));
         }
-        response.put("total", paginatedList.getResultCount());
-        response.put("logs", logs);
         
-        return Response.ok().entity(response).build();
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("total", paginatedList.getResultCount())
+                .add("logs", logs);
+        
+        return Response.ok().entity(response.build()).build();
     }
     
     /**
      * Destroy and rebuild Lucene index.
      * 
      * @return Response
-     * @throws JSONException
      */
     @POST
     @Path("batch/reindex")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response batchReindex() throws JSONException {
+    public Response batchReindex() {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -146,21 +137,20 @@ public class AppResource extends BaseResource {
             throw new ServerException("IndexingError", "Error rebuilding index", e);
         }
         
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
     }
     
     /**
      * Clean storage.
      * 
      * @return Response
-     * @throws JSONException
      */
     @POST
     @Path("batch/clean_storage")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response batchCleanStorage() throws JSONException {
+    public Response batchCleanStorage() {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -184,8 +174,9 @@ public class AppResource extends BaseResource {
             }
         }
         
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
     }
 }
