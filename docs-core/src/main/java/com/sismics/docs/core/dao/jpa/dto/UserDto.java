@@ -12,11 +12,6 @@ public class UserDto {
     private String id;
     
     /**
-     * Locale ID.
-     */
-    private String localeId;
-    
-    /**
      * Username.
      */
     private String username;
@@ -47,24 +42,6 @@ public class UserDto {
      */
     public void setId(String id) {
         this.id = id;
-    }
-
-    /**
-     * Getter of localeId.
-     *
-     * @return localeId
-     */
-    public String getLocaleId() {
-        return localeId;
-    }
-
-    /**
-     * Setter of localeId.
-     *
-     * @param localeId localeId
-     */
-    public void setLocaleId(String localeId) {
-        this.localeId = localeId;
     }
 
     /**

@@ -154,7 +154,6 @@ public class TestUserResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, aliceAuthToken)
                 .get(JsonObject.class);
         Assert.assertEquals("alice@docs.com", json.getString("email"));
-        Assert.assertFalse(json.getBoolean("first_connection"));
         Assert.assertFalse(json.getBoolean("is_default_password"));
         
         // Check bob user information
@@ -220,21 +219,20 @@ public class TestUserResource extends BaseJerseyTest {
         JsonObject json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
-        Assert.assertTrue(json.getBoolean("first_connection"));
         Assert.assertTrue(json.getBoolean("is_default_password"));
 
         // User admin updates his information
         json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .post(Entity.form(new Form()
-                        .param("first_connection", "false")), JsonObject.class);
+                        .param("email", "newadminemail@docs.com")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
 
         // Check admin information update
         json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
-        Assert.assertFalse(json.getBoolean("first_connection"));
+        Assert.assertEquals("newadminemail@docs.com", json.getString("email"));
 
         // User admin update admin_user1 information
         json = target().path("/user").request()

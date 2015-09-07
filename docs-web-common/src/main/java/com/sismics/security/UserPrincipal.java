@@ -1,9 +1,8 @@
 package com.sismics.security;
 
-import org.joda.time.DateTimeZone;
-
-import java.util.Locale;
 import java.util.Set;
+
+import org.joda.time.DateTimeZone;
 
 /**
  * Authenticated users principal.
@@ -20,11 +19,6 @@ public class UserPrincipal implements IPrincipal {
      * Username of the user.
      */
     private String name;
-    
-    /**
-     * Locale of the principal.
-     */
-    private Locale locale;
     
     /**
      * Timezone of the principal.
@@ -83,20 +77,6 @@ public class UserPrincipal implements IPrincipal {
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public Locale getLocale() {
-        return locale;
-    }
-
-    /**
-     * Setter of locale.
-     *
-     * @param locale locale
-     */
-    public void setLocale(Locale locale) {
-        this.locale = locale;
     }
 
     @Override

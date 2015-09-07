@@ -51,10 +51,8 @@ public class TestSecurity extends BaseJerseyTest {
         // User testsecurity changes his email OK
         json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, testSecurityAuthenticationToken)
-                .post(Entity.form(
-                        new Form()
-                        .param("email", "testsecurity2@docs.com")
-                        .param("locale", "en")), JsonObject.class);
+                .post(Entity.form(new Form()
+                        .param("email", "testsecurity2@docs.com")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
 
         // User testsecurity logs out

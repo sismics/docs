@@ -9,7 +9,6 @@
     <class>com.sismics.docs.core.model.jpa.AuthenticationToken</class>
     <class>com.sismics.docs.core.model.jpa.BaseFunction</class>
     <class>com.sismics.docs.core.model.jpa.Config</class>
-    <class>com.sismics.docs.core.model.jpa.Locale</class>
     <class>com.sismics.docs.core.model.jpa.User</class>
     <class>com.sismics.docs.core.model.jpa.RoleBaseFunction</class>
     <class>com.sismics.docs.core.model.jpa.Document</class>

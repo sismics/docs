@@ -2,8 +2,6 @@ package com.sismics.security;
 
 import org.joda.time.DateTimeZone;
 
-import java.util.Locale;
-
 /**
  * Anonymous principal.
  * 
@@ -11,11 +9,6 @@ import java.util.Locale;
  */
 public class AnonymousPrincipal implements IPrincipal {
     public static final String ANONYMOUS = "anonymous";
-    
-    /**
-     * User locale.
-     */
-    private Locale locale;
     
     /**
      * User timezone.
@@ -42,20 +35,6 @@ public class AnonymousPrincipal implements IPrincipal {
     @Override
     public boolean isAnonymous() {
         return true;
-    }
-
-    @Override
-    public Locale getLocale() {
-        return locale;
-    }
-
-    /**
-     * Setter of locale.
-     *
-     * @param locale locale
-     */
-    public void setLocale(Locale locale) {
-        this.locale = locale;
     }
 
     @Override

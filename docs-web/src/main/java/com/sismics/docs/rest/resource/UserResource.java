@@ -42,7 +42,6 @@ import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.security.UserPrincipal;
-import com.sismics.util.LocaleUtil;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 
 /**
@@ -90,8 +89,6 @@ public class UserResource extends BaseResource {
             throw new ServerException("PrivateKeyError", "Error while generating a private key", e);
         }
         user.setCreateDate(new Date());
-
-        user.setLocaleId(LocaleUtil.getLocaleIdFromAcceptLanguage(request.getHeader("Accept-Language")));
         
         // Create the user
         UserDao userDao = new UserDao();
@@ -116,14 +113,12 @@ public class UserResource extends BaseResource {
      * 
      * @param password Password
      * @param email E-Mail
-     * @param firstConnection True if the user hasn't acknowledged the first connection wizard yet.
      * @return Response
      */
     @POST
     public Response update(
         @FormParam("password") String password,
-        @FormParam("email") String email,
-        @FormParam("first_connection") Boolean firstConnection) {
+        @FormParam("email") String email) {
         
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -139,10 +134,7 @@ public class UserResource extends BaseResource {
         if (email != null) {
             user.setEmail(email);
         }
-        if (firstConnection != null && hasBaseFunction(BaseFunction.ADMIN)) {
-            user.setFirstConnection(firstConnection);
-        }
-        
+
         user = userDao.update(user);
         
         if (StringUtils.isNotBlank(password)) {
@@ -232,7 +224,7 @@ public class UserResource extends BaseResource {
     }
 
     /**
-     * This resource is used to authenticate the user and create a user ession.
+     * This resource is used to authenticate the user and create a user session.
      * The "session" is only used to identify the user, no other data is stored in the session.
      * 
      * @param username Username
@@ -402,9 +394,6 @@ public class UserResource extends BaseResource {
         if (!authenticate()) {
             response.add("anonymous", true);
 
-            String localeId = LocaleUtil.getLocaleIdFromAcceptLanguage(request.getHeader("Accept-Language"));
-            response.add("locale", localeId);
-            
             // Check if admin has the default password
             UserDao userDao = new UserDao();
             User adminUser = userDao.getById("admin");
@@ -416,9 +405,7 @@ public class UserResource extends BaseResource {
             UserDao userDao = new UserDao();
             User user = userDao.getById(principal.getId());
             response.add("username", user.getUsername())
-                    .add("email", user.getEmail())
-                    .add("locale", user.getLocaleId())
-                    .add("first_connection", user.isFirstConnection());
+                    .add("email", user.getEmail());
             JsonArrayBuilder baseFunctions = Json.createArrayBuilder();
             for (String baseFunction : ((UserPrincipal) principal).getBaseFunctionSet()) {
                 baseFunctions.add(baseFunction);
@@ -453,8 +440,7 @@ public class UserResource extends BaseResource {
         
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("username", user.getUsername())
-                .add("email", user.getEmail())
-                .add("locale", user.getLocaleId());
+                .add("email", user.getEmail());
         return Response.ok().entity(response.build()).build();
     }
     

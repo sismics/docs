@@ -28,12 +28,6 @@ public class User implements Loggable {
     private String id;
     
     /**
-     * Locale ID.
-     */
-    @Column(name = "USE_IDLOCALE_C", nullable = false, length = 10)
-    private String localeId;
-    
-    /**
      * Role ID.
      */
     @Column(name = "USE_IDROLE_C", nullable = false, length = 36)
@@ -64,18 +58,6 @@ public class User implements Loggable {
     private String email;
     
     /**
-     * Theme.
-     */
-    @Column(name = "USE_THEME_C", nullable = false, length = 100)
-    private String theme;
-    
-    /**
-     * True if the user hasn't dismissed the first connection screen.
-     */
-    @Column(name = "USE_FIRSTCONNECTION_B", nullable = false)
-    private boolean firstConnection;
-
-    /**
      * Creation date.
      */
     @Column(name = "USE_CREATEDATE_D", nullable = false)
@@ -103,24 +85,6 @@ public class User implements Loggable {
      */
     public void setId(String id) {
         this.id = id;
-    }
-
-    /**
-     * Getter of localeId.
-     *
-     * @return localeId
-     */
-    public String getLocaleId() {
-        return localeId;
-    }
-
-    /**
-     * Setter of localeId.
-     *
-     * @param localeId localeId
-     */
-    public void setLocaleId(String localeId) {
-        this.localeId = localeId;
     }
 
     /**
@@ -193,42 +157,6 @@ public class User implements Loggable {
      */
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    /**
-     * Getter of theme.
-     *
-     * @return theme
-     */
-    public String getTheme() {
-        return theme;
-    }
-
-    /**
-     * Setter of theme.
-     *
-     * @param theme theme
-     */
-    public void setTheme(String theme) {
-        this.theme = theme;
-    }
-
-    /**
-     * Getter of firstConnection.
-     *
-     * @return firstConnection
-     */
-    public boolean isFirstConnection() {
-        return firstConnection;
-    }
-
-    /**
-     * Setter of firstConnection.
-     *
-     * @param firstConnection firstConnection
-     */
-    public void setFirstConnection(boolean firstConnection) {
-        this.firstConnection = firstConnection;
     }
 
     /**

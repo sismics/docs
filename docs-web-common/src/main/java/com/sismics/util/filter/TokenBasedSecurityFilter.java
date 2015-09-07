@@ -3,7 +3,6 @@ package com.sismics.util.filter;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.Filter;
@@ -28,7 +27,6 @@ import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.TransactionUtil;
 import com.sismics.security.AnonymousPrincipal;
 import com.sismics.security.UserPrincipal;
-import com.sismics.util.LocaleUtil;
 
 /**
  * This filter is used to authenticate the user having an active session via an authentication token stored in database.
@@ -155,10 +153,6 @@ public class TokenBasedSecurityFilter implements Filter {
     private void injectAuthenticatedUser(HttpServletRequest request, User user) {
         UserPrincipal userPrincipal = new UserPrincipal(user.getId(), user.getUsername());
 
-        // Add locale
-        Locale locale = LocaleUtil.getLocale(user.getLocaleId());
-        userPrincipal.setLocale(locale);
-        
         // Add base functions
         RoleBaseFunctionDao userBaseFuction = new RoleBaseFunctionDao();
         Set<String> baseFunctionSet = userBaseFuction.findByRoleId(user.getRoleId());
@@ -174,7 +168,6 @@ public class TokenBasedSecurityFilter implements Filter {
      */
     private void injectAnonymousUser(HttpServletRequest request) {
         AnonymousPrincipal anonymousPrincipal = new AnonymousPrincipal();
-        anonymousPrincipal.setLocale(request.getLocale());
         anonymousPrincipal.setDateTimeZone(DateTimeZone.forID(Constants.DEFAULT_TIMEZONE_ID));
 
         request.setAttribute(PRINCIPAL_ATTRIBUTE, anonymousPrincipal);
