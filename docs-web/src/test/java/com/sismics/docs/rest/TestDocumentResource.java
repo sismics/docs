@@ -1,31 +1,32 @@
 package com.sismics.docs.rest;
 
-
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Date;
 
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
-import junit.framework.Assert;
-
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import org.joda.time.format.DateTimeFormat;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Resources;
 import com.sismics.docs.core.util.DirectoryUtil;
-import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
 import com.sismics.util.mime.MimeType;
 import com.sismics.util.mime.MimeTypeUtil;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.ClientResponse.Status;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import com.sun.jersey.multipart.FormDataBodyPart;
-import com.sun.jersey.multipart.FormDataMultiPart;
+
+
 
 /**
  * Exhaustive test of the document resource.
@@ -35,6 +36,7 @@ import com.sun.jersey.multipart.FormDataMultiPart;
 public class TestDocumentResource extends BaseJerseyTest {
     /**
      * Test the document resource.
+     * 
      * @throws Exception 
      */
     @Test
@@ -48,131 +50,113 @@ public class TestDocumentResource extends BaseJerseyTest {
         String document3Token = clientUtil.login("document3");
         
         // Create a tag
-        WebResource tagResource = resource().path("/tag");
-        tagResource.addFilter(new CookieAuthenticationFilter(document1Token));
-        MultivaluedMapImpl postParams = new MultivaluedMapImpl();
-        postParams.add("name", "SuperTag");
-        postParams.add("color", "#ffff00");
-        ClientResponse response = tagResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        JSONObject json = response.getEntity(JSONObject.class);
-        String tag1Id = json.optString("id");
+        JsonObject json = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .put(Entity.form(new Form()
+                        .param("name", "SuperTag")
+                        .param("color", "#ffff00")), JsonObject.class);
+        String tag1Id = json.getString("id");
         Assert.assertNotNull(tag1Id);
 
         // Create a document
-        WebResource documentResource = resource().path("/document");
-        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("title", "My super title document 1");
-        postParams.add("description", "My super description for document 1");
-        postParams.add("tags", tag1Id);
-        postParams.add("language", "eng");
         long create1Date = new Date().getTime();
-        postParams.add("create_date", create1Date);
-        response = documentResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        String document1Id = json.optString("id");
+        json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .put(Entity.form(new Form()
+                        .param("title", "My super title document 1")
+                        .param("description", "My super description for document 1")
+                        .param("tags", tag1Id)
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
+        String document1Id = json.getString("id");
         Assert.assertNotNull(document1Id);
         
         // Add a file
-        WebResource fileResource = resource().path("/file");
-        fileResource.addFilter(new CookieAuthenticationFilter(document1Token));
-        FormDataMultiPart form = new FormDataMultiPart();
-        InputStream file = this.getClass().getResourceAsStream("/file/Einstein-Roosevelt-letter.png");
-        FormDataBodyPart fdp = new FormDataBodyPart("file",
-                new BufferedInputStream(file),
-                MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        form.bodyPart(fdp);
-        form.field("id", document1Id);
-        response = fileResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        String file1Id = json.getString("id");
+        String file1Id = null;
+        try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                json = target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+                file1Id = json.getString("id");
+                Assert.assertNotNull(file1Id);
+            }
+        }
         
         // Share this document
-        WebResource fileShareResource = resource().path("/share");
-        fileShareResource.addFilter(new CookieAuthenticationFilter(document1Token));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("id", document1Id);
-        response = fileShareResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
+        json = target().path("/share").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .put(Entity.form(new Form().param("id", document1Id)), JsonObject.class);
         
         // List all documents
-        documentResource = resource().path("/document/list");
-        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
-        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
-        getParams.putSingle("sort_column", 3);
-        getParams.putSingle("asc", false);
-        response = documentResource.queryParams(getParams).get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        JSONArray documents = json.getJSONArray("documents");
-        JSONArray tags = documents.getJSONObject(0).getJSONArray("tags");
-        Assert.assertTrue(documents.length() == 1);
-        Assert.assertEquals(document1Id, documents.getJSONObject(0).getString("id"));
-        Assert.assertEquals("eng", documents.getJSONObject(0).getString("language"));
-        Assert.assertEquals(1, documents.getJSONObject(0).getInt("file_count"));
-        Assert.assertEquals(1, tags.length());
-        Assert.assertEquals(tag1Id, tags.getJSONObject(0).getString("id"));
-        Assert.assertEquals("SuperTag", tags.getJSONObject(0).getString("name"));
-        Assert.assertEquals("#ffff00", tags.getJSONObject(0).getString("color"));
+        json = target().path("/document/list")
+                .queryParam("sort_column", 3)
+                .queryParam("asc", false)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .get(JsonObject.class);
+        JsonArray documents = json.getJsonArray("documents");
+        JsonArray tags = documents.getJsonObject(0).getJsonArray("tags");
+        Assert.assertTrue(documents.size() == 1);
+        Assert.assertEquals(document1Id, documents.getJsonObject(0).getString("id"));
+        Assert.assertEquals("eng", documents.getJsonObject(0).getString("language"));
+        Assert.assertEquals(1, documents.getJsonObject(0).getInt("file_count"));
+        Assert.assertEquals(1, tags.size());
+        Assert.assertEquals(tag1Id, tags.getJsonObject(0).getString("id"));
+        Assert.assertEquals("SuperTag", tags.getJsonObject(0).getString("name"));
+        Assert.assertEquals("#ffff00", tags.getJsonObject(0).getString("color"));
         
         // List all documents from document3
-        documentResource = resource().path("/document/list");
-        documentResource.addFilter(new CookieAuthenticationFilter(document3Token));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("sort_column", 3);
-        getParams.putSingle("asc", false);
-        response = documentResource.queryParams(getParams).get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        documents = json.getJSONArray("documents");
-        Assert.assertTrue(documents.length() == 0);
+        json = target().path("/document/list")
+                .queryParam("sort_column", 3)
+                .queryParam("asc", false)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document3Token)
+                .get(JsonObject.class);
+        documents = json.getJsonArray("documents");
+        Assert.assertTrue(documents.size() == 0);
         
         // Create a document with document3
-        documentResource = resource().path("/document");
-        documentResource.addFilter(new CookieAuthenticationFilter(document3Token));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("title", "My super title document 1");
-        postParams.add("description", "My super description for document 1");
-        postParams.add("language", "eng");
         long create3Date = new Date().getTime();
-        postParams.add("create_date", create3Date);
-        response = documentResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        String document3Id = json.optString("id");
+        json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document3Token)
+                .put(Entity.form(new Form()
+                        .param("title", "My super title document 1")
+                        .param("description", "My super description for document 1")
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(create3Date))), JsonObject.class);
+        String document3Id = json.getString("id");
         Assert.assertNotNull(document3Id);
         
         // Add a file
-        fileResource = resource().path("/file");
-        fileResource.addFilter(new CookieAuthenticationFilter(document3Token));
-        form = new FormDataMultiPart();
-        file = this.getClass().getResourceAsStream("/file/Einstein-Roosevelt-letter.png");
-        fdp = new FormDataBodyPart("file",
-                new BufferedInputStream(file),
-                MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        form.bodyPart(fdp);
-        form.field("id", document3Id);
-        response = fileResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        String file3Id = json.getString("id");
-        Assert.assertNotNull(file3Id);
+        String file3Id = null;
+        try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                json = target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document3Token)
+                        .put(Entity.entity(multiPart.field("id", document3Id).bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+                file3Id = json.getString("id");
+                Assert.assertNotNull(file3Id);
+            }
+        }
         
         // List all documents from document3
-        documentResource = resource().path("/document/list");
-        documentResource.addFilter(new CookieAuthenticationFilter(document3Token));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("sort_column", 3);
-        getParams.putSingle("asc", false);
-        response = documentResource.queryParams(getParams).get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        documents = json.getJSONArray("documents");
-        Assert.assertTrue(documents.length() == 1);
+        json = target().path("/document/list")
+                .queryParam("sort_column", 3)
+                .queryParam("asc", false)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document3Token)
+                .get(JsonObject.class);
+        documents = json.getJsonArray("documents");
+        Assert.assertTrue(documents.size() == 1);
         
         // Search documents
         Assert.assertEquals(1, searchDocuments("full:uranium full:einstein", document1Token));
@@ -200,11 +184,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(0, searchDocuments("lang:fra", document1Token));
 
         // Get a document
-        documentResource = resource().path("/document/" + document1Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
-        response = documentResource.get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .get(JsonObject.class);
         Assert.assertEquals(document1Id, json.getString("id"));
         Assert.assertEquals("document1", json.getString("creator"));
         Assert.assertEquals(1, json.getInt("file_count"));
@@ -212,62 +194,48 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals("My super title document 1", json.getString("title"));
         Assert.assertEquals("My super description for document 1", json.getString("description"));
         Assert.assertEquals("eng", json.getString("language"));
-        Assert.assertEquals(create1Date, json.getLong("create_date"));
-        tags = json.getJSONArray("tags");
-        Assert.assertEquals(1, tags.length());
-        Assert.assertEquals(tag1Id, tags.getJSONObject(0).getString("id"));
+        Assert.assertEquals(create1Date, json.getJsonNumber("create_date").longValue());
+        tags = json.getJsonArray("tags");
+        Assert.assertEquals(1, tags.size());
+        Assert.assertEquals(tag1Id, tags.getJsonObject(0).getString("id"));
         
         // Create a tag
-        tagResource = resource().path("/tag");
-        tagResource.addFilter(new CookieAuthenticationFilter(document1Token));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("name", "SuperTag2");
-        postParams.add("color", "#00ffff");
-        response = tagResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        String tag2Id = json.optString("id");
+        json = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .put(Entity.form(new Form().param("name", "SuperTag2").param("color", "#00ffff")), JsonObject.class);
+        String tag2Id = json.getString("id");
         Assert.assertNotNull(tag1Id);
         
         // Update a document
-        documentResource = resource().path("/document/" + document1Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("title", "My new super document 1");
-        postParams.add("description", "My new super description for document 1");
-        postParams.add("tags", tag2Id);
-        response = documentResource.post(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .post(Entity.form(new Form()
+                        .param("title", "My new super document 1")
+                        .param("description", "My new super description for document 1")
+                        .param("tags", tag2Id)), JsonObject.class);
         Assert.assertEquals(document1Id, json.getString("id"));
         
         // Search documents by query
-        documentResource = resource().path("/document/list");
-        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("search", "super");
-        response = documentResource.queryParams(getParams).get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = target().path("/document/list")
+                .queryParam("search", "super")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .get(JsonObject.class);
         
         // Get a document
-        documentResource = resource().path("/document/" + document1Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
-        response = documentResource.get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .get(JsonObject.class);
         Assert.assertTrue(json.getString("title").contains("new"));
         Assert.assertTrue(json.getString("description").contains("new"));
-        tags = json.getJSONArray("tags");
-        Assert.assertEquals(1, tags.length());
-        Assert.assertEquals(tag2Id, tags.getJSONObject(0).getString("id"));
+        tags = json.getJsonArray("tags");
+        Assert.assertEquals(1, tags.size());
+        Assert.assertEquals(tag2Id, tags.getJsonObject(0).getString("id"));
         
         // Deletes a document
-        documentResource = resource().path("/document/" + document1Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
-        response = documentResource.delete(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .delete(JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
         // Check that the associated files are deleted from FS
@@ -279,9 +247,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertFalse(thumbnailFile.exists());
         
         // Get a document (KO)
-        documentResource = resource().path("/document/" + document1Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(document1Token));
-        response = documentResource.get(ClientResponse.class);
+        Response response = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .get();
         Assert.assertEquals(Status.NOT_FOUND, Status.fromStatusCode(response.getStatus()));
     }
     
@@ -294,14 +262,12 @@ public class TestDocumentResource extends BaseJerseyTest {
      * @throws Exception
      */
     private int searchDocuments(String query, String token) throws Exception {
-        WebResource documentResource = resource().path("/document/list");
-        documentResource.addFilter(new CookieAuthenticationFilter(token));
-        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
-        getParams.putSingle("search", query);
-        ClientResponse response = documentResource.queryParams(getParams).get(ClientResponse.class);
-        JSONObject json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        return json.getJSONArray("documents").length();
+        JsonObject json = target().path("/document/list")
+                .queryParam("search", query)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, token)
+                .get(JsonObject.class);
+        return json.getJsonArray("documents").size();
     }
     
     /**
@@ -316,53 +282,48 @@ public class TestDocumentResource extends BaseJerseyTest {
         String document2Token = clientUtil.login("document2");
 
         // Create a document
-        WebResource documentResource = resource().path("/document");
-        documentResource.addFilter(new CookieAuthenticationFilter(document2Token));
-        MultivaluedMapImpl postParams = new MultivaluedMapImpl();
-        postParams.add("title", "My super title document 1");
-        postParams.add("description", "My super description for document 1");
-        postParams.add("language", "eng");
         long create1Date = new Date().getTime();
-        postParams.add("create_date", create1Date);
-        ClientResponse response = documentResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        JSONObject json = response.getEntity(JSONObject.class);
-        String document1Id = json.optString("id");
+        JsonObject json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document2Token)
+                .put(Entity.form(new Form()
+                        .param("title", "My super title document 1")
+                        .param("description", "My super description for document 1")
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
+        String document1Id = json.getString("id");
         Assert.assertNotNull(document1Id);
         
         // Add a PDF file
-        WebResource fileResource = resource().path("/file");
-        fileResource.addFilter(new CookieAuthenticationFilter(document2Token));
-        FormDataMultiPart form = new FormDataMultiPart();
-        InputStream file = this.getClass().getResourceAsStream("/file/wikipedia.pdf");
-        FormDataBodyPart fdp = new FormDataBodyPart("file",
-                new BufferedInputStream(file),
-                MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        form.bodyPart(fdp);
-        form.field("id", document1Id);
-        response = fileResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        String file1Id = json.getString("id");
+        String file1Id = null;
+        try (InputStream is = Resources.getResource("file/wikipedia.pdf").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "wikipedia.pdf");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                json = target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document2Token)
+                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+                file1Id = json.getString("id");
+                Assert.assertNotNull(file1Id);
+            }
+        }
         
         // Search documents by query in full content
-        documentResource = resource().path("/document/list");
-        documentResource.addFilter(new CookieAuthenticationFilter(document2Token));
-        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
-        getParams.putSingle("search", "full:vrandecic");
-        response = documentResource.queryParams(getParams).get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        Assert.assertTrue(json.getJSONArray("documents").length() == 1);
+        json = target().path("/document/list")
+                .queryParam("search", "full:vrandecic")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document2Token)
+                .get(JsonObject.class);
+        Assert.assertTrue(json.getJsonArray("documents").size() == 1);
         
         // Get the file thumbnail data
-        fileResource = resource().path("/file/" + file1Id + "/data");
-        fileResource.addFilter(new CookieAuthenticationFilter(document2Token));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("size", "thumb");
-        response = fileResource.queryParams(getParams).get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        InputStream is = response.getEntityInputStream();
+        Response response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "thumb")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document2Token)
+                .get();
+        InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));

@@ -1,21 +1,28 @@
 package com.sismics.docs.rest.resource;
 
+import java.text.MessageFormat;
+import java.util.List;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang.StringUtils;
+
 import com.sismics.docs.core.dao.jpa.TagDao;
 import com.sismics.docs.core.dao.jpa.dto.TagStatDto;
 import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Tag REST resources.
@@ -28,29 +35,27 @@ public class TagResource extends BaseResource {
      * Returns the list of all tags.
      * 
      * @return Response
-     * @throws JSONException
      */
     @GET
     @Path("/list")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response list() throws JSONException {
+    public Response list() {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         
         TagDao tagDao = new TagDao();
         List<Tag> tagList = tagDao.getByUserId(principal.getId());
-        JSONObject response = new JSONObject();
-        List<JSONObject> items = new ArrayList<>();
+        JsonArrayBuilder items = Json.createArrayBuilder();
         for (Tag tag : tagList) {
-            JSONObject item = new JSONObject();
-            item.put("id", tag.getId());
-            item.put("name", tag.getName());
-            item.put("color", tag.getColor());
-            items.add(item);
+            items.add(Json.createObjectBuilder()
+                    .add("id", tag.getId())
+                    .add("name", tag.getName())
+                    .add("color", tag.getColor()));
         }
-        response.put("tags", items);
-        return Response.ok().entity(response).build();
+        
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("tags", items);
+        return Response.ok().entity(response.build()).build();
     }
     
     /**
@@ -61,26 +66,25 @@ public class TagResource extends BaseResource {
      */
     @GET
     @Path("/stats")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response stats() throws JSONException {
+    public Response stats() {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         
         TagDao tagDao = new TagDao();
         List<TagStatDto> tagStatDtoList = tagDao.getStats(principal.getId());
-        JSONObject response = new JSONObject();
-        List<JSONObject> items = new ArrayList<>();
+        JsonArrayBuilder items = Json.createArrayBuilder();
         for (TagStatDto tagStatDto : tagStatDtoList) {
-            JSONObject item = new JSONObject();
-            item.put("id", tagStatDto.getId());
-            item.put("name", tagStatDto.getName());
-            item.put("color", tagStatDto.getColor());
-            item.put("count", tagStatDto.getCount());
-            items.add(item);
+            items.add(Json.createObjectBuilder()
+                    .add("id", tagStatDto.getId())
+                    .add("name", tagStatDto.getName())
+                    .add("color", tagStatDto.getColor())
+                    .add("count", tagStatDto.getCount()));
         }
-        response.put("stats", items);
-        return Response.ok().entity(response).build();
+        
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("stats", items);
+        return Response.ok().entity(response.build()).build();
     }
     
     /**
@@ -88,13 +92,11 @@ public class TagResource extends BaseResource {
      * 
      * @param name Name
      * @return Response
-     * @throws JSONException
      */
     @PUT
-    @Produces(MediaType.APPLICATION_JSON)
     public Response add(
             @FormParam("name") String name,
-            @FormParam("color") String color) throws JSONException {
+            @FormParam("color") String color) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -120,11 +122,11 @@ public class TagResource extends BaseResource {
         tag.setName(name);
         tag.setColor(color);
         tag.setUserId(principal.getId());
-        String tagId = tagDao.create(tag);
+        String id = tagDao.create(tag);
         
-        JSONObject response = new JSONObject();
-        response.put("id", tagId);
-        return Response.ok().entity(response).build();
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("id", id);
+        return Response.ok().entity(response.build()).build();
     }
     
     /**
@@ -132,15 +134,13 @@ public class TagResource extends BaseResource {
      * 
      * @param name Name
      * @return Response
-     * @throws JSONException
      */
     @POST
     @Path("{id: [a-z0-9\\-]+}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response update(
             @PathParam("id") String id,
             @FormParam("name") String name,
-            @FormParam("color") String color) throws JSONException {
+            @FormParam("color") String color) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -177,9 +177,9 @@ public class TagResource extends BaseResource {
         
         tagDao.update(tag);
         
-        JSONObject response = new JSONObject();
-        response.put("id", id);
-        return Response.ok().entity(response).build();
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("id", id);
+        return Response.ok().entity(response.build()).build();
     }
     
     /**
@@ -187,13 +187,11 @@ public class TagResource extends BaseResource {
      * 
      * @param tagId Tag ID
      * @return Response
-     * @throws JSONException
      */
     @DELETE
     @Path("{id: [a-z0-9\\-]+}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
-            @PathParam("id") String tagId) throws JSONException {
+            @PathParam("id") String tagId) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -208,8 +206,9 @@ public class TagResource extends BaseResource {
         // Delete the tag
         tagDao.delete(tagId);
         
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
     }
 }

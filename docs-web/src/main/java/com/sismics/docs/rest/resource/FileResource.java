@@ -8,12 +8,14 @@ import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -28,10 +30,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -54,12 +57,10 @@ import com.sismics.docs.core.util.FileUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
+import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.mime.MimeType;
 import com.sismics.util.mime.MimeTypeUtil;
-import com.sun.jersey.api.client.ClientResponse.Status;
-import com.sun.jersey.multipart.FormDataBodyPart;
-import com.sun.jersey.multipart.FormDataParam;
 
 /**
  * File REST resources.
@@ -74,14 +75,12 @@ public class FileResource extends BaseResource {
      * @param documentId Document ID
      * @param fileBodyPart File to add
      * @return Response
-     * @throws JSONException
      */
     @PUT
     @Consumes("multipart/form-data")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response add(
             @FormDataParam("id") String documentId,
-            @FormDataParam("file") FormDataBodyPart fileBodyPart) throws JSONException {
+            @FormDataParam("file") FormDataBodyPart fileBodyPart) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -156,11 +155,11 @@ public class FileResource extends BaseResource {
                 AppContext.getInstance().getAsyncEventBus().post(fileCreatedAsyncEvent);
             }
 
-            // Always return ok
-            JSONObject response = new JSONObject();
-            response.put("status", "ok");
-            response.put("id", fileId);
-            return Response.ok().entity(response).build();
+            // Always return OK
+            JsonObjectBuilder response = Json.createObjectBuilder()
+                    .add("status", "ok")
+                    .add("id", fileId);
+            return Response.ok().entity(response.build()).build();
         } catch (Exception e) {
             throw new ServerException("FileError", "Error adding a file", e);
         }
@@ -171,14 +170,12 @@ public class FileResource extends BaseResource {
      * 
      * @param id File ID
      * @return Response
-     * @throws JSONException
      */
     @POST
     @Path("{id: [a-z0-9\\-]+}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response attach(
             @PathParam("id") String id,
-            @FormParam("id") String documentId) throws JSONException {
+            @FormParam("id") String documentId) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -226,10 +223,10 @@ public class FileResource extends BaseResource {
             throw new ClientException("AttachError", "Error attaching file to document", e);
         }
         
-        // Always return ok
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
     }
     
     /**
@@ -238,14 +235,12 @@ public class FileResource extends BaseResource {
      * @param documentId Document ID
      * @param idList List of files ID in the new order
      * @return Response
-     * @throws JSONException
      */
     @POST
     @Path("reorder")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response reorder(
             @FormParam("id") String documentId,
-            @FormParam("order") List<String> idList) throws JSONException {
+            @FormParam("order") List<String> idList) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -271,10 +266,10 @@ public class FileResource extends BaseResource {
             }
         }
         
-        // Always return ok
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
     }
     
     /**
@@ -283,14 +278,12 @@ public class FileResource extends BaseResource {
      * @param documentId Document ID
      * @param shareId Sharing ID
      * @return Response
-     * @throws JSONException
      */
     @GET
     @Path("list")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response list(
             @QueryParam("id") String documentId,
-            @QueryParam("share") String shareId) throws JSONException {
+            @QueryParam("share") String shareId) {
         boolean authenticated = authenticate();
         
         // Check document visibility
@@ -306,20 +299,18 @@ public class FileResource extends BaseResource {
         FileDao fileDao = new FileDao();
         List<File> fileList = fileDao.getByDocumentId(principal.getId(), documentId);
 
-        JSONObject response = new JSONObject();
-        List<JSONObject> files = new ArrayList<>();
-        
+        JsonArrayBuilder files = Json.createArrayBuilder();
         for (File fileDb : fileList) {
-            JSONObject file = new JSONObject();
-            file.put("id", fileDb.getId());
-            file.put("mimetype", fileDb.getMimeType());
-            file.put("document_id", fileDb.getDocumentId());
-            file.put("create_date", fileDb.getCreateDate().getTime());
-            files.add(file);
+            files.add(Json.createObjectBuilder()
+                    .add("id", fileDb.getId())
+                    .add("mimetype", fileDb.getMimeType())
+                    .add("document_id", JsonUtil.nullable(fileDb.getDocumentId()))
+                    .add("create_date", fileDb.getCreateDate().getTime()));
         }
         
-        response.put("files", files);
-        return Response.ok().entity(response).build();
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("files", files);
+        return Response.ok().entity(response.build()).build();
     }
     
     /**
@@ -327,13 +318,11 @@ public class FileResource extends BaseResource {
      * 
      * @param id File ID
      * @return Response
-     * @throws JSONException
      */
     @DELETE
     @Path("{id: [a-z0-9\\-]+}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
-            @PathParam("id") String id) throws JSONException {
+            @PathParam("id") String id) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -365,10 +354,10 @@ public class FileResource extends BaseResource {
         fileDeletedAsyncEvent.setFile(file);
         AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
         
-        // Always return ok
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
     }
     
     /**
@@ -376,15 +365,13 @@ public class FileResource extends BaseResource {
      * 
      * @param fileId File ID
      * @return Response
-     * @throws JSONException
      */
     @GET
     @Path("{id: [a-z0-9\\-]+}/data")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response data(
             @PathParam("id") final String fileId,
             @QueryParam("share") String shareId,
-            @QueryParam("size") String size) throws JSONException {
+            @QueryParam("size") String size) {
         authenticate();
         
         if (size != null) {
@@ -472,14 +459,13 @@ public class FileResource extends BaseResource {
      * 
      * @param documentId Document ID
      * @return Response
-     * @throws JSONException
      */
     @GET
     @Path("zip")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response zip(
             @QueryParam("id") String documentId,
-            @QueryParam("share") String shareId) throws JSONException {
+            @QueryParam("share") String shareId) {
         authenticate();
         
         // Get the document

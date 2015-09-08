@@ -16,7 +16,6 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import com.google.common.base.Joiner;
 import com.sismics.docs.core.constant.AuditLogType;
-import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
 import com.sismics.docs.core.dao.jpa.dto.UserDto;
 import com.sismics.docs.core.model.jpa.User;
@@ -78,7 +77,6 @@ public class UserDao {
         // Create the user
         user.setCreateDate(new Date());
         user.setPassword(hashPassword(user.getPassword()));
-        user.setTheme(Constants.DEFAULT_THEME_ID);
         em.persist(user);
         
         // Create audit log
@@ -102,10 +100,7 @@ public class UserDao {
         User userFromDb = (User) q.getSingleResult();
 
         // Update the user
-        userFromDb.setLocaleId(user.getLocaleId());
         userFromDb.setEmail(user.getEmail());
-        userFromDb.setTheme(user.getTheme());
-        userFromDb.setFirstConnection(user.isFirstConnection());
         
         // Create audit log
         AuditLogUtil.create(userFromDb, AuditLogType.UPDATE);
@@ -231,7 +226,7 @@ public class UserDao {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
         List<String> criteriaList = new ArrayList<String>();
         
-        StringBuilder sb = new StringBuilder("select u.USE_ID_C as c0, u.USE_USERNAME_C as c1, u.USE_EMAIL_C as c2, u.USE_CREATEDATE_D as c3, u.USE_IDLOCALE_C as c4");
+        StringBuilder sb = new StringBuilder("select u.USE_ID_C as c0, u.USE_USERNAME_C as c1, u.USE_EMAIL_C as c2, u.USE_CREATEDATE_D as c3");
         sb.append(" from T_USER u ");
         
         // Add search criterias
@@ -260,7 +255,6 @@ public class UserDao {
             userDto.setUsername((String) o[i++]);
             userDto.setEmail((String) o[i++]);
             userDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
-            userDto.setLocaleId((String) o[i++]);
             userDtoList.add(userDto);
         }
         paginatedList.setResultList(userDtoList);

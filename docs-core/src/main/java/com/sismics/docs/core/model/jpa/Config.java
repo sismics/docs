@@ -1,9 +1,14 @@
 package com.sismics.docs.core.model.jpa;
 
-import com.google.common.base.Objects;
-import com.sismics.docs.core.constant.ConfigType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-import javax.persistence.*;
+import com.google.common.base.MoreObjects;
+import com.sismics.docs.core.constant.ConfigType;
 
 /**
  * Configuration parameter entity.
@@ -65,7 +70,7 @@ public class Config {
     
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .toString();
     }

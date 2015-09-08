@@ -1,8 +1,6 @@
 package com.sismics.rest.exception;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
+import javax.json.Json;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -20,12 +18,10 @@ public class ForbiddenClientException extends WebApplicationException {
 
     /**
      * Constructor of ForbiddenClientException.
-     * 
-     * @throws JSONException
      */
-    public ForbiddenClientException() throws JSONException {
-        super(Response.status(Status.FORBIDDEN).entity(new JSONObject()
-            .put("type", "ForbiddenError")
-            .put("message", "You don't have access to this resource")).build());
+    public ForbiddenClientException() {
+        super(Response.status(Status.FORBIDDEN).entity(Json.createObjectBuilder()
+            .add("type", "ForbiddenError")
+            .add("message", "You don't have access to this resource").build()).build());
     }
 }

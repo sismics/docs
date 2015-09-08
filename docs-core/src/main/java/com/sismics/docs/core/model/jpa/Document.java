@@ -1,7 +1,6 @@
 package com.sismics.docs.core.model.jpa;
 
-import com.google.common.base.Objects;
-import com.sismics.docs.core.util.AuditLogUtil;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +8,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import java.util.Date;
+import com.google.common.base.MoreObjects;
+import com.sismics.docs.core.util.AuditLogUtil;
 
 /**
  * Document entity.
@@ -192,7 +192,7 @@ public class Document implements Loggable {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .toString();
     }

@@ -1,22 +1,18 @@
 package com.sismics.docs.rest.resource;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 
 import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.PermType;
@@ -46,13 +42,11 @@ public class AclResource extends BaseResource {
      * Add an ACL.
      * 
      * @return Response
-     * @throws JSONException
      */
     @PUT
-    @Produces(MediaType.APPLICATION_JSON)
     public Response add(@FormParam("source") String sourceId,
             @FormParam("perm") String permStr,
-            @FormParam("username") String username) throws JSONException {
+            @FormParam("username") String username) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -86,15 +80,15 @@ public class AclResource extends BaseResource {
             aclDao.create(acl);
             
             // Returns the ACL
-            JSONObject response = new JSONObject();
-            response.put("perm", acl.getPerm().name());
-            response.put("id", acl.getTargetId());
-            response.put("name", user.getUsername());
-            response.put("type", AclTargetType.USER.name());
-            return Response.ok().entity(response).build();
+            JsonObjectBuilder response = Json.createObjectBuilder()
+                    .add("perm", acl.getPerm().name())
+                    .add("id", acl.getTargetId())
+                    .add("name", user.getUsername())
+                    .add("type", AclTargetType.USER.name());
+            return Response.ok().entity(response.build()).build();
         }
         
-        return Response.ok().entity(new JSONObject()).build();
+        return Response.ok().entity(Json.createObjectBuilder().build()).build();
     }
     
     /**
@@ -102,15 +96,13 @@ public class AclResource extends BaseResource {
      * 
      * @param id ACL ID
      * @return Response
-     * @throws JSONException
      */
     @DELETE
     @Path("{sourceId: [a-z0-9\\-]+}/{perm: [A-Z]+}/{targetId: [a-z0-9\\-]+}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
             @PathParam("sourceId") String sourceId,
             @PathParam("perm") String permStr,
-            @PathParam("targetId") String targetId) throws JSONException {
+            @PathParam("targetId") String targetId) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -136,16 +128,21 @@ public class AclResource extends BaseResource {
         // Delete the ACL
         aclDao.delete(sourceId, perm, targetId);
         
-        // Always return ok
-        JSONObject response = new JSONObject();
-        response.put("status", "ok");
-        return Response.ok().entity(response).build();
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
     }
     
+    /**
+     * Search possible ACL target.
+     * 
+     * @param search Search query
+     * @return Response
+     */
     @GET
     @Path("target/search")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response targetList(@QueryParam("search") String search) throws JSONException {
+    public Response targetList(@QueryParam("search") String search) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -155,20 +152,19 @@ public class AclResource extends BaseResource {
         
         // Search users
         UserDao userDao = new UserDao();
-        JSONObject response = new JSONObject();
-        List<JSONObject> users = new ArrayList<>();
+        JsonArrayBuilder users = Json.createArrayBuilder();
         
         PaginatedList<UserDto> paginatedList = PaginatedLists.create();
         SortCriteria sortCriteria = new SortCriteria(1, true);
 
         userDao.findByCriteria(paginatedList, new UserCriteria().setSearch(search), sortCriteria);
         for (UserDto userDto : paginatedList.getResultList()) {
-            JSONObject user = new JSONObject();
-            user.put("username", userDto.getUsername());
-            users.add(user);
+            users.add(Json.createObjectBuilder()
+                    .add("username", userDto.getUsername()));
         }
         
-        response.put("users", users);
-        return Response.ok().entity(response).build();
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("users", users);
+        return Response.ok().entity(response.build()).build();
     }
 }

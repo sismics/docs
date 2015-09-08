@@ -8,7 +8,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.sismics.docs.core.util.AuditLogUtil;
 
 /**
@@ -26,12 +26,6 @@ public class User implements Loggable {
     @Id
     @Column(name = "USE_ID_C", length = 36)
     private String id;
-    
-    /**
-     * Locale ID.
-     */
-    @Column(name = "USE_IDLOCALE_C", nullable = false, length = 10)
-    private String localeId;
     
     /**
      * Role ID.
@@ -64,18 +58,6 @@ public class User implements Loggable {
     private String email;
     
     /**
-     * Theme.
-     */
-    @Column(name = "USE_THEME_C", nullable = false, length = 100)
-    private String theme;
-    
-    /**
-     * True if the user hasn't dismissed the first connection screen.
-     */
-    @Column(name = "USE_FIRSTCONNECTION_B", nullable = false)
-    private boolean firstConnection;
-
-    /**
      * Creation date.
      */
     @Column(name = "USE_CREATEDATE_D", nullable = false)
@@ -103,24 +85,6 @@ public class User implements Loggable {
      */
     public void setId(String id) {
         this.id = id;
-    }
-
-    /**
-     * Getter of localeId.
-     *
-     * @return localeId
-     */
-    public String getLocaleId() {
-        return localeId;
-    }
-
-    /**
-     * Setter of localeId.
-     *
-     * @param localeId localeId
-     */
-    public void setLocaleId(String localeId) {
-        this.localeId = localeId;
     }
 
     /**
@@ -196,42 +160,6 @@ public class User implements Loggable {
     }
 
     /**
-     * Getter of theme.
-     *
-     * @return theme
-     */
-    public String getTheme() {
-        return theme;
-    }
-
-    /**
-     * Setter of theme.
-     *
-     * @param theme theme
-     */
-    public void setTheme(String theme) {
-        this.theme = theme;
-    }
-
-    /**
-     * Getter of firstConnection.
-     *
-     * @return firstConnection
-     */
-    public boolean isFirstConnection() {
-        return firstConnection;
-    }
-
-    /**
-     * Setter of firstConnection.
-     *
-     * @param firstConnection firstConnection
-     */
-    public void setFirstConnection(boolean firstConnection) {
-        this.firstConnection = firstConnection;
-    }
-
-    /**
      * Getter of createDate.
      *
      * @return createDate
@@ -286,7 +214,7 @@ public class User implements Loggable {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .add("username", username)
                 .toString();

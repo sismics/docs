@@ -6,10 +6,11 @@
   version="3.0"> 
   <display-name>Docs</display-name>
   
-  <!-- This filter is used to secure URLs -->
+  <!-- This filter is used to process a couple things in the request context -->
   <filter>
     <filter-name>requestContextFilter</filter-name>
     <filter-class>com.sismics.util.filter.RequestContextFilter</filter-class>
+    <async-supported>true</async-supported>
   </filter>
   
   <filter-mapping>
@@ -22,6 +23,7 @@
   <filter>
     <filter-name>tokenBasedSecurityFilter</filter-name>
     <filter-class>com.sismics.util.filter.TokenBasedSecurityFilter</filter-class>
+    <async-supported>true</async-supported>
   </filter>
   
   <filter-mapping>
@@ -29,23 +31,28 @@
     <url-pattern>/api/*</url-pattern>
   </filter-mapping>
 
-  <!-- Welcome files -->
-  <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-  </welcome-file-list>
-  
   <!-- Jersey -->
   <servlet>
-    <servlet-name>Jersey REST Service</servlet-name>
-    <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+    <servlet-name>JerseyServlet</servlet-name>
+    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
     <init-param>
-      <param-name>com.sun.jersey.config.property.packages</param-name>
+      <param-name>jersey.config.server.provider.packages</param-name>
       <param-value>com.sismics.docs.rest.resource</param-value>
     </init-param>
+    <init-param>
+      <param-name>jersey.config.server.provider.classnames</param-name>
+      <param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+    </init-param>
+    <init-param>
+      <param-name>jersey.config.server.response.setStatusOverSendError</param-name>
+      <param-value>true</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
+    <async-supported>true</async-supported>
   </servlet>
+  
   <servlet-mapping>
-    <servlet-name>Jersey REST Service</servlet-name>
+    <servlet-name>JerseyServlet</servlet-name>
     <url-pattern>/api/*</url-pattern>
   </servlet-mapping>
 </web-app>

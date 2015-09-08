@@ -62,7 +62,7 @@ public class AppContext {
         ConfigDao configDao = new ConfigDao();
         Config luceneStorageConfig = configDao.getById(ConfigType.LUCENE_DIRECTORY_STORAGE);
         indexingService = new IndexingService(luceneStorageConfig != null ? luceneStorageConfig.getValue() : null);
-        indexingService.startAndWait();
+        indexingService.startAsync();
     }
     
     /**

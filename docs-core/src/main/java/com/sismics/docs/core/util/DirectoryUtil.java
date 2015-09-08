@@ -1,9 +1,10 @@
 package com.sismics.docs.core.util;
 
-import com.sismics.util.EnvironmentUtil;
+import java.io.File;
+
 import org.apache.commons.lang.StringUtils;
 
-import java.io.File;
+import com.sismics.util.EnvironmentUtil;
 
 /**
  * Utilities to gain access to the storage directories used by the application.
@@ -18,27 +19,27 @@ public class DirectoryUtil {
      */
     public static File getBaseDataDirectory() {
         File baseDataDir = null;
-        if (EnvironmentUtil.getWebappRoot() != null) {
-            // We are in a webapp environment
-            if (StringUtils.isNotBlank(EnvironmentUtil.getDocsHome())) {
-                // If the docs.home property is set then use it
-                baseDataDir = new File(EnvironmentUtil.getDocsHome());
-                if (!baseDataDir.isDirectory()) {
-                    baseDataDir.mkdirs();
-                }
-            } else {
-                // Use the base of the Webapp directory
-                baseDataDir = new File(EnvironmentUtil.getWebappRoot() + File.separator + "sismicsdocs");
-                if (!baseDataDir.isDirectory()) {
-                    baseDataDir.mkdirs();
-                }
+        if (StringUtils.isNotBlank(EnvironmentUtil.getDocsHome())) {
+            // If the docs.home property is set then use it
+            baseDataDir = new File(EnvironmentUtil.getDocsHome());
+        } else if (EnvironmentUtil.isUnitTest()) {
+            // For unit testing, use a temporary directory
+            baseDataDir = new File(System.getProperty("java.io.tmpdir"));
+        } else {
+            // We are in a webapp environment and nothing is specified, use the default directory for this OS
+            if (EnvironmentUtil.isUnix()) {
+                baseDataDir = new File("/var/docs");
+            } if (EnvironmentUtil.isWindows()) {
+                baseDataDir = new File(EnvironmentUtil.getWindowsAppData() + "\\Sismics\\Docs");
+            } else if (EnvironmentUtil.isMacOs()) {
+                baseDataDir = new File(EnvironmentUtil.getMacOsUserHome() + "/Library/Sismics/Docs");
             }
         }
-        if (baseDataDir == null) {
-            // Or else (for unit testing), use a temporary directory
-            baseDataDir = new File(System.getProperty("java.io.tmpdir"));
+
+        if (baseDataDir != null && !baseDataDir.isDirectory()) {
+            baseDataDir.mkdirs();
         }
-        
+
         return baseDataDir;
     }
     
@@ -76,25 +77,6 @@ public class DirectoryUtil {
      */
     public static File getLogDirectory() {
         return getDataSubDirectory("log");
-    }
-
-    /**
-     * Returns the themes directory.
-     * 
-     * @return Theme directory.
-     */
-    public static File getThemeDirectory() {
-        String webappRoot = EnvironmentUtil.getWebappRoot();
-        File themeDir = null;
-        if (webappRoot != null) {
-            themeDir = new File(webappRoot + File.separator + "style" + File.separator + "theme");
-        } else {
-            themeDir = new File(DirectoryUtil.class.getResource("/style/theme").getFile());
-        }
-        if (themeDir != null && themeDir.isDirectory()) {
-            return themeDir;
-        }
-        return null;
     }
 
     /**

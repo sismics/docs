@@ -1,15 +1,17 @@
 package com.sismics.docs.rest;
 
-import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.ClientResponse.Status;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import junit.framework.Assert;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import org.junit.Assert;
 import org.junit.Test;
+
+import com.sismics.util.filter.TokenBasedSecurityFilter;
+
 
 /**
  * Test the tag resource.
@@ -23,173 +25,138 @@ public class TestTagResource extends BaseJerseyTest {
      * @throws JSONException
      */
     @Test
-    public void testTagResource() throws JSONException {
+    public void testTagResource() {
         // Login tag1
         clientUtil.createUser("tag1");
         String tag1Token = clientUtil.login("tag1");
         
         // Create a tag
-        WebResource tagResource = resource().path("/tag");
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        MultivaluedMapImpl postParams = new MultivaluedMapImpl();
-        postParams.add("name", "Tag3");
-        postParams.add("color", "#ff0000");
-        ClientResponse response = tagResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        JSONObject json = response.getEntity(JSONObject.class);
-        String tag3Id = json.optString("id");
+        JsonObject json = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .put(Entity.form(new Form()
+                        .param("name", "Tag3")
+                        .param("color", "#ff0000")), JsonObject.class);
+        String tag3Id = json.getString("id");
         Assert.assertNotNull(tag3Id);
         
         // Create a tag
-        tagResource = resource().path("/tag");
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("name", "Tag4");
-        postParams.add("color", "#00ff00");
-        response = tagResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        String tag4Id = json.optString("id");
+        json = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .put(Entity.form(new Form()
+                        .param("name", "Tag4")
+                        .param("color", "#00ff00")), JsonObject.class);
+        String tag4Id = json.getString("id");
         Assert.assertNotNull(tag4Id);
         
         // Create a tag with space (not allowed)
-        tagResource = resource().path("/tag");
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("name", "Tag 4");
-        response = tagResource.put(ClientResponse.class, postParams);
+        Response response = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .put(Entity.form(new Form()
+                        .param("name", "Tag 4")));
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         
         // Create a document
-        WebResource documentResource = resource().path("/document");
-        documentResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("title", "My super document 1");
-        postParams.add("tags", tag3Id);
-        postParams.add("language", "eng");
-        response = documentResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
+        json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .put(Entity.form(new Form()
+                        .param("title", "My super document 1")
+                        .param("tags", tag3Id)
+                        .param("language", "eng")), JsonObject.class);
         
         // Create a document
-        documentResource = resource().path("/document");
-        documentResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("title", "My super document 2");
-        postParams.add("tags", tag4Id);
-        postParams.add("language", "eng");
-        response = documentResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
+        json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .put(Entity.form(new Form()
+                        .param("title", "My super document 2")
+                        .param("tags", tag4Id)
+                        .param("language", "eng")), JsonObject.class);
         String document2Id = json.getString("id");
         
         // Check tags on a document
-        documentResource = resource().path("/document/" + document2Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        response = documentResource.get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        JSONArray tags = json.getJSONArray("tags");
-        Assert.assertEquals(1, tags.length());
-        Assert.assertEquals(tag4Id, tags.getJSONObject(0).getString("id"));
+        json = target().path("/document/" + document2Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .get(JsonObject.class);
+        JsonArray tags = json.getJsonArray("tags");
+        Assert.assertEquals(1, tags.size());
+        Assert.assertEquals(tag4Id, tags.getJsonObject(0).getString("id"));
         
         // Update tags on a document
-        documentResource = resource().path("/document/" + document2Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("tags", tag3Id);
-        postParams.add("tags", tag4Id);
-        response = documentResource.post(ClientResponse.class, postParams);
+        response = target().path("/document/" + document2Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .post(Entity.form(new Form()
+                        .param("tags", tag3Id)
+                        .param("tags", tag4Id)));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         
         // Check tags on a document
-        documentResource = resource().path("/document/" + document2Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        response = documentResource.get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        tags = json.getJSONArray("tags");
-        Assert.assertEquals(2, tags.length());
-        Assert.assertEquals(tag3Id, tags.getJSONObject(0).getString("id"));
-        Assert.assertEquals(tag4Id, tags.getJSONObject(1).getString("id"));
+        json = target().path("/document/" + document2Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .get(JsonObject.class);
+        tags = json.getJsonArray("tags");
+        Assert.assertEquals(2, tags.size());
+        Assert.assertEquals(tag3Id, tags.getJsonObject(0).getString("id"));
+        Assert.assertEquals(tag4Id, tags.getJsonObject(1).getString("id"));
         
         // Update tags on a document
-        documentResource = resource().path("/document/" + document2Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("tags", tag4Id);
-        response = documentResource.post(ClientResponse.class, postParams);
+        response = target().path("/document/" + document2Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .post(Entity.form(new Form()
+                        .param("tags", tag4Id)));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         
         // Check tags on a document
-        documentResource = resource().path("/document/" + document2Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        response = documentResource.get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        tags = json.getJSONArray("tags");
-        Assert.assertEquals(1, tags.length());
-        Assert.assertEquals(tag4Id, tags.getJSONObject(0).getString("id"));
+        json = target().path("/document/" + document2Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .get(JsonObject.class);
+        tags = json.getJsonArray("tags");
+        Assert.assertEquals(1, tags.size());
+        Assert.assertEquals(tag4Id, tags.getJsonObject(0).getString("id"));
         
         // Get tag stats
-        tagResource = resource().path("/tag/stats");
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        response = tagResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        JSONArray stats = json.getJSONArray("stats");
-        Assert.assertTrue(stats.length() == 2);
-        Assert.assertEquals(1, stats.getJSONObject(0).getInt("count"));
-        Assert.assertEquals(1, stats.getJSONObject(1).getInt("count"));
+        json = target().path("/tag/stats").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .get(JsonObject.class);
+        JsonArray stats = json.getJsonArray("stats");
+        Assert.assertTrue(stats.size() == 2);
+        Assert.assertEquals(1, stats.getJsonObject(0).getInt("count"));
+        Assert.assertEquals(1, stats.getJsonObject(1).getInt("count"));
         
         // Get all tags
-        tagResource = resource().path("/tag/list");
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        response = tagResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        tags = json.getJSONArray("tags");
-        Assert.assertTrue(tags.length() > 0);
-        Assert.assertEquals("Tag4", tags.getJSONObject(1).getString("name"));
-        Assert.assertEquals("#00ff00", tags.getJSONObject(1).getString("color"));
+        json = target().path("/tag/list").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .get(JsonObject.class);
+        tags = json.getJsonArray("tags");
+        Assert.assertTrue(tags.size() > 0);
+        Assert.assertEquals("Tag4", tags.getJsonObject(1).getString("name"));
+        Assert.assertEquals("#00ff00", tags.getJsonObject(1).getString("color"));
         
         // Update a tag
-        tagResource = resource().path("/tag/" + tag4Id);
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("name", "UpdatedName");
-        postParams.add("color", "#0000ff");
-        response = tagResource.post(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
+        json = target().path("/tag/" + tag4Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .post(Entity.form(new Form()
+                        .param("name", "UpdatedName")
+                        .param("color", "#0000ff")), JsonObject.class);
         Assert.assertEquals(tag4Id, json.getString("id"));
         
         // Get all tags
-        tagResource = resource().path("/tag/list");
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        response = tagResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        tags = json.getJSONArray("tags");
-        Assert.assertTrue(tags.length() > 0);
-        Assert.assertEquals("UpdatedName", tags.getJSONObject(1).getString("name"));
-        Assert.assertEquals("#0000ff", tags.getJSONObject(1).getString("color"));
+        json = target().path("/tag/list").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .get(JsonObject.class);
+        tags = json.getJsonArray("tags");
+        Assert.assertTrue(tags.size() > 0);
+        Assert.assertEquals("UpdatedName", tags.getJsonObject(1).getString("name"));
+        Assert.assertEquals("#0000ff", tags.getJsonObject(1).getString("color"));
         
         // Deletes a tag
-        tagResource = resource().path("/tag/" + tag4Id);
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        response = tagResource.delete(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals("ok", json.getString("status"));
+        target().path("/tag/" + tag4Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .delete();
         
         // Get all tags
-        tagResource = resource().path("/tag/list");
-        tagResource.addFilter(new CookieAuthenticationFilter(tag1Token));
-        response = tagResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        tags = json.getJSONArray("tags");
-        Assert.assertTrue(tags.length() == 1);
+        json = target().path("/tag/list").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .get(JsonObject.class);
+        tags = json.getJsonArray("tags");
+        Assert.assertTrue(tags.size() == 1);
     }
 }

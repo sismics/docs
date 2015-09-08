@@ -2,7 +2,7 @@ package com.sismics.docs.core.event;
 
 import java.io.InputStream;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 
@@ -83,7 +83,7 @@ public class FileCreatedAsyncEvent {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
             .add("file", file)
             .add("document", document)
             .toString();

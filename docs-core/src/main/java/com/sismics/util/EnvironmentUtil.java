@@ -9,7 +9,7 @@ public class EnvironmentUtil {
 
     private static String OS = System.getProperty("os.name").toLowerCase();
     
-    private static String TEST_ENV = System.getProperty("test");
+    private static String APPLICATION_MODE = System.getProperty("application.mode");
 
     private static String WINDOWS_APPDATA = System.getenv("APPDATA");
 
@@ -18,9 +18,9 @@ public class EnvironmentUtil {
     private static String DOCS_HOME = System.getProperty("docs.home");
 
     /**
-     * Web application root.
+     * In a web application context.
      */
-    private static String webappRoot;
+    private static boolean webappContext;
     
     /**
      * Returns true if running under Microsoft Windows.
@@ -55,10 +55,18 @@ public class EnvironmentUtil {
      * @return Unit testing environment
      */
     public static boolean isUnitTest() {
-        return webappRoot == null ||
-                TEST_ENV != null && "true".equals(TEST_ENV);
+        return !webappContext || isDevMode();
     }
 
+    /**
+     * Return true if we are in dev mode.
+     *
+     * @return Dev mode
+     */
+    public static boolean isDevMode() {
+        return "dev".equalsIgnoreCase(APPLICATION_MODE);
+    }
+    
     /**
      * Returns the MS Windows AppData directory of this user.
      * 
@@ -87,20 +95,20 @@ public class EnvironmentUtil {
     }
 
     /**
-     * Getter of webappRoot.
+     * Getter of webappContext.
      *
-     * @return webappRoot
+     * @return webappContext
      */
-    public static String getWebappRoot() {
-        return webappRoot;
+    public static boolean isWebappContext() {
+        return webappContext;
     }
 
     /**
-     * Setter of webappRoot.
+     * Setter of webappContext.
      *
-     * @param webappRoot webappRoot
+     * @param webappContext webappContext
      */
-    public static void setWebappRoot(String webappRoot) {
-        EnvironmentUtil.webappRoot = webappRoot;
+    public static void setWebappContext(boolean webappContext) {
+        EnvironmentUtil.webappContext = webappContext;
     }
 }

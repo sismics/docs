@@ -1,6 +1,6 @@
 package com.sismics.docs.core.event;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /**
  * Rebuild index event.
@@ -10,7 +10,7 @@ import com.google.common.base.Objects;
 public class RebuildIndexAsyncEvent {
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .toString();
     }
 }

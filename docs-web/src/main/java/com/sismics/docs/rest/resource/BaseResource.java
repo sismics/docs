@@ -1,17 +1,17 @@
 package com.sismics.docs.rest.resource;
 
+import java.security.Principal;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.security.IPrincipal;
 import com.sismics.security.UserPrincipal;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
-import org.codehaus.jettison.json.JSONException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import java.security.Principal;
-import java.util.Set;
 
 /**
  * Base class of REST resources.
@@ -57,7 +57,7 @@ public abstract class BaseResource {
      * @param baseFunction Base function to check
      * @throws JSONException
      */
-    protected void checkBaseFunction(BaseFunction baseFunction) throws JSONException {
+    protected void checkBaseFunction(BaseFunction baseFunction) {
         if (!hasBaseFunction(baseFunction)) {
             throw new ForbiddenClientException();
         }
@@ -70,7 +70,7 @@ public abstract class BaseResource {
      * @return True if the user has the base function
      * @throws JSONException
      */
-    protected boolean hasBaseFunction(BaseFunction baseFunction) throws JSONException {
+    protected boolean hasBaseFunction(BaseFunction baseFunction) {
         if (principal == null || !(principal instanceof UserPrincipal)) {
             return false;
         }

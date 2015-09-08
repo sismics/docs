@@ -4,26 +4,29 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.util.Date;
 
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
-import junit.framework.Assert;
-
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Resources;
 import com.sismics.docs.core.util.DirectoryUtil;
-import com.sismics.docs.rest.filter.CookieAuthenticationFilter;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
 import com.sismics.util.mime.MimeType;
 import com.sismics.util.mime.MimeTypeUtil;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.ClientResponse.Status;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import com.sun.jersey.multipart.FormDataBodyPart;
-import com.sun.jersey.multipart.FormDataMultiPart;
+
 
 /**
  * Exhaustive test of the file resource.
@@ -43,145 +46,137 @@ public class TestFileResource extends BaseJerseyTest {
         String file1AuthenticationToken = clientUtil.login("file1");
         
         // Create a document
-        WebResource documentResource = resource().path("/document");
-        documentResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        MultivaluedMapImpl postParams = new MultivaluedMapImpl();
-        postParams.add("title", "File test document 1");
-        postParams.add("language", "eng");
-        ClientResponse response = documentResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        JSONObject json = response.getEntity(JSONObject.class);
-        String document1Id = json.optString("id");
+        long create1Date = new Date().getTime();
+        JsonObject json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .put(Entity.form(new Form()
+                        .param("title", "File test document 1")
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
+        String document1Id = json.getString("id");
         Assert.assertNotNull(document1Id);
         
         // Add a file
-        WebResource fileResource = resource().path("/file");
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        FormDataMultiPart form = new FormDataMultiPart();
-        InputStream file = this.getClass().getResourceAsStream("/file/PIA00452.jpg");
-        FormDataBodyPart fdp = new FormDataBodyPart("file",
-                new BufferedInputStream(file),
-                MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        form.bodyPart(fdp);
-        form.field("id", document1Id);
-        response = fileResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        String file1Id = json.getString("id");
+        String file1Id = null;
+        try (InputStream is = Resources.getResource("file/PIA00452.jpg").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "PIA00452.jpg");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                json = target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+                file1Id = json.getString("id");
+                Assert.assertNotNull(file1Id);
+            }
+        }
         
         // Add a file
-        fileResource = resource().path("/file");
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        form = new FormDataMultiPart();
-        file = this.getClass().getResourceAsStream("/file/PIA00452.jpg");
-        fdp = new FormDataBodyPart("file",
-                new BufferedInputStream(file),
-                MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        form.bodyPart(fdp);
-        form.field("id", document1Id);
-        response = fileResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        String file2Id = json.getString("id");
+        String file2Id = null;
+        try (InputStream is = Resources.getResource("file/PIA00452.jpg").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "PIA00452.jpg");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                json = target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+                file2Id = json.getString("id");
+                Assert.assertNotNull(file2Id);
+            }
+        }
         
         // Get the file data
-        fileResource = resource().path("/file/" + file1Id + "/data");
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        response = fileResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        InputStream is = response.getEntityInputStream();
+        Response response = target().path("/file/" + file1Id + "/data").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .get();
+        InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
         Assert.assertTrue(fileBytes.length > 0);
         
         // Get the thumbnail data
-        fileResource = resource().path("/file/" + file1Id + "/data");
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
-        getParams.putSingle("size", "thumb");
-        response = fileResource.queryParams(getParams).get(ClientResponse.class);
+        response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "thumb")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .get();
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        is = response.getEntityInputStream();
+        is = (InputStream) response.getEntity();
         fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
         Assert.assertTrue(fileBytes.length > 0);
         
         // Get the web data
-        fileResource = resource().path("/file/" + file1Id + "/data");
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("size", "web");
-        response = fileResource.queryParams(getParams).get(ClientResponse.class);
+        response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "web")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .get();
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        is = response.getEntityInputStream();
+        is = (InputStream) response.getEntity();
         fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
         Assert.assertTrue(fileBytes.length > 0);
         
         // Check that the files are not readable directly from FS
         java.io.File storedFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id).toFile();
-        InputStream storedFileInputStream = new BufferedInputStream(new FileInputStream(storedFile));
-        Assert.assertNull(MimeTypeUtil.guessMimeType(storedFileInputStream));
-        storedFileInputStream.close();
+        try (InputStream storedFileInputStream = new BufferedInputStream(new FileInputStream(storedFile))) {
+            Assert.assertNull(MimeTypeUtil.guessMimeType(storedFileInputStream));
+        }
         
         // Get all files from a document
-        fileResource = resource().path("/file/list");
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("id", document1Id);
-        response = fileResource.queryParams(getParams).get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        JSONArray files = json.getJSONArray("files");
-        Assert.assertEquals(2, files.length());
-        Assert.assertEquals(file1Id, files.getJSONObject(0).getString("id"));
-        Assert.assertEquals(file2Id, files.getJSONObject(1).getString("id"));
+        json = target().path("/file/list")
+                .queryParam("id", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .get(JsonObject.class);
+        JsonArray files = json.getJsonArray("files");
+        Assert.assertEquals(2, files.size());
+        Assert.assertEquals(file1Id, files.getJsonObject(0).getString("id"));
+        Assert.assertEquals(file2Id, files.getJsonObject(1).getString("id"));
         
         // Reorder files
-        fileResource = resource().path("/file/reorder");
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("id", document1Id);
-        postParams.add("order", file2Id);
-        postParams.add("order", file1Id);
-        response = fileResource.post(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        json = target().path("/file/reorder").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .post(Entity.form(new Form()
+                        .param("id", document1Id)
+                        .param("order", file2Id)
+                        .param("order", file1Id)), JsonObject.class);
 
         // Get all files from a document
-        fileResource = resource().path("/file/list");
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("id", document1Id);
-        response = fileResource.queryParams(getParams).get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        files = json.getJSONArray("files");
-        Assert.assertEquals(2, files.length());
-        Assert.assertEquals(file2Id, files.getJSONObject(0).getString("id"));
-        Assert.assertEquals(file1Id, files.getJSONObject(1).getString("id"));
+        json = target().path("/file/list")
+                .queryParam("id", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .get(JsonObject.class);
+        files = json.getJsonArray("files");
+        Assert.assertEquals(2, files.size());
+        Assert.assertEquals(file2Id, files.getJsonObject(0).getString("id"));
+        Assert.assertEquals(file1Id, files.getJsonObject(1).getString("id"));
         
         // Get a ZIP from all files
-        fileResource = resource().path("/file/zip");
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("id", document1Id);
-        response = fileResource.queryParams(getParams).get(ClientResponse.class);
-        is = response.getEntityInputStream();
+        response = target().path("/file/zip")
+                .queryParam("id", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .get();
+        is = (InputStream) response.getEntity();
         fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(MimeType.APPLICATION_ZIP, MimeTypeUtil.guessMimeType(fileBytes));
         
         // Deletes a file
-        fileResource = resource().path("/file/" + file1Id);
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        response = fileResource.delete(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
+        json = target().path("/file/" + file1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .delete(JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
         // Get the file data (not found)
-        fileResource = resource().path("/file/" + file1Id + "/data");
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        response = fileResource.get(ClientResponse.class);
+        response = target().path("/file/" + file1Id + "/data").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .get();
         Assert.assertEquals(Status.NOT_FOUND, Status.fromStatusCode(response.getStatus()));
         
         // Check that files are deleted from FS
@@ -193,15 +188,13 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertFalse(thumbnailFile.exists());
         
         // Get all files from a document
-        fileResource = resource().path("/file/list");
-        fileResource.addFilter(new CookieAuthenticationFilter(file1AuthenticationToken));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("id", document1Id);
-        response = fileResource.queryParams(getParams).get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        files = json.getJSONArray("files");
-        Assert.assertEquals(1, files.length());
+        json = target().path("/file/list")
+                .queryParam("id", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .get(JsonObject.class);
+        files = json.getJsonArray("files");
+        Assert.assertEquals(1, files.size());
     }
     
     @Test
@@ -211,91 +204,81 @@ public class TestFileResource extends BaseJerseyTest {
         String file2AuthenticationToken = clientUtil.login("file2");
         
         // Add a file
-        WebResource fileResource = resource().path("/file");
-        fileResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
-        FormDataMultiPart form = new FormDataMultiPart();
-        InputStream file = this.getClass().getResourceAsStream("/file/PIA00452.jpg");
-        FormDataBodyPart fdp = new FormDataBodyPart("file",
-                new BufferedInputStream(file),
-                MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        form.bodyPart(fdp);
-        ClientResponse response = fileResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        JSONObject json = response.getEntity(JSONObject.class);
-        String file1Id = json.getString("id");
+        String file1Id = null;
+        try (InputStream is = Resources.getResource("file/PIA00452.jpg").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "PIA00452.jpg");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                JsonObject json = target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                        .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+                file1Id = json.getString("id");
+                Assert.assertNotNull(file1Id);
+            }
+        }
         
         // Get all orphan files
-        fileResource = resource().path("/file/list");
-        fileResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
-        MultivaluedMapImpl getParams = new MultivaluedMapImpl();
-        response = fileResource.queryParams(getParams).get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        JSONArray files = json.getJSONArray("files");
-        Assert.assertEquals(1, files.length());
+        JsonObject json = target().path("/file/list").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                .get(JsonObject.class);
+        JsonArray files = json.getJsonArray("files");
+        Assert.assertEquals(1, files.size());
         
         // Get the file data
-        fileResource = resource().path("/file/" + file1Id + "/data");
-        fileResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
-        response = fileResource.get(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        InputStream is = response.getEntityInputStream();
+        Response response = target().path("/file/" + file1Id + "/data").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                .get();
+        InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
         Assert.assertEquals(163510, fileBytes.length);
         
         // Create a document
-        WebResource documentResource = resource().path("/document");
-        documentResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
-        MultivaluedMapImpl postParams = new MultivaluedMapImpl();
-        postParams.add("title", "File test document 1");
-        postParams.add("language", "eng");
-        response = documentResource.put(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        String document1Id = json.optString("id");
+        json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                .put(Entity.form(new Form()
+                        .param("title", "File test document 1")
+                        .param("language", "eng")), JsonObject.class);
+        String document1Id = json.getString("id");
         Assert.assertNotNull(document1Id);
         
         // Attach a file to a document
-        documentResource = resource().path("/file/" + file1Id);
-        documentResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
-        postParams = new MultivaluedMapImpl();
-        postParams.add("id", document1Id);
-        response = documentResource.post(ClientResponse.class, postParams);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
+        json = target().path("/file/" + file1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                .post(Entity.form(new Form()
+                        .param("id", document1Id)), JsonObject.class);
         
         // Get all files from a document
-        fileResource = resource().path("/file/list");
-        fileResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
-        getParams = new MultivaluedMapImpl();
-        getParams.putSingle("id", document1Id);
-        response = fileResource.queryParams(getParams).get(ClientResponse.class);
-        json = response.getEntity(JSONObject.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        files = json.getJSONArray("files");
-        Assert.assertEquals(1, files.length());
+        json = target().path("/file/list")
+                .queryParam("id", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                .get(JsonObject.class);
+        files = json.getJsonArray("files");
+        Assert.assertEquals(1, files.size());
         
         // Add a file
-        fileResource = resource().path("/file");
-        fileResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
-        form = new FormDataMultiPart();
-        file = this.getClass().getResourceAsStream("/file/PIA00452.jpg");
-        fdp = new FormDataBodyPart("file",
-                new BufferedInputStream(file),
-                MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        form.bodyPart(fdp);
-        response = fileResource.type(MediaType.MULTIPART_FORM_DATA).put(ClientResponse.class, form);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
-        String file2Id = json.getString("id");
+        String file2Id = null;
+        try (InputStream is0 = Resources.getResource("file/PIA00452.jpg").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is0, "PIA00452.jpg");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                json = target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                        .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+                file2Id = json.getString("id");
+                Assert.assertNotNull(file2Id);
+            }
+        }
         
         // Deletes a file
-        fileResource = resource().path("/file/" + file2Id);
-        fileResource.addFilter(new CookieAuthenticationFilter(file2AuthenticationToken));
-        response = fileResource.delete(ClientResponse.class);
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.getEntity(JSONObject.class);
+        json = target().path("/file/" + file2Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                .delete(JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
     }
 }
