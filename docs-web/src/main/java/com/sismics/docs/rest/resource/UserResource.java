@@ -40,6 +40,7 @@ import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
+import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.security.UserPrincipal;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
@@ -513,8 +514,8 @@ public class UserResource extends BaseResource {
         for (AuthenticationToken authenticationToken : authenticationTokenDao.getByUserId(principal.getId())) {
             JsonObjectBuilder session = Json.createObjectBuilder()
                     .add("create_date", authenticationToken.getCreationDate().getTime())
-                    .add("ip", authenticationToken.getIp())
-                    .add("user_agent", authenticationToken.getUserAgent());
+                    .add("ip", JsonUtil.nullable(authenticationToken.getIp()))
+                    .add("user_agent", JsonUtil.nullable(authenticationToken.getUserAgent()));
             if (authenticationToken.getLastConnectionDate() != null) {
                 session.add("last_connection_date", authenticationToken.getLastConnectionDate().getTime());
             }
