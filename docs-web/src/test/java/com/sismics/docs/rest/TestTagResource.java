@@ -2,6 +2,7 @@ package com.sismics.docs.rest;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
@@ -44,7 +45,8 @@ public class TestTagResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
                 .put(Entity.form(new Form()
                         .param("name", "Tag4")
-                        .param("color", "#00ff00")), JsonObject.class);
+                        .param("color", "#00ff00")
+                        .param("parent", tag3Id)), JsonObject.class);
         String tag4Id = json.getString("id");
         Assert.assertNotNull(tag4Id);
         
@@ -129,6 +131,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertTrue(tags.size() > 0);
         Assert.assertEquals("Tag4", tags.getJsonObject(1).getString("name"));
         Assert.assertEquals("#00ff00", tags.getJsonObject(1).getString("color"));
+        Assert.assertEquals(tag3Id, tags.getJsonObject(1).getString("parent"));
         
         // Update a tag
         json = target().path("/tag/" + tag4Id).request()
@@ -146,6 +149,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertTrue(tags.size() > 0);
         Assert.assertEquals("UpdatedName", tags.getJsonObject(1).getString("name"));
         Assert.assertEquals("#0000ff", tags.getJsonObject(1).getString("color"));
+        Assert.assertEquals(JsonValue.NULL, tags.getJsonObject(1).get("parent"));
         
         // Deletes a tag
         target().path("/tag/" + tag4Id).request()
