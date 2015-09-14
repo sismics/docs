@@ -121,7 +121,9 @@ public class TagResource extends BaseResource {
         }
         
         // Check the parent
-        if (parentId != null) {
+        if (StringUtils.isEmpty(parentId)) {
+            parentId = null;
+        } else {
             Tag parentTag = tagDao.getByTagId(principal.getId(), parentId);
             if (parentTag == null) {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
@@ -175,7 +177,9 @@ public class TagResource extends BaseResource {
         }
         
         // Check the parent
-        if (parentId != null) {
+        if (StringUtils.isEmpty(parentId)) {
+            parentId = null;
+        } else {
             Tag parentTag = tagDao.getByTagId(principal.getId(), parentId);
             if (parentTag == null) {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
