@@ -13,6 +13,7 @@ angular.module('docs').controller('Document', function($scope, $timeout, $state,
   $scope.currentPage = 1;
   $scope.limit = _.isUndefined(localStorage.documentsPageSize) ? 10 : localStorage.documentsPageSize;
   $scope.search = '';
+  $scope.setSearch = function(search) { $scope.search = search };
 
   // A timeout promise is used to slow down search requests to the server
   // We keep track of it for cancellation purpose
@@ -100,5 +101,21 @@ angular.module('docs').controller('Document', function($scope, $timeout, $state,
    */
   $scope.viewDocument = function(id) {
     $state.transitionTo('document.view', { id: id });
+  };
+
+  // Load tags
+  var tags = [];
+  Restangular.one('tag/list').getList().then(function(data) {
+    tags = data.tags;
+  });
+
+  /**
+   * Find children tags.
+   * @param parent
+   */
+  $scope.getChildrenTags = function(parent) {
+    return _.filter(tags, function(tag) {
+      return tag.parent == parent;
+    });
   };
 });
