@@ -24,7 +24,7 @@ angular.module('share').controller('FileModalView', function($rootScope, $modalI
       if (value.id == $stateParams.fileId) {
         var next = $scope.files[key + 1];
         if (next) {
-          $state.transitionTo('share.file', { documentId: $stateParams.documentId, shareId: $stateParams.shareId, fileId: next.id });
+          $state.go('share.file', { documentId: $stateParams.documentId, shareId: $stateParams.shareId, fileId: next.id });
         }
       }
     });
@@ -38,7 +38,7 @@ angular.module('share').controller('FileModalView', function($rootScope, $modalI
       if (value.id == $stateParams.fileId) {
         var previous = $scope.files[key - 1];
         if (previous) {
-          $state.transitionTo('share.file', { documentId: $stateParams.documentId, shareId: $stateParams.shareId,  fileId: previous.id });
+          $state.go('share.file', { documentId: $stateParams.documentId, shareId: $stateParams.shareId,  fileId: previous.id });
         }
       }
     });

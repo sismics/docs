@@ -62,7 +62,7 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
    * Navigate to the selected file.
    */
   $scope.openFile = function (file) {
-    $state.transitionTo('document.view.file', { id: $stateParams.id, fileId: file.id })
+    $state.go('document.view.file', { id: $stateParams.id, fileId: file.id })
   };
 
   /**
@@ -80,7 +80,7 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
       if (result == 'ok') {
         Restangular.one('document', document.id).remove().then(function () {
           $scope.loadDocuments();
-          $state.transitionTo('document.default');
+          $state.go('document.default');
         });
       }
     });

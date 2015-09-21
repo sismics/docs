@@ -9,7 +9,7 @@ angular.module('docs').controller('Login', function($scope, $rootScope, $state, 
       User.userInfo(true).then(function(data) {
         $rootScope.userInfo = data;
       });
-      $state.transitionTo('document.default');
+      $state.go('document.default');
     }, function() {
       var title = 'Login failed';
       var msg = 'Username or password invalid';

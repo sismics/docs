@@ -12,7 +12,7 @@ angular.module('docs').controller('Document', function($scope, $timeout, $state,
   $scope.offset = 0;
   $scope.currentPage = 1;
   $scope.limit = _.isUndefined(localStorage.documentsPageSize) ? 10 : localStorage.documentsPageSize;
-  $scope.search = '';
+  $scope.search = $state.params.search ? $state.params.search : '';
   $scope.setSearch = function(search) { $scope.search = search };
 
   // A timeout promise is used to slow down search requests to the server
@@ -66,6 +66,17 @@ angular.module('docs').controller('Document', function($scope, $timeout, $state,
       $timeout.cancel(timeoutPromise);
     }
 
+    if ($state.current.name == 'document.default'
+        || $state.current.name == 'document.default.search') {
+      $state.go($scope.search == '' ?
+          'document.default' : 'document.default.search', {
+        search: $scope.search
+      }, {
+        location: 'replace',
+        notify: false
+      });
+    }
+
     // Call API later
     timeoutPromise = $timeout(function () {
       $scope.loadDocuments();
@@ -100,7 +111,7 @@ angular.module('docs').controller('Document', function($scope, $timeout, $state,
    * Display a document.
    */
   $scope.viewDocument = function(id) {
-    $state.transitionTo('document.view', { id: id });
+    $state.go('document.view', { id: id });
   };
 
   // Load tags

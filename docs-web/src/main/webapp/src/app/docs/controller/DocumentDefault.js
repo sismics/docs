@@ -81,7 +81,7 @@ angular.module('docs').controller('DocumentDefault', function($scope, $state, Re
    * Navigate to the selected file.
    */
   $scope.openFile = function (file) {
-    $state.transitionTo('document.default.file', { fileId: file.id })
+    $state.go('document.default.file', { fileId: file.id })
   };
 
   /**
@@ -107,6 +107,6 @@ angular.module('docs').controller('DocumentDefault', function($scope, $state, Re
    * Add a document with checked files.
    */
   $scope.addDocument = function() {
-    $state.transitionTo('document.add', { files: _.pluck($scope.checkedFiles(), 'id') });
+    $state.go('document.add', { files: _.pluck($scope.checkedFiles(), 'id') });
   };
 });

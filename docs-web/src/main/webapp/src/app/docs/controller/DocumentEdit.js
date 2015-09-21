@@ -95,7 +95,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
           if ($scope.isEdit()) {
             // Go back to the edited document
             $scope.pageDocuments();
-            $state.transitionTo('document.view', { id: $stateParams.id });
+            $state.go('document.view', { id: $stateParams.id });
           } else {
             // Reset the scope and stay here
             var fileUploadCount = _.size($scope.newFiles) + resolve.length;
@@ -188,9 +188,9 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
    */
   $scope.cancel = function() {
     if ($scope.isEdit()) {
-      $state.transitionTo('document.view', { id: $stateParams.id });
+      $state.go('document.view', { id: $stateParams.id });
     } else {
-      $state.transitionTo('document.default');
+      $state.go('document.default');
     }
   };
 

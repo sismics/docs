@@ -19,6 +19,6 @@ angular.module('docs').controller('SettingsUser', function($scope, $state, Resta
    * Edit a user.
    */
   $scope.editUser = function(user) {
-    $state.transitionTo('settings.user.edit', { username: user.username });
+    $state.go('settings.user.edit', { username: user.username });
   };
 });

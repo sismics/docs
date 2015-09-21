@@ -16,6 +16,6 @@ angular.module('share').controller('FileView', function($modal, $state, $statePa
     modal.closed = true;
   },function(result) {
     modal.closed = true;
-    $state.transitionTo('share', { documentId: $stateParams.documentId, shareId: $stateParams.shareId });
+    $state.go('share', { documentId: $stateParams.documentId, shareId: $stateParams.shareId });
   });
 });

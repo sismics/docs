@@ -125,6 +125,9 @@ angular.module('docs',
         }
       }
     })
+      .state('document.default.search', {
+        url: '/search/:search'
+      })
       .state('document.default.file', {
         url: '/file/:fileId',
         views: {
