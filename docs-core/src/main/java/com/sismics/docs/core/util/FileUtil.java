@@ -105,7 +105,7 @@ public class FileUtil {
         PDDocument pdfDocument = null;
         try {
             PDFTextStripper stripper = new PDFTextStripper();
-            pdfDocument = PDDocument.load(inputStream, true);
+            pdfDocument = PDDocument.load(inputStream);
             content = stripper.getText(pdfDocument);
         } catch (IOException e) {
             log.error("Error while extracting text from the PDF", e);
@@ -157,7 +157,7 @@ public class FileUtil {
             // Generate preview from the first page of the PDF
             PDDocument pdfDocument = null;
             try {
-                pdfDocument = PDDocument.load(inputStream, true);
+                pdfDocument = PDDocument.load(inputStream);
                 PDFRenderer renderer = new PDFRenderer(pdfDocument);
                 image = renderer.renderImage(0);
             } finally {
