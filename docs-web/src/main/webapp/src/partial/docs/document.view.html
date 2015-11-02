@@ -38,119 +38,24 @@
 	  </ul>
 	</div>
 
-  <tabset>
-    <tab>
-      <tab-heading class="pointer">
+  <ul class="nav nav-tabs">
+    <li ng-class="{ active: $state.current.name == 'document.view.content' }">
+      <a href="#/document/view/{{ document.id }}/content">
         <span class="glyphicon glyphicon-file"></span> Content
-      </tab-heading>
-
-      <p ng-bind-html="document.description | newline"></p>
-
-      <div ng-file-drop drag-over-class="bg-success" ng-multiple="true" allow-dir="false" ng-model="dropFiles"
-           accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
-        <div class="row upload-zone" ui-sortable="fileSortableOptions" ng-model="files">
-          <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
-            <div class="thumbnail" ng-if="file.id">
-              <a ng-click="openFile(file)">
-                <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
-              </a>
-              <div class="caption" ng-show="document.writable">
-                <div class="pull-left">
-                  <div class="btn btn-default handle"><span class="glyphicon glyphicon-resize-horizontal"></span></div>
-                </div>
-                <div class="pull-right">
-                  <button class="btn btn-danger" ng-click="deleteFile(file)"><span class="glyphicon glyphicon-trash"></span></button>
-                </div>
-                <div class="clearfix"></div>
-              </div>
-            </div>
-
-            <div class="thumbnail" ng-if="!file.id">
-              <p class="text-center lead">
-                {{ file.status }}
-              </p>
-              <div class="caption">
-                <progressbar value="file.progress" class="progress-info active"></progressbar>
-              </div>
-            </div>
-          </div>
-
-          <p class="text-center well-lg" ng-if="files.length == 0">
-            <span class="glyphicon glyphicon-move"></span>
-            Drag &amp; drop files here to upload
-          </p>
-        </div>
-      </div>
-    </tab>
-
-    <tab>
-      <tab-heading class="pointer">
+      </a>
+    </li>
+    <li ng-class="{ active: $state.current.name == 'document.view.permissions' }">
+      <a href="#/document/view/{{ document.id }}/permissions">
         <span class="glyphicon glyphicon-user"></span> Permissions
-      </tab-heading>
-
-      <table class="table">
-        <tr>
-          <th style="width: 40%">For</th>
-          <th style="width: 40%">Permission</th>
-        </tr>
-
-        <tr ng-repeat="(id, acl) in acls">
-          <td><em>{{ acl[0].type == 'SHARE' ? 'Shared' : 'User' }}</em> {{ acl[0].name }}</td>
-          <td>
-            <span class="label label-default" style="margin-right: 6px;" ng-repeat="a in acl | orderBy: 'perm'">
-              {{ a.perm }}
-              <span ng-show="(document.creator != a.name && a.type == 'USER' || a.type != 'USER') && document.writable"
-                    class="glyphicon glyphicon-remove pointer"
-                    ng-click="deleteAcl(a)"></span>
-            </span>
-          </td>
-        </tr>
-      </table>
-
-      <div ng-show="document.writable">
-        <h4>Add a permission</h4>
-
-        <form name="aclForm" class="form-horizontal">
-          <div class="form-group">
-            <label class=" col-sm-2 control-label" for="inputTarget">User</label>
-            <div class="col-sm-3">
-              <input required ng-maxlength="50" class="form-control" type="text" id="inputTarget"
-                     placeholder="Type a username" name="username" ng-model="acl.username" autocomplete="off"
-                     typeahead="username for username in getTargetAclTypeahead($viewValue) | filter: $viewValue"
-                     typeahead-wait-ms="200" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class=" col-sm-2 control-label" for="inputPermission">Permission</label>
-            <div class="col-sm-3">
-              <select class="form-control" ng-model="acl.perm" id="inputPermission">
-                <option value="READ">Can read</option>
-                <option value="READWRITE">Can edit</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-              <button type="submit" class="btn btn-primary"  ng-disabled="!aclForm.$valid" ng-click="addAcl()">
-                <span class="glyphicon glyphicon-plus"></span>
-                Add
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </tab>
-
-    <tab>
-      <tab-heading class="pointer">
+      </a>
+    </li>
+    <li ng-class="{ active: $state.current.name == 'document.view.activity' }">
+      <a href="#/document/view/{{ document.id }}/activity">
         <span class="glyphicon glyphicon-tasks"></span> Activity
-      </tab-heading>
+      </a>
+    </li>
+  </ul>
 
-      <audit-log logs="logs" />
-    </tab>
-  </tabset>
-
+  <div ui-view="tab"></div>
 	<div ui-view="file"></div>
 </div>

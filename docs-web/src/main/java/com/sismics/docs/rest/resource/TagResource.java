@@ -22,6 +22,7 @@ import com.sismics.docs.core.dao.jpa.dto.TagStatDto;
 import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 
 /**
@@ -50,7 +51,8 @@ public class TagResource extends BaseResource {
             items.add(Json.createObjectBuilder()
                     .add("id", tag.getId())
                     .add("name", tag.getName())
-                    .add("color", tag.getColor()));
+                    .add("color", tag.getColor())
+                    .add("parent", JsonUtil.nullable(tag.getParentId())));
         }
         
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -96,7 +98,8 @@ public class TagResource extends BaseResource {
     @PUT
     public Response add(
             @FormParam("name") String name,
-            @FormParam("color") String color) {
+            @FormParam("color") String color,
+            @FormParam("parent") String parentId) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -117,11 +120,22 @@ public class TagResource extends BaseResource {
             throw new ClientException("AlreadyExistingTag", MessageFormat.format("Tag already exists: {0}", name));
         }
         
+        // Check the parent
+        if (StringUtils.isEmpty(parentId)) {
+            parentId = null;
+        } else {
+            Tag parentTag = tagDao.getByTagId(principal.getId(), parentId);
+            if (parentTag == null) {
+                throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
+            }
+        }
+        
         // Create the tag
         tag = new Tag();
         tag.setName(name);
         tag.setColor(color);
         tag.setUserId(principal.getId());
+        tag.setParentId(parentId);
         String id = tagDao.create(tag);
         
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -140,7 +154,8 @@ public class TagResource extends BaseResource {
     public Response update(
             @PathParam("id") String id,
             @FormParam("name") String name,
-            @FormParam("color") String color) {
+            @FormParam("color") String color,
+            @FormParam("parent") String parentId) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -161,6 +176,16 @@ public class TagResource extends BaseResource {
             throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", id));
         }
         
+        // Check the parent
+        if (StringUtils.isEmpty(parentId)) {
+            parentId = null;
+        } else {
+            Tag parentTag = tagDao.getByTagId(principal.getId(), parentId);
+            if (parentTag == null) {
+                throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
+            }
+        }
+        
         // Check for name duplicate
         Tag tagDuplicate = tagDao.getByName(principal.getId(), name);
         if (tagDuplicate != null && !tagDuplicate.getId().equals(id)) {
@@ -174,6 +199,8 @@ public class TagResource extends BaseResource {
         if (!StringUtils.isEmpty(color)) {
             tag.setColor(color);
         }
+        // Parent tag is always updated to have the possibility to delete it
+        tag.setParentId(parentId);
         
         tagDao.update(tag);
         

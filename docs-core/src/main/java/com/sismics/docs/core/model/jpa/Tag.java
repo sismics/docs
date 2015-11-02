@@ -40,6 +40,12 @@ public class Tag implements Loggable {
     private String userId;
     
     /**
+     * User ID.
+     */
+    @Column(name = "TAG_IDPARENT_C", length = 36)
+    private String parentId;
+    
+    /**
      * Creation date.
      */
     @Column(name = "TAG_CREATEDATE_D", nullable = false)
@@ -165,12 +171,31 @@ public class Tag implements Loggable {
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
     }
+    
+    /**
+     * Getter of parentId.
+     *
+     * @return parentId
+     */
+    public String getParentId() {
+        return parentId;
+    }
+
+    /**
+     * Setter of parentId.
+     *
+     * @param parentId parentId
+     */
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .add("name", name)
+                .add("parentId", parentId)
                 .toString();
     }
 

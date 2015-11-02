@@ -41,7 +41,7 @@ angular.module('docs').controller('Navigation', function($scope, $http, $state, 
    */
   $scope.openLogs = function() {
     $scope.errorNumber = 0;
-    $state.transitionTo('settings.log');
+    $state.go('settings.log');
   };
 
   /**
@@ -52,7 +52,7 @@ angular.module('docs').controller('Navigation', function($scope, $http, $state, 
       User.userInfo(true).then(function(data) {
         $rootScope.userInfo = data;
       });
-      $state.transitionTo('main');
+      $state.go('main');
     });
     $event.preventDefault();
   };

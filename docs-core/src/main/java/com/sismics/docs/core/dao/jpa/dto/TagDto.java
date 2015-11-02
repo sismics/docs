@@ -23,6 +23,11 @@ public class TagDto {
      * Color.
      */
     private String color;
+    
+    /**
+     * Parent ID.
+     */
+    private String parentId;
 
     /**
      * Getter of id.
@@ -76,5 +81,23 @@ public class TagDto {
      */
     public void setColor(String color) {
         this.color = color;
+    }
+    
+    /**
+     * Getter of parentId.
+     *
+     * @return the parentId
+     */
+    public String getParentId() {
+        return parentId;
+    }
+
+    /**
+     * Setter of parentId.
+     *
+     * @param color parentId
+     */
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 }

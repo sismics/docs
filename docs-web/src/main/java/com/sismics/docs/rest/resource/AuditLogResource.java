@@ -19,6 +19,7 @@ import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
+import com.sismics.rest.util.JsonUtil;
 
 /**
  * Audit log REST resources.
@@ -70,7 +71,7 @@ public class AuditLogResource extends BaseResource {
                     .add("target", auditLogDto.getEntityId())
                     .add("class", auditLogDto.getEntityClass())
                     .add("type", auditLogDto.getType().name())
-                    .add("message", auditLogDto.getMessage())
+                    .add("message", JsonUtil.nullable(auditLogDto.getMessage()))
                     .add("create_date", auditLogDto.getCreateTimestamp()));
         }
 

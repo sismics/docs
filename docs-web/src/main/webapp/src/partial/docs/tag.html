@@ -21,6 +21,15 @@
         <tbody>
           <tr ng-repeat="tag in tags | filter:search">
             <td><inline-edit value="tag.name" on-edit="updateTag(tag)" /></td>
+            <td class="col-xs-4">
+              <select class="form-control" ng-model="tag.parent" ng-change="updateTag(tag)">
+                <option value="" ng-selected="!tag.parent"></option>
+                <option ng-repeat="tag0 in tags"
+                        ng-if="tag0.id != tag.id"
+                        ng-selected="tag.parent == tag0.id"
+                        value="{{ tag0.id }}">Parent: {{ tag0.name }}</option>
+              </select>
+            </td>
             <td class="col-xs-1"><span colorpicker class="btn" on-hide="updateTag(tag)" data-color="" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span></td>
             <td class="col-xs-1"><button class="btn btn-danger pull-right" ng-click="deleteTag(tag)"><span class="glyphicon glyphicon-trash"></span></button></td>
           </tr>

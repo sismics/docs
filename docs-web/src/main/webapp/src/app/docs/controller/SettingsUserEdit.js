@@ -38,7 +38,7 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
     
     promise.then(function() {
       $scope.loadUsers();
-      $state.transitionTo('settings.user');
+      $state.go('settings.user');
     });
   };
 
@@ -54,9 +54,9 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
       if (result == 'ok') {
         Restangular.one('user', $stateParams.username).remove().then(function() {
           $scope.loadUsers();
-          $state.transitionTo('settings.user');
+          $state.go('settings.user');
         }, function () {
-          $state.transitionTo('settings.user');
+          $state.go('settings.user');
         });
       }
     });

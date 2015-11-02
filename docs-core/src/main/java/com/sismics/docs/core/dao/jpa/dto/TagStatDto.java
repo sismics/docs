@@ -2,7 +2,7 @@ package com.sismics.docs.core.dao.jpa.dto;
 
 
 /**
- * Tag DTO.
+ * Tag stat DTO.
  *
  * @author bgamard 
  */

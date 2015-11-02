@@ -24,13 +24,14 @@ Features
 - Support image and PDF files
 - Flexible search engine
 - Full text search in image and PDF
-- SHA-256 encryption
+- 256-bit AES encryption
 - Tag system
 - Multi-users ACL system
 - Audit log
 - Document sharing by URL
 - RESTful Web API
 - Fully featured Android client
+- Tested to 100k documents
 
 Download
 --------

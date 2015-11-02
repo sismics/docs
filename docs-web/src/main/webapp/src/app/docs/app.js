@@ -125,6 +125,9 @@ angular.module('docs',
         }
       }
     })
+      .state('document.default.search', {
+        url: '/search/:search'
+      })
       .state('document.default.file', {
         url: '/file/:fileId',
         views: {
@@ -153,6 +156,7 @@ angular.module('docs',
     })
     .state('document.view', {
       url: '/view/:id',
+      redirectTo: 'document.view.content',
       views: {
         'document': {
           templateUrl: 'partial/docs/document.view.html',
@@ -160,6 +164,33 @@ angular.module('docs',
         }
       }
     })
+      .state('document.view.content', {
+        url: '/content',
+        views: {
+          'tab': {
+            templateUrl: 'partial/docs/document.view.content.html',
+            controller: 'DocumentViewContent'
+          }
+        }
+      })
+      .state('document.view.permissions', {
+        url: '/permissions',
+        views: {
+          'tab': {
+            templateUrl: 'partial/docs/document.view.permissions.html',
+            controller: 'DocumentViewPermissions'
+          }
+        }
+      })
+      .state('document.view.activity', {
+        url: '/activity',
+        views: {
+          'tab': {
+            templateUrl: 'partial/docs/document.view.activity.html',
+            controller: 'DocumentViewActivity'
+          }
+        }
+      })
       .state('document.view.file', {
         url: '/file/:fileId',
         views: {
@@ -228,4 +259,18 @@ angular.module('docs',
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
   $rootScope.pageTitle = 'Sismics Docs';
+})
+/**
+ * Redirection support for ui-router.
+ * Thanks to https://github.com/acollard
+ * See https://github.com/angular-ui/ui-router/issues/1584#issuecomment-76993045
+ */
+.run(function($rootScope, $state){
+  $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
+    var redirect = toState.redirectTo;
+    if (redirect) {
+      event.preventDefault();
+      $state.go(redirect, toParams);
+    }
+  });
 });

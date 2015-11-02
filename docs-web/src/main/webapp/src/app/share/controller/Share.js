@@ -10,7 +10,7 @@ angular.module('share').controller('Share', function($scope, $state, $stateParam
         $scope.document = data;
       }, function (response) {
         if (response.status == 403) {
-          $state.transitionTo('403');
+          $state.go('403');
         }
       });
 
@@ -24,6 +24,6 @@ angular.module('share').controller('Share', function($scope, $state, $stateParam
    * Navigate to the selected file.
    */
   $scope.openFile = function (file) {
-    $state.transitionTo('share.file', { documentId: $stateParams.documentId, shareId: $stateParams.shareId, fileId: file.id })
+    $state.go('share.file', { documentId: $stateParams.documentId, shareId: $stateParams.shareId, fileId: file.id })
   };
 });

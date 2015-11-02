@@ -5,49 +5,61 @@
         <a href="#/document/add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add a document</a>
       </p>
 
-      <div class="input-group">
-        <span class="input-group-addon">
-          <span class="glyphicon glyphicon glyphicon-info-sign"
-            tooltip-placement="bottom"
-            tooltip-html-unsafe="before:2012-05<br/>
-            after:2012-05<br/>
-            at:2012-05<br/>
-            tag:car<br/>
-            full:led<br/>
-            shared:yes<br/>
-            lang:fra"></span>
-        </span>
-        <input type="search" class="form-control" placeholder="Search" ng-model="search" />
-        <span class="input-group-addon">
-          <span class="glyphicon glyphicon-search" ng-show="search.length == 0"></span>
-          <span class="glyphicon glyphicon-remove" ng-show="search.length > 0" ng-click="search = ''"></span>
-        </span>
+      <div class="row">
+        <div class="dropdown col-md-2 tag-tree-dropdown" dropdown>
+          <button class="btn btn-block btn-default" dropdown-toggle ng-disabled="disabled">
+            Tags <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu tag-tree">
+            <li ng-if="getChildrenTags().length == 0">No tags</li>
+            <li ng-repeat="tag in getChildrenTags()" ng-include="'tag-tree-item'"></li>
+          </ul>
+        </div>
+
+        <div class="col-md-10 input-group">
+          <span class="input-group-addon">
+            <span class="glyphicon glyphicon glyphicon-info-sign"
+                  tooltip-placement="bottom"
+                  tooltip-html-unsafe="before:2012-05<br/>
+              after:2012-05<br/>
+              at:2012-05<br/>
+              tag:car<br/>
+              full:led<br/>
+              shared:yes<br/>
+              lang:fra"></span>
+          </span>
+          <input type="search" class="form-control" placeholder="Search" ng-model="search" />
+          <span class="input-group-addon">
+            <span class="glyphicon glyphicon-search" ng-show="search.length == 0"></span>
+            <span class="glyphicon glyphicon-remove" ng-show="search.length > 0" ng-click="search = ''"></span>
+          </span>
+        </div>
       </div>
 
       <table class="row table table-striped table-hover table-documents">
         <thead>
-          <tr>
-            <th class="col-xs-6" ng-click="sortDocuments(1)"><span class="glyphicon glyphicon-chevron-{{ sortColumn == 1 ? (asc ? 'down' : 'up') : '' }}"></span> Title</th>
-            <th class="col-xs-3" ng-click="sortDocuments(3)"><span class="glyphicon glyphicon-chevron-{{ sortColumn == 3 ? (asc ? 'down' : 'up') : '' }}"></span> Creation date</th>
-            <th class="col-xs-3 hidden-xs">Tags</th>
-          </tr>
+        <tr>
+          <th class="col-xs-6" ng-click="sortDocuments(1)"><span class="glyphicon glyphicon-chevron-{{ sortColumn == 1 ? (asc ? 'down' : 'up') : '' }}"></span> Title</th>
+          <th class="col-xs-3" ng-click="sortDocuments(3)"><span class="glyphicon glyphicon-chevron-{{ sortColumn == 3 ? (asc ? 'down' : 'up') : '' }}"></span> Creation date</th>
+          <th class="col-xs-3 hidden-xs">Tags</th>
+        </tr>
         </thead>
         <tbody>
-          <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents">
-            <td>
-              {{ document.title }} ({{ document.file_count }})
-              <span class="glyphicon glyphicon-share" ng-if="document.shared" tooltip="Shared"></span>
-              <a href="#/document/view/{{ document.id }}" ng-click="$event.stopPropagation()"><span class="glyphicon glyphicon-link"></span></a>
-            </td>
-            <td>{{ document.create_date | date: 'yyyy-MM-dd' }}</td>
-            <td class="hidden-xs cell-tags">
-              <div class="tags">
-                <span class="label label-info" ng-repeat="tag in document.tags" ng-style="{ 'background': tag.color }">
-                  <span class="shorten">{{ tag.name | shorten }}</span><span class="full">{{ tag.name }}</span>
-                </span>
-              </div>
-            </td>
-          </tr>
+        <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents">
+          <td>
+            {{ document.title }} ({{ document.file_count }})
+            <span class="glyphicon glyphicon-share" ng-if="document.shared" tooltip="Shared"></span>
+            <a href="#/document/view/{{ document.id }}" target="_blank" ng-click="$event.stopPropagation()"><span class="glyphicon glyphicon-link"></span></a>
+          </td>
+          <td>{{ document.create_date | date: 'yyyy-MM-dd' }}</td>
+          <td class="hidden-xs cell-tags">
+            <div class="tags">
+            <span class="label label-info" ng-repeat="tag in document.tags" ng-style="{ 'background': tag.color }">
+              <span class="shorten">{{ tag.name | shorten }}</span><span class="full">{{ tag.name }}</span>
+            </span>
+            </div>
+          </td>
+        </tr>
         </tbody>
       </table>
 
@@ -71,3 +83,13 @@
     <div ui-view="document"></div>
   </div>
 </div>
+
+<script type="text/ng-template" id="tag-tree-item">
+  <span class="btn" ng-style="{ 'background-color': tag.color }"></span>
+  <span class="btn btn-link" ng-click="setSearch('tag:' + tag.name)">
+    {{ tag.name }}
+  </span>
+  <ul class="list-unstyled">
+    <li ng-repeat="tag in getChildrenTags(tag.id)" ng-include="'tag-tree-item'"></li>
+  </ul>
+</script>
