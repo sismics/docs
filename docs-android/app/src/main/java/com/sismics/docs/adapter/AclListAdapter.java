@@ -1,6 +1,7 @@
 package com.sismics.docs.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,7 @@ public class AclListAdapter extends BaseAdapter {
     /**
      * Shares.
      */
-    private List<JSONObject> acls;
+    private List<AclItem> aclItemList;
 
     /**
      * ACL list adapter.
@@ -32,28 +33,46 @@ public class AclListAdapter extends BaseAdapter {
      * @param acls ACLs
      */
     public AclListAdapter(JSONArray acls) {
-        this.acls = new ArrayList<>();
+        this.aclItemList = new ArrayList<>();
 
-        // Extract only share ACLs
+        // Group ACLs
         for (int i = 0; i < acls.length(); i++) {
             JSONObject acl = acls.optJSONObject(i);
-            this.acls.add(acl);
+            String type = acl.optString("type");
+            String name = acl.optString("name");
+            String perm = acl.optString("perm");
+
+            boolean found = false;
+            for (AclItem aclItem : aclItemList) {
+                if (aclItem.type.equals(type) && aclItem.name.equals(name)) {
+                    aclItem.permList.add(perm);
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                AclItem aclItem = new AclItem();
+                aclItem.type = type;
+                aclItem.name = name;
+                aclItem.permList.add(perm);
+                this.aclItemList.add(aclItem);
+            }
         }
     }
 
     @Override
     public int getCount() {
-        return acls.size();
+        return aclItemList.size();
     }
 
     @Override
-    public JSONObject getItem(int position) {
-        return acls.get(position);
+    public AclItem getItem(int position) {
+        return aclItemList.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return getItem(position).optString("id").hashCode();
+        return getItem(position).hashCode();
     }
 
     @Override
@@ -64,14 +83,29 @@ public class AclListAdapter extends BaseAdapter {
         }
 
         // Fill the view
-        final JSONObject acl = getItem(position);
+        final AclItem aclItem = getItem(position);
         TextView typeTextView = (TextView) view.findViewById(R.id.typeTextView);
-        typeTextView.setText(acl.optString("type"));
+        typeTextView.setText(aclItem.type);
         TextView nameTextView = (TextView) view.findViewById(R.id.nameTextView);
-        nameTextView.setText(acl.optString("name"));
+        nameTextView.setText(aclItem.name);
         TextView permTextView = (TextView) view.findViewById(R.id.permTextView);
-        permTextView.setText(acl.optString("perm"));
+        permTextView.setText(TextUtils.join(" + ", aclItem.permList));
 
         return view;
+    }
+
+    /**
+     * An ACL item in the list.
+     * Permissions are grouped together.
+     */
+    private static class AclItem {
+        private String type;
+        private String name;
+        private List<String> permList = new ArrayList<>();
+
+        @Override
+        public int hashCode() {
+            return (type + name).hashCode();
+        }
     }
 }
