@@ -81,6 +81,7 @@ public class TagResource extends BaseResource {
                     .add("id", tagStatDto.getId())
                     .add("name", tagStatDto.getName())
                     .add("color", tagStatDto.getColor())
+                    .add("parent", JsonUtil.nullable(tagStatDto.getParentId()))
                     .add("count", tagStatDto.getCount()));
         }
         
