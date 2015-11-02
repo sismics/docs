@@ -114,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TagListAdapter adapter = (TagListAdapter) tagListView.getAdapter();
                 if (adapter == null) return;
-                JSONObject tag = adapter.getItem(position);
-                if (tag == null) return;
-                searchQuery("tag:" + tag.optString("name"));
+                TagListAdapter.TagItem tagItem = adapter.getItem(position);
+                if (tagItem == null) return;
+                searchQuery("tag:" + tagItem.getName());
             }
         });
 

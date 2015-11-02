@@ -1,9 +1,11 @@
 package com.sismics.docs.adapter;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +19,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -30,7 +30,7 @@ public class TagListAdapter extends BaseAdapter {
     /**
      * Tags.
      */
-    private List<JSONObject> tags;
+    private List<TagItem> tagItemList = new ArrayList<>();
 
     /**
      * Tag list adapter.
@@ -38,33 +38,53 @@ public class TagListAdapter extends BaseAdapter {
      * @param tagsArray Tags
      */
     public TagListAdapter(JSONArray tagsArray) {
-        this.tags = new ArrayList<>();
+        List<JSONObject> tags = new ArrayList<>();
         for (int i = 0; i < tagsArray.length(); i++) {
             tags.add(tagsArray.optJSONObject(i));
         }
 
-        // Sort tags by count desc
-        Collections.sort(tags, new Comparator<JSONObject>() {
-            @Override
-            public int compare(JSONObject lhs, JSONObject rhs) {
-                return lhs.optInt("count") < rhs.optInt("count") ? 1 : -1;
+        // Reorder tags by parent/child relation and compute depth
+        int depth = 0;
+        initTags(tags, JSONObject.NULL.toString(), depth);
+    }
+
+    /**
+     * Init tags model recursively.
+     *
+     * @param tags All tags from server
+     * @param parentId Parent ID
+     * @param depth Depth
+     */
+    private void initTags(List<JSONObject> tags, String parentId, int depth) {
+        // Get all tags with this parent
+        for (JSONObject tag : tags) {
+            String tagParentId = tag.optString("parent");
+            if (tagParentId.equals(parentId)) {
+                TagItem tagItem = new TagItem();
+                tagItem.id = tag.optString("id");
+                tagItem.name = tag.optString("name");
+                tagItem.count = tag.optInt("count");
+                tagItem.color = tag.optString("color");
+                tagItem.depth = depth;
+                tagItemList.add(tagItem);
+                initTags(tags, tagItem.id, depth + 1);
             }
-        });
+        }
     }
 
     @Override
     public int getCount() {
-        return tags.size();
+        return tagItemList.size();
     }
 
     @Override
-    public JSONObject getItem(int position) {
-        return tags.get(position);
+    public TagItem getItem(int position) {
+        return tagItemList.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return getItem(position).optString("id").hashCode();
+        return getItem(position).id.hashCode();
     }
 
     @Override
@@ -75,19 +95,41 @@ public class TagListAdapter extends BaseAdapter {
         }
 
         // Fill the view
-        JSONObject tag = getItem(position);
+        TagItem tagItem = getItem(position);
         TextView tagTextView = (TextView) view.findViewById(R.id.tagTextView);
-        tagTextView.setText(tag.optString("name"));
+        tagTextView.setText(tagItem.name);
         TextView tagCountTextView = (TextView) view.findViewById(R.id.tagCountTextView);
-        tagCountTextView.setText(tag.optString("count"));
+        tagCountTextView.setText(String.format("%d", tagItem.count));
 
         // Label color filtering
         ImageView labelImageView = (ImageView) view.findViewById(R.id.labelImageView);
         Drawable labelDrawable = labelImageView.getDrawable().mutate();
-        labelDrawable.setColorFilter(Color.parseColor(tag.optString("color")), PorterDuff.Mode.MULTIPLY);
+        labelDrawable.setColorFilter(Color.parseColor(tagItem.color), PorterDuff.Mode.MULTIPLY);
         labelImageView.setImageDrawable(labelDrawable);
         labelImageView.invalidate();
 
+        // Offset according to depth
+        Resources resources = parent.getContext().getResources();
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) labelImageView.getLayoutParams();
+        layoutParams.leftMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, tagItem.depth * 12, resources.getDisplayMetrics());
+        labelImageView.setLayoutParams(layoutParams);
+        labelImageView.requestLayout();
+
         return view;
+    }
+
+    /**
+     * A tag item in the tags list.
+     */
+    public static class TagItem {
+        private String id;
+        private String name;
+        private int count;
+        private String color;
+        private int depth;
+
+        public String getName() {
+            return name;
+        }
     }
 }
