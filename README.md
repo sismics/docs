@@ -25,7 +25,7 @@ Features
 - Flexible search engine
 - Full text search in image and PDF
 - 256-bit AES encryption
-- Tag system
+- Tag system with relations
 - Multi-users ACL system
 - Audit log
 - Document sharing by URL
