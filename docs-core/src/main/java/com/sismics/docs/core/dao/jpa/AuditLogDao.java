@@ -67,6 +67,7 @@ public class AuditLogDao {
             // ACL on document is not checked here, it's assumed
             queries.add(baseQuery + " where l.LOG_IDENTITY_C = :documentId ");
             queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select f.FIL_ID_C from T_FILE f where f.FIL_IDDOC_C = :documentId) ");
+            queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select c.COM_ID_C from T_COMMENT c where c.COM_IDDOC_C = :documentId) ");
             queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select a.ACL_ID_C from T_ACL a where a.ACL_SOURCEID_C = :documentId) ");
             parameterMap.put("documentId", criteria.getDocumentId());
         }
@@ -76,6 +77,7 @@ public class AuditLogDao {
             queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select t.TAG_ID_C from T_TAG t where t.TAG_IDUSER_C = :userId) ");
             // Show only logs from owned documents, ACL are lost on delete
             queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select d.DOC_ID_C from T_DOCUMENT d where d.DOC_IDUSER_C = :userId) ");
+            queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select c.COM_ID_C from T_COMMENT c where c.COM_IDUSER_C = :userId) ");
             parameterMap.put("userId", criteria.getUserId());
         }
         

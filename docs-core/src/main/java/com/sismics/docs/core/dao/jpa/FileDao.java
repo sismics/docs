@@ -63,7 +63,11 @@ public class FileDao {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select f from File f where f.id = :id and f.deleteDate is null");
         q.setParameter("id", id);
-        return (File) q.getSingleResult();
+        try {
+            return (File) q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
     
     /**
@@ -78,7 +82,11 @@ public class FileDao {
         Query q = em.createQuery("select f from File f where f.id = :id and f.userId = :userId and f.deleteDate is null");
         q.setParameter("id", id);
         q.setParameter("userId", userId);
-        return (File) q.getSingleResult();
+        try {
+            return (File) q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
     
     /**

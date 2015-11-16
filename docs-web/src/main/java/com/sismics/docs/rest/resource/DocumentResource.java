@@ -11,7 +11,6 @@ import java.util.UUID;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
-import javax.persistence.NoResultException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -82,16 +81,14 @@ public class DocumentResource extends BaseResource {
         
         DocumentDao documentDao = new DocumentDao();
         AclDao aclDao = new AclDao();
-        DocumentDto documentDto;
-        try {
-            documentDto = documentDao.getDocument(documentId);
-            
-            // Check document visibility
-            if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
-                throw new ForbiddenClientException();
-            }
-        } catch (NoResultException e) {
+        DocumentDto documentDto = documentDao.getDocument(documentId);
+        if (documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
+        }
+            
+        // Check document visibility
+        if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
+            throw new ForbiddenClientException();
         }
 
         JsonObjectBuilder document = Json.createObjectBuilder()
@@ -415,9 +412,8 @@ public class DocumentResource extends BaseResource {
         // Get the document
         DocumentDao documentDao = new DocumentDao();
         Document document;
-        try {
-            document = documentDao.getDocument(id, PermType.WRITE, principal.getId());
-        } catch (NoResultException e) {
+        document = documentDao.getDocument(id, PermType.WRITE, principal.getId());
+        if (document == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
@@ -492,12 +488,9 @@ public class DocumentResource extends BaseResource {
         // Get the document
         DocumentDao documentDao = new DocumentDao();
         FileDao fileDao = new FileDao();
-        Document document;
-        List<File> fileList;
-        try {
-            document = documentDao.getDocument(id, PermType.WRITE, principal.getId());
-            fileList = fileDao.getByDocumentId(principal.getId(), id);
-        } catch (NoResultException e) {
+        Document document = documentDao.getDocument(id, PermType.WRITE, principal.getId());
+        List<File> fileList = fileDao.getByDocumentId(principal.getId(), id);
+        if (document == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         

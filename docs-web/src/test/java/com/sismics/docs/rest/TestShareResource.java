@@ -20,7 +20,6 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.Resources;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 
-
 /**
  * Exhaustive test of the share resource.
  * 

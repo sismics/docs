@@ -16,7 +16,6 @@ import java.util.zip.ZipOutputStream;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
-import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -98,9 +97,8 @@ public class FileResource extends BaseResource {
             documentId = null;
         } else {
             DocumentDao documentDao = new DocumentDao();
-            try {
-                document = documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
-            } catch (NoResultException e) {
+            document = documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
+            if (document == null) {
                 return Response.status(Status.NOT_FOUND).build();
             }
         }
@@ -190,12 +188,9 @@ public class FileResource extends BaseResource {
         // Get the document and the file
         DocumentDao documentDao = new DocumentDao();
         FileDao fileDao = new FileDao();
-        Document document;
-        File file;
-        try {
-            file = fileDao.getFile(id, principal.getId());
-            document = documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
-        } catch (NoResultException e) {
+        File file = fileDao.getFile(id, principal.getId());
+        Document document = documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
+        if (file == null || document == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
@@ -251,9 +246,7 @@ public class FileResource extends BaseResource {
         
         // Get the document
         DocumentDao documentDao = new DocumentDao();
-        try {
-            documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
-        } catch (NoResultException e) {
+        if (documentDao.getDocument(documentId, PermType.WRITE, principal.getId()) == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
@@ -330,19 +323,18 @@ public class FileResource extends BaseResource {
         // Get the file
         FileDao fileDao = new FileDao();
         DocumentDao documentDao = new DocumentDao();
-        File file;
-        try {
-            file = fileDao.getFile(id);
-            if (file.getDocumentId() == null) {
-                // It's an orphan file
-                if (!file.getUserId().equals(principal.getId())) {
-                    // But not ours
-                    throw new ForbiddenClientException();
-                }
-            } else {
-                documentDao.getDocument(file.getDocumentId(), PermType.WRITE, principal.getId());
+        File file = fileDao.getFile(id);
+        if (file == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        
+        if (file.getDocumentId() == null) {
+            // It's an orphan file
+            if (!file.getUserId().equals(principal.getId())) {
+                // But not ours
+                throw new ForbiddenClientException();
             }
-        } catch (NoResultException e) {
+        } else if (documentDao.getDocument(file.getDocumentId(), PermType.WRITE, principal.getId()) == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
@@ -383,25 +375,23 @@ public class FileResource extends BaseResource {
         // Get the file
         FileDao fileDao = new FileDao();
         UserDao userDao = new UserDao();
-        File file;
-        try {
-            file = fileDao.getFile(fileId);
-            
-            if (file.getDocumentId() == null) {
-                // It's an orphan file
-                if (!file.getUserId().equals(principal.getId())) {
-                    // But not ours
-                    throw new ForbiddenClientException();
-                }
-            } else {
-                // Check document accessibility
-                AclDao aclDao = new AclDao();
-                if (!aclDao.checkPermission(file.getDocumentId(), PermType.READ, shareId == null ? principal.getId() : shareId)) {
-                    throw new ForbiddenClientException();
-                }
-            }
-        } catch (NoResultException e) {
+        File file = fileDao.getFile(fileId);
+        if (file == null) {
             return Response.status(Status.NOT_FOUND).build();
+        }
+        
+        if (file.getDocumentId() == null) {
+            // It's an orphan file
+            if (!file.getUserId().equals(principal.getId())) {
+                // But not ours
+                throw new ForbiddenClientException();
+            }
+        } else {
+            // Check document accessibility
+            AclDao aclDao = new AclDao();
+            if (!aclDao.checkPermission(file.getDocumentId(), PermType.READ, shareId == null ? principal.getId() : shareId)) {
+                throw new ForbiddenClientException();
+            }
         }
 
         
@@ -470,17 +460,15 @@ public class FileResource extends BaseResource {
         
         // Get the document
         DocumentDao documentDao = new DocumentDao();
-        DocumentDto documentDto;
-        try {
-            documentDto = documentDao.getDocument(documentId);
-            
-            // Check document visibility
-            AclDao aclDao = new AclDao();
-            if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
-                throw new ForbiddenClientException();
-            }
-        } catch (NoResultException e) {
+        DocumentDto documentDto = documentDao.getDocument(documentId);
+        if (documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
+        }
+        
+        // Check document visibility
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
+            throw new ForbiddenClientException();
         }
         
         // Get files and user associated with this document

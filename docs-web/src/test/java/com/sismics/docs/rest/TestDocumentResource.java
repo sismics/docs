@@ -26,8 +26,6 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 import com.sismics.util.mime.MimeType;
 import com.sismics.util.mime.MimeTypeUtil;
 
-
-
 /**
  * Exhaustive test of the document resource.
  * 

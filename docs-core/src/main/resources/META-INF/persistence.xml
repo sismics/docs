@@ -5,17 +5,5 @@
   version="2.0">
   <persistence-unit name="transactions-optional" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-  
-    <class>com.sismics.docs.core.model.jpa.AuthenticationToken</class>
-    <class>com.sismics.docs.core.model.jpa.BaseFunction</class>
-    <class>com.sismics.docs.core.model.jpa.Config</class>
-    <class>com.sismics.docs.core.model.jpa.User</class>
-    <class>com.sismics.docs.core.model.jpa.RoleBaseFunction</class>
-    <class>com.sismics.docs.core.model.jpa.Document</class>
-    <class>com.sismics.docs.core.model.jpa.Tag</class>
-    <class>com.sismics.docs.core.model.jpa.DocumentTag</class>
-    <class>com.sismics.docs.core.model.jpa.Share</class>
-    <class>com.sismics.docs.core.model.jpa.Acl</class>
-    <class>com.sismics.docs.core.model.jpa.AuditLog</class>
   </persistence-unit>
 </persistence>

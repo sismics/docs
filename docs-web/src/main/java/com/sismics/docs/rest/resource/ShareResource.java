@@ -6,13 +6,13 @@ import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
-import javax.persistence.NoResultException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.PermType;
@@ -53,10 +53,8 @@ public class ShareResource extends BaseResource {
 
         // Get the document
         DocumentDao documentDao = new DocumentDao();
-        try {
-            documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
-        } catch (NoResultException e) {
-            throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", documentId));
+        if (documentDao.getDocument(documentId, PermType.WRITE, principal.getId()) == null) {
+            return Response.status(Status.NOT_FOUND).build();
         }
         
         // Create the share

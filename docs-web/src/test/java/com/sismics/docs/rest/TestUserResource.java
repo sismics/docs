@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 
-
 /**
  * Exhaustive test of the user resource.
  * 
