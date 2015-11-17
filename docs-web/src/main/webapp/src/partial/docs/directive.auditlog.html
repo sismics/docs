@@ -15,7 +15,7 @@
               <a ng-href="#/document/view/{{ log.target }}">{{ log.message }}</a>
             </span>
             <span ng-switch-when="File">
-              <a ng-href="#/document/view/{{ log.message }}/file/{{ log.target }}">Open</a>
+              <a ng-href="#/document/view/{{ log.message }}/content/file/{{ log.target }}">Open</a>
             </span>
             <span ng-switch-when="Comment">
               <a ng-href="#/document/view/{{ log.message }}/comments">See</a>

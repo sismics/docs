@@ -38,24 +38,29 @@
 	  </ul>
 	</div>
 
-  <ul class="nav nav-tabs">
-    <li ng-class="{ active: $state.current.name == 'document.view.content' }">
-      <a href="#/document/view/{{ document.id }}/content">
-        <span class="glyphicon glyphicon-file"></span> Content
-      </a>
-    </li>
-    <li ng-class="{ active: $state.current.name == 'document.view.permissions' }">
-      <a href="#/document/view/{{ document.id }}/permissions">
-        <span class="glyphicon glyphicon-user"></span> Permissions
-      </a>
-    </li>
-    <li ng-class="{ active: $state.current.name == 'document.view.activity' }">
-      <a href="#/document/view/{{ document.id }}/activity">
-        <span class="glyphicon glyphicon-tasks"></span> Activity
-      </a>
-    </li>
-  </ul>
-
-  <div ui-view="tab"></div>
-	<div ui-view="file"></div>
+  <div class="row">
+    <div class="col-md-9">
+      <ul class="nav nav-tabs">
+        <li ng-class="{ active: $state.current.name == 'document.view.content' }">
+          <a href="#/document/view/{{ document.id }}/content">
+            <span class="glyphicon glyphicon-file"></span> Content
+          </a>
+        </li>
+        <li ng-class="{ active: $state.current.name == 'document.view.permissions' }">
+          <a href="#/document/view/{{ document.id }}/permissions">
+            <span class="glyphicon glyphicon-user"></span> Permissions
+          </a>
+        </li>
+        <li ng-class="{ active: $state.current.name == 'document.view.activity' }">
+          <a href="#/document/view/{{ document.id }}/activity">
+            <span class="glyphicon glyphicon-tasks"></span> Activity
+          </a>
+        </li>
+      </ul>
+      <div ui-view="tab"></div>
+    </div>
+    <div class="col-md-3">
+      Comments
+    </div>
+  </div>
 </div>
