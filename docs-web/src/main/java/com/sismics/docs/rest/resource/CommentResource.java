@@ -21,6 +21,7 @@ import com.sismics.docs.core.dao.jpa.dto.CommentDto;
 import com.sismics.docs.core.model.jpa.Comment;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.ImageUtil;
 
 /**
  * Comment REST resource.
@@ -139,6 +140,7 @@ public class CommentResource extends BaseResource {
                     .add("id", commentDto.getId())
                     .add("content", commentDto.getContent())
                     .add("creator", commentDto.getCreatorName())
+                    .add("creator_gravatar", ImageUtil.computeGravatar(commentDto.getCreatorEmail()))
                     .add("create_date", commentDto.getCreateTimestamp()));
         }
         

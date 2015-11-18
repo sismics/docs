@@ -11,6 +11,8 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
 import com.sismics.util.mime.MimeType;
 
 /**
@@ -61,5 +63,22 @@ public class ImageUtil {
      */
     public static boolean isImage(String mimeType) {
         return mimeType.equals(MimeType.IMAGE_GIF) || mimeType.equals(MimeType.IMAGE_PNG) || mimeType.equals(MimeType.IMAGE_JPEG);
+    }
+    
+    /**
+     * Compute Gravatar hash.
+     * See https://en.gravatar.com/site/implement/hash/.
+     * 
+     * @param email
+     * @return Gravatar hash
+     */
+    public static String computeGravatar(String email) {
+        if (email == null) {
+            return null;
+        }
+        
+        return Hashing.md5().hashString(
+                email.trim().toLowerCase(), Charsets.UTF_8)
+                .toString();
     }
 }
