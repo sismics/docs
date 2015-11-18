@@ -60,7 +60,35 @@
       <div ui-view="tab"></div>
     </div>
     <div class="col-md-3">
-      Comments
+      <p class="page-header">
+        <span class="glyphicon glyphicon-comment"></span>
+        Comments
+      </p>
+
+      <div ng-show="!comments || comments.length == 0" class="text-center text-muted">
+        <h1 class="glyphicon glyphicon-comment"></h1>
+        <p ng-show="!comments && !commentsError">Loading...</p>
+        <p ng-show="comments.length == 0">No comments on this document yet</p>
+        <p ng-show="!comments && commentsError">Error loading comments</p>
+      </div>
+
+      <div ng-repeat="comment in comments" style="overflow: hidden">
+        <strong>{{ comment.creator }}</strong>
+        <p>
+          {{ comment.content }}<br />
+          <span class="text-muted">{{ comment.create_date | date: 'yyyy-MM-dd' }}</span>
+          <span class="text-muted pull-right btn-link"
+                ng-show="document.writable || userInfo.username == comment.creator"
+                ng-click="deleteComment(comment)">Delete</span>
+        </p>
+      </div>
+
+      <form ng-submit="addComment()">
+        <div class="form-group">
+          <label class="sr-only" for="commentInput">Email address</label>
+          <input type="text" class="form-control" id="commentInput" ng-model="comment" placeholder="Add a comment">
+        </div>
+      </form>
     </div>
   </div>
 </div>

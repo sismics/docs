@@ -1,4 +1,4 @@
-<p ng-bind-html="document.description | newline"></p>
+<p class="well-sm" ng-bind-html="document.description | newline"></p>
 
 <div ng-file-drop drag-over-class="bg-success" ng-multiple="true" allow-dir="false" ng-model="dropFiles"
      accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">

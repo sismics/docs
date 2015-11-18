@@ -11,6 +11,40 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
     $scope.error = response;
   });
 
+  // Load comments from server
+  Restangular.one('comment', $stateParams.id).get().then(function(data) {
+    $scope.comments = data.comments;
+  }, function(response) {
+    $scope.commentsError = response;
+  });
+
+  /**
+   * Add a comment.
+   */
+  $scope.comment = '';
+  $scope.addComment = function() {
+    if ($scope.comment.length == 0) {
+      return;
+    }
+
+    Restangular.one('comment').put({
+      id: $stateParams.id,
+      content: $scope.comment
+    }).then(function(data) {
+      $scope.comment = '';
+      $scope.comments.push(data);
+    });
+  };
+
+  /**
+   * Delete a comment.
+   */
+  $scope.deleteComment = function(comment) {
+    Restangular.one('comment', comment.id).remove().then(function() {
+      $scope.comments.splice($scope.comments.indexOf(comment), 1);
+    });
+  };
+
   /**
    * Delete a document.
    */
@@ -24,7 +58,7 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
 
     $dialog.messageBox(title, msg, btns, function (result) {
       if (result == 'ok') {
-        Restangular.one('document', document.id).remove().then(function () {
+        Restangular.one('document', document.id).remove().then(function() {
           $scope.loadDocuments();
           $state.go('document.default');
         });
