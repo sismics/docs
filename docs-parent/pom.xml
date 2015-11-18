@@ -25,14 +25,14 @@
     <org.slf4j.version>1.6.4</org.slf4j.version>
     <org.slf4j.jcl-over-slf4j.version>1.6.6</org.slf4j.jcl-over-slf4j.version>
     <junit.junit.version>4.7</junit.junit.version>
-    <com.h2database.h2.version>1.4.188</com.h2database.h2.version>
-    <org.glassfish.jersey.version>2.21</org.glassfish.jersey.version>
+    <com.h2database.h2.version>1.4.190</com.h2database.h2.version>
+    <org.glassfish.jersey.version>2.22.1</org.glassfish.jersey.version>
     <org.mindrot.jbcrypt>0.3m</org.mindrot.jbcrypt>
     <org.apache.lucene.version>4.2.0</org.apache.lucene.version>
     <org.imgscalr.imgscalr-lib.version>4.2</org.imgscalr.imgscalr-lib.version>
-    <org.apache.pdfbox.pdfbox.version>2.0.0-SNAPSHOT</org.apache.pdfbox.pdfbox.version>
-    <org.bouncycastle.bcprov-jdk15on.version>1.49</org.bouncycastle.bcprov-jdk15on.version>
-    <joda-time.joda-time.version>2.8.2</joda-time.joda-time.version>
+    <org.apache.pdfbox.pdfbox.version>2.0.0-RC1</org.apache.pdfbox.pdfbox.version>
+    <org.bouncycastle.bcprov-jdk15on.version>1.53</org.bouncycastle.bcprov-jdk15on.version>
+    <joda-time.joda-time.version>2.9</joda-time.joda-time.version>
     <org.hibernate.hibernate.version>4.1.0.Final</org.hibernate.hibernate.version>
     <javax.servlet.javax.servlet-api.version>3.1.0</javax.servlet.javax.servlet-api.version>
     <com.levigo.jbig2.levigo-jbig2-imageio.version>1.6.3</com.levigo.jbig2.levigo-jbig2-imageio.version>

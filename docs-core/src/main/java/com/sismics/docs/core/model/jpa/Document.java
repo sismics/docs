@@ -4,12 +4,10 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.google.common.base.MoreObjects;
-import com.sismics.docs.core.util.AuditLogUtil;
 
 /**
  * Document entity.
@@ -17,7 +15,6 @@ import com.sismics.docs.core.util.AuditLogUtil;
  * @author bgamard
  */
 @Entity
-@EntityListeners(AuditLogUtil.class)
 @Table(name = "T_DOCUMENT")
 public class Document implements Loggable {
     /**

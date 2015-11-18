@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 
-
 /**
  * Test the tag resource.
  * 

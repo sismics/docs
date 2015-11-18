@@ -173,6 +173,14 @@ angular.module('docs',
           }
         }
       })
+      .state('document.view.content.file', {
+        url: '/file/:fileId',
+        views: {
+          'file': {
+            controller: 'FileView'
+          }
+        }
+      })
       .state('document.view.permissions', {
         url: '/permissions',
         views: {
@@ -188,14 +196,6 @@ angular.module('docs',
           'tab': {
             templateUrl: 'partial/docs/document.view.activity.html',
             controller: 'DocumentViewActivity'
-          }
-        }
-      })
-      .state('document.view.file', {
-        url: '/file/:fileId',
-        views: {
-          'file': {
-            controller: 'FileView'
           }
         }
       })

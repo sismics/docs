@@ -38,7 +38,7 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $stat
    * Navigate to the selected file.
    */
   $scope.openFile = function (file) {
-    $state.go('document.view.file', { id: $stateParams.id, fileId: file.id })
+    $state.go('document.view.content.file', { id: $stateParams.id, fileId: file.id })
   };
 
   /**

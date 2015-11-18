@@ -38,24 +38,57 @@
 	  </ul>
 	</div>
 
-  <ul class="nav nav-tabs">
-    <li ng-class="{ active: $state.current.name == 'document.view.content' }">
-      <a href="#/document/view/{{ document.id }}/content">
-        <span class="glyphicon glyphicon-file"></span> Content
-      </a>
-    </li>
-    <li ng-class="{ active: $state.current.name == 'document.view.permissions' }">
-      <a href="#/document/view/{{ document.id }}/permissions">
-        <span class="glyphicon glyphicon-user"></span> Permissions
-      </a>
-    </li>
-    <li ng-class="{ active: $state.current.name == 'document.view.activity' }">
-      <a href="#/document/view/{{ document.id }}/activity">
-        <span class="glyphicon glyphicon-tasks"></span> Activity
-      </a>
-    </li>
-  </ul>
+  <div class="row">
+    <div class="col-md-9">
+      <ul class="nav nav-tabs">
+        <li ng-class="{ active: $state.current.name == 'document.view.content' }">
+          <a href="#/document/view/{{ document.id }}/content">
+            <span class="glyphicon glyphicon-file"></span> Content
+          </a>
+        </li>
+        <li ng-class="{ active: $state.current.name == 'document.view.permissions' }">
+          <a href="#/document/view/{{ document.id }}/permissions">
+            <span class="glyphicon glyphicon-user"></span> Permissions
+          </a>
+        </li>
+        <li ng-class="{ active: $state.current.name == 'document.view.activity' }">
+          <a href="#/document/view/{{ document.id }}/activity">
+            <span class="glyphicon glyphicon-tasks"></span> Activity
+          </a>
+        </li>
+      </ul>
+      <div ui-view="tab"></div>
+    </div>
+    <div class="col-md-3">
+      <p class="page-header">
+        <span class="glyphicon glyphicon-comment"></span>
+        Comments
+      </p>
 
-  <div ui-view="tab"></div>
-	<div ui-view="file"></div>
+      <div ng-show="!comments || comments.length == 0" class="text-center text-muted">
+        <h1 class="glyphicon glyphicon-comment"></h1>
+        <p ng-show="!comments && !commentsError">Loading...</p>
+        <p ng-show="comments.length == 0">No comments on this document yet</p>
+        <p ng-show="!comments && commentsError">Error loading comments</p>
+      </div>
+
+      <div ng-repeat="comment in comments" style="overflow: hidden">
+        <strong>{{ comment.creator }}</strong>
+        <p>
+          {{ comment.content }}<br />
+          <span class="text-muted">{{ comment.create_date | date: 'yyyy-MM-dd' }}</span>
+          <span class="text-muted pull-right btn-link"
+                ng-show="document.writable || userInfo.username == comment.creator"
+                ng-click="deleteComment(comment)">Delete</span>
+        </p>
+      </div>
+
+      <form ng-submit="addComment()">
+        <div class="form-group">
+          <label class="sr-only" for="commentInput">Email address</label>
+          <input type="text" class="form-control" id="commentInput" ng-model="comment" placeholder="Add a comment">
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

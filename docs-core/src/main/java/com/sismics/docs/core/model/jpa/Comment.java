@@ -5,68 +5,54 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import com.google.common.base.MoreObjects;
 
 /**
- * File entity.
+ * Comment entity.
  * 
  * @author bgamard
  */
 @Entity
-@Table(name = "T_FILE")
-public class File implements Loggable {
+@Table(name = "T_COMMENT")
+public class Comment implements Loggable {
     /**
-     * File ID.
+     * Comment ID.
      */
     @Id
-    @Column(name = "FIL_ID_C", length = 36)
+    @Column(name = "COM_ID_C", length = 36)
     private String id;
     
     /**
      * Document ID.
      */
-    @Column(name = "FIL_IDDOC_C", length = 36)
+    @Column(name = "COM_IDDOC_C", length = 36, nullable = false)
     private String documentId;
     
     /**
      * User ID.
      */
-    @Column(name = "FIL_IDUSER_C", length = 36)
+    @Column(name = "COM_IDUSER_C", length = 36, nullable = false)
     private String userId;
     
     /**
-     * MIME type.
+     * Content.
      */
-    @Column(name = "FIL_MIMETYPE_C", length = 100)
-    private String mimeType;
-    
-    /**
-     * OCR-ized content.
-     */
-    @Lob
-    @Column(name = "FIL_CONTENT_C")
+    @Column(name = "COM_CONTENT_C", nullable = false)
     private String content;
     
     /**
      * Creation date.
      */
-    @Column(name = "FIL_CREATEDATE_D", nullable = false)
+    @Column(name = "COM_CREATEDATE_D", nullable = false)
     private Date createDate;
 
     /**
      * Deletion date.
      */
-    @Column(name = "FIL_DELETEDATE_D")
+    @Column(name = "COM_DELETEDATE_D")
     private Date deleteDate;
-    
-    /**
-     * Display order of this file.
-     */
-    @Column(name = "FIL_ORDER_N")
-    private Integer order;
     
     /**
      * Getter of id.
@@ -104,24 +90,6 @@ public class File implements Loggable {
         this.documentId = documentId;
     }
     
-    /**
-     * Getter of mimeType.
-     *
-     * @return the mimeType
-     */
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    /**
-     * Setter of mimeType.
-     *
-     * @param mimeType mimeType
-     */
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
-    }
-
     /**
      * Getter of createDate.
      *
@@ -178,24 +146,6 @@ public class File implements Loggable {
     }
 
     /**
-     * Getter of order.
-     *
-     * @return the order
-     */
-    public Integer getOrder() {
-        return order;
-    }
-
-    /**
-     * Setter of order.
-     *
-     * @param order order
-     */
-    public void setOrder(Integer order) {
-        this.order = order;
-    }
-    
-    /**
      * Getter of userId.
      * 
      * @return the userId
@@ -217,6 +167,8 @@ public class File implements Loggable {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
+                .add("documentId", documentId)
+                .add("userId", userId)
                 .toString();
     }
 

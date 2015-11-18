@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
@@ -12,7 +11,6 @@ import javax.persistence.Table;
 
 import com.google.common.base.MoreObjects;
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.util.AuditLogUtil;
 
 /**
  * ACL entity.
@@ -20,7 +18,6 @@ import com.sismics.docs.core.util.AuditLogUtil;
  * @author bgamard
  */
 @Entity
-@EntityListeners(AuditLogUtil.class)
 @Table(name = "T_ACL")
 public class Acl implements Loggable {
     /**

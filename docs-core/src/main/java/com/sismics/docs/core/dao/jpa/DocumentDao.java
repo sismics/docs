@@ -83,7 +83,12 @@ public class DocumentDao {
         sb.append(" where d.DOC_IDUSER_C = u.USE_ID_C and d.DOC_ID_C = :id and d.DOC_DELETEDATE_D is null ");
         Query q = em.createNativeQuery(sb.toString());
         q.setParameter("id", id);
-        Object[] o = (Object[]) q.getSingleResult();
+        Object[] o = null;
+        try {
+            o = (Object[]) q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
         
         DocumentDto documentDto = new DocumentDto();
         int i = 0;
@@ -114,7 +119,11 @@ public class DocumentDao {
         q.setParameter("id", id);
         q.setParameter("perm", perm.name());
         q.setParameter("userId", userId);
-        return (Document) q.getSingleResult();
+        try {
+            return (Document) q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
     
     /**
