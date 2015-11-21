@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="well col-md-12">
+  <div class="col-md-10">
     <div class="page-header">
       <h1>
         {{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }}</small>
@@ -25,5 +25,32 @@
      </div>
 
     <div ui-view="file"></div>
+  </div>
+
+  <div class="col-md-2">
+    <p class="page-header">
+      <span class="glyphicon glyphicon-comment"></span>
+      Comments
+    </p>
+
+    <div ng-show="!comments || comments.length == 0" class="text-center text-muted">
+      <h1 class="glyphicon glyphicon-comment"></h1>
+      <p ng-show="!comments && !commentsError">Loading...</p>
+      <p ng-show="comments.length == 0">No comments on this document yet</p>
+      <p ng-show="!comments && commentsError">Error loading comments</p>
+    </div>
+
+    <div ng-repeat="comment in comments" class="media" style="overflow: hidden">
+      <div class="pull-left">
+        <img ng-src="http://www.gravatar.com/avatar/{{ comment.creator_gravatar }}?s=40&d=identicon" class="media-object" />
+      </div>
+      <div class="media-body">
+        <strong>{{ comment.creator }}</strong>
+        <p>
+          {{ comment.content }}<br />
+          <span class="text-muted">{{ comment.create_date | date: 'yyyy-MM-dd' }}</span>
+        </p>
+      </div>
+    </div>
   </div>
 </div>

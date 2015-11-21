@@ -127,6 +127,7 @@ public class TestCommentResource extends BaseJerseyTest {
         Assert.assertEquals(comment2Id, comment.getString("id"));
         Assert.assertEquals("Comment by comment2", comment.getString("content"));
         Assert.assertEquals("comment2", comment.getString("creator"));
+        Assert.assertEquals("d6e56c42f61983bba80d370138763420", comment.getString("creator_gravatar"));
         Assert.assertNotNull(comment.getJsonNumber("create_date"));
         
         // Delete a comment with comment2

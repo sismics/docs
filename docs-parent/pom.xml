@@ -32,7 +32,7 @@
     <org.imgscalr.imgscalr-lib.version>4.2</org.imgscalr.imgscalr-lib.version>
     <org.apache.pdfbox.pdfbox.version>2.0.0-RC1</org.apache.pdfbox.pdfbox.version>
     <org.bouncycastle.bcprov-jdk15on.version>1.53</org.bouncycastle.bcprov-jdk15on.version>
-    <joda-time.joda-time.version>2.9</joda-time.joda-time.version>
+    <joda-time.joda-time.version>2.9.1</joda-time.joda-time.version>
     <org.hibernate.hibernate.version>4.1.0.Final</org.hibernate.hibernate.version>
     <javax.servlet.javax.servlet-api.version>3.1.0</javax.servlet.javax.servlet-api.version>
     <com.levigo.jbig2.levigo-jbig2-imageio.version>1.6.3</com.levigo.jbig2.levigo-jbig2-imageio.version>

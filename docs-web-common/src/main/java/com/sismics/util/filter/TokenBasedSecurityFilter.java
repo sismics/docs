@@ -158,6 +158,9 @@ public class TokenBasedSecurityFilter implements Filter {
         Set<String> baseFunctionSet = userBaseFuction.findByRoleId(user.getRoleId());
         userPrincipal.setBaseFunctionSet(baseFunctionSet);
         
+        // Add email
+        userPrincipal.setEmail(user.getEmail());
+        
         request.setAttribute(PRINCIPAL_ATTRIBUTE, userPrincipal);
     }
 

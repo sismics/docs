@@ -72,15 +72,20 @@
         <p ng-show="!comments && commentsError">Error loading comments</p>
       </div>
 
-      <div ng-repeat="comment in comments" style="overflow: hidden">
-        <strong>{{ comment.creator }}</strong>
-        <p>
-          {{ comment.content }}<br />
-          <span class="text-muted">{{ comment.create_date | date: 'yyyy-MM-dd' }}</span>
+      <div ng-repeat="comment in comments" class="media" style="overflow: hidden">
+        <div class="pull-left">
+          <img ng-src="http://www.gravatar.com/avatar/{{ comment.creator_gravatar }}?s=40&d=identicon" class="media-object" />
+        </div>
+        <div class="media-body">
+          <strong>{{ comment.creator }}</strong>
+          <p>
+            {{ comment.content }}<br />
+            <span class="text-muted">{{ comment.create_date | date: 'yyyy-MM-dd' }}</span>
           <span class="text-muted pull-right btn-link"
                 ng-show="document.writable || userInfo.username == comment.creator"
                 ng-click="deleteComment(comment)">Delete</span>
-        </p>
+          </p>
+        </div>
       </div>
 
       <form ng-submit="addComment()">

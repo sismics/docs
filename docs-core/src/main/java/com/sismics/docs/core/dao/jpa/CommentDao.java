@@ -90,7 +90,7 @@ public class CommentDao {
      */
     public List<CommentDto> getByDocumentId(String documentId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select c.COM_ID_C, c.COM_CONTENT_C, c.COM_CREATEDATE_D, u.USE_USERNAME_C from T_COMMENT c, T_USER u");
+        StringBuilder sb = new StringBuilder("select c.COM_ID_C, c.COM_CONTENT_C, c.COM_CREATEDATE_D, u.USE_USERNAME_C, u.USE_EMAIL_C from T_COMMENT c, T_USER u");
         sb.append(" where c.COM_IDDOC_C = :documentId and c.COM_IDUSER_C = u.USE_ID_C and c.COM_DELETEDATE_D is null ");
         sb.append(" order by c.COM_CREATEDATE_D asc ");
         Query q = em.createNativeQuery(sb.toString());
@@ -106,6 +106,7 @@ public class CommentDao {
             commentDto.setContent((String) o[i++]);
             commentDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
             commentDto.setCreatorName((String) o[i++]);
+            commentDto.setCreatorEmail((String) o[i++]);
             commentDtoList.add(commentDto);
         }
         return commentDtoList;

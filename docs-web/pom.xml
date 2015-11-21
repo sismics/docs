@@ -219,7 +219,6 @@
               </systemProperties>
               <webApp>
                 <contextPath>/docs-web</contextPath>
-                <overrideDescriptor>src/dev/main/webapp/web-override.xml</overrideDescriptor>
               </webApp>
             </configuration>
           </plugin>

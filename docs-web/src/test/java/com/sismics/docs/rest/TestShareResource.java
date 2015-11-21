@@ -78,6 +78,14 @@ public class TestShareResource extends BaseJerseyTest {
         Assert.assertEquals(document1Id, json.getString("id"));
         Assert.assertEquals(3, json.getJsonArray("acls").size()); // 2 for the creator, 1 for the share
 
+        // Get all comments from this document anonymously
+        json = target().path("/comment/" + document1Id)
+                .queryParam("share", share1Id)
+                .request()
+                .get(JsonObject.class);
+        JsonArray comments = json.getJsonArray("comments");
+        Assert.assertEquals(0, comments.size());
+        
         // Get all files from this document anonymously
         json = target().path("/file/list")
                 .queryParam("id", document1Id)
