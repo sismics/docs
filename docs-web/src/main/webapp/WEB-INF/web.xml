@@ -3,7 +3,8 @@
   xmlns="http://java.sun.com/xml/ns/javaee"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-  version="3.0"> 
+  version="3.0"
+  metadata-complete="true"> 
   <display-name>Docs</display-name>
   
   <!-- This filter is used to process a couple things in the request context -->
@@ -55,4 +56,6 @@
     <servlet-name>JerseyServlet</servlet-name>
     <url-pattern>/api/*</url-pattern>
   </servlet-mapping>
+  
+  <absolute-ordering/>
 </web-app>

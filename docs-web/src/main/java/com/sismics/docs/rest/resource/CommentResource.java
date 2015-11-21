@@ -11,6 +11,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -65,8 +66,9 @@ public class CommentResource extends BaseResource {
         // Returns the comment
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("id", comment.getId())
-                .add("creator", principal.getName())
                 .add("content", comment.getContent())
+                .add("creator", principal.getName())
+                .add("creator_gravatar", ImageUtil.computeGravatar(principal.getEmail()))
                 .add("create_date", comment.getCreateDate().getTime());
         return Response.ok().entity(response.build()).build();
     }
@@ -120,14 +122,13 @@ public class CommentResource extends BaseResource {
      */
     @GET
     @Path("{documentId: [a-z0-9\\-]+}")
-    public Response get(@PathParam("documentId") String documentId) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+    public Response get(@PathParam("documentId") String documentId,
+            @QueryParam("share") String shareId) {
+        authenticate();
         
         // Read access on doc gives access to read comments 
         DocumentDao documentDao = new DocumentDao();
-        if (documentDao.getDocument(documentId, PermType.READ, principal.getId()) == null) {
+        if (documentDao.getDocument(documentId, PermType.READ, shareId == null ? principal.getId() : shareId) == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         

@@ -74,9 +74,7 @@
 
       <div ng-repeat="comment in comments" class="media" style="overflow: hidden">
         <div class="pull-left">
-          <a href="#">
-            <img ng-src="http://www.gravatar.com/avatar/{{ comment.creator_gravatar }}?s=40&d=identicon" class="media-object" />
-          </a>
+          <img ng-src="http://www.gravatar.com/avatar/{{ comment.creator_gravatar }}?s=40&d=identicon" class="media-object" />
         </div>
         <div class="media-body">
           <strong>{{ comment.creator }}</strong>
