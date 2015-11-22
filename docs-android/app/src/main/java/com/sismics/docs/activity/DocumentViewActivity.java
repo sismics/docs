@@ -24,6 +24,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -240,6 +242,39 @@ public class DocumentViewActivity extends AppCompatActivity {
             public void onClick(View view) {
                 DialogFragment dialog = DocShareFragment.newInstance(DocumentViewActivity.this.document.optString("id"));
                 dialog.show(getSupportFragmentManager(), "DocShareFragment");
+            }
+        });
+
+        // TODO Delete comment button
+
+        ImageButton imageButton = (ImageButton) findViewById(R.id.addCommentBtn);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
+                if (commentEditText.getText().length() == 0) {
+                    // No content for the new comment
+                    return;
+                }
+
+                Toast.makeText(DocumentViewActivity.this, R.string.adding_comment, Toast.LENGTH_LONG).show();
+
+                CommentResource.add(DocumentViewActivity.this,
+                        DocumentViewActivity.this.document.optString("id"),
+                        commentEditText.getText().toString(),
+                        new JsonHttpResponseHandler() {
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        // TODO Send a new comment event and update the adapter properly
+                        // if there is no adapter yet (comments not loaded), do nothing
+                        commentEditText.setText("");
+                        updateComments();
+                    }
+
+                    @Override
+                    public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                        Toast.makeText(DocumentViewActivity.this, R.string.comment_add_failure, Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         });
 

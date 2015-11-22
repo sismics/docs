@@ -2,6 +2,7 @@ package com.sismics.docs.resource;
 
 import android.content.Context;
 
+import com.loopj.android.http.RequestParams;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 
 
@@ -22,6 +23,23 @@ public class CommentResource extends BaseResource {
         init(context);
 
         client.get(getApiUrl(context) + "/comment/" + documentId, responseHandler);
+    }
+
+    /**
+     * PUT /comment.
+     *
+     * @param context Context
+     * @param documentId Document ID
+     * @param content Comment content
+     * @param responseHandler Callback
+     */
+    public static void add(Context context, String documentId, String content, JsonHttpResponseHandler responseHandler) {
+        init(context);
+
+        RequestParams params = new RequestParams();
+        params.put("id", documentId);
+        params.put("content", content);
+        client.put(getApiUrl(context) + "/comment", params, responseHandler);
     }
 
     /**

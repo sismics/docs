@@ -12,7 +12,7 @@
     <item
         android:id="@+id/comments"
         app:showAsAction="collapseActionView"
-        android:title="@string/show_comments">
+        android:title="@string/comments">
     </item>
 
     <item
