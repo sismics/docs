@@ -10,6 +10,12 @@
     </item>
 
     <item
+        android:id="@+id/comments"
+        app:showAsAction="collapseActionView"
+        android:title="@string/show_comments">
+    </item>
+
+    <item
         android:id="@+id/download_file"
         app:showAsAction="collapseActionView"
         android:title="@string/download_file">

@@ -107,6 +107,10 @@
     <string name="all_languages">All languages</string>
     <string name="toggle_informations">Toggle informations</string>
     <string name="who_can_access">Who can access</string>
+    <string name="show_comments">Show comments</string>
+    <string name="comments">Comments</string>
+    <string name="no_comments">No comments</string>
+    <string name="error_loading_comments">Error loading comments</string>
 
 
 </resources>

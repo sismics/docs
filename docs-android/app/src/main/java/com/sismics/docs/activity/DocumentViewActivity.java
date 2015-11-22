@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.sismics.docs.R;
 import com.sismics.docs.adapter.AclListAdapter;
+import com.sismics.docs.adapter.CommentListAdapter;
 import com.sismics.docs.adapter.FilePagerAdapter;
 import com.sismics.docs.event.DocumentDeleteEvent;
 import com.sismics.docs.event.DocumentEditEvent;
@@ -40,6 +41,7 @@ import com.sismics.docs.event.FileDeleteEvent;
 import com.sismics.docs.fragment.DocShareFragment;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
+import com.sismics.docs.resource.CommentResource;
 import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.resource.FileResource;
 import com.sismics.docs.service.FileUploadService;
@@ -241,6 +243,9 @@ public class DocumentViewActivity extends AppCompatActivity {
             }
         });
 
+        // Grab the comments
+        updateComments();
+
         // Grab the attached files
         updateFiles();
 
@@ -265,6 +270,15 @@ public class DocumentViewActivity extends AppCompatActivity {
                     drawerLayout.closeDrawer(GravityCompat.END);
                 } else {
                     drawerLayout.openDrawer(GravityCompat.END);
+                }
+                return true;
+
+            case R.id.comments:
+                drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);
                 }
                 return true;
 
@@ -568,6 +582,42 @@ public class DocumentViewActivity extends AppCompatActivity {
                 // ACLs
                 ListView aclListView = (ListView) findViewById(R.id.aclListView);
                 aclListView.setAdapter(new AclListAdapter(document.optJSONArray("acls")));
+            }
+        });
+    }
+
+    /**
+     * Refresh comments list.
+     */
+    private void updateComments() {
+        if (document == null) return;
+
+        final View progressBar = findViewById(R.id.commentProgressView);
+        final TextView emptyView = (TextView) findViewById(R.id.commentEmptyView);
+        final ListView listView = (ListView) findViewById(R.id.commentListView);
+        progressBar.setVisibility(View.VISIBLE);
+        emptyView.setVisibility(View.GONE);
+        listView.setVisibility(View.GONE);
+
+        CommentResource.list(this, document.optString("id"), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                JSONArray comments = response.optJSONArray("comments");
+                listView.setAdapter(new CommentListAdapter(comments));
+                listView.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+                if (comments.length() == 0) {
+                    listView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                emptyView.setText(R.string.error_loading_comments);
+                progressBar.setVisibility(View.GONE);
+                listView.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
             }
         });
     }
