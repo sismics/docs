@@ -43,6 +43,19 @@ public class CommentResource extends BaseResource {
     }
 
     /**
+     * DELETE /comment/id.
+     *
+     * @param context Context
+     * @param commentId Comment ID
+     * @param responseHandler Callback
+     */
+    public static void remove(Context context, String commentId, JsonHttpResponseHandler responseHandler) {
+        init(context);
+
+        client.delete(getApiUrl(context) + "/comment/" + commentId, responseHandler);
+    }
+
+    /**
      * Cancel pending requests.
      *
      * @param context Context

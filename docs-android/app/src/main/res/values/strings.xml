@@ -113,7 +113,10 @@
     <string name="send">Send</string>
     <string name="add_comment">Add a comment</string>
     <string name="comment_add_failure">Error adding a comment</string>
-    <string name="adding_comment">Adding a comment...</string>
+    <string name="adding_comment">Adding a comment</string>
+    <string name="comment_delete">Delete comment</string>
+    <string name="deleting_comment">Deleting comment</string>
+    <string name="error_deleting_comment">Error deleting comment</string>
 
 
 </resources>

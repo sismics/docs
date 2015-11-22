@@ -19,10 +19,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -35,6 +37,8 @@ import com.sismics.docs.R;
 import com.sismics.docs.adapter.AclListAdapter;
 import com.sismics.docs.adapter.CommentListAdapter;
 import com.sismics.docs.adapter.FilePagerAdapter;
+import com.sismics.docs.event.CommentAddEvent;
+import com.sismics.docs.event.CommentDeleteEvent;
 import com.sismics.docs.event.DocumentDeleteEvent;
 import com.sismics.docs.event.DocumentEditEvent;
 import com.sismics.docs.event.DocumentFullscreenEvent;
@@ -86,6 +90,11 @@ public class DocumentViewActivity extends AppCompatActivity {
      * File pager adapter.
      */
     private FilePagerAdapter filePagerAdapter;
+
+    /**
+     * Comment list adapter.
+     */
+    private CommentListAdapter commentListAdapter;
 
     /**
      * Document displayed.
@@ -245,8 +254,7 @@ public class DocumentViewActivity extends AppCompatActivity {
             }
         });
 
-        // TODO Delete comment button
-
+        // Button add a comment
         ImageButton imageButton = (ImageButton) findViewById(R.id.addCommentBtn);
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -264,10 +272,8 @@ public class DocumentViewActivity extends AppCompatActivity {
                         commentEditText.getText().toString(),
                         new JsonHttpResponseHandler() {
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        // TODO Send a new comment event and update the adapter properly
-                        // if there is no adapter yet (comments not loaded), do nothing
+                        EventBus.getDefault().post(new CommentAddEvent(response));
                         commentEditText.setText("");
-                        updateComments();
                     }
 
                     @Override
@@ -556,6 +562,36 @@ public class DocumentViewActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * A comment add event has been fired.
+     *
+     * @param event Comment add event
+     */
+    public void onEventMainThread(CommentAddEvent event) {
+        if (commentListAdapter == null) return;
+        TextView emptyView = (TextView) findViewById(R.id.commentEmptyView);
+        ListView listView = (ListView) findViewById(R.id.commentListView);
+        emptyView.setVisibility(View.GONE);
+        listView.setVisibility(View.VISIBLE);
+        commentListAdapter.add(event.getComment());
+    }
+
+    /**
+     * A comment delete event has been fired.
+     *
+     * @param event Comment add event
+     */
+    public void onEventMainThread(CommentDeleteEvent event) {
+        if (commentListAdapter == null) return;
+        TextView emptyView = (TextView) findViewById(R.id.commentEmptyView);
+        ListView listView = (ListView) findViewById(R.id.commentListView);
+        commentListAdapter.remove(event.getCommentId());
+        if (commentListAdapter.getCount() == 0) {
+            emptyView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (document == null) return;
@@ -621,6 +657,51 @@ public class DocumentViewActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        switch (view.getId()) {
+            case R.id.commentListView:
+                if (commentListAdapter == null || document == null) return;
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+                JSONObject comment = commentListAdapter.getItem(info.position);
+                boolean writable = document.optBoolean("writable");
+                String creator = comment.optString("creator");
+                String username = ApplicationContext.getInstance().getUserInfo().optString("username");
+                if (writable || creator.equals(username)) {
+                    menu.add(Menu.NONE, 0, 0, getString(R.string.comment_delete));
+                }
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        // Use real ids if more than one item someday
+        if (item.getItemId() == 0) {
+            // Delete a comment
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+            if (commentListAdapter == null) return false;
+            JSONObject comment = commentListAdapter.getItem(info.position);
+            final String commentId = comment.optString("id");
+            Toast.makeText(DocumentViewActivity.this, R.string.deleting_comment, Toast.LENGTH_LONG).show();
+
+            CommentResource.remove(DocumentViewActivity.this, commentId, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    EventBus.getDefault().post(new CommentDeleteEvent(commentId));
+                }
+
+                @Override
+                public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                    Toast.makeText(DocumentViewActivity.this, R.string.error_deleting_comment, Toast.LENGTH_LONG).show();
+                }
+            });
+
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Refresh comments list.
      */
@@ -633,12 +714,14 @@ public class DocumentViewActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         emptyView.setVisibility(View.GONE);
         listView.setVisibility(View.GONE);
+        registerForContextMenu(listView);
 
         CommentResource.list(this, document.optString("id"), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 JSONArray comments = response.optJSONArray("comments");
-                listView.setAdapter(new CommentListAdapter(comments));
+                commentListAdapter = new CommentListAdapter(comments);
+                listView.setAdapter(commentListAdapter);
                 listView.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
                 if (comments.length() == 0) {

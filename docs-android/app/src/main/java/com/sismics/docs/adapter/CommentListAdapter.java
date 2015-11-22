@@ -99,4 +99,29 @@ public class CommentListAdapter extends BaseAdapter {
 
         return view;
     }
+
+    /**
+     * Add a new comment.
+     *
+     * @param comment Comment
+     */
+    public void add(JSONObject comment) {
+        commentList.add(comment);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Remove a comment.
+     *
+     * @param commentId Comment ID
+     */
+    public void remove(String commentId) {
+        for (JSONObject comment : commentList) {
+            if (comment.optString("id").equals(commentId)) {
+                commentList.remove(comment);
+                notifyDataSetChanged();
+                return;
+            }
+        }
+    }
 }
