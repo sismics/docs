@@ -20,6 +20,8 @@ public class TestJpa extends BaseTransactionalTest {
         user.setUsername("username");
         user.setEmail("toto@docs.com");
         user.setRoleId("admin");
+        user.setStorageCurrent(0l);
+        user.setStorageQuota(10l);
         user.setPrivateKey("AwesomePrivateKey");
         String id = userDao.create(user);
         

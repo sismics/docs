@@ -101,6 +101,8 @@ public class UserDao {
 
         // Update the user
         userFromDb.setEmail(user.getEmail());
+        userFromDb.setStorageQuota(user.getStorageQuota());
+        userFromDb.setStorageCurrent(user.getStorageCurrent());
         
         // Create audit log
         AuditLogUtil.create(userFromDb, AuditLogType.UPDATE);

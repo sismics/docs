@@ -55,7 +55,8 @@ public class TestUserResource extends BaseJerseyTest {
                 .put(Entity.form(new Form()
                         .param("username", "   bb  ")
                         .param("email", "bob@docs.com")
-                        .param("password", "12345678")));
+                        .param("password", "12345678")
+                        .param("storage_quota", "10")));
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
         Assert.assertEquals("ValidationError", json.getString("type"));
@@ -67,11 +68,25 @@ public class TestUserResource extends BaseJerseyTest {
                 .put(Entity.form(new Form()
                         .param("username", "bob-")
                         .param("email", "bob@docs.com")
-                        .param("password", "12345678")));
+                        .param("password", "12345678")
+                        .param("storage_quota", "10")));
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
         Assert.assertEquals("ValidationError", json.getString("type"));
         Assert.assertTrue(json.getString("message"), json.getString("message").contains("alphanumeric"));
+        
+        // Create a user KO (invalid quota)
+        response = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .put(Entity.form(new Form()
+                        .param("username", "bob")
+                        .param("email", "bob@docs.com")
+                        .param("password", "12345678")
+                        .param("storage_quota", "nope")));
+        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+        json = response.readEntity(JsonObject.class);
+        Assert.assertEquals("ValidationError", json.getString("type"));
+        Assert.assertTrue(json.getString("message"), json.getString("message").contains("number"));
 
         // Create a user KO (email format validation)
         response = target().path("/user").request()
@@ -79,7 +94,8 @@ public class TestUserResource extends BaseJerseyTest {
                 .put(Entity.form(new Form()
                         .param("username", "bob")
                         .param("email", "bobdocs.com")
-                        .param("password", "12345678")));
+                        .param("password", "12345678")
+                        .param("storage_quota", "10")));
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
         Assert.assertEquals("ValidationError", json.getString("type"));
@@ -89,7 +105,8 @@ public class TestUserResource extends BaseJerseyTest {
         Form form = new Form()
                 .param("username", " bob ")
                 .param("email", " bob@docs.com ")
-                .param("password", " 12345678 ");
+                .param("password", " 12345678 ")
+                .param("storage_quota", "10");
         json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .put(Entity.form(form), JsonObject.class);
@@ -154,6 +171,8 @@ public class TestUserResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         Assert.assertEquals("alice@docs.com", json.getString("email"));
         Assert.assertFalse(json.getBoolean("is_default_password"));
+        Assert.assertEquals(0l, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(1000000l, json.getJsonNumber("storage_quota").longValue());
         
         // Check bob user information
         json = target().path("/user").request()
@@ -219,6 +238,8 @@ public class TestUserResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .get(JsonObject.class);
         Assert.assertTrue(json.getBoolean("is_default_password"));
+        Assert.assertEquals(0l, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(10000000000l, json.getJsonNumber("storage_quota").longValue());
 
         // User admin updates his information
         json = target().path("/user").request()
