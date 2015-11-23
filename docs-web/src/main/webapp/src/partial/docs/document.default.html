@@ -2,7 +2,7 @@
 
 <div ng-show="app">
   <div class="well">
-    <h3>Quick upload</h3>
+    <h3><span class="glyphicon glyphicon-cloud-upload"></span> Quick upload</h3>
     <div class="row upload-zone" ng-model="dropFiles" ng-file-drop drag-over-class="bg-success"
          ng-multiple="true" allow-dir="false" accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
       <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
@@ -44,8 +44,8 @@
 
   <div ui-view="file"></div>
 
-  <div class="well">
-    <h3>Latest activity</h3>
+  <div>
+    <h3><span class="glyphicon glyphicon-tasks"></span> Latest activity</h3>
     <audit-log logs="logs" />
   </div>
 

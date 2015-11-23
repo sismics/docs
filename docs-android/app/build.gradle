@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'com.android.tools.build:gradle:2.0.0-alpha1'
     }
 }
 apply plugin: 'com.android.application'
@@ -14,7 +14,7 @@ repositories {
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "23.0.2"
+    buildToolsVersion '23.0.2'
 
     defaultConfig {
         minSdkVersion 14
@@ -54,6 +54,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:22.+'
     compile 'com.loopj.android:android-async-http:1.4.6'
     compile 'it.sephiroth.android.library.imagezoom:imagezoom:1.0.5'
-    compile 'de.greenrobot:eventbus:2.4.0'
+    compile 'de.greenrobot:eventbus:2.4.1'
     compile 'com.shamanland:fab:0.0.6'
 }
