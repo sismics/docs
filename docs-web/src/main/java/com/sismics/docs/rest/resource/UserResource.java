@@ -123,8 +123,7 @@ public class UserResource extends BaseResource {
     @POST
     public Response update(
         @FormParam("password") String password,
-        @FormParam("email") String email,
-        @FormParam("storage_quota") String storageQuotaStr) {
+        @FormParam("email") String email) {
         
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -139,10 +138,6 @@ public class UserResource extends BaseResource {
         User user = userDao.getActiveByUsername(principal.getName());
         if (email != null) {
             user.setEmail(email);
-        }
-        if (StringUtils.isNotBlank(storageQuotaStr)) {
-            Long storageQuota = ValidationUtil.validateLong(storageQuotaStr, "storage_quota");
-            user.setStorageQuota(storageQuota);
         }
         user = userDao.update(user);
         
