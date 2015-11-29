@@ -29,6 +29,7 @@ Features
 - Multi-users ACL system
 - Audit log
 - Comments
+- Storage quota per user
 - Document sharing by URL
 - RESTful Web API
 - Fully featured Android client

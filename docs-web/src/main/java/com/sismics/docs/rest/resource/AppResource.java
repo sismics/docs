@@ -228,7 +228,9 @@ public class AppResource extends BaseResource {
         
         // Save all users
         for (User user : userMap.values()) {
-            userDao.update(user);
+            if (user.getDeleteDate() == null) {
+                userDao.update(user);
+            }
         }
         
         // Always return OK
