@@ -1,9 +1,9 @@
 package com.sismics.docs.rest;
 
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Date;
 
 import javax.json.JsonArray;
@@ -68,6 +68,7 @@ public class TestFileResource extends BaseJerseyTest {
                                 MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
                 file1Id = json.getString("id");
                 Assert.assertNotNull(file1Id);
+                Assert.assertEquals(163510l, json.getJsonNumber("size").longValue());
             }
         }
         
@@ -121,8 +122,8 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertTrue(fileBytes.length > 0);
         
         // Check that the files are not readable directly from FS
-        java.io.File storedFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id).toFile();
-        try (InputStream storedFileInputStream = new BufferedInputStream(new FileInputStream(storedFile))) {
+        Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file1Id);
+        try (InputStream storedFileInputStream = new BufferedInputStream(Files.newInputStream(storedFile))) {
             Assert.assertNull(MimeTypeUtil.guessMimeType(storedFileInputStream));
         }
         
@@ -135,6 +136,7 @@ public class TestFileResource extends BaseJerseyTest {
         JsonArray files = json.getJsonArray("files");
         Assert.assertEquals(2, files.size());
         Assert.assertEquals(file1Id, files.getJsonObject(0).getString("id"));
+        Assert.assertEquals(163510l, files.getJsonObject(0).getJsonNumber("size").longValue());
         Assert.assertEquals(file2Id, files.getJsonObject(1).getString("id"));
         
         // Reorder files
@@ -179,12 +181,12 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(Status.NOT_FOUND, Status.fromStatusCode(response.getStatus()));
         
         // Check that files are deleted from FS
-        storedFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id).toFile();
-        java.io.File webFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id + "_web").toFile();
-        java.io.File thumbnailFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id + "_thumb").toFile();
-        Assert.assertFalse(storedFile.exists());
-        Assert.assertFalse(webFile.exists());
-        Assert.assertFalse(thumbnailFile.exists());
+        storedFile = DirectoryUtil.getStorageDirectory().resolve(file1Id);
+        Path webFile = DirectoryUtil.getStorageDirectory().resolve(file1Id + "_web");
+        Path thumbnailFile = DirectoryUtil.getStorageDirectory().resolve(file1Id + "_thumb");
+        Assert.assertFalse(Files.exists(storedFile));
+        Assert.assertFalse(Files.exists(webFile));
+        Assert.assertFalse(Files.exists(thumbnailFile));
         
         // Get all files from a document
         json = target().path("/file/list")
@@ -198,7 +200,7 @@ public class TestFileResource extends BaseJerseyTest {
     
     @Test
     public void testOrphanFile() throws Exception {
-        // Login file1
+        // Login file2
         clientUtil.createUser("file2");
         String file2AuthenticationToken = clientUtil.login("file2");
         
@@ -279,5 +281,98 @@ public class TestFileResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
                 .delete(JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
+    }
+    
+    @Test
+    public void testQuota() throws Exception {
+        // Login file_quota
+        clientUtil.createUser("file_quota");
+        String fileQuotaAuthenticationToken = clientUtil.login("file_quota");
+        
+        // Add a file (292641 bytes large)
+        String file1Id = null;
+        try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                JsonObject json = target()
+                    .register(MultiPartFeature.class)
+                    .path("/file").request()
+                    .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                    .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
+                            MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+                file1Id = json.getString("id");
+                Assert.assertNotNull(file1Id);
+            }
+        }
+        
+        // Check current quota
+        JsonObject json = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(292641l, json.getJsonNumber("storage_current").longValue());
+        
+        // Add a file (292641 bytes large)
+        try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                target()
+                    .register(MultiPartFeature.class)
+                    .path("/file").request()
+                    .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                    .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
+                            MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+            }
+        }
+        
+        // Check current quota
+        json = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(585282l, json.getJsonNumber("storage_current").longValue());
+        
+        // Add a file (292641 bytes large)
+        try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                target()
+                    .register(MultiPartFeature.class)
+                    .path("/file").request()
+                    .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                    .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
+                            MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+            }
+        }
+        
+        // Check current quota
+        json = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(877923l, json.getJsonNumber("storage_current").longValue());
+        
+        // Add a file (292641 bytes large)
+        try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                Response response = target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                        .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE));
+                Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+            }
+        }
+        
+        // Deletes a file
+        json = target().path("/file/" + file1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                .delete(JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
+        
+        // Check current quota
+        json = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(585282l, json.getJsonNumber("storage_current").longValue());
     }
 }

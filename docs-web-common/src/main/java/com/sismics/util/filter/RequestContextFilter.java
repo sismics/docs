@@ -1,6 +1,5 @@
 package com.sismics.util.filter;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 
@@ -44,20 +43,19 @@ public class RequestContextFilter implements Filter {
         if (!filterConfig.getServletContext().getServerInfo().startsWith("Grizzly")) {
             EnvironmentUtil.setWebappContext(true);
         }
-        File baseDataDirectory = null;
         try {
-            baseDataDirectory = DirectoryUtil.getBaseDataDirectory();
+            if (log.isInfoEnabled()) {
+                log.info(MessageFormat.format("Using base data directory: {0}", DirectoryUtil.getBaseDataDirectory()));
+            }
         } catch (Exception e) {
             log.error("Error initializing base data directory", e);
         }
-        if (log.isInfoEnabled()) {
-            log.info(MessageFormat.format("Using base data directory: {0}", baseDataDirectory.toString()));
-        }
+        
         
         // Initialize file logger
         RollingFileAppender fileAppender = new RollingFileAppender();
         fileAppender.setName("FILE");
-        fileAppender.setFile(DirectoryUtil.getLogDirectory() + File.separator + "docs.log");
+        fileAppender.setFile(DirectoryUtil.getLogDirectory().resolve("docs.log").toString());
         fileAppender.setLayout(new PatternLayout("%d{DATE} %p %l %m %n"));
         fileAppender.setThreshold(Level.INFO);
         fileAppender.setAppend(true);

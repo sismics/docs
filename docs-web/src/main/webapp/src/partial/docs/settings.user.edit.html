@@ -37,6 +37,21 @@
         <span class="help-block" ng-show="editUserForm.email.$error.maxlength">Too long</span>
       </div>
     </div>
+    <div class="form-group" ng-class="{ 'has-error': !editUserForm.storage_quota.$valid, success: editUserForm.storage_quota.$valid }">
+      <label class="col-sm-2 control-label" for="inputQuota">Storage quota</label>
+
+      <div class="col-sm-7">
+        <div class="input-group">
+          <input name="storage_quota" type="number" id="inputQuota" required class="form-control"
+                 ng-pattern="/[0-9]*/" placeholder="Storage quota (in MB)" ng-model="user.storage_quota"/>
+          <div class="input-group-addon">MB</div>
+        </div>
+      </div>
+
+      <div class="col-sm-3">
+        <span class="help-block" ng-show="editUserForm.storage_quota.$error.pattern">Number required</span>
+      </div>
+    </div>
     <div class="form-group" ng-class="{ 'has-error': !editUserForm.password.$valid, success: editUserForm.password.$valid }">
       <label class="col-sm-2 control-label" for="inputPassword">Password</label>
   

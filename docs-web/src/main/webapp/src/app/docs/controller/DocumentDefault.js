@@ -3,7 +3,7 @@
 /**
  * Document default controller.
  */
-angular.module('docs').controller('DocumentDefault', function($scope, $state, Restangular, $upload) {
+angular.module('docs').controller('DocumentDefault', function($scope, $rootScope, $state, Restangular, $upload) {
   // Load app data
   Restangular.one('app').get().then(function(data) {
     $scope.app = data;
@@ -73,7 +73,18 @@ angular.module('docs').controller('DocumentDefault', function($scope, $state, Re
           newfile.progress = parseInt(100.0 * e.loaded / e.total);
         })
         .success(function (data) {
+          // Update local model with real data
           newfile.id = data.id;
+          newfile.size = data.size;
+
+          // New file uploaded, increase used quota
+          $rootScope.userInfo.storage_current += data.size;
+        })
+        .error(function (data) {
+          newfile.status = 'Upload error';
+          if (data.type == 'QuotaReached') {
+            newfile.status += ' - Quota reached';
+          }
         });
   };
 
@@ -90,7 +101,11 @@ angular.module('docs').controller('DocumentDefault', function($scope, $state, Re
   $scope.deleteFile = function ($event, file) {
     $event.stopPropagation();
 
-    Restangular.one('file', file.id).remove().then(function () {
+    Restangular.one('file', file.id).remove().then(function() {
+      // File deleted, decrease used quota
+      $rootScope.userInfo.storage_current -= file.size;
+
+      // Update local data
       $scope.loadFiles();
     });
     return false;

@@ -19,11 +19,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,7 +35,10 @@ import android.widget.Toast;
 
 import com.sismics.docs.R;
 import com.sismics.docs.adapter.AclListAdapter;
+import com.sismics.docs.adapter.CommentListAdapter;
 import com.sismics.docs.adapter.FilePagerAdapter;
+import com.sismics.docs.event.CommentAddEvent;
+import com.sismics.docs.event.CommentDeleteEvent;
 import com.sismics.docs.event.DocumentDeleteEvent;
 import com.sismics.docs.event.DocumentEditEvent;
 import com.sismics.docs.event.DocumentFullscreenEvent;
@@ -40,6 +47,7 @@ import com.sismics.docs.event.FileDeleteEvent;
 import com.sismics.docs.fragment.DocShareFragment;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
+import com.sismics.docs.resource.CommentResource;
 import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.resource.FileResource;
 import com.sismics.docs.service.FileUploadService;
@@ -82,6 +90,11 @@ public class DocumentViewActivity extends AppCompatActivity {
      * File pager adapter.
      */
     private FilePagerAdapter filePagerAdapter;
+
+    /**
+     * Comment list adapter.
+     */
+    private CommentListAdapter commentListAdapter;
 
     /**
      * Document displayed.
@@ -241,6 +254,39 @@ public class DocumentViewActivity extends AppCompatActivity {
             }
         });
 
+        // Button add a comment
+        ImageButton imageButton = (ImageButton) findViewById(R.id.addCommentBtn);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final EditText commentEditText = (EditText) findViewById(R.id.commentEditText);
+                if (commentEditText.getText().length() == 0) {
+                    // No content for the new comment
+                    return;
+                }
+
+                Toast.makeText(DocumentViewActivity.this, R.string.adding_comment, Toast.LENGTH_LONG).show();
+
+                CommentResource.add(DocumentViewActivity.this,
+                        DocumentViewActivity.this.document.optString("id"),
+                        commentEditText.getText().toString(),
+                        new JsonHttpResponseHandler() {
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        EventBus.getDefault().post(new CommentAddEvent(response));
+                        commentEditText.setText("");
+                    }
+
+                    @Override
+                    public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                        Toast.makeText(DocumentViewActivity.this, R.string.comment_add_failure, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+
+        // Grab the comments
+        updateComments();
+
         // Grab the attached files
         updateFiles();
 
@@ -265,6 +311,15 @@ public class DocumentViewActivity extends AppCompatActivity {
                     drawerLayout.closeDrawer(GravityCompat.END);
                 } else {
                     drawerLayout.openDrawer(GravityCompat.END);
+                }
+                return true;
+
+            case R.id.comments:
+                drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);
                 }
                 return true;
 
@@ -507,6 +562,36 @@ public class DocumentViewActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * A comment add event has been fired.
+     *
+     * @param event Comment add event
+     */
+    public void onEventMainThread(CommentAddEvent event) {
+        if (commentListAdapter == null) return;
+        TextView emptyView = (TextView) findViewById(R.id.commentEmptyView);
+        ListView listView = (ListView) findViewById(R.id.commentListView);
+        emptyView.setVisibility(View.GONE);
+        listView.setVisibility(View.VISIBLE);
+        commentListAdapter.add(event.getComment());
+    }
+
+    /**
+     * A comment delete event has been fired.
+     *
+     * @param event Comment add event
+     */
+    public void onEventMainThread(CommentDeleteEvent event) {
+        if (commentListAdapter == null) return;
+        TextView emptyView = (TextView) findViewById(R.id.commentEmptyView);
+        ListView listView = (ListView) findViewById(R.id.commentListView);
+        commentListAdapter.remove(event.getCommentId());
+        if (commentListAdapter.getCount() == 0) {
+            emptyView.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (document == null) return;
@@ -568,6 +653,89 @@ public class DocumentViewActivity extends AppCompatActivity {
                 // ACLs
                 ListView aclListView = (ListView) findViewById(R.id.aclListView);
                 aclListView.setAdapter(new AclListAdapter(document.optJSONArray("acls")));
+            }
+        });
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        switch (view.getId()) {
+            case R.id.commentListView:
+                if (commentListAdapter == null || document == null) return;
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+                JSONObject comment = commentListAdapter.getItem(info.position);
+                boolean writable = document.optBoolean("writable");
+                String creator = comment.optString("creator");
+                String username = ApplicationContext.getInstance().getUserInfo().optString("username");
+                if (writable || creator.equals(username)) {
+                    menu.add(Menu.NONE, 0, 0, getString(R.string.comment_delete));
+                }
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        // Use real ids if more than one item someday
+        if (item.getItemId() == 0) {
+            // Delete a comment
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+            if (commentListAdapter == null) return false;
+            JSONObject comment = commentListAdapter.getItem(info.position);
+            final String commentId = comment.optString("id");
+            Toast.makeText(DocumentViewActivity.this, R.string.deleting_comment, Toast.LENGTH_LONG).show();
+
+            CommentResource.remove(DocumentViewActivity.this, commentId, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    EventBus.getDefault().post(new CommentDeleteEvent(commentId));
+                }
+
+                @Override
+                public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                    Toast.makeText(DocumentViewActivity.this, R.string.error_deleting_comment, Toast.LENGTH_LONG).show();
+                }
+            });
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Refresh comments list.
+     */
+    private void updateComments() {
+        if (document == null) return;
+
+        final View progressBar = findViewById(R.id.commentProgressView);
+        final TextView emptyView = (TextView) findViewById(R.id.commentEmptyView);
+        final ListView listView = (ListView) findViewById(R.id.commentListView);
+        progressBar.setVisibility(View.VISIBLE);
+        emptyView.setVisibility(View.GONE);
+        listView.setVisibility(View.GONE);
+        registerForContextMenu(listView);
+
+        CommentResource.list(this, document.optString("id"), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                JSONArray comments = response.optJSONArray("comments");
+                commentListAdapter = new CommentListAdapter(comments);
+                listView.setAdapter(commentListAdapter);
+                listView.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+                if (comments.length() == 0) {
+                    listView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                emptyView.setText(R.string.error_loading_comments);
+                progressBar.setVisibility(View.GONE);
+                listView.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
             }
         });
     }

@@ -142,8 +142,8 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
             success: function(response) {
               deferred.resolve(response);
             },
-            error: function(jqXHR, textStatus, errorThrown) {
-              deferred.reject(errorThrown);
+            error: function(jqXHR) {
+              deferred.reject(jqXHR);
             },
             xhr: function() {
               var myXhr = $.ajaxSettings.xhr();
@@ -155,8 +155,23 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
 
           // Update progress bar and title on progress
           var startProgress = $scope.fileProgress;
-          deferred.promise.then(null, null, function(e) {
-            var done = 1 - (e.total - e.position) / e.total;
+          deferred.promise.then(function(data) {
+            // New file uploaded, increase used quota
+            $rootScope.userInfo.storage_current += data.size;
+          }, function(data) {
+            // Error uploading a file, we stop here
+            $scope.alerts.unshift({
+              type: 'danger',
+              msg: 'Document successfully ' + ($scope.isEdit() ? 'edited' : 'added') + ' but some files cannot be uploaded'
+                + (data.responseJSON.type == 'QuotaReached' ? ' - Quota reached' : '')
+            });
+
+            // Reset view and title
+            $scope.fileIsUploading = false;
+            $scope.fileProgress = 0;
+            $rootScope.pageTitle = 'Sismics Docs';
+          }, function(e) {
+            var done = 1 - (e.total - e.loaded) / e.total;
             var chunk = 100 / _.size($scope.newFiles);
             $scope.fileProgress = startProgress + done * chunk;
             $rootScope.pageTitle = Math.round($scope.fileProgress) + '% - Sismics Docs';
@@ -170,7 +185,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
         var then = function() {
           key++;
           if ($scope.newFiles[key]) {
-            sendFile(key).then(then); // TODO Handle upload error
+            sendFile(key).then(then);
           } else {
             $scope.fileIsUploading = false;
             $scope.fileProgress = 0;

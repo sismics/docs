@@ -155,7 +155,23 @@ public class ValidationUtil {
         try {
             return Integer.valueOf(s);
         } catch (NumberFormatException e) {
-            throw new ClientException("Validation Error", MessageFormat.format("{0} is not a number", name));
+            throw new ClientException("ValidationError", MessageFormat.format("{0} is not a number", name));
+        }
+    }
+    
+    /**
+     * Checks if the string is a number.
+     * 
+     * @param s String to validate
+     * @param name Name of the parameter
+     * @return Parsed number
+     * @throws ClientException
+     */
+    public static Long validateLong(String s, String name) throws ClientException {
+        try {
+            return Long.valueOf(s);
+        } catch (NumberFormatException e) {
+            throw new ClientException("ValidationError", MessageFormat.format("{0} is not a number", name));
         }
     }
     

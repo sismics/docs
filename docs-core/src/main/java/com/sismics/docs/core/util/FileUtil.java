@@ -1,13 +1,11 @@
 package com.sismics.docs.core.util;
 
 import java.awt.image.BufferedImage;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -132,7 +130,7 @@ public class FileUtil {
      */
     public static void save(InputStream inputStream, File file, String privateKey) throws Exception {
         Cipher cipher = EncryptionUtil.getEncryptionCipher(privateKey);
-        Path path = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId());
+        Path path = DirectoryUtil.getStorageDirectory().resolve(file.getId());
         Files.copy(new CipherInputStream(inputStream, cipher), path);
         
         // Generate file variations
@@ -172,21 +170,15 @@ public class FileUtil {
             image.flush();
             
             // Write "web" encrypted image
-            java.io.File outputFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_web").toFile();
-            OutputStream outputStream = new CipherOutputStream(new FileOutputStream(outputFile), cipher);
-            try {
+            Path outputFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_web");
+            try (OutputStream outputStream = new CipherOutputStream(Files.newOutputStream(outputFile), cipher)) {
                 ImageUtil.writeJpeg(web, outputStream);
-            } finally {
-                outputStream.close();
             }
             
             // Write "thumb" encrypted image
-            outputFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_thumb").toFile();
-            outputStream = new CipherOutputStream(new FileOutputStream(outputFile), cipher);
-            try {
+            outputFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_thumb");
+            try (OutputStream outputStream = new CipherOutputStream(Files.newOutputStream(outputFile), cipher)) {
                 ImageUtil.writeJpeg(thumbnail, outputStream);
-            } finally {
-                outputStream.close();
             }
         }
     }
@@ -195,20 +187,21 @@ public class FileUtil {
      * Remove a file from the storage filesystem.
      * 
      * @param file File to delete
+     * @throws IOException 
      */
-    public static void delete(File file) {
-        java.io.File storedFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId()).toFile();
-        java.io.File webFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_web").toFile();
-        java.io.File thumbnailFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId() + "_thumb").toFile();
+    public static void delete(File file) throws IOException {
+        Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+        Path webFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_web");
+        Path thumbnailFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_thumb");
         
-        if (storedFile.exists()) {
-            storedFile.delete();
+        if (Files.exists(storedFile)) {
+            Files.delete(storedFile);
         }
-        if (webFile.exists()) {
-            webFile.delete();
+        if (Files.exists(webFile)) {
+            Files.delete(webFile);
         }
-        if (thumbnailFile.exists()) {
-            thumbnailFile.delete();
+        if (Files.exists(thumbnailFile)) {
+            Files.delete(thumbnailFile);
         }
     }
 }

@@ -40,7 +40,7 @@ public class ClientUtil {
         form.param("username", username);
         form.param("email", username + "@docs.com");
         form.param("password", "12345678");
-        form.param("time_zone", "Asia/Tokyo");
+        form.param("storage_quota", "1000000"); // 1MB quota
         resource.path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .put(Entity.form(form), JsonObject.class);

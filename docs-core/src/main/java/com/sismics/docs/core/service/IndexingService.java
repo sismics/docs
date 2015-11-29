@@ -1,7 +1,7 @@
 package com.sismics.docs.core.service;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.lucene.index.DirectoryReader;
@@ -56,10 +56,10 @@ public class IndexingService extends AbstractScheduledService {
             directory = new RAMDirectory();
             log.info("Using RAM Lucene storage");
         } else if (luceneStorageConfig.equals(Constants.LUCENE_DIRECTORY_STORAGE_FILE)) {
-            File luceneDirectory = DirectoryUtil.getLuceneDirectory();
+            Path luceneDirectory = DirectoryUtil.getLuceneDirectory();
             log.info("Using file Lucene storage: {}", luceneDirectory);
             try {
-                directory = new SimpleFSDirectory(luceneDirectory, new SimpleFSLockFactory());
+                directory = new SimpleFSDirectory(luceneDirectory.toFile(), new SimpleFSLockFactory());
             } catch (IOException e) {
                 log.error("Error initializing Lucene index", e);
             }

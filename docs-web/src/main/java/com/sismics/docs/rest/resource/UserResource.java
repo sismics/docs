@@ -64,7 +64,8 @@ public class UserResource extends BaseResource {
     public Response register(
         @FormParam("username") String username,
         @FormParam("password") String password,
-        @FormParam("email") String email) {
+        @FormParam("email") String email,
+        @FormParam("storage_quota") String storageQuotaStr) {
 
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -76,6 +77,7 @@ public class UserResource extends BaseResource {
         ValidationUtil.validateAlphanumeric(username, "username");
         password = ValidationUtil.validateLength(password, "password", 8, 50);
         email = ValidationUtil.validateLength(email, "email", 3, 50);
+        Long storageQuota = ValidationUtil.validateLong(storageQuotaStr, "storage_quota");
         ValidationUtil.validateEmail(email, "email");
         
         // Create the user
@@ -84,6 +86,8 @@ public class UserResource extends BaseResource {
         user.setUsername(username);
         user.setPassword(password);
         user.setEmail(email);
+        user.setStorageQuota(storageQuota);
+        user.setStorageCurrent(0l);
         try {
             user.setPrivateKey(EncryptionUtil.generatePrivateKey());
         } catch (NoSuchAlgorithmException e) {
@@ -135,9 +139,9 @@ public class UserResource extends BaseResource {
         if (email != null) {
             user.setEmail(email);
         }
-
         user = userDao.update(user);
         
+        // Change the password
         if (StringUtils.isNotBlank(password)) {
             user.setPassword(password);
             userDao.updatePassword(user);
@@ -162,7 +166,8 @@ public class UserResource extends BaseResource {
     public Response update(
         @PathParam("username") String username,
         @FormParam("password") String password,
-        @FormParam("email") String email) {
+        @FormParam("email") String email,
+        @FormParam("storage_quota") String storageQuotaStr) {
         
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -184,11 +189,14 @@ public class UserResource extends BaseResource {
         if (email != null) {
             user.setEmail(email);
         }
-        
+        if (StringUtils.isNotBlank(storageQuotaStr)) {
+            Long storageQuota = ValidationUtil.validateLong(storageQuotaStr, "storage_quota");
+            user.setStorageQuota(storageQuota);
+        }
         user = userDao.update(user);
         
+        // Change the password
         if (StringUtils.isNotBlank(password)) {
-            // Change the password
             user.setPassword(password);
             userDao.updatePassword(user);
         }
@@ -406,7 +414,9 @@ public class UserResource extends BaseResource {
             UserDao userDao = new UserDao();
             User user = userDao.getById(principal.getId());
             response.add("username", user.getUsername())
-                    .add("email", user.getEmail());
+                    .add("email", user.getEmail())
+                    .add("storage_quota", user.getStorageQuota())
+                    .add("storage_current", user.getStorageCurrent());
             JsonArrayBuilder baseFunctions = Json.createArrayBuilder();
             for (String baseFunction : ((UserPrincipal) principal).getBaseFunctionSet()) {
                 baseFunctions.add(baseFunction);
@@ -441,7 +451,9 @@ public class UserResource extends BaseResource {
         
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("username", user.getUsername())
-                .add("email", user.getEmail());
+                .add("email", user.getEmail())
+                .add("storage_quota", user.getStorageQuota())
+                .add("storage_current", user.getStorageCurrent());
         return Response.ok().entity(response.build()).build();
     }
     
@@ -477,6 +489,8 @@ public class UserResource extends BaseResource {
                     .add("id", userDto.getId())
                     .add("username", userDto.getUsername())
                     .add("email", userDto.getEmail())
+                    .add("storage_quota", userDto.getStorageQuota())
+                    .add("storage_current", userDto.getStorageCurrent())
                     .add("create_date", userDto.getCreateTimestamp()));
         }
         

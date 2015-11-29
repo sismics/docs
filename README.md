@@ -28,6 +28,7 @@ Features
 - Tag system with relations
 - Multi-users ACL system
 - Audit log
+- Comments
 - Document sharing by URL
 - RESTful Web API
 - Fully featured Android client

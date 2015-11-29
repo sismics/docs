@@ -1,6 +1,9 @@
 package com.sismics.docs.core.util;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -17,27 +20,31 @@ public class DirectoryUtil {
      * 
      * @return Base data directory
      */
-    public static File getBaseDataDirectory() {
-        File baseDataDir = null;
+    public static Path getBaseDataDirectory() {
+        Path baseDataDir = null;
         if (StringUtils.isNotBlank(EnvironmentUtil.getDocsHome())) {
             // If the docs.home property is set then use it
-            baseDataDir = new File(EnvironmentUtil.getDocsHome());
+            baseDataDir = Paths.get(EnvironmentUtil.getDocsHome());
         } else if (EnvironmentUtil.isUnitTest()) {
             // For unit testing, use a temporary directory
-            baseDataDir = new File(System.getProperty("java.io.tmpdir"));
+            baseDataDir = Paths.get(System.getProperty("java.io.tmpdir"));
         } else {
             // We are in a webapp environment and nothing is specified, use the default directory for this OS
             if (EnvironmentUtil.isUnix()) {
-                baseDataDir = new File("/var/docs");
+                baseDataDir = Paths.get("/var/docs");
             } if (EnvironmentUtil.isWindows()) {
-                baseDataDir = new File(EnvironmentUtil.getWindowsAppData() + "\\Sismics\\Docs");
+                baseDataDir = Paths.get(EnvironmentUtil.getWindowsAppData() + "\\Sismics\\Docs");
             } else if (EnvironmentUtil.isMacOs()) {
-                baseDataDir = new File(EnvironmentUtil.getMacOsUserHome() + "/Library/Sismics/Docs");
+                baseDataDir = Paths.get(EnvironmentUtil.getMacOsUserHome() + "/Library/Sismics/Docs");
             }
         }
 
-        if (baseDataDir != null && !baseDataDir.isDirectory()) {
-            baseDataDir.mkdirs();
+        if (baseDataDir != null && !Files.isDirectory(baseDataDir)) {
+            try {
+                Files.createDirectories(baseDataDir);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         return baseDataDir;
@@ -48,7 +55,7 @@ public class DirectoryUtil {
      * 
      * @return Database directory.
      */
-    public static File getDbDirectory() {
+    public static Path getDbDirectory() {
         return getDataSubDirectory("db");
     }
 
@@ -57,7 +64,7 @@ public class DirectoryUtil {
      * 
      * @return Lucene indexes directory.
      */
-    public static File getLuceneDirectory() {
+    public static Path getLuceneDirectory() {
         return getDataSubDirectory("lucene");
     }
     
@@ -66,7 +73,7 @@ public class DirectoryUtil {
      * 
      * @return Storage directory.
      */
-    public static File getStorageDirectory() {
+    public static Path getStorageDirectory() {
         return getDataSubDirectory("storage");
     }
     
@@ -75,7 +82,7 @@ public class DirectoryUtil {
      * 
      * @return Log directory.
      */
-    public static File getLogDirectory() {
+    public static Path getLogDirectory() {
         return getDataSubDirectory("log");
     }
 
@@ -84,11 +91,15 @@ public class DirectoryUtil {
      * 
      * @return Subdirectory
      */
-    private static File getDataSubDirectory(String subdirectory) {
-        File baseDataDir = getBaseDataDirectory();
-        File directory = new File(baseDataDir.getPath() + File.separator + subdirectory);
-        if (!directory.isDirectory()) {
-            directory.mkdirs();
+    private static Path getDataSubDirectory(String subdirectory) {
+        Path baseDataDir = getBaseDataDirectory();
+        Path directory = baseDataDir.resolve(subdirectory);
+        if (!Files.isDirectory(directory)) {
+            try {
+                Files.createDirectories(directory);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         return directory;
     }

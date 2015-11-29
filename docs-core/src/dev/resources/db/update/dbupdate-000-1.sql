@@ -1,0 +1,1 @@
+update T_CONFIG set CFG_VALUE_C = 'RAM' where CFG_ID_C = 'LUCENE_DIRECTORY_STORAGE';
