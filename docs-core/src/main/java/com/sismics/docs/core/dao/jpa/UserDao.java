@@ -228,7 +228,7 @@ public class UserDao {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
         List<String> criteriaList = new ArrayList<String>();
         
-        StringBuilder sb = new StringBuilder("select u.USE_ID_C as c0, u.USE_USERNAME_C as c1, u.USE_EMAIL_C as c2, u.USE_CREATEDATE_D as c3");
+        StringBuilder sb = new StringBuilder("select u.USE_ID_C as c0, u.USE_USERNAME_C as c1, u.USE_EMAIL_C as c2, u.USE_CREATEDATE_D as c3, u.USE_STORAGECURRENT_N as c4, u.USE_STORAGEQUOTA_N as c5");
         sb.append(" from T_USER u ");
         
         // Add search criterias
@@ -257,6 +257,8 @@ public class UserDao {
             userDto.setUsername((String) o[i++]);
             userDto.setEmail((String) o[i++]);
             userDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
+            userDto.setStorageCurrent(((Number) o[i++]).longValue());
+            userDto.setStorageQuota(((Number) o[i++]).longValue());
             userDtoList.add(userDto);
         }
         paginatedList.setResultList(userDtoList);

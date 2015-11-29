@@ -1,8 +1,6 @@
 package com.sismics.docs.rest;
 
-import java.io.File;
 import java.net.URI;
-import java.net.URLDecoder;
 
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.UriBuilder;
@@ -63,8 +61,7 @@ public abstract class BaseJerseyTest extends JerseyTest {
         
         clientUtil = new ClientUtil(target());
         
-        String httpRoot = URLDecoder.decode(new File(getClass().getResource("/").getFile()).getAbsolutePath(), "utf-8");
-        httpServer = HttpServer.createSimpleServer(httpRoot, "localhost", getPort());
+        httpServer = HttpServer.createSimpleServer(getClass().getResource("/").getFile(), "localhost", getPort());
         WebappContext context = new WebappContext("GrizzlyContext", "/docs");
         context.addFilter("requestContextFilter", RequestContextFilter.class)
                 .addMappingForUrlPatterns(null, "/*");

@@ -1,10 +1,10 @@
 package com.sismics.docs.rest.resource;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -123,6 +123,11 @@ public class FileResource extends BaseResource {
             throw new ClientException("InvalidFileType", "File type not recognized");
         }
         
+        // Validate quota
+        if (user.getStorageCurrent() + fileData.length > user.getStorageQuota()) {
+            throw new ClientException("QuotaReached", "Quota limit reached");
+        }
+        
         try {
             // Get files of this document
             FileDao fileDao = new FileDao();
@@ -143,6 +148,10 @@ public class FileResource extends BaseResource {
             
             // Save the file
             FileUtil.save(fileInputStream, file, user.getPrivateKey());
+            
+            // Update the user quota
+            user.setStorageCurrent(user.getStorageCurrent() + fileData.length);
+            userDao.update(user);
             
             // Raise a new file created event if we have a document
             if (documentId != null) {
@@ -206,8 +215,8 @@ public class FileResource extends BaseResource {
         
         // Raise a new file created event (it wasn't sent during file creation)
         try {
-            java.io.File storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), id).toFile();
-            InputStream fileInputStream = new FileInputStream(storedfile);
+            java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
+            InputStream fileInputStream = Files.newInputStream(storedFile);
             final InputStream responseInputStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey());
             FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
             fileCreatedAsyncEvent.setDocument(document);
@@ -341,6 +350,17 @@ public class FileResource extends BaseResource {
         // Delete the file
         fileDao.delete(file.getId());
         
+        // Update the user quota
+        UserDao userDao = new UserDao();
+        User user = userDao.getById(principal.getId());
+        java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
+        try {
+            user.setStorageCurrent(user.getStorageCurrent() - Files.size(storedFile));
+            userDao.update(user);
+        } catch (IOException e) {
+            // The file doesn't exists on disk, which is weird, but not fatal
+        }
+        
         // Raise a new file deleted event
         FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
         fileDeletedAsyncEvent.setFile(file);
@@ -396,30 +416,33 @@ public class FileResource extends BaseResource {
 
         
         // Get the stored file
-        java.io.File storedfile;
+        java.nio.file.Path storedFile;
         String mimeType;
         boolean decrypt = false;
         if (size != null) {
-            storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), fileId + "_" + size).toFile();
+            storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_" + size);
             mimeType = MimeType.IMAGE_JPEG; // Thumbnails are JPEG
             decrypt = true; // Thumbnails are encrypted
-            if (!storedfile.exists()) {
-                storedfile = new java.io.File(getClass().getResource("/image/file.png").getFile());
+            if (!Files.exists(storedFile)) {
+                storedFile = Paths.get(getClass().getResource("/image/file.png").getFile());
                 mimeType = MimeType.IMAGE_PNG;
                 decrypt = false;
             }
         } else {
-            storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), fileId).toFile();
+            storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId);
             mimeType = file.getMimeType();
             decrypt = true; // Original files are encrypted
         }
         
         // Stream the output and decrypt it if necessary
         StreamingOutput stream;
+        
         // A file is always encrypted by the creator of it
         User user = userDao.getById(file.getUserId());
+        
+        // Write the decrypted file to the output
         try {
-            InputStream fileInputStream = new FileInputStream(storedfile);
+            InputStream fileInputStream = Files.newInputStream(storedFile);
             final InputStream responseInputStream = decrypt ?
                     EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey()) : fileInputStream;
                     
@@ -484,8 +507,8 @@ public class FileResource extends BaseResource {
                     // Add each file to the ZIP stream
                     int index = 0;
                     for (File file : fileList) {
-                        java.io.File storedfile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file.getId()).toFile();
-                        InputStream fileInputStream = new FileInputStream(storedfile);
+                        java.nio.file.Path storedfile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+                        InputStream fileInputStream = Files.newInputStream(storedfile);
                         
                         // Add the decrypted file to the ZIP stream
                         // Files are encrypted by the creator of them

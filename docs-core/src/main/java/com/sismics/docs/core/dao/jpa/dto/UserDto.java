@@ -1,5 +1,6 @@
 package com.sismics.docs.core.dao.jpa.dto;
 
+
 /**
  * User DTO.
  *
@@ -26,6 +27,16 @@ public class UserDto {
      */
     private Long createTimestamp;
 
+    /**
+     * Storage quota.
+     */
+    private Long storageQuota;
+    
+    /**
+     * Storage current usage.
+     */
+    private Long storageCurrent;
+    
     /**
      * Getter of id.
      *
@@ -87,6 +98,22 @@ public class UserDto {
      */
     public Long getCreateTimestamp() {
         return createTimestamp;
+    }
+    
+    public Long getStorageQuota() {
+        return storageQuota;
+    }
+
+    public void setStorageQuota(Long storageQuota) {
+        this.storageQuota = storageQuota;
+    }
+
+    public Long getStorageCurrent() {
+        return storageCurrent;
+    }
+
+    public void setStorageCurrent(Long storageCurrent) {
+        this.storageCurrent = storageCurrent;
     }
 
     /**

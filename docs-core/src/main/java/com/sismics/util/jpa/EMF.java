@@ -1,6 +1,16 @@
 package com.sismics.util.jpa;
 
-import com.sismics.docs.core.util.DirectoryUtil;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
 import org.hibernate.cfg.Environment;
 import org.hibernate.internal.util.config.ConfigurationHelper;
 import org.hibernate.service.ServiceRegistry;
@@ -8,15 +18,7 @@ import org.hibernate.service.ServiceRegistryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import com.sismics.docs.core.util.DirectoryUtil;
 
 /**
  * Entity manager factory.
@@ -79,8 +81,8 @@ public final class EMF {
         log.info("Configuring EntityManager from environment parameters");
         Map<Object, Object> props = new HashMap<Object, Object>();
         props.put("hibernate.connection.driver_class", "org.h2.Driver");
-        File dbDirectory = DirectoryUtil.getDbDirectory();
-        String dbFile = dbDirectory.getAbsoluteFile() + File.separator + "docs";
+        Path dbDirectory = DirectoryUtil.getDbDirectory();
+        String dbFile = dbDirectory.resolve("docs").toAbsolutePath().toString();
         props.put("hibernate.connection.url", "jdbc:h2:file:" + dbFile + ";CACHE_SIZE=65536");
         props.put("hibernate.connection.username", "sa");
         props.put("hibernate.hbm2ddl.auto", "none");

@@ -489,6 +489,8 @@ public class UserResource extends BaseResource {
                     .add("id", userDto.getId())
                     .add("username", userDto.getUsername())
                     .add("email", userDto.getEmail())
+                    .add("storage_quota", userDto.getStorageQuota())
+                    .add("storage_current", userDto.getStorageCurrent())
                     .add("create_date", userDto.getCreateTimestamp()));
         }
         

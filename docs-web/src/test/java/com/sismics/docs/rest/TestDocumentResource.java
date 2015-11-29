@@ -1,7 +1,6 @@
 package com.sismics.docs.rest;
 
 import java.io.InputStream;
-import java.nio.file.Paths;
 import java.util.Date;
 
 import javax.json.JsonArray;
@@ -237,9 +236,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals("ok", json.getString("status"));
         
         // Check that the associated files are deleted from FS
-        java.io.File storedFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id).toFile();
-        java.io.File webFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id + "_web").toFile();
-        java.io.File thumbnailFile = Paths.get(DirectoryUtil.getStorageDirectory().getPath(), file1Id + "_thumb").toFile();
+        java.io.File storedFile = DirectoryUtil.getStorageDirectory().resolve(file1Id).toFile();
+        java.io.File webFile = DirectoryUtil.getStorageDirectory().resolve(file1Id + "_web").toFile();
+        java.io.File thumbnailFile = DirectoryUtil.getStorageDirectory().resolve(file1Id + "_thumb").toFile();
         Assert.assertFalse(storedFile.exists());
         Assert.assertFalse(webFile.exists());
         Assert.assertFalse(thumbnailFile.exists());

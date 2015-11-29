@@ -1,5 +1,8 @@
 package com.sismics.docs.rest.resource;
 
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -165,13 +168,16 @@ public class AppResource extends BaseResource {
         }
         
         // Check if each stored file is valid
-        java.io.File[] storedFileList = DirectoryUtil.getStorageDirectory().listFiles();
-        for (java.io.File storedFile : storedFileList) {
-            String fileName = storedFile.getName();
-            String[] fileNameArray = fileName.split("_");
-            if (!fileMap.containsKey(fileNameArray[0])) {
-                storedFile.delete();
+        try (DirectoryStream<java.nio.file.Path> storedFileList = Files.newDirectoryStream(DirectoryUtil.getStorageDirectory())) {
+            for (java.nio.file.Path storedFile : storedFileList) {
+                String fileName = storedFile.getFileName().toString();
+                String[] fileNameArray = fileName.split("_");
+                if (!fileMap.containsKey(fileNameArray[0])) {
+                    Files.delete(storedFile);
+                }
             }
+        } catch (IOException e) {
+            throw new ServerException("FileError", "Error deleting orphan files", e);
         }
         
         // Always return OK
