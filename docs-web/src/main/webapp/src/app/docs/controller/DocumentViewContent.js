@@ -3,7 +3,7 @@
 /**
  * Document view content controller.
  */
-angular.module('docs').controller('DocumentViewContent', function ($scope, $stateParams, Restangular, $dialog, $state, $upload) {
+angular.module('docs').controller('DocumentViewContent', function ($scope, $rootScope, $stateParams, Restangular, $dialog, $state, $upload) {
   /**
    * Configuration for file sorting.
    */
@@ -55,6 +55,10 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $stat
     $dialog.messageBox(title, msg, btns, function (result) {
       if (result == 'ok') {
         Restangular.one('file', file.id).remove().then(function () {
+          // File deleted, decrease used quota
+          $rootScope.userInfo.storage_current -= file.size;
+
+          // Update local data
           $scope.loadFiles();
         });
       }
@@ -109,11 +113,22 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $stat
         id: $stateParams.id
       }
     })
-        .progress(function (e) {
+        .progress(function(e) {
           newfile.progress = parseInt(100.0 * e.loaded / e.total);
         })
-        .success(function (data) {
+        .success(function(data) {
+          // Update local model with real data
           newfile.id = data.id;
+          newfile.size = data.size;
+
+          // New file uploaded, increase used quota
+          $rootScope.userInfo.storage_current += data.size;
+        })
+        .error(function (data) {
+          newfile.status = 'Upload error';
+          if (data.type == 'QuotaReached') {
+            newfile.status += ' - Quota reached';
+          }
         });
   };
 });

@@ -68,6 +68,7 @@ public class TestFileResource extends BaseJerseyTest {
                                 MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
                 file1Id = json.getString("id");
                 Assert.assertNotNull(file1Id);
+                Assert.assertEquals(163510l, json.getJsonNumber("size").longValue());
             }
         }
         
@@ -135,6 +136,7 @@ public class TestFileResource extends BaseJerseyTest {
         JsonArray files = json.getJsonArray("files");
         Assert.assertEquals(2, files.size());
         Assert.assertEquals(file1Id, files.getJsonObject(0).getString("id"));
+        Assert.assertEquals(163510l, files.getJsonObject(0).getJsonNumber("size").longValue());
         Assert.assertEquals(file2Id, files.getJsonObject(1).getString("id"));
         
         // Reorder files

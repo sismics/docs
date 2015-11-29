@@ -165,7 +165,8 @@ public class FileResource extends BaseResource {
             // Always return OK
             JsonObjectBuilder response = Json.createObjectBuilder()
                     .add("status", "ok")
-                    .add("id", fileId);
+                    .add("id", fileId)
+                    .add("size", fileData.length);
             return Response.ok().entity(response.build()).build();
         } catch (Exception e) {
             throw new ServerException("FileError", "Error adding a file", e);
@@ -303,11 +304,16 @@ public class FileResource extends BaseResource {
 
         JsonArrayBuilder files = Json.createArrayBuilder();
         for (File fileDb : fileList) {
-            files.add(Json.createObjectBuilder()
-                    .add("id", fileDb.getId())
-                    .add("mimetype", fileDb.getMimeType())
-                    .add("document_id", JsonUtil.nullable(fileDb.getDocumentId()))
-                    .add("create_date", fileDb.getCreateDate().getTime()));
+            try {
+                files.add(Json.createObjectBuilder()
+                        .add("id", fileDb.getId())
+                        .add("mimetype", fileDb.getMimeType())
+                        .add("document_id", JsonUtil.nullable(fileDb.getDocumentId()))
+                        .add("create_date", fileDb.getCreateDate().getTime())
+                        .add("size", Files.size(DirectoryUtil.getStorageDirectory().resolve(fileDb.getId()))));
+            } catch (IOException e) {
+                throw new ServerException("FileError", "Unable to get the size of " + fileDb.getId(), e);
+            }
         }
         
         JsonObjectBuilder response = Json.createObjectBuilder()
