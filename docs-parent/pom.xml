@@ -48,6 +48,7 @@
     <org.apache.maven.plugins.maven-release-plugin.version>2.5.2</org.apache.maven.plugins.maven-release-plugin.version>
     <org.apache.maven.plugins.maven-resources-plugin.version>2.7</org.apache.maven.plugins.maven-resources-plugin.version>
     <org.apache.maven.plugins.maven-war-plugin.version>2.6</org.apache.maven.plugins.maven-war-plugin.version>
+    <org.apache.maven.plugins.maven-surefire-plugin.version>2.18.1</org.apache.maven.plugins.maven-surefire-plugin.version>
     <org.eclipse.jetty.jetty-maven-plugin.version>9.2.13.v20150730</org.eclipse.jetty.jetty-maven-plugin.version>
   </properties>
   
@@ -109,11 +110,16 @@
       </plugin>
       
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${org.apache.maven.plugins.maven-surefire-plugin.version}</version>
+      </plugin>
+      
+      <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${org.eclipse.jetty.jetty-maven-plugin.version}</version>
       </plugin>
-      
     </plugins>
   </build>
         
