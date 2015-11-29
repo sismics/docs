@@ -53,6 +53,12 @@ public class TestAppResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .post(Entity.form(new Form()));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        
+        // Recompute quota
+        response = target().path("/app/batch/recompute_quota").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .post(Entity.form(new Form()));
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
     }
 
     /**

@@ -16,6 +16,7 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
    */
   if ($scope.isEdit()) {
     Restangular.one('user', $stateParams.username).get().then(function(data) {
+      data.storage_quota /= 1000000;
       $scope.user = data;
     });
   }
@@ -25,15 +26,17 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
    */
   $scope.edit = function() {
     var promise = null;
+    var user = angular.copy($scope.user);
+    user.storage_quota *= 1000000;
     
     if ($scope.isEdit()) {
       promise = Restangular
       .one('user', $stateParams.username)
-      .post('', $scope.user);
+      .post('', user);
     } else {
       promise = Restangular
       .one('user')
-      .put($scope.user);
+      .put(user);
     }
     
     promise.then(function() {

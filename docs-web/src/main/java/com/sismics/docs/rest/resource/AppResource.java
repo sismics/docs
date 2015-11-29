@@ -22,8 +22,10 @@ import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
 
 import com.sismics.docs.core.dao.jpa.FileDao;
+import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
@@ -178,6 +180,55 @@ public class AppResource extends BaseResource {
             }
         } catch (IOException e) {
             throw new ServerException("FileError", "Error deleting orphan files", e);
+        }
+        
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+    
+    /**
+     * Recompute the quota for each user.
+     * 
+     * @return Response
+     */
+    @POST
+    @Path("batch/recompute_quota")
+    public Response batchRecomputeQuota() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        
+        // Get all files
+        FileDao fileDao = new FileDao();
+        List<File> fileList = fileDao.findAll();
+        
+        // Count each file for the corresponding user quota
+        UserDao userDao = new UserDao();
+        Map<String, User> userMap = new HashMap<>();
+        for (File file : fileList) {
+            java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+            User user = null;
+            if (userMap.containsKey(file.getUserId())) {
+                user = userMap.get(file.getUserId());
+            } else {
+                user = userDao.getById(file.getUserId());
+                user.setStorageCurrent(0l);
+                userMap.put(user.getId(), user);
+            }
+            
+            try {
+                user.setStorageCurrent(user.getStorageCurrent() + Files.size(storedFile));
+            } catch (IOException e) {
+                throw new ServerException("MissingFile", "File does not exist", e);
+            }
+        }
+        
+        // Save all users
+        for (User user : userMap.values()) {
+            userDao.update(user);
         }
         
         // Always return OK

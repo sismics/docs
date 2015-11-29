@@ -110,7 +110,10 @@
               </a>
           </li>
           <li>
-            <a href="#/settings/account" title="Logged in as {{ userInfo.username }}">{{ userInfo.username }}</a>
+            <a href="#/settings/account" title="Logged in as {{ userInfo.username }}">
+              <span class="glyphicon glyphicon-user"></span>
+              {{ userInfo.username }}
+            </a>
           </li>
           <li ng-class="{active: $uiRoute}" ui-route="/settings.*">
             <a href="#/settings/account">
