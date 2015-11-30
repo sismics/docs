@@ -68,6 +68,20 @@ public class DocumentDao {
     }
     
     /**
+     * Returns the list of all documents from a user.
+     * 
+     * @param userId User ID
+     * @return List of documents
+     */
+    @SuppressWarnings("unchecked")
+    public List<Document> findByUserId(String userId) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select d from Document d where d.userId = :userId and d.deleteDate is null");
+        q.setParameter("userId", userId);
+        return q.getResultList();
+    }
+    
+    /**
      * Returns an active document.
      * 
      * @param id Document ID
@@ -149,13 +163,12 @@ public class DocumentDao {
         q.setParameter("dateNow", dateNow);
         q.executeUpdate();
         
-        // TODO Delete share from deleted ACLs
-//        q = em.createQuery("update Share s set s.deleteDate = :dateNow where s.documentId = :documentId and s.deleteDate is null");
-//        q.setParameter("documentId", id);
-//        q.setParameter("dateNow", dateNow);
-//        q.executeUpdate();
+        q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.sourceId = :documentId and a.deleteDate is null");
+        q.setParameter("documentId", id);
+        q.setParameter("dateNow", dateNow);
+        q.executeUpdate();
         
-        q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.sourceId = :documentId");
+        q = em.createQuery("update DocumentTag dt set dt.deleteDate = :dateNow where dt.documentId = :documentId and dt.deleteDate is not null");
         q.setParameter("documentId", id);
         q.setParameter("dateNow", dateNow);
         q.executeUpdate();
