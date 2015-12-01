@@ -204,6 +204,26 @@ public class UserDao {
         q.setParameter("userId", userFromDb.getId());
         q.executeUpdate();
         
+        q = em.createQuery("update Document d set d.deleteDate = :dateNow where d.userId = :userId and d.deleteDate is null");
+        q.setParameter("userId", userFromDb.getId());
+        q.setParameter("dateNow", dateNow);
+        q.executeUpdate();
+        
+        q = em.createQuery("update File f set f.deleteDate = :dateNow where f.userId = :userId and f.deleteDate is null");
+        q.setParameter("userId", userFromDb.getId());
+        q.setParameter("dateNow", dateNow);
+        q.executeUpdate();
+        
+        q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.targetId = :userId and a.deleteDate is null");
+        q.setParameter("userId", userFromDb.getId());
+        q.setParameter("dateNow", dateNow);
+        q.executeUpdate();
+        
+        q = em.createQuery("update Comment c set c.deleteDate = :dateNow where c.userId = :userId and c.deleteDate is null");
+        q.setParameter("userId", userFromDb.getId());
+        q.setParameter("dateNow", dateNow);
+        q.executeUpdate();
+        
         // Create audit log
         AuditLogUtil.create(userFromDb, AuditLogType.DELETE);
     }

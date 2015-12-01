@@ -34,7 +34,7 @@ public class File implements Loggable {
     /**
      * User ID.
      */
-    @Column(name = "FIL_IDUSER_C", length = 36)
+    @Column(name = "FIL_IDUSER_C", length = 36, nullable = false)
     private String userId;
     
     /**

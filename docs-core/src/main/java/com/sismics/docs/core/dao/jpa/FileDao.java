@@ -54,6 +54,20 @@ public class FileDao {
     }
     
     /**
+     * Returns the list of all files from a user.
+     * 
+     * @param userId User ID
+     * @return List of files
+     */
+    @SuppressWarnings("unchecked")
+    public List<File> findByUserId(String userId) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select f from File f where f.userId = :userId and f.deleteDate is null");
+        q.setParameter("userId", userId);
+        return q.getResultList();
+    }
+    
+    /**
      * Returns an active file.
      * 
      * @param id File ID

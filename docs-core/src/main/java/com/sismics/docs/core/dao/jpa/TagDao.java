@@ -240,10 +240,12 @@ public class TagDao {
         Tag tagDb = (Tag) q.getSingleResult();
         
         // Delete the tag
-        tagDb.setDeleteDate(new Date());
+        Date dateNow = new Date();
+        tagDb.setDeleteDate(dateNow);
 
         // Delete linked data
-        q = em.createQuery("delete DocumentTag dt where dt.tagId = :tagId");
+        q = em.createQuery("update DocumentTag dt set dt.deleteDate = :dateNow where dt.tagId = :tagId and dt.deleteDate is not null");
+        q.setParameter("dateNow", dateNow);
         q.setParameter("tagId", tagId);
         q.executeUpdate();
         
@@ -291,3 +293,4 @@ public class TagDao {
         return tagFromDb;
     }
 }
+

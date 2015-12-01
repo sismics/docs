@@ -2,6 +2,7 @@ package com.sismics.docs.rest.resource;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.json.Json;
@@ -26,11 +27,18 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.AuthenticationTokenDao;
+import com.sismics.docs.core.dao.jpa.DocumentDao;
+import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.RoleBaseFunctionDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
 import com.sismics.docs.core.dao.jpa.dto.UserDto;
+import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
+import com.sismics.docs.core.event.FileDeletedAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.AuthenticationToken;
+import com.sismics.docs.core.model.jpa.Document;
+import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.EncryptionUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
@@ -345,9 +353,29 @@ public class UserResource extends BaseResource {
             throw new ClientException("ForbiddenError", "The admin user cannot be deleted");
         }
         
+        // Find linked data
+        DocumentDao documentDao = new DocumentDao();
+        List<Document> documentList = documentDao.findByUserId(principal.getId());
+        FileDao fileDao = new FileDao();
+        List<File> fileList = fileDao.findByUserId(principal.getId());
+        
         // Delete the user
         UserDao userDao = new UserDao();
         userDao.delete(principal.getName());
+        
+        // Raise deleted events for documents
+        for (Document document : documentList) {
+            DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
+            documentDeletedAsyncEvent.setDocument(document);
+            AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
+        }
+        
+        // Raise deleted events for files
+        for (File file : fileList) {
+            FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
+            fileDeletedAsyncEvent.setFile(file);
+            AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
+        }
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -383,8 +411,28 @@ public class UserResource extends BaseResource {
             throw new ClientException("ForbiddenError", "The admin user cannot be deleted");
         }
         
+        // Find linked data
+        DocumentDao documentDao = new DocumentDao();
+        List<Document> documentList = documentDao.findByUserId(user.getId());
+        FileDao fileDao = new FileDao();
+        List<File> fileList = fileDao.findByUserId(user.getId());
+        
         // Delete the user
         userDao.delete(user.getUsername());
+        
+        // Raise deleted events for documents
+        for (Document document : documentList) {
+            DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
+            documentDeletedAsyncEvent.setDocument(document);
+            AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
+        }
+        
+        // Raise deleted events for files
+        for (File file : fileList) {
+            FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
+            fileDeletedAsyncEvent.setFile(file);
+            AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
+        }
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
