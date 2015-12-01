@@ -3,6 +3,7 @@ package com.sismics.docs.rest.resource;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -206,30 +207,45 @@ public class AppResource extends BaseResource {
         Query q = em.createNativeQuery(sb.toString());
         log.info("Deleting {} orphan audit logs", q.executeUpdate());
         
-        // Hard delete orphan ACLs
-        sb = new StringBuilder("delete from T_ACL a where a.ACL_ID_C in (select a.ACL_ID_C from T_ACL a ");
+        // Soft delete orphan ACLs
+        sb = new StringBuilder("update T_ACL a set ACL_DELETEDATE_D = :dateNow where a.ACL_ID_C in (select a.ACL_ID_C from T_ACL a ");
         sb.append(" left join T_SHARE s on s.SHA_ID_C = a.ACL_TARGETID_C ");
         sb.append(" left join T_USER u on u.USE_ID_C = a.ACL_TARGETID_C ");
         sb.append(" left join T_DOCUMENT d on d.DOC_ID_C = a.ACL_SOURCEID_C ");
         sb.append(" where s.SHA_ID_C is null and u.USE_ID_C is null or d.DOC_ID_C is null)");
         q = em.createNativeQuery(sb.toString());
+        q.setParameter("dateNow", new Date());
         log.info("Deleting {} orphan ACLs", q.executeUpdate());
         
-        // Hard delete orphan comments
-        q = em.createNativeQuery("delete from T_COMMENT c where c.COM_ID_C in (select c.COM_ID_C from T_COMMENT c left join T_DOCUMENT d on d.DOC_ID_C = c.COM_IDDOC_C and d.DOC_DELETEDATE_D is null where d.DOC_ID_C is null)");
+        // Soft delete orphan comments
+        q = em.createNativeQuery("update T_COMMENT c set c.COM_DELETEDATE_D = :dateNow where c.COM_ID_C in (select c.COM_ID_C from T_COMMENT c left join T_DOCUMENT d on d.DOC_ID_C = c.COM_IDDOC_C and d.DOC_DELETEDATE_D is null where d.DOC_ID_C is null)");
+        q.setParameter("dateNow", new Date());
         log.info("Deleting {} orphan comments", q.executeUpdate());
         
-        // Hard delete orphan document tag links
-        q = em.createNativeQuery("delete from T_DOCUMENT_TAG dt where dt.DOT_ID_C in (select dt.DOT_ID_C from T_DOCUMENT_TAG dt left join T_DOCUMENT d on dt.DOT_IDDOCUMENT_C = d.DOC_ID_C and d.DOC_DELETEDATE_D is null left join T_TAG t on t.TAG_ID_C = dt.DOT_IDTAG_C and t.TAG_DELETEDATE_D is null where d.DOC_ID_C is null or t.TAG_ID_C is null)");
+        // Soft delete orphan document tag links
+        q = em.createNativeQuery("update T_DOCUMENT_TAG dt set dt.DOT_DELETEDATE_D = :dateNow where dt.DOT_ID_C in (select dt.DOT_ID_C from T_DOCUMENT_TAG dt left join T_DOCUMENT d on dt.DOT_IDDOCUMENT_C = d.DOC_ID_C and d.DOC_DELETEDATE_D is null left join T_TAG t on t.TAG_ID_C = dt.DOT_IDTAG_C and t.TAG_DELETEDATE_D is null where d.DOC_ID_C is null or t.TAG_ID_C is null)");
+        q.setParameter("dateNow", new Date());
         log.info("Deleting {} orphan document tag links", q.executeUpdate());
         
-        // Hard delete orphan shares
-        q = em.createNativeQuery("delete from T_SHARE s where s.SHA_ID_C in (select s.SHA_ID_C from T_SHARE s left join T_ACL a on a.ACL_TARGETID_C = s.SHA_ID_C and a.ACL_DELETEDATE_D is null where a.ACL_ID_C is null)");
+        // Soft delete orphan shares
+        q = em.createNativeQuery("update T_SHARE s set s.SHA_DELETEDATE_D = :dateNow where s.SHA_ID_C in (select s.SHA_ID_C from T_SHARE s left join T_ACL a on a.ACL_TARGETID_C = s.SHA_ID_C and a.ACL_DELETEDATE_D is null where a.ACL_ID_C is null)");
+        q.setParameter("dateNow", new Date());
         log.info("Deleting {} orphan shares", q.executeUpdate());
         
-        // Hard delete orphan tags
-        q = em.createNativeQuery("delete from T_TAG t where t.TAG_ID_C in (select t.TAG_ID_C from T_TAG t left join T_USER u on u.USE_ID_C = t.TAG_IDUSER_C and u.USE_DELETEDATE_D is null where u.USE_ID_C is null)");
+        // Soft delete orphan tags
+        q = em.createNativeQuery("update T_TAG t set t.TAG_DELETEDATE_D = :dateNow where t.TAG_ID_C in (select t.TAG_ID_C from T_TAG t left join T_USER u on u.USE_ID_C = t.TAG_IDUSER_C and u.USE_DELETEDATE_D is null where u.USE_ID_C is null)");
+        q.setParameter("dateNow", new Date());
         log.info("Deleting {} orphan tags", q.executeUpdate());
+        
+        // Soft delete orphan documents
+        q = em.createNativeQuery("update T_DOCUMENT d set d.DOC_DELETEDATE_D = :dateNow where d.DOC_ID_C in (select d.DOC_ID_C from T_DOCUMENT d left join T_USER u on u.USE_ID_C = d.DOC_IDUSER_C and u.USE_DELETEDATE_D is null where u.USE_ID_C is null)");
+        q.setParameter("dateNow", new Date());
+        log.info("Deleting {} orphan documents", q.executeUpdate());
+        
+        // Soft delete orphan files
+        q = em.createNativeQuery("update T_FILE f set f.FIL_DELETEDATE_D = :dateNow where f.FIL_ID_C in (select f.FIL_ID_C from T_FILE f left join T_USER u on u.USE_ID_C = f.FIL_IDUSER_C and u.USE_DELETEDATE_D is null where u.USE_ID_C is null)");
+        q.setParameter("dateNow", new Date());
+        log.info("Deleting {} orphan files", q.executeUpdate());
         
         // Hard delete softly deleted data
         log.info("Deleting {} soft deleted document tag links", em.createQuery("delete DocumentTag dt where dt.deleteDate is not null").executeUpdate());
