@@ -8,7 +8,7 @@
       <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
         <div class="thumbnail" ng-class="{ 'thumbnail-checked': file.checked }" ng-if="file.id">
           <a ng-click="openFile(file)">
-            <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }}" tooltip-placement="top" />
+            <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
           </a>
           <div class="caption pointer" ng-click="file.checked = !file.checked">
             <div class="pull-left">

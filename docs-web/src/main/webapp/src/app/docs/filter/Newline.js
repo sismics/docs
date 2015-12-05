@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Filter converting new lines in <br />
+ * Filter converting new lines in <br />.
  */
 angular.module('docs').filter('newline', function() {
   return function(text) {
@@ -10,4 +10,4 @@ angular.module('docs').filter('newline', function() {
     }
     return text.replace(/\n/g, '<br/>');
   }
-})
+});
