@@ -12,6 +12,7 @@ import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.FileUtil;
 import com.sismics.docs.core.util.TransactionUtil;
+import com.sismics.util.mime.MimeTypeUtil;
 
 /**
  * Listener on file created.
@@ -36,20 +37,23 @@ public class FileCreatedAsyncListener {
             log.info("File created event: " + fileCreatedAsyncEvent.toString());
         }
 
-        // OCR the file
+        // Guess the mime type a second time, for open document format (first detected as simple ZIP file)
         final File file = fileCreatedAsyncEvent.getFile();
+        file.setMimeType(MimeTypeUtil.guessOpenDocumentFormat(file, fileCreatedAsyncEvent.getInputStream()));
+        
+        // Extract text content from the file
         long startTime = System.currentTimeMillis();
         final String content = FileUtil.extractContent(fileCreatedAsyncEvent.getDocument(), file, fileCreatedAsyncEvent.getInputStream());
         fileCreatedAsyncEvent.getInputStream().close();
         log.info(MessageFormat.format("File content extracted in {0}ms", System.currentTimeMillis() - startTime));
         
-        // Store the OCR-ization result in the database
+        // Store the text content in the database
         TransactionUtil.handle(new Runnable() {
             @Override
             public void run() {
                 FileDao fileDao = new FileDao();
                 if (fileDao.getById(file.getId()) == null) {
-                    // The file has been deleted since the OCR-ization started, ignore the result
+                    // The file has been deleted since the text extraction started, ignore the result
                     return;
                 }
                 

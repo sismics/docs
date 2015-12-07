@@ -117,6 +117,16 @@
       <groupId>com.levigo.jbig2</groupId>
       <artifactId>levigo-jbig2-imageio</artifactId>
     </dependency>
+
+		<dependency>
+			<groupId>fr.opensagres.xdocreport</groupId>
+			<artifactId>org.odftoolkit.odfdom.converter.pdf</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>fr.opensagres.xdocreport</groupId>
+			<artifactId>org.apache.poi.xwpf.converter.pdf</artifactId>
+		</dependency>
     
     <!-- OCR dependencies -->
     <dependency>

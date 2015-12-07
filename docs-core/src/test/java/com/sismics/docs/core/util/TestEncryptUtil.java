@@ -18,7 +18,6 @@ import com.google.common.io.ByteStreams;
  * @author bgamard
  */
 public class TestEncryptUtil {
-
     /**
      * Test private key.
      */

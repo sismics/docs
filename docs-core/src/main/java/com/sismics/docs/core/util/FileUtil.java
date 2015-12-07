@@ -15,9 +15,13 @@ import javax.imageio.ImageIO;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Method;
 import org.imgscalr.Scalr.Mode;
+import org.odftoolkit.odfdom.converter.pdf.PdfConverter;
+import org.odftoolkit.odfdom.converter.pdf.PdfOptions;
+import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +57,10 @@ public class FileUtil {
             content = ocrFile(inputStream, document);
         } else if (file.getMimeType().equals(MimeType.APPLICATION_PDF)) {
             content = extractPdf(inputStream);
+        } else if (file.getMimeType().equals(MimeType.OPEN_DOCUMENT_TEXT)) {
+            content = extractOpenDocumentText(inputStream);
+        } else if (file.getMimeType().equals(MimeType.OFFICE_DOCUMENT)) {
+            content = extractOfficeDocument(inputStream);
         }
         
         return content;
@@ -121,6 +129,76 @@ public class FileUtil {
     }
     
     /**
+     * Extract text from an open document text file.
+     * 
+     * @param inputStream Unencrypted input stream
+     * @return Content extracted
+     */
+    private static String extractOpenDocumentText(InputStream inputStream) {
+        String content = null;
+        Path tempFile = null;
+        try {
+            // Convert the ODT file to a temporary PDF file
+            tempFile = Files.createTempFile("sismicsdocs_", ".pdf");
+            try (OutputStream out = Files.newOutputStream(tempFile)) {
+                OdfTextDocument document = OdfTextDocument.loadDocument(inputStream);
+                PdfOptions options = PdfOptions.create();
+                PdfConverter.getInstance().convert(document, out, options);
+            }
+            
+            // Extract content from the PDF file
+            try (InputStream pdfInputStream = Files.newInputStream(tempFile)) {
+                content = extractPdf(pdfInputStream);
+            }
+            
+        } catch (Exception e) {
+            log.error("Error while extracting text from the ODT", e);
+        } finally {
+            try {
+                Files.delete(tempFile); // Delete the temporary PDF file
+            } catch (IOException e) {
+                // Should not happen
+            }
+        }
+        return content;
+    }
+    
+    /**
+     * Extract text from an Office document.
+     * 
+     * @param inputStream Unencrypted input stream
+     * @return Content extracted
+     */
+    private static String extractOfficeDocument(InputStream inputStream) {
+        String content = null;
+        Path tempFile = null;
+        try {
+            // Convert the DOCX file to a temporary PDF file
+            tempFile = Files.createTempFile("sismicsdocs_", ".pdf");
+            try (OutputStream out = Files.newOutputStream(tempFile)) {
+                XWPFDocument document = new XWPFDocument(inputStream);
+                org.apache.poi.xwpf.converter.pdf.PdfOptions options = org.apache.poi.xwpf.converter.pdf.PdfOptions.create();
+                org.apache.poi.xwpf.converter.pdf.PdfConverter.getInstance().convert(document, out, options);
+            }
+            
+            // Extract content from the PDF file
+            try (InputStream pdfInputStream = Files.newInputStream(tempFile)) {
+                content = extractPdf(pdfInputStream);
+            }
+            
+        } catch (Exception e) {
+            log.error("Error while extracting text from the DOCX", e);
+        } finally {
+            try {
+                Files.delete(tempFile); // Delete the temporary PDF file
+            } catch (IOException e) {
+                // Should not happen
+            }
+        }
+        return content;
+    }
+    
+    /**
      * Save a file on the storage filesystem.
      * 
      * @param inputStream Unencrypted input stream
@@ -162,6 +240,7 @@ public class FileUtil {
                 pdfDocument.close();
             }
         }
+        // TODO Generate thumbnails for DOCX/ODT documents (guess the MIME type earlier and build a PDF version now?)
         
         if (image != null) {
             // Generate thumbnails from image
