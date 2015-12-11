@@ -142,6 +142,7 @@ public class FileDao {
         fileFromDb.setDocumentId(file.getDocumentId());
         fileFromDb.setContent(file.getContent());
         fileFromDb.setOrder(file.getOrder());
+        fileFromDb.setMimeType(file.getMimeType());
         
         return file;
     }

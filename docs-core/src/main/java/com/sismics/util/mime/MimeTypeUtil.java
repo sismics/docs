@@ -3,6 +3,13 @@ package com.sismics.util.mime;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.utils.IOUtils;
+
+import com.google.common.base.Charsets;
+import com.sismics.docs.core.model.jpa.File;
+
 /**
  * Utility to check MIME types.
  *
@@ -77,8 +84,59 @@ public class MimeTypeUtil {
             return "ico";
         case MimeType.APPLICATION_PDF:
             return "pdf";
+        case MimeType.OPEN_DOCUMENT_TEXT:
+            return "odt";
+        case MimeType.OFFICE_DOCUMENT:
+            return "docx";
         default:
             return null;
         }
+    }
+    
+    /**
+     * Guess the MIME type of open document formats (docx and odt).
+     * It's more costly than the simple header check, but needed because open document formats
+     * are simple ZIP files on the outside and much bigger on the inside.
+     * 
+     * @param file File 
+     * @param inputStream Input stream
+     * @return MIME type
+     */
+    public static String guessOpenDocumentFormat(File file, InputStream inputStream) {
+        if (!MimeType.APPLICATION_ZIP.equals(file.getMimeType())) {
+            // open document formats are ZIP files
+            return file.getMimeType();
+        }
+        
+        String mimeType = file.getMimeType();
+        try (ZipArchiveInputStream archiveInputStream = new ZipArchiveInputStream(inputStream, Charsets.ISO_8859_1.name())) {
+            ArchiveEntry archiveEntry = archiveInputStream.getNextEntry();
+            while (archiveEntry != null) {
+                if (archiveEntry.getName().equals("mimetype")) {
+                    // Maybe it's an ODT file
+                    String content = new String(IOUtils.toByteArray(archiveInputStream), Charsets.ISO_8859_1);
+                    if (MimeType.OPEN_DOCUMENT_TEXT.equals(content.trim())) {
+                        mimeType = MimeType.OPEN_DOCUMENT_TEXT;
+                        break;
+                    }
+                } else if (archiveEntry.getName().equals("[Content_Types].xml")) {
+                    // Maybe it's a DOCX file
+                    String content = new String(IOUtils.toByteArray(archiveInputStream), Charsets.ISO_8859_1);
+                    if (content.contains(MimeType.OFFICE_DOCUMENT)) {
+                        mimeType =  MimeType.OFFICE_DOCUMENT;
+                        break;
+                    }
+                }
+    
+                archiveEntry = archiveInputStream.getNextEntry();
+            }
+            
+            inputStream.reset();
+        } catch (Exception e) {
+            // In case of any error, just give up and keep the ZIP MIME type
+            return file.getMimeType();
+        }
+        
+        return mimeType;
     }
 }

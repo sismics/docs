@@ -10,4 +10,4 @@ angular.module('docs').filter('shorten', function() {
     }
     return text.substring(0, 1).toUpperCase();
   }
-})
+});

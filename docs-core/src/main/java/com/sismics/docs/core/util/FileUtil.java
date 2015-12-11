@@ -1,6 +1,8 @@
 package com.sismics.docs.core.util;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -15,9 +17,13 @@ import javax.imageio.ImageIO;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Method;
 import org.imgscalr.Scalr.Mode;
+import org.odftoolkit.odfdom.converter.pdf.PdfConverter;
+import org.odftoolkit.odfdom.converter.pdf.PdfOptions;
+import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,15 +50,16 @@ public class FileUtil {
      * @param document Document linked to the file
      * @param file File to extract
      * @param inputStream Unencrypted input stream
+     * @param pdfInputStream Unencrypted PDF input stream
      * @return Content extract
      */
-    public static String extractContent(Document document, File file, InputStream inputStream) {
+    public static String extractContent(Document document, File file, InputStream inputStream, InputStream pdfInputStream) {
         String content = null;
         
         if (ImageUtil.isImage(file.getMimeType())) {
             content = ocrFile(inputStream, document);
-        } else if (file.getMimeType().equals(MimeType.APPLICATION_PDF)) {
-            content = extractPdf(inputStream);
+        } else if (pdfInputStream != null) {
+            content = extractPdf(pdfInputStream);
         }
         
         return content;
@@ -121,22 +128,80 @@ public class FileUtil {
     }
     
     /**
+     * Convert a file to PDF if necessary.
+     * 
+     * @param inputStream InputStream
+     * @param file File
+     * @return PDF input stream
+     * @throws Exception 
+     */
+    public static InputStream convertToPdf(InputStream inputStream, File file) throws Exception {
+        if (file.getMimeType().equals(MimeType.APPLICATION_PDF)) {
+            // It's already PDF, just return the input
+            return inputStream;
+        }
+        
+        if (file.getMimeType().equals(MimeType.OFFICE_DOCUMENT)) {
+            return convertOfficeDocument(inputStream);
+        }
+        
+        if (file.getMimeType().equals(MimeType.OPEN_DOCUMENT_TEXT)) {
+            return convertOpenDocumentText(inputStream);
+        }
+        
+        // PDF conversion not necessary/possible
+        return null;
+    }
+    
+    /**
+     * Convert an open document text file to PDF.
+     * 
+     * @param inputStream Unencrypted input stream
+     * @return PDF input stream
+     * @throws Exception 
+     */
+    private static InputStream convertOpenDocumentText(InputStream inputStream) throws Exception {
+        ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
+        OdfTextDocument document = OdfTextDocument.loadDocument(inputStream);
+        PdfOptions options = PdfOptions.create();
+        PdfConverter.getInstance().convert(document, pdfOutputStream, options);
+        inputStream.reset();
+        return new ByteArrayInputStream(pdfOutputStream.toByteArray());
+    }
+    
+    /**
+     * Convert an Office document to PDF.
+     * 
+     * @param inputStream Unencrypted input stream
+     * @return PDF input stream
+     * @throws Exception 
+     */
+    private static InputStream convertOfficeDocument(InputStream inputStream) throws Exception {
+        ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
+        XWPFDocument document = new XWPFDocument(inputStream);
+        org.apache.poi.xwpf.converter.pdf.PdfOptions options = org.apache.poi.xwpf.converter.pdf.PdfOptions.create();
+        org.apache.poi.xwpf.converter.pdf.PdfConverter.getInstance().convert(document, pdfOutputStream, options);
+        inputStream.reset();
+        return new ByteArrayInputStream(pdfOutputStream.toByteArray());
+    }
+    
+    /**
      * Save a file on the storage filesystem.
      * 
      * @param inputStream Unencrypted input stream
+     * @param pdf
      * @param file File to save
      * @param privateKey Private key used for encryption
      * @throws Exception
      */
-    public static void save(InputStream inputStream, File file, String privateKey) throws Exception {
+    public static void save(InputStream inputStream, InputStream pdfInputStream, File file, String privateKey) throws Exception {
         Cipher cipher = EncryptionUtil.getEncryptionCipher(privateKey);
         Path path = DirectoryUtil.getStorageDirectory().resolve(file.getId());
         Files.copy(new CipherInputStream(inputStream, cipher), path);
+        inputStream.reset();
         
         // Generate file variations
-        inputStream.reset();
-        saveVariations(file, inputStream, cipher);
-        inputStream.reset();
+        saveVariations(file, inputStream, pdfInputStream, cipher);
     }
 
     /**
@@ -144,20 +209,23 @@ public class FileUtil {
      * 
      * @param file File from database
      * @param inputStream Unencrypted input stream
+     * @param pdfInputStream Unencrypted PDF input stream
      * @param cipher Cipher to use for encryption
      * @throws Exception
      */
-    public static void saveVariations(File file, InputStream inputStream, Cipher cipher) throws Exception {
+    public static void saveVariations(File file, InputStream inputStream, InputStream pdfInputStream, Cipher cipher) throws Exception {
         BufferedImage image = null;
         if (ImageUtil.isImage(file.getMimeType())) {
             image = ImageIO.read(inputStream);
-        } else if(file.getMimeType().equals(MimeType.APPLICATION_PDF)) {
+            inputStream.reset();
+        } else if(pdfInputStream != null) {
             // Generate preview from the first page of the PDF
             PDDocument pdfDocument = null;
             try {
-                pdfDocument = PDDocument.load(inputStream);
+                pdfDocument = PDDocument.load(pdfInputStream);
                 PDFRenderer renderer = new PDFRenderer(pdfDocument);
                 image = renderer.renderImage(0);
+                pdfInputStream.reset();
             } finally {
                 pdfDocument.close();
             }

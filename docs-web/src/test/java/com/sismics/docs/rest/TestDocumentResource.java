@@ -268,20 +268,138 @@ public class TestDocumentResource extends BaseJerseyTest {
     }
     
     /**
+     * Test ODT extraction.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testOdtExtraction() throws Exception {
+        // Login document_odt
+        clientUtil.createUser("document_odt");
+        String documentOdtToken = clientUtil.login("document_odt");
+
+        // Create a document
+        long create1Date = new Date().getTime();
+        JsonObject json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentOdtToken)
+                .put(Entity.form(new Form()
+                        .param("title", "My super title document 1")
+                        .param("description", "My super description for document 1")
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
+        String document1Id = json.getString("id");
+        Assert.assertNotNull(document1Id);
+        
+        // Add a PDF file
+        String file1Id = null;
+        try (InputStream is = Resources.getResource("file/document.odt").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "document.odt");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                json = target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentOdtToken)
+                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+                file1Id = json.getString("id");
+                Assert.assertNotNull(file1Id);
+            }
+        }
+        
+        // Search documents by query in full content
+        json = target().path("/document/list")
+                .queryParam("search", "full:ipsum")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentOdtToken)
+                .get(JsonObject.class);
+        Assert.assertTrue(json.getJsonArray("documents").size() == 1);
+        
+        // Get the file thumbnail data
+        Response response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "thumb")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentOdtToken)
+                .get();
+        InputStream is = (InputStream) response.getEntity();
+        byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
+    }
+    
+    /**
+     * Test DOCX extraction.
+     * 
+     * @throws Exception 
+     */
+    @Test
+    public void testDocxExtraction() throws Exception {
+        // Login document_docx
+        clientUtil.createUser("document_docx");
+        String documentDocxToken = clientUtil.login("document_docx");
+
+        // Create a document
+        long create1Date = new Date().getTime();
+        JsonObject json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentDocxToken)
+                .put(Entity.form(new Form()
+                        .param("title", "My super title document 1")
+                        .param("description", "My super description for document 1")
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
+        String document1Id = json.getString("id");
+        Assert.assertNotNull(document1Id);
+        
+        // Add a PDF file
+        String file1Id = null;
+        try (InputStream is = Resources.getResource("file/document.docx").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "document.docx");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                json = target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentDocxToken)
+                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+                file1Id = json.getString("id");
+                Assert.assertNotNull(file1Id);
+            }
+        }
+        
+        // Search documents by query in full content
+        json = target().path("/document/list")
+                .queryParam("search", "full:dolor")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentDocxToken)
+                .get(JsonObject.class);
+        Assert.assertTrue(json.getJsonArray("documents").size() == 1);
+        
+        // Get the file thumbnail data
+        Response response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "thumb")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentDocxToken)
+                .get();
+        InputStream is = (InputStream) response.getEntity();
+        byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
+    }
+    
+    /**
      * Test PDF extraction.
      * 
      * @throws Exception 
      */
     @Test
     public void testPdfExtraction() throws Exception {
-        // Login document2
-        clientUtil.createUser("document2");
-        String document2Token = clientUtil.login("document2");
+        // Login document_pdf
+        clientUtil.createUser("document_pdf");
+        String documentPdfToken = clientUtil.login("document_pdf");
 
         // Create a document
         long create1Date = new Date().getTime();
         JsonObject json = target().path("/document").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document2Token)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPdfToken)
                 .put(Entity.form(new Form()
                         .param("title", "My super title document 1")
                         .param("description", "My super description for document 1")
@@ -298,7 +416,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 json = target()
                         .register(MultiPartFeature.class)
                         .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document2Token)
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPdfToken)
                         .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
                                 MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
                 file1Id = json.getString("id");
@@ -310,7 +428,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         json = target().path("/document/list")
                 .queryParam("search", "full:vrandecic")
                 .request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document2Token)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPdfToken)
                 .get(JsonObject.class);
         Assert.assertTrue(json.getJsonArray("documents").size() == 1);
         
@@ -318,7 +436,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Response response = target().path("/file/" + file1Id + "/data")
                 .queryParam("size", "thumb")
                 .request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document2Token)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPdfToken)
                 .get();
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
