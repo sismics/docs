@@ -25,7 +25,8 @@ public class TestFileUtil {
             File file = new File();
             file.setMimeType(MimeType.OPEN_DOCUMENT_TEXT);
             try (InputStream pdfInputStream = FileUtil.convertToPdf(bytesInputStream, file)) {
-                Assert.assertEquals("Lorem ipsum dolor sit amen.\r\n", FileUtil.extractContent(null, file, inputStream, pdfInputStream));
+                String content = FileUtil.extractContent(null, file, inputStream, pdfInputStream);
+                Assert.assertTrue(content.contains("Lorem ipsum dolor sit amen."));
             }
         }
     }
@@ -37,7 +38,8 @@ public class TestFileUtil {
             File file = new File();
             file.setMimeType(MimeType.OFFICE_DOCUMENT);
             try (InputStream pdfInputStream = FileUtil.convertToPdf(bytesInputStream, file)) {
-                Assert.assertEquals("Lorem ipsum dolor sit amen.\r\n", FileUtil.extractContent(null, file, inputStream, pdfInputStream));
+                String content = FileUtil.extractContent(null, file, inputStream, pdfInputStream);
+                Assert.assertTrue(content.contains("Lorem ipsum dolor sit amen."));
             }
         }
     }
