@@ -12,7 +12,6 @@ import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.FileUtil;
 import com.sismics.docs.core.util.TransactionUtil;
-import com.sismics.util.mime.MimeTypeUtil;
 
 /**
  * Listener on file created.
@@ -39,12 +38,15 @@ public class FileCreatedAsyncListener {
 
         // Guess the mime type a second time, for open document format (first detected as simple ZIP file)
         final File file = fileCreatedAsyncEvent.getFile();
-        file.setMimeType(MimeTypeUtil.guessOpenDocumentFormat(file, fileCreatedAsyncEvent.getInputStream()));
         
         // Extract text content from the file
         long startTime = System.currentTimeMillis();
-        final String content = FileUtil.extractContent(fileCreatedAsyncEvent.getDocument(), file, fileCreatedAsyncEvent.getInputStream());
+        final String content = FileUtil.extractContent(fileCreatedAsyncEvent.getDocument(), file,
+                fileCreatedAsyncEvent.getInputStream(), fileCreatedAsyncEvent.getPdfInputStream());
         fileCreatedAsyncEvent.getInputStream().close();
+        if (fileCreatedAsyncEvent.getPdfInputStream() != null) {
+            fileCreatedAsyncEvent.getPdfInputStream().close();
+        }
         log.info(MessageFormat.format("File content extracted in {0}ms", System.currentTimeMillis() - startTime));
         
         // Store the text content in the database

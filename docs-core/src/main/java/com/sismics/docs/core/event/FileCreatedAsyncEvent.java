@@ -28,57 +28,42 @@ public class FileCreatedAsyncEvent {
     private InputStream inputStream;
     
     /**
-     * Getter of file.
-     *
-     * @return the file
+     * Unencrypted input stream containing a PDF representation
+     * of the file. May be null if the PDF conversion is not
+     * necessary or not possible.
      */
+    private InputStream pdfInputStream;
+    
     public File getFile() {
         return file;
     }
 
-    /**
-     * Setter of file.
-     *
-     * @param file file
-     */
     public void setFile(File file) {
         this.file = file;
     }
     
-    /**
-     * Getter of document.
-     *
-     * @return the document
-     */
     public Document getDocument() {
         return document;
     }
 
-    /**
-     * Setter of document.
-     *
-     * @param document document
-     */
     public void setDocument(Document document) {
         this.document = document;
     }
     
-    /**
-     * Getter of inputStream.
-     *
-     * @return the inputStream
-     */
     public InputStream getInputStream() {
         return inputStream;
     }
 
-    /**
-     * Setter de inputStream.
-     *
-     * @param inputStream inputStream
-     */
     public void setInputStream(InputStream inputStream) {
         this.inputStream = inputStream;
+    }
+    
+    public InputStream getPdfInputStream() {
+        return pdfInputStream;
+    }
+
+    public void setPdfInputStream(InputStream pdfInputStream) {
+        this.pdfInputStream = pdfInputStream;
     }
 
     @Override

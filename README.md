@@ -21,7 +21,7 @@ Features
 
 - Responsive user interface
 - Optical character recognition
-- Support image and PDF files
+- Support image, PDF, ODT and DOCX files
 - Flexible search engine
 - Full text search in image and PDF
 - 256-bit AES encryption

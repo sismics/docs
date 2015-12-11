@@ -146,8 +146,14 @@ public class FileResource extends BaseResource {
             file.setUserId(principal.getId());
             String fileId = fileDao.create(file);
             
+            // Guess the mime type a second time, for open document format (first detected as simple ZIP file)
+            file.setMimeType(MimeTypeUtil.guessOpenDocumentFormat(file, fileInputStream));
+            
+            // Convert to PDF if necessary (for thumbnail and text extraction)
+            InputStream pdfIntputStream = FileUtil.convertToPdf(fileInputStream, file);
+            
             // Save the file
-            FileUtil.save(fileInputStream, file, user.getPrivateKey());
+            FileUtil.save(fileInputStream, pdfIntputStream, file, user.getPrivateKey());
             
             // Update the user quota
             user.setStorageCurrent(user.getStorageCurrent() + fileData.length);
@@ -159,6 +165,7 @@ public class FileResource extends BaseResource {
                 fileCreatedAsyncEvent.setDocument(document);
                 fileCreatedAsyncEvent.setFile(file);
                 fileCreatedAsyncEvent.setInputStream(fileInputStream);
+                fileCreatedAsyncEvent.setPdfInputStream(pdfIntputStream);
                 AppContext.getInstance().getAsyncEventBus().post(fileCreatedAsyncEvent);
             }
 
