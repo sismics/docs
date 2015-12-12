@@ -157,7 +157,7 @@ public class FileResource extends BaseResource {
             
             // Update the user quota
             user.setStorageCurrent(user.getStorageCurrent() + fileData.length);
-            userDao.update(user);
+            userDao.updateQuota(user);
             
             // Raise a new file created event if we have a document
             if (documentId != null) {
@@ -369,7 +369,7 @@ public class FileResource extends BaseResource {
         java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
         try {
             user.setStorageCurrent(user.getStorageCurrent() - Files.size(storedFile));
-            userDao.update(user);
+            userDao.updateQuota(user);
         } catch (IOException e) {
             // The file doesn't exists on disk, which is weird, but not fatal
         }
