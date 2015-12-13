@@ -150,7 +150,7 @@ public class FileResource extends BaseResource {
             file.setMimeType(MimeTypeUtil.guessOpenDocumentFormat(file, fileInputStream));
             
             // Convert to PDF if necessary (for thumbnail and text extraction)
-            InputStream pdfIntputStream = FileUtil.convertToPdf(fileInputStream, file);
+            InputStream pdfIntputStream = FileUtil.convertToPdf(file, fileInputStream, true);
             
             // Save the file
             FileUtil.save(fileInputStream, pdfIntputStream, file, user.getPrivateKey());

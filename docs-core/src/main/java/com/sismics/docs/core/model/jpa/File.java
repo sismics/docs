@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.google.common.base.MoreObjects;
 
@@ -69,148 +70,83 @@ public class File implements Loggable {
     private Integer order;
     
     /**
-     * Getter of id.
-     *
-     * @return the id
+     * Private key to decrypt the file.
+     * Not saved to database, of course.
      */
+    @Transient
+    private String privateKey;
+    
     public String getId() {
         return id;
     }
 
-    /**
-     * Setter of id.
-     *
-     * @param id id
-     */
     public void setId(String id) {
         this.id = id;
     }
     
-    /**
-     * Getter of documentId.
-     *
-     * @return the documentId
-     */
     public String getDocumentId() {
         return documentId;
     }
 
-    /**
-     * Setter of documentId.
-     *
-     * @param documentId documentId
-     */
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
     }
-    
-    /**
-     * Getter of mimeType.
-     *
-     * @return the mimeType
-     */
+
     public String getMimeType() {
         return mimeType;
     }
 
-    /**
-     * Setter of mimeType.
-     *
-     * @param mimeType mimeType
-     */
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
 
-    /**
-     * Getter of createDate.
-     *
-     * @return the createDate
-     */
     public Date getCreateDate() {
         return createDate;
     }
 
-    /**
-     * Setter of createDate.
-     *
-     * @param createDate createDate
-     */
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 
-    /**
-     * Getter of deleteDate.
-     *
-     * @return the deleteDate
-     */
     @Override
     public Date getDeleteDate() {
         return deleteDate;
     }
 
-    /**
-     * Setter of deleteDate.
-     *
-     * @param deleteDate deleteDate
-     */
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
     }
     
-    /**
-     * Getter of content.
-     *
-     * @return the content
-     */
     public String getContent() {
         return content;
     }
 
-    /**
-     * Setter of content.
-     *
-     * @param content content
-     */
     public void setContent(String content) {
         this.content = content;
     }
 
-    /**
-     * Getter of order.
-     *
-     * @return the order
-     */
     public Integer getOrder() {
         return order;
     }
 
-    /**
-     * Setter of order.
-     *
-     * @param order order
-     */
     public void setOrder(Integer order) {
         this.order = order;
     }
     
-    /**
-     * Getter of userId.
-     * 
-     * @return the userId
-     */
     public String getUserId() {
         return userId;
     }
 
-    /**
-     * Setter of userId.
-     * 
-     * @param userId userId
-     */
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getPrivateKey() {
+        return privateKey;
+    }
+
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
     }
 
     @Override

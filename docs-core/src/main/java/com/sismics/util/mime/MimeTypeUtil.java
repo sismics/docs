@@ -55,8 +55,6 @@ public class MimeTypeUtil {
         } else if (headerBytes[0] == ((byte) 0x89) && headerBytes[1] == ((byte) 0x50) && headerBytes[2] == ((byte) 0x4e) && headerBytes[3] == ((byte) 0x47) &&
                 headerBytes[4] == ((byte) 0x0d) && headerBytes[5] == ((byte) 0x0a) && headerBytes[6] == ((byte) 0x1a) && headerBytes[7] == ((byte) 0x0a)) {
             return MimeType.IMAGE_PNG;
-        } else if (headerBytes[0] == ((byte) 0x00) && headerBytes[1] == ((byte) 0x00) && headerBytes[2] == ((byte) 0x01) && headerBytes[3] == ((byte) 0x00)) {
-            return MimeType.IMAGE_X_ICON;
         } else if (headerBytes[0] == ((byte) 0x25) && headerBytes[1] == ((byte) 0x50) && headerBytes[2] == ((byte) 0x44) && headerBytes[3] == ((byte) 0x46)) {
             return MimeType.APPLICATION_PDF;
         }
@@ -80,8 +78,6 @@ public class MimeTypeUtil {
             return "jpg";
         case MimeType.IMAGE_PNG:
             return "png";
-        case MimeType.IMAGE_X_ICON:
-            return "ico";
         case MimeType.APPLICATION_PDF:
             return "pdf";
         case MimeType.OPEN_DOCUMENT_TEXT:
