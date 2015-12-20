@@ -1,0 +1,28 @@
+<div class="modal-header">
+  <h3>Export to PDF</h3>
+</div>
+<div class="modal-body">
+  <form>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" ng-model="export.metadata" /> Export metadata
+      </label>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" ng-model="export.comments" /> Export comments
+      </label>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" ng-model="export.fitimagetopage" /> Fit image to page
+      </label>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button ng-click="exportPdf()" class="btn btn-primary">
+    <span class="glyphicon glyphicon-save-file"></span> Export
+  </button>
+  <button ng-click="close()" class="btn btn-default">Cancel</button>
+</div>

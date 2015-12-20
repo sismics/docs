@@ -9,7 +9,26 @@
 
 <div ng-show="document">
 	<div class="text-right" ng-show="document.writable">
-	  <div class="btn-group">
+	  <div class="btn-group dropdown" dropdown>
+      <button class="btn btn-default" dropdown-toggle>
+        <span class="glyphicon glyphicon-export"></span>
+        Export
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li>
+          <a ng-href="../api/file/zip?id={{ document.id }}" title="Download all files">
+            <span class="glyphicon glyphicon glyphicon-compressed"></span>
+            Download files
+          </a>
+        </li>
+        <li>
+          <a ng-click="exportPdf()" title="Export document to PDF" class="pointer">
+            <span class="glyphicon glyphicon glyphicon-save-file"></span>
+            Export to PDF
+          </a>
+        </li>
+      </ul>
 	    <button class="btn btn-danger" ng-click="deleteDocument(document)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
 	    <a href="#/document/edit/{{ document.id }}" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 	  </div>
@@ -19,18 +38,20 @@
 	  <h1>
       {{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }} by {{ document.creator }}</small>
       <img ng-if="document" ng-src="img/flag/{{ document.language }}.png" title="{{ document.language }}" />
-      <a ng-href="../api/file/zip?id={{ document.id }}" class="btn btn-default" title="Download all files">
-        <span class="glyphicon glyphicon-download-alt"></span>
-      </a>
     </h1>
+
 	  <p ng-show="document.writable">
 	    <button class="btn btn-sm btn-info" ng-click="share()">
         <span class="glyphicon glyphicon-share"></span> Share
       </button>
-	    <button class="btn btn-default btn-sm" ng-repeat="share in document.acls | filter: { 'type': 'SHARE' }" ng-click="showShare(share)">
-        <span class="glyphicon glyphicon-ok"></span> {{ share.name ? share.name : 'shared' }}
-      </button>
+
+      <span ng-repeat="share in document.acls | filter: { 'type': 'SHARE' }">
+        <button class="btn btn-default btn-sm" ng-click="showShare(share)">
+          <span class="glyphicon glyphicon-ok"></span> {{ share.name ? share.name : 'shared' }}
+        </button>
+      </span>
 	  </p>
+
 	  <ul class="list-inline">
 	    <li ng-repeat="tag in document.tags">
         <span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span>
