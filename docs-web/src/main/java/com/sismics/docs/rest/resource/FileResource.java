@@ -53,6 +53,7 @@ import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.core.util.EncryptionUtil;
 import com.sismics.docs.core.util.FileUtil;
+import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
@@ -150,7 +151,7 @@ public class FileResource extends BaseResource {
             file.setMimeType(MimeTypeUtil.guessOpenDocumentFormat(file, fileInputStream));
             
             // Convert to PDF if necessary (for thumbnail and text extraction)
-            InputStream pdfIntputStream = FileUtil.convertToPdf(file, fileInputStream, true);
+            InputStream pdfIntputStream = PdfUtil.convertToPdf(file, fileInputStream, true);
             
             // Save the file
             FileUtil.save(fileInputStream, pdfIntputStream, file, user.getPrivateKey());

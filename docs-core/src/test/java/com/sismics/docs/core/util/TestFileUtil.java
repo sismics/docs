@@ -4,14 +4,14 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.util.mime.MimeType;
+
+import junit.framework.Assert;
 
 /**
  * Test of the file entity utilities.
@@ -24,7 +24,7 @@ public class TestFileUtil {
         try (InputStream inputStream = Resources.getResource("file/document.odt").openStream()) {
             File file = new File();
             file.setMimeType(MimeType.OPEN_DOCUMENT_TEXT);
-            try (InputStream pdfInputStream = FileUtil.convertToPdf(file, inputStream, false)) {
+            try (InputStream pdfInputStream = PdfUtil.convertToPdf(file, inputStream, false)) {
                 String content = FileUtil.extractContent(null, file, inputStream, pdfInputStream);
                 Assert.assertTrue(content.contains("Lorem ipsum dolor sit amen."));
             }
@@ -36,7 +36,7 @@ public class TestFileUtil {
         try (InputStream inputStream = Resources.getResource("file/document.docx").openStream()) {
             File file = new File();
             file.setMimeType(MimeType.OFFICE_DOCUMENT);
-            try (InputStream pdfInputStream = FileUtil.convertToPdf(file, inputStream, false)) {
+            try (InputStream pdfInputStream = PdfUtil.convertToPdf(file, inputStream, false)) {
                 String content = FileUtil.extractContent(null, file, inputStream, pdfInputStream);
                 Assert.assertTrue(content.contains("Lorem ipsum dolor sit amen."));
             }
@@ -81,7 +81,7 @@ public class TestFileUtil {
             file4.setId("document_odt");
             file4.setMimeType(MimeType.OPEN_DOCUMENT_TEXT);
             
-            FileUtil.convertToPdf(Lists.newArrayList(file0, file1, file2, file3, file4), true, 10).close();
+            PdfUtil.convertToPdf(Lists.newArrayList(file0, file1, file2, file3, file4), true, 10).close();
         }
     }
 }
