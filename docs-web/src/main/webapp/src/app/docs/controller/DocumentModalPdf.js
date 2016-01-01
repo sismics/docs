@@ -7,7 +7,8 @@ angular.module('docs').controller('DocumentModalPdf', function ($scope, $window,
   $scope.export = {
     metadata: false,
     comments: false,
-    fitimagetopage: false
+    fitimagetopage: true,
+    margin: 10
   };
 
   // Export to PDF
@@ -15,7 +16,8 @@ angular.module('docs').controller('DocumentModalPdf', function ($scope, $window,
     $window.open('../api/document/' + $stateParams.id
         + '/pdf?metadata=' + $scope.export.metadata
         + '&comments=' + $scope.export.comments
-        + '&fitimagetopage=' + $scope.export.fitimagetopage);
+        + '&fitimagetopage=' + $scope.export.fitimagetopage
+        + '&margin=' + $scope.export.margin);
 
     $modalInstance.close();
   };

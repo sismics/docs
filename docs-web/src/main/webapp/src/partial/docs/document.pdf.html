@@ -2,21 +2,38 @@
   <h3>Export to PDF</h3>
 </div>
 <div class="modal-body">
-  <form>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" ng-model="export.metadata" /> Export metadata
-      </label>
+  <form class="form-horizontal">
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="export.metadata" /> Export metadata
+          </label>
+        </div>
+      </div>
     </div>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" ng-model="export.comments" /> Export comments
-      </label>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="export.comments" /> Export comments
+          </label>
+        </div>
+      </div>
     </div>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" ng-model="export.fitimagetopage" /> Fit image to page
-      </label>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="export.fitimagetopage" /> Fit image to page
+          </label>
+        </div>
+      </div>
+    </div>
+    <label for="inputMargin" class="col-sm-2 control-label">Margin</label>
+    <div class="input-group col-sm-5">
+      <input type="number" class="form-control" id="inputMargin" ng-model="export.margin" min="0" max="100" step="1">
+      <div class="input-group-addon">mm</div>
     </div>
   </form>
 </div>
