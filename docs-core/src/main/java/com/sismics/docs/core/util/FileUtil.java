@@ -1,8 +1,6 @@
 package com.sismics.docs.core.util;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,16 +12,9 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.imageio.ImageIO;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.rendering.PDFRenderer;
-import org.apache.pdfbox.text.PDFTextStripper;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Method;
 import org.imgscalr.Scalr.Mode;
-import org.odftoolkit.odfdom.converter.pdf.PdfConverter;
-import org.odftoolkit.odfdom.converter.pdf.PdfOptions;
-import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +22,6 @@ import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.tess4j.Tesseract;
 import com.sismics.util.ImageUtil;
-import com.sismics.util.mime.MimeType;
 
 /**
  * File entity utilities.
@@ -59,7 +49,7 @@ public class FileUtil {
         if (ImageUtil.isImage(file.getMimeType())) {
             content = ocrFile(inputStream, document);
         } else if (pdfInputStream != null) {
-            content = extractPdf(pdfInputStream);
+            content = PdfUtil.extractPdf(pdfInputStream);
         }
         
         return content;
@@ -100,92 +90,6 @@ public class FileUtil {
     }
     
     /**
-     * Extract text from a PDF.
-     * 
-     * @param inputStream Unencrypted input stream
-     * @return Content extracted
-     */
-    private static String extractPdf(InputStream inputStream) {
-        String content = null;
-        PDDocument pdfDocument = null;
-        try {
-            PDFTextStripper stripper = new PDFTextStripper();
-            pdfDocument = PDDocument.load(inputStream);
-            content = stripper.getText(pdfDocument);
-        } catch (IOException e) {
-            log.error("Error while extracting text from the PDF", e);
-        } finally {
-            if (pdfDocument != null) {
-                try {
-                    pdfDocument.close();
-                } catch (IOException e) {
-                    // NOP
-                }
-            }
-        }
-        
-        return content;
-    }
-    
-    /**
-     * Convert a file to PDF if necessary.
-     * 
-     * @param inputStream InputStream
-     * @param file File
-     * @return PDF input stream
-     * @throws Exception 
-     */
-    public static InputStream convertToPdf(InputStream inputStream, File file) throws Exception {
-        if (file.getMimeType().equals(MimeType.APPLICATION_PDF)) {
-            // It's already PDF, just return the input
-            return inputStream;
-        }
-        
-        if (file.getMimeType().equals(MimeType.OFFICE_DOCUMENT)) {
-            return convertOfficeDocument(inputStream);
-        }
-        
-        if (file.getMimeType().equals(MimeType.OPEN_DOCUMENT_TEXT)) {
-            return convertOpenDocumentText(inputStream);
-        }
-        
-        // PDF conversion not necessary/possible
-        return null;
-    }
-    
-    /**
-     * Convert an open document text file to PDF.
-     * 
-     * @param inputStream Unencrypted input stream
-     * @return PDF input stream
-     * @throws Exception 
-     */
-    private static InputStream convertOpenDocumentText(InputStream inputStream) throws Exception {
-        ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
-        OdfTextDocument document = OdfTextDocument.loadDocument(inputStream);
-        PdfOptions options = PdfOptions.create();
-        PdfConverter.getInstance().convert(document, pdfOutputStream, options);
-        inputStream.reset();
-        return new ByteArrayInputStream(pdfOutputStream.toByteArray());
-    }
-    
-    /**
-     * Convert an Office document to PDF.
-     * 
-     * @param inputStream Unencrypted input stream
-     * @return PDF input stream
-     * @throws Exception 
-     */
-    private static InputStream convertOfficeDocument(InputStream inputStream) throws Exception {
-        ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
-        XWPFDocument document = new XWPFDocument(inputStream);
-        org.apache.poi.xwpf.converter.pdf.PdfOptions options = org.apache.poi.xwpf.converter.pdf.PdfOptions.create();
-        org.apache.poi.xwpf.converter.pdf.PdfConverter.getInstance().convert(document, pdfOutputStream, options);
-        inputStream.reset();
-        return new ByteArrayInputStream(pdfOutputStream.toByteArray());
-    }
-    
-    /**
      * Save a file on the storage filesystem.
      * 
      * @param inputStream Unencrypted input stream
@@ -220,15 +124,8 @@ public class FileUtil {
             inputStream.reset();
         } else if(pdfInputStream != null) {
             // Generate preview from the first page of the PDF
-            PDDocument pdfDocument = null;
-            try {
-                pdfDocument = PDDocument.load(pdfInputStream);
-                PDFRenderer renderer = new PDFRenderer(pdfDocument);
-                image = renderer.renderImage(0);
-                pdfInputStream.reset();
-            } finally {
-                pdfDocument.close();
-            }
+            image = PdfUtil.renderFirstPage(pdfInputStream);
+            pdfInputStream.reset();
         }
         
         if (image != null) {

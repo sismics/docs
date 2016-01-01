@@ -1,5 +1,8 @@
 package com.sismics.docs.rest.resource;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,8 +22,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -31,12 +36,14 @@ import org.joda.time.format.DateTimeParser;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
+import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.AclDto;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
@@ -50,6 +57,8 @@ import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.Tag;
+import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -58,6 +67,7 @@ import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.mime.MimeType;
 
 /**
  * Document REST resources.
@@ -143,6 +153,64 @@ public class DocumentResource extends BaseResource {
                 .add("writable", writable);
         
         return Response.ok().entity(document.build()).build();
+    }
+    
+    /**
+     * Export a document to PDF.
+     * 
+     * @param documentId Document ID
+     * @return Response
+     */
+    @GET
+    @Path("{id: [a-z0-9\\-]+}/pdf")
+    public Response getPdf(
+            @PathParam("id") String documentId,
+            @QueryParam("share") String shareId,
+            @QueryParam("metadata") Boolean metadata,
+            @QueryParam("comments") Boolean comments,
+            final @QueryParam("fitimagetopage") Boolean fitImageToPage,
+            @QueryParam("margin") String marginStr) {
+        authenticate();
+        
+        // Validate input
+        final int margin = ValidationUtil.validateInteger(marginStr, "margin");
+        
+        // Get document and check read permission
+        DocumentDao documentDao = new DocumentDao();
+        Document document = documentDao.getDocument(documentId, PermType.READ, shareId == null ? principal.getId() : shareId);
+        if (document == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        
+        // Get files
+        FileDao fileDao = new FileDao();
+        UserDao userDao = new UserDao();
+        final List<File> fileList = fileDao.getByDocumentId(null, documentId);
+        for (File file : fileList) {
+            // A file is always encrypted by the creator of it
+            // Store its private key to decrypt it
+            User user = userDao.getById(file.getUserId());
+            file.setPrivateKey(user.getPrivateKey());
+        }
+        
+        // Convert to PDF
+        StreamingOutput stream = new StreamingOutput() {
+            @Override
+            public void write(OutputStream outputStream) throws IOException, WebApplicationException {
+                try (InputStream inputStream = PdfUtil.convertToPdf(fileList, fitImageToPage, margin)) {
+                    ByteStreams.copy(inputStream, outputStream);
+                } catch (Exception e) {
+                    throw new IOException(e);
+                } finally {
+                    outputStream.close();
+                }
+            }
+        };
+
+        return Response.ok(stream)
+                .header("Content-Type", MimeType.APPLICATION_PDF)
+                .header("Content-Disposition", "inline; filename=\"" + document.getTitle() + ".pdf\"")
+                .build();
     }
     
     /**

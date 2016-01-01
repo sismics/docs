@@ -53,6 +53,7 @@ import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.core.util.EncryptionUtil;
 import com.sismics.docs.core.util.FileUtil;
+import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
@@ -150,14 +151,14 @@ public class FileResource extends BaseResource {
             file.setMimeType(MimeTypeUtil.guessOpenDocumentFormat(file, fileInputStream));
             
             // Convert to PDF if necessary (for thumbnail and text extraction)
-            InputStream pdfIntputStream = FileUtil.convertToPdf(fileInputStream, file);
+            InputStream pdfIntputStream = PdfUtil.convertToPdf(file, fileInputStream, true);
             
             // Save the file
             FileUtil.save(fileInputStream, pdfIntputStream, file, user.getPrivateKey());
             
             // Update the user quota
             user.setStorageCurrent(user.getStorageCurrent() + fileData.length);
-            userDao.update(user);
+            userDao.updateQuota(user);
             
             // Raise a new file created event if we have a document
             if (documentId != null) {
@@ -369,7 +370,7 @@ public class FileResource extends BaseResource {
         java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
         try {
             user.setStorageCurrent(user.getStorageCurrent() - Files.size(storedFile));
-            userDao.update(user);
+            userDao.updateQuota(user);
         } catch (IOException e) {
             // The file doesn't exists on disk, which is weird, but not fatal
         }

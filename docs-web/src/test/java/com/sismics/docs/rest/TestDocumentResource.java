@@ -196,6 +196,14 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(1, tags.size());
         Assert.assertEquals(tag1Id, tags.getJsonObject(0).getString("id"));
         
+        // Export a document in PDF format
+        Response response = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .get();
+        InputStream is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
+        
         // Create a tag
         json = target().path("/tag").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
@@ -244,7 +252,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertFalse(thumbnailFile.exists());
         
         // Get a document (KO)
-        Response response = target().path("/document/" + document1Id).request()
+        response = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
                 .get();
         Assert.assertEquals(Status.NOT_FOUND, Status.fromStatusCode(response.getStatus()));

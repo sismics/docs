@@ -304,7 +304,7 @@ public class AppResource extends BaseResource {
         // Save all users
         for (User user : userMap.values()) {
             if (user.getDeleteDate() == null) {
-                userDao.update(user);
+                userDao.updateQuota(user);
             }
         }
         

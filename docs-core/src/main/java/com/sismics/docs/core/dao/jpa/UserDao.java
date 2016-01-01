@@ -111,6 +111,26 @@ public class UserDao {
     }
     
     /**
+     * Updates a user's quota.
+     * 
+     * @param user User to update
+     * @return Updated user
+     */
+    public User updateQuota(User user) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        
+        // Get the user
+        Query q = em.createQuery("select u from User u where u.id = :id and u.deleteDate is null");
+        q.setParameter("id", user.getId());
+        User userFromDb = (User) q.getSingleResult();
+
+        // Update the user
+        userFromDb.setStorageQuota(user.getStorageQuota());
+        
+        return user;
+    }
+    
+    /**
      * Update the user password.
      * 
      * @param user User to update

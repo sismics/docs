@@ -117,4 +117,16 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
       }
     });
   };
+
+  /**
+   * Export the current document to PDF.
+   */
+  $scope.exportPdf = function() {
+    $modal.open({
+      templateUrl: 'partial/docs/document.pdf.html',
+      controller: 'DocumentModalPdf'
+    });
+
+    return false;
+  };
 });

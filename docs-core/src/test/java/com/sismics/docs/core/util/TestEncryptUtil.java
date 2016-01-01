@@ -18,11 +18,6 @@ import com.google.common.io.ByteStreams;
  * @author bgamard
  */
 public class TestEncryptUtil {
-    /**
-     * Test private key.
-     */
-    String pk = "OnceUponATime";
-    
     @Test
     public void generatePrivateKeyTest() throws Exception {
         String key = EncryptionUtil.generatePrivateKey();
@@ -38,7 +33,7 @@ public class TestEncryptUtil {
         } catch (IllegalArgumentException e) {
             // NOP
         }
-        Cipher cipher = EncryptionUtil.getEncryptionCipher(pk);
+        Cipher cipher = EncryptionUtil.getEncryptionCipher("OnceUponATime");
         InputStream inputStream = new CipherInputStream(this.getClass().getResourceAsStream("/file/udhr.pdf"), cipher);
         byte[] encryptedData = ByteStreams.toByteArray(inputStream);
         byte[] assertData = ByteStreams.toByteArray(this.getClass().getResourceAsStream("/file/udhr_encrypted.pdf"));
@@ -48,7 +43,8 @@ public class TestEncryptUtil {
     
     @Test
     public void decryptStreamTest() throws Exception {
-        InputStream inputStream = EncryptionUtil.decryptInputStream(this.getClass().getResourceAsStream("/file/udhr_encrypted.pdf"), pk);
+        InputStream inputStream = EncryptionUtil.decryptInputStream(
+                this.getClass().getResourceAsStream("/file/udhr_encrypted.pdf"), "OnceUponATime");
         byte[] encryptedData = ByteStreams.toByteArray(inputStream);
         byte[] assertData = ByteStreams.toByteArray(this.getClass().getResourceAsStream("/file/udhr.pdf"));
         

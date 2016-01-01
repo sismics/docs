@@ -45,7 +45,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents">
+        <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents" ng-class="{ active: $stateParams.id == document.id }">
           <td>
             {{ document.title }} ({{ document.file_count }})
             <span class="glyphicon glyphicon-share" ng-if="document.shared" tooltip="Shared"></span>
