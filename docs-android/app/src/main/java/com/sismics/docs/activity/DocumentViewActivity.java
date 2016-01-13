@@ -44,6 +44,7 @@ import com.sismics.docs.event.DocumentEditEvent;
 import com.sismics.docs.event.DocumentFullscreenEvent;
 import com.sismics.docs.event.FileAddEvent;
 import com.sismics.docs.event.FileDeleteEvent;
+import com.sismics.docs.fragment.DocExportPdfFragment;
 import com.sismics.docs.fragment.DocShareFragment;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
@@ -241,6 +242,16 @@ public class DocumentViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 deleteDocument();
+            }
+        });
+
+        // Action export PDF
+        button = (Button) findViewById(R.id.actionExportPdf);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment dialog = DocExportPdfFragment.newInstance(DocumentViewActivity.this.document.optString("id"));
+                dialog.show(getSupportFragmentManager(), "DocExportPdfFragment");
             }
         });
 

@@ -208,6 +208,17 @@
                 style="?android:buttonBarStyle">
 
                 <Button
+                    android:id="@+id/actionExportPdf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/ic_description_grey600_24dp"
+                    style="?android:buttonBarButtonStyle"
+                    android:text="@string/export_pdf"
+                    android:textColor="@color/button_material_dark"
+                    android:textAllCaps="false"
+                    android:layout_margin="8dp"/>
+
+                <Button
                     android:id="@+id/actionSharing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

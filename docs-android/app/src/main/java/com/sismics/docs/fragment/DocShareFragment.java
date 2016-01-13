@@ -44,7 +44,8 @@ public class DocShareFragment extends DialogFragment {
     private JSONObject document;
 
     /**
-     * Document sharing dialog fragment
+     * Document sharing dialog fragment.
+     *
      * @param id Document ID
      */
     public static DocShareFragment newInstance(String id) {
