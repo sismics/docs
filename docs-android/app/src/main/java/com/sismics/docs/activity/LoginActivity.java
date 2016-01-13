@@ -22,8 +22,9 @@ import com.sismics.docs.ui.form.validator.Required;
 import com.sismics.docs.util.DialogUtil;
 import com.sismics.docs.util.PreferenceUtil;
 
-import org.apache.http.Header;
 import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Login activity.

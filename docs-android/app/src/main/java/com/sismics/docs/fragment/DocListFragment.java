@@ -27,9 +27,9 @@ import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.ui.view.DividerItemDecoration;
 import com.sismics.docs.ui.view.EmptyRecyclerView;
 
-import org.apache.http.Header;
 import org.json.JSONObject;
 
+import cz.msebera.android.httpclient.Header;
 import de.greenrobot.event.EventBus;
 
 /**

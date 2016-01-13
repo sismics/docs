@@ -26,10 +26,10 @@ import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.resource.ShareResource;
 import com.sismics.docs.util.PreferenceUtil;
 
-import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import cz.msebera.android.httpclient.Header;
 import de.greenrobot.event.EventBus;
 
 /**

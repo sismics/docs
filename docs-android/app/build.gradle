@@ -13,12 +13,13 @@ repositories {
 }
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 23
     buildToolsVersion '23.0.2'
+    useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
@@ -50,9 +51,9 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
-    compile 'com.android.support:appcompat-v7:22.+'
-    compile 'com.android.support:recyclerview-v7:22.+'
-    compile 'com.loopj.android:android-async-http:1.4.6'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'it.sephiroth.android.library.imagezoom:imagezoom:1.0.5'
     compile 'de.greenrobot:eventbus:2.4.1'
     compile 'com.shamanland:fab:0.0.6'

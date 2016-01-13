@@ -7,10 +7,11 @@ import android.preference.PreferenceManager;
 
 import com.loopj.android.http.PersistentCookieStore;
 
-import org.apache.http.cookie.Cookie;
 import org.json.JSONObject;
 
 import java.util.List;
+
+import cz.msebera.android.httpclient.cookie.Cookie;
 
 /**
  * Utility class on preferences.

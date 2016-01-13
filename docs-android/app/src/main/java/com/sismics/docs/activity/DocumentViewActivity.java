@@ -54,7 +54,6 @@ import com.sismics.docs.service.FileUploadService;
 import com.sismics.docs.util.PreferenceUtil;
 import com.sismics.docs.util.TagUtil;
 
-import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,6 +62,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
 import de.greenrobot.event.EventBus;
 
 /**
