@@ -1,7 +1,6 @@
 package com.sismics.docs.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.BitmapAjaxCallback;
 import com.sismics.docs.R;
+import com.sismics.docs.util.OkHttpUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,21 +26,22 @@ import java.util.List;
  */
 public class CommentListAdapter extends BaseAdapter {
     /**
-     * AQuery.
-     */
-    private AQuery aq;
-
-    /**
      * Tags.
      */
     private List<JSONObject> commentList = new ArrayList<>();
+
+    /**
+     * Context.
+     */
+    private Context context;
 
     /**
      * Comment list adapter.
      *
      * @param commentsArray Comments
      */
-    public CommentListAdapter(JSONArray commentsArray) {
+    public CommentListAdapter(Context context, JSONArray commentsArray) {
+        this.context = context;
         for (int i = 0; i < commentsArray.length(); i++) {
             commentList.add(commentsArray.optJSONObject(i));
         }
@@ -70,12 +69,6 @@ public class CommentListAdapter extends BaseAdapter {
             view = vi.inflate(R.layout.comment_list_item, parent, false);
         }
 
-        if (aq == null) {
-            aq = new AQuery(view);
-        } else {
-            aq.recycle(view);
-        }
-
         // Fill the view
         JSONObject comment = getItem(position);
         TextView creatorTextView = (TextView) view.findViewById(R.id.creatorTextView);
@@ -88,14 +81,9 @@ public class CommentListAdapter extends BaseAdapter {
 
         // Gravatar image
         String gravatarUrl = "http://www.gravatar.com/avatar/" + comment.optString("creator_gravatar") + "?s=128d=identicon";
-        if (aq.shouldDelay(position, view, parent, gravatarUrl)) {
-            aq.id(gravatarImageView).image((Bitmap) null);
-        } else {
-            aq.id(gravatarImageView).image(new BitmapAjaxCallback()
-                            .url(gravatarUrl)
-                            .animation(AQuery.FADE_IN_NETWORK)
-            );
-        }
+        OkHttpUtil.picasso(context, null)
+                .load(gravatarUrl)
+                .into(gravatarImageView);
 
         return view;
     }

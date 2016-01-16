@@ -731,7 +731,7 @@ public class DocumentViewActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 JSONArray comments = response.optJSONArray("comments");
-                commentListAdapter = new CommentListAdapter(comments);
+                commentListAdapter = new CommentListAdapter(DocumentViewActivity.this, comments);
                 listView.setAdapter(commentListAdapter);
                 listView.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);

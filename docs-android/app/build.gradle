@@ -3,7 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0-alpha3'
+        classpath 'com.android.tools.build:gradle:2.0.0-alpha5'
     }
 }
 apply plugin: 'com.android.application'
@@ -15,7 +15,6 @@ repositories {
 android {
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
-    useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         minSdkVersion 14
@@ -57,4 +56,7 @@ dependencies {
     compile 'it.sephiroth.android.library.imagezoom:imagezoom:1.0.5'
     compile 'de.greenrobot:eventbus:2.4.1'
     compile 'com.shamanland:fab:0.0.6'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.squareup.okhttp3:okhttp:3.0.1'
+    compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
 }

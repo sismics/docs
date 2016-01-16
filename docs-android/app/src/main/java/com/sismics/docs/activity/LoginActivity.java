@@ -10,8 +10,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
-import com.androidquery.AQuery;
 import com.sismics.docs.R;
 import com.sismics.docs.listener.CallbackListener;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
@@ -43,19 +43,17 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
-        
-        AQuery aq = new AQuery(this);
-        aq.id(R.id.loginExplain)
-            .text(Html.fromHtml(getString(R.string.login_explain)))
-            .getTextView()
-            .setMovementMethod(LinkMovementMethod.getInstance());
-        
-        final EditText txtServer = aq.id(R.id.txtServer).getEditText();
-        final EditText txtUsername = aq.id(R.id.txtUsername).getEditText();
-        final EditText txtPassword = aq.id(R.id.txtPassword).getEditText();
-        final Button btnConnect = aq.id(R.id.btnConnect).getButton();
-        loginForm = aq.id(R.id.loginForm).getView();
-        progressBar = aq.id(R.id.progressBar).getView();
+
+        TextView loginExplainTextView = (TextView) findViewById(R.id.loginExplain);
+        loginExplainTextView.setText(Html.fromHtml(getString(R.string.login_explain)));
+        loginExplainTextView.setMovementMethod(LinkMovementMethod.getInstance());
+
+        final EditText txtServer = (EditText) findViewById(R.id.txtServer);
+        final EditText txtUsername = (EditText) findViewById(R.id.txtUsername);
+        final EditText txtPassword = (EditText) findViewById(R.id.txtPassword);
+        final Button btnConnect = (Button) findViewById(R.id.btnConnect);
+        loginForm = findViewById(R.id.loginForm);
+        progressBar = findViewById(R.id.progressBar);
         
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         

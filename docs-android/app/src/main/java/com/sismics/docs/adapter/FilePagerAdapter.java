@@ -7,10 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.BitmapAjaxCallback;
 import com.sismics.docs.R;
+import com.sismics.docs.util.OkHttpUtil;
 import com.sismics.docs.util.PreferenceUtil;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,11 +30,6 @@ public class FilePagerAdapter extends PagerAdapter {
      * Files list.
      */
     private List<JSONObject> files;
-
-    /**
-     * AQuery.
-     */
-    private AQuery aq;
 
     /**
      * Context.
@@ -58,7 +54,6 @@ public class FilePagerAdapter extends PagerAdapter {
         }
         this.context = context;
         this.authToken = PreferenceUtil.getAuthToken(context);
-        aq = new AQuery(context);
     }
 
     @Override
@@ -66,15 +61,20 @@ public class FilePagerAdapter extends PagerAdapter {
         View view = LayoutInflater.from(container.getContext()).inflate(R.layout.file_viewpager_item, container, false);
 
         ImageViewTouch fileImageView = (ImageViewTouch) view.findViewById(R.id.fileImageView);
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.fileProgressBar);
+        final ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.fileProgressBar);
         JSONObject file = files.get(position);
         String fileUrl = PreferenceUtil.getServerUrl(context) + "/api/file/" + file.optString("id") + "/data?size=web";
-        aq.id(fileImageView)
-                .image(new BitmapAjaxCallback()
-                        .url(fileUrl)
-                        .progress(progressBar)
-                        .animation(AQuery.FADE_IN_NETWORK)
-                        .cookie("auth_token", authToken));
+
+        // Load image
+        OkHttpUtil.picasso(context, authToken)
+                .load(fileUrl)
+                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                .into(fileImageView, new Callback.EmptyCallback() {
+                    @Override
+                    public void onSuccess() {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
 
         fileImageView.setDisplayType(ImageViewTouchBase.DisplayType.FIT_TO_SCREEN);
 

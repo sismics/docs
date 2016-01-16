@@ -58,8 +58,8 @@ public class FileResource extends BaseResource {
         SyncHttpClient client = new SyncHttpClient();
         KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
         trustStore.load(null, null);
-        MySSLSocketFactory2 sf = new MySSLSocketFactory2(trustStore);
-        sf.setHostnameVerifier(MySSLSocketFactory2.ALLOW_ALL_HOSTNAME_VERIFIER);
+        MySSLSocketFactory sf = new MySSLSocketFactory(trustStore);
+        sf.setHostnameVerifier(MySSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
         client.setSSLSocketFactory(sf);
         client.setCookieStore(new PersistentCookieStore(context));
         client.setUserAgent(USER_AGENT);

@@ -18,7 +18,6 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.androidquery.util.AQUtility;
 import com.sismics.docs.R;
 import com.sismics.docs.adapter.TagListAdapter;
 import com.sismics.docs.event.AdvancedSearchEvent;
@@ -274,10 +273,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
-        if(isTaskRoot()) {
-            int cacheSizeMb = PreferenceUtil.getIntegerPreference(this, PreferenceUtil.PREF_CACHE_SIZE, 10);
-            AQUtility.cleanCacheAsync(this, cacheSizeMb * 1000000, cacheSizeMb * 1000000);
-        }
         super.onDestroy();
     }
 }

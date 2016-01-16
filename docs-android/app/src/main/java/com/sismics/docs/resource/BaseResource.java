@@ -3,13 +3,10 @@ package com.sismics.docs.resource;
 import android.content.Context;
 import android.os.Build;
 
-import com.androidquery.callback.AbstractAjaxCallback;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.PersistentCookieStore;
 import com.sismics.docs.util.ApplicationUtil;
 import com.sismics.docs.util.PreferenceUtil;
-
-import org.apache.http.conn.ssl.SSLSocketFactory;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -25,6 +22,8 @@ import java.util.Locale;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
+import cz.msebera.android.httpclient.conn.ssl.SSLSocketFactory;
 
 /**
  * Base class for API access.
@@ -55,15 +54,10 @@ public class BaseResource {
             KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
             trustStore.load(null, null);
 
-            // AQuery support only the old Apache HTTP library
+            // Async HTTP Client uses another HTTP libary
             MySSLSocketFactory sf = new MySSLSocketFactory(trustStore);
             sf.setHostnameVerifier(MySSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-            AbstractAjaxCallback.setSSF(sf);
-
-            // Async HTTP Client uses another HTTP libary
-            MySSLSocketFactory2 sf2 = new MySSLSocketFactory2(trustStore);
-            sf2.setHostnameVerifier(MySSLSocketFactory2.ALLOW_ALL_HOSTNAME_VERIFIER);
-            client.setSSLSocketFactory(sf2);
+            client.setSSLSocketFactory(sf);
         } catch (Exception e) {
             // NOP
         }
@@ -90,51 +84,14 @@ public class BaseResource {
     }
     
     /**
-     * Socket factory to allow self-signed certificates for AQuery.
-     * 
-     * @author bgamard
-     */
-    public static class MySSLSocketFactory extends SSLSocketFactory {
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-
-        public MySSLSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
-            super(truststore);
-
-            TrustManager tm = new X509TrustManager() {
-                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                }
-
-                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                }
-
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-            };
-
-            sslContext.init(null, new TrustManager[] { tm }, null);
-        }
-
-        @Override
-        public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException {
-            return sslContext.getSocketFactory().createSocket(socket, host, port, autoClose);
-        }
-
-        @Override
-        public Socket createSocket() throws IOException {
-            return sslContext.getSocketFactory().createSocket();
-        }
-    }
-
-    /**
      * Socket factory to allow self-signed certificates for Async HTTP Client.
      *
      * @author bgamard
      */
-    public static class MySSLSocketFactory2 extends cz.msebera.android.httpclient.conn.ssl.SSLSocketFactory {
-        SSLContext sslContext = SSLContext.getInstance("TLS");
+    public static class MySSLSocketFactory extends cz.msebera.android.httpclient.conn.ssl.SSLSocketFactory {
+        SSLContext sslContext = SSLContext.getInstance(SSLSocketFactory.TLS);
 
-        public MySSLSocketFactory2(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
+        public MySSLSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
             super(truststore);
 
             TrustManager tm = new X509TrustManager() {
