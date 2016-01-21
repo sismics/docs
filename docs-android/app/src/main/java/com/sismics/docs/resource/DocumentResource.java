@@ -3,9 +3,13 @@ package com.sismics.docs.resource;
 import android.content.Context;
 
 import com.loopj.android.http.RequestParams;
+import com.sismics.docs.listener.HttpCallback;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 
 import java.util.Set;
+
+import okhttp3.HttpUrl;
+import okhttp3.Request;
 
 /**
  * Access to /document API.
@@ -19,18 +23,22 @@ public class DocumentResource extends BaseResource {
      * @param context Context
      * @param offset Offset
      * @param query Search query
-     * @param responseHandler Callback
+     * @param callback Callback
      */
-    public static void list(Context context, int offset, String query, JsonHttpResponseHandler responseHandler) {
-        init(context);
-        
-        RequestParams params = new RequestParams();
-        params.put("limit", 20);
-        params.put("offset", offset);
-        params.put("sort_column", 3);
-        params.put("asc", false);
-        params.put("search", query);
-        client.get(getApiUrl(context) + "/document/list", params, responseHandler);
+    public static void list(Context context, int offset, String query, HttpCallback callback) {
+        Request request = new Request.Builder()
+                .url(HttpUrl.parse(getApiUrl(context) + "/document/list")
+                        .newBuilder()
+                        .addQueryParameter("limit", "20")
+                        .addQueryParameter("offset", Integer.toString(offset))
+                        .addQueryParameter("sort_column", "3")
+                        .addQueryParameter("asc", "false")
+                        .addQueryParameter("search", query)
+                        .build())
+                .build();
+        buildOkHttpClient(context)
+                .newCall(request)
+                .enqueue(HttpCallback.buildOkHttpCallback(callback));
     }
 
     /**

@@ -21,7 +21,7 @@ import com.sismics.docs.event.DocumentAddEvent;
 import com.sismics.docs.event.DocumentDeleteEvent;
 import com.sismics.docs.event.DocumentEditEvent;
 import com.sismics.docs.event.SearchEvent;
-import com.sismics.docs.listener.JsonHttpResponseHandler;
+import com.sismics.docs.listener.HttpCallback;
 import com.sismics.docs.listener.RecyclerItemClickListener;
 import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.ui.view.DividerItemDecoration;
@@ -29,7 +29,6 @@ import com.sismics.docs.ui.view.EmptyRecyclerView;
 
 import org.json.JSONObject;
 
-import cz.msebera.android.httpclient.Header;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -218,16 +217,16 @@ public class DocListFragment extends Fragment {
 
         recyclerView.setEmptyView(progressBar);
 
-        DocumentResource.list(getActivity(), reset ? 0 : adapter.getItemCount(), query, new JsonHttpResponseHandler() {
+        DocumentResource.list(getActivity(), reset ? 0 : adapter.getItemCount(), query, new HttpCallback() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onSuccess(JSONObject response) {
                 adapter.addDocuments(response.optJSONArray("documents"));
                 documentsEmptyView.setText(R.string.no_documents);
                 recyclerView.setEmptyView(documentsEmptyView);
             }
 
             @Override
-            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+            public void onFailure(JSONObject response, Exception e) {
                 documentsEmptyView.setText(R.string.error_loading_documents);
                 recyclerView.setEmptyView(documentsEmptyView);
 

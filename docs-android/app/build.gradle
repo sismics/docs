@@ -58,5 +58,6 @@ dependencies {
     compile 'com.shamanland:fab:0.0.6'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.okhttp3:okhttp:3.0.1'
+    compile "com.squareup.okhttp3:okhttp-urlconnection:3.0.1"
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
 }
