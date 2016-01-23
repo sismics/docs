@@ -1,23 +1,29 @@
 package com.sismics.docs.util;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import com.jakewharton.picasso.OkHttp3Downloader;
+import com.sismics.docs.resource.cookie.PersistentCookieStore;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.HttpCookie;
+import java.net.URI;
 import java.security.cert.CertificateException;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Cache;
 import okhttp3.Interceptor;
+import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -29,57 +35,27 @@ import okhttp3.Response;
  */
 public class OkHttpUtil {
     /**
-     * Build a Picasso object with base config.
-     *
-     * @param context Context
-     * @param authToken Auth token
-     * @return Picasso object
+     * OkHttp singleton client.
      */
-    public static Picasso picasso(Context context, final String authToken) {
-        OkHttpClient okHttpClient = buildOkHttpClient()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Interceptor.Chain chain) throws IOException {
-                        final Request original = chain.request();
-                        final Request.Builder requestBuilder = original.newBuilder()
-                                .header("Cookie", "auth_token=" + authToken)
-                                .header("Cache-Control", "max-age=" + (3600 * 24 * 365))
-                                .method(original.method(), original.body());
-                        return chain.proceed(requestBuilder.build());
-                    }
-                })
-                .cache(new Cache(context.getCacheDir(),
-                        PreferenceUtil.getIntegerPreference(context, PreferenceUtil.PREF_CACHE_SIZE, 0) * 1000000))
-                .build();
-
-        Picasso picasso = new Picasso.Builder(context)
-                .downloader(new OkHttp3Downloader(okHttpClient))
-                .build();
-        picasso.setIndicatorsEnabled(false);
-        return picasso;
-    }
+    private static OkHttpClient okHttpClient = new OkHttpClient();
 
     /**
-     * Clear the cache.
-     *
-     * @param context Context
+     * Singleton cache.
      */
-    public static void clearCache(Context context) {
-        Cache cache = new Cache(context.getCacheDir(),
-                PreferenceUtil.getIntegerPreference(context, PreferenceUtil.PREF_CACHE_SIZE, Integer.MAX_VALUE));
-        try {
-            cache.evictAll();
-        } catch (IOException e) {
-            Log.e("OKHttpUtil", "Error clearing cache", e);
-        }
-    }
+    private static Cache cache = null;
 
     /**
-     * Build a OkHttpClient accepting all SSL certificates.
-     *
-     * @return OkHttpClient.Builder
+     * User-Agent to use.
      */
-    private static OkHttpClient.Builder buildOkHttpClient() {
+    protected static String userAgent = null;
+
+    /**
+     * Accept-Language header.
+     */
+    protected static String acceptLanguage = null;
+
+    static {
+        // OkHttp configuration
         try {
             // Create a trust manager that does not validate certificate chains
             final TrustManager[] trustAllCerts = new TrustManager[] {
@@ -102,22 +78,114 @@ public class OkHttpUtil {
             // Install the all-trusting trust manager
             final SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+            final javax.net.ssl.SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
-            // Create an ssl socket factory with our all-trusting manager
-            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-
-            OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            builder.sslSocketFactory(sslSocketFactory);
-            builder.hostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
-
-            return builder;
+            // Configure OkHttpClient
+            okHttpClient = okHttpClient.newBuilder()
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .sslSocketFactory(sslSocketFactory)
+                    .build();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            // NOP
         }
+    }
+
+    /**
+     * Build a Picasso object with base config.
+     *
+     * @param context Context
+     * @return Picasso object
+     */
+    public static Picasso picasso(Context context) {
+        OkHttpClient okHttpClient = buildClient(context)
+                .newBuilder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Interceptor.Chain chain) throws IOException { // Override cache configuration
+                        final Request original = chain.request();
+                        final Request.Builder requestBuilder = original.newBuilder()
+                                .header("Cache-Control", "max-age=" + (3600 * 24 * 365))
+                                .method(original.method(), original.body());
+                        return chain.proceed(requestBuilder.build());
+                    }
+                })
+                .cache(getCache(context))
+                .build();
+
+        Picasso picasso = new Picasso.Builder(context)
+                .downloader(new OkHttp3Downloader(okHttpClient))
+                .build();
+        picasso.setIndicatorsEnabled(false); // Debug stuff
+        return picasso;
+    }
+
+    /**
+     * Get and eventually build the singleton cache.
+     *
+     * @param context Context
+     * @return Cache
+     */
+    private static Cache getCache(Context context) {
+        if (cache == null) {
+            cache = new Cache(context.getCacheDir(),
+                    PreferenceUtil.getIntegerPreference(context, PreferenceUtil.PREF_CACHE_SIZE, 0) * 1000000);
+        }
+        return cache;
+    }
+
+    /**
+     * Clear the HTTP cache.
+     *
+     * @param context Context
+     */
+    public static void clearCache(Context context) {
+        Cache cache = getCache(context);
+        try {
+            cache.evictAll();
+        } catch (IOException e) {
+            Log.e("OKHttpUtil", "Error clearing cache", e);
+        }
+    }
+
+    /**
+     * Build an OkHttpClient.
+     *
+     * @param context Context
+     * @return OkHttpClient
+     */
+    public static OkHttpClient buildClient(final Context context) {
+        // One-time header computation
+        if (userAgent == null) {
+            userAgent = "Sismics Docs Android " + ApplicationUtil.getVersionName(context) + "/Android " + Build.VERSION.RELEASE + "/" + Build.MODEL;
+        }
+
+        if (acceptLanguage == null) {
+            Locale locale = Locale.getDefault();
+            acceptLanguage = locale.getLanguage() + "_" + locale.getCountry();
+        }
+
+        // Cookie handling
+        PersistentCookieStore cookieStore = new PersistentCookieStore(context);
+        CookieManager cookieManager = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL);
+        cookieStore.add(URI.create(PreferenceUtil.getServerUrl(context)),
+                new HttpCookie("auth_token", PreferenceUtil.getAuthToken(context))); // TODO Remove me when async http is ditched
+
+        // Runtime configuration
+        return okHttpClient.newBuilder()
+                .cookieJar(new JavaNetCookieJar(cookieManager))
+                .addNetworkInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request originalRequest = chain.request();
+                        return chain.proceed(originalRequest.newBuilder()
+                                .header("User-Agent", userAgent)
+                                .header("Accept-Language", acceptLanguage)
+                                // TODO necessary?? .method(originalRequest.method(), originalRequest.body())
+                                .build());
+                    }
+                })
+                .build();
     }
 }

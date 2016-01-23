@@ -46,6 +46,7 @@ import com.sismics.docs.event.FileAddEvent;
 import com.sismics.docs.event.FileDeleteEvent;
 import com.sismics.docs.fragment.DocExportPdfFragment;
 import com.sismics.docs.fragment.DocShareFragment;
+import com.sismics.docs.listener.HttpCallback;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.resource.CommentResource;
@@ -487,14 +488,14 @@ public class DocumentViewActivity extends AppCompatActivity {
 
                         // Actual delete server call
                         final String documentId = document.optString("id");
-                        DocumentResource.delete(DocumentViewActivity.this, documentId, new JsonHttpResponseHandler() {
+                        DocumentResource.delete(DocumentViewActivity.this, documentId, new HttpCallback() {
                             @Override
-                            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            public void onSuccess(JSONObject response) {
                                 EventBus.getDefault().post(new DocumentDeleteEvent(documentId));
                             }
 
                             @Override
-                            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                            public void onFailure(JSONObject json, Exception e) {
                                 Toast.makeText(DocumentViewActivity.this, R.string.document_delete_failure, Toast.LENGTH_LONG).show();
                             }
 
@@ -646,9 +647,9 @@ public class DocumentViewActivity extends AppCompatActivity {
         // Silently get the document to know if it is writable by the current user
         // If this call fails or is slow and the document is read-only,
         // write actions will be allowed and will fail
-        DocumentResource.get(this, document.optString("id"), new JsonHttpResponseHandler() {
+        DocumentResource.get(this, document.optString("id"), new HttpCallback() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onSuccess(JSONObject response) {
                 document = response;
                 boolean writable = document.optBoolean("writable");
 

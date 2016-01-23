@@ -2,12 +2,12 @@ package com.sismics.docs.resource;
 
 import android.content.Context;
 
-import com.loopj.android.http.RequestParams;
 import com.sismics.docs.listener.HttpCallback;
-import com.sismics.docs.listener.JsonHttpResponseHandler;
+import com.sismics.docs.util.OkHttpUtil;
 
 import java.util.Set;
 
+import okhttp3.FormBody;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
 
@@ -35,8 +35,9 @@ public class DocumentResource extends BaseResource {
                         .addQueryParameter("asc", "false")
                         .addQueryParameter("search", query)
                         .build())
+                .get()
                 .build();
-        buildOkHttpClient(context)
+        OkHttpUtil.buildClient(context)
                 .newCall(request)
                 .enqueue(HttpCallback.buildOkHttpCallback(callback));
     }
@@ -46,12 +47,16 @@ public class DocumentResource extends BaseResource {
      *
      * @param context Context
      * @param id ID
-     * @param responseHandler Callback
+     * @param callback Callback
      */
-    public static void get(Context context, String id, JsonHttpResponseHandler responseHandler) {
-        init(context);
-
-        client.get(getApiUrl(context) + "/document/" + id, responseHandler);
+    public static void get(Context context, String id, HttpCallback callback) {
+        Request request = new Request.Builder()
+                .url(HttpUrl.parse(getApiUrl(context) + "/document/" + id))
+                .get()
+                .build();
+        OkHttpUtil.buildClient(context)
+                .newCall(request)
+                .enqueue(HttpCallback.buildOkHttpCallback(callback));
     }
 
     /**
@@ -59,12 +64,16 @@ public class DocumentResource extends BaseResource {
      *
      * @param context Context
      * @param id ID
-     * @param responseHandler Callback
+     * @param callback Callback
      */
-    public static void delete(Context context, String id, JsonHttpResponseHandler responseHandler) {
-        init(context);
-
-        client.delete(getApiUrl(context) + "/document/" + id, responseHandler);
+    public static void delete(Context context, String id, HttpCallback callback) {
+        Request request = new Request.Builder()
+                .url(HttpUrl.parse(getApiUrl(context) + "/document/" + id))
+                .delete()
+                .build();
+        OkHttpUtil.buildClient(context)
+                .newCall(request)
+                .enqueue(HttpCallback.buildOkHttpCallback(callback));
     }
 
     /**
@@ -76,19 +85,27 @@ public class DocumentResource extends BaseResource {
      * @param tagIdList Tags ID list
      * @param language Language
      * @param createDate Create date
-     * @param responseHandler Callback
+     * @param callback Callback
      */
     public static void add(Context context, String title, String description,
-                           Set<String> tagIdList, String language, long createDate, JsonHttpResponseHandler responseHandler) {
-        init(context);
+                           Set<String> tagIdList, String language, long createDate, HttpCallback callback) {
+        FormBody.Builder formBuilder = new FormBody.Builder()
+                .add("title", title)
+                .add("description", description)
+                .add("language", language)
+                .add("create_date", Long.toString(createDate));
+        String[] tagIdArray = tagIdList.toArray(new String[tagIdList.size()]);
+        for (int i = 0; i < tagIdArray.length; i++) {
+            formBuilder.add("tags", tagIdArray[i]);
+        }
 
-        RequestParams params = new RequestParams();
-        params.put("title", title);
-        params.put("description", description);
-        params.put("tags", tagIdList);
-        params.put("language", language);
-        params.put("create_date", createDate);
-        client.put(getApiUrl(context) + "/document", params, responseHandler);
+        Request request = new Request.Builder()
+                .url(HttpUrl.parse(getApiUrl(context) + "/document"))
+                .put(formBuilder.build())
+                .build();
+        OkHttpUtil.buildClient(context)
+                .newCall(request)
+                .enqueue(HttpCallback.buildOkHttpCallback(callback));
     }
 
     /**
@@ -101,19 +118,27 @@ public class DocumentResource extends BaseResource {
      * @param tagIdList Tags ID list
      * @param language Language
      * @param createDate Create date
-     * @param responseHandler Callback
+     * @param callback Callback
      */
     public static void edit(Context context, String id, String title, String description,
-                           Set<String> tagIdList, String language, long createDate, JsonHttpResponseHandler responseHandler) {
-        init(context);
+                           Set<String> tagIdList, String language, long createDate, HttpCallback callback) {
+        FormBody.Builder formBuilder = new FormBody.Builder()
+                .add("title", title)
+                .add("description", description)
+                .add("language", language)
+                .add("create_date", Long.toString(createDate));
+        String[] tagIdArray = tagIdList.toArray(new String[tagIdList.size()]);
+        for (int i = 0; i < tagIdArray.length; i++) {
+            formBuilder.add("tags", tagIdArray[i]);
+        }
 
-        RequestParams params = new RequestParams();
-        params.put("title", title);
-        params.put("description", description);
-        params.put("tags", tagIdList);
-        params.put("language", language);
-        params.put("create_date", createDate);
-        client.post(getApiUrl(context) + "/document/" + id, params, responseHandler);
+        Request request = new Request.Builder()
+                .url(HttpUrl.parse(getApiUrl(context) + "/document/" + id))
+                .post(formBuilder.build())
+                .build();
+        OkHttpUtil.buildClient(context)
+                .newCall(request)
+                .enqueue(HttpCallback.buildOkHttpCallback(callback));
     }
 
     /**

@@ -66,9 +66,9 @@ public class FilePagerAdapter extends PagerAdapter {
         String fileUrl = PreferenceUtil.getServerUrl(context) + "/api/file/" + file.optString("id") + "/data?size=web";
 
         // Load image
-        OkHttpUtil.picasso(context, authToken)
+        OkHttpUtil.picasso(context)
                 .load(fileUrl)
-                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE) // Don't memory cache the images
                 .into(fileImageView, new Callback.EmptyCallback() {
                     @Override
                     public void onSuccess() {
@@ -109,7 +109,7 @@ public class FilePagerAdapter extends PagerAdapter {
      * @return Object
      */
     public JSONObject getObjectAt(int position) {
-        if (files == null) {
+        if (files == null || position < 0 || position >= files.size()) {
             return null;
         }
 

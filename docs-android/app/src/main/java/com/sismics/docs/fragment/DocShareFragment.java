@@ -21,6 +21,7 @@ import com.sismics.docs.R;
 import com.sismics.docs.adapter.ShareListAdapter;
 import com.sismics.docs.event.ShareDeleteEvent;
 import com.sismics.docs.event.ShareSendEvent;
+import com.sismics.docs.listener.HttpCallback;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.resource.ShareResource;
@@ -122,9 +123,9 @@ public class DocShareFragment extends DialogFragment {
         final ProgressBar shareProgressBar = (ProgressBar) view.findViewById(R.id.shareProgressBar);
 
         shareListView.setEmptyView(shareProgressBar);
-        DocumentResource.get(getActivity(), getArguments().getString("id"), new JsonHttpResponseHandler() {
+        DocumentResource.get(getActivity(), getArguments().getString("id"), new HttpCallback() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onSuccess(JSONObject response) {
                 document = response;
                 JSONArray acls = response.optJSONArray("acls");
                 shareProgressBar.setVisibility(View.GONE);
@@ -133,7 +134,7 @@ public class DocShareFragment extends DialogFragment {
             }
 
             @Override
-            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+            public void onFailure(JSONObject json, Exception e) {
                 getDialog().cancel();
                 Toast.makeText(getActivity(), R.string.error_loading_shares, Toast.LENGTH_SHORT).show();
             }

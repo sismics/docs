@@ -17,7 +17,7 @@ import com.sismics.docs.adapter.LanguageAdapter;
 import com.sismics.docs.adapter.TagAutoCompleteAdapter;
 import com.sismics.docs.event.DocumentAddEvent;
 import com.sismics.docs.event.DocumentEditEvent;
-import com.sismics.docs.listener.JsonHttpResponseHandler;
+import com.sismics.docs.listener.HttpCallback;
 import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.ui.form.Validator;
 import com.sismics.docs.ui.form.validator.Required;
@@ -35,7 +35,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import cz.msebera.android.httpclient.Header;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -174,9 +173,9 @@ public class DocumentEditActivity extends AppCompatActivity {
                         });
 
                 // Server callback
-                JsonHttpResponseHandler callback = new JsonHttpResponseHandler() {
+                HttpCallback callback = new HttpCallback() {
                     @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    public void onSuccess(JSONObject response) {
                         // Build a fake document JSON to update the UI
                         final JSONObject outputDoc = new JSONObject();
                         try {
@@ -211,7 +210,7 @@ public class DocumentEditActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                    public void onFailure(JSONObject json, Exception e) {
                         Toast.makeText(DocumentEditActivity.this, R.string.error_editing_document, Toast.LENGTH_LONG).show();
                     }
 

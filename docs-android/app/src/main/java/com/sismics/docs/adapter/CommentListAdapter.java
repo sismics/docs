@@ -81,7 +81,7 @@ public class CommentListAdapter extends BaseAdapter {
 
         // Gravatar image
         String gravatarUrl = "http://www.gravatar.com/avatar/" + comment.optString("creator_gravatar") + "?s=128d=identicon";
-        OkHttpUtil.picasso(context, null)
+        OkHttpUtil.picasso(context)
                 .load(gravatarUrl)
                 .into(gravatarImageView);
 
