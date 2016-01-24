@@ -2,7 +2,6 @@ package com.sismics.docs;
 
 import android.app.Application;
 
-import com.androidquery.callback.BitmapAjaxCallback;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.util.PreferenceUtil;
 
@@ -23,11 +22,5 @@ public class MainApplication extends Application {
         // TODO Provide documents to intent action get content
 
         super.onCreate();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        BitmapAjaxCallback.clearCache();
     }
 }

@@ -7,6 +7,12 @@
   metadata-complete="true"> 
   <display-name>Docs</display-name>
   
+  <!-- Proper loader/unloader of ImageIO plugins -->
+  <listener>
+    <display-name>ImageIO service provider loader/unloader</display-name>
+    <listener-class>com.twelvemonkeys.servlet.image.IIOProviderContextListener</listener-class>
+  </listener>
+  
   <!-- This filter is used to process a couple things in the request context -->
   <filter>
     <filter-name>requestContextFilter</filter-name>

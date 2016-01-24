@@ -44,7 +44,9 @@ import com.sismics.docs.event.DocumentEditEvent;
 import com.sismics.docs.event.DocumentFullscreenEvent;
 import com.sismics.docs.event.FileAddEvent;
 import com.sismics.docs.event.FileDeleteEvent;
+import com.sismics.docs.fragment.DocExportPdfFragment;
 import com.sismics.docs.fragment.DocShareFragment;
+import com.sismics.docs.listener.HttpCallback;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.resource.CommentResource;
@@ -54,7 +56,6 @@ import com.sismics.docs.service.FileUploadService;
 import com.sismics.docs.util.PreferenceUtil;
 import com.sismics.docs.util.TagUtil;
 
-import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,6 +64,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -241,6 +243,16 @@ public class DocumentViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 deleteDocument();
+            }
+        });
+
+        // Action export PDF
+        button = (Button) findViewById(R.id.actionExportPdf);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment dialog = DocExportPdfFragment.newInstance(DocumentViewActivity.this.document.optString("id"));
+                dialog.show(getSupportFragmentManager(), "DocExportPdfFragment");
             }
         });
 
@@ -476,14 +488,14 @@ public class DocumentViewActivity extends AppCompatActivity {
 
                         // Actual delete server call
                         final String documentId = document.optString("id");
-                        DocumentResource.delete(DocumentViewActivity.this, documentId, new JsonHttpResponseHandler() {
+                        DocumentResource.delete(DocumentViewActivity.this, documentId, new HttpCallback() {
                             @Override
-                            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            public void onSuccess(JSONObject response) {
                                 EventBus.getDefault().post(new DocumentDeleteEvent(documentId));
                             }
 
                             @Override
-                            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                            public void onFailure(JSONObject json, Exception e) {
                                 Toast.makeText(DocumentViewActivity.this, R.string.document_delete_failure, Toast.LENGTH_LONG).show();
                             }
 
@@ -635,9 +647,9 @@ public class DocumentViewActivity extends AppCompatActivity {
         // Silently get the document to know if it is writable by the current user
         // If this call fails or is slow and the document is read-only,
         // write actions will be allowed and will fail
-        DocumentResource.get(this, document.optString("id"), new JsonHttpResponseHandler() {
+        DocumentResource.get(this, document.optString("id"), new HttpCallback() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onSuccess(JSONObject response) {
                 document = response;
                 boolean writable = document.optBoolean("writable");
 
@@ -720,7 +732,7 @@ public class DocumentViewActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 JSONArray comments = response.optJSONArray("comments");
-                commentListAdapter = new CommentListAdapter(comments);
+                commentListAdapter = new CommentListAdapter(DocumentViewActivity.this, comments);
                 listView.setAdapter(commentListAdapter);
                 listView.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);

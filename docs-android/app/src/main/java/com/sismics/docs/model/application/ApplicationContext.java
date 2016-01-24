@@ -8,8 +8,9 @@ import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.resource.UserResource;
 import com.sismics.docs.util.PreferenceUtil;
 
-import org.apache.http.Header;
 import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Global context of the application.

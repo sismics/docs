@@ -117,6 +117,8 @@
     <string name="comment_delete">Delete comment</string>
     <string name="deleting_comment">Deleting comment</string>
     <string name="error_deleting_comment">Error deleting comment</string>
+    <string name="export_pdf">Export PDF</string>
+    <string name="download">Download</string>
 
 
 </resources>

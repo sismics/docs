@@ -9,7 +9,7 @@
         android:layout_width="200dp"
         android:layout_height="15dip"
         android:id="@+id/fileProgressBar"
-        android:indeterminate="false"
+        android:indeterminate="true"
         android:layout_centerInParent="true"/>
 
     <it.sephiroth.android.library.imagezoom.ImageViewTouch

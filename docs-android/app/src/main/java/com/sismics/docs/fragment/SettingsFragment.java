@@ -9,10 +9,10 @@ import android.preference.PreferenceManager;
 import android.provider.SearchRecentSuggestions;
 import android.widget.Toast;
 
-import com.androidquery.util.AQUtility;
 import com.sismics.docs.R;
 import com.sismics.docs.provider.RecentSuggestionsProvider;
 import com.sismics.docs.util.ApplicationUtil;
+import com.sismics.docs.util.OkHttpUtil;
 import com.sismics.docs.util.PreferenceUtil;
 
 /**
@@ -52,7 +52,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         clearCachePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                AQUtility.cleanCacheAsync(getActivity());
+                OkHttpUtil.clearCache(getActivity());
                 Toast.makeText(getActivity(), R.string.pref_clear_cache_success, Toast.LENGTH_LONG).show();
                 return true;
             }

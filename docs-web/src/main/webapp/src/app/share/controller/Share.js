@@ -3,7 +3,7 @@
 /**
  * Share controller.
  */
-angular.module('share').controller('Share', function($scope, $state, $stateParams, Restangular) {
+angular.module('share').controller('Share', function($scope, $state, $stateParams, Restangular, $modal) {
   // Load document
   Restangular.one('document', $stateParams.documentId).get({ share: $stateParams.shareId })
       .then(function (data) {
@@ -32,5 +32,17 @@ angular.module('share').controller('Share', function($scope, $state, $stateParam
    */
   $scope.openFile = function (file) {
     $state.go('share.file', { documentId: $stateParams.documentId, shareId: $stateParams.shareId, fileId: file.id })
+  };
+
+  /**
+   * Export the current document to PDF.
+   */
+  $scope.exportPdf = function() {
+    $modal.open({
+      templateUrl: 'partial/share/share.pdf.html',
+      controller: 'ShareModalPdf'
+    });
+
+    return false;
   };
 });

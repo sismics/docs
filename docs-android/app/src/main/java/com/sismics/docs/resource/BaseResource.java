@@ -3,13 +3,10 @@ package com.sismics.docs.resource;
 import android.content.Context;
 import android.os.Build;
 
-import com.androidquery.callback.AbstractAjaxCallback;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.PersistentCookieStore;
 import com.sismics.docs.util.ApplicationUtil;
 import com.sismics.docs.util.PreferenceUtil;
-
-import org.apache.http.conn.ssl.SSLSocketFactory;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -26,13 +23,14 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import cz.msebera.android.httpclient.conn.ssl.SSLSocketFactory;
+
 /**
  * Base class for API access.
  * 
  * @author bgamard
  */
 public class BaseResource {
-    
     /**
      * User-Agent to use.
      */
@@ -44,20 +42,21 @@ public class BaseResource {
     protected static String ACCEPT_LANGUAGE = null;
     
     /**
-     * HTTP client.
+     * Async HTTP client.
      */
     protected static AsyncHttpClient client = new AsyncHttpClient();
-    
+
     static {
         // 20sec default timeout
         client.setTimeout(60000);
         try {
             KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
             trustStore.load(null, null);
+
+            // Async HTTP Client uses another HTTP libary
             MySSLSocketFactory sf = new MySSLSocketFactory(trustStore);
             sf.setHostnameVerifier(MySSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
             client.setSSLSocketFactory(sf);
-            AbstractAjaxCallback.setSSF(sf);
         } catch (Exception e) {
             // NOP
         }
@@ -82,14 +81,14 @@ public class BaseResource {
             client.addHeader("Accept-Language", ACCEPT_LANGUAGE);
         }
     }
-    
+
     /**
-     * Socket factory to allow self-signed certificates.
-     * 
+     * Socket factory to allow self-signed certificates for Async HTTP Client.
+     *
      * @author bgamard
      */
-    public static class MySSLSocketFactory extends SSLSocketFactory {
-        SSLContext sslContext = SSLContext.getInstance("TLS");
+    public static class MySSLSocketFactory extends cz.msebera.android.httpclient.conn.ssl.SSLSocketFactory {
+        SSLContext sslContext = SSLContext.getInstance(SSLSocketFactory.TLS);
 
         public MySSLSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
             super(truststore);
@@ -106,7 +105,7 @@ public class BaseResource {
                 }
             };
 
-            sslContext.init(null, new TrustManager[] { tm }, null);
+            sslContext.init(null, new TrustManager[]{tm}, null);
         }
 
         @Override
@@ -119,7 +118,7 @@ public class BaseResource {
             return sslContext.getSocketFactory().createSocket();
         }
     }
-    
+
     /**
      * Returns cleaned API URL.
      *

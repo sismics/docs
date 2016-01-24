@@ -15,12 +15,12 @@ import com.sismics.docs.event.FileAddEvent;
 import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.resource.FileResource;
 
-import org.apache.http.Header;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import cz.msebera.android.httpclient.Header;
 import de.greenrobot.event.EventBus;
 
 /**
