@@ -35,8 +35,11 @@
     <joda-time.joda-time.version>2.9.1</joda-time.joda-time.version>
     <org.hibernate.hibernate.version>4.1.0.Final</org.hibernate.hibernate.version>
     <javax.servlet.javax.servlet-api.version>3.1.0</javax.servlet.javax.servlet-api.version>
-    <com.levigo.jbig2.levigo-jbig2-imageio.version>1.6.3</com.levigo.jbig2.levigo-jbig2-imageio.version>
     <fr.opensagres.xdocreport.version>1.0.5</fr.opensagres.xdocreport.version>
+    <net.java.dev.jna.jna.version>4.2.1</net.java.dev.jna.jna.version>
+    <com.twelvemonkeys.imageio.version>3.2.1</com.twelvemonkeys.imageio.version>
+    <com.levigo.jbig2.levigo-jbig2-imageio.version>1.6.5</com.levigo.jbig2.levigo-jbig2-imageio.version>
+    <com.github.jai-imageio.jai-imageio-core.version>1.3.1</com.github.jai-imageio.jai-imageio-core.version>
 
     <org.eclipse.jetty.jetty-server.version>9.2.13.v20150730</org.eclipse.jetty.jetty-server.version>
     <org.eclipse.jetty.jetty-webapp.version>9.2.13.v20150730</org.eclipse.jetty.jetty-webapp.version>
@@ -69,14 +72,7 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-    
-    <repository>
-      <id>jbig2.googlecode</id>
-      <name>JBIG2 ImageIO-Plugin repository at googlecode.com</name>
-      <url>http://jbig2-imageio.googlecode.com/svn/maven-repository</url>
-    </repository>
   </repositories>
-  
 
   <build>
     <plugins>
@@ -369,90 +365,50 @@
       </dependency>
       
       <dependency>
-	      <groupId>fr.opensagres.xdocreport</groupId>
-	      <artifactId>org.odftoolkit.odfdom.converter.pdf</artifactId>
-	      <version>${fr.opensagres.xdocreport.version}</version>
-	    </dependency>
-	
-	    <dependency>
-	      <groupId>fr.opensagres.xdocreport</groupId>
-	      <artifactId>org.apache.poi.xwpf.converter.pdf</artifactId>
-	      <version>${fr.opensagres.xdocreport.version}</version>
-	    </dependency>
-      
-      <!-- Used to read JBIG2 images. See https://github.com/sismics/docs/issues/38 -->
+        <groupId>fr.opensagres.xdocreport</groupId>
+        <artifactId>org.odftoolkit.odfdom.converter.pdf</artifactId>
+        <version>${fr.opensagres.xdocreport.version}</version>
+      </dependency>
+  
       <dependency>
+        <groupId>fr.opensagres.xdocreport</groupId>
+        <artifactId>org.apache.poi.xwpf.converter.pdf</artifactId>
+        <version>${fr.opensagres.xdocreport.version}</version>
+      </dependency>
+      
+      <dependency> <!-- Servlet listener to register SPI ImageIO plugins -->
+        <groupId>com.twelvemonkeys.servlet</groupId>
+        <artifactId>servlet</artifactId>
+        <version>${com.twelvemonkeys.imageio.version}</version>
+      </dependency>
+      
+      <!-- JNA for Tesseract -->
+      <dependency>
+        <groupId>net.java.dev.jna</groupId>
+        <artifactId>jna</artifactId>
+        <version>${net.java.dev.jna.jna.version}</version>
+      </dependency>
+      
+      <!-- ImageIO plugins -->
+      <dependency> <!-- Permissive JPEG plugin -->
+        <groupId>com.twelvemonkeys.imageio</groupId>
+        <artifactId>imageio-jpeg</artifactId>
+        <version>${com.twelvemonkeys.imageio.version}</version>
+      </dependency>
+      
+      <dependency><!-- Only JBIG2 -->
         <groupId>com.levigo.jbig2</groupId>
         <artifactId>levigo-jbig2-imageio</artifactId>
         <version>${com.levigo.jbig2.levigo-jbig2-imageio.version}</version>
       </dependency>
       
-      <!-- OCR dependencies -->
-      <dependency>
-        <groupId>jna</groupId>
-        <artifactId>jna</artifactId>
-        <version>1.0</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>jai</groupId>
-        <artifactId>imageio</artifactId>
-        <version>1.0</version>
+      <dependency><!-- Essentially TIFF (for OCR) -->
+        <groupId>com.github.jai-imageio</groupId>
+        <artifactId>jai-imageio-core</artifactId>
+        <version>${com.github.jai-imageio.jai-imageio-core.version}</version>
       </dependency>
       
     </dependencies>
   </dependencyManagement>
   
-  <profiles>
-    <profile>
-      <id>init</id>
-      
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <version>2.3.1</version>
-            <executions>
-            
-              <execution>
-                <id>install-jna</id>
-                <phase>validate</phase>
-                <configuration>
-                  <file>${project.basedir}/lib/jna.jar</file>
-                  <repositoryLayout>default</repositoryLayout>
-                  <groupId>jna</groupId>
-                  <artifactId>jna</artifactId>
-                  <version>1.0</version>
-                  <packaging>jar</packaging>
-                  <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                  <goal>install-file</goal>
-                </goals>
-              </execution>
-              
-              <execution>
-                <id>install-jai-imageio</id>
-                <phase>validate</phase>
-                <configuration>
-                  <file>${project.basedir}/lib/jai_imageio.jar</file>
-                  <repositoryLayout>default</repositoryLayout>
-                  <groupId>jai</groupId>
-                  <artifactId>imageio</artifactId>
-                  <version>1.0</version>
-                  <packaging>jar</packaging>
-                  <generatePom>true</generatePom>
-                </configuration>
-                <goals>
-                  <goal>install-file</goal>
-                </goals>
-              </execution>
-              
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

@@ -38,9 +38,9 @@ import javax.imageio.stream.ImageOutputStream;
 
 import org.w3c.dom.NodeList;
 
-import com.sun.media.imageio.plugins.tiff.TIFFImageWriteParam;
-import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
-import com.sun.media.imageioimpl.plugins.tiff.TIFFImageWriterSpi;
+import com.github.jaiimageio.impl.plugins.tiff.TIFFImageReaderSpi;
+import com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriterSpi;
+import com.github.jaiimageio.plugins.tiff.TIFFImageWriteParam;
 
 public class ImageIOHelper {
 
@@ -51,26 +51,26 @@ public class ImageIOHelper {
      * Gets pixel data of an
      * <code>IIOImage</code> object.
      *
-     * @param image an
+     * @param oimage an
      * <code>IIOImage</code> object
      * @return a byte buffer of pixel data
      * @throws Exception
      */
-    public static ByteBuffer getImageByteBuffer(IIOImage image) throws IOException {
-        //Set up the writeParam
-        TIFFImageWriteParam tiffWriteParam = new TIFFImageWriteParam(Locale.US);
-        tiffWriteParam.setCompressionMode(ImageWriteParam.MODE_DISABLED);
-
-        //Get tif writer and set output to file
+    public static ByteBuffer getImageByteBuffer(BufferedImage oimage) throws IOException {
+        // Get tif writer and set output to file
         ImageWriter writer = new TIFFImageWriterSpi().createWriterInstance();
 
-        //Get the stream metadata
+        // Set up the writeParam
+        // We are using the old JAI ImageIO plugin, because for some reason, OCR don't work with TwelveMonkeys' plugin
+        ImageWriteParam tiffWriteParam = new TIFFImageWriteParam(Locale.US);
+        tiffWriteParam.setCompressionMode(ImageWriteParam.MODE_DISABLED);
+        
+        // Get the stream metadata
         IIOMetadata streamMetadata = writer.getDefaultStreamMetadata(tiffWriteParam);
-
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageOutputStream ios = ImageIO.createImageOutputStream(outputStream);
         writer.setOutput(ios);
-        writer.write(streamMetadata, new IIOImage(image.getRenderedImage(), null, null), tiffWriteParam);
+        writer.write(streamMetadata, new IIOImage(oimage, null, null), tiffWriteParam);
         writer.dispose();
         
         // Read the writed image

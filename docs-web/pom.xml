@@ -83,6 +83,11 @@
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>com.twelvemonkeys.servlet</groupId>
+      <artifactId>servlet</artifactId>
+    </dependency>
 
     <!-- Test dependencies -->
     <dependency>

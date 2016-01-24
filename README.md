@@ -60,7 +60,6 @@ or download the sources from GitHub.
 
 From the `docs-parent` directory:
 
-    mvn -Pinit validate -N
     mvn clean -DskipTests install
 
 #### Run a stand-alone version

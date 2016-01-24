@@ -17,15 +17,12 @@ package com.sismics.tess4j;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-
-import javax.imageio.IIOImage;
 
 import com.sun.jna.Pointer;
 
@@ -169,9 +166,8 @@ public class Tesseract {
      * @throws TesseractException
      */
     public String doOCR(BufferedImage bi, Rectangle rect) throws TesseractException {
-        IIOImage oimage = new IIOImage(bi, null, null);
-        List<IIOImage> imageList = new ArrayList<IIOImage>();
-        imageList.add(oimage);
+        List<BufferedImage> imageList = new ArrayList<BufferedImage>();
+        imageList.add(bi);
         return doOCR(imageList, rect);
     }
 
@@ -179,23 +175,22 @@ public class Tesseract {
      * Performs OCR operation.
      *
      * @param imageList a list of
-     * <code>IIOImage</code> objects
+     * <code>BufferedImage</code> objects
      * @param rect the bounding rectangle defines the region of the image to be
      * recognized. A rectangle of zero dimension or
      * <code>null</code> indicates the whole image.
      * @return the recognized text
      * @throws TesseractException
      */
-    public String doOCR(List<IIOImage> imageList, Rectangle rect) throws TesseractException {
+    public String doOCR(List<BufferedImage> imageList, Rectangle rect) throws TesseractException {
         StringBuilder sb = new StringBuilder();
         pageNum = 0;
 
-        for (IIOImage oimage : imageList) {
+        for (BufferedImage oimage : imageList) {
             pageNum++;
             try {
                 ByteBuffer buf = ImageIOHelper.getImageByteBuffer(oimage);
-                RenderedImage ri = oimage.getRenderedImage();
-                String pageText = doOCR(ri.getWidth(), ri.getHeight(), buf, rect, ri.getColorModel().getPixelSize());
+                String pageText = doOCR(oimage.getWidth(), oimage.getHeight(), buf, rect, oimage.getColorModel().getPixelSize());
                 sb.append(pageText);
             } catch (IOException ioe) {
                 //skip the problematic image

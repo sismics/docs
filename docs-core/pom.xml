@@ -113,11 +113,6 @@
       <artifactId>bcprov-jdk15on</artifactId>
     </dependency>
     
-    <dependency>
-      <groupId>com.levigo.jbig2</groupId>
-      <artifactId>levigo-jbig2-imageio</artifactId>
-    </dependency>
-
 		<dependency>
 			<groupId>fr.opensagres.xdocreport</groupId>
 			<artifactId>org.odftoolkit.odfdom.converter.pdf</artifactId>
@@ -127,16 +122,26 @@
 			<groupId>fr.opensagres.xdocreport</groupId>
 			<artifactId>org.apache.poi.xwpf.converter.pdf</artifactId>
 		</dependency>
-    
-    <!-- OCR dependencies -->
+
     <dependency>
-      <groupId>jna</groupId>
+      <groupId>net.java.dev.jna</groupId>
       <artifactId>jna</artifactId>
+    </dependency>
+
+    <!-- ImageIO plugins -->
+    <dependency>
+      <groupId>com.levigo.jbig2</groupId>
+      <artifactId>levigo-jbig2-imageio</artifactId>
+    </dependency> 
+
+    <dependency>
+      <groupId>com.twelvemonkeys.imageio</groupId>
+      <artifactId>imageio-jpeg</artifactId>
     </dependency>
     
     <dependency>
-      <groupId>jai</groupId>
-      <artifactId>imageio</artifactId>
+      <groupId>com.github.jai-imageio</groupId>
+      <artifactId>jai-imageio-core</artifactId>
     </dependency>
     
     <!-- Test dependencies -->
