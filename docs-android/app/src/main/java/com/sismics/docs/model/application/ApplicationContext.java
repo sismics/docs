@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.sismics.docs.listener.CallbackListener;
-import com.sismics.docs.listener.JsonHttpResponseHandler;
+import com.sismics.docs.listener.HttpCallback;
 import com.sismics.docs.resource.UserResource;
 import com.sismics.docs.util.PreferenceUtil;
 
 import org.json.JSONObject;
-
-import cz.msebera.android.httpclient.Header;
 
 /**
  * Global context of the application.
@@ -81,9 +79,9 @@ public class ApplicationContext {
      * @param callbackListener CallbackListener
      */
     public void fetchUserInfo(final Activity activity, final CallbackListener callbackListener) {
-        UserResource.info(activity.getApplicationContext(), new JsonHttpResponseHandler() {
+        UserResource.info(activity.getApplicationContext(), new HttpCallback() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, final JSONObject json) {
+            public void onSuccess(JSONObject json) {
                 // Save data in application context
                 if (!json.optBoolean("anonymous", true)) {
                     setUserInfo(activity.getApplicationContext(), json);

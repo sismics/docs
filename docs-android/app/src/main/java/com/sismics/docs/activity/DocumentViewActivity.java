@@ -47,7 +47,6 @@ import com.sismics.docs.event.FileDeleteEvent;
 import com.sismics.docs.fragment.DocExportPdfFragment;
 import com.sismics.docs.fragment.DocShareFragment;
 import com.sismics.docs.listener.HttpCallback;
-import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.resource.CommentResource;
 import com.sismics.docs.resource.DocumentResource;
@@ -64,7 +63,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import cz.msebera.android.httpclient.Header;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -282,14 +280,14 @@ public class DocumentViewActivity extends AppCompatActivity {
                 CommentResource.add(DocumentViewActivity.this,
                         DocumentViewActivity.this.document.optString("id"),
                         commentEditText.getText().toString(),
-                        new JsonHttpResponseHandler() {
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        new HttpCallback() {
+                    public void onSuccess(JSONObject response) {
                         EventBus.getDefault().post(new CommentAddEvent(response));
                         commentEditText.setText("");
                     }
 
                     @Override
-                    public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                    public void onFailure(JSONObject json, Exception e) {
                         Toast.makeText(DocumentViewActivity.this, R.string.comment_add_failure, Toast.LENGTH_LONG).show();
                     }
                 });
@@ -393,24 +391,18 @@ public class DocumentViewActivity extends AppCompatActivity {
                         // Show a progress dialog while deleting
                         final ProgressDialog progressDialog = ProgressDialog.show(DocumentViewActivity.this,
                                 getString(R.string.please_wait),
-                                getString(R.string.file_deleting_message), true, true,
-                                new DialogInterface.OnCancelListener() {
-                                    @Override
-                                    public void onCancel(DialogInterface dialog) {
-                                        FileResource.cancel(DocumentViewActivity.this);
-                                    }
-                                });
+                                getString(R.string.file_deleting_message), true, true);
 
                         // Actual delete server call
                         final String fileId = file.optString("id");
-                        FileResource.delete(DocumentViewActivity.this, fileId, new JsonHttpResponseHandler() {
+                        FileResource.delete(DocumentViewActivity.this, fileId, new HttpCallback() {
                             @Override
-                            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            public void onSuccess(JSONObject response) {
                                 EventBus.getDefault().post(new FileDeleteEvent(fileId));
                             }
 
                             @Override
-                            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                            public void onFailure(JSONObject json, Exception e) {
                                 Toast.makeText(DocumentViewActivity.this, R.string.file_delete_failure, Toast.LENGTH_LONG).show();
                             }
 
@@ -478,13 +470,7 @@ public class DocumentViewActivity extends AppCompatActivity {
                         // Show a progress dialog while deleting
                         final ProgressDialog progressDialog = ProgressDialog.show(DocumentViewActivity.this,
                                 getString(R.string.please_wait),
-                                getString(R.string.document_deleting_message), true, true,
-                                new DialogInterface.OnCancelListener() {
-                                    @Override
-                                    public void onCancel(DialogInterface dialog) {
-                                        DocumentResource.cancel(DocumentViewActivity.this);
-                                    }
-                                });
+                                getString(R.string.document_deleting_message), true, true);
 
                         // Actual delete server call
                         final String documentId = document.optString("id");
@@ -696,14 +682,14 @@ public class DocumentViewActivity extends AppCompatActivity {
             final String commentId = comment.optString("id");
             Toast.makeText(DocumentViewActivity.this, R.string.deleting_comment, Toast.LENGTH_LONG).show();
 
-            CommentResource.remove(DocumentViewActivity.this, commentId, new JsonHttpResponseHandler() {
+            CommentResource.remove(DocumentViewActivity.this, commentId, new HttpCallback() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                public void onSuccess(JSONObject response) {
                     EventBus.getDefault().post(new CommentDeleteEvent(commentId));
                 }
 
                 @Override
-                public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                public void onFailure(JSONObject json, Exception e) {
                     Toast.makeText(DocumentViewActivity.this, R.string.error_deleting_comment, Toast.LENGTH_LONG).show();
                 }
             });
@@ -728,9 +714,9 @@ public class DocumentViewActivity extends AppCompatActivity {
         listView.setVisibility(View.GONE);
         registerForContextMenu(listView);
 
-        CommentResource.list(this, document.optString("id"), new JsonHttpResponseHandler() {
+        CommentResource.list(this, document.optString("id"), new HttpCallback() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onSuccess(JSONObject response) {
                 JSONArray comments = response.optJSONArray("comments");
                 commentListAdapter = new CommentListAdapter(DocumentViewActivity.this, comments);
                 listView.setAdapter(commentListAdapter);
@@ -743,7 +729,7 @@ public class DocumentViewActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+            public void onFailure(JSONObject json, Exception e) {
                 emptyView.setText(R.string.error_loading_comments);
                 progressBar.setVisibility(View.GONE);
                 listView.setVisibility(View.GONE);
@@ -766,9 +752,9 @@ public class DocumentViewActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         filesEmptyView.setVisibility(View.GONE);
 
-        FileResource.list(this, document.optString("id"), new JsonHttpResponseHandler() {
+        FileResource.list(this, document.optString("id"), new HttpCallback() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onSuccess(JSONObject response) {
                 JSONArray files = response.optJSONArray("files");
                 filePagerAdapter = new FilePagerAdapter(DocumentViewActivity.this, files);
                 fileViewPager.setAdapter(filePagerAdapter);
@@ -778,7 +764,7 @@ public class DocumentViewActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+            public void onFailure(JSONObject json, Exception e) {
                 filesEmptyView.setText(R.string.error_loading_files);
                 progressBar.setVisibility(View.GONE);
                 filesEmptyView.setVisibility(View.VISIBLE);

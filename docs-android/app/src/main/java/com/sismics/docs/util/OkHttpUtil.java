@@ -11,8 +11,6 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
-import java.net.HttpCookie;
-import java.net.URI;
 import java.security.cert.CertificateException;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -105,10 +103,10 @@ public class OkHttpUtil {
                     @Override
                     public Response intercept(Interceptor.Chain chain) throws IOException { // Override cache configuration
                         final Request original = chain.request();
-                        final Request.Builder requestBuilder = original.newBuilder()
+                        return chain.proceed(original.newBuilder()
                                 .header("Cache-Control", "max-age=" + (3600 * 24 * 365))
-                                .method(original.method(), original.body());
-                        return chain.proceed(requestBuilder.build());
+                                .method(original.method(), original.body())
+                                .build());
                     }
                 })
                 .cache(getCache(context))
@@ -169,8 +167,6 @@ public class OkHttpUtil {
         // Cookie handling
         PersistentCookieStore cookieStore = new PersistentCookieStore(context);
         CookieManager cookieManager = new CookieManager(cookieStore, CookiePolicy.ACCEPT_ALL);
-        cookieStore.add(URI.create(PreferenceUtil.getServerUrl(context)),
-                new HttpCookie("auth_token", PreferenceUtil.getAuthToken(context))); // TODO Remove me when async http is ditched
 
         // Runtime configuration
         return okHttpClient.newBuilder()
@@ -178,11 +174,11 @@ public class OkHttpUtil {
                 .addNetworkInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
-                        Request originalRequest = chain.request();
-                        return chain.proceed(originalRequest.newBuilder()
+                        Request original = chain.request();
+                        return chain.proceed(original.newBuilder()
                                 .header("User-Agent", userAgent)
                                 .header("Accept-Language", acceptLanguage)
-                                // TODO necessary?? .method(originalRequest.method(), originalRequest.body())
+                                .method(original.method(), original.body())
                                 .build());
                     }
                 })

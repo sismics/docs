@@ -12,7 +12,7 @@ import android.util.Log;
 
 import com.sismics.docs.R;
 import com.sismics.docs.event.FileAddEvent;
-import com.sismics.docs.listener.JsonHttpResponseHandler;
+import com.sismics.docs.listener.HttpCallback;
 import com.sismics.docs.resource.FileResource;
 
 import org.json.JSONObject;
@@ -20,8 +20,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 
-import cz.msebera.android.httpclient.Header;
 import de.greenrobot.event.EventBus;
+import okhttp3.internal.Util;
 
 /**
  * Service to upload a file to a document in the background.
@@ -81,16 +81,21 @@ public class FileUploadService extends IntentService {
      */
     private void handleFileUpload(final String documentId, final Uri uri) throws Exception {
         final InputStream is = getContentResolver().openInputStream(uri);
-        FileResource.addSync(this, documentId, is, new JsonHttpResponseHandler() {
+        FileResource.addSync(this, documentId, is, new HttpCallback() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onSuccess(JSONObject response) {
                 EventBus.getDefault().post(new FileAddEvent(documentId, response.optString("id")));
                 FileUploadService.this.onComplete();
             }
 
             @Override
-            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+            public void onFailure(JSONObject json, Exception e) {
                 FileUploadService.this.onError();
+            }
+
+            @Override
+            public void onFinish() {
+                Util.closeQuietly(is);
             }
         });
     }

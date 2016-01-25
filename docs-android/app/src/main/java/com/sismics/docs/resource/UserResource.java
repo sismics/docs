@@ -2,8 +2,12 @@ package com.sismics.docs.resource;
 
 import android.content.Context;
 
-import com.loopj.android.http.RequestParams;
-import com.sismics.docs.listener.JsonHttpResponseHandler;
+import com.sismics.docs.listener.HttpCallback;
+import com.sismics.docs.util.OkHttpUtil;
+
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.Request;
 
 /**
  * Access to /user API.
@@ -18,41 +22,51 @@ public class UserResource extends BaseResource {
      * @param context Context
      * @param username Username
      * @param password Password
-     * @param responseHandler Callback
+     * @param callback Callback
      */
-    public static void login(Context context, String username, String password, JsonHttpResponseHandler responseHandler) {
-        init(context);
-        
-        RequestParams params = new RequestParams();
-        params.put("username", username);
-        params.put("password", password);
-        params.put("remember", "true");
-        client.post(getApiUrl(context) + "/user/login", params, responseHandler);
+    public static void login(Context context, String username, String password, HttpCallback callback) {
+        Request request = new Request.Builder()
+                .url(HttpUrl.parse(getApiUrl(context) + "/user/login"))
+                .post(new FormBody.Builder()
+                        .add("username", username)
+                        .add("password", password)
+                        .add("remember", "true")
+                        .build())
+                .build();
+        OkHttpUtil.buildClient(context)
+                .newCall(request)
+                .enqueue(HttpCallback.buildOkHttpCallback(callback));
     }
 
     /**
      * GET /user.
      *
      * @param context Context
-     * @param responseHandler Callback
+     * @param callback Callback
      */
-    public static void info(Context context, JsonHttpResponseHandler responseHandler) {
-        init(context);
-        
-        RequestParams params = new RequestParams();
-        client.get(getApiUrl(context) + "/user", params, responseHandler);
+    public static void info(Context context, HttpCallback callback) {
+        Request request = new Request.Builder()
+                .url(HttpUrl.parse(getApiUrl(context) + "/user"))
+                .get()
+                .build();
+        OkHttpUtil.buildClient(context)
+                .newCall(request)
+                .enqueue(HttpCallback.buildOkHttpCallback(callback));
     }
     
     /**
      * POST /user/logout.
      *
      * @param context Context
-     * @param responseHandler Callback
+     * @param callback Callback
      */
-    public static void logout(Context context, JsonHttpResponseHandler responseHandler) {
-        init(context);
-        
-        RequestParams params = new RequestParams();
-        client.post(getApiUrl(context) + "/user/logout", params, responseHandler);
+    public static void logout(Context context, HttpCallback callback) {
+        Request request = new Request.Builder()
+                .url(HttpUrl.parse(getApiUrl(context) + "/user/logout"))
+                .post(new FormBody.Builder().build())
+                .build();
+        OkHttpUtil.buildClient(context)
+                .newCall(request)
+                .enqueue(HttpCallback.buildOkHttpCallback(callback));
     }
 }

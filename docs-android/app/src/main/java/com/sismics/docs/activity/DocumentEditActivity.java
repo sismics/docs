@@ -1,7 +1,6 @@
 package com.sismics.docs.activity;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -164,13 +163,7 @@ public class DocumentEditActivity extends AppCompatActivity {
                 // Cancellable progress dialog
                 final ProgressDialog progressDialog = ProgressDialog.show(this,
                         getString(R.string.please_wait),
-                        getString(R.string.document_editing_message), true, true,
-                        new DialogInterface.OnCancelListener() {
-                            @Override
-                            public void onCancel(DialogInterface dialog) {
-                                DocumentResource.cancel(DocumentEditActivity.this);
-                            }
-                        });
+                        getString(R.string.document_editing_message), true, true);
 
                 // Server callback
                 HttpCallback callback = new HttpCallback() {
