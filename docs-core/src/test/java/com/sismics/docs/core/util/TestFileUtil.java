@@ -11,7 +11,7 @@ import com.google.common.io.Resources;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.util.mime.MimeType;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  * Test of the file entity utilities.

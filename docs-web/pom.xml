@@ -88,7 +88,7 @@
       <groupId>com.twelvemonkeys.servlet</groupId>
       <artifactId>servlet</artifactId>
     </dependency>
-
+    
     <!-- Test dependencies -->
     <dependency>
       <groupId>com.sismics.docs</groupId>

@@ -1,21 +1,11 @@
 package com.sismics.util.jpa;
 
-import com.google.common.base.Strings;
-import com.google.common.io.CharStreams;
-import com.sismics.docs.core.util.ConfigUtil;
-import com.sismics.util.ResourceUtil;
-import org.hibernate.HibernateException;
-import org.hibernate.JDBCException;
-import org.hibernate.engine.jdbc.internal.FormatStyle;
-import org.hibernate.engine.jdbc.internal.Formatter;
-import org.hibernate.engine.jdbc.spi.JdbcServices;
-import org.hibernate.engine.jdbc.spi.SqlStatementLogger;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.tool.hbm2ddl.ConnectionHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Writer;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,6 +15,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import org.hibernate.HibernateException;
+import org.hibernate.JDBCException;
+import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
+import org.hibernate.engine.jdbc.internal.FormatStyle;
+import org.hibernate.engine.jdbc.internal.Formatter;
+import org.hibernate.engine.jdbc.spi.JdbcServices;
+import org.hibernate.engine.jdbc.spi.SqlStatementLogger;
+import org.hibernate.service.ServiceRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+import com.google.common.io.CharStreams;
+import com.sismics.docs.core.util.ConfigUtil;
+import com.sismics.util.ResourceUtil;
 
 /**
  * A helper to update the database incrementally.
@@ -37,9 +43,9 @@ public abstract class DbOpenHelper {
      */
     private static final Logger log = LoggerFactory.getLogger(DbOpenHelper.class);
 
-    private final ConnectionHelper connectionHelper;
-    
     private final SqlStatementLogger sqlStatementLogger;
+    
+    private final JdbcConnectionAccess jdbcConnectionAccess;
     
     private final List<Exception> exceptions = new ArrayList<Exception>();
 
@@ -51,9 +57,8 @@ public abstract class DbOpenHelper {
 
     public DbOpenHelper(ServiceRegistry serviceRegistry) throws HibernateException {
         final JdbcServices jdbcServices = serviceRegistry.getService(JdbcServices.class);
-        connectionHelper = new SuppliedConnectionProviderConnectionHelper(jdbcServices.getConnectionProvider());
-
         sqlStatementLogger = jdbcServices.getSqlStatementLogger();
+        jdbcConnectionAccess = jdbcServices.getBootstrapJdbcConnectionAccess();
         formatter = (sqlStatementLogger.isFormat() ? FormatStyle.DDL : FormatStyle.NONE).getFormatter();
     }
 
@@ -67,8 +72,7 @@ public abstract class DbOpenHelper {
 
         try {
             try {
-                connectionHelper.prepare(true);
-                connection = connectionHelper.getConnection();
+                connection = jdbcConnectionAccess.obtainConnection();
             } catch (SQLException sqle) {
                 exceptions.add(sqle);
                 log.error("Unable to get database metadata", sqle);
@@ -120,7 +124,7 @@ public abstract class DbOpenHelper {
                     stmt.close();
                     stmt = null;
                 }
-                connectionHelper.release();
+                jdbcConnectionAccess.releaseConnection(connection);
             } catch (Exception e) {
                 exceptions.add(e);
                 log.error("Unable to close connection", e);

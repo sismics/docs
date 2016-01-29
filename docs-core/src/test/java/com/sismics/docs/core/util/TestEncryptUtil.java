@@ -5,8 +5,7 @@ import java.io.InputStream;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.common.base.Strings;

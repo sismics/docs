@@ -11,10 +11,10 @@ import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Environment;
 import org.hibernate.internal.util.config.ConfigurationHelper;
 import org.hibernate.service.ServiceRegistry;
-import org.hibernate.service.ServiceRegistryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ public final class EMF {
 
             Environment.verifyProperties(properties);
             ConfigurationHelper.resolvePlaceHolders(properties);
-            ServiceRegistry reg = new ServiceRegistryBuilder().applySettings(properties).buildServiceRegistry();
+            ServiceRegistry reg = new StandardServiceRegistryBuilder().applySettings(properties).build();
 
             DbOpenHelper openHelper = new DbOpenHelper(reg) {
                 
@@ -85,12 +85,16 @@ public final class EMF {
         String dbFile = dbDirectory.resolve("docs").toAbsolutePath().toString();
         props.put("hibernate.connection.url", "jdbc:h2:file:" + dbFile + ";CACHE_SIZE=65536");
         props.put("hibernate.connection.username", "sa");
-        props.put("hibernate.hbm2ddl.auto", "none");
+        props.put("hibernate.hbm2ddl.auto", "");
         props.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
         props.put("hibernate.show_sql", "false");
         props.put("hibernate.format_sql", "false");
         props.put("hibernate.max_fetch_depth", "5");
         props.put("hibernate.cache.use_second_level_cache", "false");
+        props.put("hibernate.c3p0.min_size", "1");
+        props.put("hibernate.c3p0.max_size", "10");
+        props.put("hibernate.c3p0.timeout", "0");
+        props.put("hibernate.c3p0.max_statements", "0");
         return props;
     }
     

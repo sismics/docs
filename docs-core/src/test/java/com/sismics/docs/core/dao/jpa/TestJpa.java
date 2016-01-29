@@ -3,7 +3,7 @@ package com.sismics.docs.core.dao.jpa;
 import com.sismics.docs.BaseTransactionalTest;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.TransactionUtil;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
