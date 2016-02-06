@@ -181,7 +181,7 @@ public class DocumentViewActivity extends AppCompatActivity {
         createdDateTextView.setText(date);
 
         TextView descriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
-        if (description == null || description.isEmpty() || description.equals(JSONObject.NULL.toString())) {
+        if (description.isEmpty() || document.isNull("description")) {
             descriptionTextView.setVisibility(View.GONE);
         } else {
             descriptionTextView.setVisibility(View.VISIBLE);

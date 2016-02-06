@@ -122,7 +122,7 @@ public class DocumentEditActivity extends AppCompatActivity {
         } else {
             setTitle(R.string.edit_document);
             titleEditText.setText(document.optString("title"));
-            descriptionEditText.setText(document.optString("description"));
+            descriptionEditText.setText(document.isNull("description") ? "" : document.optString("description"));
             datePickerView.setDate(new Date(document.optLong("create_date")));
             languageSpinner.setSelection(languageAdapter.getItemPosition(document.optString("language")));
             JSONArray documentTags = document.optJSONArray("tags");
