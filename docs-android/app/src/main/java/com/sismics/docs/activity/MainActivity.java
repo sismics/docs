@@ -30,9 +30,10 @@ import com.sismics.docs.resource.TagResource;
 import com.sismics.docs.resource.UserResource;
 import com.sismics.docs.util.PreferenceUtil;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Main activity.
@@ -265,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param event Advanced search event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(AdvancedSearchEvent event) {
         searchQuery(event.getQuery());
     }

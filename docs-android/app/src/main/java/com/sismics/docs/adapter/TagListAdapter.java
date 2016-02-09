@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Tag list adapter.
@@ -99,7 +100,7 @@ public class TagListAdapter extends BaseAdapter {
         TextView tagTextView = (TextView) view.findViewById(R.id.tagTextView);
         tagTextView.setText(tagItem.name);
         TextView tagCountTextView = (TextView) view.findViewById(R.id.tagCountTextView);
-        tagCountTextView.setText(String.format("%d", tagItem.count));
+        tagCountTextView.setText(String.format(Locale.ENGLISH, "%d", tagItem.count));
 
         // Label color filtering
         ImageView labelImageView = (ImageView) view.findViewById(R.id.labelImageView);

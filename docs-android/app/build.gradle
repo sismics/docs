@@ -53,10 +53,10 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'it.sephiroth.android.library.imagezoom:imagezoom:1.0.5'
-    compile 'de.greenrobot:eventbus:2.4.1'
+    compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.shamanland:fab:0.0.6'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.squareup.okhttp3:okhttp:3.0.1'
-    compile "com.squareup.okhttp3:okhttp-urlconnection:3.0.1"
+    compile 'com.squareup.okhttp3:okhttp:3.1.1'
+    compile "com.squareup.okhttp3:okhttp-urlconnection:3.1.1"
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
 }

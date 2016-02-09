@@ -26,10 +26,11 @@ import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.resource.ShareResource;
 import com.sismics.docs.util.PreferenceUtil;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Document sharing dialog fragment.
@@ -139,6 +140,12 @@ public class DocShareFragment extends DialogFragment {
         });
     }
 
+    /**
+     * A share delete event has been fired.
+     *
+     * @param event Share delete event
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(ShareDeleteEvent event) {
         ShareResource.delete(getActivity(), event.getId(), new HttpCallback() {
             @Override
@@ -153,6 +160,12 @@ public class DocShareFragment extends DialogFragment {
         });
     }
 
+    /**
+     * A share send event has been fired.
+     *
+     * @param event Share send event
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(ShareSendEvent event) {
         if (document == null) return;
 

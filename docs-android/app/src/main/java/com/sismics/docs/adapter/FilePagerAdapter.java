@@ -37,11 +37,6 @@ public class FilePagerAdapter extends PagerAdapter {
     private Context context;
 
     /**
-     * Auth token used to download files.
-     */
-    private String authToken;
-
-    /**
      * File pager adapter.
      *
      * @param context Context
@@ -53,7 +48,6 @@ public class FilePagerAdapter extends PagerAdapter {
             files.add(filesArray.optJSONObject(i));
         }
         this.context = context;
-        this.authToken = PreferenceUtil.getAuthToken(context);
     }
 
     @Override

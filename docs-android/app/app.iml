@@ -107,16 +107,16 @@
     <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="android-easing-1.0.3" level="project" />
     <orderEntry type="library" exported="" name="imagezoom-1.0.5" level="project" />
+    <orderEntry type="library" exported="" name="okhttp-urlconnection-3.1.1" level="project" />
     <orderEntry type="library" exported="" name="picasso-2.5.2" level="project" />
-    <orderEntry type="library" exported="" name="eventbus-2.4.1" level="project" />
-    <orderEntry type="library" exported="" name="okhttp-urlconnection-3.0.1" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="fab-0.0.6" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.1.1" level="project" />
+    <orderEntry type="library" exported="" name="okhttp-3.1.1" level="project" />
     <orderEntry type="library" exported="" name="okio-1.6.0" level="project" />
     <orderEntry type="library" exported="" name="picasso2-okhttp3-downloader-1.0.2" level="project" />
     <orderEntry type="library" exported="" name="tokenautocomplete-1.2.1" level="project" />
-    <orderEntry type="library" exported="" name="okhttp-3.0.1" level="project" />
+    <orderEntry type="library" exported="" name="eventbus-3.0.0" level="project" />
   </component>
 </module>

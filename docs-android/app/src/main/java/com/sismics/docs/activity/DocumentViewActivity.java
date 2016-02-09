@@ -55,6 +55,9 @@ import com.sismics.docs.service.FileUploadService;
 import com.sismics.docs.util.PreferenceUtil;
 import com.sismics.docs.util.TagUtil;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,8 +65,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Document activity.
@@ -506,6 +507,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param event Document fullscreen event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(DocumentFullscreenEvent event) {
         findViewById(R.id.detailLayout).setVisibility(event.isFullscreen() ? View.GONE : View.VISIBLE);
     }
@@ -515,6 +517,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param event Document edit event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(DocumentEditEvent event) {
         if (document == null) return;
         if (event.getDocument().optString("id").equals(document.optString("id"))) {
@@ -528,6 +531,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param event Document delete event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(DocumentDeleteEvent event) {
         if (document == null) return;
         if (event.getDocumentId().equals(document.optString("id"))) {
@@ -541,6 +545,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param event File delete event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(FileDeleteEvent event) {
         if (filePagerAdapter == null) return;
         filePagerAdapter.remove(event.getFileId());
@@ -553,6 +558,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param event File add event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(FileAddEvent event) {
         if (document == null) return;
         if (document.optString("id").equals(event.getDocumentId())) {
@@ -565,6 +571,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param event Comment add event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(CommentAddEvent event) {
         if (commentListAdapter == null) return;
         TextView emptyView = (TextView) findViewById(R.id.commentEmptyView);
@@ -579,6 +586,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param event Comment add event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(CommentDeleteEvent event) {
         if (commentListAdapter == null) return;
         TextView emptyView = (TextView) findViewById(R.id.commentEmptyView);

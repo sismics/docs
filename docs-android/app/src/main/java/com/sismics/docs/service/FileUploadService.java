@@ -15,12 +15,12 @@ import com.sismics.docs.event.FileAddEvent;
 import com.sismics.docs.listener.HttpCallback;
 import com.sismics.docs.resource.FileResource;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import de.greenrobot.event.EventBus;
 import okhttp3.internal.Util;
 
 /**
