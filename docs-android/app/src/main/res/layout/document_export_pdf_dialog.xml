@@ -8,23 +8,59 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Export metadata"
-        android:id="@+id/checkBox" />
+        android:layout_margin="6dp"
+        android:text="@string/export_metadata"
+        android:id="@+id/exportMetadataCheckbox" />
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Export comments"
-        android:id="@+id/checkBox2" />
+        android:layout_margin="6dp"
+        android:text="@string/export_comments"
+        android:id="@+id/exportCommentsCheckbox" />
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fit image to page"
-        android:id="@+id/checkBox3" />
+        android:layout_margin="6dp"
+        android:checked="true"
+        android:text="@string/fit_image_to_page"
+        android:id="@+id/fitToPageCheckbox" />
 
-    <SeekBar
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/seekBar" />
+        android:layout_margin="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/margin"
+            android:layout_weight="0"/>
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/marginSeekBar"
+            android:progress="10"
+            android:max="50"/>
+
+        <TextView
+            android:id="@+id/marginValueText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="10"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            android:layout_weight="0"
+            android:text="@string/mm"/>
+
+    </LinearLayout>
 </LinearLayout>

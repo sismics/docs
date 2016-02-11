@@ -1,16 +1,13 @@
 package com.sismics.docs.activity;
 
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.ClipData;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -52,6 +49,7 @@ import com.sismics.docs.resource.CommentResource;
 import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.resource.FileResource;
 import com.sismics.docs.service.FileUploadService;
+import com.sismics.docs.util.NetworkUtil;
 import com.sismics.docs.util.PreferenceUtil;
 import com.sismics.docs.util.TagUtil;
 
@@ -250,7 +248,8 @@ public class DocumentViewActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment dialog = DocExportPdfFragment.newInstance(DocumentViewActivity.this.document.optString("id"));
+                DialogFragment dialog = DocExportPdfFragment.newInstance(
+                        DocumentViewActivity.this.document.optString("id"), DocumentViewActivity.this.document.optString("title"));
                 dialog.show(getSupportFragmentManager(), "DocExportPdfFragment");
             }
         });
@@ -365,11 +364,11 @@ public class DocumentViewActivity extends AppCompatActivity {
         int position = fileViewPager.getCurrentItem();
         if (mimeType == null || !mimeType.contains("/")) return;
         String ext = mimeType.split("/")[1];
-        String fileName = getTitle() + "-" + position + "." + ext;
+        String fileName = document.optString("title") + "-" + position + "." + ext;
 
         // Download the file
         String fileUrl = PreferenceUtil.getServerUrl(this) + "/api/file/" + file.optString("id") + "/data";
-        downloadFile(fileUrl, fileName, getTitle().toString(), getString(R.string.downloading_file, position + 1));
+        NetworkUtil.downloadFile(this, fileUrl, fileName, document.optString("title"), getString(R.string.download_file_title));
     }
 
     private void deleteCurrentFile() {
@@ -428,28 +427,8 @@ public class DocumentViewActivity extends AppCompatActivity {
     private void downloadZip() {
         if (document == null) return;
         String url = PreferenceUtil.getServerUrl(this) + "/api/file/zip?id=" + document.optString("id");
-        String fileName = getTitle() + ".zip";
-        downloadFile(url, fileName, getTitle().toString(), getString(R.string.downloading_document));
-    }
-
-    /**
-     * Download a file using Android download manager.
-     *
-     * @param url URL to download
-     * @param fileName Destination file name
-     * @param title Notification title
-     * @param description Notification description
-     */
-    private void downloadFile(String url, String fileName, String title, String description) {
-        String authToken = PreferenceUtil.getAuthToken(this);
-        DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-        request.addRequestHeader("Cookie", "auth_token=" + authToken);
-        request.setTitle(title);
-        request.setDescription(description);
-        downloadManager.enqueue(request);
+        String fileName = document.optString("title") + ".zip";
+        NetworkUtil.downloadFile(this, url, fileName, document.optString("title"), getString(R.string.download_document_title));
     }
 
     /**

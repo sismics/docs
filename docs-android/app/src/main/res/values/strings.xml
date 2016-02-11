@@ -28,9 +28,7 @@
     <string name="crash_toast_text">A crash occurred, a report has been sent to resolve this problem</string>
     <string name="created_date">Created date</string>
     <string name="download_file">Download current file</string>
-    <string name="downloading_file">Downloading file number %1s</string>
     <string name="download_document">Download</string>
-    <string name="downloading_document">Downloading document</string>
     <string name="action_search">Search documents</string>
     <string name="all_documents">All documents</string>
     <string name="shared_documents">Shared documents</string>
@@ -119,6 +117,13 @@
     <string name="error_deleting_comment">Error deleting comment</string>
     <string name="export_pdf">Export PDF</string>
     <string name="download">Download</string>
-
+    <string name="margin">Margin</string>
+    <string name="fit_image_to_page">Fit image to page</string>
+    <string name="export_comments">Export comments</string>
+    <string name="export_metadata">Export metadata</string>
+    <string name="mm">mm</string>
+    <string name="download_file_title">Sismics Docs file export</string>
+    <string name="download_document_title">Sismics Docs document export</string>
+    <string name="download_pdf_title">Sismics Docs PDF export</string>
 
 </resources>

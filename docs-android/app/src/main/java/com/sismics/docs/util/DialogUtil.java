@@ -12,7 +12,6 @@ import com.sismics.docs.R;
  * @author bgamard
  */
 public class DialogUtil {
-
     /**
      * Create a dialog with an OK button.
      *
