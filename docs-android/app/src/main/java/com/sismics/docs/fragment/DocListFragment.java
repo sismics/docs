@@ -27,9 +27,10 @@ import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.ui.view.DividerItemDecoration;
 import com.sismics.docs.ui.view.EmptyRecyclerView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * @author bgamard.
@@ -99,7 +100,7 @@ public class DocListFragment extends Fragment {
         }));
 
         // Infinite scrolling
-        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -149,6 +150,7 @@ public class DocListFragment extends Fragment {
      *
      * @param event Search event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(SearchEvent event) {
         query = event.getQuery();
         loadDocuments(getView(), true);
@@ -159,6 +161,7 @@ public class DocListFragment extends Fragment {
      *
      * @param event Document edit event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(DocumentEditEvent event) {
         adapter.updateDocument(event.getDocument());
     }
@@ -168,6 +171,7 @@ public class DocListFragment extends Fragment {
      *
      * @param event Document delete event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(DocumentDeleteEvent event) {
         adapter.deleteDocument(event.getDocumentId());
     }
@@ -177,6 +181,7 @@ public class DocListFragment extends Fragment {
      *
      * @param event Document add event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(DocumentAddEvent event) {
         // Refresh the list, maybe the new document fit in it
         loadDocuments(getView(), true);

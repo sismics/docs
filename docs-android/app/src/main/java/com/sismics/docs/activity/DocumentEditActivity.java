@@ -1,7 +1,6 @@
 package com.sismics.docs.activity;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -25,6 +24,7 @@ import com.sismics.docs.ui.view.DatePickerView;
 import com.sismics.docs.ui.view.TagsCompleteTextView;
 import com.sismics.docs.util.PreferenceUtil;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,8 +34,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Document edition activity.
@@ -123,7 +121,7 @@ public class DocumentEditActivity extends AppCompatActivity {
         } else {
             setTitle(R.string.edit_document);
             titleEditText.setText(document.optString("title"));
-            descriptionEditText.setText(document.optString("description"));
+            descriptionEditText.setText(document.isNull("description") ? "" : document.optString("description"));
             datePickerView.setDate(new Date(document.optLong("create_date")));
             languageSpinner.setSelection(languageAdapter.getItemPosition(document.optString("language")));
             JSONArray documentTags = document.optJSONArray("tags");
@@ -164,13 +162,7 @@ public class DocumentEditActivity extends AppCompatActivity {
                 // Cancellable progress dialog
                 final ProgressDialog progressDialog = ProgressDialog.show(this,
                         getString(R.string.please_wait),
-                        getString(R.string.document_editing_message), true, true,
-                        new DialogInterface.OnCancelListener() {
-                            @Override
-                            public void onCancel(DialogInterface dialog) {
-                                DocumentResource.cancel(DocumentEditActivity.this);
-                            }
-                        });
+                        getString(R.string.document_editing_message), true, true);
 
                 // Server callback
                 HttpCallback callback = new HttpCallback() {

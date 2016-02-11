@@ -12,13 +12,12 @@ import com.sismics.docs.R;
 import com.sismics.docs.event.ShareDeleteEvent;
 import com.sismics.docs.event.ShareSendEvent;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Share list adapter.

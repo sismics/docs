@@ -10,7 +10,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
  * @author bgamard
  */
 public class ApplicationUtil {
-
     /**
      * Returns version name.
      * 

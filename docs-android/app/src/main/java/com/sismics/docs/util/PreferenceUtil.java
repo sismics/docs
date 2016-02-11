@@ -5,13 +5,12 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 
-import com.loopj.android.http.PersistentCookieStore;
+import com.sismics.docs.resource.cookie.PersistentCookieStore;
 
 import org.json.JSONObject;
 
+import java.net.HttpCookie;
 import java.util.List;
-
-import cz.msebera.android.httpclient.cookie.Cookie;
 
 /**
  * Utility class on preferences.
@@ -27,6 +26,7 @@ public class PreferenceUtil {
 
     /**
      * Returns a preference of boolean type.
+     *
      * @param context Context
      * @param key Shared preference key
      * @return Shared preference value
@@ -38,6 +38,7 @@ public class PreferenceUtil {
     
     /**
      * Returns a preference of string type.
+     *
      * @param context Context
      * @param key Shared preference key
      * @return Shared preference value
@@ -49,6 +50,7 @@ public class PreferenceUtil {
     
     /**
      * Returns a preference of integer type.
+     *
      * @param context Context
      * @param key Shared preference key
      * @return Shared preference value
@@ -70,6 +72,7 @@ public class PreferenceUtil {
     
     /**
      * Update JSON cache.
+     *
      * @param context Context
      * @param key Shared preference key
      * @param json JSON data
@@ -81,6 +84,7 @@ public class PreferenceUtil {
     
     /**
      * Returns a JSON cache.
+     *
      * @param context Context
      * @param key Shared preference key
      * @return JSON data
@@ -97,6 +101,7 @@ public class PreferenceUtil {
     
     /**
      * Update server URL.
+     *
      * @param context Context
      */
     public static void setServerUrl(Context context, String serverUrl) {
@@ -106,6 +111,7 @@ public class PreferenceUtil {
     
     /**
      * Empty user caches.
+     *
      * @param context Context
      */
     public static void resetUserCache(Context context) {
@@ -119,12 +125,13 @@ public class PreferenceUtil {
     
     /**
      * Returns auth token cookie from shared preferences.
+     *
      * @return Auth token
      */
     public static String getAuthToken(Context context) {
         PersistentCookieStore cookieStore = new PersistentCookieStore(context);
-        List<Cookie> cookieList = cookieStore.getCookies();
-        for (Cookie cookie : cookieList) {
+        List<HttpCookie> cookieList = cookieStore.getCookies();
+        for (HttpCookie cookie : cookieList) {
             if (cookie.getName().equals("auth_token")) {
                 return cookie.getValue();
             }
@@ -135,6 +142,7 @@ public class PreferenceUtil {
 
     /**
      * Returns cleaned server URL.
+     *
      * @param context Context
      * @return Server URL
      */

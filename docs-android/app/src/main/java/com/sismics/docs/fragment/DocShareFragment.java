@@ -22,16 +22,15 @@ import com.sismics.docs.adapter.ShareListAdapter;
 import com.sismics.docs.event.ShareDeleteEvent;
 import com.sismics.docs.event.ShareSendEvent;
 import com.sismics.docs.listener.HttpCallback;
-import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.resource.ShareResource;
 import com.sismics.docs.util.PreferenceUtil;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import cz.msebera.android.httpclient.Header;
-import de.greenrobot.event.EventBus;
 
 /**
  * Document sharing dialog fragment.
@@ -76,15 +75,15 @@ public class DocShareFragment extends DialogFragment {
                 shareAddButton.setEnabled(false);
 
                 ShareResource.add(getActivity(), getArguments().getString("id"), shareNameEditText.getText().toString(),
-                        new JsonHttpResponseHandler() {
+                        new HttpCallback() {
                     @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    public void onSuccess(JSONObject response) {
                         shareNameEditText.setText("");
                         loadShares(getDialog().getWindow().getDecorView());
                     }
 
                     @Override
-                    public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                    public void onFailure(JSONObject json, Exception e) {
                         Toast.makeText(getActivity(), R.string.error_adding_share, Toast.LENGTH_SHORT).show();
                     }
 
@@ -141,20 +140,32 @@ public class DocShareFragment extends DialogFragment {
         });
     }
 
+    /**
+     * A share delete event has been fired.
+     *
+     * @param event Share delete event
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(ShareDeleteEvent event) {
-        ShareResource.delete(getActivity(), event.getId(), new JsonHttpResponseHandler() {
+        ShareResource.delete(getActivity(), event.getId(), new HttpCallback() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onSuccess(JSONObject response) {
                 loadShares(getDialog().getWindow().getDecorView());
             }
 
             @Override
-            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+            public void onFailure(JSONObject json, Exception e) {
                 Toast.makeText(getActivity(), R.string.error_deleting_share, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    /**
+     * A share send event has been fired.
+     *
+     * @param event Share send event
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(ShareSendEvent event) {
         if (document == null) return;
 

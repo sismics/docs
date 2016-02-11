@@ -23,17 +23,17 @@ import com.sismics.docs.adapter.TagListAdapter;
 import com.sismics.docs.event.AdvancedSearchEvent;
 import com.sismics.docs.event.SearchEvent;
 import com.sismics.docs.fragment.SearchFragment;
-import com.sismics.docs.listener.JsonHttpResponseHandler;
+import com.sismics.docs.listener.HttpCallback;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.provider.RecentSuggestionsProvider;
 import com.sismics.docs.resource.TagResource;
 import com.sismics.docs.resource.UserResource;
 import com.sismics.docs.util.PreferenceUtil;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
-
-import cz.msebera.android.httpclient.Header;
-import de.greenrobot.event.EventBus;
 
 /**
  * Main activity.
@@ -90,9 +90,9 @@ public class MainActivity extends AppCompatActivity {
         if (cacheTags != null) {
             tagListView.setAdapter(new TagListAdapter(cacheTags.optJSONArray("stats")));
         }
-        TagResource.stats(this, new JsonHttpResponseHandler() {
+        TagResource.stats(this, new HttpCallback() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onSuccess(JSONObject response) {
                 PreferenceUtil.setCachedJson(MainActivity.this, PreferenceUtil.PREF_CACHED_TAGS_JSON, response);
                 tagListView.setAdapter(new TagListAdapter(response.optJSONArray("stats")));
                 tagProgressView.setVisibility(View.GONE);
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+            public void onFailure(JSONObject json, Exception e) {
                 tagEmptyView.setText(R.string.error_loading_tags);
                 tagProgressView.setVisibility(View.GONE);
                 tagListView.setEmptyView(tagEmptyView);
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
-                UserResource.logout(getApplicationContext(), new JsonHttpResponseHandler() {
+                UserResource.logout(getApplicationContext(), new HttpCallback() {
                     @Override
                     public void onFinish() {
                         // Force logout in all cases, so the user is not stuck in case of network error
@@ -266,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param event Advanced search event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(AdvancedSearchEvent event) {
         searchQuery(event.getQuery());
     }

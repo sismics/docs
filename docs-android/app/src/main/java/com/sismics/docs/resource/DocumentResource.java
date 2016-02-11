@@ -94,9 +94,8 @@ public class DocumentResource extends BaseResource {
                 .add("description", description)
                 .add("language", language)
                 .add("create_date", Long.toString(createDate));
-        String[] tagIdArray = tagIdList.toArray(new String[tagIdList.size()]);
-        for (int i = 0; i < tagIdArray.length; i++) {
-            formBuilder.add("tags", tagIdArray[i]);
+        for( String tagId : tagIdList) {
+            formBuilder.add("tags", tagId);
         }
 
         Request request = new Request.Builder()
@@ -127,9 +126,8 @@ public class DocumentResource extends BaseResource {
                 .add("description", description)
                 .add("language", language)
                 .add("create_date", Long.toString(createDate));
-        String[] tagIdArray = tagIdList.toArray(new String[tagIdList.size()]);
-        for (int i = 0; i < tagIdArray.length; i++) {
-            formBuilder.add("tags", tagIdArray[i]);
+        for( String tagId : tagIdList) {
+            formBuilder.add("tags", tagId);
         }
 
         Request request = new Request.Builder()
@@ -139,14 +137,5 @@ public class DocumentResource extends BaseResource {
         OkHttpUtil.buildClient(context)
                 .newCall(request)
                 .enqueue(HttpCallback.buildOkHttpCallback(callback));
-    }
-
-    /**
-     * Cancel pending requests.
-     *
-     * @param context Context
-     */
-    public static void cancel(Context context) {
-        client.cancelRequests(context, true);
     }
 }

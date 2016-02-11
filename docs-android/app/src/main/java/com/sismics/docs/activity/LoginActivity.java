@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.sismics.docs.R;
 import com.sismics.docs.listener.CallbackListener;
-import com.sismics.docs.listener.JsonHttpResponseHandler;
+import com.sismics.docs.listener.HttpCallback;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.resource.UserResource;
 import com.sismics.docs.ui.form.Validator;
@@ -23,8 +23,6 @@ import com.sismics.docs.util.DialogUtil;
 import com.sismics.docs.util.PreferenceUtil;
 
 import org.json.JSONObject;
-
-import cz.msebera.android.httpclient.Header;
 
 /**
  * Login activity.
@@ -90,9 +88,9 @@ public class LoginActivity extends AppCompatActivity {
                 PreferenceUtil.setServerUrl(LoginActivity.this, txtServer.getText().toString());
                 
                 try {
-                    UserResource.login(getApplicationContext(), txtUsername.getText().toString(), txtPassword.getText().toString(), new JsonHttpResponseHandler() {
+                    UserResource.login(getApplicationContext(), txtUsername.getText().toString(), txtPassword.getText().toString(), new HttpCallback() {
                         @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject json) {
+                        public void onSuccess(JSONObject json) {
                             // Empty previous user caches
                             PreferenceUtil.resetUserCache(getApplicationContext());
 
@@ -108,11 +106,11 @@ public class LoginActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                        public void onFailure(JSONObject json, Exception e) {
                             loginForm.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.GONE);
 
-                            if (responseBytes != null && new String(responseBytes).contains("\"ForbiddenError\"")) {
+                            if (json != null && json.optString("type").equals("ForbiddenError")) {
                                 DialogUtil.showOkDialog(LoginActivity.this, R.string.login_fail_title, R.string.login_fail);
                             } else {
                                 DialogUtil.showOkDialog(LoginActivity.this, R.string.network_error_title, R.string.network_error);
@@ -150,9 +148,9 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         } else {
             // Trying to get user data
-            UserResource.info(getApplicationContext(), new JsonHttpResponseHandler() {
+            UserResource.info(getApplicationContext(), new HttpCallback() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, final JSONObject json) {
+                public void onSuccess(final JSONObject json) {
                     if (json.optBoolean("anonymous", true)) {
                         loginForm.setVisibility(View.VISIBLE);
                         return;
@@ -168,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                public void onFailure(JSONObject json, Exception e) {
                     DialogUtil.showOkDialog(LoginActivity.this, R.string.network_error_title, R.string.network_error);
                     loginForm.setVisibility(View.VISIBLE);
                 }

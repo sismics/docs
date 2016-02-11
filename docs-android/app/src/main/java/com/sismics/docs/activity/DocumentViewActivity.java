@@ -1,16 +1,13 @@
 package com.sismics.docs.activity;
 
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.ClipData;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -47,15 +44,18 @@ import com.sismics.docs.event.FileDeleteEvent;
 import com.sismics.docs.fragment.DocExportPdfFragment;
 import com.sismics.docs.fragment.DocShareFragment;
 import com.sismics.docs.listener.HttpCallback;
-import com.sismics.docs.listener.JsonHttpResponseHandler;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.resource.CommentResource;
 import com.sismics.docs.resource.DocumentResource;
 import com.sismics.docs.resource.FileResource;
 import com.sismics.docs.service.FileUploadService;
+import com.sismics.docs.util.NetworkUtil;
 import com.sismics.docs.util.PreferenceUtil;
 import com.sismics.docs.util.TagUtil;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,9 +63,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import cz.msebera.android.httpclient.Header;
-import de.greenrobot.event.EventBus;
 
 /**
  * Document activity.
@@ -183,7 +180,7 @@ public class DocumentViewActivity extends AppCompatActivity {
         createdDateTextView.setText(date);
 
         TextView descriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
-        if (description == null || description.isEmpty() || description.equals(JSONObject.NULL.toString())) {
+        if (description.isEmpty() || document.isNull("description")) {
             descriptionTextView.setVisibility(View.GONE);
         } else {
             descriptionTextView.setVisibility(View.VISIBLE);
@@ -251,7 +248,8 @@ public class DocumentViewActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment dialog = DocExportPdfFragment.newInstance(DocumentViewActivity.this.document.optString("id"));
+                DialogFragment dialog = DocExportPdfFragment.newInstance(
+                        DocumentViewActivity.this.document.optString("id"), DocumentViewActivity.this.document.optString("title"));
                 dialog.show(getSupportFragmentManager(), "DocExportPdfFragment");
             }
         });
@@ -282,14 +280,14 @@ public class DocumentViewActivity extends AppCompatActivity {
                 CommentResource.add(DocumentViewActivity.this,
                         DocumentViewActivity.this.document.optString("id"),
                         commentEditText.getText().toString(),
-                        new JsonHttpResponseHandler() {
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        new HttpCallback() {
+                    public void onSuccess(JSONObject response) {
                         EventBus.getDefault().post(new CommentAddEvent(response));
                         commentEditText.setText("");
                     }
 
                     @Override
-                    public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                    public void onFailure(JSONObject json, Exception e) {
                         Toast.makeText(DocumentViewActivity.this, R.string.comment_add_failure, Toast.LENGTH_LONG).show();
                     }
                 });
@@ -366,11 +364,11 @@ public class DocumentViewActivity extends AppCompatActivity {
         int position = fileViewPager.getCurrentItem();
         if (mimeType == null || !mimeType.contains("/")) return;
         String ext = mimeType.split("/")[1];
-        String fileName = getTitle() + "-" + position + "." + ext;
+        String fileName = document.optString("title") + "-" + position + "." + ext;
 
         // Download the file
         String fileUrl = PreferenceUtil.getServerUrl(this) + "/api/file/" + file.optString("id") + "/data";
-        downloadFile(fileUrl, fileName, getTitle().toString(), getString(R.string.downloading_file, position + 1));
+        NetworkUtil.downloadFile(this, fileUrl, fileName, document.optString("title"), getString(R.string.download_file_title));
     }
 
     private void deleteCurrentFile() {
@@ -393,24 +391,18 @@ public class DocumentViewActivity extends AppCompatActivity {
                         // Show a progress dialog while deleting
                         final ProgressDialog progressDialog = ProgressDialog.show(DocumentViewActivity.this,
                                 getString(R.string.please_wait),
-                                getString(R.string.file_deleting_message), true, true,
-                                new DialogInterface.OnCancelListener() {
-                                    @Override
-                                    public void onCancel(DialogInterface dialog) {
-                                        FileResource.cancel(DocumentViewActivity.this);
-                                    }
-                                });
+                                getString(R.string.file_deleting_message), true, true);
 
                         // Actual delete server call
                         final String fileId = file.optString("id");
-                        FileResource.delete(DocumentViewActivity.this, fileId, new JsonHttpResponseHandler() {
+                        FileResource.delete(DocumentViewActivity.this, fileId, new HttpCallback() {
                             @Override
-                            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            public void onSuccess(JSONObject response) {
                                 EventBus.getDefault().post(new FileDeleteEvent(fileId));
                             }
 
                             @Override
-                            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                            public void onFailure(JSONObject json, Exception e) {
                                 Toast.makeText(DocumentViewActivity.this, R.string.file_delete_failure, Toast.LENGTH_LONG).show();
                             }
 
@@ -435,28 +427,8 @@ public class DocumentViewActivity extends AppCompatActivity {
     private void downloadZip() {
         if (document == null) return;
         String url = PreferenceUtil.getServerUrl(this) + "/api/file/zip?id=" + document.optString("id");
-        String fileName = getTitle() + ".zip";
-        downloadFile(url, fileName, getTitle().toString(), getString(R.string.downloading_document));
-    }
-
-    /**
-     * Download a file using Android download manager.
-     *
-     * @param url URL to download
-     * @param fileName Destination file name
-     * @param title Notification title
-     * @param description Notification description
-     */
-    private void downloadFile(String url, String fileName, String title, String description) {
-        String authToken = PreferenceUtil.getAuthToken(this);
-        DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-        request.addRequestHeader("Cookie", "auth_token=" + authToken);
-        request.setTitle(title);
-        request.setDescription(description);
-        downloadManager.enqueue(request);
+        String fileName = document.optString("title") + ".zip";
+        NetworkUtil.downloadFile(this, url, fileName, document.optString("title"), getString(R.string.download_document_title));
     }
 
     /**
@@ -478,13 +450,7 @@ public class DocumentViewActivity extends AppCompatActivity {
                         // Show a progress dialog while deleting
                         final ProgressDialog progressDialog = ProgressDialog.show(DocumentViewActivity.this,
                                 getString(R.string.please_wait),
-                                getString(R.string.document_deleting_message), true, true,
-                                new DialogInterface.OnCancelListener() {
-                                    @Override
-                                    public void onCancel(DialogInterface dialog) {
-                                        DocumentResource.cancel(DocumentViewActivity.this);
-                                    }
-                                });
+                                getString(R.string.document_deleting_message), true, true);
 
                         // Actual delete server call
                         final String documentId = document.optString("id");
@@ -520,6 +486,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param event Document fullscreen event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(DocumentFullscreenEvent event) {
         findViewById(R.id.detailLayout).setVisibility(event.isFullscreen() ? View.GONE : View.VISIBLE);
     }
@@ -529,6 +496,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param event Document edit event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(DocumentEditEvent event) {
         if (document == null) return;
         if (event.getDocument().optString("id").equals(document.optString("id"))) {
@@ -542,6 +510,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param event Document delete event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(DocumentDeleteEvent event) {
         if (document == null) return;
         if (event.getDocumentId().equals(document.optString("id"))) {
@@ -555,6 +524,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param event File delete event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(FileDeleteEvent event) {
         if (filePagerAdapter == null) return;
         filePagerAdapter.remove(event.getFileId());
@@ -567,6 +537,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param event File add event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(FileAddEvent event) {
         if (document == null) return;
         if (document.optString("id").equals(event.getDocumentId())) {
@@ -579,6 +550,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param event Comment add event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(CommentAddEvent event) {
         if (commentListAdapter == null) return;
         TextView emptyView = (TextView) findViewById(R.id.commentEmptyView);
@@ -593,6 +565,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param event Comment add event
      */
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(CommentDeleteEvent event) {
         if (commentListAdapter == null) return;
         TextView emptyView = (TextView) findViewById(R.id.commentEmptyView);
@@ -696,14 +669,14 @@ public class DocumentViewActivity extends AppCompatActivity {
             final String commentId = comment.optString("id");
             Toast.makeText(DocumentViewActivity.this, R.string.deleting_comment, Toast.LENGTH_LONG).show();
 
-            CommentResource.remove(DocumentViewActivity.this, commentId, new JsonHttpResponseHandler() {
+            CommentResource.remove(DocumentViewActivity.this, commentId, new HttpCallback() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                public void onSuccess(JSONObject response) {
                     EventBus.getDefault().post(new CommentDeleteEvent(commentId));
                 }
 
                 @Override
-                public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+                public void onFailure(JSONObject json, Exception e) {
                     Toast.makeText(DocumentViewActivity.this, R.string.error_deleting_comment, Toast.LENGTH_LONG).show();
                 }
             });
@@ -728,9 +701,9 @@ public class DocumentViewActivity extends AppCompatActivity {
         listView.setVisibility(View.GONE);
         registerForContextMenu(listView);
 
-        CommentResource.list(this, document.optString("id"), new JsonHttpResponseHandler() {
+        CommentResource.list(this, document.optString("id"), new HttpCallback() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onSuccess(JSONObject response) {
                 JSONArray comments = response.optJSONArray("comments");
                 commentListAdapter = new CommentListAdapter(DocumentViewActivity.this, comments);
                 listView.setAdapter(commentListAdapter);
@@ -743,7 +716,7 @@ public class DocumentViewActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+            public void onFailure(JSONObject json, Exception e) {
                 emptyView.setText(R.string.error_loading_comments);
                 progressBar.setVisibility(View.GONE);
                 listView.setVisibility(View.GONE);
@@ -766,9 +739,9 @@ public class DocumentViewActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         filesEmptyView.setVisibility(View.GONE);
 
-        FileResource.list(this, document.optString("id"), new JsonHttpResponseHandler() {
+        FileResource.list(this, document.optString("id"), new HttpCallback() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onSuccess(JSONObject response) {
                 JSONArray files = response.optJSONArray("files");
                 filePagerAdapter = new FilePagerAdapter(DocumentViewActivity.this, files);
                 fileViewPager.setAdapter(filePagerAdapter);
@@ -778,7 +751,7 @@ public class DocumentViewActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onAllFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+            public void onFailure(JSONObject json, Exception e) {
                 filesEmptyView.setText(R.string.error_loading_files);
                 progressBar.setVisibility(View.GONE);
                 filesEmptyView.setVisibility(View.VISIBLE);
