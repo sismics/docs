@@ -128,7 +128,8 @@ public class DocumentResource extends BaseResource {
         }
         
         // Below is specific to GET /document/id
-        
+        document.add("subject", JsonUtil.nullable(documentDto.getSubject()));
+        document.add("identifier", JsonUtil.nullable(documentDto.getIdentifier()));
         document.add("creator", documentDto.getCreator());
         
         // Add ACL
@@ -390,6 +391,8 @@ public class DocumentResource extends BaseResource {
     public Response add(
             @FormParam("title") String title,
             @FormParam("description") String description,
+            @FormParam("subject") String subject,
+            @FormParam("identifier") String identifier,
             @FormParam("tags") List<String> tagList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
@@ -401,6 +404,8 @@ public class DocumentResource extends BaseResource {
         title = ValidationUtil.validateLength(title, "title", 1, 100, false);
         language = ValidationUtil.validateLength(language, "language", 3, 3, false);
         description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
+        subject = ValidationUtil.validateLength(subject, "subject", 0, 500, true);
+        identifier = ValidationUtil.validateLength(identifier, "description", 0, 500, true);
         Date createDate = ValidationUtil.validateDate(createDateStr, "create_date", true);
         if (!Constants.SUPPORTED_LANGUAGES.contains(language)) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", language));
@@ -412,6 +417,8 @@ public class DocumentResource extends BaseResource {
         document.setUserId(principal.getId());
         document.setTitle(title);
         document.setDescription(description);
+        document.setSubject(subject);
+        document.setIdentifier(identifier);
         document.setLanguage(language);
         if (createDate == null) {
             document.setCreateDate(new Date());
@@ -461,6 +468,8 @@ public class DocumentResource extends BaseResource {
             @PathParam("id") String id,
             @FormParam("title") String title,
             @FormParam("description") String description,
+            @FormParam("subject") String subject,
+            @FormParam("identifier") String identifier,
             @FormParam("tags") List<String> tagList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
@@ -472,6 +481,8 @@ public class DocumentResource extends BaseResource {
         title = ValidationUtil.validateLength(title, "title", 1, 100, true);
         language = ValidationUtil.validateLength(language, "language", 3, 3, true);
         description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
+        subject = ValidationUtil.validateLength(subject, "subject", 0, 500, true);
+        identifier = ValidationUtil.validateLength(identifier, "identifier", 0, 500, true);
         Date createDate = ValidationUtil.validateDate(createDateStr, "create_date", true);
         if (language != null && !Constants.SUPPORTED_LANGUAGES.contains(language)) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", language));
@@ -491,6 +502,12 @@ public class DocumentResource extends BaseResource {
         }
         if (!StringUtils.isEmpty(description)) {
             document.setDescription(description);
+        }
+        if (!StringUtils.isEmpty(subject)) {
+            document.setSubject(subject);
+        }
+        if (!StringUtils.isEmpty(identifier)) {
+            document.setIdentifier(identifier);
         }
         if (createDate != null) {
             document.setCreateDate(createDate);

@@ -159,6 +159,8 @@ public class LuceneDao {
         BooleanQuery query = new BooleanQuery();
         query.add(qpHelper.parse(searchQuery, "title"), Occur.SHOULD);
         query.add(qpHelper.parse(searchQuery, "description"), Occur.SHOULD);
+        query.add(qpHelper.parse(searchQuery, "subject"), Occur.SHOULD);
+        query.add(qpHelper.parse(searchQuery, "identifier"), Occur.SHOULD);
         query.add(qpHelper.parse(fullSearchQuery, "content"), Occur.SHOULD);
         
         // Search
@@ -198,11 +200,15 @@ public class LuceneDao {
         org.apache.lucene.document.Document luceneDocument = new org.apache.lucene.document.Document();
         luceneDocument.add(new StringField("id", document.getId(), Field.Store.YES));
         luceneDocument.add(new StringField("type", "document", Field.Store.YES));
-        if (document.getTitle() != null) {
-            luceneDocument.add(new TextField("title", document.getTitle(), Field.Store.NO));
-        }
+        luceneDocument.add(new TextField("title", document.getTitle(), Field.Store.NO));
         if (document.getDescription() != null) {
             luceneDocument.add(new TextField("description", document.getDescription(), Field.Store.NO));
+        }
+        if (document.getSubject() != null) {
+            luceneDocument.add(new TextField("subject", document.getSubject(), Field.Store.NO));
+        }
+        if (document.getIdentifier() != null) {
+            luceneDocument.add(new TextField("identifier", document.getIdentifier(), Field.Store.NO));
         }
         
         return luceneDocument;

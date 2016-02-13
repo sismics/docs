@@ -62,6 +62,8 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .put(Entity.form(new Form()
                         .param("title", "My super title document 1")
                         .param("description", "My super description for document 1")
+                        .param("subject", "Subject document 1")
+                        .param("identifier", "Identifier document 1")
                         .param("tags", tag1Id)
                         .param("language", "eng")
                         .param("create_date", Long.toString(create1Date))), JsonObject.class);
@@ -160,6 +162,8 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(1, searchDocuments("full:title", document1Token));
         Assert.assertEquals(1, searchDocuments("title", document1Token));
         Assert.assertEquals(1, searchDocuments("super description", document1Token));
+        Assert.assertEquals(1, searchDocuments("subject", document1Token));
+        Assert.assertEquals(1, searchDocuments("identifier", document1Token));
         Assert.assertEquals(1, searchDocuments("at:" + DateTimeFormat.forPattern("yyyy").print(new Date().getTime()), document1Token));
         Assert.assertEquals(1, searchDocuments("at:" + DateTimeFormat.forPattern("yyyy-MM").print(new Date().getTime()), document1Token));
         Assert.assertEquals(1, searchDocuments("at:" + DateTimeFormat.forPattern("yyyy-MM-dd").print(new Date().getTime()), document1Token));
@@ -190,6 +194,8 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(true, json.getBoolean("shared"));
         Assert.assertEquals("My super title document 1", json.getString("title"));
         Assert.assertEquals("My super description for document 1", json.getString("description"));
+        Assert.assertEquals("Subject document 1", json.getString("subject"));
+        Assert.assertEquals("Identifier document 1", json.getString("identifier"));
         Assert.assertEquals("eng", json.getString("language"));
         Assert.assertEquals(create1Date, json.getJsonNumber("create_date").longValue());
         tags = json.getJsonArray("tags");
