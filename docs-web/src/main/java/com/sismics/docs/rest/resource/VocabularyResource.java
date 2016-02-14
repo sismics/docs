@@ -42,6 +42,7 @@ public class VocabularyResource extends BaseResource {
         for (Vocabulary vocabulary : vocabularyList) {
             entries.add(Json.createObjectBuilder()
                     .add("id", vocabulary.getId())
+                    .add("name", vocabulary.getName())
                     .add("value", vocabulary.getValue())
                     .add("order", vocabulary.getOrder()));
         }
@@ -113,7 +114,9 @@ public class VocabularyResource extends BaseResource {
         
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 50, true);
-        ValidationUtil.validateRegex(name, "name", "[a-z0-9\\-]+");
+        if (name != null) {
+            ValidationUtil.validateRegex(name, "name", "[a-z0-9\\-]+");
+        }
         value = ValidationUtil.validateLength(value, "value", 1, 100, true);
         Integer order = null;
         if (orderStr != null) {

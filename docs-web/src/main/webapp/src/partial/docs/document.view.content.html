@@ -4,6 +4,12 @@
   <dd ng-if="document.subject">{{ document.subject }}</dd>
   <dt ng-if="document.identifier">Identifier</dt>
   <dd ng-if="document.identifier">{{ document.identifier }}</dd>
+  <dt ng-if="document.publisher">Publisher</dt>
+  <dd ng-if="document.publisher">{{ document.publisher }}</dd>
+  <dt ng-if="document.format">Format</dt>
+  <dd ng-if="document.format">{{ document.format }}</dd>
+  <dt ng-if="document.source">Source</dt>
+  <dd ng-if="document.source">{{ document.source }}</dd>
 </dl>
 
 <div ng-file-drop drag-over-class="bg-success" ng-multiple="true" allow-dir="false" ng-model="dropFiles"

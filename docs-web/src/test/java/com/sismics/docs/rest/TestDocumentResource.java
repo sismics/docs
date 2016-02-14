@@ -64,6 +64,12 @@ public class TestDocumentResource extends BaseJerseyTest {
                         .param("description", "My super description for document 1")
                         .param("subject", "Subject document 1")
                         .param("identifier", "Identifier document 1")
+                        .param("publisher", "Publisher document 1")
+                        .param("format", "Format document 1")
+                        .param("source", "Source document 1")
+                        .param("type", "Software")
+                        .param("coverage", "Greenland")
+                        .param("rights", "Public Domain")
                         .param("tags", tag1Id)
                         .param("language", "eng")
                         .param("create_date", Long.toString(create1Date))), JsonObject.class);
@@ -164,6 +170,12 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(1, searchDocuments("super description", document1Token));
         Assert.assertEquals(1, searchDocuments("subject", document1Token));
         Assert.assertEquals(1, searchDocuments("identifier", document1Token));
+        Assert.assertEquals(1, searchDocuments("publisher", document1Token));
+        Assert.assertEquals(1, searchDocuments("format", document1Token));
+        Assert.assertEquals(1, searchDocuments("source", document1Token));
+        Assert.assertEquals(1, searchDocuments("software", document1Token));
+        Assert.assertEquals(1, searchDocuments("greenland", document1Token));
+        Assert.assertEquals(1, searchDocuments("public domain", document1Token));
         Assert.assertEquals(1, searchDocuments("at:" + DateTimeFormat.forPattern("yyyy").print(new Date().getTime()), document1Token));
         Assert.assertEquals(1, searchDocuments("at:" + DateTimeFormat.forPattern("yyyy-MM").print(new Date().getTime()), document1Token));
         Assert.assertEquals(1, searchDocuments("at:" + DateTimeFormat.forPattern("yyyy-MM-dd").print(new Date().getTime()), document1Token));
@@ -196,6 +208,12 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals("My super description for document 1", json.getString("description"));
         Assert.assertEquals("Subject document 1", json.getString("subject"));
         Assert.assertEquals("Identifier document 1", json.getString("identifier"));
+        Assert.assertEquals("Publisher document 1", json.getString("publisher"));
+        Assert.assertEquals("Format document 1", json.getString("format"));
+        Assert.assertEquals("Source document 1", json.getString("source"));
+        Assert.assertEquals("Software", json.getString("type"));
+        Assert.assertEquals("Greenland", json.getString("coverage"));
+        Assert.assertEquals("Public Domain", json.getString("rights"));
         Assert.assertEquals("eng", json.getString("language"));
         Assert.assertEquals(create1Date, json.getJsonNumber("create_date").longValue());
         tags = json.getJsonArray("tags");
@@ -223,6 +241,14 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .post(Entity.form(new Form()
                         .param("title", "My new super document 1")
                         .param("description", "My new super description for document 1")
+                        .param("subject", "My new subject for document 1")
+                        .param("identifier", "My new identifier for document 1")
+                        .param("publisher", "My new publisher for document 1")
+                        .param("format", "My new format for document 1")
+                        .param("source", "My new source for document 1")
+                        .param("type", "Image")
+                        .param("coverage", "France")
+                        .param("rights", "All Rights Reserved")
                         .param("tags", tag2Id)), JsonObject.class);
         Assert.assertEquals(document1Id, json.getString("id"));
         
@@ -239,6 +265,14 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         Assert.assertTrue(json.getString("title").contains("new"));
         Assert.assertTrue(json.getString("description").contains("new"));
+        Assert.assertTrue(json.getString("subject").contains("new"));
+        Assert.assertTrue(json.getString("identifier").contains("new"));
+        Assert.assertTrue(json.getString("publisher").contains("new"));
+        Assert.assertTrue(json.getString("format").contains("new"));
+        Assert.assertTrue(json.getString("source").contains("new"));
+        Assert.assertEquals("Image", json.getString("type"));
+        Assert.assertEquals("France", json.getString("coverage"));
+        Assert.assertEquals("All Rights Reserved", json.getString("rights"));
         tags = json.getJsonArray("tags");
         Assert.assertEquals(1, tags.size());
         Assert.assertEquals(tag2Id, tags.getJsonObject(0).getString("id"));

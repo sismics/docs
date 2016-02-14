@@ -161,6 +161,12 @@ public class LuceneDao {
         query.add(qpHelper.parse(searchQuery, "description"), Occur.SHOULD);
         query.add(qpHelper.parse(searchQuery, "subject"), Occur.SHOULD);
         query.add(qpHelper.parse(searchQuery, "identifier"), Occur.SHOULD);
+        query.add(qpHelper.parse(searchQuery, "publisher"), Occur.SHOULD);
+        query.add(qpHelper.parse(searchQuery, "format"), Occur.SHOULD);
+        query.add(qpHelper.parse(searchQuery, "source"), Occur.SHOULD);
+        query.add(qpHelper.parse(searchQuery, "type"), Occur.SHOULD);
+        query.add(qpHelper.parse(searchQuery, "coverage"), Occur.SHOULD);
+        query.add(qpHelper.parse(searchQuery, "rights"), Occur.SHOULD);
         query.add(qpHelper.parse(fullSearchQuery, "content"), Occur.SHOULD);
         
         // Search
@@ -209,6 +215,24 @@ public class LuceneDao {
         }
         if (document.getIdentifier() != null) {
             luceneDocument.add(new TextField("identifier", document.getIdentifier(), Field.Store.NO));
+        }
+        if (document.getPublisher() != null) {
+            luceneDocument.add(new TextField("publisher", document.getPublisher(), Field.Store.NO));
+        }
+        if (document.getFormat() != null) {
+            luceneDocument.add(new TextField("format", document.getFormat(), Field.Store.NO));
+        }
+        if (document.getSource() != null) {
+            luceneDocument.add(new TextField("source", document.getSource(), Field.Store.NO));
+        }
+        if (document.getType() != null) {
+            luceneDocument.add(new TextField("type", document.getType(), Field.Store.NO));
+        }
+        if (document.getCoverage() != null) {
+            luceneDocument.add(new TextField("coverage", document.getCoverage(), Field.Store.NO));
+        }
+        if (document.getRights() != null) {
+            luceneDocument.add(new TextField("rights", document.getRights(), Field.Store.NO));
         }
         
         return luceneDocument;

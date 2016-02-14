@@ -35,6 +35,36 @@ public class DocumentDto {
     private String identifier;
     
     /**
+     * Publisher.
+     */
+    private String publisher;
+    
+    /**
+     * Format.
+     */
+    private String format;
+    
+    /**
+     * Source.
+     */
+    private String source;
+    
+    /**
+     * Type.
+     */
+    private String type;
+    
+    /**
+     * Coverage.
+     */
+    private String coverage;
+    
+    /**
+     * Rights.
+     */
+    private String rights;
+    
+    /**
      * Language.
      */
     private String language;
@@ -97,6 +127,54 @@ public class DocumentDto {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+    
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getCoverage() {
+        return coverage;
+    }
+
+    public void setCoverage(String coverage) {
+        this.coverage = coverage;
+    }
+
+    public String getRights() {
+        return rights;
+    }
+
+    public void setRights(String rights) {
+        this.rights = rights;
     }
 
     public Long getCreateTimestamp() {

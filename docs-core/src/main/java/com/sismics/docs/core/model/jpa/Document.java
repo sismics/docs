@@ -61,6 +61,42 @@ public class Document implements Loggable {
     private String identifier;
     
     /**
+     * Publisher.
+     */
+    @Column(name = "DOC_PUBLISHER_C", length = 500)
+    private String publisher;
+    
+    /**
+     * Format.
+     */
+    @Column(name = "DOC_FORMAT_C", length = 500)
+    private String format;
+    
+    /**
+     * Source.
+     */
+    @Column(name = "DOC_SOURCE_C", length = 500)
+    private String source;
+    
+    /**
+     * Type.
+     */
+    @Column(name = "DOC_TYPE_C", length = 100)
+    private String type;
+    
+    /**
+     * Coverage.
+     */
+    @Column(name = "DOC_COVERAGE_C", length = 100)
+    private String coverage;
+    
+    /**
+     * Rights.
+     */
+    @Column(name = "DOC_RIGHTS_C", length = 100)
+    private String rights;
+    
+    /**
      * Creation date.
      */
     @Column(name = "DOC_CREATEDATE_D", nullable = false)
@@ -126,6 +162,54 @@ public class Document implements Loggable {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+    
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getCoverage() {
+        return coverage;
+    }
+
+    public void setCoverage(String coverage) {
+        this.coverage = coverage;
+    }
+
+    public String getRights() {
+        return rights;
+    }
+
+    public void setRights(String rights) {
+        this.rights = rights;
     }
 
     public Date getCreateDate() {

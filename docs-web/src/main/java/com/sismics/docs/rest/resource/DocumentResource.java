@@ -130,6 +130,12 @@ public class DocumentResource extends BaseResource {
         // Below is specific to GET /document/id
         document.add("subject", JsonUtil.nullable(documentDto.getSubject()));
         document.add("identifier", JsonUtil.nullable(documentDto.getIdentifier()));
+        document.add("publisher", JsonUtil.nullable(documentDto.getPublisher()));
+        document.add("format", JsonUtil.nullable(documentDto.getFormat()));
+        document.add("source", JsonUtil.nullable(documentDto.getSource()));
+        document.add("type", JsonUtil.nullable(documentDto.getType()));
+        document.add("coverage", JsonUtil.nullable(documentDto.getCoverage()));
+        document.add("rights", JsonUtil.nullable(documentDto.getRights()));
         document.add("creator", documentDto.getCreator());
         
         // Add ACL
@@ -393,6 +399,12 @@ public class DocumentResource extends BaseResource {
             @FormParam("description") String description,
             @FormParam("subject") String subject,
             @FormParam("identifier") String identifier,
+            @FormParam("publisher") String publisher,
+            @FormParam("format") String format,
+            @FormParam("source") String source,
+            @FormParam("type") String type,
+            @FormParam("coverage") String coverage,
+            @FormParam("rights") String rights,
             @FormParam("tags") List<String> tagList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
@@ -405,7 +417,13 @@ public class DocumentResource extends BaseResource {
         language = ValidationUtil.validateLength(language, "language", 3, 3, false);
         description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
         subject = ValidationUtil.validateLength(subject, "subject", 0, 500, true);
-        identifier = ValidationUtil.validateLength(identifier, "description", 0, 500, true);
+        identifier = ValidationUtil.validateLength(identifier, "identifier", 0, 500, true);
+        publisher = ValidationUtil.validateLength(publisher, "publisher", 0, 500, true);
+        format = ValidationUtil.validateLength(format, "format", 0, 500, true);
+        source = ValidationUtil.validateLength(source, "source", 0, 500, true);
+        type = ValidationUtil.validateLength(type, "type", 0, 100, true);
+        coverage = ValidationUtil.validateLength(coverage, "coverage", 0, 100, true);
+        rights = ValidationUtil.validateLength(rights, "rights", 0, 100, true);
         Date createDate = ValidationUtil.validateDate(createDateStr, "create_date", true);
         if (!Constants.SUPPORTED_LANGUAGES.contains(language)) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", language));
@@ -419,6 +437,12 @@ public class DocumentResource extends BaseResource {
         document.setDescription(description);
         document.setSubject(subject);
         document.setIdentifier(identifier);
+        document.setPublisher(publisher);
+        document.setFormat(format);
+        document.setSource(source);
+        document.setType(type);
+        document.setCoverage(coverage);
+        document.setRights(rights);
         document.setLanguage(language);
         if (createDate == null) {
             document.setCreateDate(new Date());
@@ -470,6 +494,12 @@ public class DocumentResource extends BaseResource {
             @FormParam("description") String description,
             @FormParam("subject") String subject,
             @FormParam("identifier") String identifier,
+            @FormParam("publisher") String publisher,
+            @FormParam("format") String format,
+            @FormParam("source") String source,
+            @FormParam("type") String type,
+            @FormParam("coverage") String coverage,
+            @FormParam("rights") String rights,
             @FormParam("tags") List<String> tagList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
@@ -483,6 +513,12 @@ public class DocumentResource extends BaseResource {
         description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
         subject = ValidationUtil.validateLength(subject, "subject", 0, 500, true);
         identifier = ValidationUtil.validateLength(identifier, "identifier", 0, 500, true);
+        publisher = ValidationUtil.validateLength(publisher, "publisher", 0, 500, true);
+        format = ValidationUtil.validateLength(format, "format", 0, 500, true);
+        source = ValidationUtil.validateLength(source, "source", 0, 500, true);
+        type = ValidationUtil.validateLength(type, "type", 0, 100, true);
+        coverage = ValidationUtil.validateLength(coverage, "coverage", 0, 100, true);
+        rights = ValidationUtil.validateLength(rights, "rights", 0, 100, true);
         Date createDate = ValidationUtil.validateDate(createDateStr, "create_date", true);
         if (language != null && !Constants.SUPPORTED_LANGUAGES.contains(language)) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", language));
@@ -508,6 +544,24 @@ public class DocumentResource extends BaseResource {
         }
         if (!StringUtils.isEmpty(identifier)) {
             document.setIdentifier(identifier);
+        }
+        if (!StringUtils.isEmpty(publisher)) {
+            document.setPublisher(publisher);
+        }
+        if (!StringUtils.isEmpty(format)) {
+            document.setFormat(format);
+        }
+        if (!StringUtils.isEmpty(source)) {
+            document.setSource(source);
+        }
+        if (!StringUtils.isEmpty(type)) {
+            document.setType(type);
+        }
+        if (!StringUtils.isEmpty(coverage)) {
+            document.setCoverage(coverage);
+        }
+        if (!StringUtils.isEmpty(rights)) {
+            document.setRights(rights);
         }
         if (createDate != null) {
             document.setCreateDate(createDate);

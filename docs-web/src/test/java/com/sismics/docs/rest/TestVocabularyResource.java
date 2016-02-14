@@ -38,10 +38,12 @@ public class TestVocabularyResource extends BaseJerseyTest {
         Assert.assertEquals(249, json.getJsonArray("entries").size());
         JsonObject entry = json.getJsonArray("entries").getJsonObject(0);
         Assert.assertEquals("coverage-afg", entry.getString("id"));
+        Assert.assertEquals("coverage", entry.getString("name"));
         Assert.assertEquals("Afghanistan", entry.getString("value"));
         Assert.assertEquals(0, entry.getJsonNumber("order").intValue());
         entry = json.getJsonArray("entries").getJsonObject(248);
         Assert.assertEquals("coverage-zwe", entry.getString("id"));
+        Assert.assertEquals("coverage", entry.getString("name"));
         Assert.assertEquals("Zimbabwe", entry.getString("value"));
         Assert.assertEquals(248, entry.getJsonNumber("order").intValue());
         

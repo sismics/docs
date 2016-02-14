@@ -1,18 +1,24 @@
 alter table T_DOCUMENT add column DOC_SUBJECT_C varchar(500);
 alter table T_DOCUMENT add column DOC_IDENTIFIER_C varchar(500);
+alter table T_DOCUMENT add column DOC_PUBLISHER_C varchar(500);
+alter table T_DOCUMENT add column DOC_FORMAT_C varchar(500);
+alter table T_DOCUMENT add column DOC_SOURCE_C varchar(500);
+alter table T_DOCUMENT add column DOC_TYPE_C varchar(100);
+alter table T_DOCUMENT add column DOC_COVERAGE_C varchar(100);
+alter table T_DOCUMENT add column DOC_RIGHTS_C varchar(100);
 create memory table T_VOCABULARY ( VOC_ID_C varchar(36) not null, VOC_NAME_C varchar(50) not null, VOC_VALUE_C varchar(100) not null, VOC_ORDER_N int not null, primary key (VOC_ID_C) );
 
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-collection', 'type', 'Collection', 0);
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-dataset', 'type', 'Dataset', 1);
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-event', 'type', 'Event', 2);
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-image', 'type', 'Image', 3);
-insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-interactive_resource', 'type', 'Interactive Resource', 4);
-insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-moving_image', 'type', 'Moving Image', 5);
-insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-physical_object', 'type', 'Physical Object', 6);
+insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-interactive-resource', 'type', 'Interactive Resource', 4);
+insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-moving-image', 'type', 'Moving Image', 5);
+insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-physical-object', 'type', 'Physical Object', 6);
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-service', 'type', 'Service', 7);
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-software', 'type', 'Software', 8);
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-sound', 'type', 'Sound', 9);
-insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-still_image', 'type', 'Still Image', 10);
+insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-still-image', 'type', 'Still Image', 10);
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-text', 'type', 'Text', 11);
 
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('coverage-afg', 'coverage', 'Afghanistan', 0);
