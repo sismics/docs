@@ -19,13 +19,19 @@ public class Vocabulary {
      * Vocabulary ID.
      */
     @Id
-    @Column(name = "VOC_ID_C", length = 50)
+    @Column(name = "VOC_ID_C", nullable = false, length = 36)
     private String id;
+    
+    /**
+     * Vocabulary name.
+     */
+    @Column(name = "VOC_NAME_C", nullable = false, length = 50)
+    private String name;
     
     /**
      * Vocabulary value.
      */
-    @Column(name = "VOC_VALUE_C", length = 100)
+    @Column(name = "VOC_VALUE_C", nullable = false, length = 100)
     private String value;
 
     /**
@@ -40,6 +46,14 @@ public class Vocabulary {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getValue() {
@@ -62,6 +76,7 @@ public class Vocabulary {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
+                .add("name", name)
                 .add("value", value)
                 .add("order", order)
                 .toString();
