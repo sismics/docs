@@ -74,7 +74,6 @@ public class UserResource extends BaseResource {
         @FormParam("password") String password,
         @FormParam("email") String email,
         @FormParam("storage_quota") String storageQuotaStr) {
-
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -132,7 +131,6 @@ public class UserResource extends BaseResource {
     public Response update(
         @FormParam("password") String password,
         @FormParam("email") String email) {
-        
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -176,7 +174,6 @@ public class UserResource extends BaseResource {
         @FormParam("password") String password,
         @FormParam("email") String email,
         @FormParam("storage_quota") String storageQuotaStr) {
-        
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -225,7 +222,6 @@ public class UserResource extends BaseResource {
     @Path("check_username")
     public Response checkUsername(
         @QueryParam("username") String username) {
-        
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
         
@@ -255,7 +251,6 @@ public class UserResource extends BaseResource {
         @FormParam("username") String username,
         @FormParam("password") String password,
         @FormParam("remember") boolean longLasted) {
-        
         // Validate the input data
         username = StringUtils.strip(username);
         password = StringUtils.strip(password);

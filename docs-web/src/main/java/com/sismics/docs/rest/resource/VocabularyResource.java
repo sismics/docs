@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.sismics.docs.core.dao.jpa.VocabularyDao;
 import com.sismics.docs.core.model.jpa.Vocabulary;
+import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
 
@@ -66,6 +67,7 @@ public class VocabularyResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
+        checkBaseFunction(BaseFunction.ADMIN);
         
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 50, false);
@@ -107,6 +109,7 @@ public class VocabularyResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
+        checkBaseFunction(BaseFunction.ADMIN);
         
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 50, true);
@@ -157,6 +160,7 @@ public class VocabularyResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
+        checkBaseFunction(BaseFunction.ADMIN);
         
         // Get the vocabulary
         VocabularyDao vocabularyDao = new VocabularyDao();

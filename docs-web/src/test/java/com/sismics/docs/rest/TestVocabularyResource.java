@@ -28,6 +28,9 @@ public class TestVocabularyResource extends BaseJerseyTest {
         clientUtil.createUser("vocabulary1");
         String vocabulary1Token = clientUtil.login("vocabulary1");
         
+        // Login admin
+        String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
+        
         // Get coverage vocabularies entries
         JsonObject json = target().path("/vocabulary/coverage").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, vocabulary1Token)
@@ -42,9 +45,9 @@ public class TestVocabularyResource extends BaseJerseyTest {
         Assert.assertEquals("Zimbabwe", entry.getString("value"));
         Assert.assertEquals(248, entry.getJsonNumber("order").intValue());
         
-        // Create a vocabulary entry with vocabulary1
+        // Create a vocabulary entry with admin
         json = target().path("/vocabulary").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, vocabulary1Token)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .put(Entity.form(new Form()
                         .param("name", "test-voc-1")
                         .param("value", "First value")
@@ -55,9 +58,9 @@ public class TestVocabularyResource extends BaseJerseyTest {
         Assert.assertEquals("First value", json.getString("value"));
         Assert.assertEquals(0, json.getJsonNumber("order").intValue());
         
-        // Create a vocabulary entry with vocabulary1
+        // Create a vocabulary entry with admin
         Response response = target().path("/vocabulary").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, vocabulary1Token)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .put(Entity.form(new Form()
                         .param("name", "NOT_VALID")
                         .param("value", "First value")
@@ -74,9 +77,9 @@ public class TestVocabularyResource extends BaseJerseyTest {
         Assert.assertEquals("First value", entry.getString("value"));
         Assert.assertEquals(0, entry.getJsonNumber("order").intValue());
         
-        // Update a vocabulary entry with vocabulary1
+        // Update a vocabulary entry with admin
         json = target().path("/vocabulary/" + vocabulary1Id).request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, vocabulary1Token)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .post(Entity.form(new Form()
                         .param("name", "test-voc-1-updated")
                         .param("value", "First value updated")
@@ -96,9 +99,9 @@ public class TestVocabularyResource extends BaseJerseyTest {
         Assert.assertEquals("First value updated", entry.getString("value"));
         Assert.assertEquals(1, entry.getJsonNumber("order").intValue());
         
-        // Delete a vocabulary entry with vocabulary1
+        // Delete a vocabulary entry with admin
         json = target().path("/vocabulary/" + vocabulary1Id).request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, vocabulary1Token)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .delete(JsonObject.class);
         
         // Get test-voc-1-updated vocabularies entries
