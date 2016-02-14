@@ -54,111 +54,51 @@ public class Comment implements Loggable {
     @Column(name = "COM_DELETEDATE_D")
     private Date deleteDate;
     
-    /**
-     * Getter of id.
-     *
-     * @return the id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Setter of id.
-     *
-     * @param id id
-     */
     public void setId(String id) {
         this.id = id;
     }
     
-    /**
-     * Getter of documentId.
-     *
-     * @return the documentId
-     */
     public String getDocumentId() {
         return documentId;
     }
 
-    /**
-     * Setter of documentId.
-     *
-     * @param documentId documentId
-     */
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
     }
     
-    /**
-     * Getter of createDate.
-     *
-     * @return the createDate
-     */
     public Date getCreateDate() {
         return createDate;
     }
 
-    /**
-     * Setter of createDate.
-     *
-     * @param createDate createDate
-     */
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 
-    /**
-     * Getter of deleteDate.
-     *
-     * @return the deleteDate
-     */
     @Override
     public Date getDeleteDate() {
         return deleteDate;
     }
 
-    /**
-     * Setter of deleteDate.
-     *
-     * @param deleteDate deleteDate
-     */
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
     }
     
-    /**
-     * Getter of content.
-     *
-     * @return the content
-     */
     public String getContent() {
         return content;
     }
 
-    /**
-     * Setter of content.
-     *
-     * @param content content
-     */
     public void setContent(String content) {
         this.content = content;
     }
 
-    /**
-     * Getter of userId.
-     * 
-     * @return the userId
-     */
     public String getUserId() {
         return userId;
     }
 
-    /**
-     * Setter of userId.
-     * 
-     * @param userId userId
-     */
     public void setUserId(String userId) {
         this.userId = userId;
     }

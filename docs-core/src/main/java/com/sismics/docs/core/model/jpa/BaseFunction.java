@@ -22,20 +22,10 @@ public class BaseFunction {
     @Column(name = "BAF_ID_C", length = 10)
     private String id;
 
-    /**
-     * Getter of id.
-     *
-     * @return id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Setter of id.
-     *
-     * @param id id
-     */
     public void setId(String id) {
         this.id = id;
     }

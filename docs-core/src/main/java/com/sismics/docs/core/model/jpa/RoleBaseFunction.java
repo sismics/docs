@@ -48,92 +48,42 @@ public class RoleBaseFunction {
     @Column(name = "RBF_DELETEDATE_D")
     private Date deleteDate;
 
-    /**
-     * Getter of id.
-     *
-     * @return id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Setter of id.
-     *
-     * @param id id
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * Getter of roleId.
-     *
-     * @return roleId
-     */
     public String getRoleId() {
         return roleId;
     }
 
-    /**
-     * Setter of roleId.
-     *
-     * @param roleId roleId
-     */
     public void setRoleId(String roleId) {
         this.roleId = roleId;
     }
 
-    /**
-     * Getter of baseFunctionId.
-     *
-     * @return baseFunctionId
-     */
     public String getBaseFunctionId() {
         return baseFunctionId;
     }
 
-    /**
-     * Setter of baseFunctionId.
-     *
-     * @param baseFunctionId baseFunctionId
-     */
     public void setBaseFunctionId(String baseFunctionId) {
         this.baseFunctionId = baseFunctionId;
     }
 
-    /**
-     * Getter of createDate.
-     *
-     * @return createDate
-     */
     public Date getCreateDate() {
         return createDate;
     }
 
-    /**
-     * Setter of createDate.
-     *
-     * @param createDate createDate
-     */
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 
-    /**
-     * Getter of deleteDate.
-     *
-     * @return deleteDate
-     */
     public Date getDeleteDate() {
         return deleteDate;
     }
 
-    /**
-     * Setter of deleteDate.
-     *
-     * @param deleteDate deleteDate
-     */
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
     }

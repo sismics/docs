@@ -58,110 +58,50 @@ public class AuditLog {
     @Column(name = "LOG_CREATEDATE_D", nullable = false)
     private Date createDate;
     
-    /**
-     * Getter of id.
-     *
-     * @return id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Setter of id.
-     *
-     * @param id id
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * Getter of entityId.
-     * 
-     * @return entityId
-     */
     public String getEntityId() {
         return entityId;
     }
 
-    /**
-     * Setter of entityId.
-     *
-     * @param entityId entityId
-     */
     public void setEntityId(String entityId) {
         this.entityId = entityId;
     }
 
-    /**
-     * Getter of entityClass.
-     * 
-     * @return entityClass
-     */
     public String getEntityClass() {
         return entityClass;
     }
 
-    /**
-     * Setter of entityClass.
-     *
-     * @param entityClass entityClass
-     */
     public void setEntityClass(String entityClass) {
         this.entityClass = entityClass;
     }
     
-    /**
-     * Getter of message.
-     * 
-     * @return message
-     */
     public String getMessage() {
         return message;
     }
 
-    /**
-     * Setter of message.
-     *
-     * @param message message
-     */
     public void setMessage(String message) {
         this.message = message;
     }
 
-    /**
-     * Getter of type.
-     * 
-     * @return type
-     */
     public AuditLogType getType() {
         return type;
     }
 
-    /**
-     * Setter of type.
-     *
-     * @param type type
-     */
     public void setType(AuditLogType type) {
         this.type = type;
     }
 
-    /**
-     * Getter of createDate.
-     *
-     * @return createDate
-     */
     public Date getCreateDate() {
         return createDate;
     }
 
-    /**
-     * Setter of createDate.
-     *
-     * @param createDate createDate
-     */
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
