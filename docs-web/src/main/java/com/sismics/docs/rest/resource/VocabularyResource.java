@@ -73,7 +73,7 @@ public class VocabularyResource extends BaseResource {
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 50, false);
         ValidationUtil.validateRegex(name, "name", "[a-z0-9\\-]+");
-        value = ValidationUtil.validateLength(value, "value", 1, 100, false);
+        value = ValidationUtil.validateLength(value, "value", 1, 500, false);
         Integer order = ValidationUtil.validateInteger(orderStr, "order");
         
         // Create the vocabulary
@@ -117,7 +117,7 @@ public class VocabularyResource extends BaseResource {
         if (name != null) {
             ValidationUtil.validateRegex(name, "name", "[a-z0-9\\-]+");
         }
-        value = ValidationUtil.validateLength(value, "value", 1, 100, true);
+        value = ValidationUtil.validateLength(value, "value", 1, 500, true);
         Integer order = null;
         if (orderStr != null) {
             order = ValidationUtil.validateInteger(orderStr, "order");

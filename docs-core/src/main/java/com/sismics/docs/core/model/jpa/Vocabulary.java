@@ -31,7 +31,7 @@ public class Vocabulary {
     /**
      * Vocabulary value.
      */
-    @Column(name = "VOC_VALUE_C", nullable = false, length = 100)
+    @Column(name = "VOC_VALUE_C", nullable = false, length = 500)
     private String value;
 
     /**
