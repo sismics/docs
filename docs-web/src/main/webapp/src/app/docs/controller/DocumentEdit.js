@@ -7,6 +7,9 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
   // Alerts
   $scope.alerts = [];
 
+  // Vocabularies
+  $scope.vocabularies = [];
+
   // Orphan files to add
   $scope.orphanFiles = $stateParams.files ? $stateParams.files.split(',') : [];
 
@@ -219,4 +222,14 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
   } else {
     $scope.resetForm();
   }
+
+  // Load vocabularies
+  $scope.loadVocabulary = function(name) {
+    Restangular.one('vocabulary', name).get().then(function(result) {
+      $scope.vocabularies[name] = result.entries;
+    });
+  };
+  $scope.loadVocabulary('type');
+  $scope.loadVocabulary('coverage');
+  $scope.loadVocabulary('rights');
 });
