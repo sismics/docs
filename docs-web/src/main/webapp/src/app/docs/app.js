@@ -106,6 +106,15 @@ angular.module('docs',
           }
         }
       })
+  .state('settings.vocabulary', {
+    url: '/vocabulary',
+    views: {
+      'settings': {
+        templateUrl: 'partial/docs/settings.vocabulary.html',
+        controller: 'SettingsVocabulary'
+      }
+    }
+  })
   .state('document', {
     url: '/document',
     abstract: true,
