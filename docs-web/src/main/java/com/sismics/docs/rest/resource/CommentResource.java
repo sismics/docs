@@ -86,9 +86,6 @@ public class CommentResource extends BaseResource {
             throw new ForbiddenClientException();
         }
         
-        // Validate input data
-        ValidationUtil.validateRequired(id, "id");
-        
         // Get the comment
         CommentDao commentDao = new CommentDao();
         Comment comment = commentDao.getActiveById(id);

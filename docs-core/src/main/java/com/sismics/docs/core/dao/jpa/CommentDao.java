@@ -52,12 +52,12 @@ public class CommentDao {
     public void delete(String id) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
             
-        // Get the document
+        // Get the comment
         Query q = em.createQuery("select c from Comment c where c.id = :id and c.deleteDate is null");
         q.setParameter("id", id);
         Comment commentDb = (Comment) q.getSingleResult();
         
-        // Delete the document
+        // Delete the comment
         Date dateNow = new Date();
         commentDb.setDeleteDate(dateNow);
 

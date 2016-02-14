@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import com.google.common.base.MoreObjects;
 
 /**
- * Vocabulary entity.
+ * Vocabulary entry entity.
  * 
  * @author bgamard
  */
