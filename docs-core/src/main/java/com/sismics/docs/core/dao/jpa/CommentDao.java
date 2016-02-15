@@ -26,10 +26,11 @@ public class CommentDao {
      * Creates a new comment.
      * 
      * @param comment Comment
+     * @param userId User ID
      * @return New ID
      * @throws Exception
      */
-    public String create(Comment comment) {
+    public String create(Comment comment, String userId) {
         // Create the UUID
         comment.setId(UUID.randomUUID().toString());
         
@@ -39,7 +40,7 @@ public class CommentDao {
         em.persist(comment);
         
         // Create audit log
-        AuditLogUtil.create(comment, AuditLogType.CREATE);
+        AuditLogUtil.create(comment, AuditLogType.CREATE, userId);
         
         return comment.getId();
     }
@@ -48,8 +49,9 @@ public class CommentDao {
      * Deletes a comment.
      * 
      * @param id Comment ID
+     * @param userId User ID
      */
-    public void delete(String id) {
+    public void delete(String id, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
             
         // Get the comment
@@ -62,7 +64,7 @@ public class CommentDao {
         commentDb.setDeleteDate(dateNow);
 
         // Create audit log
-        AuditLogUtil.create(commentDb, AuditLogType.DELETE);
+        AuditLogUtil.create(commentDb, AuditLogType.DELETE, userId);
     }
     
     /**

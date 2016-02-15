@@ -61,7 +61,7 @@ public class CommentResource extends BaseResource {
         comment.setContent(content);
         comment.setUserId(principal.getId());
         CommentDao commentDao = new CommentDao();
-        commentDao.create(comment);
+        commentDao.create(comment, principal.getId());
         
         // Returns the comment
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -103,7 +103,7 @@ public class CommentResource extends BaseResource {
         }
         
         // Delete the comment
-        commentDao.delete(id);
+        commentDao.delete(id, principal.getId());
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()

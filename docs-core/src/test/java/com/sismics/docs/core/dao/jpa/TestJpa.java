@@ -23,7 +23,7 @@ public class TestJpa extends BaseTransactionalTest {
         user.setStorageCurrent(0l);
         user.setStorageQuota(10l);
         user.setPrivateKey("AwesomePrivateKey");
-        String id = userDao.create(user);
+        String id = userDao.create(user, "me");
         
         TransactionUtil.commit();
 

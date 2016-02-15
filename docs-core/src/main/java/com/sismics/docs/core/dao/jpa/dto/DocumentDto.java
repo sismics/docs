@@ -1,7 +1,5 @@
 package com.sismics.docs.core.dao.jpa.dto;
 
-import javax.persistence.Id;
-
 /**
  * Document DTO.
  *
@@ -11,7 +9,6 @@ public class DocumentDto {
     /**
      * Document ID.
      */
-    @Id
     private String id;
     
     /**

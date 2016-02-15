@@ -1,7 +1,5 @@
 package com.sismics.docs.core.dao.jpa.dto;
 
-import javax.persistence.Id;
-
 import com.sismics.docs.core.constant.AuditLogType;
 
 /**
@@ -13,8 +11,12 @@ public class AuditLogDto {
     /**
      * Audit log ID.
      */
-    @Id
     private String id;
+    
+    /**
+     * Username.
+     */
+    private String username;
     
     /**
      * Entity ID.
@@ -49,6 +51,14 @@ public class AuditLogDto {
         this.id = id;
     }
     
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getEntityId() {
         return entityId;
     }

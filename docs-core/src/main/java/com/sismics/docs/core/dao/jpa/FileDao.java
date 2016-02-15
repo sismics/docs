@@ -23,10 +23,11 @@ public class FileDao {
      * Creates a new file.
      * 
      * @param file File
+     * @param userId User ID
      * @return New ID
      * @throws Exception
      */
-    public String create(File file) {
+    public String create(File file, String userId) {
         // Create the UUID
         file.setId(UUID.randomUUID().toString());
         
@@ -36,7 +37,7 @@ public class FileDao {
         em.persist(file);
         
         // Create audit log
-        AuditLogUtil.create(file, AuditLogType.CREATE);
+        AuditLogUtil.create(file, AuditLogType.CREATE, userId);
         
         return file.getId();
     }
@@ -107,8 +108,9 @@ public class FileDao {
      * Deletes a file.
      * 
      * @param id File ID
+     * @param userId User ID
      */
-    public void delete(String id) {
+    public void delete(String id, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
             
         // Get the file
@@ -121,7 +123,7 @@ public class FileDao {
         fileDb.setDeleteDate(dateNow);
         
         // Create audit log
-        AuditLogUtil.create(fileDb, AuditLogType.DELETE);
+        AuditLogUtil.create(fileDb, AuditLogType.DELETE, userId);
     }
     
     /**

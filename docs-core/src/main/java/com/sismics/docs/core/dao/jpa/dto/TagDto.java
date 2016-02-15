@@ -1,7 +1,5 @@
 package com.sismics.docs.core.dao.jpa.dto;
 
-import javax.persistence.Id;
-
 /**
  * Tag DTO.
  *
@@ -11,7 +9,6 @@ public class TagDto {
     /**
      * Tag ID.
      */
-    @Id
     private String id;
     
     /**

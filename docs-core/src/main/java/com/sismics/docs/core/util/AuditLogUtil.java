@@ -20,7 +20,7 @@ public class AuditLogUtil {
      * @param entity Entity
      * @param type Audit log type
      */
-    public static void create(Loggable loggable, AuditLogType type) {
+    public static void create(Loggable loggable, AuditLogType type, String userId) {
         // Get the entity ID
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         String entityId = (String) em.getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(loggable);
@@ -28,6 +28,7 @@ public class AuditLogUtil {
         // Create the audit log
         AuditLogDao auditLogDao = new AuditLogDao();
         AuditLog auditLog = new AuditLog();
+        auditLog.setUserId(userId);
         auditLog.setEntityId(entityId);
         auditLog.setEntityClass(loggable.getClass().getSimpleName());
         auditLog.setType(type);

@@ -58,10 +58,11 @@ public class UserDao {
      * Creates a new user.
      * 
      * @param user User to create
+     * @param userId User ID
      * @return User ID
      * @throws Exception
      */
-    public String create(User user) throws Exception {
+    public String create(User user, String userId) throws Exception {
         // Create the user UUID
         user.setId(UUID.randomUUID().toString());
         
@@ -80,7 +81,7 @@ public class UserDao {
         em.persist(user);
         
         // Create audit log
-        AuditLogUtil.create(user, AuditLogType.CREATE);
+        AuditLogUtil.create(user, AuditLogType.CREATE, userId);
         
         return user.getId();
     }
@@ -89,9 +90,10 @@ public class UserDao {
      * Updates a user.
      * 
      * @param user User to update
+     * @param userId User ID
      * @return Updated user
      */
-    public User update(User user) {
+    public User update(User user, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         
         // Get the user
@@ -99,13 +101,13 @@ public class UserDao {
         q.setParameter("id", user.getId());
         User userFromDb = (User) q.getSingleResult();
 
-        // Update the user
+        // Update the user (except password)
         userFromDb.setEmail(user.getEmail());
         userFromDb.setStorageQuota(user.getStorageQuota());
         userFromDb.setStorageCurrent(user.getStorageCurrent());
         
         // Create audit log
-        AuditLogUtil.create(userFromDb, AuditLogType.UPDATE);
+        AuditLogUtil.create(userFromDb, AuditLogType.UPDATE, userId);
         
         return user;
     }
@@ -134,9 +136,10 @@ public class UserDao {
      * Update the user password.
      * 
      * @param user User to update
+     * @param userId User ID
      * @return Updated user
      */
-    public User updatePassword(User user) {
+    public User updatePassword(User user, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         
         // Get the user
@@ -148,7 +151,7 @@ public class UserDao {
         userFromDb.setPassword(hashPassword(user.getPassword()));
         
         // Create audit log
-        AuditLogUtil.create(userFromDb, AuditLogType.UPDATE);
+        AuditLogUtil.create(userFromDb, AuditLogType.UPDATE, userId);
         
         return user;
     }
@@ -206,8 +209,9 @@ public class UserDao {
      * Deletes a user.
      * 
      * @param username User's username
+     * @param userId User ID
      */
-    public void delete(String username) {
+    public void delete(String username, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
             
         // Get the user
@@ -245,7 +249,7 @@ public class UserDao {
         q.executeUpdate();
         
         // Create audit log
-        AuditLogUtil.create(userFromDb, AuditLogType.DELETE);
+        AuditLogUtil.create(userFromDb, AuditLogType.DELETE, userId);
     }
 
     /**

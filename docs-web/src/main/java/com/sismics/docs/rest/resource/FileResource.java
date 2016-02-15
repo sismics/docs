@@ -145,7 +145,7 @@ public class FileResource extends BaseResource {
             file.setDocumentId(documentId);
             file.setMimeType(mimeType);
             file.setUserId(principal.getId());
-            String fileId = fileDao.create(file);
+            String fileId = fileDao.create(file, principal.getId());
             
             // Guess the mime type a second time, for open document format (first detected as simple ZIP file)
             file.setMimeType(MimeTypeUtil.guessOpenDocumentFormat(file, fileInputStream));
@@ -362,7 +362,7 @@ public class FileResource extends BaseResource {
         }
         
         // Delete the file
-        fileDao.delete(file.getId());
+        fileDao.delete(file.getId(), principal.getId());
         
         // Update the user quota
         UserDao userDao = new UserDao();

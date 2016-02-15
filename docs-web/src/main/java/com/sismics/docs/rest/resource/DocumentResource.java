@@ -449,7 +449,7 @@ public class DocumentResource extends BaseResource {
         } else {
             document.setCreateDate(createDate);
         }
-        String documentId = documentDao.create(document);
+        String documentId = documentDao.create(document, principal.getId());
         
         // Create read ACL
         AclDao aclDao = new AclDao();
@@ -457,14 +457,14 @@ public class DocumentResource extends BaseResource {
         acl.setPerm(PermType.READ);
         acl.setSourceId(documentId);
         acl.setTargetId(principal.getId());
-        aclDao.create(acl);
+        aclDao.create(acl, principal.getId());
         
         // Create write ACL
         acl = new Acl();
         acl.setPerm(PermType.WRITE);
         acl.setSourceId(documentId);
         acl.setTargetId(principal.getId());
-        aclDao.create(acl);
+        aclDao.create(acl, principal.getId());
         
         // Update tags
         updateTagList(documentId, tagList);
@@ -570,7 +570,7 @@ public class DocumentResource extends BaseResource {
             document.setLanguage(language);
         }
         
-        document = documentDao.update(document);
+        document = documentDao.update(document, principal.getId());
         
         // Update tags
         updateTagList(id, tagList);
@@ -634,7 +634,7 @@ public class DocumentResource extends BaseResource {
         }
         
         // Delete the document
-        documentDao.delete(document.getId());
+        documentDao.delete(document.getId(), principal.getId());
         
         // Raise file deleted events
         for (File file : fileList) {

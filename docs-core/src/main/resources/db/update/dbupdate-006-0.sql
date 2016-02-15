@@ -6,6 +6,8 @@ alter table T_DOCUMENT add column DOC_SOURCE_C varchar(500);
 alter table T_DOCUMENT add column DOC_TYPE_C varchar(500);
 alter table T_DOCUMENT add column DOC_COVERAGE_C varchar(500);
 alter table T_DOCUMENT add column DOC_RIGHTS_C varchar(500);
+alter table T_AUDIT_LOG add column LOG_IDUSER_C varchar(36) not null default 'admin';
+
 create memory table T_VOCABULARY ( VOC_ID_C varchar(36) not null, VOC_NAME_C varchar(50) not null, VOC_VALUE_C varchar(500) not null, VOC_ORDER_N int not null, primary key (VOC_ID_C) );
 
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('type-collection', 'type', 'Collection', 0);

@@ -105,7 +105,7 @@ public class UserResource extends BaseResource {
         // Create the user
         UserDao userDao = new UserDao();
         try {
-            userDao.create(user);
+            userDao.create(user, principal.getId());
         } catch (Exception e) {
             if ("AlreadyExistingUsername".equals(e.getMessage())) {
                 throw new ServerException("AlreadyExistingUsername", "Login already used", e);
@@ -145,12 +145,12 @@ public class UserResource extends BaseResource {
         if (email != null) {
             user.setEmail(email);
         }
-        user = userDao.update(user);
+        user = userDao.update(user, principal.getId());
         
         // Change the password
         if (StringUtils.isNotBlank(password)) {
             user.setPassword(password);
-            userDao.updatePassword(user);
+            userDao.updatePassword(user, principal.getId());
         }
         
         // Always return OK
@@ -198,12 +198,12 @@ public class UserResource extends BaseResource {
             Long storageQuota = ValidationUtil.validateLong(storageQuotaStr, "storage_quota");
             user.setStorageQuota(storageQuota);
         }
-        user = userDao.update(user);
+        user = userDao.update(user, principal.getId());
         
         // Change the password
         if (StringUtils.isNotBlank(password)) {
             user.setPassword(password);
-            userDao.updatePassword(user);
+            userDao.updatePassword(user, principal.getId());
         }
         
         // Always return OK
@@ -356,7 +356,7 @@ public class UserResource extends BaseResource {
         
         // Delete the user
         UserDao userDao = new UserDao();
-        userDao.delete(principal.getName());
+        userDao.delete(principal.getName(), principal.getId());
         
         // Raise deleted events for documents
         for (Document document : documentList) {
@@ -413,7 +413,7 @@ public class UserResource extends BaseResource {
         List<File> fileList = fileDao.findByUserId(user.getId());
         
         // Delete the user
-        userDao.delete(user.getUsername());
+        userDao.delete(user.getUsername(), principal.getId());
         
         // Raise deleted events for documents
         for (Document document : documentList) {

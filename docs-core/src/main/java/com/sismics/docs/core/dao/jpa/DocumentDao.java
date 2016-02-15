@@ -38,10 +38,11 @@ public class DocumentDao {
      * Creates a new document.
      * 
      * @param document Document
+     * @param userId User ID
      * @return New ID
      * @throws Exception
      */
-    public String create(Document document) {
+    public String create(Document document, String userId) {
         // Create the UUID
         document.setId(UUID.randomUUID().toString());
         
@@ -50,7 +51,7 @@ public class DocumentDao {
         em.persist(document);
         
         // Create audit log
-        AuditLogUtil.create(document, AuditLogType.CREATE);
+        AuditLogUtil.create(document, AuditLogType.CREATE, userId);
         
         return document.getId();
     }
@@ -152,8 +153,9 @@ public class DocumentDao {
      * Deletes a document.
      * 
      * @param id Document ID
+     * @param userId User ID
      */
-    public void delete(String id) {
+    public void delete(String id, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
             
         // Get the document
@@ -182,7 +184,7 @@ public class DocumentDao {
         q.executeUpdate();
         
         // Create audit log
-        AuditLogUtil.create(documentDb, AuditLogType.DELETE);
+        AuditLogUtil.create(documentDb, AuditLogType.DELETE, userId);
     }
     
     /**
@@ -291,9 +293,10 @@ public class DocumentDao {
      * Update a document.
      * 
      * @param document Document to update
+     * @param userId User ID
      * @return Updated document
      */
-    public Document update(Document document) {
+    public Document update(Document document, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         
         // Get the document
@@ -316,7 +319,7 @@ public class DocumentDao {
         documentFromDb.setLanguage(document.getLanguage());
         
         // Create audit log
-        AuditLogUtil.create(documentFromDb, AuditLogType.UPDATE);
+        AuditLogUtil.create(documentFromDb, AuditLogType.UPDATE, userId);
         
         return documentFromDb;
     }

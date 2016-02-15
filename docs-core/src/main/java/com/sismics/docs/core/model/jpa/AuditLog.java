@@ -28,6 +28,12 @@ public class AuditLog {
     private String id;
     
     /**
+     * User ID.
+     */
+    @Column(name = "LOG_IDUSER_C", nullable = false, length = 36)
+    private String userId;
+    
+    /**
      * Entity ID.
      */
     @Column(name = "LOG_IDENTITY_C", nullable = false, length = 36)
@@ -64,6 +70,14 @@ public class AuditLog {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getEntityId() {

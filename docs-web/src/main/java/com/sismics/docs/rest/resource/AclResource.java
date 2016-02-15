@@ -77,7 +77,7 @@ public class AclResource extends BaseResource {
         
         // Avoid duplicates
         if (!aclDao.checkPermission(acl.getSourceId(), acl.getPerm(), acl.getTargetId())) {
-            aclDao.create(acl);
+            aclDao.create(acl, principal.getId());
             
             // Returns the ACL
             JsonObjectBuilder response = Json.createObjectBuilder()
@@ -126,7 +126,7 @@ public class AclResource extends BaseResource {
         }
         
         // Delete the ACL
-        aclDao.delete(sourceId, perm, targetId);
+        aclDao.delete(sourceId, perm, targetId, principal.getId());
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()

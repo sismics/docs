@@ -1,7 +1,5 @@
 package com.sismics.docs.core.dao.jpa.dto;
 
-import javax.persistence.Id;
-
 import com.sismics.docs.core.constant.PermType;
 
 /**
@@ -13,7 +11,6 @@ public class AclDto {
     /**
      * Acl ID.
      */
-    @Id
     private String id;
     
     /**
