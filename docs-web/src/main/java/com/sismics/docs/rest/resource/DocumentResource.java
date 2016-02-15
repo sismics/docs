@@ -295,6 +295,7 @@ public class DocumentResource extends BaseResource {
         }
         
         TagDao tagDao = new TagDao();
+        UserDao userDao = new UserDao();
         DateTimeParser[] parsers = { 
                 DateTimeFormat.forPattern("yyyy").getParser(),
                 DateTimeFormat.forPattern("yyyy-MM").getParser(),
@@ -369,6 +370,16 @@ public class DocumentResource extends BaseResource {
                 // New language criteria
                 if (Constants.SUPPORTED_LANGUAGES.contains(params[1])) {
                     documentCriteria.setLanguage(params[1]);
+                }
+            } else if (params[0].equals("by")) {
+                // New creator criteria
+                User user = userDao.getActiveByUsername(params[1]);
+                if (user == null) {
+                    // This user doesn't exists, return nothing
+                    documentCriteria.setCreatorId(UUID.randomUUID().toString());
+                } else {
+                    // This user exists, search its documents
+                    documentCriteria.setCreatorId(user.getId());
                 }
             } else if (params[0].equals("full")) {
                 // New full content search criteria

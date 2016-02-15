@@ -259,6 +259,10 @@ public class DocumentDao {
             criteriaList.add("d.DOC_LANGUAGE_C = :language");
             parameterMap.put("language", criteria.getLanguage());
         }
+        if (criteria.getCreatorId() != null) {
+            criteriaList.add("d.DOC_IDUSER_C = :creatorId");
+            parameterMap.put("creatorId", criteria.getCreatorId());
+        }
         
         criteriaList.add("d.DOC_DELETEDATE_D is null");
         

@@ -55,7 +55,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         String tag1Id = json.getString("id");
         Assert.assertNotNull(tag1Id);
 
-        // Create a document
+        // Create a document with document1
         long create1Date = new Date().getTime();
         json = target().path("/document").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
@@ -176,6 +176,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(1, searchDocuments("software", document1Token));
         Assert.assertEquals(1, searchDocuments("greenland", document1Token));
         Assert.assertEquals(1, searchDocuments("public domain", document1Token));
+        Assert.assertEquals(0, searchDocuments("by:document3", document1Token));
+        Assert.assertEquals(1, searchDocuments("by:document1", document1Token));
+        Assert.assertEquals(0, searchDocuments("by:nobody", document1Token));
         Assert.assertEquals(1, searchDocuments("at:" + DateTimeFormat.forPattern("yyyy").print(new Date().getTime()), document1Token));
         Assert.assertEquals(1, searchDocuments("at:" + DateTimeFormat.forPattern("yyyy-MM").print(new Date().getTime()), document1Token));
         Assert.assertEquals(1, searchDocuments("at:" + DateTimeFormat.forPattern("yyyy-MM-dd").print(new Date().getTime()), document1Token));
