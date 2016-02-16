@@ -484,7 +484,6 @@ public class UserResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        checkBaseFunction(BaseFunction.ADMIN);
         
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
@@ -519,7 +518,6 @@ public class UserResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        checkBaseFunction(BaseFunction.ADMIN);
         
         JsonArrayBuilder users = Json.createArrayBuilder();
         PaginatedList<UserDto> paginatedList = PaginatedLists.create(limit, offset);
