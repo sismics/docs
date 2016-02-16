@@ -17,10 +17,10 @@
         <input type="search" class="form-control" placeholder="Search" ng-model="search.name">
       </p>
 
-      <table class="row table table-striped table-hover table-tags">
+      <table class="row table table-striped table-hover">
         <tbody>
           <tr ng-repeat="tag in tags | filter:search">
-            <td><inline-edit value="tag.name" on-edit="updateTag(tag)" /></td>
+            <td><inline-edit value="tag.name" on-edit="updateTag(tag)" ></inline-edit></td>
             <td class="col-xs-4">
               <select class="form-control" ng-model="tag.parent" ng-change="updateTag(tag)">
                 <option value="" ng-selected="!tag.parent"></option>

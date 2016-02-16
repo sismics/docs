@@ -1,3 +1,26 @@
-User
+<div class="row">
+  <div class="col-md-4">
+    <div class="well">
+      <p class="input-group">
+        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+        <input type="search" class="form-control" placeholder="Search" ng-model="search">
+      </p>
 
-<div ui-view="user"></div>
+      <table class="row table table-striped table-hover">
+        <tbody>
+        <tr class="pointer" ng-repeat="user in users | filter: search"
+            ng-click="openUser(user)" ng-class="{ active: $stateParams.username == user.username }">
+          <td class="col-xs-4">
+            <span class="glyphicon glyphicon-user"></span>
+            {{ user.username }}
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <div ui-view="user"></div>
+  </div>
+</div>
