@@ -2,5 +2,27 @@
   <h1>{{ user.username }} <small>{{ user.email }}</small></h1>
 </div>
 
-<h4>Documents created by {{ user.username }}</h4>
-TODO
+<h4>Quota used</h4>
+<div class="row">
+  <div class="col-md-6">
+    <div class="progress" title="{{(user.storage_current / user.storage_quota * 100) | number: 0}}% Used">
+      <div class="progress-bar" ng-style="{ 'width': (user.storage_current / user.storage_quota * 100) + '%' }">
+        <span class="sr-only">{{ (user.storage_current / user.storage_quota * 100) }}% Used</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h4>Related links</h4>
+<ul>
+  <li>
+    <a ng-href="#/document/search/by:{{ user.username }}">
+      Documents created by {{ user.username }}
+    </a>
+  </li>
+  <li>
+    <a ng-href="#/settings/user/edit/{{ user.username }}" ng-if="userInfo.base_functions.indexOf('ADMIN') != -1">
+      Edit {{ user.username}} user
+    </a>
+  </li>
+</ul>

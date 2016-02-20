@@ -13,6 +13,7 @@
           <td class="col-xs-4">
             <span class="glyphicon glyphicon-user"></span>
             {{ user.username }}
+            <span class="text-muted" ng-if="userInfo.username == user.username">It's you!</span>
           </td>
         </tr>
         </tbody>
