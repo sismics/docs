@@ -222,6 +222,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         tags = json.getJsonArray("tags");
         Assert.assertEquals(1, tags.size());
         Assert.assertEquals(tag1Id, tags.getJsonObject(0).getString("id"));
+        JsonArray contributors = json.getJsonArray("contributors");
+        Assert.assertEquals(1, contributors.size());
+        Assert.assertEquals("document1", contributors.getJsonObject(0).getString("username"));
         
         // Export a document in PDF format
         Response response = target().path("/document/" + document1Id).request()
@@ -279,6 +282,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         tags = json.getJsonArray("tags");
         Assert.assertEquals(1, tags.size());
         Assert.assertEquals(tag2Id, tags.getJsonObject(0).getString("id"));
+        contributors = json.getJsonArray("contributors");
+        Assert.assertEquals(1, contributors.size());
+        Assert.assertEquals("document1", contributors.getJsonObject(0).getString("username"));
         
         // Deletes a document
         json = target().path("/document/" + document1Id).request()

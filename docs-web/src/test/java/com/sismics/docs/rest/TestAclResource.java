@@ -100,20 +100,36 @@ public class TestAclResource extends BaseJerseyTest {
         acls = json.getJsonArray("acls");
         Assert.assertEquals(4, acls.size());
         
+        // Update the document as acl2
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl2Token)
+                .post(Entity.form(new Form()
+                        .param("title", "My new super document 1")), JsonObject.class);
+        Assert.assertEquals(document1Id, json.getString("id"));
+        
+        // Get the document as acl2
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl2Token)
+                .get(JsonObject.class);
+        Assert.assertEquals(document1Id, json.getString("id"));
+        JsonArray contributors = json.getJsonArray("contributors");
+        Assert.assertEquals(2, contributors.size());
+        
         // Delete the ACL WRITE for acl2 with acl2
         target().path("/acl/" + document1Id + "/WRITE/" + acl2Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl2Token)
-                .delete();
+                .delete(JsonObject.class);
         
-        // Delete the ACL READ for acl2 with acl2
-        target().path("/acl/" + document1Id + "/READ/" + acl2Id).request()
+        // Delete the ACL READ for acl2 with acl2 (not authorized)
+        response = target().path("/acl/" + document1Id + "/READ/" + acl2Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl2Token)
                 .delete();
+        Assert.assertEquals(Status.FORBIDDEN, Status.fromStatusCode(response.getStatus()));
         
         // Delete the ACL READ for acl2 with acl1
         target().path("/acl/" + document1Id + "/READ/" + acl2Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl1Token)
-                .delete();
+                .delete(JsonObject.class);
         
         // Get the document as acl1
         json = target().path("/document/" + document1Id).request()

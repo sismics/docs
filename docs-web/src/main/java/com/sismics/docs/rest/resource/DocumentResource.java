@@ -40,12 +40,14 @@ import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
+import com.sismics.docs.core.dao.jpa.ContributorDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.AclDto;
+import com.sismics.docs.core.dao.jpa.dto.ContributorDto;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
@@ -158,6 +160,17 @@ public class DocumentResource extends BaseResource {
         }
         document.add("acls", aclList)
                 .add("writable", writable);
+        
+        // Add contributors
+        ContributorDao contributorDao = new ContributorDao();
+        List<ContributorDto> contributorDtoList = contributorDao.getByDocumentId(documentId);
+        JsonArrayBuilder contributorList = Json.createArrayBuilder();
+        for (ContributorDto contributorDto : contributorDtoList) {
+            contributorList.add(Json.createObjectBuilder()
+                    .add("username", contributorDto.getUsername())
+                    .add("email", contributorDto.getEmail()));
+        }
+        document.add("contributors", contributorList);
         
         return Response.ok().entity(document.build()).build();
     }

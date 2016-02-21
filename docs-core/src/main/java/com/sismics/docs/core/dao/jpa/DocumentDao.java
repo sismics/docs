@@ -136,9 +136,10 @@ public class DocumentDao {
      */
     public Document getDocument(String id, PermType perm, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createNativeQuery("select d.* from T_DOCUMENT d "
-                + " join T_ACL a on a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_TARGETID_C = :userId and a.ACL_PERM_C = :perm and a.ACL_DELETEDATE_D is null "
-                + " where d.DOC_ID_C = :id and d.DOC_DELETEDATE_D is null", Document.class);
+        StringBuilder sb = new StringBuilder("select d.* from T_DOCUMENT d ");
+        sb.append(" join T_ACL a on a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_TARGETID_C = :userId and a.ACL_PERM_C = :perm and a.ACL_DELETEDATE_D is null ");
+        sb.append(" where d.DOC_ID_C = :id and d.DOC_DELETEDATE_D is null");
+        Query q = em.createNativeQuery(sb.toString(), Document.class);
         q.setParameter("id", id);
         q.setParameter("perm", perm.name());
         q.setParameter("userId", userId);
@@ -276,7 +277,7 @@ public class DocumentDao {
         List<Object[]> l = PaginatedLists.executePaginatedQuery(paginatedList, queryParam, sortCriteria);
         
         // Assemble results
-        List<DocumentDto> documentDtoList = new ArrayList<DocumentDto>();
+        List<DocumentDto> documentDtoList = new ArrayList<>();
         for (Object[] o : l) {
             int i = 0;
             DocumentDto documentDto = new DocumentDto();
