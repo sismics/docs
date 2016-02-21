@@ -649,7 +649,7 @@ public class DocumentResource extends BaseResource {
         // Delete the document
         documentDao.delete(document.getId(), principal.getId());
         
-        // Raise file deleted events
+        // Raise file deleted events (don't bother sending document updated event)
         for (File file : fileList) {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
