@@ -163,6 +163,7 @@ public class FileResource extends BaseResource {
             // Raise a new file created event if we have a document
             if (documentId != null) {
                 FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
+                fileCreatedAsyncEvent.setUserId(principal.getId());
                 fileCreatedAsyncEvent.setDocument(document);
                 fileCreatedAsyncEvent.setFile(file);
                 fileCreatedAsyncEvent.setInputStream(fileInputStream);
@@ -228,6 +229,7 @@ public class FileResource extends BaseResource {
             InputStream fileInputStream = Files.newInputStream(storedFile);
             final InputStream responseInputStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey());
             FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
+            fileCreatedAsyncEvent.setUserId(principal.getId());
             fileCreatedAsyncEvent.setDocument(document);
             fileCreatedAsyncEvent.setFile(file);
             fileCreatedAsyncEvent.setInputStream(responseInputStream);
@@ -377,6 +379,7 @@ public class FileResource extends BaseResource {
         
         // Raise a new file deleted event
         FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
+        fileDeletedAsyncEvent.setUserId(principal.getId());
         fileDeletedAsyncEvent.setFile(file);
         AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
         

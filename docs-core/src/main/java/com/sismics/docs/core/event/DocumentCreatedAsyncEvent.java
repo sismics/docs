@@ -8,7 +8,7 @@ import com.sismics.docs.core.model.jpa.Document;
  *
  * @author bgamard
  */
-public class DocumentCreatedAsyncEvent {
+public class DocumentCreatedAsyncEvent extends UserEvent {
     /**
      * Created document.
      */

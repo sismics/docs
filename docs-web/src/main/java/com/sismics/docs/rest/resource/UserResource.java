@@ -361,6 +361,7 @@ public class UserResource extends BaseResource {
         // Raise deleted events for documents
         for (Document document : documentList) {
             DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
+            documentDeletedAsyncEvent.setUserId(principal.getId());
             documentDeletedAsyncEvent.setDocument(document);
             AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
         }
@@ -368,6 +369,7 @@ public class UserResource extends BaseResource {
         // Raise deleted events for files
         for (File file : fileList) {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
+            fileDeletedAsyncEvent.setUserId(principal.getId());
             fileDeletedAsyncEvent.setFile(file);
             AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
         }
@@ -418,6 +420,7 @@ public class UserResource extends BaseResource {
         // Raise deleted events for documents
         for (Document document : documentList) {
             DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
+            documentDeletedAsyncEvent.setUserId(principal.getId());
             documentDeletedAsyncEvent.setDocument(document);
             AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
         }
@@ -425,6 +428,7 @@ public class UserResource extends BaseResource {
         // Raise deleted events for files
         for (File file : fileList) {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
+            fileDeletedAsyncEvent.setUserId(principal.getId());
             fileDeletedAsyncEvent.setFile(file);
             AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
         }

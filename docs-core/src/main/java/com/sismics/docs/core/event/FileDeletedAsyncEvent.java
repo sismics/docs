@@ -8,7 +8,7 @@ import com.sismics.docs.core.model.jpa.File;
  *
  * @author bgamard
  */
-public class FileDeletedAsyncEvent {
+public class FileDeletedAsyncEvent extends UserEvent {
     /**
      * Deleted file.
      */
