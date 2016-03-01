@@ -1,4 +1,32 @@
 <p class="well-sm" ng-bind-html="document.description | newline"></p>
+<dl class="dl-horizontal">
+  <dt ng-if="document.subject">Subject</dt>
+  <dd ng-if="document.subject">{{ document.subject }}</dd>
+  <dt ng-if="document.identifier">Identifier</dt>
+  <dd ng-if="document.identifier">{{ document.identifier }}</dd>
+  <dt ng-if="document.publisher">Publisher</dt>
+  <dd ng-if="document.publisher">{{ document.publisher }}</dd>
+  <dt ng-if="document.format">Format</dt>
+  <dd ng-if="document.format">{{ document.format }}</dd>
+  <dt ng-if="document.source">Source</dt>
+  <dd ng-if="document.source">{{ document.source }}</dd>
+  <dt ng-if="document.type">Type</dt>
+  <dd ng-if="document.type">{{ document.type }}</dd>
+  <dt ng-if="document.coverage">Coverage</dt>
+  <dd ng-if="document.coverage">{{ document.coverage }}</dd>
+  <dt ng-if="document.rights">rights</dt>
+  <dd ng-if="document.rights">{{ document.rights }}</dd>
+  <dt>Contributors</dt>
+  <dd>
+    <span ng-repeat="contributor in document.contributors">
+      <span class="btn btn-default btn-xs">
+        <a href="#/user/{{ contributor.username }}">
+          {{ contributor.username }}
+        </a>
+      </span>
+    </span>
+  </dd>
+</dl>
 
 <div ng-file-drop drag-over-class="bg-success" ng-multiple="true" allow-dir="false" ng-model="dropFiles"
      accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">

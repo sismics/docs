@@ -106,6 +106,15 @@ angular.module('docs',
           }
         }
       })
+  .state('settings.vocabulary', {
+    url: '/vocabulary',
+    views: {
+      'settings': {
+        templateUrl: 'partial/docs/settings.vocabulary.html',
+        controller: 'SettingsVocabulary'
+      }
+    }
+  })
   .state('document', {
     url: '/document',
     abstract: true,
@@ -207,7 +216,25 @@ angular.module('docs',
         controller: 'Login'
       }
     }
-  });
+  })
+  .state('user', {
+    url: '/user',
+    views: {
+      'page': {
+        templateUrl: 'partial/docs/user.html',
+        controller: 'User'
+      }
+    }
+  })
+    .state('user.profile', {
+      url: '/:username',
+      views: {
+        'user': {
+          templateUrl: 'partial/docs/user.profile.html',
+          controller: 'UserProfile'
+        }
+      }
+    });
   
   // Configuring Restangular
   RestangularProvider.setBaseUrl('../api');

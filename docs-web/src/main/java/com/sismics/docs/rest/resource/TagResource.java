@@ -137,7 +137,7 @@ public class TagResource extends BaseResource {
         tag.setColor(color);
         tag.setUserId(principal.getId());
         tag.setParentId(parentId);
-        String id = tagDao.create(tag);
+        String id = tagDao.create(tag, principal.getId());
         
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("id", id);
@@ -203,7 +203,7 @@ public class TagResource extends BaseResource {
         // Parent tag is always updated to have the possibility to delete it
         tag.setParentId(parentId);
         
-        tagDao.update(tag);
+        tagDao.update(tag, principal.getId());
         
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("id", id);
@@ -232,7 +232,7 @@ public class TagResource extends BaseResource {
         }
         
         // Delete the tag
-        tagDao.delete(tagId);
+        tagDao.delete(tagId, principal.getId());
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()

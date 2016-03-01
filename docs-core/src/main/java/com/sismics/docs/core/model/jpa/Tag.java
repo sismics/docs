@@ -60,129 +60,59 @@ public class Tag implements Loggable {
     @Column(name = "TAG_COLOR_C", nullable = false, length = 7)
     private String color;
 
-    /**
-     * Getter of id.
-     *
-     * @return id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Setter of id.
-     *
-     * @param id id
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * Getter of userId.
-     *
-     * @return the userId
-     */
     public String getUserId() {
         return userId;
     }
 
-    /**
-     * Setter of userId.
-     *
-     * @param userId userId
-     */
     public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    /**
-     * Getter of name.
-     *
-     * @return name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Setter of name.
-     *
-     * @param name name
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Getter of createDate.
-     *
-     * @return createDate
-     */
     public Date getCreateDate() {
         return createDate;
     }
 
-    /**
-     * Setter of createDate.
-     *
-     * @param createDate createDate
-     */
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
     
-    /**
-     * Getter of color.
-     *
-     * @return the color
-     */
     public String getColor() {
         return color;
     }
 
-    /**
-     * Setter of color.
-     *
-     * @param color color
-     */
     public void setColor(String color) {
         this.color = color;
     }
 
-    /**
-     * Getter of deleteDate.
-     *
-     * @return deleteDate
-     */
     @Override
     public Date getDeleteDate() {
         return deleteDate;
     }
 
-    /**
-     * Setter of deleteDate.
-     *
-     * @param deleteDate deleteDate
-     */
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
     }
     
-    /**
-     * Getter of parentId.
-     *
-     * @return parentId
-     */
     public String getParentId() {
         return parentId;
     }
 
-    /**
-     * Setter of parentId.
-     *
-     * @param parentId parentId
-     */
     public void setParentId(String parentId) {
         this.parentId = parentId;
     }

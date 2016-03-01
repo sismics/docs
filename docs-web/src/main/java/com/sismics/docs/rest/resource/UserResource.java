@@ -74,7 +74,6 @@ public class UserResource extends BaseResource {
         @FormParam("password") String password,
         @FormParam("email") String email,
         @FormParam("storage_quota") String storageQuotaStr) {
-
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -106,7 +105,7 @@ public class UserResource extends BaseResource {
         // Create the user
         UserDao userDao = new UserDao();
         try {
-            userDao.create(user);
+            userDao.create(user, principal.getId());
         } catch (Exception e) {
             if ("AlreadyExistingUsername".equals(e.getMessage())) {
                 throw new ServerException("AlreadyExistingUsername", "Login already used", e);
@@ -132,7 +131,6 @@ public class UserResource extends BaseResource {
     public Response update(
         @FormParam("password") String password,
         @FormParam("email") String email) {
-        
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -147,12 +145,12 @@ public class UserResource extends BaseResource {
         if (email != null) {
             user.setEmail(email);
         }
-        user = userDao.update(user);
+        user = userDao.update(user, principal.getId());
         
         // Change the password
         if (StringUtils.isNotBlank(password)) {
             user.setPassword(password);
-            userDao.updatePassword(user);
+            userDao.updatePassword(user, principal.getId());
         }
         
         // Always return OK
@@ -176,7 +174,6 @@ public class UserResource extends BaseResource {
         @FormParam("password") String password,
         @FormParam("email") String email,
         @FormParam("storage_quota") String storageQuotaStr) {
-        
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -201,12 +198,12 @@ public class UserResource extends BaseResource {
             Long storageQuota = ValidationUtil.validateLong(storageQuotaStr, "storage_quota");
             user.setStorageQuota(storageQuota);
         }
-        user = userDao.update(user);
+        user = userDao.update(user, principal.getId());
         
         // Change the password
         if (StringUtils.isNotBlank(password)) {
             user.setPassword(password);
-            userDao.updatePassword(user);
+            userDao.updatePassword(user, principal.getId());
         }
         
         // Always return OK
@@ -225,7 +222,6 @@ public class UserResource extends BaseResource {
     @Path("check_username")
     public Response checkUsername(
         @QueryParam("username") String username) {
-        
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
         
@@ -255,7 +251,6 @@ public class UserResource extends BaseResource {
         @FormParam("username") String username,
         @FormParam("password") String password,
         @FormParam("remember") boolean longLasted) {
-        
         // Validate the input data
         username = StringUtils.strip(username);
         password = StringUtils.strip(password);
@@ -361,18 +356,20 @@ public class UserResource extends BaseResource {
         
         // Delete the user
         UserDao userDao = new UserDao();
-        userDao.delete(principal.getName());
+        userDao.delete(principal.getName(), principal.getId());
         
         // Raise deleted events for documents
         for (Document document : documentList) {
             DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
+            documentDeletedAsyncEvent.setUserId(principal.getId());
             documentDeletedAsyncEvent.setDocument(document);
             AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
         }
         
-        // Raise deleted events for files
+        // Raise deleted events for files (don't bother sending document updated event)
         for (File file : fileList) {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
+            fileDeletedAsyncEvent.setUserId(principal.getId());
             fileDeletedAsyncEvent.setFile(file);
             AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
         }
@@ -418,18 +415,20 @@ public class UserResource extends BaseResource {
         List<File> fileList = fileDao.findByUserId(user.getId());
         
         // Delete the user
-        userDao.delete(user.getUsername());
+        userDao.delete(user.getUsername(), principal.getId());
         
         // Raise deleted events for documents
         for (Document document : documentList) {
             DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
+            documentDeletedAsyncEvent.setUserId(principal.getId());
             documentDeletedAsyncEvent.setDocument(document);
             AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
         }
         
-        // Raise deleted events for files
+        // Raise deleted events for files (don't bother sending document updated event)
         for (File file : fileList) {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
+            fileDeletedAsyncEvent.setUserId(principal.getId());
             fileDeletedAsyncEvent.setFile(file);
             AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
         }
@@ -489,7 +488,6 @@ public class UserResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        checkBaseFunction(BaseFunction.ADMIN);
         
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
@@ -524,7 +522,6 @@ public class UserResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        checkBaseFunction(BaseFunction.ADMIN);
         
         JsonArrayBuilder users = Json.createArrayBuilder();
         PaginatedList<UserDto> paginatedList = PaginatedLists.create(limit, offset);

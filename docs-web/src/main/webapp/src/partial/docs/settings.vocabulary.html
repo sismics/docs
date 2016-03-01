@@ -1,0 +1,51 @@
+<h1>Vocabulary <small>entries</small></h1>
+
+<div class="row">
+  <form class="form-inline">
+    <div class="form-group">
+      <label for="inputVocabulary">Choose a vocabulary to edit</label>
+      <select class="form-control" id="inputVocabulary" ng-model="vocabulary" ng-init="vocabulary = 'type'">
+        <option value="type">Type</option>
+        <option value="coverage">Coverage</option>
+        <option value="rights">Rights</option>
+      </select>
+    </div>
+  </form>
+
+  <table class="table table-striped" ng-show="entries">
+    <thead>
+      <tr>
+        <th width="70%">Value</th>
+        <th width="20%">Order</th>
+        <th width="10%"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="info">
+        <td>
+          <input type="text" placeholder="New entry" class="form-control" ng-model="entry.value" maxlength="500" />
+        </td>
+        <td>
+          <input type="number" class="form-control" ng-model="entry.order" />
+        </td>
+        <td>
+          <span ng-click="addEntry(entry)" class="glyphicon glyphicon-plus pointer"></span>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3">&nbsp;</td>
+      </tr>
+      <tr ng-repeat="entry in entries | orderBy: 'order'">
+        <td>
+          <input type="text" class="form-control" ng-model="entry.value" maxlength="500" ng-blur="updateEntry(entry)" />
+        </td>
+        <td>
+          <input type="number" class="form-control" ng-model="entry.order" ng-blur="updateEntry(entry)" />
+        </td>
+        <td>
+          <span ng-click="deleteEntry(entry)" class="glyphicon glyphicon-trash pointer"></span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

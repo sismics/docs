@@ -89,7 +89,7 @@ public abstract class DbOpenHelper {
                     oldVersion = Integer.parseInt(oldVersionStr);
                 }
             } catch (Exception e) {
-                if (e.getMessage().contains("object not found")) {
+                if (e.getMessage().contains("not found")) {
                     log.info("Unable to get database version: Table T_CONFIG not found");
                 } else {
                     log.error("Unable to get database version", e);
@@ -120,6 +120,7 @@ public abstract class DbOpenHelper {
             log.error("Unable to complete schema update", e);
         } finally {
             try {
+                connection.commit();
                 if (stmt != null) {
                     stmt.close();
                     stmt = null;

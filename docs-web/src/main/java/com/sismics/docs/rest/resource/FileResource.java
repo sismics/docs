@@ -44,6 +44,7 @@ import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
@@ -145,7 +146,7 @@ public class FileResource extends BaseResource {
             file.setDocumentId(documentId);
             file.setMimeType(mimeType);
             file.setUserId(principal.getId());
-            String fileId = fileDao.create(file);
+            String fileId = fileDao.create(file, principal.getId());
             
             // Guess the mime type a second time, for open document format (first detected as simple ZIP file)
             file.setMimeType(MimeTypeUtil.guessOpenDocumentFormat(file, fileInputStream));
@@ -160,14 +161,20 @@ public class FileResource extends BaseResource {
             user.setStorageCurrent(user.getStorageCurrent() + fileData.length);
             userDao.updateQuota(user);
             
-            // Raise a new file created event if we have a document
+            // Raise a new file created event and document updated event if we have a document
             if (documentId != null) {
                 FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
+                fileCreatedAsyncEvent.setUserId(principal.getId());
                 fileCreatedAsyncEvent.setDocument(document);
                 fileCreatedAsyncEvent.setFile(file);
                 fileCreatedAsyncEvent.setInputStream(fileInputStream);
                 fileCreatedAsyncEvent.setPdfInputStream(pdfIntputStream);
                 AppContext.getInstance().getAsyncEventBus().post(fileCreatedAsyncEvent);
+                
+                DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
+                documentUpdatedAsyncEvent.setUserId(principal.getId());
+                documentUpdatedAsyncEvent.setDocument(document);
+                AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
             }
 
             // Always return OK
@@ -222,16 +229,22 @@ public class FileResource extends BaseResource {
         file.setOrder(fileDao.getByDocumentId(principal.getId(), documentId).size());
         fileDao.update(file);
         
-        // Raise a new file created event (it wasn't sent during file creation)
+        // Raise a new file created event and document updated event (it wasn't sent during file creation)
         try {
             java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
             InputStream fileInputStream = Files.newInputStream(storedFile);
             final InputStream responseInputStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey());
             FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
+            fileCreatedAsyncEvent.setUserId(principal.getId());
             fileCreatedAsyncEvent.setDocument(document);
             fileCreatedAsyncEvent.setFile(file);
             fileCreatedAsyncEvent.setInputStream(responseInputStream);
             AppContext.getInstance().getAsyncEventBus().post(fileCreatedAsyncEvent);
+            
+            DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
+            documentUpdatedAsyncEvent.setUserId(principal.getId());
+            documentUpdatedAsyncEvent.setDocument(document);
+            AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
         } catch (Exception e) {
             throw new ClientException("AttachError", "Error attaching file to document", e);
         }
@@ -351,18 +364,19 @@ public class FileResource extends BaseResource {
             return Response.status(Status.NOT_FOUND).build();
         }
         
+        Document document = null;
         if (file.getDocumentId() == null) {
             // It's an orphan file
             if (!file.getUserId().equals(principal.getId())) {
                 // But not ours
                 throw new ForbiddenClientException();
             }
-        } else if (documentDao.getDocument(file.getDocumentId(), PermType.WRITE, principal.getId()) == null) {
+        } else if ((document = documentDao.getDocument(file.getDocumentId(), PermType.WRITE, principal.getId())) == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
         // Delete the file
-        fileDao.delete(file.getId());
+        fileDao.delete(file.getId(), principal.getId());
         
         // Update the user quota
         UserDao userDao = new UserDao();
@@ -377,8 +391,17 @@ public class FileResource extends BaseResource {
         
         // Raise a new file deleted event
         FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
+        fileDeletedAsyncEvent.setUserId(principal.getId());
         fileDeletedAsyncEvent.setFile(file);
         AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
+        
+        if (document != null) {
+            // Raise a new document updated
+            DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
+            documentUpdatedAsyncEvent.setUserId(principal.getId());
+            documentUpdatedAsyncEvent.setDocument(document);
+            AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
+        }
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()

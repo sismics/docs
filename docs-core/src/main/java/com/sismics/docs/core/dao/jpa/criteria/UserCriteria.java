@@ -13,20 +13,10 @@ public class UserCriteria {
      */
     private String search;
 
-    /**
-     * Getter of search.
-     *
-     * @return the search
-     */
     public String getSearch() {
         return search;
     }
 
-    /**
-     * Setter of search.
-     *
-     * @param search search
-     */
     public UserCriteria setSearch(String search) {
         this.search = search;
         return this;

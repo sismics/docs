@@ -40,12 +40,14 @@ import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
+import com.sismics.docs.core.dao.jpa.ContributorDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.AclDto;
+import com.sismics.docs.core.dao.jpa.dto.ContributorDto;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
@@ -128,7 +130,14 @@ public class DocumentResource extends BaseResource {
         }
         
         // Below is specific to GET /document/id
-        
+        document.add("subject", JsonUtil.nullable(documentDto.getSubject()));
+        document.add("identifier", JsonUtil.nullable(documentDto.getIdentifier()));
+        document.add("publisher", JsonUtil.nullable(documentDto.getPublisher()));
+        document.add("format", JsonUtil.nullable(documentDto.getFormat()));
+        document.add("source", JsonUtil.nullable(documentDto.getSource()));
+        document.add("type", JsonUtil.nullable(documentDto.getType()));
+        document.add("coverage", JsonUtil.nullable(documentDto.getCoverage()));
+        document.add("rights", JsonUtil.nullable(documentDto.getRights()));
         document.add("creator", documentDto.getCreator());
         
         // Add ACL
@@ -151,6 +160,17 @@ public class DocumentResource extends BaseResource {
         }
         document.add("acls", aclList)
                 .add("writable", writable);
+        
+        // Add contributors
+        ContributorDao contributorDao = new ContributorDao();
+        List<ContributorDto> contributorDtoList = contributorDao.getByDocumentId(documentId);
+        JsonArrayBuilder contributorList = Json.createArrayBuilder();
+        for (ContributorDto contributorDto : contributorDtoList) {
+            contributorList.add(Json.createObjectBuilder()
+                    .add("username", contributorDto.getUsername())
+                    .add("email", contributorDto.getEmail()));
+        }
+        document.add("contributors", contributorList);
         
         return Response.ok().entity(document.build()).build();
     }
@@ -288,6 +308,7 @@ public class DocumentResource extends BaseResource {
         }
         
         TagDao tagDao = new TagDao();
+        UserDao userDao = new UserDao();
         DateTimeParser[] parsers = { 
                 DateTimeFormat.forPattern("yyyy").getParser(),
                 DateTimeFormat.forPattern("yyyy-MM").getParser(),
@@ -363,6 +384,16 @@ public class DocumentResource extends BaseResource {
                 if (Constants.SUPPORTED_LANGUAGES.contains(params[1])) {
                     documentCriteria.setLanguage(params[1]);
                 }
+            } else if (params[0].equals("by")) {
+                // New creator criteria
+                User user = userDao.getActiveByUsername(params[1]);
+                if (user == null) {
+                    // This user doesn't exists, return nothing
+                    documentCriteria.setCreatorId(UUID.randomUUID().toString());
+                } else {
+                    // This user exists, search its documents
+                    documentCriteria.setCreatorId(user.getId());
+                }
             } else if (params[0].equals("full")) {
                 // New full content search criteria
                 fullQuery.add(params[1]);
@@ -390,6 +421,14 @@ public class DocumentResource extends BaseResource {
     public Response add(
             @FormParam("title") String title,
             @FormParam("description") String description,
+            @FormParam("subject") String subject,
+            @FormParam("identifier") String identifier,
+            @FormParam("publisher") String publisher,
+            @FormParam("format") String format,
+            @FormParam("source") String source,
+            @FormParam("type") String type,
+            @FormParam("coverage") String coverage,
+            @FormParam("rights") String rights,
             @FormParam("tags") List<String> tagList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
@@ -401,6 +440,14 @@ public class DocumentResource extends BaseResource {
         title = ValidationUtil.validateLength(title, "title", 1, 100, false);
         language = ValidationUtil.validateLength(language, "language", 3, 3, false);
         description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
+        subject = ValidationUtil.validateLength(subject, "subject", 0, 500, true);
+        identifier = ValidationUtil.validateLength(identifier, "identifier", 0, 500, true);
+        publisher = ValidationUtil.validateLength(publisher, "publisher", 0, 500, true);
+        format = ValidationUtil.validateLength(format, "format", 0, 500, true);
+        source = ValidationUtil.validateLength(source, "source", 0, 500, true);
+        type = ValidationUtil.validateLength(type, "type", 0, 100, true);
+        coverage = ValidationUtil.validateLength(coverage, "coverage", 0, 100, true);
+        rights = ValidationUtil.validateLength(rights, "rights", 0, 100, true);
         Date createDate = ValidationUtil.validateDate(createDateStr, "create_date", true);
         if (!Constants.SUPPORTED_LANGUAGES.contains(language)) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", language));
@@ -412,13 +459,21 @@ public class DocumentResource extends BaseResource {
         document.setUserId(principal.getId());
         document.setTitle(title);
         document.setDescription(description);
+        document.setSubject(subject);
+        document.setIdentifier(identifier);
+        document.setPublisher(publisher);
+        document.setFormat(format);
+        document.setSource(source);
+        document.setType(type);
+        document.setCoverage(coverage);
+        document.setRights(rights);
         document.setLanguage(language);
         if (createDate == null) {
             document.setCreateDate(new Date());
         } else {
             document.setCreateDate(createDate);
         }
-        String documentId = documentDao.create(document);
+        String documentId = documentDao.create(document, principal.getId());
         
         // Create read ACL
         AclDao aclDao = new AclDao();
@@ -426,20 +481,21 @@ public class DocumentResource extends BaseResource {
         acl.setPerm(PermType.READ);
         acl.setSourceId(documentId);
         acl.setTargetId(principal.getId());
-        aclDao.create(acl);
+        aclDao.create(acl, principal.getId());
         
         // Create write ACL
         acl = new Acl();
         acl.setPerm(PermType.WRITE);
         acl.setSourceId(documentId);
         acl.setTargetId(principal.getId());
-        aclDao.create(acl);
+        aclDao.create(acl, principal.getId());
         
         // Update tags
         updateTagList(documentId, tagList);
         
         // Raise a document created event
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
+        documentCreatedAsyncEvent.setUserId(principal.getId());
         documentCreatedAsyncEvent.setDocument(document);
         AppContext.getInstance().getAsyncEventBus().post(documentCreatedAsyncEvent);
         
@@ -461,6 +517,14 @@ public class DocumentResource extends BaseResource {
             @PathParam("id") String id,
             @FormParam("title") String title,
             @FormParam("description") String description,
+            @FormParam("subject") String subject,
+            @FormParam("identifier") String identifier,
+            @FormParam("publisher") String publisher,
+            @FormParam("format") String format,
+            @FormParam("source") String source,
+            @FormParam("type") String type,
+            @FormParam("coverage") String coverage,
+            @FormParam("rights") String rights,
             @FormParam("tags") List<String> tagList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
@@ -472,6 +536,14 @@ public class DocumentResource extends BaseResource {
         title = ValidationUtil.validateLength(title, "title", 1, 100, true);
         language = ValidationUtil.validateLength(language, "language", 3, 3, true);
         description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
+        subject = ValidationUtil.validateLength(subject, "subject", 0, 500, true);
+        identifier = ValidationUtil.validateLength(identifier, "identifier", 0, 500, true);
+        publisher = ValidationUtil.validateLength(publisher, "publisher", 0, 500, true);
+        format = ValidationUtil.validateLength(format, "format", 0, 500, true);
+        source = ValidationUtil.validateLength(source, "source", 0, 500, true);
+        type = ValidationUtil.validateLength(type, "type", 0, 100, true);
+        coverage = ValidationUtil.validateLength(coverage, "coverage", 0, 100, true);
+        rights = ValidationUtil.validateLength(rights, "rights", 0, 100, true);
         Date createDate = ValidationUtil.validateDate(createDateStr, "create_date", true);
         if (language != null && !Constants.SUPPORTED_LANGUAGES.contains(language)) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", language));
@@ -492,6 +564,30 @@ public class DocumentResource extends BaseResource {
         if (!StringUtils.isEmpty(description)) {
             document.setDescription(description);
         }
+        if (!StringUtils.isEmpty(subject)) {
+            document.setSubject(subject);
+        }
+        if (!StringUtils.isEmpty(identifier)) {
+            document.setIdentifier(identifier);
+        }
+        if (!StringUtils.isEmpty(publisher)) {
+            document.setPublisher(publisher);
+        }
+        if (!StringUtils.isEmpty(format)) {
+            document.setFormat(format);
+        }
+        if (!StringUtils.isEmpty(source)) {
+            document.setSource(source);
+        }
+        if (!StringUtils.isEmpty(type)) {
+            document.setType(type);
+        }
+        if (!StringUtils.isEmpty(coverage)) {
+            document.setCoverage(coverage);
+        }
+        if (!StringUtils.isEmpty(rights)) {
+            document.setRights(rights);
+        }
         if (createDate != null) {
             document.setCreateDate(createDate);
         }
@@ -499,13 +595,14 @@ public class DocumentResource extends BaseResource {
             document.setLanguage(language);
         }
         
-        document = documentDao.update(document);
+        document = documentDao.update(document, principal.getId());
         
         // Update tags
         updateTagList(id, tagList);
         
         // Raise a document updated event
         DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
+        documentUpdatedAsyncEvent.setUserId(principal.getId());
         documentUpdatedAsyncEvent.setDocument(document);
         AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
         
@@ -563,17 +660,19 @@ public class DocumentResource extends BaseResource {
         }
         
         // Delete the document
-        documentDao.delete(document.getId());
+        documentDao.delete(document.getId(), principal.getId());
         
-        // Raise file deleted events
+        // Raise file deleted events (don't bother sending document updated event)
         for (File file : fileList) {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
+            fileDeletedAsyncEvent.setUserId(principal.getId());
             fileDeletedAsyncEvent.setFile(file);
             AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
         }
         
         // Raise a document deleted event
         DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
+        documentDeletedAsyncEvent.setUserId(principal.getId());
         documentDeletedAsyncEvent.setDocument(document);
         AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
         

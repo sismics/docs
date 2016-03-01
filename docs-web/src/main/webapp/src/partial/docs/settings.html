@@ -12,6 +12,7 @@
       <div class="panel-heading" ng-show="isAdmin"><strong>General settings</strong></div>
       <ul class="list-group">
         <a class="list-group-item" ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/user.*" href="#/settings/user">Users</a>
+        <a class="list-group-item" ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/vocabulary.*" href="#/settings/vocabulary">Vocabularies</a>
         <a class="list-group-item" ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/log" href="#/settings/log">Server logs</a>
       </ul>
     </div>

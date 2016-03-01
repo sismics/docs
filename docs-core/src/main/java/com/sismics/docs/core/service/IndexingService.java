@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.lucene.index.CheckIndex;
+import org.apache.lucene.index.CheckIndex.Status;
+import org.apache.lucene.index.CheckIndex.Status.SegmentInfoStatus;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.NoLockFactory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
-import org.apache.lucene.store.SimpleFSLockFactory;
+import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,10 +63,36 @@ public class IndexingService extends AbstractScheduledService {
             Path luceneDirectory = DirectoryUtil.getLuceneDirectory();
             log.info("Using file Lucene storage: {}", luceneDirectory);
             try {
-                directory = new SimpleFSDirectory(luceneDirectory.toFile(), new SimpleFSLockFactory());
+                directory = new SimpleFSDirectory(luceneDirectory, NoLockFactory.INSTANCE);
             } catch (IOException e) {
                 log.error("Error initializing Lucene index", e);
             }
+        }
+        
+        // Check index version and rebuild it if necessary
+        try {
+            if (DirectoryReader.indexExists(directory)) {
+                log.info("Checking index health and version");
+                try (CheckIndex checkIndex = new CheckIndex(directory)) {
+                    Status status = checkIndex.checkIndex();
+                    if (status.clean) {
+                        for (SegmentInfoStatus segmentInfo : status.segmentInfos) {
+                            if (!segmentInfo.version.onOrAfter(Version.LATEST)) {
+                                log.info("Index is old (" + segmentInfo.version + "), rebuilding");
+                                RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
+                                AppContext.getInstance().getAsyncEventBus().post(rebuildIndexAsyncEvent);
+                                break;
+                            }
+                        }
+                    } else {
+                        log.info("Index is dirty, rebuilding");
+                        RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
+                        AppContext.getInstance().getAsyncEventBus().post(rebuildIndexAsyncEvent);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error checking index", e);
         }
     }
 
@@ -127,10 +157,10 @@ public class IndexingService extends AbstractScheduledService {
      */
     public DirectoryReader getDirectoryReader() {
         if (directoryReader == null) {
-            if (!DirectoryReader.indexExists(directory)) {
-                return null;
-            }
             try {
+                if (!DirectoryReader.indexExists(directory)) {
+                    return null;
+                }
                 directoryReader = DirectoryReader.open(directory);
             } catch (IOException e) {
                 log.error("Error creating the directory reader", e);

@@ -143,6 +143,12 @@ public class ValidationUtil {
         }
     }
     
+    public static void validateRegex(String s, String name, String regex) throws ClientException {
+        if (!Pattern.compile(regex).matcher(s).matches()) {
+            throw new ClientException("ValidationError", MessageFormat.format("{0} must match {1}", name, regex));
+        }
+    }
+    
     /**
      * Checks if the string is a number.
      * 

@@ -24,6 +24,7 @@ Features
 - Support image, PDF, ODT and DOCX files
 - Flexible search engine
 - Full text search in image and PDF
+- All [Dublin Core](http://dublincore.org/) metadata
 - 256-bit AES encryption
 - Tag system with relations
 - Multi-users ACL system

@@ -39,7 +39,7 @@ public class Document implements Loggable {
     /**
      * Title.
      */
-    @Column(name = "DOC_TITLE_C", length = 100)
+    @Column(name = "DOC_TITLE_C", nullable = false, length = 100)
     private String title;
     
     /**
@@ -47,6 +47,54 @@ public class Document implements Loggable {
      */
     @Column(name = "DOC_DESCRIPTION_C", length = 4000)
     private String description;
+    
+    /**
+     * Subject.
+     */
+    @Column(name = "DOC_SUBJECT_C", length = 500)
+    private String subject;
+    
+    /**
+     * Identifer.
+     */
+    @Column(name = "DOC_IDENTIFIER_C", length = 500)
+    private String identifier;
+    
+    /**
+     * Publisher.
+     */
+    @Column(name = "DOC_PUBLISHER_C", length = 500)
+    private String publisher;
+    
+    /**
+     * Format.
+     */
+    @Column(name = "DOC_FORMAT_C", length = 500)
+    private String format;
+    
+    /**
+     * Source.
+     */
+    @Column(name = "DOC_SOURCE_C", length = 500)
+    private String source;
+    
+    /**
+     * Type.
+     */
+    @Column(name = "DOC_TYPE_C", length = 100)
+    private String type;
+    
+    /**
+     * Coverage.
+     */
+    @Column(name = "DOC_COVERAGE_C", length = 100)
+    private String coverage;
+    
+    /**
+     * Rights.
+     */
+    @Column(name = "DOC_RIGHTS_C", length = 100)
+    private String rights;
     
     /**
      * Creation date.
@@ -60,129 +108,123 @@ public class Document implements Loggable {
     @Column(name = "DOC_DELETEDATE_D")
     private Date deleteDate;
     
-    /**
-     * Getter of id.
-     *
-     * @return the id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Setter of id.
-     *
-     * @param id id
-     */
     public void setId(String id) {
         this.id = id;
     }
     
-    /**
-     * Getter of language.
-     *
-     * @return the language
-     */
     public String getLanguage() {
         return language;
     }
 
-    /**
-     * Setter of language.
-     *
-     * @param language language
-     */
     public void setLanguage(String language) {
         this.language = language;
     }
     
-    /**
-     * Getter of userId.
-     *
-     * @return the userId
-     */
     public String getUserId() {
         return userId;
     }
 
-    /**
-     * Setter of userId.
-     *
-     * @param userId userId
-     */
     public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    /**
-     * Getter of title.
-     *
-     * @return the title
-     */
     public String getTitle() {
         return title;
     }
 
-    /**
-     * Setter of title.
-     *
-     * @param title title
-     */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    /**
-     * Getter of description.
-     *
-     * @return the description
-     */
     public String getDescription() {
         return description;
     }
 
-    /**
-     * Setter of description.
-     *
-     * @param description description
-     */
     public void setDescription(String description) {
         this.description = description;
     }
+    
+    public String getSubject() {
+        return subject;
+    }
 
-    /**
-     * Getter of createDate.
-     *
-     * @return the createDate
-     */
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+    
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getCoverage() {
+        return coverage;
+    }
+
+    public void setCoverage(String coverage) {
+        this.coverage = coverage;
+    }
+
+    public String getRights() {
+        return rights;
+    }
+
+    public void setRights(String rights) {
+        this.rights = rights;
+    }
+
     public Date getCreateDate() {
         return createDate;
     }
 
-    /**
-     * Setter of createDate.
-     *
-     * @param createDate createDate
-     */
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 
-    /**
-     * Getter of deleteDate.
-     *
-     * @return the deleteDate
-     */
     @Override
     public Date getDeleteDate() {
         return deleteDate;
     }
 
-    /**
-     * Setter of deleteDate.
-     *
-     * @param deleteDate deleteDate
-     */
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
     }

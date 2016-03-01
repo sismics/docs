@@ -26,10 +26,11 @@ public class AclDao {
      * Creates a new ACL.
      * 
      * @param acl ACL
+     * @param userId User ID
      * @return New ID
      * @throws Exception
      */
-    public String create(Acl acl) {
+    public String create(Acl acl, String userId) {
         // Create the UUID
         acl.setId(UUID.randomUUID().toString());
         
@@ -38,7 +39,7 @@ public class AclDao {
         em.persist(acl);
         
         // Create audit log
-        AuditLogUtil.create(acl, AuditLogType.CREATE);
+        AuditLogUtil.create(acl, AuditLogType.CREATE, userId);
         
         return acl.getId();
     }
@@ -125,9 +126,10 @@ public class AclDao {
      * @param sourceId Source ID
      * @param perm Permission
      * @param targetId Target ID
+     * @param userId User ID
      */
     @SuppressWarnings("unchecked")
-    public void delete(String sourceId, PermType perm, String targetId) {
+    public void delete(String sourceId, PermType perm, String targetId, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         
         // Create audit log
@@ -137,7 +139,7 @@ public class AclDao {
         q.setParameter("targetId", targetId);
         List<Acl> aclList = q.getResultList();
         for (Acl acl : aclList) {
-            AuditLogUtil.create(acl, AuditLogType.DELETE);
+            AuditLogUtil.create(acl, AuditLogType.DELETE, userId);
         }
         
         // Soft delete the ACLs

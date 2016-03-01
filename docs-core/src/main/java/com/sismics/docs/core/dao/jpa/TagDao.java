@@ -170,10 +170,11 @@ public class TagDao {
      * Creates a new tag.
      * 
      * @param tag Tag
+     * @param userId User ID
      * @return New ID
      * @throws Exception
      */
-    public String create(Tag tag) {
+    public String create(Tag tag, String userId) {
         // Create the UUID
         tag.setId(UUID.randomUUID().toString());
         
@@ -183,7 +184,7 @@ public class TagDao {
         em.persist(tag);
         
         // Create audit log
-        AuditLogUtil.create(tag, AuditLogType.CREATE);
+        AuditLogUtil.create(tag, AuditLogType.CREATE, userId);
         
         return tag.getId();
     }
@@ -230,8 +231,9 @@ public class TagDao {
      * Deletes a tag.
      * 
      * @param tagId Tag ID
+     * @param userId User ID
      */
-    public void delete(String tagId) {
+    public void delete(String tagId, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
             
         // Get the tag
@@ -250,7 +252,7 @@ public class TagDao {
         q.executeUpdate();
         
         // Create audit log
-        AuditLogUtil.create(tagDb, AuditLogType.DELETE);
+        AuditLogUtil.create(tagDb, AuditLogType.DELETE, userId);
     }
 
     /**
@@ -272,9 +274,10 @@ public class TagDao {
      * Update a tag.
      * 
      * @param tag Tag to update
+     * @param userId User ID
      * @return Updated tag
      */
-    public Tag update(Tag tag) {
+    public Tag update(Tag tag, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         
         // Get the tag
@@ -288,7 +291,7 @@ public class TagDao {
         tagFromDb.setParentId(tag.getParentId());
         
         // Create audit log
-        AuditLogUtil.create(tagFromDb, AuditLogType.UPDATE);
+        AuditLogUtil.create(tagFromDb, AuditLogType.UPDATE, userId);
         
         return tagFromDb;
     }

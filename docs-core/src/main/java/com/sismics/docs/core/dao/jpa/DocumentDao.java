@@ -38,10 +38,11 @@ public class DocumentDao {
      * Creates a new document.
      * 
      * @param document Document
+     * @param userId User ID
      * @return New ID
      * @throws Exception
      */
-    public String create(Document document) {
+    public String create(Document document, String userId) {
         // Create the UUID
         document.setId(UUID.randomUUID().toString());
         
@@ -50,7 +51,7 @@ public class DocumentDao {
         em.persist(document);
         
         // Create audit log
-        AuditLogUtil.create(document, AuditLogType.CREATE);
+        AuditLogUtil.create(document, AuditLogType.CREATE, userId);
         
         return document.getId();
     }
@@ -89,7 +90,7 @@ public class DocumentDao {
      */
     public DocumentDto getDocument(String id) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select d.DOC_ID_C, d.DOC_TITLE_C, d.DOC_DESCRIPTION_C, d.DOC_CREATEDATE_D, d.DOC_LANGUAGE_C, ");
+        StringBuilder sb = new StringBuilder("select d.DOC_ID_C, d.DOC_TITLE_C, d.DOC_DESCRIPTION_C, d.DOC_SUBJECT_C, d.DOC_IDENTIFIER_C, d.DOC_PUBLISHER_C, d.DOC_FORMAT_C, d.DOC_SOURCE_C, d.DOC_TYPE_C, d.DOC_COVERAGE_C, d.DOC_RIGHTS_C, d.DOC_CREATEDATE_D, d.DOC_LANGUAGE_C, ");
         sb.append(" (select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null), ");
         sb.append(" (select count(f.FIL_ID_C) from T_FILE f where f.FIL_DELETEDATE_D is null and f.FIL_IDDOC_C = d.DOC_ID_C), ");
         sb.append(" u.USE_USERNAME_C ");
@@ -109,6 +110,14 @@ public class DocumentDao {
         documentDto.setId((String) o[i++]);
         documentDto.setTitle((String) o[i++]);
         documentDto.setDescription((String) o[i++]);
+        documentDto.setSubject((String) o[i++]);
+        documentDto.setIdentifier((String) o[i++]);
+        documentDto.setPublisher((String) o[i++]);
+        documentDto.setFormat((String) o[i++]);
+        documentDto.setSource((String) o[i++]);
+        documentDto.setType((String) o[i++]);
+        documentDto.setCoverage((String) o[i++]);
+        documentDto.setRights((String) o[i++]);
         documentDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
         documentDto.setLanguage((String) o[i++]);
         documentDto.setShared(((Number) o[i++]).intValue() > 0);
@@ -127,9 +136,10 @@ public class DocumentDao {
      */
     public Document getDocument(String id, PermType perm, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createNativeQuery("select d.* from T_DOCUMENT d "
-                + " join T_ACL a on a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_TARGETID_C = :userId and a.ACL_PERM_C = :perm and a.ACL_DELETEDATE_D is null "
-                + " where d.DOC_ID_C = :id and d.DOC_DELETEDATE_D is null", Document.class);
+        StringBuilder sb = new StringBuilder("select d.* from T_DOCUMENT d ");
+        sb.append(" join T_ACL a on a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_TARGETID_C = :userId and a.ACL_PERM_C = :perm and a.ACL_DELETEDATE_D is null ");
+        sb.append(" where d.DOC_ID_C = :id and d.DOC_DELETEDATE_D is null");
+        Query q = em.createNativeQuery(sb.toString(), Document.class);
         q.setParameter("id", id);
         q.setParameter("perm", perm.name());
         q.setParameter("userId", userId);
@@ -144,8 +154,9 @@ public class DocumentDao {
      * Deletes a document.
      * 
      * @param id Document ID
+     * @param userId User ID
      */
-    public void delete(String id) {
+    public void delete(String id, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
             
         // Get the document
@@ -174,7 +185,7 @@ public class DocumentDao {
         q.executeUpdate();
         
         // Create audit log
-        AuditLogUtil.create(documentDb, AuditLogType.DELETE);
+        AuditLogUtil.create(documentDb, AuditLogType.DELETE, userId);
     }
     
     /**
@@ -249,6 +260,10 @@ public class DocumentDao {
             criteriaList.add("d.DOC_LANGUAGE_C = :language");
             parameterMap.put("language", criteria.getLanguage());
         }
+        if (criteria.getCreatorId() != null) {
+            criteriaList.add("d.DOC_IDUSER_C = :creatorId");
+            parameterMap.put("creatorId", criteria.getCreatorId());
+        }
         
         criteriaList.add("d.DOC_DELETEDATE_D is null");
         
@@ -262,7 +277,7 @@ public class DocumentDao {
         List<Object[]> l = PaginatedLists.executePaginatedQuery(paginatedList, queryParam, sortCriteria);
         
         // Assemble results
-        List<DocumentDto> documentDtoList = new ArrayList<DocumentDto>();
+        List<DocumentDto> documentDtoList = new ArrayList<>();
         for (Object[] o : l) {
             int i = 0;
             DocumentDto documentDto = new DocumentDto();
@@ -283,9 +298,10 @@ public class DocumentDao {
      * Update a document.
      * 
      * @param document Document to update
+     * @param userId User ID
      * @return Updated document
      */
-    public Document update(Document document) {
+    public Document update(Document document, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         
         // Get the document
@@ -296,11 +312,19 @@ public class DocumentDao {
         // Update the document
         documentFromDb.setTitle(document.getTitle());
         documentFromDb.setDescription(document.getDescription());
+        documentFromDb.setSubject(document.getSubject());
+        documentFromDb.setIdentifier(document.getIdentifier());
+        documentFromDb.setPublisher(document.getPublisher());
+        documentFromDb.setFormat(document.getFormat());
+        documentFromDb.setSource(document.getSource());
+        documentFromDb.setType(document.getType());
+        documentFromDb.setCoverage(document.getCoverage());
+        documentFromDb.setRights(document.getRights());
         documentFromDb.setCreateDate(document.getCreateDate());
         documentFromDb.setLanguage(document.getLanguage());
         
         // Create audit log
-        AuditLogUtil.create(documentFromDb, AuditLogType.UPDATE);
+        AuditLogUtil.create(documentFromDb, AuditLogType.UPDATE, userId);
         
         return documentFromDb;
     }

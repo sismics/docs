@@ -59,12 +59,13 @@ public class AuditLogDao {
     public void findByCriteria(PaginatedList<AuditLogDto> paginatedList, AuditLogCriteria criteria, SortCriteria sortCriteria) throws Exception {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
         
-        String baseQuery = "select l.LOG_ID_C c0, l.LOG_CREATEDATE_D c1, l.LOG_IDENTITY_C c2, l.LOG_CLASSENTITY_C c3, l.LOG_TYPE_C c4, l.LOG_MESSAGE_C c5 from T_AUDIT_LOG l ";
+        StringBuilder baseQuery = new StringBuilder("select l.LOG_ID_C c0, l.LOG_CREATEDATE_D c1, u.USE_USERNAME_C c2, l.LOG_IDENTITY_C c3, l.LOG_CLASSENTITY_C c4, l.LOG_TYPE_C c5, l.LOG_MESSAGE_C c6 from T_AUDIT_LOG l ");
+        baseQuery.append(" join T_USER u on l.LOG_IDUSER_C = u.USE_ID_C ");
         List<String> queries = Lists.newArrayList();
         
         // Adds search criteria
         if (criteria.getDocumentId() != null) {
-            // ACL on document is not checked here, it's assumed
+            // ACL on document is not checked here, rights have been checked before
             queries.add(baseQuery + " where l.LOG_IDENTITY_C = :documentId ");
             queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select f.FIL_ID_C from T_FILE f where f.FIL_IDDOC_C = :documentId) ");
             queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select c.COM_ID_C from T_COMMENT c where c.COM_IDDOC_C = :documentId) ");
@@ -73,11 +74,9 @@ public class AuditLogDao {
         }
         
         if (criteria.getUserId() != null) {
-            queries.add(baseQuery + " where l.LOG_IDENTITY_C = :userId ");
-            queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select t.TAG_ID_C from T_TAG t where t.TAG_IDUSER_C = :userId) ");
-            // Show only logs from owned documents, ACL are lost on delete
-            queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select d.DOC_ID_C from T_DOCUMENT d where d.DOC_IDUSER_C = :userId) ");
-            queries.add(baseQuery + " where l.LOG_IDENTITY_C in (select c.COM_ID_C from T_COMMENT c where c.COM_IDUSER_C = :userId) ");
+            // Get all logs originating from the user, not necessarly on owned items
+            // Filter out ACL logs
+            queries.add(baseQuery + " where l.LOG_IDUSER_C = :userId and l.LOG_CLASSENTITY_C != 'Acl' ");
             parameterMap.put("userId", criteria.getUserId());
         }
         
@@ -92,6 +91,7 @@ public class AuditLogDao {
             AuditLogDto auditLogDto = new AuditLogDto();
             auditLogDto.setId((String) o[i++]);
             auditLogDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
+            auditLogDto.setUsername((String) o[i++]);
             auditLogDto.setEntityId((String) o[i++]);
             auditLogDto.setEntityClass((String) o[i++]);
             auditLogDto.setType(AuditLogType.valueOf((String) o[i++]));

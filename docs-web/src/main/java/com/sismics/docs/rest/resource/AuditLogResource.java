@@ -68,6 +68,7 @@ public class AuditLogResource extends BaseResource {
         for (AuditLogDto auditLogDto : paginatedList.getResultList()) {
             logs.add(Json.createObjectBuilder()
                     .add("id", auditLogDto.getId())
+                    .add("username", auditLogDto.getUsername())
                     .add("target", auditLogDto.getEntityId())
                     .add("class", auditLogDto.getEntityClass())
                     .add("type", auditLogDto.getType().name())

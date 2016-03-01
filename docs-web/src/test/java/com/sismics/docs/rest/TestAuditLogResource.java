@@ -59,13 +59,25 @@ public class TestAuditLogResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         JsonArray logs = json.getJsonArray("logs");
         Assert.assertTrue(logs.size() == 3);
+        Assert.assertEquals(countByClass(logs, "Document"), 1);
+        Assert.assertEquals(countByClass(logs, "Acl"), 2);
+        Assert.assertEquals("auditlog1", logs.getJsonObject(0).getString("username"));
+        Assert.assertNotNull(logs.getJsonObject(0).getString("id"));
+        Assert.assertNotNull(logs.getJsonObject(0).getString("target"));
+        Assert.assertNotNull(logs.getJsonObject(0).getString("type"));
+        Assert.assertNotNull(logs.getJsonObject(0).getString("message"));
+        Assert.assertNotNull(logs.getJsonObject(0).getJsonNumber("create_date"));
+        Assert.assertEquals("auditlog1", logs.getJsonObject(1).getString("username"));
+        Assert.assertEquals("auditlog1", logs.getJsonObject(2).getString("username"));
         
         // Get all logs for the current user
         json = target().path("/auditlog").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, auditlog1Token)
                 .get(JsonObject.class);
         logs = json.getJsonArray("logs");
-        Assert.assertTrue(logs.size() == 3);
+        Assert.assertTrue(logs.size() == 2);
+        Assert.assertEquals(countByClass(logs, "Document"), 1);
+        Assert.assertEquals(countByClass(logs, "Tag"), 1);
         
         // Deletes a tag
         json = target().path("/tag/" + tag1Id).request()
@@ -78,6 +90,25 @@ public class TestAuditLogResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, auditlog1Token)
                 .get(JsonObject.class);
         logs = json.getJsonArray("logs");
-        Assert.assertTrue(logs.size() == 4);
+        Assert.assertTrue(logs.size() == 3);
+        Assert.assertEquals(countByClass(logs, "Document"), 1);
+        Assert.assertEquals(countByClass(logs, "Tag"), 2);
+    }
+    
+    /**
+     * Count logs by class.
+     * 
+     * @param logs Logs
+     * @param clazz Class
+     * @return Count by class
+     */
+    private int countByClass(JsonArray logs, String clazz) {
+        int count = 0;
+        for (int i = 0; i < logs.size(); i++) {
+            if (logs.getJsonObject(i).getString("class").equals(clazz)) {
+                count++;
+            }
+        }
+        return count;
     }
 }

@@ -48,74 +48,34 @@ public class DocumentTag implements Serializable {
     @Column(name = "DOT_DELETEDATE_D")
     private Date deleteDate;
     
-    /**
-     * Getter of id.
-     *
-     * @return id
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Setter of id.
-     *
-     * @param id id
-     */
     public void setId(String id) {
         this.id = id;
     }
     
-    /**
-     * Getter de documentId.
-     *
-     * @return the documentId
-     */
     public String getDocumentId() {
         return documentId;
     }
 
-    /**
-     * Setter de documentId.
-     *
-     * @param documentId documentId
-     */
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
     }
 
-    /**
-     * Getter de tagId.
-     *
-     * @return the tagId
-     */
     public String getTagId() {
         return tagId;
     }
 
-    /**
-     * Setter de tagId.
-     *
-     * @param tagId tagId
-     */
     public void setTagId(String tagId) {
         this.tagId = tagId;
     }
     
-    /**
-     * Getter of deleteDate.
-     *
-     * @return the deleteDate
-     */
     public Date getDeleteDate() {
         return deleteDate;
     }
 
-    /**
-     * Setter of deleteDate.
-     *
-     * @param deleteDate deleteDate
-     */
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
     }

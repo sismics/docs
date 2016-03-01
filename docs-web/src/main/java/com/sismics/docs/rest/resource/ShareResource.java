@@ -69,7 +69,7 @@ public class ShareResource extends BaseResource {
         acl.setSourceId(documentId);
         acl.setPerm(PermType.READ);
         acl.setTargetId(share.getId());
-        aclDao.create(acl);
+        aclDao.create(acl, principal.getId());
 
         // Returns the created ACL
         JsonObjectBuilder response = Json.createObjectBuilder()

@@ -32,38 +32,18 @@ public class Config {
     @Column(name = "CFG_VALUE_C", length = 250)
     private String value;
 
-    /**
-     * Getter of id.
-     *
-     * @return id
-     */
     public ConfigType getId() {
         return id;
     }
 
-    /**
-     * Setter of id.
-     *
-     * @param id id
-     */
     public void setId(ConfigType id) {
         this.id = id;
     }
 
-    /**
-     * Getter of value.
-     *
-     * @return value
-     */
     public String getValue() {
         return value;
     }
 
-    /**
-     * Setter of value.
-     *
-     * @param value value
-     */
     public void setValue(String value) {
         this.value = value;
     }

@@ -11,7 +11,7 @@ import com.sismics.docs.core.model.jpa.File;
  *
  * @author bgamard
  */
-public class FileCreatedAsyncEvent {
+public class FileCreatedAsyncEvent extends UserEvent {
     /**
      * Created file.
      */
