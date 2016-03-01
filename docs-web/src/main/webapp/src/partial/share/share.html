@@ -39,6 +39,18 @@
       <dd ng-if="document.subject">{{ document.subject }}</dd>
       <dt ng-if="document.identifier">Identifier</dt>
       <dd ng-if="document.identifier">{{ document.identifier }}</dd>
+      <dt ng-if="document.publisher">Publisher</dt>
+      <dd ng-if="document.publisher">{{ document.publisher }}</dd>
+      <dt ng-if="document.format">Format</dt>
+      <dd ng-if="document.format">{{ document.format }}</dd>
+      <dt ng-if="document.source">Source</dt>
+      <dd ng-if="document.source">{{ document.source }}</dd>
+      <dt ng-if="document.type">Type</dt>
+      <dd ng-if="document.type">{{ document.type }}</dd>
+      <dt ng-if="document.coverage">Coverage</dt>
+      <dd ng-if="document.coverage">{{ document.coverage }}</dd>
+      <dt ng-if="document.rights">rights</dt>
+      <dd ng-if="document.rights">{{ document.rights }}</dd>
     </dl>
 
     <div class="row" ui-sortable="fileSortableOptions" ng-model="files" ng-show="files.length > 0">
