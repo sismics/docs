@@ -8,7 +8,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
-import org.apache.lucene.store.SimpleFSLockFactory;
+import org.apache.lucene.store.SingleInstanceLockFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +59,7 @@ public class IndexingService extends AbstractScheduledService {
             Path luceneDirectory = DirectoryUtil.getLuceneDirectory();
             log.info("Using file Lucene storage: {}", luceneDirectory);
             try {
-                directory = new SimpleFSDirectory(luceneDirectory.toFile(), new SimpleFSLockFactory());
+                directory = new SimpleFSDirectory(luceneDirectory, new SingleInstanceLockFactory());
             } catch (IOException e) {
                 log.error("Error initializing Lucene index", e);
             }
@@ -127,10 +127,10 @@ public class IndexingService extends AbstractScheduledService {
      */
     public DirectoryReader getDirectoryReader() {
         if (directoryReader == null) {
-            if (!DirectoryReader.indexExists(directory)) {
-                return null;
-            }
             try {
+                if (!DirectoryReader.indexExists(directory)) {
+                    return null;
+                }
                 directoryReader = DirectoryReader.open(directory);
             } catch (IOException e) {
                 log.error("Error creating the directory reader", e);

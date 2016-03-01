@@ -1,16 +1,16 @@
 package com.sismics.docs.core.util;
 
-import com.sismics.docs.core.dao.lucene.DocsStandardAnalyzer;
-import com.sismics.docs.core.model.context.AppContext;
+import java.io.IOException;
+
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.SerialMergeScheduler;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import com.sismics.docs.core.model.context.AppContext;
 
 /**
  * Lucene utils.
@@ -31,7 +31,7 @@ public class LuceneUtil {
      */
     public static void handle(LuceneRunnable runnable) {
         // Standard analyzer
-        IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_42, new DocsStandardAnalyzer(Version.LUCENE_42));
+        IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
         
         // Merge sequentially, because Lucene writing is already done asynchronously 
         config.setMergeScheduler(new SerialMergeScheduler());
@@ -45,15 +45,6 @@ public class LuceneUtil {
             log.error("Cannot create IndexWriter", e);
         }
 
-        // Unlock index if needed
-        try {
-            if (IndexWriter.isLocked(directory)) {
-                IndexWriter.unlock(directory);
-            }
-        } catch (IOException e) {
-            log.error("Cannot unlock Lucene directory", e);
-        }
-        
         try {
             runnable.run(indexWriter);
         } catch (Exception e) {

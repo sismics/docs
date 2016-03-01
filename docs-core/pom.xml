@@ -94,11 +94,6 @@
     </dependency>
     
     <dependency>
-      <groupId>org.apache.lucene</groupId>
-      <artifactId>lucene-highlighter</artifactId>
-    </dependency>
-    
-    <dependency>
       <groupId>org.imgscalr</groupId>
       <artifactId>imgscalr-lib</artifactId>
     </dependency>
