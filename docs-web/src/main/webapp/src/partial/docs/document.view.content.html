@@ -16,6 +16,16 @@
   <dd ng-if="document.coverage">{{ document.coverage }}</dd>
   <dt ng-if="document.rights">rights</dt>
   <dd ng-if="document.rights">{{ document.rights }}</dd>
+  <dt>Contributors</dt>
+  <dd>
+    <span ng-repeat="contributor in document.contributors">
+      <span class="btn btn-default btn-xs">
+        <a href="#/user/{{ contributor.username }}">
+          {{ contributor.username }}
+        </a>
+      </span>
+    </span>
+  </dd>
 </dl>
 
 <div ng-file-drop drag-over-class="bg-success" ng-multiple="true" allow-dir="false" ng-model="dropFiles"
