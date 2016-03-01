@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
@@ -19,7 +20,6 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.util.Version;
 
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Document;
@@ -152,22 +152,23 @@ public class LuceneDao {
         fullSearchQuery = "\"" + QueryParserUtil.escape(fullSearchQuery) + "\"";
         
         // Build search query
-        StandardQueryParser qpHelper = new StandardQueryParser(new DocsStandardAnalyzer(Version.LUCENE_42));
+        StandardQueryParser qpHelper = new StandardQueryParser(new StandardAnalyzer());
         qpHelper.setPhraseSlop(100000); // PhraseQuery add terms
         
         // Search on documents and files
-        BooleanQuery query = new BooleanQuery();
-        query.add(qpHelper.parse(searchQuery, "title"), Occur.SHOULD);
-        query.add(qpHelper.parse(searchQuery, "description"), Occur.SHOULD);
-        query.add(qpHelper.parse(searchQuery, "subject"), Occur.SHOULD);
-        query.add(qpHelper.parse(searchQuery, "identifier"), Occur.SHOULD);
-        query.add(qpHelper.parse(searchQuery, "publisher"), Occur.SHOULD);
-        query.add(qpHelper.parse(searchQuery, "format"), Occur.SHOULD);
-        query.add(qpHelper.parse(searchQuery, "source"), Occur.SHOULD);
-        query.add(qpHelper.parse(searchQuery, "type"), Occur.SHOULD);
-        query.add(qpHelper.parse(searchQuery, "coverage"), Occur.SHOULD);
-        query.add(qpHelper.parse(searchQuery, "rights"), Occur.SHOULD);
-        query.add(qpHelper.parse(fullSearchQuery, "content"), Occur.SHOULD);
+        BooleanQuery query = new BooleanQuery.Builder()
+                .add(qpHelper.parse(searchQuery, "title"), Occur.SHOULD)
+                .add(qpHelper.parse(searchQuery, "description"), Occur.SHOULD)
+                .add(qpHelper.parse(searchQuery, "subject"), Occur.SHOULD)
+                .add(qpHelper.parse(searchQuery, "identifier"), Occur.SHOULD)
+                .add(qpHelper.parse(searchQuery, "publisher"), Occur.SHOULD)
+                .add(qpHelper.parse(searchQuery, "format"), Occur.SHOULD)
+                .add(qpHelper.parse(searchQuery, "source"), Occur.SHOULD)
+                .add(qpHelper.parse(searchQuery, "type"), Occur.SHOULD)
+                .add(qpHelper.parse(searchQuery, "coverage"), Occur.SHOULD)
+                .add(qpHelper.parse(searchQuery, "rights"), Occur.SHOULD)
+                .add(qpHelper.parse(fullSearchQuery, "content"), Occur.SHOULD)
+                .build();
         
         // Search
         DirectoryReader directoryReader = AppContext.getInstance().getIndexingService().getDirectoryReader();
@@ -183,7 +184,7 @@ public class LuceneDao {
         // Extract document IDs
         for (int i = 0; i < docs.length; i++) {
             org.apache.lucene.document.Document document = searcher.doc(docs[i].doc);
-            String type = document.get("type");
+            String type = document.get("doctype");
             String documentId = null;
             if (type.equals("document")) {
                 documentId = document.get("id");
@@ -205,7 +206,7 @@ public class LuceneDao {
     private org.apache.lucene.document.Document getDocumentFromDocument(Document document) {
         org.apache.lucene.document.Document luceneDocument = new org.apache.lucene.document.Document();
         luceneDocument.add(new StringField("id", document.getId(), Field.Store.YES));
-        luceneDocument.add(new StringField("type", "document", Field.Store.YES));
+        luceneDocument.add(new StringField("doctype", "document", Field.Store.YES));
         luceneDocument.add(new TextField("title", document.getTitle(), Field.Store.NO));
         if (document.getDescription() != null) {
             luceneDocument.add(new TextField("description", document.getDescription(), Field.Store.NO));
@@ -248,7 +249,7 @@ public class LuceneDao {
     private org.apache.lucene.document.Document getDocumentFromFile(File file, Document document) {
         org.apache.lucene.document.Document luceneDocument = new org.apache.lucene.document.Document();
         luceneDocument.add(new StringField("id", file.getId(), Field.Store.YES));
-        luceneDocument.add(new StringField("type", "file", Field.Store.YES));
+        luceneDocument.add(new StringField("doctype", "file", Field.Store.YES));
         luceneDocument.add(new StringField("document_id", file.getDocumentId(), Field.Store.YES));
         if (file.getContent() != null) {
             luceneDocument.add(new TextField("content", file.getContent(), Field.Store.NO));

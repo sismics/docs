@@ -28,7 +28,7 @@
     <com.h2database.h2.version>1.4.191</com.h2database.h2.version>
     <org.glassfish.jersey.version>2.22.1</org.glassfish.jersey.version>
     <org.mindrot.jbcrypt>0.3m</org.mindrot.jbcrypt>
-    <org.apache.lucene.version>4.2.0</org.apache.lucene.version>
+    <org.apache.lucene.version>5.5.0</org.apache.lucene.version>
     <org.imgscalr.imgscalr-lib.version>4.2</org.imgscalr.imgscalr-lib.version>
     <org.apache.pdfbox.pdfbox.version>2.0.0-RC3</org.apache.pdfbox.pdfbox.version>
     <org.bouncycastle.bcprov-jdk15on.version>1.54</org.bouncycastle.bcprov-jdk15on.version>
@@ -341,7 +341,7 @@
       
       <dependency>
         <groupId>org.apache.lucene</groupId>
-        <artifactId>lucene-highlighter</artifactId>
+        <artifactId>lucene-backward-codecs</artifactId>
         <version>${org.apache.lucene.version}</version>
       </dependency>
       
