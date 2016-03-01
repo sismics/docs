@@ -340,6 +340,12 @@
       </dependency>
       
       <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-backward-codecs</artifactId>
+        <version>${org.apache.lucene.version}</version>
+      </dependency>
+      
+      <dependency>
         <groupId>org.imgscalr</groupId>
         <artifactId>imgscalr-lib</artifactId>
         <version>${org.imgscalr.imgscalr-lib.version}</version>

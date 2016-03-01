@@ -33,6 +33,9 @@ public class LuceneUtil {
         // Standard analyzer
         IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
         
+        // Automatically commit when closing this writer
+        config.setCommitOnClose(true);
+        
         // Merge sequentially, because Lucene writing is already done asynchronously 
         config.setMergeScheduler(new SerialMergeScheduler());
         
@@ -59,7 +62,7 @@ public class LuceneUtil {
         try {
             indexWriter.close();
         } catch (IOException e) {
-            log.error("Cannot close IndexWriter", e);
+            log.error("Cannot commit and close IndexWriter", e);
         }
     }
     
