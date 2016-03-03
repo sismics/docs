@@ -13,7 +13,7 @@ import com.google.common.base.MoreObjects;
  * @author bgamard
  */
 @Entity
-@Table(name = "T_Contributor")
+@Table(name = "T_CONTRIBUTOR")
 public class Contributor {
     /**
      * Contributor ID.
