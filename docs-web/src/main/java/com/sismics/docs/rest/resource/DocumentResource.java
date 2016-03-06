@@ -43,12 +43,14 @@ import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.ContributorDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
+import com.sismics.docs.core.dao.jpa.RelationDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.AclDto;
 import com.sismics.docs.core.dao.jpa.dto.ContributorDto;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.dao.jpa.dto.RelationDto;
 import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
@@ -171,6 +173,17 @@ public class DocumentResource extends BaseResource {
                     .add("email", contributorDto.getEmail()));
         }
         document.add("contributors", contributorList);
+        
+        // Add relations
+        RelationDao relationDao = new RelationDao();
+        List<RelationDto> relationDtoList = relationDao.getByDocumentId(documentId);
+        JsonArrayBuilder relationList = Json.createArrayBuilder();
+        for (RelationDto relationDto : relationDtoList) {
+            relationList.add(Json.createObjectBuilder()
+                    .add("id", relationDto.getId())
+                    .add("title", relationDto.getTitle()));
+        }
+        document.add("relations", relationList);
         
         return Response.ok().entity(document.build()).build();
     }
@@ -430,6 +443,7 @@ public class DocumentResource extends BaseResource {
             @FormParam("coverage") String coverage,
             @FormParam("rights") String rights,
             @FormParam("tags") List<String> tagList,
+            @FormParam("relations") List<String> relationList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
         if (!authenticate()) {
@@ -493,6 +507,9 @@ public class DocumentResource extends BaseResource {
         // Update tags
         updateTagList(documentId, tagList);
         
+        // Update relations
+        updateRelationList(documentId, relationList);
+        
         // Raise a document created event
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
         documentCreatedAsyncEvent.setUserId(principal.getId());
@@ -526,6 +543,7 @@ public class DocumentResource extends BaseResource {
             @FormParam("coverage") String coverage,
             @FormParam("rights") String rights,
             @FormParam("tags") List<String> tagList,
+            @FormParam("relations") List<String> relationList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
         if (!authenticate()) {
@@ -600,6 +618,9 @@ public class DocumentResource extends BaseResource {
         // Update tags
         updateTagList(id, tagList);
         
+        // Update relations
+        updateRelationList(id, relationList);
+        
         // Raise a document updated event
         DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
         documentUpdatedAsyncEvent.setUserId(principal.getId());
@@ -633,6 +654,27 @@ public class DocumentResource extends BaseResource {
                 tagSet.add(tagId);
             }
             tagDao.updateTagList(documentId, tagSet);
+        }
+    }
+    
+    /**
+     * Update relations list on a document.
+     * 
+     * @param documentId Document ID
+     * @param relationList Relation ID list
+     */
+    private void updateRelationList(String documentId, List<String> relationList) {
+        if (relationList != null) {
+            DocumentDao documentDao = new DocumentDao();
+            RelationDao relationDao = new RelationDao();
+            Set<String> documentIdSet = new HashSet<>();
+            for (String targetDocId : relationList) {
+                Document document = documentDao.getDocument(targetDocId, PermType.READ, principal.getId());
+                if (document != null && !documentId.equals(targetDocId)) {
+                    documentIdSet.add(targetDocId);
+                }
+            }
+            relationDao.updateRelationList(documentId, documentIdSet);
         }
     }
     

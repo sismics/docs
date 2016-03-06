@@ -184,6 +184,11 @@ public class DocumentDao {
         q.setParameter("dateNow", dateNow);
         q.executeUpdate();
         
+        q = em.createQuery("update Relation r set r.deleteDate = :dateNow where (r.fromDocumentId = :documentId or r.toDocumentId = :documentId) and r.deleteDate is not null");
+        q.setParameter("documentId", id);
+        q.setParameter("dateNow", dateNow);
+        q.executeUpdate();
+        
         // Create audit log
         AuditLogUtil.create(documentDb, AuditLogType.DELETE, userId);
     }
