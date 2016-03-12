@@ -19,9 +19,19 @@
   <dt>Contributors</dt>
   <dd>
     <span ng-repeat="contributor in document.contributors">
-      <span class="btn btn-default btn-xs">
+      <span class="btn btn-link btn-xs">
         <a href="#/user/{{ contributor.username }}">
           {{ contributor.username }}
+        </a>
+      </span>
+    </span>
+  </dd>
+  <dt>Relations</dt>
+  <dd>
+    <span ng-repeat="relation in document.relations">
+      <span class="btn btn-link btn-xs">
+        <a href="#/document/view/{{ relation.id }}">
+          {{ relation.title }}
         </a>
       </span>
     </span>

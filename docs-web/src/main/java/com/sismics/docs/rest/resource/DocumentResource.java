@@ -181,7 +181,8 @@ public class DocumentResource extends BaseResource {
         for (RelationDto relationDto : relationDtoList) {
             relationList.add(Json.createObjectBuilder()
                     .add("id", relationDto.getId())
-                    .add("title", relationDto.getTitle()));
+                    .add("title", relationDto.getTitle())
+                    .add("source", relationDto.isSource()));
         }
         document.add("relations", relationList);
         
@@ -669,7 +670,8 @@ public class DocumentResource extends BaseResource {
             RelationDao relationDao = new RelationDao();
             Set<String> documentIdSet = new HashSet<>();
             for (String targetDocId : relationList) {
-                Document document = documentDao.getDocument(targetDocId, PermType.READ, principal.getId());
+                // ACL are not checked, because the editing user is not forced to view the target document
+                Document document = documentDao.getById(targetDocId);
                 if (document != null && !documentId.equals(targetDocId)) {
                     documentIdSet.add(targetDocId);
                 }

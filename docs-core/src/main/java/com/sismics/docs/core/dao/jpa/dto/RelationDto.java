@@ -16,6 +16,11 @@ public class RelationDto {
      */
     private String title;
 
+    /**
+     * True if the document is the source of the relation.
+     */
+    private boolean source;
+    
     public String getId() {
         return id;
     }
@@ -30,5 +35,13 @@ public class RelationDto {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public boolean isSource() {
+        return source;
+    }
+
+    public void setSource(boolean source) {
+        this.source = source;
     }
 }

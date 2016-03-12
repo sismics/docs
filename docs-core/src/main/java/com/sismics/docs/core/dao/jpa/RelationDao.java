@@ -28,7 +28,7 @@ public class RelationDao {
     @SuppressWarnings("unchecked")
     public List<RelationDto> getByDocumentId(String documentId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select d.DOC_ID_C, d.DOC_TITLE_C ");
+        StringBuilder sb = new StringBuilder("select d.DOC_ID_C, d.DOC_TITLE_C, r.REL_IDDOCFROM_C ");
         sb.append(" from T_RELATION r ");
         sb.append(" join T_DOCUMENT d on d.DOC_ID_C = r.REL_IDDOCFROM_C and r.REL_IDDOCFROM_C != :documentId or d.DOC_ID_C = r.REL_IDDOCTO_C and r.REL_IDDOCTO_C != :documentId ");
         sb.append(" where (r.REL_IDDOCFROM_C = :documentId or r.REL_IDDOCTO_C = :documentId) ");
@@ -47,6 +47,8 @@ public class RelationDao {
             RelationDto relationDto = new RelationDto();
             relationDto.setId((String) o[i++]);
             relationDto.setTitle((String) o[i++]);
+            String fromDocId = (String) o[i++];
+            relationDto.setSource(documentId.equals(fromDocId));
             relationDtoList.add(relationDto);
         }
         return relationDtoList;

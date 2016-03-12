@@ -238,6 +238,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         JsonArray relations = json.getJsonArray("relations");
         Assert.assertEquals(1, relations.size());
         Assert.assertEquals(document2Id, relations.getJsonObject(0).getString("id"));
+        Assert.assertFalse(relations.getJsonObject(0).getBoolean("source"));
         Assert.assertEquals("My super title document 2", relations.getJsonObject(0).getString("title"));
         
         // Get document 2
@@ -248,6 +249,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         relations = json.getJsonArray("relations");
         Assert.assertEquals(1, relations.size());
         Assert.assertEquals(document1Id, relations.getJsonObject(0).getString("id"));
+        Assert.assertTrue(relations.getJsonObject(0).getBoolean("source"));
         Assert.assertEquals("My super title document 1", relations.getJsonObject(0).getString("title"));
         
         // Export a document in PDF format
