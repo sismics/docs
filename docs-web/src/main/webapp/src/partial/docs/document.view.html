@@ -5,6 +5,10 @@
     <span class="glyphicon glyphicon-warning-sign"></span>
     Document not found
   </p>
+  <p class="text-center" ng-show="error.status == 403">
+    <span class="glyphicon glyphicon-warning-sign"></span>
+    Access forbidden
+  </p>
 </div>
 
 <div ng-show="document">

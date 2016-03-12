@@ -20,8 +20,8 @@
       Documents created by {{ user.username }}
     </a>
   </li>
-  <li>
-    <a ng-href="#/settings/user/edit/{{ user.username }}" ng-if="userInfo.base_functions.indexOf('ADMIN') != -1">
+  <li ng-if="userInfo.base_functions.indexOf('ADMIN') != -1">
+    <a ng-href="#/settings/user/edit/{{ user.username }}">
       Edit {{ user.username}} user
     </a>
   </li>
