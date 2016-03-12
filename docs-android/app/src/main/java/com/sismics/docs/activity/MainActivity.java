@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         // between the sliding drawer and the action bar app icon
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
                 R.string.drawer_open, R.string.drawer_close);
-        drawerLayout.setDrawerListener(drawerToggle);
+        drawerLayout.addDrawerListener(drawerToggle);
 
         // Fill the drawer user info
         JSONObject userInfo = ApplicationContext.getInstance().getUserInfo();
@@ -134,6 +134,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 searchQuery("shared:yes");
+            }
+        });
+
+        // Click on Latest activity
+        View auditLogLayout = findViewById(R.id.auditLogLayout);
+        auditLogLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, AuditLogActivity.class));
             }
         });
 

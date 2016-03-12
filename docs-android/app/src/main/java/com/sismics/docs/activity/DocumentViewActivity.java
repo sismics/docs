@@ -154,7 +154,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param document Document in JSON format
      */
-    private void refreshDocument(JSONObject document) {
+    private void refreshDocument(final JSONObject document) {
         this.document = document;
 
         String title = document.optString("title");
@@ -249,7 +249,7 @@ public class DocumentViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 DialogFragment dialog = DocExportPdfFragment.newInstance(
-                        DocumentViewActivity.this.document.optString("id"), DocumentViewActivity.this.document.optString("title"));
+                        document.optString("id"), document.optString("title"));
                 dialog.show(getSupportFragmentManager(), "DocExportPdfFragment");
             }
         });
@@ -259,8 +259,19 @@ public class DocumentViewActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment dialog = DocShareFragment.newInstance(DocumentViewActivity.this.document.optString("id"));
+                DialogFragment dialog = DocShareFragment.newInstance(document.optString("id"));
                 dialog.show(getSupportFragmentManager(), "DocShareFragment");
+            }
+        });
+
+        // Action audit log
+        button = (Button) findViewById(R.id.actionAuditLog);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DocumentViewActivity.this, AuditLogActivity.class);
+                intent.putExtra("documentId", document.optString("id"));
+                startActivity(intent);
             }
         });
 

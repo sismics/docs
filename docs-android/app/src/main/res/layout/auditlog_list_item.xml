@@ -9,57 +9,44 @@
     android:background="?android:attr/selectableItemBackground">
 
     <ImageView
+        android:id="@+id/assignImageView"
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_marginRight="12dp"
         android:layout_marginEnd="12dp"
-        android:id="@+id/folderImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_folder_open_grey600_48dp"/>
+        android:src="@drawable/ic_assignment_grey600_48dp"/>
 
     <TextView
-        android:id="@+id/titleTextView"
+        android:id="@+id/usernameTextView"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/folderImageView"
-        android:layout_toEndOf="@+id/folderImageView"
-        android:layout_toLeftOf="@+id/dateTextView"
-        android:layout_toStartOf="@+id/dateTextView"
+        android:layout_toRightOf="@+id/assignImageView"
+        android:layout_toEndOf="@+id/assignImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
         android:textColor="#212121"
-        android:text="Test"
+        android:text="admin"
         android:textSize="16sp"
         android:ellipsize="end"
         android:maxLines="1"/>
 
     <TextView
-        android:id="@+id/subtitleTextView"
-        android:layout_below="@+id/titleTextView"
-        android:layout_toRightOf="@+id/folderImageView"
-        android:layout_toEndOf="@id/folderImageView"
-        android:layout_toLeftOf="@+id/sharedImageView"
-        android:layout_toStartOf="@id/sharedImageView"
+        android:id="@+id/messageTextView"
+        android:layout_below="@+id/usernameTextView"
+        android:layout_toRightOf="@+id/assignImageView"
+        android:layout_toEndOf="@+id/assignImageView"
         android:layout_marginTop="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
         android:textColor="#777777"
-        android:text="test2"
+        android:text="Document created : test doc 1"
         android:textSize="16sp"
         android:maxLines="1"
         android:ellipsize="end"/>
-
-    <ImageView
-        android:id="@+id/sharedImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_folder_shared_grey600_24dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:id="@+id/dateTextView"
@@ -71,5 +58,5 @@
         android:layout_alignParentTop="true"
         android:textColor="#777777"
         android:fontFamily="sans-serif-light"/>
-    
+
 </RelativeLayout>

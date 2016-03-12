@@ -48,6 +48,10 @@
             android:label="@string/new_document">
         </activity>
         <activity
+            android:name=".activity.AuditLogActivity"
+            android:label="@string/latest_activity">
+        </activity>
+        <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/settings">
         </activity>

@@ -54,9 +54,8 @@ public class AuditLogDao {
      * @param criteria Search criteria
      * @param sortCriteria Sort criteria
      * @return List of audit logs
-     * @throws Exception 
      */
-    public void findByCriteria(PaginatedList<AuditLogDto> paginatedList, AuditLogCriteria criteria, SortCriteria sortCriteria) throws Exception {
+    public void findByCriteria(PaginatedList<AuditLogDto> paginatedList, AuditLogCriteria criteria, SortCriteria sortCriteria) {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
         
         StringBuilder baseQuery = new StringBuilder("select l.LOG_ID_C c0, l.LOG_CREATEDATE_D c1, u.USE_USERNAME_C c2, l.LOG_IDENTITY_C c3, l.LOG_CLASSENTITY_C c4, l.LOG_TYPE_C c5, l.LOG_MESSAGE_C c6 from T_AUDIT_LOG l ");

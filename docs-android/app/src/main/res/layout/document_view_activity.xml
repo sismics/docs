@@ -52,14 +52,14 @@
         <!-- Comments -->
 
         <TextView
-            android:drawableStart="@drawable/ic_comment_black_24dp"
-            android:drawableLeft="@drawable/ic_comment_black_24dp"
+            android:drawableStart="@drawable/ic_comment_grey600_24dp"
+            android:drawableLeft="@drawable/ic_comment_grey600_24dp"
             android:drawablePadding="6dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:gravity="center"
-            android:textColor="@color/primary_text_default_material_light"
+            android:textColor="#de000000"
             android:text="@string/comments"
             android:layout_margin="12dp"/>
 
@@ -173,7 +173,7 @@
                     android:drawableTop="@drawable/ic_create_grey600_24dp"
                     style="?android:buttonBarButtonStyle"
                     android:text="@string/edit_document"
-                    android:textColor="@color/button_material_dark"
+                    android:textColor="#ff5a595b"
                     android:textAllCaps="false"
                     android:layout_margin="8dp"/>
 
@@ -184,7 +184,7 @@
                     android:drawableTop="@drawable/ic_file_upload_grey600_24dp"
                     style="?android:buttonBarButtonStyle"
                     android:text="@string/upload_file"
-                    android:textColor="@color/button_material_dark"
+                    android:textColor="#ff5a595b"
                     android:textAllCaps="false"
                     android:layout_margin="8dp"/>
 
@@ -195,7 +195,7 @@
                     android:drawableTop="@drawable/ic_file_download_grey600_24dp"
                     style="?android:buttonBarButtonStyle"
                     android:text="@string/download_document"
-                    android:textColor="@color/button_material_dark"
+                    android:textColor="#ff5a595b"
                     android:textAllCaps="false"
                     android:layout_margin="8dp"/>
 
@@ -214,9 +214,9 @@
                     android:drawableTop="@drawable/ic_description_grey600_24dp"
                     style="?android:buttonBarButtonStyle"
                     android:text="@string/export_pdf"
-                    android:textColor="@color/button_material_dark"
+                    android:textColor="#ff5a595b"
                     android:textAllCaps="false"
-                    android:layout_margin="8dp"/>
+                    android:layout_margin="0dp"/>
 
                 <Button
                     android:id="@+id/actionSharing"
@@ -225,9 +225,20 @@
                     android:drawableTop="@drawable/ic_share_grey600_24dp"
                     style="?android:buttonBarButtonStyle"
                     android:text="@string/share"
-                    android:textColor="@color/button_material_dark"
+                    android:textColor="#ff5a595b"
                     android:textAllCaps="false"
-                    android:layout_margin="8dp"/>
+                    android:layout_margin="0dp"/>
+
+                <Button
+                    android:id="@+id/actionAuditLog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/ic_assignment_grey600_24dp"
+                    style="?android:buttonBarButtonStyle"
+                    android:text="@string/activity"
+                    android:textColor="#ff5a595b"
+                    android:textAllCaps="false"
+                    android:layout_margin="0dp"/>
 
                 <Button
                     android:id="@+id/actionDelete"
@@ -236,9 +247,9 @@
                     android:drawableTop="@drawable/ic_delete_grey600_24dp"
                     style="?android:buttonBarButtonStyle"
                     android:text="@string/delete_document"
-                    android:textColor="@color/button_material_dark"
+                    android:textColor="#ff5a595b"
                     android:textAllCaps="false"
-                    android:layout_margin="8dp"/>
+                    android:layout_margin="0dp"/>
 
             </LinearLayout>
 
@@ -333,7 +344,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:textColor="@color/primary_text_default_material_light"
+            android:textColor="#de000000"
             android:text="@string/who_can_access"
             android:layout_margin="12dp"/>
 
