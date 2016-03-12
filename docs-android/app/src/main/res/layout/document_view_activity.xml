@@ -292,11 +292,32 @@
                 android:fontFamily="sans-serif-light"/>
 
             <TextView
+                android:id="@+id/creatorLabel"
+                android:layout_width="100dp"
+                android:layout_height="24dp"
+                android:gravity="center_vertical"
+                android:layout_below="@+id/createdDateLabel"
+                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/creator"/>
+
+            <TextView
+                android:id="@+id/creatorTextView"
+                android:layout_toRightOf="@id/creatorLabel"
+                android:layout_toEndOf="@id/creatorLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:gravity="center_vertical"
+                android:layout_below="@+id/createdDateTextView"
+                android:fontFamily="sans-serif-light"/>
+
+            <TextView
                 android:id="@+id/tagTextView"
                 android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/createdDateLabel"
+                android:layout_below="@id/creatorLabel"
                 android:layout_marginRight="8dp"
                 android:layout_marginEnd="8dp"
                 android:maxLines="1"

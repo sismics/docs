@@ -59,6 +59,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -311,7 +312,7 @@ public class DocumentViewActivity extends AppCompatActivity {
         // Grab the attached files
         updateFiles();
 
-        // Grab the full document (used for ACLs and writable status)
+        // Grab the full document (used for ACLs, remaining metadata and writable status)
         updateDocument();
     }
 
@@ -649,6 +650,10 @@ public class DocumentViewActivity extends AppCompatActivity {
                 // ACLs
                 ListView aclListView = (ListView) findViewById(R.id.aclListView);
                 aclListView.setAdapter(new AclListAdapter(document.optJSONArray("acls")));
+
+                // Remaining metadata
+                TextView creatorTextView = (TextView) findViewById(R.id.creatorTextView);
+                creatorTextView.setText(document.optString("creator"));
             }
         });
     }
