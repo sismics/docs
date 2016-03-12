@@ -99,6 +99,7 @@
     <string name="title">Title</string>
     <string name="simple_search">Simple search</string>
     <string name="fulltext_search">Fulltext search</string>
+    <string name="creator">Creator</string>
     <string name="after_date">After date</string>
     <string name="before_date">Before date</string>
     <string name="search_tags">Search tags</string>

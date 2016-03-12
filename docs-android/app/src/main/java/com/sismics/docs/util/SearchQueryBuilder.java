@@ -60,6 +60,21 @@ public class SearchQueryBuilder {
     }
 
     /**
+     * Add a creator criteria.
+     *
+     * @param creator Creator criteria
+     * @return The builder
+     */
+    public SearchQueryBuilder creator(String creator) {
+        if (isValid(creator)) {
+            query.append(SEARCH_SEPARATOR)
+                    .append("by:")
+                    .append(creator);
+        }
+        return this;
+    }
+
+    /**
      * Add a language criteria.
      *
      * @param language Language criteria
