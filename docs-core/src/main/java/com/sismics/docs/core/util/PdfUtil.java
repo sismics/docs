@@ -150,6 +150,7 @@ public class PdfUtil {
     public static InputStream convertToPdf(List<File> fileList, boolean fitImageToPage, int margin) throws Exception {
         // TODO PDF Export: Option to add a front page with:
         // document title, document description, creator, date created, language,
+        // additional dublincore metadata (except relations)
         // list of all files (and information if it is in this document or not)
         // TODO PDF Export: Option to add the comments
         

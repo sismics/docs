@@ -100,8 +100,6 @@ public class AppResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        // TODO Change level by minLevel (returns all logs above)
-
         // Get the memory appender
         org.apache.log4j.Logger logger = org.apache.log4j.Logger.getRootLogger();
         Appender appender = logger.getAppender("MEMORY");

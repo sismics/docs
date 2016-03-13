@@ -58,15 +58,4 @@ public class LogEntry {
     public String getMessage() {
         return message;
     }
-    
-    /**
-     * Compare the current log level with the provided one.
-     * 
-     * @param level2 Comparison level
-     * @return 1 if level is greater than level2, -1 if level is lower than level2, and 0 if level equals to level2
-     */
-    public int compareLevel(String level2) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
 }
