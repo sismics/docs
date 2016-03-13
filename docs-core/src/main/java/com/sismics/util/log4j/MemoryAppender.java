@@ -1,16 +1,18 @@
 package com.sismics.util.log4j;
 
-import com.google.common.collect.Lists;
-import com.sismics.docs.core.util.jpa.PaginatedList;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.helpers.LogLog;
-import org.apache.log4j.spi.LoggingEvent;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
+import org.apache.log4j.helpers.LogLog;
+import org.apache.log4j.spi.LoggingEvent;
+
+import com.google.common.collect.Lists;
+import com.sismics.docs.core.util.jpa.PaginatedList;
 
 /**
  * Memory appender for Log4J.
@@ -54,7 +56,7 @@ public class MemoryAppender extends AppenderSkeleton {
         
         String loggerName = getLoggerName(event);
 
-        LogEntry logEntry = new LogEntry(System.currentTimeMillis(), event.getLevel().toString(), loggerName, event.getMessage().toString());
+        LogEntry logEntry = new LogEntry(System.currentTimeMillis(), event.getLevel(), loggerName, event.getMessage().toString());
         logQueue.add(logEntry);
     }
 
@@ -98,13 +100,13 @@ public class MemoryAppender extends AppenderSkeleton {
      */
     public void find(LogCriteria criteria, PaginatedList<LogEntry> list) {
         List<LogEntry> logEntryList = new LinkedList<LogEntry>();
-        final String level = criteria.getLevel();
+        final Level minLevel = criteria.getMinLevel();
         final String tag = criteria.getTag();
         final String message = criteria.getMessage();
         int resultCount = 0;
         for (Iterator<LogEntry> it = logQueue.iterator(); it.hasNext();) {
             LogEntry logEntry = it.next();
-            if ((level == null || logEntry.getLevel().toLowerCase().equals(level)) &&
+            if ((minLevel == null ||  Integer.compare(logEntry.getLevel().toInt(), minLevel.toInt()) >= 0) &&
                     (tag == null || logEntry.getTag().toLowerCase().equals(tag)) &&
                     (message == null || logEntry.getMessage().toLowerCase().contains(message))) {
                 logEntryList.add(logEntry);
