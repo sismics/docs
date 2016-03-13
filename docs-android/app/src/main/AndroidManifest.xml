@@ -52,6 +52,9 @@
             android:label="@string/latest_activity">
         </activity>
         <activity
+            android:name=".activity.UserProfileActivity">
+        </activity>
+        <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/settings">
         </activity>

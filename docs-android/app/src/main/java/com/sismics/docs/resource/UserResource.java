@@ -53,6 +53,23 @@ public class UserResource extends BaseResource {
                 .newCall(request)
                 .enqueue(HttpCallback.buildOkHttpCallback(callback));
     }
+
+    /**
+     * GET /user/username.
+     *
+     * @param context Context
+     * param username Username
+     * @param callback Callback
+     */
+    public static void get(Context context, String username, HttpCallback callback) {
+        Request request = new Request.Builder()
+                .url(HttpUrl.parse(getApiUrl(context) + "/user/" + username))
+                .get()
+                .build();
+        OkHttpUtil.buildClient(context)
+                .newCall(request)
+                .enqueue(HttpCallback.buildOkHttpCallback(callback));
+    }
     
     /**
      * POST /user/logout.

@@ -6,6 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -23,7 +24,6 @@ import org.json.JSONObject;
  * @author bgamard.
  */
 public class AuditLogActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +61,22 @@ public class AuditLogActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 refreshView(documentId);
+            }
+        });
+
+        // Navigate to user profile on click
+        final ListView auditLogListView = (ListView) findViewById(R.id.auditLogListView);
+        auditLogListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (auditLogListView.getAdapter() == null) {
+                    return;
+                }
+                AuditLogListAdapter adapter = (AuditLogListAdapter) auditLogListView.getAdapter();
+                String username = adapter.getItem(position).optString("username");
+                Intent intent = new Intent(AuditLogActivity.this, UserProfileActivity.class);
+                intent.putExtra("username", username);
+                startActivity(intent);
             }
         });
 

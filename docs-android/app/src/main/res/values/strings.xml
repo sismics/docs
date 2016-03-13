@@ -128,5 +128,8 @@
     <string name="download_pdf_title">Sismics Docs PDF export</string>
     <string name="latest_activity">Latest activity</string>
     <string name="activity">Activity</string>
+    <string name="email">E-mail</string>
+    <string name="storage_quota">Storage quota</string>
+    <string name="storage_display">%1$d/%2$d MB</string>
 
 </resources>

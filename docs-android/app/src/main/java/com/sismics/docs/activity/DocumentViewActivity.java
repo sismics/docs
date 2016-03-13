@@ -59,7 +59,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -642,6 +641,7 @@ public class DocumentViewActivity extends AppCompatActivity {
                     menu.findItem(R.id.delete_file).setVisible(writable);
                 }
 
+                // Action only available if the document is writable
                 findViewById(R.id.actionEditDocument).setVisibility(writable ? View.VISIBLE : View.INVISIBLE);
                 findViewById(R.id.actionUploadFile).setVisibility(writable ? View.VISIBLE : View.INVISIBLE);
                 findViewById(R.id.actionSharing).setVisibility(writable ? View.VISIBLE : View.INVISIBLE);
@@ -649,11 +649,32 @@ public class DocumentViewActivity extends AppCompatActivity {
 
                 // ACLs
                 ListView aclListView = (ListView) findViewById(R.id.aclListView);
-                aclListView.setAdapter(new AclListAdapter(document.optJSONArray("acls")));
+                final AclListAdapter aclListAdapter = new AclListAdapter(document.optJSONArray("acls"));
+                aclListView.setAdapter(aclListAdapter);
+                aclListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        AclListAdapter.AclItem acl = aclListAdapter.getItem(position);
+                        if (acl.getType().equals("USER")) {
+                            Intent intent = new Intent(DocumentViewActivity.this, UserProfileActivity.class);
+                            intent.putExtra("username", acl.getName());
+                            startActivity(intent);
+                        }
+                    }
+                });
 
                 // Remaining metadata
                 TextView creatorTextView = (TextView) findViewById(R.id.creatorTextView);
-                creatorTextView.setText(document.optString("creator"));
+                final String creator = document.optString("creator");
+                creatorTextView.setText(creator);
+                creatorTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(DocumentViewActivity.this, UserProfileActivity.class);
+                        intent.putExtra("username", creator);
+                        startActivity(intent);
+                    }
+                });
             }
         });
     }

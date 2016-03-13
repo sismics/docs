@@ -12,6 +12,8 @@
             android:id="@+id/auditLogListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:choiceMode="singleChoice"
+            android:dividerHeight="0dp"
             android:visibility="gone">
         </ListView>
     </android.support.v4.widget.SwipeRefreshLayout>
