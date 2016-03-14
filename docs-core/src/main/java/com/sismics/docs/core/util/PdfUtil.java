@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -17,6 +19,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
@@ -29,8 +32,11 @@ import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.io.Closer;
+import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.util.pdf.PdfPage;
 import com.sismics.util.ImageUtil;
 import com.sismics.util.mime.MimeType;
 
@@ -141,21 +147,16 @@ public class PdfUtil {
     /**
      * Convert a document and its files to a merged PDF file.
      * 
+     * @param documentDto Document DTO
      * @param fileList List of files
      * @param fitImageToPage Fit images to the page
      * @param metadata Add a page with metadata
-     * @param comment Add a page with comments
      * @param margin Margins in millimeters
      * @return PDF input stream
      * @throws IOException 
      */
-    public static InputStream convertToPdf(List<File> fileList, boolean fitImageToPage, boolean metadata, boolean comments, int margin) throws Exception {
-        // TODO PDF Export: Option to add a front page with:
-        // document title, document description, creator, date created, language,
-        // additional dublincore metadata (except relations)
-        // list of all files (and information if it is in this document or not)
-        // TODO PDF Export: Option to add the comments
-
+    public static InputStream convertToPdf(DocumentDto documentDto, List<File> fileList,
+            boolean fitImageToPage, boolean metadata, int margin) throws Exception {
         // Setup PDFBox
         Closer closer = Closer.create();
         MemoryUsageSetting memUsageSettings = MemoryUsageSetting.setupMixed(1000000); // 1MB max memory usage
@@ -166,12 +167,45 @@ public class PdfUtil {
         try (PDDocument doc = new PDDocument(memUsageSettings)) {
             // Add metadata
             if (metadata) {
-                
-            }
-            
-            // Add comments
-            if (comments) {
-                
+                PDPage page = new PDPage();
+                doc.addPage(page);
+                try (PdfPage pdfPage = new PdfPage(doc, page, margin * mmPerInch, PDType1Font.HELVETICA, 12)) {
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    pdfPage.addText(documentDto.getTitle(), true, PDType1Font.HELVETICA_BOLD, 16)
+                        .newLine()
+                        .addText("Created by " + documentDto.getCreator()
+                            + " on " + dateFormat.format(new Date(documentDto.getCreateTimestamp())), true)
+                        .newLine()
+                        .addText(documentDto.getDescription())
+                        .newLine();
+                    if (!Strings.isNullOrEmpty(documentDto.getSubject())) {
+                        pdfPage.addText("Subject: " + documentDto.getSubject());
+                    }
+                    if (!Strings.isNullOrEmpty(documentDto.getIdentifier())) {
+                        pdfPage.addText("Identifier: " + documentDto.getIdentifier());
+                    }
+                    if (!Strings.isNullOrEmpty(documentDto.getPublisher())) {
+                        pdfPage.addText("Publisher: " + documentDto.getPublisher());
+                    }
+                    if (!Strings.isNullOrEmpty(documentDto.getFormat())) {
+                        pdfPage.addText("Format: " + documentDto.getFormat());
+                    }
+                    if (!Strings.isNullOrEmpty(documentDto.getSource())) {
+                        pdfPage.addText("Source: " + documentDto.getSource());
+                    }
+                    if (!Strings.isNullOrEmpty(documentDto.getType())) {
+                        pdfPage.addText("Type: " + documentDto.getType());
+                    }
+                    if (!Strings.isNullOrEmpty(documentDto.getCoverage())) {
+                        pdfPage.addText("Coverage: " + documentDto.getCoverage());
+                    }
+                    if (!Strings.isNullOrEmpty(documentDto.getRights())) {
+                        pdfPage.addText("Rights: " + documentDto.getRights());
+                    }
+                    pdfPage.addText("Language: " + documentDto.getLanguage())
+                        .newLine()
+                        .addText("Files in this document : " + fileList.size(), false, PDType1Font.HELVETICA_BOLD, 12);
+                }
             }
             
             // Add files

@@ -1,17 +1,21 @@
 package com.sismics.docs.core.util;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Date;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.Resources;
+import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.util.mime.MimeType;
-
-import org.junit.Assert;
 
 /**
  * Test of the file entity utilities.
@@ -50,6 +54,21 @@ public class TestFileUtil {
                 InputStream inputStream2 = Resources.getResource("file/udhr_encrypted.pdf").openStream();
                 InputStream inputStream3 = Resources.getResource("file/document.docx").openStream();
                 InputStream inputStream4 = Resources.getResource("file/document.odt").openStream()) {
+            // Document
+            DocumentDto documentDto = new DocumentDto();
+            documentDto.setTitle("My super document 1");
+            documentDto.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis id turpis iaculis, commodo est ac, efficitur quam. Nam accumsan magna in orci vulputate ultricies. Sed vulputate neque magna, at laoreet leo ultricies vel. Proin eu hendrerit felis. Quisque sit amet arcu efficitur, pulvinar orci sed, imperdiet elit. Nunc posuere ex sed fermentum congue. Aliquam ultrices convallis finibus. Praesent iaculis justo vitae dictum auctor. Praesent suscipit imperdiet erat ac maximus. Aenean pharetra quam sed fermentum commodo. Donec sagittis ipsum nibh, id congue dolor venenatis quis. In tincidunt nisl non ex sollicitudin, a imperdiet neque scelerisque. Nullam lacinia ac orci sed faucibus. Donec tincidunt venenatis justo, nec fermentum justo rutrum a.");
+            documentDto.setSubject("A set of random picture");
+            documentDto.setIdentifier("ID-2016-08-00001");
+            documentDto.setPublisher("My Publisher, Inc.");
+            documentDto.setFormat("A4 standard ISO format");
+            documentDto.setType("Image");
+            documentDto.setCoverage("France");
+            documentDto.setRights("Public Domain");
+            documentDto.setLanguage("en");
+            documentDto.setCreator("user1");
+            documentDto.setCreateTimestamp(new Date().getTime());
+            
             // First file
             Files.copy(inputStream0, DirectoryUtil.getStorageDirectory().resolve("apollo_landscape"), StandardCopyOption.REPLACE_EXISTING);
             File file0 = new File();
@@ -81,7 +100,10 @@ public class TestFileUtil {
             file4.setId("document_odt");
             file4.setMimeType(MimeType.OPEN_DOCUMENT_TEXT);
             
-            PdfUtil.convertToPdf(Lists.newArrayList(file0, file1, file2, file3, file4), true, true, true, 10).close();
+            try (InputStream pdfInputStream = PdfUtil.convertToPdf(documentDto, Lists.newArrayList(file0, file1, file2, file3, file4), true, true, 10);
+                    OutputStream fileOutputStream = Files.newOutputStream(Paths.get("c:/temp.pdf"))) {
+                ByteStreams.copy(pdfInputStream, fileOutputStream);
+            }
         }
     }
 }

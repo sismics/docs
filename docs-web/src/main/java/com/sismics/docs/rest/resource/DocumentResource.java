@@ -206,7 +206,7 @@ public class DocumentResource extends BaseResource {
         
         // Get document and check read permission
         DocumentDao documentDao = new DocumentDao();
-        DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, shareId == null ? principal.getId() : shareId);
+        final DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, shareId == null ? principal.getId() : shareId);
         if (documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
@@ -226,7 +226,7 @@ public class DocumentResource extends BaseResource {
         StreamingOutput stream = new StreamingOutput() {
             @Override
             public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                try (InputStream inputStream = PdfUtil.convertToPdf(fileList, fitImageToPage, metadata, comments, margin)) {
+                try (InputStream inputStream = PdfUtil.convertToPdf(documentDto, fileList, fitImageToPage, metadata, margin)) {
                     ByteStreams.copy(inputStream, outputStream);
                 } catch (Exception e) {
                     throw new IOException(e);
