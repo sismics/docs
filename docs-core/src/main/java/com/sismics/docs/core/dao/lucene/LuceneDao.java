@@ -1,9 +1,7 @@
 package com.sismics.docs.core.dao.lucene;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -46,16 +44,14 @@ public class LuceneDao {
                 indexWriter.deleteAll();
                 
                 // Add all documents
-                Map<String, Document> documentMap = new HashMap<>();
                 for (Document document : documentList) {
                     org.apache.lucene.document.Document luceneDocument = getDocumentFromDocument(document);
                     indexWriter.addDocument(luceneDocument);
-                    documentMap.put(document.getId(), document);
                 }
                 
                 // Add all files
                 for (File file : fileList) {
-                    org.apache.lucene.document.Document luceneDocument = getDocumentFromFile(file, documentMap.get(file.getDocumentId()));
+                    org.apache.lucene.document.Document luceneDocument = getDocumentFromFile(file);
                     indexWriter.addDocument(luceneDocument);
                 }
             }
@@ -81,13 +77,12 @@ public class LuceneDao {
      * Add file to the index.
      * 
      * @param file File to add
-     * @param document Document linked to the file
      */
-    public void createFile(final File file, final Document document) {
+    public void createFile(final File file) {
         LuceneUtil.handle(new LuceneRunnable() {
             @Override
             public void run(IndexWriter indexWriter) throws Exception {
-                org.apache.lucene.document.Document luceneDocument = getDocumentFromFile(file, document);
+                org.apache.lucene.document.Document luceneDocument = getDocumentFromFile(file);
                 indexWriter.addDocument(luceneDocument);
             }
         });
@@ -112,13 +107,12 @@ public class LuceneDao {
      * Update file index.
      * 
      * @param file Updated file
-     * @param document Document linked to the file
      */
-    public void updateFile(final File file, final Document document) {
+    public void updateFile(final File file) {
         LuceneUtil.handle(new LuceneRunnable() {
             @Override
             public void run(IndexWriter indexWriter) throws Exception {
-                org.apache.lucene.document.Document luceneDocument = getDocumentFromFile(file, document);
+                org.apache.lucene.document.Document luceneDocument = getDocumentFromFile(file);
                 indexWriter.updateDocument(new Term("id", file.getId()), luceneDocument);
             }
         });
@@ -200,7 +194,7 @@ public class LuceneDao {
     /**
      * Build Lucene document from database document.
      * 
-     * @param document Document
+     * @param documentDto Document
      * @return Document
      */
     private org.apache.lucene.document.Document getDocumentFromDocument(Document document) {
@@ -243,10 +237,9 @@ public class LuceneDao {
      * Build Lucene document from file.
      * 
      * @param file File
-     * @param document Document linked to the file
      * @return Document
      */
-    private org.apache.lucene.document.Document getDocumentFromFile(File file, Document document) {
+    private org.apache.lucene.document.Document getDocumentFromFile(File file) {
         org.apache.lucene.document.Document luceneDocument = new org.apache.lucene.document.Document();
         luceneDocument.add(new StringField("id", file.getId(), Field.Store.YES));
         luceneDocument.add(new StringField("doctype", "file", Field.Store.YES));

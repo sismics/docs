@@ -41,7 +41,7 @@ public class FileCreatedAsyncListener {
         
         // Extract text content from the file
         long startTime = System.currentTimeMillis();
-        final String content = FileUtil.extractContent(fileCreatedAsyncEvent.getDocument(), file,
+        final String content = FileUtil.extractContent(fileCreatedAsyncEvent.getLanguage(), file,
                 fileCreatedAsyncEvent.getInputStream(), fileCreatedAsyncEvent.getPdfInputStream());
         fileCreatedAsyncEvent.getInputStream().close();
         if (fileCreatedAsyncEvent.getPdfInputStream() != null) {
@@ -66,6 +66,6 @@ public class FileCreatedAsyncListener {
         
         // Update Lucene index
         LuceneDao luceneDao = new LuceneDao();
-        luceneDao.createFile(fileCreatedAsyncEvent.getFile(), fileCreatedAsyncEvent.getDocument());
+        luceneDao.createFile(fileCreatedAsyncEvent.getFile());
     }
 }

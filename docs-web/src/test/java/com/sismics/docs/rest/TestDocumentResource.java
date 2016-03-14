@@ -299,7 +299,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
                 .get(JsonObject.class);
         documents = json.getJsonArray("documents");
-        Assert.assertTrue(documents.size() == 1);
+        Assert.assertEquals(1, documents.size());
         
         // Get document 1
         json = target().path("/document/" + document1Id).request()

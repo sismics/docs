@@ -57,7 +57,7 @@ public class TestAclResource extends BaseJerseyTest {
         Response response = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl2Token)
                 .get();
-        Assert.assertEquals(Status.FORBIDDEN, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.NOT_FOUND, Status.fromStatusCode(response.getStatus()));
         
         // Add an ACL READ for acl2 with acl1
         json = target().path("/acl").request()
@@ -144,7 +144,7 @@ public class TestAclResource extends BaseJerseyTest {
         response = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl2Token)
                 .get();
-        Assert.assertEquals(Status.FORBIDDEN, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.NOT_FOUND, Status.fromStatusCode(response.getStatus()));
         
         // Delete the ACL READ for acl1 with acl1
         response = target().path("/acl/" + document1Id + "/READ/" + acl1Id).request()

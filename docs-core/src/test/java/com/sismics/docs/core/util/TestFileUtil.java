@@ -81,7 +81,7 @@ public class TestFileUtil {
             file4.setId("document_odt");
             file4.setMimeType(MimeType.OPEN_DOCUMENT_TEXT);
             
-            PdfUtil.convertToPdf(Lists.newArrayList(file0, file1, file2, file3, file4), true, 10).close();
+            PdfUtil.convertToPdf(Lists.newArrayList(file0, file1, file2, file3, file4), true, true, true, 10).close();
         }
     }
 }

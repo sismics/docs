@@ -18,7 +18,6 @@ import org.imgscalr.Scalr.Mode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.tess4j.Tesseract;
 import com.sismics.util.ImageUtil;
@@ -37,17 +36,17 @@ public class FileUtil {
     /**
      * Extract content from a file.
      * 
-     * @param document Document linked to the file
+     * @param language Language to extract
      * @param file File to extract
      * @param inputStream Unencrypted input stream
      * @param pdfInputStream Unencrypted PDF input stream
      * @return Content extract
      */
-    public static String extractContent(Document document, File file, InputStream inputStream, InputStream pdfInputStream) {
+    public static String extractContent(String language, File file, InputStream inputStream, InputStream pdfInputStream) {
         String content = null;
         
         if (ImageUtil.isImage(file.getMimeType())) {
-            content = ocrFile(inputStream, document);
+            content = ocrFile(inputStream, language);
         } else if (pdfInputStream != null) {
             content = PdfUtil.extractPdf(pdfInputStream);
         }
@@ -59,10 +58,10 @@ public class FileUtil {
      * Optical character recognition on a stream.
      * 
      * @param inputStream Unencrypted input stream
-     * @param document Document linked to the file
+     * @param language Language to OCR
      * @return Content extracted
      */
-    private static String ocrFile(InputStream inputStream, Document document) {
+    private static String ocrFile(InputStream inputStream, String language) {
         Tesseract instance = Tesseract.getInstance();
         String content = null;
         BufferedImage image = null;
@@ -80,7 +79,7 @@ public class FileUtil {
         // OCR the file
         try {
             log.info("Starting OCR with TESSDATA_PREFIX=" + System.getenv("TESSDATA_PREFIX") + ";LC_NUMERIC=" + System.getenv("LC_NUMERIC"));
-            instance.setLanguage(document.getLanguage());
+            instance.setLanguage(language);
             content = instance.doOCR(image);
         } catch (Throwable e) {
             log.error("Error while OCR-izing the image", e);

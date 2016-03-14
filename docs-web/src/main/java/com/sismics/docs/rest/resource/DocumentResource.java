@@ -95,16 +95,11 @@ public class DocumentResource extends BaseResource {
         
         DocumentDao documentDao = new DocumentDao();
         AclDao aclDao = new AclDao();
-        DocumentDto documentDto = documentDao.getDocument(documentId);
+        DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, shareId == null ? principal.getId() : shareId);
         if (documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
             
-        // Check document visibility
-        if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
-            throw new ForbiddenClientException();
-        }
-
         JsonObjectBuilder document = Json.createObjectBuilder()
                 .add("id", documentDto.getId())
                 .add("title", documentDto.getTitle())
@@ -200,8 +195,8 @@ public class DocumentResource extends BaseResource {
     public Response getPdf(
             @PathParam("id") String documentId,
             @QueryParam("share") String shareId,
-            @QueryParam("metadata") Boolean metadata,
-            @QueryParam("comments") Boolean comments,
+            final @QueryParam("metadata") Boolean metadata,
+            final @QueryParam("comments") Boolean comments,
             final @QueryParam("fitimagetopage") Boolean fitImageToPage,
             @QueryParam("margin") String marginStr) {
         authenticate();
@@ -211,8 +206,8 @@ public class DocumentResource extends BaseResource {
         
         // Get document and check read permission
         DocumentDao documentDao = new DocumentDao();
-        Document document = documentDao.getDocument(documentId, PermType.READ, shareId == null ? principal.getId() : shareId);
-        if (document == null) {
+        DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, shareId == null ? principal.getId() : shareId);
+        if (documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
@@ -231,7 +226,7 @@ public class DocumentResource extends BaseResource {
         StreamingOutput stream = new StreamingOutput() {
             @Override
             public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                try (InputStream inputStream = PdfUtil.convertToPdf(fileList, fitImageToPage, margin)) {
+                try (InputStream inputStream = PdfUtil.convertToPdf(fileList, fitImageToPage, metadata, comments, margin)) {
                     ByteStreams.copy(inputStream, outputStream);
                 } catch (Exception e) {
                     throw new IOException(e);
@@ -243,7 +238,7 @@ public class DocumentResource extends BaseResource {
 
         return Response.ok(stream)
                 .header("Content-Type", MimeType.APPLICATION_PDF)
-                .header("Content-Disposition", "inline; filename=\"" + document.getTitle() + ".pdf\"")
+                .header("Content-Disposition", "inline; filename=\"" + documentDto.getTitle() + ".pdf\"")
                 .build();
     }
     
@@ -568,10 +563,15 @@ public class DocumentResource extends BaseResource {
             throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", language));
         }
         
+        // Check write permission
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(id, PermType.WRITE, principal.getId())) {
+            throw new ForbiddenClientException();
+        }
+        
         // Get the document
         DocumentDao documentDao = new DocumentDao();
-        Document document;
-        document = documentDao.getDocument(id, PermType.WRITE, principal.getId());
+        Document document = documentDao.getById(id);
         if (document == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
@@ -622,10 +622,10 @@ public class DocumentResource extends BaseResource {
         // Update relations
         updateRelationList(id, relationList);
         
-        // Raise a document updated event
+        // Raise a document updated event (with the document to update Lucene)
         DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
         documentUpdatedAsyncEvent.setUserId(principal.getId());
-        documentUpdatedAsyncEvent.setDocument(document);
+        documentUpdatedAsyncEvent.setDocumentId(id);
         AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
         
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -697,14 +697,14 @@ public class DocumentResource extends BaseResource {
         // Get the document
         DocumentDao documentDao = new DocumentDao();
         FileDao fileDao = new FileDao();
-        Document document = documentDao.getDocument(id, PermType.WRITE, principal.getId());
-        List<File> fileList = fileDao.getByDocumentId(principal.getId(), id);
-        if (document == null) {
+        DocumentDto documentDto = documentDao.getDocument(id, PermType.WRITE, principal.getId());
+        if (documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
+        List<File> fileList = fileDao.getByDocumentId(principal.getId(), id);
         
         // Delete the document
-        documentDao.delete(document.getId(), principal.getId());
+        documentDao.delete(documentDto.getId(), principal.getId());
         
         // Raise file deleted events (don't bother sending document updated event)
         for (File file : fileList) {
@@ -717,7 +717,7 @@ public class DocumentResource extends BaseResource {
         // Raise a document deleted event
         DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
         documentDeletedAsyncEvent.setUserId(principal.getId());
-        documentDeletedAsyncEvent.setDocument(document);
+        documentDeletedAsyncEvent.setDocumentId(documentDto.getId());
         AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
         
         // Always return OK

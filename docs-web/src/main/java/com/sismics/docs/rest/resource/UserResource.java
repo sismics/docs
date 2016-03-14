@@ -362,7 +362,7 @@ public class UserResource extends BaseResource {
         for (Document document : documentList) {
             DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
             documentDeletedAsyncEvent.setUserId(principal.getId());
-            documentDeletedAsyncEvent.setDocument(document);
+            documentDeletedAsyncEvent.setDocumentId(document.getId());
             AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
         }
         
@@ -421,7 +421,7 @@ public class UserResource extends BaseResource {
         for (Document document : documentList) {
             DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
             documentDeletedAsyncEvent.setUserId(principal.getId());
-            documentDeletedAsyncEvent.setDocument(document);
+            documentDeletedAsyncEvent.setDocumentId(document.getId());
             AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
         }
         

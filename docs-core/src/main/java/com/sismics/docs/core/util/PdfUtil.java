@@ -143,24 +143,37 @@ public class PdfUtil {
      * 
      * @param fileList List of files
      * @param fitImageToPage Fit images to the page
+     * @param metadata Add a page with metadata
+     * @param comment Add a page with comments
      * @param margin Margins in millimeters
      * @return PDF input stream
      * @throws IOException 
      */
-    public static InputStream convertToPdf(List<File> fileList, boolean fitImageToPage, int margin) throws Exception {
+    public static InputStream convertToPdf(List<File> fileList, boolean fitImageToPage, boolean metadata, boolean comments, int margin) throws Exception {
         // TODO PDF Export: Option to add a front page with:
         // document title, document description, creator, date created, language,
         // additional dublincore metadata (except relations)
         // list of all files (and information if it is in this document or not)
         // TODO PDF Export: Option to add the comments
-        
-        // Create a blank PDF
+
+        // Setup PDFBox
         Closer closer = Closer.create();
         MemoryUsageSetting memUsageSettings = MemoryUsageSetting.setupMixed(1000000); // 1MB max memory usage
         memUsageSettings.setTempDir(new java.io.File(System.getProperty("java.io.tmpdir"))); // To OS temp
         float mmPerInch = 1 / (10 * 2.54f) * 72f;
         
+        // Create a blank PDF
         try (PDDocument doc = new PDDocument(memUsageSettings)) {
+            // Add metadata
+            if (metadata) {
+                
+            }
+            
+            // Add comments
+            if (comments) {
+                
+            }
+            
             // Add files
             for (File file : fileList) {
                 Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());

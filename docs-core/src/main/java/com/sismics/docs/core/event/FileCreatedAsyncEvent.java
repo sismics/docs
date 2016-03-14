@@ -3,7 +3,6 @@ package com.sismics.docs.core.event;
 import java.io.InputStream;
 
 import com.google.common.base.MoreObjects;
-import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 
 /**
@@ -18,9 +17,9 @@ public class FileCreatedAsyncEvent extends UserEvent {
     private File file;
     
     /**
-     * Document linked to the file.
+     * Language of the file.
      */
-    private Document document;
+    private String language;
     
     /**
      * Unencrypted input stream containing the file.
@@ -42,12 +41,12 @@ public class FileCreatedAsyncEvent extends UserEvent {
         this.file = file;
     }
     
-    public Document getDocument() {
-        return document;
+    public String getLanguage() {
+        return language;
     }
 
-    public void setDocument(Document document) {
-        this.document = document;
+    public void setLanguage(String language) {
+        this.language = language;
     }
     
     public InputStream getInputStream() {
@@ -70,7 +69,7 @@ public class FileCreatedAsyncEvent extends UserEvent {
     public String toString() {
         return MoreObjects.toStringHelper(this)
             .add("file", file)
-            .add("document", document)
+            .add("language", language)
             .toString();
     }
 }
