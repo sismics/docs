@@ -104,7 +104,8 @@ public class TestAclResource extends BaseJerseyTest {
         json = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl2Token)
                 .post(Entity.form(new Form()
-                        .param("title", "My new super document 1")), JsonObject.class);
+                        .param("title", "My new super document 1")
+                        .param("language", "eng")), JsonObject.class);
         Assert.assertEquals(document1Id, json.getString("id"));
         
         // Get the document as acl2

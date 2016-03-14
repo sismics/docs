@@ -27,7 +27,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -547,8 +546,8 @@ public class DocumentResource extends BaseResource {
         }
         
         // Validate input data
-        title = ValidationUtil.validateLength(title, "title", 1, 100, true);
-        language = ValidationUtil.validateLength(language, "language", 3, 3, true);
+        title = ValidationUtil.validateLength(title, "title", 1, 100, false);
+        language = ValidationUtil.validateLength(language, "language", 3, 3, false);
         description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
         subject = ValidationUtil.validateLength(subject, "subject", 0, 500, true);
         identifier = ValidationUtil.validateLength(identifier, "identifier", 0, 500, true);
@@ -577,41 +576,21 @@ public class DocumentResource extends BaseResource {
         }
         
         // Update the document
-        if (!StringUtils.isEmpty(title)) {
-            document.setTitle(title);
-        }
-        if (!StringUtils.isEmpty(description)) {
-            document.setDescription(description);
-        }
-        if (!StringUtils.isEmpty(subject)) {
-            document.setSubject(subject);
-        }
-        if (!StringUtils.isEmpty(identifier)) {
-            document.setIdentifier(identifier);
-        }
-        if (!StringUtils.isEmpty(publisher)) {
-            document.setPublisher(publisher);
-        }
-        if (!StringUtils.isEmpty(format)) {
-            document.setFormat(format);
-        }
-        if (!StringUtils.isEmpty(source)) {
-            document.setSource(source);
-        }
-        if (!StringUtils.isEmpty(type)) {
-            document.setType(type);
-        }
-        if (!StringUtils.isEmpty(coverage)) {
-            document.setCoverage(coverage);
-        }
-        if (!StringUtils.isEmpty(rights)) {
-            document.setRights(rights);
-        }
-        if (createDate != null) {
+        document.setTitle(title);
+        document.setDescription(description);
+        document.setSubject(subject);
+        document.setIdentifier(identifier);
+        document.setPublisher(publisher);
+        document.setFormat(format);
+        document.setSource(source);
+        document.setType(type);
+        document.setCoverage(coverage);
+        document.setRights(rights);
+        document.setLanguage(language);
+        if (createDate == null) {
+            document.setCreateDate(new Date());
+        } else {
             document.setCreateDate(createDate);
-        }
-        if (language != null) {
-            document.setLanguage(language);
         }
         
         document = documentDao.update(document, principal.getId());

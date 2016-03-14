@@ -280,6 +280,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                         .param("source", "My new source for document 1")
                         .param("type", "Image")
                         .param("coverage", "France")
+                        .param("language", "eng")
                         .param("rights", "All Rights Reserved")
                         .param("tags", tag2Id)), JsonObject.class);
         Assert.assertEquals(document1Id, json.getString("id"));
@@ -289,7 +290,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
                 .post(Entity.form(new Form()
                         .param("title", "My super title document 2")
-                        .param("lang", "eng")), JsonObject.class);
+                        .param("language", "eng")), JsonObject.class);
         Assert.assertEquals(document2Id, json.getString("id"));
         
         // Search documents by query

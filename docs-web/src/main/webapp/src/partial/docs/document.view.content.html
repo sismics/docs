@@ -26,8 +26,8 @@
       </span>
     </span>
   </dd>
-  <dt>Relations</dt>
-  <dd>
+  <dt ng-if="document.relations.length > 0">Relations</dt>
+  <dd ng-if="document.relations.length > 0">
     <span ng-repeat="relation in document.relations">
       <span class="btn btn-link btn-xs">
         <a href="#/document/view/{{ relation.id }}">
