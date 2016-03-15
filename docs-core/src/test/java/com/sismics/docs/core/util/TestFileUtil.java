@@ -1,9 +1,7 @@
 package com.sismics.docs.core.util;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
 
@@ -100,9 +98,8 @@ public class TestFileUtil {
             file4.setId("document_odt");
             file4.setMimeType(MimeType.OPEN_DOCUMENT_TEXT);
             
-            try (InputStream pdfInputStream = PdfUtil.convertToPdf(documentDto, Lists.newArrayList(file0, file1, file2, file3, file4), true, true, 10);
-                    OutputStream fileOutputStream = Files.newOutputStream(Paths.get("c:/temp.pdf"))) {
-                ByteStreams.copy(pdfInputStream, fileOutputStream);
+            try (InputStream pdfInputStream = PdfUtil.convertToPdf(documentDto, Lists.newArrayList(file0, file1, file2, file3, file4), true, true, 10)) {
+                ByteStreams.copy(pdfInputStream, System.out);
             }
         }
     }
