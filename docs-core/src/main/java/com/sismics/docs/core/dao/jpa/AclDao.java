@@ -105,12 +105,12 @@ public class AclDao {
      * @param targetId ACL target entity ID
      * @return True if the document is accessible
      */
-    public boolean checkPermission(String sourceId, PermType perm, String targetId) {
+    public boolean checkPermission(String sourceId, PermType perm, List<String> targetIdList) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select a from Acl a where a.sourceId = :sourceId and a.perm = :perm and a.targetId = :targetId and a.deleteDate is null");
+        Query q = em.createQuery("select a from Acl a where a.sourceId = :sourceId and a.perm = :perm and a.targetId in (:targetIdList) and a.deleteDate is null");
         q.setParameter("sourceId", sourceId);
         q.setParameter("perm", perm);
-        q.setParameter("targetId", targetId);
+        q.setParameter("targetIdList", targetIdList);
         
         // We have a matching permission
         if (q.getResultList().size() > 0) {

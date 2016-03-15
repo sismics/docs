@@ -49,7 +49,7 @@ public class AuditLogResource extends BaseResource {
         } else {
             // Check ACL on the document
             AclDao aclDao = new AclDao();
-            if (!aclDao.checkPermission(documentId, PermType.READ, principal.getId())) {
+            if (!aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(null))) {
                 return Response.status(Status.NOT_FOUND).build();
             }
             criteria.setDocumentId(documentId);

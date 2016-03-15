@@ -90,20 +90,20 @@ public class DocumentDao {
      * @param userId User ID
      * @return Document
      */
-    public DocumentDto getDocument(String id, PermType perm, String userId) {
+    public DocumentDto getDocument(String id, PermType perm, List<String> targetIdList) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         StringBuilder sb = new StringBuilder("select d.DOC_ID_C, d.DOC_TITLE_C, d.DOC_DESCRIPTION_C, d.DOC_SUBJECT_C, d.DOC_IDENTIFIER_C, d.DOC_PUBLISHER_C, d.DOC_FORMAT_C, d.DOC_SOURCE_C, d.DOC_TYPE_C, d.DOC_COVERAGE_C, d.DOC_RIGHTS_C, d.DOC_CREATEDATE_D, d.DOC_LANGUAGE_C, ");
         sb.append(" (select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null), ");
         sb.append(" (select count(f.FIL_ID_C) from T_FILE f where f.FIL_DELETEDATE_D is null and f.FIL_IDDOC_C = d.DOC_ID_C), ");
         sb.append(" u.USE_USERNAME_C ");
         sb.append(" from T_DOCUMENT d, T_USER u ");
-        sb.append(" join T_ACL a on a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_TARGETID_C = :userId and a.ACL_PERM_C = :perm and a.ACL_DELETEDATE_D is null ");
+        sb.append(" join T_ACL a on a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_TARGETID_C in (:targetIdList) and a.ACL_PERM_C = :perm and a.ACL_DELETEDATE_D is null ");
         sb.append(" where d.DOC_IDUSER_C = u.USE_ID_C and d.DOC_ID_C = :id and d.DOC_DELETEDATE_D is null ");
        
         Query q = em.createNativeQuery(sb.toString());
         q.setParameter("id", id);
         q.setParameter("perm", perm.name());
-        q.setParameter("userId", userId);
+        q.setParameter("targetIdList", targetIdList);
         
         Object[] o = null;
         try {
@@ -212,10 +212,10 @@ public class DocumentDao {
         sb.append(" from T_DOCUMENT d ");
         
         // Adds search criteria
-        if (criteria.getUserId() != null) {
+        if (criteria.getTargetIdList() != null) {
             // Read permission is enough for searching
-            sb.append(" join T_ACL a on a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_TARGETID_C = :userId and a.ACL_PERM_C = 'READ' and a.ACL_DELETEDATE_D is null ");
-            parameterMap.put("userId", criteria.getUserId());
+            sb.append(" join T_ACL a on a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_TARGETID_C in (:targetIdList) and a.ACL_PERM_C = 'READ' and a.ACL_DELETEDATE_D is null ");
+            parameterMap.put("targetIdList", criteria.getTargetIdList());
         }
         if (!Strings.isNullOrEmpty(criteria.getSearch()) || !Strings.isNullOrEmpty(criteria.getFullSearch())) {
             LuceneDao luceneDao = new LuceneDao();

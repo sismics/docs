@@ -1,6 +1,10 @@
 package com.sismics.security;
 
+import java.util.List;
+
 import org.joda.time.DateTimeZone;
+
+import com.google.common.collect.Lists;
 
 /**
  * Anonymous principal.
@@ -47,12 +51,12 @@ public class AnonymousPrincipal implements IPrincipal {
         return null;
     }
     
-    /**
-     * Setter of dateTimeZone.
-     *
-     * @param dateTimeZone dateTimeZone
-     */
     public void setDateTimeZone(DateTimeZone dateTimeZone) {
         this.dateTimeZone = dateTimeZone;
+    }
+
+    @Override
+    public List<String> getGroupIdList() {
+        return Lists.newArrayList();
     }
 }

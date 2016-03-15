@@ -1,8 +1,11 @@
 package com.sismics.security;
 
+import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTimeZone;
+
+import jersey.repackaged.com.google.common.collect.Lists;
 
 /**
  * Authenticated users principal.
@@ -56,11 +59,6 @@ public class UserPrincipal implements IPrincipal {
         return id;
     }
 
-    /**
-     * Setter of id.
-     *
-     * @param id id
-     */
     public void setId(String id) {
         this.id = id;
     }
@@ -70,11 +68,6 @@ public class UserPrincipal implements IPrincipal {
         return name;
     }
 
-    /**
-     * Setter of name.
-     *
-     * @param name name
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -84,11 +77,6 @@ public class UserPrincipal implements IPrincipal {
         return dateTimeZone;
     }
 
-    /**
-     * Setter of dateTimeZone.
-     *
-     * @param dateTimeZone dateTimeZone
-     */
     public void setDateTimeZone(DateTimeZone dateTimeZone) {
         this.dateTimeZone = dateTimeZone;
     }
@@ -98,31 +86,21 @@ public class UserPrincipal implements IPrincipal {
         return email;
     }
     
-    /**
-     * Setter of email.
-     *
-     * @param email email
-     */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    /**
-     * Getter of baseFunctionSet.
-     *
-     * @return baseFunctionSet
-     */
     public Set<String> getBaseFunctionSet() {
         return baseFunctionSet;
     }
 
-    /**
-     * Setter of baseFunctionSet.
-     *
-     * @param baseFunctionSet baseFunctionSet
-     */
     public void setBaseFunctionSet(Set<String> baseFunctionSet) {
         this.baseFunctionSet = baseFunctionSet;
     }
 
+    @Override
+    public List<String> getGroupIdList() {
+        // TODO Real groups
+        return Lists.newArrayList("members");
+    }
 }

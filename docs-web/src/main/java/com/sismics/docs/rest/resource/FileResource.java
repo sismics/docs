@@ -98,7 +98,7 @@ public class FileResource extends BaseResource {
             documentId = null;
         } else {
             DocumentDao documentDao = new DocumentDao();
-            documentDto = documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
+            documentDto = documentDao.getDocument(documentId, PermType.WRITE, getTargetIdList(null));
             if (documentDto == null) {
                 return Response.status(Status.NOT_FOUND).build();
             }
@@ -213,7 +213,7 @@ public class FileResource extends BaseResource {
         DocumentDao documentDao = new DocumentDao();
         FileDao fileDao = new FileDao();
         File file = fileDao.getFile(id, principal.getId());
-        DocumentDto documentDto = documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
+        DocumentDto documentDto = documentDao.getDocument(documentId, PermType.WRITE, getTargetIdList(null));
         if (file == null || documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
@@ -276,7 +276,7 @@ public class FileResource extends BaseResource {
         
         // Get the document
         DocumentDao documentDao = new DocumentDao();
-        if (documentDao.getDocument(documentId, PermType.WRITE, principal.getId()) == null) {
+        if (documentDao.getDocument(documentId, PermType.WRITE, getTargetIdList(null)) == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
@@ -312,7 +312,7 @@ public class FileResource extends BaseResource {
         // Check document visibility
         if (documentId != null) {
             AclDao aclDao = new AclDao();
-            if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
+            if (!aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(shareId))) {
                 return Response.status(Status.NOT_FOUND).build();
             }
         } else if (!authenticated) {
@@ -370,7 +370,7 @@ public class FileResource extends BaseResource {
                 // But not ours
                 throw new ForbiddenClientException();
             }
-        } else if ((documentDto = documentDao.getDocument(file.getDocumentId(), PermType.WRITE, principal.getId())) == null) {
+        } else if ((documentDto = documentDao.getDocument(file.getDocumentId(), PermType.WRITE, getTargetIdList(null))) == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
@@ -445,7 +445,7 @@ public class FileResource extends BaseResource {
         } else {
             // Check document accessibility
             AclDao aclDao = new AclDao();
-            if (!aclDao.checkPermission(file.getDocumentId(), PermType.READ, shareId == null ? principal.getId() : shareId)) {
+            if (!aclDao.checkPermission(file.getDocumentId(), PermType.READ, getTargetIdList(shareId))) {
                 throw new ForbiddenClientException();
             }
         }
@@ -519,7 +519,7 @@ public class FileResource extends BaseResource {
         
         // Get the document
         DocumentDao documentDao = new DocumentDao();
-        DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, shareId == null ? principal.getId() : shareId);
+        DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
         if (documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
         }

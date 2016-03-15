@@ -94,7 +94,7 @@ public class DocumentResource extends BaseResource {
         
         DocumentDao documentDao = new DocumentDao();
         AclDao aclDao = new AclDao();
-        DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, shareId == null ? principal.getId() : shareId);
+        DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
         if (documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
@@ -148,7 +148,8 @@ public class DocumentResource extends BaseResource {
                     .add("type", aclDto.getTargetType()));
             
             if (!principal.isAnonymous()
-                    && aclDto.getTargetId().equals(principal.getId())
+                    && (aclDto.getTargetId().equals(principal.getId())
+                            || principal.getGroupIdList().contains(aclDto.getTargetId()))
                     && aclDto.getPerm() == PermType.WRITE) {
                 // The document is writable for the current user
                 writable = true;
@@ -205,7 +206,7 @@ public class DocumentResource extends BaseResource {
         
         // Get document and check read permission
         DocumentDao documentDao = new DocumentDao();
-        final DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, shareId == null ? principal.getId() : shareId);
+        final DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
         if (documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
@@ -268,7 +269,7 @@ public class DocumentResource extends BaseResource {
         PaginatedList<DocumentDto> paginatedList = PaginatedLists.create(limit, offset);
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
         DocumentCriteria documentCriteria = parseSearchQuery(search);
-        documentCriteria.setUserId(principal.getId());
+        documentCriteria.setTargetIdList(getTargetIdList(null));
         try {
             documentDao.findByCriteria(paginatedList, documentCriteria, sortCriteria);
         } catch (Exception e) {
@@ -564,7 +565,7 @@ public class DocumentResource extends BaseResource {
         
         // Check write permission
         AclDao aclDao = new AclDao();
-        if (!aclDao.checkPermission(id, PermType.WRITE, principal.getId())) {
+        if (!aclDao.checkPermission(id, PermType.WRITE, getTargetIdList(null))) {
             throw new ForbiddenClientException();
         }
         
@@ -676,7 +677,7 @@ public class DocumentResource extends BaseResource {
         // Get the document
         DocumentDao documentDao = new DocumentDao();
         FileDao fileDao = new FileDao();
-        DocumentDto documentDto = documentDao.getDocument(id, PermType.WRITE, principal.getId());
+        DocumentDto documentDto = documentDao.getDocument(id, PermType.WRITE, getTargetIdList(null));
         if (documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
         }

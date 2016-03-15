@@ -14,6 +14,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import com.google.common.collect.Lists;
 import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
@@ -51,6 +52,7 @@ public class AclResource extends BaseResource {
             throw new ForbiddenClientException();
         }
         
+        // TODO Allow group input
         // Validate input
         ValidationUtil.validateRequired(sourceId, "source");
         PermType perm = PermType.valueOf(ValidationUtil.validateLength(permStr, "perm", 1, 30, false));
@@ -65,7 +67,7 @@ public class AclResource extends BaseResource {
         
         // Check permission on the source by the principal
         AclDao aclDao = new AclDao();
-        if (!aclDao.checkPermission(sourceId, PermType.WRITE, principal.getId())) {
+        if (!aclDao.checkPermission(sourceId, PermType.WRITE, getTargetIdList(null))) {
             throw new ForbiddenClientException();
         }
         
@@ -76,7 +78,7 @@ public class AclResource extends BaseResource {
         acl.setTargetId(user.getId());
         
         // Avoid duplicates
-        if (!aclDao.checkPermission(acl.getSourceId(), acl.getPerm(), acl.getTargetId())) {
+        if (!aclDao.checkPermission(acl.getSourceId(), acl.getPerm(), Lists.newArrayList(acl.getTargetId()))) {
             aclDao.create(acl, principal.getId());
             
             // Returns the ACL
@@ -114,7 +116,7 @@ public class AclResource extends BaseResource {
 
         // Check permission on the source by the principal
         AclDao aclDao = new AclDao();
-        if (!aclDao.checkPermission(sourceId, PermType.WRITE, principal.getId())) {
+        if (!aclDao.checkPermission(sourceId, PermType.WRITE, getTargetIdList(null))) {
             throw new ForbiddenClientException();
         }
         
@@ -162,6 +164,8 @@ public class AclResource extends BaseResource {
             users.add(Json.createObjectBuilder()
                     .add("username", userDto.getUsername()));
         }
+        
+        // TODO Returns groups too
         
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("users", users);
