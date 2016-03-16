@@ -11,41 +11,41 @@ import javax.persistence.Table;
 import com.google.common.base.MoreObjects;
 
 /**
- * Link between a document and a tag.
+ * Link between an user and a group.
  * 
  * @author bgamard
  */
 @Entity
-@Table(name = "T_DOCUMENT_TAG")
-public class DocumentTag implements Serializable {
+@Table(name = "T_USER_GROUP")
+public class UserGroup implements Serializable {
     /**
      * Serial version UID.
      */
     private static final long serialVersionUID = 1L;
 
     /**
-     * Document tag ID.
+     * User group ID.
      */
     @Id
-    @Column(name = "DOT_ID_C", length = 36)
+    @Column(name = "UGP_ID_C", length = 36)
     private String id;
     
     /**
-     * Document ID.
+     * User ID.
      */
-    @Column(name = "DOT_IDDOCUMENT_C", nullable = false, length = 36)
-    private String documentId;
+    @Column(name = "UGP_IDUSER_C", nullable = false, length = 36)
+    private String userId;
     
     /**
-     * Tag ID.
+     * Group ID.
      */
-    @Column(name = "DOT_IDTAG_C", nullable = false, length = 36)
-    private String tagId;
+    @Column(name = "UGP_IDGROUP_C", nullable = false, length = 36)
+    private String groupId;
 
     /**
      * Deletion date.
      */
-    @Column(name = "DOT_DELETEDATE_D")
+    @Column(name = "UGP_DELETEDATE_D")
     private Date deleteDate;
     
     public String getId() {
@@ -55,23 +55,23 @@ public class DocumentTag implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
-    
-    public String getDocumentId() {
-        return documentId;
+
+    public String getUserId() {
+        return userId;
     }
 
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getTagId() {
-        return tagId;
+    public String getGroupId() {
+        return groupId;
     }
 
-    public void setTagId(String tagId) {
-        this.tagId = tagId;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
-    
+
     public Date getDeleteDate() {
         return deleteDate;
     }
@@ -79,13 +79,13 @@ public class DocumentTag implements Serializable {
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
     }
-    
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
-                .add("documentId", documentId)
-                .add("tagId", tagId)
+                .add("userId", userId)
+                .add("groupId", groupId)
                 .toString();
     }
 }
