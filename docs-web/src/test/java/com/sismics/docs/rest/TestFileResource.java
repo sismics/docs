@@ -42,12 +42,12 @@ public class TestFileResource extends BaseJerseyTest {
     public void testFileResource() throws Exception {
         // Login file1
         clientUtil.createUser("file1");
-        String file1AuthenticationToken = clientUtil.login("file1");
+        String file1Token = clientUtil.login("file1");
         
         // Create a document
         long create1Date = new Date().getTime();
         JsonObject json = target().path("/document").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .put(Entity.form(new Form()
                         .param("title", "File test document 1")
                         .param("language", "eng")
@@ -63,7 +63,7 @@ public class TestFileResource extends BaseJerseyTest {
                 json = target()
                         .register(MultiPartFeature.class)
                         .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                         .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
                                 MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
                 file1Id = json.getString("id");
@@ -80,7 +80,7 @@ public class TestFileResource extends BaseJerseyTest {
                 json = target()
                         .register(MultiPartFeature.class)
                         .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                         .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
                                 MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
                 file2Id = json.getString("id");
@@ -90,7 +90,7 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Get the file data
         Response response = target().path("/file/" + file1Id + "/data").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .get();
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
@@ -101,7 +101,7 @@ public class TestFileResource extends BaseJerseyTest {
         response = target().path("/file/" + file1Id + "/data")
                 .queryParam("size", "thumb")
                 .request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .get();
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         is = (InputStream) response.getEntity();
@@ -113,7 +113,7 @@ public class TestFileResource extends BaseJerseyTest {
         response = target().path("/file/" + file1Id + "/data")
                 .queryParam("size", "web")
                 .request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .get();
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         is = (InputStream) response.getEntity();
@@ -131,7 +131,7 @@ public class TestFileResource extends BaseJerseyTest {
         json = target().path("/file/list")
                 .queryParam("id", document1Id)
                 .request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .get(JsonObject.class);
         JsonArray files = json.getJsonArray("files");
         Assert.assertEquals(2, files.size());
@@ -141,7 +141,7 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Reorder files
         json = target().path("/file/reorder").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .post(Entity.form(new Form()
                         .param("id", document1Id)
                         .param("order", file2Id)
@@ -151,7 +151,7 @@ public class TestFileResource extends BaseJerseyTest {
         json = target().path("/file/list")
                 .queryParam("id", document1Id)
                 .request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .get(JsonObject.class);
         files = json.getJsonArray("files");
         Assert.assertEquals(2, files.size());
@@ -162,7 +162,7 @@ public class TestFileResource extends BaseJerseyTest {
         response = target().path("/file/zip")
                 .queryParam("id", document1Id)
                 .request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .get();
         is = (InputStream) response.getEntity();
         fileBytes = ByteStreams.toByteArray(is);
@@ -170,13 +170,13 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Deletes a file
         json = target().path("/file/" + file1Id).request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .delete(JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
         // Get the file data (not found)
         response = target().path("/file/" + file1Id + "/data").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .get();
         Assert.assertEquals(Status.NOT_FOUND, Status.fromStatusCode(response.getStatus()));
         
@@ -192,7 +192,7 @@ public class TestFileResource extends BaseJerseyTest {
         json = target().path("/file/list")
                 .queryParam("id", document1Id)
                 .request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .get(JsonObject.class);
         files = json.getJsonArray("files");
         Assert.assertEquals(1, files.size());
@@ -202,7 +202,7 @@ public class TestFileResource extends BaseJerseyTest {
     public void testOrphanFile() throws Exception {
         // Login file2
         clientUtil.createUser("file2");
-        String file2AuthenticationToken = clientUtil.login("file2");
+        String file2Token = clientUtil.login("file2");
         
         // Add a file
         String file1Id = null;
@@ -212,7 +212,7 @@ public class TestFileResource extends BaseJerseyTest {
                 JsonObject json = target()
                         .register(MultiPartFeature.class)
                         .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2Token)
                         .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
                                 MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
                 file1Id = json.getString("id");
@@ -222,14 +222,14 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Get all orphan files
         JsonObject json = target().path("/file/list").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2Token)
                 .get(JsonObject.class);
         JsonArray files = json.getJsonArray("files");
         Assert.assertEquals(1, files.size());
         
         // Get the file data
         Response response = target().path("/file/" + file1Id + "/data").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2Token)
                 .get();
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
@@ -238,7 +238,7 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Create a document
         json = target().path("/document").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2Token)
                 .put(Entity.form(new Form()
                         .param("title", "File test document 1")
                         .param("language", "eng")), JsonObject.class);
@@ -247,7 +247,7 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Attach a file to a document
         json = target().path("/file/" + file1Id).request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2Token)
                 .post(Entity.form(new Form()
                         .param("id", document1Id)), JsonObject.class);
         
@@ -255,7 +255,7 @@ public class TestFileResource extends BaseJerseyTest {
         json = target().path("/file/list")
                 .queryParam("id", document1Id)
                 .request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2Token)
                 .get(JsonObject.class);
         files = json.getJsonArray("files");
         Assert.assertEquals(1, files.size());
@@ -268,7 +268,7 @@ public class TestFileResource extends BaseJerseyTest {
                 json = target()
                         .register(MultiPartFeature.class)
                         .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2Token)
                         .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
                                 MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
                 file2Id = json.getString("id");
@@ -278,7 +278,7 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Deletes a file
         json = target().path("/file/" + file2Id).request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2Token)
                 .delete(JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
     }
@@ -287,7 +287,7 @@ public class TestFileResource extends BaseJerseyTest {
     public void testQuota() throws Exception {
         // Login file_quota
         clientUtil.createUser("file_quota");
-        String fileQuotaAuthenticationToken = clientUtil.login("file_quota");
+        String fileQuotaToken = clientUtil.login("file_quota");
         
         // Add a file (292641 bytes large)
         String file1Id = null;
@@ -297,7 +297,7 @@ public class TestFileResource extends BaseJerseyTest {
                 JsonObject json = target()
                     .register(MultiPartFeature.class)
                     .path("/file").request()
-                    .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                    .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                     .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
                             MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
                 file1Id = json.getString("id");
@@ -307,7 +307,7 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Check current quota
         JsonObject json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
         Assert.assertEquals(292641l, json.getJsonNumber("storage_current").longValue());
         
@@ -318,7 +318,7 @@ public class TestFileResource extends BaseJerseyTest {
                 target()
                     .register(MultiPartFeature.class)
                     .path("/file").request()
-                    .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                    .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                     .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
                             MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
             }
@@ -326,7 +326,7 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Check current quota
         json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
         Assert.assertEquals(585282l, json.getJsonNumber("storage_current").longValue());
         
@@ -337,7 +337,7 @@ public class TestFileResource extends BaseJerseyTest {
                 target()
                     .register(MultiPartFeature.class)
                     .path("/file").request()
-                    .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                    .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                     .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
                             MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
             }
@@ -345,7 +345,7 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Check current quota
         json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
         Assert.assertEquals(877923l, json.getJsonNumber("storage_current").longValue());
         
@@ -356,7 +356,7 @@ public class TestFileResource extends BaseJerseyTest {
                 Response response = target()
                         .register(MultiPartFeature.class)
                         .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                         .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
                                 MediaType.MULTIPART_FORM_DATA_TYPE));
                 Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
@@ -365,13 +365,13 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Deletes a file
         json = target().path("/file/" + file1Id).request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .delete(JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
         // Check current quota
         json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
         Assert.assertEquals(585282l, json.getJsonNumber("storage_current").longValue());
     }

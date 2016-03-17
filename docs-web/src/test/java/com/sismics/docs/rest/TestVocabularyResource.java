@@ -29,7 +29,7 @@ public class TestVocabularyResource extends BaseJerseyTest {
         String vocabulary1Token = clientUtil.login("vocabulary1");
         
         // Login admin
-        String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
+        String adminToken = clientUtil.login("admin", "admin", false);
         
         // Get coverage vocabularies entries
         JsonObject json = target().path("/vocabulary/coverage").request()
@@ -49,7 +49,7 @@ public class TestVocabularyResource extends BaseJerseyTest {
         
         // Create a vocabulary entry with admin
         json = target().path("/vocabulary").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
                         .param("name", "test-voc-1")
                         .param("value", "First value")
@@ -62,7 +62,7 @@ public class TestVocabularyResource extends BaseJerseyTest {
         
         // Create a vocabulary entry with admin
         Response response = target().path("/vocabulary").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
                         .param("name", "NOT_VALID")
                         .param("value", "First value")
@@ -81,7 +81,7 @@ public class TestVocabularyResource extends BaseJerseyTest {
         
         // Update a vocabulary entry with admin
         json = target().path("/vocabulary/" + vocabulary1Id).request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()
                         .param("name", "test-voc-1-updated")
                         .param("value", "First value updated")
@@ -103,7 +103,7 @@ public class TestVocabularyResource extends BaseJerseyTest {
         
         // Delete a vocabulary entry with admin
         json = target().path("/vocabulary/" + vocabulary1Id).request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .delete(JsonObject.class);
         
         // Get test-voc-1-updated vocabularies entries

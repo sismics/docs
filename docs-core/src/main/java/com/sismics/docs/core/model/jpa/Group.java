@@ -46,24 +46,27 @@ public class Group implements Loggable {
         return id;
     }
 
-    public void setId(String id) {
+    public Group setId(String id) {
         this.id = id;
+        return this;
     }
 
     public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(String parentId) {
+    public Group setParentId(String parentId) {
         this.parentId = parentId;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public Group setName(String name) {
         this.name = name;
+        return this;
     }
 
     @Override
@@ -71,8 +74,9 @@ public class Group implements Loggable {
         return deleteDate;
     }
     
-    public void setDeleteDate(Date deleteDate) {
+    public Group setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
+        return this;
     }
     
     @Override

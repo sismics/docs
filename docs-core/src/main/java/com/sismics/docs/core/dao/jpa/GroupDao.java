@@ -20,15 +20,17 @@ import com.sismics.util.context.ThreadLocalContext;
  */
 public class GroupDao {
     /**
-     * Gets a group by its ID.
+     * Returns a group by name.
      * 
-     * @param id Group ID
-     * @return Group
+     * @param name Name
+     * @return Tag
      */
-    public Group getById(String id) {
+    public Group getByName(String name) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select g from Group g where g.name = :name and g.deleteDate is null");
+        q.setParameter("name", name);
         try {
-            return em.find(Group.class, id);
+            return (Group) q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

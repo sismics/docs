@@ -36,11 +36,11 @@ public class TestShareResource extends BaseJerseyTest {
     public void testShareResource() throws Exception {
         // Login share1
         clientUtil.createUser("share1");
-        String share1AuthenticationToken = clientUtil.login("share1");
+        String share1Token = clientUtil.login("share1");
         
         // Create a document
         JsonObject json = target().path("/document").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, share1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, share1Token)
                 .put(Entity.form(new Form()
                         .param("title", "File test document 1")
                         .param("language", "eng")), JsonObject.class);
@@ -55,7 +55,7 @@ public class TestShareResource extends BaseJerseyTest {
                 json = target()
                         .register(MultiPartFeature.class)
                         .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, share1AuthenticationToken)
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, share1Token)
                         .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
                                 MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
                 file1Id = json.getString("id");
@@ -64,7 +64,7 @@ public class TestShareResource extends BaseJerseyTest {
         
         // Share this document
         json = target().path("/share").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, share1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, share1Token)
                 .put(Entity.form(new Form()
                         .param("id", document1Id)
                         .param("name", "4 All")), JsonObject.class);
@@ -107,9 +107,9 @@ public class TestShareResource extends BaseJerseyTest {
         
         // Deletes the share (not allowed)
         clientUtil.createUser("share2");
-        String share2AuthenticationToken = clientUtil.login("share2");
+        String share2Token = clientUtil.login("share2");
         response = target().path("/share/" + share1Id).request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, share2AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, share2Token)
                 .delete();
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
@@ -117,13 +117,13 @@ public class TestShareResource extends BaseJerseyTest {
         
         // Deletes the share
         json = target().path("/share/" + share1Id).request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, share1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, share1Token)
                 .delete(JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
 
         // Deletes the share again
         response = target().path("/share/" + share1Id).request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, share1AuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, share1Token)
                 .delete();
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);

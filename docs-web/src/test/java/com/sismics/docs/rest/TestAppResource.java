@@ -27,11 +27,11 @@ public class TestAppResource extends BaseJerseyTest {
     @Test
     public void testAppResource() {
         // Login admin
-        String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
+        String adminToken = clientUtil.login("admin", "admin", false);
         
         // Check the application info
         JsonObject json = target().path("/app").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
         String currentVersion = json.getString("current_version");
         Assert.assertNotNull(currentVersion);
@@ -44,19 +44,19 @@ public class TestAppResource extends BaseJerseyTest {
         
         // Rebuild Lucene index
         Response response = target().path("/app/batch/reindex").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         
         // Clean storage
         response = target().path("/app/batch/clean_storage").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         
         // Recompute quota
         response = target().path("/app/batch/recompute_quota").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
     }
@@ -69,13 +69,13 @@ public class TestAppResource extends BaseJerseyTest {
     @Test
     public void testLogResource() {
         // Login admin
-        String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
+        String adminToken = clientUtil.login("admin", "admin", false);
         
         // Check the logs (page 1)
         JsonObject json = target().path("/app/log")
                 .queryParam("level", "DEBUG")
                 .request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
         JsonArray logs = json.getJsonArray("logs");
         Assert.assertTrue(logs.size() > 0);
@@ -88,7 +88,7 @@ public class TestAppResource extends BaseJerseyTest {
                 .queryParam("offset",  "10")
                 .queryParam("level", "DEBUG")
                 .request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
         logs = json.getJsonArray("logs");
         Assert.assertTrue(logs.size() > 0);
