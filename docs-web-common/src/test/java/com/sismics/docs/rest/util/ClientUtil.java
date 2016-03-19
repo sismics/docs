@@ -31,22 +31,59 @@ public class ClientUtil {
      * 
      * @param username Username
      */
-    public void createUser(String username) {
+    public void createUser(String username, String... groupNameList) {
         // Login admin to create the user
-        String adminAuthenticationToken = login("admin", "admin", false);
+        String adminToken = login("admin", "admin", false);
         
         // Create the user
-        Form form = new Form();
-        form.param("username", username);
-        form.param("email", username + "@docs.com");
-        form.param("password", "12345678");
-        form.param("storage_quota", "1000000"); // 1MB quota
         resource.path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
-                .put(Entity.form(form), JsonObject.class);
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("username", username)
+                        .param("email", username + "@docs.com")
+                        .param("password", "12345678")
+                        .param("storage_quota", "1000000")), JsonObject.class); // 1MB quota
+        
+        // Add to groups
+        for (String groupName : groupNameList) {
+            resource.path("/group/" + groupName).request()
+                    .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                    .put(Entity.form(new Form()
+                            .param("username", username)), JsonObject.class);
+        }
         
         // Logout admin
-        logout(adminAuthenticationToken);
+        logout(adminToken);
+    }
+    
+    /**
+     * Creates a group.
+     * 
+     * @param name Name
+     */
+    public void createGroup(String name) {
+        createGroup(name, null);
+    }
+    
+    /**
+     * Creates a group.
+     * 
+     * @param name Name
+     * @param parent Parent
+     */
+    public void createGroup(String name, String parentId) {
+        // Login admin to create the group
+        String adminToken = login("admin", "admin", false);
+        
+        // Create the gorup
+        resource.path("/group").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("name", name)
+                        .param("parent", parentId)), JsonObject.class);
+        
+        // Logout admin
+        logout(adminToken);
     }
     
     /**

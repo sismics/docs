@@ -1,16 +1,28 @@
 package com.sismics.docs.core.dao.jpa;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import com.google.common.base.Joiner;
 import com.sismics.docs.core.constant.AuditLogType;
+import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
+import com.sismics.docs.core.dao.jpa.dto.GroupDto;
 import com.sismics.docs.core.model.jpa.Group;
 import com.sismics.docs.core.model.jpa.UserGroup;
 import com.sismics.docs.core.util.AuditLogUtil;
+import com.sismics.docs.core.util.jpa.QueryParam;
+import com.sismics.docs.core.util.jpa.QueryUtil;
+import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
 
 /**
@@ -25,7 +37,7 @@ public class GroupDao {
      * @param name Name
      * @return Tag
      */
-    public Group getByName(String name) {
+    public Group getActiveByName(String name) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select g from Group g where g.name = :name and g.deleteDate is null");
         q.setParameter("name", name);
@@ -81,6 +93,11 @@ public class GroupDao {
         q.setParameter("dateNow", dateNow);
         q.setParameter("groupId", groupId);
         q.executeUpdate();
+        
+        q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.targetId = :groupId and a.deleteDate is null");
+        q.setParameter("groupId", groupDb.getId());
+        q.setParameter("dateNow", dateNow);
+        q.executeUpdate();
 
         // Create audit log
         AuditLogUtil.create(groupDb, AuditLogType.DELETE, userId);
@@ -108,18 +125,107 @@ public class GroupDao {
      * Remove an user from a group.
      * 
      * @param groupId Group ID
+     * @param userId User ID
      */
-    public void removeMember(String userGroupId) {
+    public void removeMember(String groupId, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
             
         // Get the user group
-        Query q = em.createQuery("select ug from UserGroup ug where ug.id = :id and ug.deleteDate is null");
-        q.setParameter("id", userGroupId);
+        Query q = em.createQuery("select ug from UserGroup ug where ug.groupId = :groupId and ug.userId = :userId and ug.deleteDate is null");
+        q.setParameter("groupId", groupId);
+        q.setParameter("userId", userId);
         UserGroup userGroupDb = (UserGroup) q.getSingleResult();
         
         // Delete the user group
         Date dateNow = new Date();
         userGroupDb.setDeleteDate(dateNow);
+    }
+    
+    /**
+     * Returns the list of all groups.
+     * 
+     * @param criteria Search criteria
+     * @param sortCriteria Sort criteria
+     * @return List of groups
+     */
+    public List<GroupDto> findByCriteria(GroupCriteria criteria, SortCriteria sortCriteria) {
+        Map<String, Object> parameterMap = new HashMap<String, Object>();
+        List<String> criteriaList = new ArrayList<String>();
+        
+        StringBuilder sb = new StringBuilder("select g.GRP_ID_C as c0, g.GRP_NAME_C as c1, g.GRP_IDPARENT_C as c2, ug.UGP_ID_C ");
+        sb.append(" from T_GROUP g ");
+        
+        // Add search criterias
+        if (criteria.getSearch() != null) {
+            criteriaList.add("lower(g.GRP_NAME_C) like lower(:search)");
+            parameterMap.put("search", "%" + criteria.getSearch() + "%");
+        }
+        if (criteria.getUserId() != null) {
+            // Left join and post-filtering for recursive groups
+            sb.append((criteria.isRecursive() ? " left " : "")
+                    + " join T_USER_GROUP ug on ug.UGP_IDGROUP_C = g.GRP_ID_C and ug.UGP_IDUSER_C = :userId and ug.UGP_DELETEDATE_D is null ");
+            parameterMap.put("userId", criteria.getUserId());
+        }
+        
+        criteriaList.add("g.GRP_DELETEDATE_D is null");
+        
+        if (!criteriaList.isEmpty()) {
+            sb.append(" where ");
+            sb.append(Joiner.on(" and ").join(criteriaList));
+        }
+        
+        // Perform the search
+        QueryParam queryParam = QueryUtil.getSortedQueryParam(new QueryParam(sb.toString(), parameterMap), sortCriteria);
+        @SuppressWarnings("unchecked")
+        List<Object[]> l = QueryUtil.getNativeQuery(queryParam).getResultList();
+        
+        // Assemble results
+        List<GroupDto> groupDtoList = new ArrayList<>();
+        List<GroupDto> userGroupDtoList = new ArrayList<>();
+        for (Object[] o : l) {
+            int i = 0;
+            GroupDto groupDto = new GroupDto()
+                .setId((String) o[i++])
+                .setName((String) o[i++])
+                .setParentId((String) o[i++]);
+            groupDtoList.add(groupDto);
+            if (o[i++] != null) {
+                userGroupDtoList.add(groupDto);
+            }
+        }
+        
+        // Post-query filtering for recursive groups
+        if (criteria.getUserId() != null && criteria.isRecursive()) {
+            Set<GroupDto> filteredGroupDtoSet = new HashSet<>();
+            for (GroupDto userGroupDto : userGroupDtoList) {
+                filteredGroupDtoSet.add(userGroupDto); // Direct group
+                findGroupParentHierarchy(filteredGroupDtoSet, groupDtoList, userGroupDto, 0); // Indirect groups
+            }
+            groupDtoList = new ArrayList<>(filteredGroupDtoSet);
+        }
+        
+        return groupDtoList;
+    }
+
+    /**
+     * Recursively search group's parents.
+     * 
+     * @param parentGroupDtoSet Resulting parents
+     * @param groupDtoList All groups
+     * @param userGroupDto Reference group to search from
+     * @param depth Depth
+     */
+    private void findGroupParentHierarchy(Set<GroupDto> parentGroupDtoSet, List<GroupDto> groupDtoList, GroupDto userGroupDto, int depth) {
+        if (userGroupDto.getParentId() == null || depth == 10) { // Max depth 10 to avoid infinite loop
+            return;
+        }
+        
+        for (GroupDto groupDto : groupDtoList) {
+            if (groupDto.getId().equals(userGroupDto.getParentId())) {
+                parentGroupDtoSet.add(groupDto); // Add parent
+                findGroupParentHierarchy(parentGroupDtoSet, groupDtoList, groupDto, depth + 1); // Find parent's parents
+            }
+        }
     }
 }
 

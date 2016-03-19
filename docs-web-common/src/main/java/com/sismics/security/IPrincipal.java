@@ -1,7 +1,7 @@
 package com.sismics.security;
 
 import java.security.Principal;
-import java.util.List;
+import java.util.Set;
 
 import org.joda.time.DateTimeZone;
 
@@ -31,7 +31,7 @@ public interface IPrincipal extends Principal {
      * 
      * @return List of group ID
      */
-    public List<String> getGroupIdList();
+    public Set<String> getGroupIdSet();
     
     /**
      * Returns the timezone of the principal.

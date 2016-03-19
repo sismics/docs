@@ -1,6 +1,7 @@
 package com.sismics.docs.rest.resource;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -19,14 +20,16 @@ import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
+import com.sismics.docs.core.dao.jpa.GroupDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
+import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
 import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
+import com.sismics.docs.core.dao.jpa.dto.GroupDto;
 import com.sismics.docs.core.dao.jpa.dto.UserDto;
 import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Document;
+import com.sismics.docs.core.model.jpa.Group;
 import com.sismics.docs.core.model.jpa.User;
-import com.sismics.docs.core.util.jpa.PaginatedList;
-import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
@@ -42,27 +45,52 @@ public class AclResource extends BaseResource {
     /**
      * Add an ACL.
      * 
+     * @param sourceId Source ID
+     * @param permStr Permission
+     * @param targetName Target name
+     * @param type ACL type
      * @return Response
      */
     @PUT
     public Response add(@FormParam("source") String sourceId,
             @FormParam("perm") String permStr,
-            @FormParam("username") String username) {
+            @FormParam("target") String targetName,
+            @FormParam("type") String typeStr) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         
-        // TODO Allow group input
         // Validate input
         ValidationUtil.validateRequired(sourceId, "source");
         PermType perm = PermType.valueOf(ValidationUtil.validateLength(permStr, "perm", 1, 30, false));
-        username = ValidationUtil.validateLength(username, "username", 1, 50, false);
+        AclTargetType type = AclTargetType.valueOf(ValidationUtil.validateLength(typeStr, "type", 1, 10, false));
+        targetName = ValidationUtil.validateLength(targetName, "target", 1, 50, false);
         
-        // Validate the target user
-        UserDao userDao = new UserDao();
-        User user = userDao.getActiveByUsername(username);
-        if (user == null) {
-            throw new ClientException("UserNotFound", MessageFormat.format("User not found: {0}", username));
+        // Search user or group
+        String targetId = null;
+        switch (type) {
+        case USER:
+            UserDao userDao = new UserDao();
+            User user = userDao.getActiveByUsername(targetName);
+            if (user != null) {
+                targetId = user.getId();
+            }
+            break;
+        case GROUP:
+            GroupDao groupDao = new GroupDao();
+            Group group = groupDao.getActiveByName(targetName);
+            if (group != null) {
+                targetId = group.getId();
+            }
+            break;
+        case SHARE:
+            // Share must use the Share REST resource
+            break;
+        }
+        
+        // Does a target has been found?
+        if (targetId == null) {
+            throw new ClientException("InvalidTarget", MessageFormat.format("This target does not exist: {0}", targetName));
         }
         
         // Check permission on the source by the principal
@@ -75,7 +103,7 @@ public class AclResource extends BaseResource {
         Acl acl = new Acl();
         acl.setSourceId(sourceId);
         acl.setPerm(perm);
-        acl.setTargetId(user.getId());
+        acl.setTargetId(targetId);
         
         // Avoid duplicates
         if (!aclDao.checkPermission(acl.getSourceId(), acl.getPerm(), Lists.newArrayList(acl.getTargetId()))) {
@@ -85,8 +113,8 @@ public class AclResource extends BaseResource {
             JsonObjectBuilder response = Json.createObjectBuilder()
                     .add("perm", acl.getPerm().name())
                     .add("id", acl.getTargetId())
-                    .add("name", user.getUsername())
-                    .add("type", AclTargetType.USER.name());
+                    .add("name", targetName)
+                    .add("type", type.name());
             return Response.ok().entity(response.build()).build();
         }
         
@@ -96,7 +124,9 @@ public class AclResource extends BaseResource {
     /**
      * Deletes an ACL.
      * 
-     * @param id ACL ID
+     * @param sourceId Source ID
+     * @param permStr Permission
+     * @param targetId Target ID
      * @return Response
      */
     @DELETE
@@ -155,20 +185,25 @@ public class AclResource extends BaseResource {
         // Search users
         UserDao userDao = new UserDao();
         JsonArrayBuilder users = Json.createArrayBuilder();
-        
-        PaginatedList<UserDto> paginatedList = PaginatedLists.create();
         SortCriteria sortCriteria = new SortCriteria(1, true);
-
-        userDao.findByCriteria(paginatedList, new UserCriteria().setSearch(search), sortCriteria);
-        for (UserDto userDto : paginatedList.getResultList()) {
+        List<UserDto> userDtoList = userDao.findByCriteria(new UserCriteria().setSearch(search), sortCriteria);
+        for (UserDto userDto : userDtoList) {
             users.add(Json.createObjectBuilder()
-                    .add("username", userDto.getUsername()));
+                    .add("name", userDto.getUsername()));
         }
         
-        // TODO Returns groups too
+        // Search groups
+        GroupDao groupDao = new GroupDao();
+        JsonArrayBuilder groups = Json.createArrayBuilder();
+        List<GroupDto> groupDtoList = groupDao.findByCriteria(new GroupCriteria().setSearch(search), sortCriteria);
+        for (GroupDto groupDto : groupDtoList) {
+            groups.add(Json.createObjectBuilder()
+                    .add("name", groupDto.getName()));
+        }
         
         JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("users", users);
+                .add("users", users)
+                .add("groups", groups);
         return Response.ok().entity(response.build()).build();
     }
 }

@@ -37,6 +37,7 @@ public class ShareResource extends BaseResource {
      * Add a share to a document.
      *
      * @param documentId Document ID
+     * @param name Share name
      * @return Response
      */
     @PUT

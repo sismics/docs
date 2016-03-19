@@ -1,11 +1,8 @@
 package com.sismics.security;
 
-import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTimeZone;
-
-import jersey.repackaged.com.google.common.collect.Lists;
 
 /**
  * Authenticated users principal.
@@ -37,6 +34,11 @@ public class UserPrincipal implements IPrincipal {
      * User base functions.
      */
     private Set<String> baseFunctionSet;
+    
+    /**
+     * User groups.
+     */
+    private Set<String> groupIdSet;
     
     /**
      * Constructor of UserPrincipal.
@@ -99,8 +101,11 @@ public class UserPrincipal implements IPrincipal {
     }
 
     @Override
-    public List<String> getGroupIdList() {
-        // TODO Real groups
-        return Lists.newArrayList("members");
+    public Set<String> getGroupIdSet() {
+        return groupIdSet;
+    }
+    
+    public void setGroupIdSet(Set<String> groupIdSet) {
+        this.groupIdSet = groupIdSet;
     }
 }

@@ -149,7 +149,7 @@ public class DocumentResource extends BaseResource {
             
             if (!principal.isAnonymous()
                     && (aclDto.getTargetId().equals(principal.getId())
-                            || principal.getGroupIdList().contains(aclDto.getTargetId()))
+                            || principal.getGroupIdSet().contains(aclDto.getTargetId()))
                     && aclDto.getPerm() == PermType.WRITE) {
                 // The document is writable for the current user
                 writable = true;

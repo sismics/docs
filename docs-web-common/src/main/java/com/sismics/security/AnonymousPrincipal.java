@@ -1,10 +1,10 @@
 package com.sismics.security;
 
-import java.util.List;
+import java.util.Set;
 
 import org.joda.time.DateTimeZone;
 
-import com.google.common.collect.Lists;
+import jersey.repackaged.com.google.common.collect.Sets;
 
 /**
  * Anonymous principal.
@@ -56,7 +56,7 @@ public class AnonymousPrincipal implements IPrincipal {
     }
 
     @Override
-    public List<String> getGroupIdList() {
-        return Lists.newArrayList();
+    public Set<String> getGroupIdSet() {
+        return Sets.newHashSet();
     }
 }

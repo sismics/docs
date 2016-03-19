@@ -22,10 +22,10 @@
 
   <form name="aclForm" class="form-horizontal">
     <div class="form-group">
-      <label class=" col-sm-2 control-label" for="inputTarget">User</label>
+      <label class=" col-sm-2 control-label" for="inputTarget">For</label>
       <div class="col-sm-3">
         <input required ng-maxlength="50" class="form-control" type="text" id="inputTarget"
-               placeholder="Type a username" name="username" ng-model="acl.username" autocomplete="off"
+               placeholder="Type a username" name="username" ng-model="acl.target" autocomplete="off"
                typeahead="username for username in getTargetAclTypeahead($viewValue) | filter: $viewValue"
                typeahead-wait-ms="200" />
       </div>

@@ -68,10 +68,11 @@ public class AclDao {
     @SuppressWarnings("unchecked")
     public List<AclDto> getBySourceId(String sourceId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select a.ACL_ID_C, a.ACL_PERM_C, a.ACL_TARGETID_C, u.USE_USERNAME_C, s.SHA_NAME_C");
+        StringBuilder sb = new StringBuilder("select a.ACL_ID_C, a.ACL_PERM_C, a.ACL_TARGETID_C, u.USE_USERNAME_C, s.SHA_NAME_C, g.GRP_NAME_C ");
         sb.append(" from T_ACL a ");
         sb.append(" left join T_USER u on u.USE_ID_C = a.ACL_TARGETID_C ");
         sb.append(" left join T_SHARE s on s.SHA_ID_C = a.ACL_TARGETID_C ");
+        sb.append(" left join T_GROUP g on g.GRP_ID_C = a.ACL_TARGETID_C ");
         sb.append(" where a.ACL_DELETEDATE_D is null and a.ACL_SOURCEID_C = :sourceId ");
         
         // Perform the query
@@ -89,9 +90,19 @@ public class AclDao {
             aclDto.setTargetId((String) o[i++]);
             String userName = (String) o[i++];
             String shareName = (String) o[i++];
-            aclDto.setTargetName(userName == null ? shareName : userName);
-            aclDto.setTargetType(userName == null ?
-                    AclTargetType.SHARE.name() : AclTargetType.USER.name());
+            String groupName = (String) o[i++];
+            if (userName != null) {
+                aclDto.setTargetName(userName);
+                aclDto.setTargetType(AclTargetType.USER.name());
+            }
+            if (shareName != null) {
+                aclDto.setTargetName(shareName);
+                aclDto.setTargetType(AclTargetType.SHARE.name());
+            }
+            if (groupName != null) {
+                aclDto.setTargetName(groupName);
+                aclDto.setTargetType(AclTargetType.GROUP.name());
+            }
             aclDtoList.add(aclDto);
         }
         return aclDtoList;

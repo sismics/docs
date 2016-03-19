@@ -3,6 +3,7 @@ package com.sismics.util.filter;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.Filter;
@@ -20,13 +21,17 @@ import org.slf4j.LoggerFactory;
 
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.AuthenticationTokenDao;
+import com.sismics.docs.core.dao.jpa.GroupDao;
 import com.sismics.docs.core.dao.jpa.RoleBaseFunctionDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
+import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
+import com.sismics.docs.core.dao.jpa.dto.GroupDto;
 import com.sismics.docs.core.model.jpa.AuthenticationToken;
 import com.sismics.docs.core.model.jpa.User;
-import com.sismics.docs.core.util.TransactionUtil;
 import com.sismics.security.AnonymousPrincipal;
 import com.sismics.security.UserPrincipal;
+
+import jersey.repackaged.com.google.common.collect.Sets;
 
 /**
  * This filter is used to authenticate the user having an active session via an authentication token stored in database.
@@ -113,10 +118,6 @@ public class TokenBasedSecurityFilter implements Filter {
                 User user = userDao.getById(authenticationToken.getUserId());
                 if (user != null && user.getDeleteDate() == null) {
                     injectAuthenticatedUser(request, user);
-                    
-                    // Update the last connection date
-                    authenticationTokenDao.updateLastConnectionDate(authenticationToken.getId());
-                    TransactionUtil.commit();
                 } else {
                     injectAnonymousUser(request);
                 }
@@ -157,6 +158,17 @@ public class TokenBasedSecurityFilter implements Filter {
         RoleBaseFunctionDao userBaseFuction = new RoleBaseFunctionDao();
         Set<String> baseFunctionSet = userBaseFuction.findByRoleId(user.getRoleId());
         userPrincipal.setBaseFunctionSet(baseFunctionSet);
+        
+        // Add groups
+        GroupDao groupDao = new GroupDao();
+        List<GroupDto> groupDtoList = groupDao.findByCriteria(new GroupCriteria()
+                .setUserId(user.getId())
+                .setRecursive(true), null);
+        Set<String> groupIdSet = Sets.newHashSet();
+        for (GroupDto groupDto : groupDtoList) {
+            groupIdSet.add(groupDto.getId());
+        }
+        userPrincipal.setGroupIdSet(groupIdSet);
         
         // Add email
         userPrincipal.setEmail(user.getEmail());

@@ -28,6 +28,7 @@ Features
 - 256-bit AES encryption
 - Tag system with relations
 - Multi-users ACL system
+- Hierarchical groups
 - Audit log
 - Comments
 - Storage quota per user

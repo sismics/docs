@@ -105,13 +105,7 @@ public class PaginatedLists {
      * @return List of results
      */
     public static <E> List<Object[]> executePaginatedQuery(PaginatedList<E> paginatedList, QueryParam queryParam, SortCriteria sortCriteria) {
-        StringBuilder sb = new StringBuilder(queryParam.getQueryString());
-        sb.append(" order by c");
-        sb.append(sortCriteria.getColumn());
-        sb.append(sortCriteria.isAsc() ? " asc" : " desc");
-        
-        QueryParam sortedQueryParam = new QueryParam(sb.toString(), queryParam.getParameterMap());
-        
+        QueryParam sortedQueryParam = QueryUtil.getSortedQueryParam(queryParam, sortCriteria);
         executeCountQuery(paginatedList, sortedQueryParam);
         return executeResultQuery(paginatedList, sortedQueryParam);
     }

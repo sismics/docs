@@ -29,9 +29,12 @@ import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.AuthenticationTokenDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
+import com.sismics.docs.core.dao.jpa.GroupDao;
 import com.sismics.docs.core.dao.jpa.RoleBaseFunctionDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
+import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
 import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
+import com.sismics.docs.core.dao.jpa.dto.GroupDto;
 import com.sismics.docs.core.dao.jpa.dto.UserDto;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
@@ -41,8 +44,6 @@ import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.EncryptionUtil;
-import com.sismics.docs.core.util.jpa.PaginatedList;
-import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
@@ -299,14 +300,7 @@ public class UserResource extends BaseResource {
         }
 
         // Get the value of the session token
-        String authToken = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
-                    authToken = cookie.getValue();
-                }
-            }
-        }
+        String authToken = getAuthToken();
         
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
         AuthenticationToken authenticationToken = null;
@@ -457,18 +451,39 @@ public class UserResource extends BaseResource {
                 response.add("is_default_password", Constants.DEFAULT_ADMIN_PASSWORD.equals(adminUser.getPassword()));
             }
         } else {
+            // Update the last connection date
+            String authToken = getAuthToken();
+            AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
+            authenticationTokenDao.updateLastConnectionDate(authToken);
+            
+            // Build the response
             response.add("anonymous", false);
             UserDao userDao = new UserDao();
+            GroupDao groupDao = new GroupDao();
             User user = userDao.getById(principal.getId());
+            List<GroupDto> groupDtoList = groupDao.findByCriteria(new GroupCriteria()
+                    .setUserId(user.getId())
+                    .setRecursive(true), null);
+            
             response.add("username", user.getUsername())
                     .add("email", user.getEmail())
                     .add("storage_quota", user.getStorageQuota())
                     .add("storage_current", user.getStorageCurrent());
+            
+            // Base functions
             JsonArrayBuilder baseFunctions = Json.createArrayBuilder();
             for (String baseFunction : ((UserPrincipal) principal).getBaseFunctionSet()) {
                 baseFunctions.add(baseFunction);
             }
+            
+            // Groups
+            JsonArrayBuilder groups = Json.createArrayBuilder();
+            for (GroupDto groupDto : groupDtoList) {
+                groups.add(groupDto.getName());
+            }
+            
             response.add("base_functions", baseFunctions)
+                    .add("groups", groups)
                     .add("is_default_password", hasBaseFunction(BaseFunction.ADMIN) && Constants.DEFAULT_ADMIN_PASSWORD.equals(user.getPassword()));
         }
         
@@ -495,8 +510,19 @@ public class UserResource extends BaseResource {
             throw new ClientException("UserNotFound", "The user doesn't exist");
         }
         
+        // Groups
+        GroupDao groupDao = new GroupDao();
+        List<GroupDto> groupDtoList = groupDao.findByCriteria(
+                new GroupCriteria().setUserId(user.getId()),
+                new SortCriteria(1, true));
+        JsonArrayBuilder groups = Json.createArrayBuilder();
+        for (GroupDto groupDto : groupDtoList) {
+            groups.add(groupDto.getName());
+        }
+        
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("username", user.getUsername())
+                .add("groups", groups)
                 .add("email", user.getEmail())
                 .add("storage_quota", user.getStorageQuota())
                 .add("storage_current", user.getStorageCurrent());
@@ -515,8 +541,6 @@ public class UserResource extends BaseResource {
     @GET
     @Path("list")
     public Response list(
-            @QueryParam("limit") Integer limit,
-            @QueryParam("offset") Integer offset,
             @QueryParam("sort_column") Integer sortColumn,
             @QueryParam("asc") Boolean asc) {
         if (!authenticate()) {
@@ -524,12 +548,11 @@ public class UserResource extends BaseResource {
         }
         
         JsonArrayBuilder users = Json.createArrayBuilder();
-        PaginatedList<UserDto> paginatedList = PaginatedLists.create(limit, offset);
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
 
         UserDao userDao = new UserDao();
-        userDao.findByCriteria(paginatedList, new UserCriteria(), sortCriteria);
-        for (UserDto userDto : paginatedList.getResultList()) {
+        List<UserDto> userDtoList = userDao.findByCriteria(new UserCriteria(), sortCriteria);
+        for (UserDto userDto : userDtoList) {
             users.add(Json.createObjectBuilder()
                     .add("id", userDto.getId())
                     .add("username", userDto.getUsername())
@@ -540,7 +563,6 @@ public class UserResource extends BaseResource {
         }
         
         JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("total", paginatedList.getResultCount())
                 .add("users", users);
         return Response.ok().entity(response.build()).build();
     }
@@ -558,14 +580,7 @@ public class UserResource extends BaseResource {
         }
         
         // Get the value of the session token
-        String authToken = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
-                    authToken = cookie.getValue();
-                }
-            }
-        }
+        String authToken = getAuthToken();
         
         JsonArrayBuilder sessions = Json.createArrayBuilder();
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
@@ -600,14 +615,7 @@ public class UserResource extends BaseResource {
         }
         
         // Get the value of the session token
-        String authToken = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
-                    authToken = cookie.getValue();
-                }
-            }
-        }
+        String authToken = getAuthToken();
         
         // Remove other tokens
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
@@ -617,5 +625,21 @@ public class UserResource extends BaseResource {
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
         return Response.ok().entity(response.build()).build();
+    }
+    
+    /**
+     * Returns the authentication token value.
+     * 
+     * @return Token value
+     */
+    private String getAuthToken() {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }

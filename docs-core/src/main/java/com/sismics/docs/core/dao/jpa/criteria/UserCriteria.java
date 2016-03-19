@@ -1,7 +1,5 @@
 package com.sismics.docs.core.dao.jpa.criteria;
 
-
-
 /**
  * User criteria.
  *

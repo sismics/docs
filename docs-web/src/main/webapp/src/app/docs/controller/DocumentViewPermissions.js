@@ -74,7 +74,7 @@ angular.module('docs').controller('DocumentViewPermissions', function ($scope, $
         .get({
           search: $viewValue
         }).then(function(data) {
-          deferred.resolve(_.pluck(data.users, 'username'), true);
+          deferred.resolve(_.pluck(data.users, 'name'), true);
         });
     return deferred.promise;
   };

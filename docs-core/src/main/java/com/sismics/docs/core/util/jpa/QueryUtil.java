@@ -1,10 +1,11 @@
 package com.sismics.docs.core.util.jpa;
 
-import com.sismics.util.context.ThreadLocalContext;
+import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.util.Map.Entry;
+
+import com.sismics.util.context.ThreadLocalContext;
 
 /**
  * Query utilities.
@@ -26,5 +27,23 @@ public class QueryUtil {
             query.setParameter(entry.getKey(), entry.getValue());
         }
         return query;
+    }
+    
+    /**
+     * Returns sorted query parameters.
+     * 
+     * @param queryParam Query parameters
+     * @param sortCriteria Sort criteria
+     * @return Sorted query parameters
+     */
+    public static QueryParam getSortedQueryParam(QueryParam queryParam, SortCriteria sortCriteria) {
+        StringBuilder sb = new StringBuilder(queryParam.getQueryString());
+        if (sortCriteria != null) {
+            sb.append(" order by c");
+            sb.append(sortCriteria.getColumn());
+            sb.append(sortCriteria.isAsc() ? " asc" : " desc");
+        }
+        
+        return new QueryParam(sb.toString(), queryParam.getParameterMap());
     }
 }
