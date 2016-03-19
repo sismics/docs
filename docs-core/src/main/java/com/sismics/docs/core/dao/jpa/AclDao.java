@@ -68,7 +68,8 @@ public class AclDao {
     @SuppressWarnings("unchecked")
     public List<AclDto> getBySourceId(String sourceId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select a.ACL_ID_C, a.ACL_PERM_C, a.ACL_TARGETID_C, u.USE_USERNAME_C, s.SHA_NAME_C, g.GRP_NAME_C ");
+        StringBuilder sb = new StringBuilder("select a.ACL_ID_C, a.ACL_PERM_C, a.ACL_TARGETID_C, ");
+        sb.append(" u.USE_USERNAME_C, s.SHA_ID_C, s.SHA_NAME_C, g.GRP_NAME_C ");
         sb.append(" from T_ACL a ");
         sb.append(" left join T_USER u on u.USE_ID_C = a.ACL_TARGETID_C ");
         sb.append(" left join T_SHARE s on s.SHA_ID_C = a.ACL_TARGETID_C ");
@@ -89,13 +90,14 @@ public class AclDao {
             aclDto.setPerm(PermType.valueOf((String) o[i++]));
             aclDto.setTargetId((String) o[i++]);
             String userName = (String) o[i++];
+            String shareId = (String) o[i++];
             String shareName = (String) o[i++];
             String groupName = (String) o[i++];
             if (userName != null) {
                 aclDto.setTargetName(userName);
                 aclDto.setTargetType(AclTargetType.USER.name());
             }
-            if (shareName != null) {
+            if (shareId != null) { // Use ID because share name is nullable
                 aclDto.setTargetName(shareName);
                 aclDto.setTargetType(AclTargetType.SHARE.name());
             }

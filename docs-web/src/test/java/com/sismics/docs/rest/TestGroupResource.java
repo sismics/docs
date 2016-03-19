@@ -41,11 +41,24 @@ public class TestGroupResource extends BaseJerseyTest {
         clientUtil.createUser("group1", "g112", "g12");
         String group1Token = clientUtil.login("group1");
         
-        // Check admin groups (all computed groups)
-        JsonObject json = target().path("/user").request()
+        // Get all groups
+        JsonObject json = target().path("/group")
+                .queryParam("sort_column", "1")
+                .queryParam("asc", "true")
+                .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
         JsonArray groups = json.getJsonArray("groups");
+        Assert.assertEquals(6, groups.size());
+        JsonObject groupG11 = groups.getJsonObject(2);
+        Assert.assertEquals("g11", groupG11.getString("name"));
+        Assert.assertEquals("g1", groupG11.getString("parent"));
+        
+        // Check admin groups (all computed groups)
+        json = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        groups = json.getJsonArray("groups");
         Assert.assertEquals(1, groups.size());
         Assert.assertEquals("administrators", groups.getString(0));
         

@@ -21,6 +21,11 @@ public class GroupDto {
      */
     private String parentId;
     
+    /**
+     * Parent name.
+     */
+    private String parentName;
+    
     public String getId() {
         return id;
     }
@@ -48,6 +53,15 @@ public class GroupDto {
         return this;
     }
     
+    public String getParentName() {
+        return parentName;
+    }
+
+    public GroupDto setParentName(String parentName) {
+        this.parentName = parentName;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return id.equals(((GroupDto) obj).getId());

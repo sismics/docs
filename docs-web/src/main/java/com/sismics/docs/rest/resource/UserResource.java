@@ -532,8 +532,6 @@ public class UserResource extends BaseResource {
     /**
      * Returns all active users.
      * 
-     * @param limit Page limit
-     * @param offset Page offset
      * @param sortColumn Sort index
      * @param asc If true, ascending sorting, else descending
      * @return Response

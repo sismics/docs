@@ -4,12 +4,15 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -21,9 +24,11 @@ import com.sismics.docs.core.dao.jpa.dto.GroupDto;
 import com.sismics.docs.core.model.jpa.Group;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.model.jpa.UserGroup;
+import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 
 /**
@@ -175,6 +180,37 @@ public class GroupResource extends BaseResource {
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+    
+    /**
+     * Returns all active groups.
+     * 
+     * @param sortColumn Sort index
+     * @param asc If true, ascending sorting, else descending
+     * @return Response
+     */
+    @GET
+    public Response list(
+            @QueryParam("sort_column") Integer sortColumn,
+            @QueryParam("asc") Boolean asc) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        
+        JsonArrayBuilder groups = Json.createArrayBuilder();
+        SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
+
+        GroupDao groupDao = new GroupDao();
+        List<GroupDto> groupDtoList = groupDao.findByCriteria(new GroupCriteria(), sortCriteria);
+        for (GroupDto groupDto : groupDtoList) {
+            groups.add(Json.createObjectBuilder()
+                    .add("name", groupDto.getName())
+                    .add("parent", JsonUtil.nullable(groupDto.getParentName())));
+        }
+        
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("groups", groups);
         return Response.ok().entity(response.build()).build();
     }
 }
