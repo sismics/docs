@@ -152,7 +152,10 @@ public class GroupDao {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
         List<String> criteriaList = new ArrayList<String>();
         
-        StringBuilder sb = new StringBuilder("select g.GRP_ID_C as c0, g.GRP_NAME_C as c1, g.GRP_IDPARENT_C as c2, ug.UGP_ID_C ");
+        StringBuilder sb = new StringBuilder("select g.GRP_ID_C as c0, g.GRP_NAME_C as c1, g.GRP_IDPARENT_C as c2 ");
+        if (criteria.getUserId() != null) {
+            sb.append(" , ug.UGP_ID_C ");
+        }
         sb.append(" from T_GROUP g ");
         
         // Add search criterias
@@ -189,7 +192,7 @@ public class GroupDao {
                 .setName((String) o[i++])
                 .setParentId((String) o[i++]);
             groupDtoList.add(groupDto);
-            if (o[i++] != null) {
+            if (criteria.getUserId() != null && o[i++] != null) {
                 userGroupDtoList.add(groupDto);
             }
         }

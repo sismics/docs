@@ -219,7 +219,7 @@ public class TestAclResource extends BaseJerseyTest {
                 .delete();
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         
-        // Search target list
+        // Search target list (acl)
         json = target().path("/acl/target/search")
                 .queryParam("search", "acl")
                 .request()
@@ -228,6 +228,17 @@ public class TestAclResource extends BaseJerseyTest {
         JsonArray users = json.getJsonArray("users");
         Assert.assertEquals(2, users.size());
         JsonArray groups = json.getJsonArray("groups");
+        Assert.assertEquals(1, groups.size());
+        
+        // Search target list (admin)
+        json = target().path("/acl/target/search")
+                .queryParam("search", "admin")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl1Token)
+                .get(JsonObject.class);
+        users = json.getJsonArray("users");
+        Assert.assertEquals(1, users.size());
+        groups = json.getJsonArray("groups");
         Assert.assertEquals(1, groups.size());
     }
 }
