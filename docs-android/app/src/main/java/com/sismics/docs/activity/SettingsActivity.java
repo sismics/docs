@@ -12,7 +12,6 @@ import com.sismics.docs.fragment.SettingsFragment;
  * @author bgamard.
  */
 public class SettingsActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

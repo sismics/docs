@@ -659,6 +659,10 @@ public class DocumentViewActivity extends AppCompatActivity {
                             Intent intent = new Intent(DocumentViewActivity.this, UserProfileActivity.class);
                             intent.putExtra("username", acl.getName());
                             startActivity(intent);
+                        } else if (acl.getType().equals("GROUP")) {
+                            Intent intent = new Intent(DocumentViewActivity.this, GroupProfileActivity.class);
+                            intent.putExtra("name", acl.getName());
+                            startActivity(intent);
                         }
                     }
                 });

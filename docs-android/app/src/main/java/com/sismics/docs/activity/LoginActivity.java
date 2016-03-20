@@ -30,7 +30,6 @@ import org.json.JSONObject;
  * @author bgamard
  */
 public class LoginActivity extends AppCompatActivity {
-
     /**
      * User interface.
      */

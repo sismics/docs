@@ -13,14 +13,15 @@ import com.sismics.docs.listener.HttpCallback;
 import com.sismics.docs.model.application.ApplicationContext;
 import com.sismics.docs.resource.UserResource;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * User profile activity.
+ * Group profile activity.
  *
  * @author bgamard.
  */
-public class UserProfileActivity extends AppCompatActivity {
+public class GroupProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,36 +39,36 @@ public class UserProfileActivity extends AppCompatActivity {
             return;
         }
 
-        // Input username
-        final String username = getIntent().getStringExtra("username");
-        if (username == null) {
+        // Input name
+        final String name = getIntent().getStringExtra("name");
+        if (name == null) {
             finish();
             return;
         }
 
         // Setup the activity
-        setTitle(username);
-        setContentView(R.layout.userprofile_activity);
+        setTitle(name);
+        setContentView(R.layout.groupprofile_activity);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         }
 
-        // Get the user and populate the view
+        // Get the group and populate the view
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         final View layoutView = findViewById(R.id.layout);
         progressBar.setVisibility(View.VISIBLE);
         layoutView.setVisibility(View.GONE);
-        UserResource.get(this, username, new HttpCallback() {
+        UserResource.get(this, name, new HttpCallback() {
             @Override
             public void onSuccess(JSONObject json) {
-                TextView emailTextView = (TextView) findViewById(R.id.emailTextView);
-                emailTextView.setText(json.optString("email"));
-
-                TextView quotaTextView = (TextView) findViewById(R.id.quotaTextView);
-                quotaTextView.setText(getString(R.string.storage_display,
-                        Math.round(json.optLong("storage_current") / 1000000),
-                        Math.round(json.optLong("storage_quota") / 1000000)));
+                TextView membersTextView = (TextView) findViewById(R.id.membersTextView);
+                JSONArray members = json.optJSONArray("members");
+                String output = "";
+                for (int i = 0; i < members.length(); i++) {
+                    output += members.optString(i) + "; ";
+                }
+                membersTextView.setText(output);
             }
 
             @Override

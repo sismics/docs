@@ -42,7 +42,6 @@ import org.json.JSONObject;
  */
 
 public class MainActivity extends AppCompatActivity {
-    
     private ActionBarDrawerToggle drawerToggle;
     private MenuItem searchItem;
     private DrawerLayout drawerLayout;

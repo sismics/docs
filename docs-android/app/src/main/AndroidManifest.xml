@@ -55,6 +55,9 @@
             android:name=".activity.UserProfileActivity">
         </activity>
         <activity
+            android:name=".activity.GroupProfileActivity">
+        </activity>
+        <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/settings">
         </activity>
