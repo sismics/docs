@@ -281,6 +281,11 @@ public class UserDao {
             parameterMap.put("search", "%" + criteria.getSearch() + "%");
         }
         
+        if (criteria.getGroupId() != null) {
+            sb.append(" join T_USER_GROUP ug on ug.UGP_IDUSER_C = u.USE_ID_C and ug.UGP_IDGROUP_C = :groupId and ug.UGP_DELETEDATE_D is null ");
+            parameterMap.put("groupId", criteria.getGroupId());
+        }
+        
         criteriaList.add("u.USE_DELETEDATE_D is null");
         
         if (!criteriaList.isEmpty()) {

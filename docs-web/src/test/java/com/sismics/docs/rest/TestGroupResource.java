@@ -86,6 +86,15 @@ public class TestGroupResource extends BaseJerseyTest {
         Assert.assertEquals("g112", groups.getString(0));
         Assert.assertEquals("g12", groups.getString(1));
         
+        // List all users in group1
+        json = target().path("/user/list")
+                .queryParam("group", "g112")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        JsonArray users = json.getJsonArray("users");
+        Assert.assertEquals(1, users.size());
+        
         // Add group1 to g112 (again)
         json = target().path("/group/g112").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)

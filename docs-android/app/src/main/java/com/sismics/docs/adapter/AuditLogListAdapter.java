@@ -76,6 +76,7 @@ public class AuditLogListAdapter extends BaseAdapter {
             case "Acl":
             case "Tag":
             case "User":
+            case "Group":
                 message.append(" : ");
                 message.append(log.optString("message"));
                 break;

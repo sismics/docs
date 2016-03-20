@@ -42,6 +42,7 @@ import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.AuthenticationToken;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.model.jpa.Group;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.EncryptionUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -534,13 +535,15 @@ public class UserResource extends BaseResource {
      * 
      * @param sortColumn Sort index
      * @param asc If true, ascending sorting, else descending
+     * @param groupName Only return users from this group
      * @return Response
      */
     @GET
     @Path("list")
     public Response list(
             @QueryParam("sort_column") Integer sortColumn,
-            @QueryParam("asc") Boolean asc) {
+            @QueryParam("asc") Boolean asc,
+            @QueryParam("group") String groupName) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -548,8 +551,18 @@ public class UserResource extends BaseResource {
         JsonArrayBuilder users = Json.createArrayBuilder();
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
 
+        // Validate the group
+        String groupId = null;
+        if (!Strings.isNullOrEmpty(groupName)) {
+            GroupDao groupDao = new GroupDao();
+            Group group = groupDao.getActiveByName(groupName);
+            if (group != null) {
+                groupId = group.getId();
+            }
+        }
+        
         UserDao userDao = new UserDao();
-        List<UserDto> userDtoList = userDao.findByCriteria(new UserCriteria(), sortCriteria);
+        List<UserDto> userDtoList = userDao.findByCriteria(new UserCriteria().setGroupId(groupId), sortCriteria);
         for (UserDto userDto : userDtoList) {
             users.add(Json.createObjectBuilder()
                     .add("id", userDto.getId())

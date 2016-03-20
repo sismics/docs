@@ -35,7 +35,7 @@ public class GroupDao {
      * Returns a group by name.
      * 
      * @param name Name
-     * @return Tag
+     * @return Group
      */
     public Group getActiveByName(String name) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
