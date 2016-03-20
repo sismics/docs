@@ -48,7 +48,7 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
   /**
    * Delete the current user.
    */
-  $scope.remove = function () {
+  $scope.remove = function() {
     var title = 'Delete user';
     var msg = 'Do you really want to delete this user? All associated documents, files and tags will be deleted';
     var btns = [{result:'cancel', label: 'Cancel'}, {result:'ok', label: 'OK', cssClass: 'btn-primary'}];
@@ -58,7 +58,7 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
         Restangular.one('user', $stateParams.username).remove().then(function() {
           $scope.loadUsers();
           $state.go('settings.user');
-        }, function () {
+        }, function() {
           $state.go('settings.user');
         });
       }

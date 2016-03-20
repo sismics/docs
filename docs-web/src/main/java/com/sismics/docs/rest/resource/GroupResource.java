@@ -21,7 +21,9 @@ import com.google.common.base.Strings;
 import com.sismics.docs.core.dao.jpa.GroupDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
+import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
 import com.sismics.docs.core.dao.jpa.dto.GroupDto;
+import com.sismics.docs.core.dao.jpa.dto.UserDto;
 import com.sismics.docs.core.model.jpa.Group;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.model.jpa.UserGroup;
@@ -327,7 +329,14 @@ public class GroupResource extends BaseResource {
             response.add("parent", parentGroup.getName());
         }
         
-        // TODO Add members
+        // Members
+        JsonArrayBuilder members = Json.createArrayBuilder();
+        UserDao userDao = new UserDao();
+        List<UserDto> userDtoList = userDao.findByCriteria(new UserCriteria().setGroupId(group.getId()), new SortCriteria(1, true));
+        for (UserDto userDto : userDtoList) {
+            members.add(userDto.getUsername());
+        }
+        response.add("members", members);
         
         return Response.ok().entity(response.build()).build();
     }

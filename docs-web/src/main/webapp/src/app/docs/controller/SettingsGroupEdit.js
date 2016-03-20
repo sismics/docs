@@ -51,7 +51,7 @@ angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog,
   /**
    * Delete the current group.
    */
-  $scope.remove = function () {
+  $scope.remove = function() {
     var title = 'Delete group';
     var msg = 'Do you really want to delete this group?';
     var btns = [{result:'cancel', label: 'Cancel'}, {result:'ok', label: 'OK', cssClass: 'btn-primary'}];
@@ -61,7 +61,7 @@ angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog,
         Restangular.one('group', $stateParams.name).remove().then(function() {
           $scope.loadGroups();
           $state.go('settings.group');
-        }, function () {
+        }, function() {
           $state.go('settings.group');
         });
       }
@@ -83,5 +83,44 @@ angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog,
       }), 'name'));
     });
     return deferred.promise;
+  };
+
+  /**
+   * Returns a promise for typeahead user.
+   */
+  $scope.getUserTypeahead = function($viewValue) {
+    var deferred = $q.defer();
+    Restangular.one('user')
+        .getList('list', {
+          search: $viewValue,
+          sort_column: 1,
+          asc: true
+        }).then(function(data) {
+      deferred.resolve(_.pluck(data.users, 'username'));
+    });
+    return deferred.promise;
+  };
+
+  /**
+   * Add a new member.
+   */
+  $scope.addMember = function(member) {
+    $scope.member = '';
+    Restangular.one('group/' + $stateParams.name).put({
+      username: member
+    }).then(function() {
+      if ($scope.group.members.indexOf(member) === -1) {
+        $scope.group.members.push(member);
+      }
+    });
+  };
+
+  /**
+   * Remove a member.
+   */
+  $scope.removeMember = function(member) {
+    Restangular.one('group/' + $stateParams.name, member).remove().then(function() {
+      $scope.group.members.splice($scope.group.members.indexOf(member), 1);
+    });
   };
 });

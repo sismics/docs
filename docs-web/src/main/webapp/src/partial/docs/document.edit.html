@@ -9,7 +9,7 @@
         <div class="col-sm-10">
           <input required ng-maxlength="100" class="form-control" type="text" id="inputTitle"
             placeholder="The nature or genre of the resource" name="title" ng-model="document.title" autocomplete="off"
-            typeahead="document for document in getTitleTypeahead($viewValue) | filter: $viewValue"
+            typeahead="document for document in getTitleTypeahead($viewValue)"
             typeahead-wait-ms="200" ng-disabled="fileIsUploading" />
         </div>
       </div>

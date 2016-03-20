@@ -130,6 +130,9 @@ public class TestGroupResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         Assert.assertEquals("g12new", json.getString("name"));
         Assert.assertEquals("g11", json.getString("parent"));
+        JsonArray members = json.getJsonArray("members");
+        Assert.assertEquals(1, members.size());
+        Assert.assertEquals("group1", members.getString(0));
         
         // Remove group1 from g12new
         json = target().path("/group/g12new/group1").request()

@@ -27,8 +27,8 @@
 
       <div class="col-sm-7">
         <input name="name" type="text" id="inputParent" class="form-control" autocomplete="off"
-               placeholder="Type a group name" ng-model="group.parent"
-               typeahead="group for group in getGroupTypeahead($viewValue) | filter: $viewValue"
+               placeholder="Search a group" ng-model="group.parent"
+               typeahead="group for group in getGroupTypeahead($viewValue)"
                typeahead-wait-ms="200" typeahead-editable="false" />
       </div>
     </div>
@@ -44,6 +44,30 @@
     </div>
   </form>
 
-  <h3>Members</h3>
-  
+  <div ng-show="isEdit()">
+    <h3>Members</h3>
+    <form class="form-horizontal" novalidate>
+      <div class="form-group">
+        <label class="col-sm-2 control-label" for="inputMember">New member</label>
+        <div class="col-sm-7">
+          <input name="member" type="text" id="inputMember" class="form-control" ng-model="member" placeholder="Search a user"
+                 typeahead="user for user in getUserTypeahead($viewValue)" typeahead-on-select="addMember($item)"
+                 typeahead-wait-ms="200" typeahead-editable="false"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Members</label>
+        <div class="col-sm-7">
+          <span ng-repeat="member in group.members">
+            <span class="btn btn-default"
+               ng-click="removeMember(member)">
+              {{ member }}
+              <span class="glyphicon glyphicon-remove"></span>
+            </span>&nbsp;
+          </span>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
