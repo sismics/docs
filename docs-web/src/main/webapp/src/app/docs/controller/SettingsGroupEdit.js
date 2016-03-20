@@ -96,7 +96,9 @@ angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog,
           sort_column: 1,
           asc: true
         }).then(function(data) {
-      deferred.resolve(_.pluck(data.users, 'username'));
+      deferred.resolve(_.pluck(_.filter(data.users, function(user) {
+        return user.username.indexOf($viewValue) !== -1;
+      }), 'username'));
     });
     return deferred.promise;
   };

@@ -52,7 +52,7 @@
         <div class="col-sm-7">
           <input name="member" type="text" id="inputMember" class="form-control" ng-model="member" placeholder="Search a user"
                  typeahead="user for user in getUserTypeahead($viewValue)" typeahead-on-select="addMember($item)"
-                 typeahead-wait-ms="200" typeahead-editable="false"/>
+                 typeahead-wait-ms="200" typeahead-editable="false" autocomplete="off" />
         </div>
       </div>
 

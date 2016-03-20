@@ -12,6 +12,15 @@
   background-color: #263238;
 }
 
+// Selected table line
+.table tr {
+  &.active {
+    td {
+      background-color: #e8e8e8 !important;
+    }
+  }
+}
+
 // Documents list
 .table-documents {
 	thead th {
@@ -20,12 +29,6 @@
 	
 	tbody tr {
     cursor: pointer;
-
-    &.active {
-      td {
-        background-color: #e8e8e8;
-      }
-    }
 	}
 	
 	.cell-tags {
@@ -71,12 +74,6 @@
 .table-users {
 	tbody tr {
     cursor: pointer;
-
-    &.active {
-      td {
-        background-color: #e8e8e8;
-      }
-    }
   }
 }
 
