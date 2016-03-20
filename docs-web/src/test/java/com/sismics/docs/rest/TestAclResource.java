@@ -109,6 +109,16 @@ public class TestAclResource extends BaseJerseyTest {
                         .param("target", "aclGroup2")
                         .param("type", "GROUP")), JsonObject.class);
         
+        // List all documents with acl2
+        json = target().path("/document/list")
+                .queryParam("sort_column", 3)
+                .queryParam("asc", true)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl2Token)
+                .get(JsonObject.class);
+        JsonArray documents = json.getJsonArray("documents");
+        Assert.assertEquals(1, documents.size());
+        
         // Get the document as acl1
         json = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl1Token)

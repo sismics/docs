@@ -35,18 +35,21 @@ angular.module('docs').controller('DocumentViewPermissions', function ($scope, $
     if ($scope.acl.perm == 'READWRITE') {
       acls = [{
         source: $stateParams.id,
-        username: $scope.acl.username,
-        perm: 'READ'
+        target: $scope.acl.target.name,
+        perm: 'READ',
+        type: $scope.acl.target.type
       }, {
         source: $stateParams.id,
-        username: $scope.acl.username,
-        perm: 'WRITE'
+        target: $scope.acl.target.name,
+        perm: 'WRITE',
+        type: $scope.acl.target.type
       }];
     } else {
       acls = [{
         source: $stateParams.id,
-        username: $scope.acl.username,
-        perm: $scope.acl.perm
+        target: $scope.acl.target.name,
+        perm: $scope.acl.perm,
+        type: $scope.acl.target.type
       }];
     }
 
@@ -74,7 +77,20 @@ angular.module('docs').controller('DocumentViewPermissions', function ($scope, $
         .get({
           search: $viewValue
         }).then(function(data) {
-          deferred.resolve(_.pluck(data.users, 'name'), true);
+          var output = [];
+
+          // Add the type to use later
+          output.push.apply(output,  _.map(data.users, function(user) {
+            user.type = 'USER';
+            return user;
+          }));
+          output.push.apply(output, _.map(data.groups, function(group) {
+            group.type = 'GROUP';
+            return group;
+          }));
+
+          // Send the data to the typeahead directive
+          deferred.resolve(output, true);
         });
     return deferred.promise;
   };
