@@ -173,7 +173,7 @@ public class GroupDao {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
         List<String> criteriaList = new ArrayList<String>();
         
-        StringBuilder sb = new StringBuilder("select g.GRP_ID_C as c0, g.GRP_NAME_C as c1, g.GRP_IDPARENT_C as c2, gp.GRP_NAME_C as c3 ");
+        StringBuilder sb = new StringBuilder("select g.GRP_ID_C as c0, g.GRP_NAME_C as c1, g.GRP_IDPARENT_C as c2, gp.GRP_NAME_C as c3, g.GRP_IDROLE_C ");
         if (criteria.getUserId() != null) {
             sb.append(" , ug.UGP_ID_C ");
         }
@@ -213,7 +213,8 @@ public class GroupDao {
                 .setId((String) o[i++])
                 .setName((String) o[i++])
                 .setParentId((String) o[i++])
-                .setParentName((String) o[i++]);
+                .setParentName((String) o[i++])
+                .setRoleId((String) o[i++]);
             groupDtoList.add(groupDto);
             if (criteria.getUserId() != null && o[i++] != null) {
                 userGroupDtoList.add(groupDto);

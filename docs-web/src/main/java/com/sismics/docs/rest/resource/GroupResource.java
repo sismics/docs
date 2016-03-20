@@ -310,7 +310,6 @@ public class GroupResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        checkBaseFunction(BaseFunction.ADMIN);
         
         // Get the group
         GroupDao groupDao = new GroupDao();

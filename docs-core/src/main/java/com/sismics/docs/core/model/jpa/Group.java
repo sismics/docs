@@ -37,6 +37,12 @@ public class Group implements Loggable {
     private String name;
 
     /**
+     * Role ID.
+     */
+    @Column(name = "GRP_IDROLE_C", length = 36)
+    private String roleId;
+    
+    /**
      * Deletion date.
      */
     @Column(name = "GRP_DELETEDATE_D")
@@ -79,10 +85,20 @@ public class Group implements Loggable {
         return this;
     }
     
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public Group setRoleId(String roleId) {
+        this.roleId = roleId;
+        return this;
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
+                .add("roleId", roleId)
                 .add("parentId", parentId)
                 .add("name", name)
                 .toString();

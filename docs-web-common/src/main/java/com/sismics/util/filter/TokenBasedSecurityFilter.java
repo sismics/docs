@@ -3,6 +3,7 @@ package com.sismics.util.filter;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,7 +37,7 @@ import jersey.repackaged.com.google.common.collect.Sets;
 /**
  * This filter is used to authenticate the user having an active session via an authentication token stored in database.
  * The filter extracts the authentication token stored in a cookie.
- * If the ocokie exists and the token is valid, the filter injects a UserPrincipal into a request attribute.
+ * If the cookie exists and the token is valid, the filter injects a UserPrincipal into a request attribute.
  * If not, the user is anonymous, and the filter injects a AnonymousPrincipal into the request attribute.
  *
  * @author jtremeaux
@@ -154,21 +155,26 @@ public class TokenBasedSecurityFilter implements Filter {
     private void injectAuthenticatedUser(HttpServletRequest request, User user) {
         UserPrincipal userPrincipal = new UserPrincipal(user.getId(), user.getUsername());
 
-        // Add base functions
-        RoleBaseFunctionDao userBaseFuction = new RoleBaseFunctionDao();
-        Set<String> baseFunctionSet = userBaseFuction.findByRoleId(user.getRoleId());
-        userPrincipal.setBaseFunctionSet(baseFunctionSet);
-        
         // Add groups
         GroupDao groupDao = new GroupDao();
+        Set<String> groupRoleIdSet = new HashSet<>();
         List<GroupDto> groupDtoList = groupDao.findByCriteria(new GroupCriteria()
                 .setUserId(user.getId())
                 .setRecursive(true), null);
         Set<String> groupIdSet = Sets.newHashSet();
         for (GroupDto groupDto : groupDtoList) {
             groupIdSet.add(groupDto.getId());
+            if (groupDto.getRoleId() != null) {
+                groupRoleIdSet.add(groupDto.getRoleId());
+            }
         }
         userPrincipal.setGroupIdSet(groupIdSet);
+        
+        // Add base functions
+        groupRoleIdSet.add(user.getRoleId());
+        RoleBaseFunctionDao userBaseFuction = new RoleBaseFunctionDao();
+        Set<String> baseFunctionSet = userBaseFuction.findByRoleId(groupRoleIdSet);
+        userPrincipal.setBaseFunctionSet(baseFunctionSet);
         
         // Add email
         userPrincipal.setEmail(user.getEmail());

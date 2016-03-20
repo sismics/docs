@@ -41,6 +41,18 @@ public class TestGroupResource extends BaseJerseyTest {
         clientUtil.createUser("group1", "g112", "g12");
         String group1Token = clientUtil.login("group1");
         
+        // Login admin2
+        clientUtil.createUser("admin2", "administrators");
+        String admin2Token = clientUtil.login("admin2");
+        
+        // Create trashme
+        clientUtil.createUser("trashme");
+        
+        // Delete trashme with admin2
+        target().path("/user/trashme").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, admin2Token)
+                .delete(JsonObject.class);
+        
         // Get all groups
         JsonObject json = target().path("/group")
                 .queryParam("sort_column", "1")

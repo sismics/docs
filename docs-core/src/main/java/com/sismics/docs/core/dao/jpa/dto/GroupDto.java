@@ -26,6 +26,11 @@ public class GroupDto {
      */
     private String parentName;
     
+    /**
+     * Role ID.
+     */
+    private String roleId;
+    
     public String getId() {
         return id;
     }
@@ -59,6 +64,15 @@ public class GroupDto {
 
     public GroupDto setParentName(String parentName) {
         this.parentName = parentName;
+        return this;
+    }
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public GroupDto setRoleId(String roleId) {
+        this.roleId = roleId;
         return this;
     }
 
