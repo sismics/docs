@@ -106,6 +106,33 @@ angular.module('docs',
           }
         }
       })
+    .state('settings.group', {
+        url: '/group',
+        views: {
+          'settings': {
+            templateUrl: 'partial/docs/settings.group.html',
+            controller: 'SettingsGroup'
+          }
+        }
+      })
+      .state('settings.group.edit', {
+        url: '/edit/:name',
+        views: {
+          'group': {
+            templateUrl: 'partial/docs/settings.group.edit.html',
+            controller: 'SettingsGroupEdit'
+          }
+        }
+      })
+      .state('settings.group.add', {
+        url: '/add',
+        views: {
+          'group': {
+            templateUrl: 'partial/docs/settings.group.edit.html',
+            controller: 'SettingsGroupEdit'
+          }
+        }
+      })
   .state('settings.vocabulary', {
     url: '/vocabulary',
     views: {

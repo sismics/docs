@@ -9,6 +9,7 @@ import javax.json.JsonObjectBuilder;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -76,6 +77,87 @@ public class GroupResource extends BaseResource {
         groupDao.create(new Group()
                 .setName(name)
                 .setParentId(parentId), principal.getId());
+        
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+    
+    /**
+     * Update a group.
+     * 
+     * @return Response
+     */
+    @POST
+    @Path("{groupName: [a-zA-Z0-9_]+}")
+    public Response update(@PathParam("groupName") String groupName,
+            @FormParam("parent") String parentName,
+            @FormParam("name") String name) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        
+        // Validate input
+        name = ValidationUtil.validateLength(name, "name", 1, 50, false);
+        ValidationUtil.validateAlphanumeric(name, "name");
+        
+        // Get the group (by its old name)
+        GroupDao groupDao = new GroupDao();
+        Group group = groupDao.getActiveByName(groupName);
+        if (group == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        
+        // Avoid duplicates
+        Group existingGroup = groupDao.getActiveByName(name);
+        if (existingGroup != null && existingGroup.getId() != group.getId()) {
+            throw new ClientException("GroupAlreadyExists", MessageFormat.format("This group already exists: {0}", name));
+        }
+        
+        // Validate parent
+        String parentId = null;
+        if (!Strings.isNullOrEmpty(parentName)) {
+            Group parentGroup = groupDao.getActiveByName(parentName);
+            if (parentGroup == null) {
+                throw new ClientException("ParentGroupNotFound", MessageFormat.format("This group does not exists: {0}", parentName));
+            }
+            parentId = parentGroup.getId();
+        }
+        
+        // Update the group
+        groupDao.update(group.setName(name)
+                .setParentId(parentId), principal.getId());
+        
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+    
+    /**
+     * Delete a group.
+     * 
+     * @return Response
+     */
+    @DELETE
+    @Path("{groupName: [a-zA-Z0-9_]+}")
+    public Response delete(@PathParam("groupName") String groupName) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        
+        // Get the group
+        GroupDao groupDao = new GroupDao();
+        Group group = groupDao.getActiveByName(groupName);
+        if (group == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        
+        // Delete the group
+        groupDao.delete(group.getId(), principal.getId());
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -211,6 +293,42 @@ public class GroupResource extends BaseResource {
         
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("groups", groups);
+        return Response.ok().entity(response.build()).build();
+    }
+    
+    /**
+     * Get a group.
+     * 
+     * @param groupName Group name
+     * @return Response
+     */
+    @GET
+    @Path("{groupName: [a-zA-Z0-9_]+}")
+    public Response get(@PathParam("groupName") String groupName) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        
+        // Get the group
+        GroupDao groupDao = new GroupDao();
+        Group group = groupDao.getActiveByName(groupName);
+        if (group == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        
+        // Build the response
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("name", group.getName());
+        
+        // Get the parent
+        if (group.getParentId() != null) {
+            Group parentGroup = groupDao.getActiveById(group.getParentId());
+            response.add("parent", parentGroup.getName());
+        }
+        
+        // TODO Add members
+        
         return Response.ok().entity(response.build()).build();
     }
 }

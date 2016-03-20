@@ -31,12 +31,12 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
     
     if ($scope.isEdit()) {
       promise = Restangular
-      .one('user', $stateParams.username)
-      .post('', user);
+        .one('user', $stateParams.username)
+        .post('', user);
     } else {
       promise = Restangular
-      .one('user')
-      .put(user);
+        .one('user')
+        .put(user);
     }
     
     promise.then(function() {

@@ -49,6 +49,23 @@ public class GroupDao {
     }
     
     /**
+     * Returns a group by ID.
+     * 
+     * @param id Group ID
+     * @return Group
+     */
+    public Group getActiveById(String id) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select g from Group g where g.id = :id and g.deleteDate is null");
+        q.setParameter("id", id);
+        try {
+            return (Group) q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
+    /**
      * Creates a new group.
      * 
      * @param group Group
@@ -97,6 +114,10 @@ public class GroupDao {
         q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.targetId = :groupId and a.deleteDate is null");
         q.setParameter("groupId", groupDb.getId());
         q.setParameter("dateNow", dateNow);
+        q.executeUpdate();
+
+        q = em.createQuery("update Group g set g.parentId = null where g.parentId = :groupId and g.deleteDate is null");
+        q.setParameter("groupId", groupDb.getId());
         q.executeUpdate();
 
         // Create audit log
@@ -211,7 +232,7 @@ public class GroupDao {
         
         return groupDtoList;
     }
-
+    
     /**
      * Recursively search group's parents.
      * 
@@ -231,6 +252,31 @@ public class GroupDao {
                 findGroupParentHierarchy(parentGroupDtoSet, groupDtoList, groupDto, depth + 1); // Find parent's parents
             }
         }
+    }
+    
+    /**
+     * Update a group.
+     * 
+     * @param group Group to update
+     * @param userId User ID
+     * @return Updated group
+     */
+    public Group update(Group group, String userId) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        
+        // Get the group
+        Query q = em.createQuery("select g from Group g where g.id = :id and g.deleteDate is null");
+        q.setParameter("id", group.getId());
+        Group groupFromDb = (Group) q.getSingleResult();
+        
+        // Update the group
+        groupFromDb.setName(group.getName());
+        groupFromDb.setParentId(group.getParentId());
+        
+        // Create audit log
+        AuditLogUtil.create(groupFromDb, AuditLogType.UPDATE, userId);
+        
+        return groupFromDb;
     }
 }
 
