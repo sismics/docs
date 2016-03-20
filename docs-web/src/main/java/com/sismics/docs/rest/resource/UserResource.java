@@ -323,7 +323,7 @@ public class UserResource extends BaseResource {
         
         // Deletes the client token in the HTTP response
         JsonObjectBuilder response = Json.createObjectBuilder();
-        NewCookie cookie = new NewCookie(TokenBasedSecurityFilter.COOKIE_NAME, null);
+        NewCookie cookie = new NewCookie(TokenBasedSecurityFilter.COOKIE_NAME, null, "/", null, 1, null, -1, new Date(1), false, false);
         return Response.ok().entity(response.build()).cookie(cookie).build();
     }
 
@@ -646,7 +646,8 @@ public class UserResource extends BaseResource {
     private String getAuthToken() {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
-                if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
+                if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())
+                        && !Strings.isNullOrEmpty(cookie.getValue())) {
                     return cookie.getValue();
                 }
             }
