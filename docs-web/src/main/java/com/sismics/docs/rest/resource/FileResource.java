@@ -48,7 +48,6 @@ import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
-import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.DirectoryUtil;
@@ -94,13 +93,13 @@ public class FileResource extends BaseResource {
         User user = userDao.getById(principal.getId());
         
         // Get the document
-        Document document = null;
+        DocumentDto documentDto = null;
         if (Strings.isNullOrEmpty(documentId)) {
             documentId = null;
         } else {
             DocumentDao documentDao = new DocumentDao();
-            document = documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
-            if (document == null) {
+            documentDto = documentDao.getDocument(documentId, PermType.WRITE, getTargetIdList(null));
+            if (documentDto == null) {
                 return Response.status(Status.NOT_FOUND).build();
             }
         }
@@ -165,7 +164,7 @@ public class FileResource extends BaseResource {
             if (documentId != null) {
                 FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
                 fileCreatedAsyncEvent.setUserId(principal.getId());
-                fileCreatedAsyncEvent.setDocument(document);
+                fileCreatedAsyncEvent.setLanguage(documentDto.getLanguage());
                 fileCreatedAsyncEvent.setFile(file);
                 fileCreatedAsyncEvent.setInputStream(fileInputStream);
                 fileCreatedAsyncEvent.setPdfInputStream(pdfIntputStream);
@@ -173,7 +172,7 @@ public class FileResource extends BaseResource {
                 
                 DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
                 documentUpdatedAsyncEvent.setUserId(principal.getId());
-                documentUpdatedAsyncEvent.setDocument(document);
+                documentUpdatedAsyncEvent.setDocumentId(documentId);
                 AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
             }
 
@@ -214,8 +213,8 @@ public class FileResource extends BaseResource {
         DocumentDao documentDao = new DocumentDao();
         FileDao fileDao = new FileDao();
         File file = fileDao.getFile(id, principal.getId());
-        Document document = documentDao.getDocument(documentId, PermType.WRITE, principal.getId());
-        if (file == null || document == null) {
+        DocumentDto documentDto = documentDao.getDocument(documentId, PermType.WRITE, getTargetIdList(null));
+        if (file == null || documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
@@ -236,14 +235,14 @@ public class FileResource extends BaseResource {
             final InputStream responseInputStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey());
             FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
             fileCreatedAsyncEvent.setUserId(principal.getId());
-            fileCreatedAsyncEvent.setDocument(document);
+            fileCreatedAsyncEvent.setLanguage(documentDto.getLanguage());
             fileCreatedAsyncEvent.setFile(file);
             fileCreatedAsyncEvent.setInputStream(responseInputStream);
             AppContext.getInstance().getAsyncEventBus().post(fileCreatedAsyncEvent);
             
             DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
             documentUpdatedAsyncEvent.setUserId(principal.getId());
-            documentUpdatedAsyncEvent.setDocument(document);
+            documentUpdatedAsyncEvent.setDocumentId(documentId);
             AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
         } catch (Exception e) {
             throw new ClientException("AttachError", "Error attaching file to document", e);
@@ -277,7 +276,7 @@ public class FileResource extends BaseResource {
         
         // Get the document
         DocumentDao documentDao = new DocumentDao();
-        if (documentDao.getDocument(documentId, PermType.WRITE, principal.getId()) == null) {
+        if (documentDao.getDocument(documentId, PermType.WRITE, getTargetIdList(null)) == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
@@ -313,7 +312,7 @@ public class FileResource extends BaseResource {
         // Check document visibility
         if (documentId != null) {
             AclDao aclDao = new AclDao();
-            if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
+            if (!aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(shareId))) {
                 return Response.status(Status.NOT_FOUND).build();
             }
         } else if (!authenticated) {
@@ -364,14 +363,14 @@ public class FileResource extends BaseResource {
             return Response.status(Status.NOT_FOUND).build();
         }
         
-        Document document = null;
+        DocumentDto documentDto = null;
         if (file.getDocumentId() == null) {
             // It's an orphan file
             if (!file.getUserId().equals(principal.getId())) {
                 // But not ours
                 throw new ForbiddenClientException();
             }
-        } else if ((document = documentDao.getDocument(file.getDocumentId(), PermType.WRITE, principal.getId())) == null) {
+        } else if ((documentDto = documentDao.getDocument(file.getDocumentId(), PermType.WRITE, getTargetIdList(null))) == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
@@ -395,11 +394,11 @@ public class FileResource extends BaseResource {
         fileDeletedAsyncEvent.setFile(file);
         AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
         
-        if (document != null) {
+        if (documentDto != null) {
             // Raise a new document updated
             DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
             documentUpdatedAsyncEvent.setUserId(principal.getId());
-            documentUpdatedAsyncEvent.setDocument(document);
+            documentUpdatedAsyncEvent.setDocumentId(documentDto.getId());
             AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
         }
         
@@ -446,7 +445,7 @@ public class FileResource extends BaseResource {
         } else {
             // Check document accessibility
             AclDao aclDao = new AclDao();
-            if (!aclDao.checkPermission(file.getDocumentId(), PermType.READ, shareId == null ? principal.getId() : shareId)) {
+            if (!aclDao.checkPermission(file.getDocumentId(), PermType.READ, getTargetIdList(shareId))) {
                 throw new ForbiddenClientException();
             }
         }
@@ -520,15 +519,9 @@ public class FileResource extends BaseResource {
         
         // Get the document
         DocumentDao documentDao = new DocumentDao();
-        DocumentDto documentDto = documentDao.getDocument(documentId);
+        DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
         if (documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
-        }
-        
-        // Check document visibility
-        AclDao aclDao = new AclDao();
-        if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
-            throw new ForbiddenClientException();
         }
         
         // Get files and user associated with this document

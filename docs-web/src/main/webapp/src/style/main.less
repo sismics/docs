@@ -12,6 +12,15 @@
   background-color: #263238;
 }
 
+// Selected table line
+.table tr {
+  &.active {
+    td {
+      background-color: #e8e8e8 !important;
+    }
+  }
+}
+
 // Documents list
 .table-documents {
 	thead th {
@@ -20,12 +29,6 @@
 	
 	tbody tr {
     cursor: pointer;
-
-    &.active {
-      td {
-        background-color: #e8e8e8;
-      }
-    }
 	}
 	
 	.cell-tags {
@@ -208,4 +211,34 @@ input[readonly].share-link {
       white-space: nowrap;
     }
   }
+}
+
+// Vertical alignment
+.vertical-center {
+  min-height: 100vh;
+
+  /* Make it a flex container */
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+  /* Align the bootstrap's container vertically */
+  -webkit-box-align : center;
+  -webkit-align-items : center;
+  -moz-box-align : center;
+  -ms-flex-align : center;
+  align-items : center;
+}
+
+// Login
+.login-box-container {
+  background: url('../img/background.jpg') no-repeat center;
+}
+
+.login-box {
+  background: rgba(255, 255, 255, 0.5);
+  padding: 20px;
+  border-radius: 4px
 }

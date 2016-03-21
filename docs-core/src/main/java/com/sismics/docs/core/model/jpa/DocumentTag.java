@@ -33,13 +33,13 @@ public class DocumentTag implements Serializable {
     /**
      * Document ID.
      */
-    @Column(name = "DOT_IDDOCUMENT_C", length = 36)
+    @Column(name = "DOT_IDDOCUMENT_C", nullable = false, length = 36)
     private String documentId;
     
     /**
      * Tag ID.
      */
-    @Column(name = "DOT_IDTAG_C", length = 36)
+    @Column(name = "DOT_IDTAG_C", nullable = false, length = 36)
     private String tagId;
 
     /**
@@ -83,6 +83,7 @@ public class DocumentTag implements Serializable {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
+                .add("id", id)
                 .add("documentId", documentId)
                 .add("tagId", tagId)
                 .toString();

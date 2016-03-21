@@ -85,6 +85,8 @@ public class TestTagResource extends BaseJerseyTest {
         response = target().path("/document/" + document2Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
                 .post(Entity.form(new Form()
+                        .param("title", "My super document 2")
+                        .param("language", "eng")
                         .param("tags", tag3Id)
                         .param("tags", tag4Id)));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
@@ -102,6 +104,8 @@ public class TestTagResource extends BaseJerseyTest {
         response = target().path("/document/" + document2Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
                 .post(Entity.form(new Form()
+                        .param("title", "My super document 2")
+                        .param("language", "eng")
                         .param("tags", tag4Id)));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         

@@ -32,6 +32,6 @@ public class DocumentDeletedAsyncListener {
 
         // Update Lucene index
         LuceneDao luceneDao = new LuceneDao();
-        luceneDao.deleteDocument(documentDeletedAsyncEvent.getDocument().getId());
+        luceneDao.deleteDocument(documentDeletedAsyncEvent.getDocumentId());
     }
 }

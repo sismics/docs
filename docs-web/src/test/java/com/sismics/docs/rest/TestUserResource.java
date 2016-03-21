@@ -37,14 +37,14 @@ public class TestUserResource extends BaseJerseyTest {
         clientUtil.createUser("alice");
 
         // Login admin
-        String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
+        String adminToken = clientUtil.login("admin", "admin", false);
         
         // List all users
         json = target().path("/user/list")
                 .queryParam("sort_column", 2)
                 .queryParam("asc", false)
                 .request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
         JsonArray users = json.getJsonArray("users");
         Assert.assertTrue(users.size() > 0);
@@ -58,7 +58,7 @@ public class TestUserResource extends BaseJerseyTest {
         
         // Create a user KO (login length validation)
         Response response = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
                         .param("username", "   bb  ")
                         .param("email", "bob@docs.com")
@@ -71,7 +71,7 @@ public class TestUserResource extends BaseJerseyTest {
 
         // Create a user KO (login format validation)
         response = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
                         .param("username", "bob-")
                         .param("email", "bob@docs.com")
@@ -84,7 +84,7 @@ public class TestUserResource extends BaseJerseyTest {
         
         // Create a user KO (invalid quota)
         response = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
                         .param("username", "bob")
                         .param("email", "bob@docs.com")
@@ -97,7 +97,7 @@ public class TestUserResource extends BaseJerseyTest {
 
         // Create a user KO (email format validation)
         response = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
                         .param("username", "bob")
                         .param("email", "bobdocs.com")
@@ -115,12 +115,12 @@ public class TestUserResource extends BaseJerseyTest {
                 .param("password", " 12345678 ")
                 .param("storage_quota", "10");
         json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(form), JsonObject.class);
 
         // Create a user bob KO : duplicate username
         response = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(form));
         Assert.assertNotSame(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
@@ -144,12 +144,12 @@ public class TestUserResource extends BaseJerseyTest {
         String aliceAuthToken = clientUtil.getAuthenticationCookie(response);
 
         // Login user bob twice
-        String bobAuthToken = clientUtil.login("bob");
-        String bobAuthToken2 = clientUtil.login("bob");
+        String bobToken = clientUtil.login("bob");
+        String bobToken2 = clientUtil.login("bob");
 
         // List sessions
         response = target().path("/user/session").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, bobAuthToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, bobToken)
                 .get();
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
@@ -160,13 +160,13 @@ public class TestUserResource extends BaseJerseyTest {
         
         // Delete all sessions
         response = target().path("/user/session").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, bobAuthToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, bobToken)
                 .delete();
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
 
         // Check bob user information with token 2 (just deleted)
         response = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, bobAuthToken2)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, bobToken2)
                 .get();
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
@@ -183,7 +183,7 @@ public class TestUserResource extends BaseJerseyTest {
         
         // Check bob user information
         json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, bobAuthToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, bobToken)
                 .get(JsonObject.class);
         Assert.assertEquals("bob@docs.com", json.getString("email"));
         
@@ -238,11 +238,11 @@ public class TestUserResource extends BaseJerseyTest {
         clientUtil.createUser("admin_user1");
 
         // Login admin
-        String adminAuthenticationToken = clientUtil.login("admin", "admin", false);
+        String adminToken = clientUtil.login("admin", "admin", false);
 
         // Check admin information
         JsonObject json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
         Assert.assertTrue(json.getBoolean("is_default_password"));
         Assert.assertEquals(0l, json.getJsonNumber("storage_current").longValue());
@@ -250,27 +250,27 @@ public class TestUserResource extends BaseJerseyTest {
 
         // User admin updates his information
         json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()
                         .param("email", "newadminemail@docs.com")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
 
         // Check admin information update
         json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
         Assert.assertEquals("newadminemail@docs.com", json.getString("email"));
 
         // User admin update admin_user1 information
         json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()
                         .param("email", " alice2@docs.com ")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
         // User admin deletes himself: forbidden
         Response response = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .delete();
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
@@ -278,13 +278,13 @@ public class TestUserResource extends BaseJerseyTest {
 
         // User admin deletes user admin_user1
         json = target().path("/user/admin_user1").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .delete(JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
         // User admin deletes user admin_user1 : KO (user doesn't exist)
         response = target().path("/user/admin_user1").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .delete();
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);

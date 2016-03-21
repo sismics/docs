@@ -1,7 +1,6 @@
 package com.sismics.docs.core.event;
 
 import com.google.common.base.MoreObjects;
-import com.sismics.docs.core.model.jpa.Document;
 
 /**
  * Document updated event.
@@ -10,32 +9,22 @@ import com.sismics.docs.core.model.jpa.Document;
  */
 public class DocumentUpdatedAsyncEvent extends UserEvent {
     /**
-     * Created document.
+     * Document ID.
      */
-    private Document document;
+    private String documentId;
     
-    /**
-     * Getter of document.
-     *
-     * @return the document
-     */
-    public Document getDocument() {
-        return document;
+    public String getDocumentId() {
+        return documentId;
     }
 
-    /**
-     * Setter of document.
-     *
-     * @param document document
-     */
-    public void setDocument(Document document) {
-        this.document = document;
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-            .add("document", document)
+            .add("documentId", documentId)
             .toString();
     }
 }

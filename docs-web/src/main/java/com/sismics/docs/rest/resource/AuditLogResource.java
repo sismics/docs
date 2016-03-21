@@ -9,6 +9,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.AuditLogDao;
@@ -18,7 +19,6 @@ import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ForbiddenClientException;
-import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.JsonUtil;
 
 /**
@@ -43,25 +43,21 @@ public class AuditLogResource extends BaseResource {
         PaginatedList<AuditLogDto> paginatedList = PaginatedLists.create(20, 0);
         SortCriteria sortCriteria = new SortCriteria(1, false);
         AuditLogCriteria criteria = new AuditLogCriteria();
-        if (documentId == null) {
+        if (Strings.isNullOrEmpty(documentId)) {
             // Search logs for a user
             criteria.setUserId(principal.getId());
         } else {
             // Check ACL on the document
             AclDao aclDao = new AclDao();
-            if (!aclDao.checkPermission(documentId, PermType.READ, principal.getId())) {
+            if (!aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(null))) {
                 return Response.status(Status.NOT_FOUND).build();
             }
             criteria.setDocumentId(documentId);
         }
         
         // Search the logs
-        try {
-            AuditLogDao auditLogDao = new AuditLogDao();
-            auditLogDao.findByCriteria(paginatedList, criteria, sortCriteria);
-        } catch (Exception e) {
-            throw new ServerException("SearchError", "Error searching in logs", e);
-        }
+        AuditLogDao auditLogDao = new AuditLogDao();
+        auditLogDao.findByCriteria(paginatedList, criteria, sortCriteria);
         
         // Assemble the results
         JsonArrayBuilder logs = Json.createArrayBuilder();

@@ -1,6 +1,7 @@
 package com.sismics.util.log4j;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Level;
 
 /**
  * Log search criteria.
@@ -10,9 +11,9 @@ import org.apache.commons.lang.StringUtils;
 public class LogCriteria {
 
     /**
-     * Logging level (DEBUG, WARN)...
+     * Minimum logging level (DEBUG, WARN)...
      */
-    private String level;
+    private Level minLevel;
     
     /**
      * Logger name / tag.
@@ -24,57 +25,30 @@ public class LogCriteria {
      */
     private String message;
 
-    /**
-     * Getter of level.
-     *
-     * @return level
-     */
-    public String getLevel() {
-        return level;
+    public Level getMinLevel() {
+        return minLevel;
     }
 
-    /**
-     * Setter of level.
-     *
-     * @param level level
-     */
-    public void setLevel(String level) {
-        this.level = StringUtils.lowerCase(level);
+    public LogCriteria setMinLevel(Level level) {
+        this.minLevel = level;
+        return this;
     }
 
-    /**
-     * Getter of tag.
-     *
-     * @return tag
-     */
     public String getTag() {
         return tag;
     }
 
-    /**
-     * Setter of tag.
-     *
-     * @param tag tag
-     */
-    public void setTag(String tag) {
+    public LogCriteria setTag(String tag) {
         this.tag = StringUtils.lowerCase(tag);
+        return this;
     }
 
-    /**
-     * Getter of message.
-     *
-     * @return message
-     */
     public String getMessage() {
         return message;
     }
 
-    /**
-     * Setter of message.
-     *
-     * @param message message
-     */
-    public void setMessage(String message) {
+    public LogCriteria setMessage(String message) {
         this.message = StringUtils.lowerCase(message);
+        return this;
     }
 }

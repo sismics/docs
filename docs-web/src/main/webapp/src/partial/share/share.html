@@ -51,6 +51,16 @@
       <dd ng-if="document.coverage">{{ document.coverage }}</dd>
       <dt ng-if="document.rights">rights</dt>
       <dd ng-if="document.rights">{{ document.rights }}</dd>
+      <dt>Contributors</dt>
+      <dd>
+        <span ng-repeat="contributor in document.contributors">
+          <span class="btn btn-default btn-xs">
+            <a href="mailto:{{ contributor.email }}">
+              {{ contributor.username }}
+            </a>
+          </span>
+        </span>
+      </dd>
     </dl>
 
     <div class="row" ui-sortable="fileSortableOptions" ng-model="files" ng-show="files.length > 0">

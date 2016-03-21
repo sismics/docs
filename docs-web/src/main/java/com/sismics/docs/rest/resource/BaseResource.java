@@ -1,12 +1,14 @@
 package com.sismics.docs.rest.resource;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 
+import com.google.common.collect.Lists;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.security.IPrincipal;
@@ -76,5 +78,22 @@ public abstract class BaseResource {
         }
         Set<String> baseFunctionSet = ((UserPrincipal) principal).getBaseFunctionSet();
         return baseFunctionSet != null && baseFunctionSet.contains(baseFunction.name());
+    }
+    
+    /**
+     * Returns a list of ACL target ID.
+     * 
+     * @param shareId Share ID (optional)
+     * @return List of ACL target ID
+     */
+    protected List<String> getTargetIdList(String shareId) {
+        List<String> targetIdList = Lists.newArrayList(principal.getGroupIdSet());
+        if (principal.getId() != null) {
+            targetIdList.add(principal.getId());
+        }
+        if (shareId != null) {
+            targetIdList.add(shareId);
+        }
+        return targetIdList;
     }
 }

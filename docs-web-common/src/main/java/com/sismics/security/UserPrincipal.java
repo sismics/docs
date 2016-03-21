@@ -36,6 +36,11 @@ public class UserPrincipal implements IPrincipal {
     private Set<String> baseFunctionSet;
     
     /**
+     * User groups.
+     */
+    private Set<String> groupIdSet;
+    
+    /**
      * Constructor of UserPrincipal.
      * 
      * @param id ID of the user
@@ -56,11 +61,6 @@ public class UserPrincipal implements IPrincipal {
         return id;
     }
 
-    /**
-     * Setter of id.
-     *
-     * @param id id
-     */
     public void setId(String id) {
         this.id = id;
     }
@@ -70,11 +70,6 @@ public class UserPrincipal implements IPrincipal {
         return name;
     }
 
-    /**
-     * Setter of name.
-     *
-     * @param name name
-     */
     public void setName(String name) {
         this.name = name;
     }
@@ -84,11 +79,6 @@ public class UserPrincipal implements IPrincipal {
         return dateTimeZone;
     }
 
-    /**
-     * Setter of dateTimeZone.
-     *
-     * @param dateTimeZone dateTimeZone
-     */
     public void setDateTimeZone(DateTimeZone dateTimeZone) {
         this.dateTimeZone = dateTimeZone;
     }
@@ -98,31 +88,24 @@ public class UserPrincipal implements IPrincipal {
         return email;
     }
     
-    /**
-     * Setter of email.
-     *
-     * @param email email
-     */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    /**
-     * Getter of baseFunctionSet.
-     *
-     * @return baseFunctionSet
-     */
     public Set<String> getBaseFunctionSet() {
         return baseFunctionSet;
     }
 
-    /**
-     * Setter of baseFunctionSet.
-     *
-     * @param baseFunctionSet baseFunctionSet
-     */
     public void setBaseFunctionSet(Set<String> baseFunctionSet) {
         this.baseFunctionSet = baseFunctionSet;
     }
 
+    @Override
+    public Set<String> getGroupIdSet() {
+        return groupIdSet;
+    }
+    
+    public void setGroupIdSet(Set<String> groupIdSet) {
+        this.groupIdSet = groupIdSet;
+    }
 }

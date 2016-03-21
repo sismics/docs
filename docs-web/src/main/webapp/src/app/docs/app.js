@@ -106,6 +106,33 @@ angular.module('docs',
           }
         }
       })
+    .state('settings.group', {
+        url: '/group',
+        views: {
+          'settings': {
+            templateUrl: 'partial/docs/settings.group.html',
+            controller: 'SettingsGroup'
+          }
+        }
+      })
+      .state('settings.group.edit', {
+        url: '/edit/:name',
+        views: {
+          'group': {
+            templateUrl: 'partial/docs/settings.group.edit.html',
+            controller: 'SettingsGroupEdit'
+          }
+        }
+      })
+      .state('settings.group.add', {
+        url: '/add',
+        views: {
+          'group': {
+            templateUrl: 'partial/docs/settings.group.edit.html',
+            controller: 'SettingsGroupEdit'
+          }
+        }
+      })
   .state('settings.vocabulary', {
     url: '/vocabulary',
     views: {
@@ -221,17 +248,35 @@ angular.module('docs',
     url: '/user',
     views: {
       'page': {
-        templateUrl: 'partial/docs/user.html',
-        controller: 'User'
+        templateUrl: 'partial/docs/usergroup.html',
+        controller: 'UserGroup'
       }
     }
   })
     .state('user.profile', {
       url: '/:username',
       views: {
-        'user': {
+        'sub': {
           templateUrl: 'partial/docs/user.profile.html',
           controller: 'UserProfile'
+        }
+      }
+    })
+  .state('group', {
+    url: '/group',
+    views: {
+      'page': {
+        templateUrl: 'partial/docs/usergroup.html',
+        controller: 'UserGroup'
+      }
+    }
+  })
+    .state('group.profile', {
+      url: '/:name',
+      views: {
+        'sub': {
+          templateUrl: 'partial/docs/group.profile.html',
+          controller: 'GroupProfile'
         }
       }
     });

@@ -50,6 +50,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
   $scope.resetForm = function() {
     $scope.document = {
       tags: [],
+      relations: [],
       language: 'fra'
     };
     $scope.newFiles = [];
@@ -71,6 +72,9 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
     
     // Extract ids from tags
     document.tags = _.pluck(document.tags, 'id');
+
+    // Extract ids from relations (only when our document is the source)
+    document.relations = _.pluck(_.where(document.relations, { source: true }), 'id');
     
     if ($scope.isEdit()) {
       promise = Restangular.one('document', $stateParams.id).post('', document);

@@ -98,10 +98,18 @@ public class AclListAdapter extends BaseAdapter {
      * An ACL item in the list.
      * Permissions are grouped together.
      */
-    private static class AclItem {
+    public static class AclItem {
         private String type;
         private String name;
         private List<String> permList = new ArrayList<>();
+
+        public String getType() {
+            return type;
+        }
+
+        public String getName() {
+            return name;
+        }
 
         @Override
         public int hashCode() {

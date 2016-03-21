@@ -37,7 +37,7 @@
         android:textSize="16sp"
         android:layout_centerInParent="true"/>
 
-    <com.shamanland.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/addDocumentButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -48,6 +48,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="20dp"
         android:src="@drawable/ic_add_white_24dp"
-        app:floatingActionButtonColor="#263238"/>
+        app:fabSize="normal"/>
 
 </RelativeLayout>

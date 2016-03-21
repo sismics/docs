@@ -5,7 +5,7 @@
   </tr>
 
   <tr ng-repeat="(id, acl) in acls">
-    <td><em>{{ acl[0].type == 'SHARE' ? 'Shared' : 'User' }}</em> {{ acl[0].name }}</td>
+    <td><acl data="acl[0]"></acl></td>
     <td>
             <span class="label label-default" style="margin-right: 6px;" ng-repeat="a in acl | orderBy: 'perm'">
               {{ a.perm }}
@@ -22,12 +22,18 @@
 
   <form name="aclForm" class="form-horizontal">
     <div class="form-group">
-      <label class=" col-sm-2 control-label" for="inputTarget">User</label>
+      <label class="col-sm-2 control-label" for="inputTarget">For</label>
       <div class="col-sm-3">
         <input required ng-maxlength="50" class="form-control" type="text" id="inputTarget"
-               placeholder="Type a username" name="username" ng-model="acl.username" autocomplete="off"
-               typeahead="username for username in getTargetAclTypeahead($viewValue) | filter: $viewValue"
+               placeholder="Search a user or group" name="target" ng-model="acl.target" autocomplete="off"
+               typeahead="target as target.name for target in getTargetAclTypeahead($viewValue) | filter: $viewValue"
+               typeahead-template-url="partial/docs/directive.typeahead.acl.html"
                typeahead-wait-ms="200" />
+      </div>
+      <div class="col-sm-4">
+        <span class="btn btn-primary" ng-if="acl.target.type" ng-click="acl.target = null">
+          <acl data="acl.target"></acl>
+        </span>
       </div>
     </div>
 
@@ -43,7 +49,7 @@
 
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-primary"  ng-disabled="!aclForm.$valid" ng-click="addAcl()">
+        <button type="submit" class="btn btn-primary"  ng-disabled="!acl.target.type" ng-click="addAcl()">
           <span class="glyphicon glyphicon-plus"></span>
           Add
         </button>

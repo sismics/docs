@@ -27,7 +27,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -43,12 +42,14 @@ import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.ContributorDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
+import com.sismics.docs.core.dao.jpa.RelationDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.jpa.dto.AclDto;
 import com.sismics.docs.core.dao.jpa.dto.ContributorDto;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.dao.jpa.dto.RelationDto;
 import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
@@ -93,16 +94,11 @@ public class DocumentResource extends BaseResource {
         
         DocumentDao documentDao = new DocumentDao();
         AclDao aclDao = new AclDao();
-        DocumentDto documentDto = documentDao.getDocument(documentId);
+        DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
         if (documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
             
-        // Check document visibility
-        if (!aclDao.checkPermission(documentId, PermType.READ, shareId == null ? principal.getId() : shareId)) {
-            throw new ForbiddenClientException();
-        }
-
         JsonObjectBuilder document = Json.createObjectBuilder()
                 .add("id", documentDto.getId())
                 .add("title", documentDto.getTitle())
@@ -152,7 +148,8 @@ public class DocumentResource extends BaseResource {
                     .add("type", aclDto.getTargetType()));
             
             if (!principal.isAnonymous()
-                    && aclDto.getTargetId().equals(principal.getId())
+                    && (aclDto.getTargetId().equals(principal.getId())
+                            || principal.getGroupIdSet().contains(aclDto.getTargetId()))
                     && aclDto.getPerm() == PermType.WRITE) {
                 // The document is writable for the current user
                 writable = true;
@@ -172,6 +169,18 @@ public class DocumentResource extends BaseResource {
         }
         document.add("contributors", contributorList);
         
+        // Add relations
+        RelationDao relationDao = new RelationDao();
+        List<RelationDto> relationDtoList = relationDao.getByDocumentId(documentId);
+        JsonArrayBuilder relationList = Json.createArrayBuilder();
+        for (RelationDto relationDto : relationDtoList) {
+            relationList.add(Json.createObjectBuilder()
+                    .add("id", relationDto.getId())
+                    .add("title", relationDto.getTitle())
+                    .add("source", relationDto.isSource()));
+        }
+        document.add("relations", relationList);
+        
         return Response.ok().entity(document.build()).build();
     }
     
@@ -186,8 +195,8 @@ public class DocumentResource extends BaseResource {
     public Response getPdf(
             @PathParam("id") String documentId,
             @QueryParam("share") String shareId,
-            @QueryParam("metadata") Boolean metadata,
-            @QueryParam("comments") Boolean comments,
+            final @QueryParam("metadata") Boolean metadata,
+            final @QueryParam("comments") Boolean comments,
             final @QueryParam("fitimagetopage") Boolean fitImageToPage,
             @QueryParam("margin") String marginStr) {
         authenticate();
@@ -197,8 +206,8 @@ public class DocumentResource extends BaseResource {
         
         // Get document and check read permission
         DocumentDao documentDao = new DocumentDao();
-        Document document = documentDao.getDocument(documentId, PermType.READ, shareId == null ? principal.getId() : shareId);
-        if (document == null) {
+        final DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
+        if (documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
@@ -217,7 +226,7 @@ public class DocumentResource extends BaseResource {
         StreamingOutput stream = new StreamingOutput() {
             @Override
             public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                try (InputStream inputStream = PdfUtil.convertToPdf(fileList, fitImageToPage, margin)) {
+                try (InputStream inputStream = PdfUtil.convertToPdf(documentDto, fileList, fitImageToPage, metadata, margin)) {
                     ByteStreams.copy(inputStream, outputStream);
                 } catch (Exception e) {
                     throw new IOException(e);
@@ -229,7 +238,7 @@ public class DocumentResource extends BaseResource {
 
         return Response.ok(stream)
                 .header("Content-Type", MimeType.APPLICATION_PDF)
-                .header("Content-Disposition", "inline; filename=\"" + document.getTitle() + ".pdf\"")
+                .header("Content-Disposition", "inline; filename=\"" + documentDto.getTitle() + ".pdf\"")
                 .build();
     }
     
@@ -260,7 +269,7 @@ public class DocumentResource extends BaseResource {
         PaginatedList<DocumentDto> paginatedList = PaginatedLists.create(limit, offset);
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
         DocumentCriteria documentCriteria = parseSearchQuery(search);
-        documentCriteria.setUserId(principal.getId());
+        documentCriteria.setTargetIdList(getTargetIdList(null));
         try {
             documentDao.findByCriteria(paginatedList, documentCriteria, sortCriteria);
         } catch (Exception e) {
@@ -430,6 +439,7 @@ public class DocumentResource extends BaseResource {
             @FormParam("coverage") String coverage,
             @FormParam("rights") String rights,
             @FormParam("tags") List<String> tagList,
+            @FormParam("relations") List<String> relationList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
         if (!authenticate()) {
@@ -493,6 +503,9 @@ public class DocumentResource extends BaseResource {
         // Update tags
         updateTagList(documentId, tagList);
         
+        // Update relations
+        updateRelationList(documentId, relationList);
+        
         // Raise a document created event
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
         documentCreatedAsyncEvent.setUserId(principal.getId());
@@ -526,6 +539,7 @@ public class DocumentResource extends BaseResource {
             @FormParam("coverage") String coverage,
             @FormParam("rights") String rights,
             @FormParam("tags") List<String> tagList,
+            @FormParam("relations") List<String> relationList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
         if (!authenticate()) {
@@ -533,8 +547,8 @@ public class DocumentResource extends BaseResource {
         }
         
         // Validate input data
-        title = ValidationUtil.validateLength(title, "title", 1, 100, true);
-        language = ValidationUtil.validateLength(language, "language", 3, 3, true);
+        title = ValidationUtil.validateLength(title, "title", 1, 100, false);
+        language = ValidationUtil.validateLength(language, "language", 3, 3, false);
         description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
         subject = ValidationUtil.validateLength(subject, "subject", 0, 500, true);
         identifier = ValidationUtil.validateLength(identifier, "identifier", 0, 500, true);
@@ -549,50 +563,35 @@ public class DocumentResource extends BaseResource {
             throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", language));
         }
         
+        // Check write permission
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(id, PermType.WRITE, getTargetIdList(null))) {
+            throw new ForbiddenClientException();
+        }
+        
         // Get the document
         DocumentDao documentDao = new DocumentDao();
-        Document document;
-        document = documentDao.getDocument(id, PermType.WRITE, principal.getId());
+        Document document = documentDao.getById(id);
         if (document == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
         // Update the document
-        if (!StringUtils.isEmpty(title)) {
-            document.setTitle(title);
-        }
-        if (!StringUtils.isEmpty(description)) {
-            document.setDescription(description);
-        }
-        if (!StringUtils.isEmpty(subject)) {
-            document.setSubject(subject);
-        }
-        if (!StringUtils.isEmpty(identifier)) {
-            document.setIdentifier(identifier);
-        }
-        if (!StringUtils.isEmpty(publisher)) {
-            document.setPublisher(publisher);
-        }
-        if (!StringUtils.isEmpty(format)) {
-            document.setFormat(format);
-        }
-        if (!StringUtils.isEmpty(source)) {
-            document.setSource(source);
-        }
-        if (!StringUtils.isEmpty(type)) {
-            document.setType(type);
-        }
-        if (!StringUtils.isEmpty(coverage)) {
-            document.setCoverage(coverage);
-        }
-        if (!StringUtils.isEmpty(rights)) {
-            document.setRights(rights);
-        }
-        if (createDate != null) {
+        document.setTitle(title);
+        document.setDescription(description);
+        document.setSubject(subject);
+        document.setIdentifier(identifier);
+        document.setPublisher(publisher);
+        document.setFormat(format);
+        document.setSource(source);
+        document.setType(type);
+        document.setCoverage(coverage);
+        document.setRights(rights);
+        document.setLanguage(language);
+        if (createDate == null) {
+            document.setCreateDate(new Date());
+        } else {
             document.setCreateDate(createDate);
-        }
-        if (language != null) {
-            document.setLanguage(language);
         }
         
         document = documentDao.update(document, principal.getId());
@@ -600,10 +599,13 @@ public class DocumentResource extends BaseResource {
         // Update tags
         updateTagList(id, tagList);
         
-        // Raise a document updated event
+        // Update relations
+        updateRelationList(id, relationList);
+        
+        // Raise a document updated event (with the document to update Lucene)
         DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
         documentUpdatedAsyncEvent.setUserId(principal.getId());
-        documentUpdatedAsyncEvent.setDocument(document);
+        documentUpdatedAsyncEvent.setDocumentId(id);
         AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
         
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -637,6 +639,28 @@ public class DocumentResource extends BaseResource {
     }
     
     /**
+     * Update relations list on a document.
+     * 
+     * @param documentId Document ID
+     * @param relationList Relation ID list
+     */
+    private void updateRelationList(String documentId, List<String> relationList) {
+        if (relationList != null) {
+            DocumentDao documentDao = new DocumentDao();
+            RelationDao relationDao = new RelationDao();
+            Set<String> documentIdSet = new HashSet<>();
+            for (String targetDocId : relationList) {
+                // ACL are not checked, because the editing user is not forced to view the target document
+                Document document = documentDao.getById(targetDocId);
+                if (document != null && !documentId.equals(targetDocId)) {
+                    documentIdSet.add(targetDocId);
+                }
+            }
+            relationDao.updateRelationList(documentId, documentIdSet);
+        }
+    }
+    
+    /**
      * Deletes a document.
      * 
      * @param id Document ID
@@ -653,14 +677,14 @@ public class DocumentResource extends BaseResource {
         // Get the document
         DocumentDao documentDao = new DocumentDao();
         FileDao fileDao = new FileDao();
-        Document document = documentDao.getDocument(id, PermType.WRITE, principal.getId());
-        List<File> fileList = fileDao.getByDocumentId(principal.getId(), id);
-        if (document == null) {
+        DocumentDto documentDto = documentDao.getDocument(id, PermType.WRITE, getTargetIdList(null));
+        if (documentDto == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
+        List<File> fileList = fileDao.getByDocumentId(principal.getId(), id);
         
         // Delete the document
-        documentDao.delete(document.getId(), principal.getId());
+        documentDao.delete(documentDto.getId(), principal.getId());
         
         // Raise file deleted events (don't bother sending document updated event)
         for (File file : fileList) {
@@ -673,7 +697,7 @@ public class DocumentResource extends BaseResource {
         // Raise a document deleted event
         DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
         documentDeletedAsyncEvent.setUserId(principal.getId());
-        documentDeletedAsyncEvent.setDocument(document);
+        documentDeletedAsyncEvent.setDocumentId(documentDto.getId());
         AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
         
         // Always return OK

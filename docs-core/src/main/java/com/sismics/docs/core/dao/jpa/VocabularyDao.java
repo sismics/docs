@@ -35,7 +35,7 @@ public class VocabularyDao {
     }
 
     /**
-     * Get all vocabulary entries sharing a single name
+     * Get all vocabulary entries sharing a single name.
      * 
      * @param name Name
      * @return Vocabulary entries

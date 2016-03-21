@@ -14,20 +14,10 @@ public class FileDeletedAsyncEvent extends UserEvent {
      */
     private File file;
     
-    /**
-     * Getter of file.
-     *
-     * @return the file
-     */
     public File getFile() {
         return file;
     }
 
-    /**
-     * Setter of file.
-     *
-     * @param file file
-     */
     public void setFile(File file) {
         this.file = file;
     }

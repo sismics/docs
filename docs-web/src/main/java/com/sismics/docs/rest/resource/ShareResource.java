@@ -37,6 +37,7 @@ public class ShareResource extends BaseResource {
      * Add a share to a document.
      *
      * @param documentId Document ID
+     * @param name Share name
      * @return Response
      */
     @PUT
@@ -53,7 +54,7 @@ public class ShareResource extends BaseResource {
 
         // Get the document
         DocumentDao documentDao = new DocumentDao();
-        if (documentDao.getDocument(documentId, PermType.WRITE, principal.getId()) == null) {
+        if (documentDao.getDocument(documentId, PermType.WRITE, getTargetIdList(null)) == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
@@ -102,7 +103,7 @@ public class ShareResource extends BaseResource {
         }
         
         Acl acl = aclList.get(0);
-        if (!aclDao.checkPermission(acl.getSourceId(), PermType.WRITE, principal.getId())) {
+        if (!aclDao.checkPermission(acl.getSourceId(), PermType.WRITE, getTargetIdList(null))) {
             throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", acl.getSourceId()));
         }
 

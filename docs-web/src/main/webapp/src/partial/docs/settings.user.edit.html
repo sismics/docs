@@ -37,6 +37,15 @@
         <span class="help-block" ng-show="editUserForm.email.$error.maxlength">Too long</span>
       </div>
     </div>
+    <div class="form-group" ng-if="user.groups.length > 0">
+      <label class="col-sm-2 control-label">Groups</label>
+
+      <div class="col-sm-7">
+        <a class="btn btn-default"
+           ng-repeat="group in user.groups"
+           href="#/settings/group/edit/{{ group }}">{{ group }}</a>
+      </div>
+    </div>
     <div class="form-group" ng-class="{ 'has-error': !editUserForm.storage_quota.$valid, success: editUserForm.storage_quota.$valid }">
       <label class="col-sm-2 control-label" for="inputQuota">Storage quota</label>
 
@@ -90,5 +99,4 @@
       </div>
     </div>
   </form>
-  <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{ alert.msg }}</alert>
 </div>

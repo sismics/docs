@@ -1,6 +1,5 @@
 package com.sismics.docs.core.dao.jpa.dto;
 
-
 /**
  * User DTO.
  *

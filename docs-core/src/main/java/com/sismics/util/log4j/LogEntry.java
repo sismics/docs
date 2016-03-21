@@ -1,5 +1,7 @@
 package com.sismics.util.log4j;
 
+import org.apache.log4j.Level;
+
 /**
  * Log entry.
  *
@@ -14,7 +16,7 @@ public class LogEntry {
     /**
      * Logging level (DEBUG, WARN)...
      */
-    private String level;
+    private Level level;
     
     /**
      * Logger name / tag.
@@ -34,45 +36,25 @@ public class LogEntry {
      * @param tag Logger name / tag
      * @param message Message logged
      */
-    public LogEntry(long timestamp, String level, String tag, String message) {
+    public LogEntry(long timestamp, Level level, String tag, String message) {
         this.timestamp = timestamp;
         this.level = level;
         this.tag = tag;
         this.message = message;
     }
 
-    /**
-     * Getter of timestamp.
-     *
-     * @return timestamp
-     */
     public long getTimestamp() {
         return timestamp;
     }
 
-    /**
-     * Getter of level.
-     *
-     * @return level
-     */
-    public String getLevel() {
+    public Level getLevel() {
         return level;
     }
 
-    /**
-     * Getter of tag.
-     *
-     * @return tag
-     */
     public String getTag() {
         return tag;
     }
 
-    /**
-     * Getter of message.
-     *
-     * @return message
-     */
     public String getMessage() {
         return message;
     }

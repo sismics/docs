@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Appender;
+import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +82,7 @@ public class AppResource extends BaseResource {
     /**
      * Retrieve the application logs.
      * 
-     * @param level Filter on logging level
+     * @param minLevel Filter on logging level
      * @param tag Filter on logger name / tag
      * @param message Filter on message
      * @param limit Page limit
@@ -91,7 +92,7 @@ public class AppResource extends BaseResource {
     @GET
     @Path("log")
     public Response log(
-            @QueryParam("level") String level,
+            @QueryParam("level") String minLevel,
             @QueryParam("tag") String tag,
             @QueryParam("message") String message,
             @QueryParam("limit") Integer limit,
@@ -99,8 +100,6 @@ public class AppResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        // TODO Change level by minLevel (returns all logs above)
-
         // Get the memory appender
         org.apache.log4j.Logger logger = org.apache.log4j.Logger.getRootLogger();
         Appender appender = logger.getAppender("MEMORY");
@@ -110,10 +109,10 @@ public class AppResource extends BaseResource {
         MemoryAppender memoryAppender = (MemoryAppender) appender;
         
         // Find the logs
-        LogCriteria logCriteria = new LogCriteria();
-        logCriteria.setLevel(StringUtils.stripToNull(level));
-        logCriteria.setTag(StringUtils.stripToNull(tag));
-        logCriteria.setMessage(StringUtils.stripToNull(message));
+        LogCriteria logCriteria = new LogCriteria()
+                .setMinLevel(Level.toLevel(StringUtils.stripToNull(minLevel)))
+                .setTag(StringUtils.stripToNull(tag))
+                .setMessage(StringUtils.stripToNull(message));
         
         PaginatedList<LogEntry> paginatedList = PaginatedLists.create(limit, offset);
         memoryAppender.find(logCriteria, paginatedList);
@@ -121,7 +120,7 @@ public class AppResource extends BaseResource {
         for (LogEntry logEntry : paginatedList.getResultList()) {
             logs.add(Json.createObjectBuilder()
                     .add("date", logEntry.getTimestamp())
-                    .add("level", logEntry.getLevel())
+                    .add("level", logEntry.getLevel().toString())
                     .add("tag", logEntry.getTag())
                     .add("message", logEntry.getMessage()));
         }

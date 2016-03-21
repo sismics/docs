@@ -2,6 +2,13 @@
   <h1>{{ user.username }} <small>{{ user.email }}</small></h1>
 </div>
 
+<h4 ng-if="user.groups.length > 0">Groups</h4>
+<ul ng-if="user.groups.length > 0">
+  <li ng-repeat="group in user.groups">
+    <a href="#/group/{{ group }}">{{ group }}</a>
+  </li>
+</ul>
+
 <h4>Quota used</h4>
 <div class="row">
   <div class="col-md-6">
@@ -20,9 +27,9 @@
       Documents created by {{ user.username }}
     </a>
   </li>
-  <li>
-    <a ng-href="#/settings/user/edit/{{ user.username }}" ng-if="userInfo.base_functions.indexOf('ADMIN') != -1">
-      Edit {{ user.username}} user
+  <li ng-if="userInfo.base_functions.indexOf('ADMIN') != -1">
+    <a ng-href="#/settings/user/edit/{{ user.username }}">
+      Edit {{ user.username }} user
     </a>
   </li>
 </ul>

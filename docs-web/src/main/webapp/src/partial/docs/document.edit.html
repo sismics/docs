@@ -9,7 +9,7 @@
         <div class="col-sm-10">
           <input required ng-maxlength="100" class="form-control" type="text" id="inputTitle"
             placeholder="The nature or genre of the resource" name="title" ng-model="document.title" autocomplete="off"
-            typeahead="document for document in getTitleTypeahead($viewValue) | filter: $viewValue"
+            typeahead="document for document in getTitleTypeahead($viewValue)"
             typeahead-wait-ms="200" ng-disabled="fileIsUploading" />
         </div>
       </div>
@@ -98,6 +98,7 @@
         <label class="col-sm-2 control-label" for="inputType">Type</label>
         <div class="col-sm-10">
           <select class="form-control" id="inputType" name="type" ng-model="document.type" ng-disabled="fileIsUploading">
+            <option value=""></option>
             <option ng-repeat="vocabulary in vocabularies['type']">{{ vocabulary.value }}</option>
           </select>
         </div>
@@ -106,6 +107,7 @@
         <label class="col-sm-2 control-label" for="inputCoverage">Coverage</label>
         <div class="col-sm-10">
           <select class="form-control" id="inputCoverage" name="coverage" ng-model="document.coverage" ng-disabled="fileIsUploading">
+            <option value=""></option>
             <option ng-repeat="vocabulary in vocabularies['coverage']">{{ vocabulary.value }}</option>
           </select>
         </div>
@@ -114,8 +116,15 @@
         <label class="col-sm-2 control-label" for="inputRights">Rights</label>
         <div class="col-sm-10">
           <select class="form-control" id="inputRights" name="rights" ng-model="document.rights" ng-disabled="fileIsUploading">
+            <option value=""></option>
             <option ng-repeat="vocabulary in vocabularies['rights']">{{ vocabulary.value }}</option>
           </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="col-sm-2 control-label" for="inputRelations">Relations</label>
+        <div class="col-sm-10">
+          <select-relation relations="document.relations" ref="inputRelations" ng-disabled="fileIsUploading"></select-relation>
         </div>
       </div>
     </fieldset>

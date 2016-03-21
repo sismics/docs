@@ -117,6 +117,40 @@
 
         </RelativeLayout>
 
+        <!-- Audit log -->
+
+        <RelativeLayout
+            android:id="@+id/auditLogLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:clickable="true"
+            android:background="?android:attr/selectableItemBackground">
+
+            <ImageView
+                android:id="@+id/auditLogImageView"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_assignment_grey600_24dp"/>
+
+            <TextView
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/auditLogImageView"
+                android:layout_toEndOf="@+id/auditLogImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:textColor="#212121"
+                android:text="@string/latest_activity"
+                android:textSize="14sp"/>
+
+        </RelativeLayout>
+
         <!-- Separator -->
 
         <View

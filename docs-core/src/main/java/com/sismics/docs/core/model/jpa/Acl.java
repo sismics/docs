@@ -30,20 +30,20 @@ public class Acl implements Loggable {
     /**
      * ACL permission.
      */
-    @Column(name = "ACL_PERM_C", length = 30)
+    @Column(name = "ACL_PERM_C", length = 30, nullable = false)
     @Enumerated(EnumType.STRING)
     private PermType perm;
 
     /**
      * ACL source ID.
      */
-    @Column(name = "ACL_SOURCEID_C", length = 36)
+    @Column(name = "ACL_SOURCEID_C", length = 36, nullable = false)
     private String sourceId;
     
     /**
      * ACL target ID.
      */
-    @Column(name = "ACL_TARGETID_C", length = 36)
+    @Column(name = "ACL_TARGETID_C", length = 36, nullable = false)
     private String targetId;
     
     /**

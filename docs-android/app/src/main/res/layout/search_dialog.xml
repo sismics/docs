@@ -27,6 +27,15 @@
             android:textSize="18sp"
             android:hint="@string/fulltext_search"/>
 
+        <!-- Creator -->
+        <EditText
+            android:id="@+id/creatorEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:textSize="18sp"
+            android:hint="@string/creator"/>
+
         <!-- Language -->
         <Spinner
             android:id="@+id/languageSpinner"

@@ -1,0 +1,45 @@
+<div class="row">
+  <div class="col-md-4">
+    <div class="well">
+      <p class="input-group">
+        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+        <input type="search" class="form-control" placeholder="Search in groups" ng-model="searchGroup">
+      </p>
+
+      <table class="row table table-striped table-hover">
+        <tbody>
+        <tr class="pointer" ng-repeat="group in groups | filter: searchGroup"
+            ng-click="openGroup(group)" ng-class="{ active: $stateParams.name == group.name }">
+          <td class="col-xs-4">
+            {{ group.name }}
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="well">
+      <p class="input-group">
+        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+        <input type="search" class="form-control" placeholder="Search in users" ng-model="searchUser">
+      </p>
+
+      <table class="row table table-striped table-hover">
+        <tbody>
+        <tr class="pointer" ng-repeat="user in users | filter: searchUser"
+            ng-click="openUser(user)" ng-class="{ active: $stateParams.username == user.username }">
+          <td class="col-xs-4">
+            <span class="glyphicon glyphicon-user"></span>
+            {{ user.username }}
+            <span class="text-muted" ng-if="userInfo.username == user.username">It's you!</span>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <div ui-view="sub"></div>
+  </div>
+</div>

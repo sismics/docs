@@ -8,7 +8,10 @@ angular.module('docs').controller('SettingsUser', function($scope, $state, Resta
    * Load users from server.
    */
   $scope.loadUsers = function() {
-    Restangular.one('user/list').get({ limit: 100 }).then(function(data) {
+    Restangular.one('user/list').get({
+      sort_column: 1,
+      asc: true
+    }).then(function(data) {
       $scope.users = data.users;
     });
   };

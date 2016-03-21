@@ -20,9 +20,8 @@ import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
 import com.sismics.docs.core.dao.jpa.dto.UserDto;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.AuditLogUtil;
-import com.sismics.docs.core.util.jpa.PaginatedList;
-import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.QueryParam;
+import com.sismics.docs.core.util.jpa.QueryUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
 
@@ -265,10 +264,11 @@ public class UserDao {
     /**
      * Returns the list of all users.
      * 
-     * @param paginatedList List of users (updated by side effects)
+     * @param criteria Search criteria
      * @param sortCriteria Sort criteria
+     * @return List of users
      */
-    public void findByCriteria(PaginatedList<UserDto> paginatedList, UserCriteria criteria, SortCriteria sortCriteria) {
+    public List<UserDto> findByCriteria(UserCriteria criteria, SortCriteria sortCriteria) {
         Map<String, Object> parameterMap = new HashMap<String, Object>();
         List<String> criteriaList = new ArrayList<String>();
         
@@ -281,6 +281,11 @@ public class UserDao {
             parameterMap.put("search", "%" + criteria.getSearch() + "%");
         }
         
+        if (criteria.getGroupId() != null) {
+            sb.append(" join T_USER_GROUP ug on ug.UGP_IDUSER_C = u.USE_ID_C and ug.UGP_IDGROUP_C = :groupId and ug.UGP_DELETEDATE_D is null ");
+            parameterMap.put("groupId", criteria.getGroupId());
+        }
+        
         criteriaList.add("u.USE_DELETEDATE_D is null");
         
         if (!criteriaList.isEmpty()) {
@@ -289,8 +294,9 @@ public class UserDao {
         }
         
         // Perform the search
-        QueryParam queryParam = new QueryParam(sb.toString(), parameterMap);
-        List<Object[]> l = PaginatedLists.executePaginatedQuery(paginatedList, queryParam, sortCriteria);
+        QueryParam queryParam = QueryUtil.getSortedQueryParam(new QueryParam(sb.toString(), parameterMap), sortCriteria);
+        @SuppressWarnings("unchecked")
+        List<Object[]> l = QueryUtil.getNativeQuery(queryParam).getResultList();
         
         // Assemble results
         List<UserDto> userDtoList = new ArrayList<UserDto>();
@@ -305,6 +311,6 @@ public class UserDao {
             userDto.setStorageQuota(((Number) o[i++]).longValue());
             userDtoList.add(userDto);
         }
-        paginatedList.setResultList(userDtoList);
+        return userDtoList;
     }
 }

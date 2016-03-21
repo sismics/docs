@@ -51,7 +51,7 @@ public class CommentResource extends BaseResource {
         
         // Read access on doc gives access to write comments 
         DocumentDao documentDao = new DocumentDao();
-        if (documentDao.getDocument(documentId, PermType.READ, principal.getId()) == null) {
+        if (documentDao.getDocument(documentId, PermType.READ, getTargetIdList(null)) == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         
@@ -97,7 +97,7 @@ public class CommentResource extends BaseResource {
         if (!comment.getUserId().equals(principal.getId())) {
             // Get the associated document
             DocumentDao documentDao = new DocumentDao();
-            if (documentDao.getDocument(comment.getDocumentId(), PermType.WRITE, principal.getId()) == null) {
+            if (documentDao.getDocument(comment.getDocumentId(), PermType.WRITE, getTargetIdList(null)) == null) {
                 return Response.status(Status.NOT_FOUND).build();
             }
         }
@@ -125,7 +125,7 @@ public class CommentResource extends BaseResource {
         
         // Read access on doc gives access to read comments 
         DocumentDao documentDao = new DocumentDao();
-        if (documentDao.getDocument(documentId, PermType.READ, shareId == null ? principal.getId() : shareId) == null) {
+        if (documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId)) == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         

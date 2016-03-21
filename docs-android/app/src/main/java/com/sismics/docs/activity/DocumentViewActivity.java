@@ -154,7 +154,7 @@ public class DocumentViewActivity extends AppCompatActivity {
      *
      * @param document Document in JSON format
      */
-    private void refreshDocument(JSONObject document) {
+    private void refreshDocument(final JSONObject document) {
         this.document = document;
 
         String title = document.optString("title");
@@ -249,7 +249,7 @@ public class DocumentViewActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 DialogFragment dialog = DocExportPdfFragment.newInstance(
-                        DocumentViewActivity.this.document.optString("id"), DocumentViewActivity.this.document.optString("title"));
+                        document.optString("id"), document.optString("title"));
                 dialog.show(getSupportFragmentManager(), "DocExportPdfFragment");
             }
         });
@@ -259,8 +259,19 @@ public class DocumentViewActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment dialog = DocShareFragment.newInstance(DocumentViewActivity.this.document.optString("id"));
+                DialogFragment dialog = DocShareFragment.newInstance(document.optString("id"));
                 dialog.show(getSupportFragmentManager(), "DocShareFragment");
+            }
+        });
+
+        // Action audit log
+        button = (Button) findViewById(R.id.actionAuditLog);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DocumentViewActivity.this, AuditLogActivity.class);
+                intent.putExtra("documentId", document.optString("id"));
+                startActivity(intent);
             }
         });
 
@@ -300,7 +311,7 @@ public class DocumentViewActivity extends AppCompatActivity {
         // Grab the attached files
         updateFiles();
 
-        // Grab the full document (used for ACLs and writable status)
+        // Grab the full document (used for ACLs, remaining metadata and writable status)
         updateDocument();
     }
 
@@ -630,6 +641,7 @@ public class DocumentViewActivity extends AppCompatActivity {
                     menu.findItem(R.id.delete_file).setVisible(writable);
                 }
 
+                // Action only available if the document is writable
                 findViewById(R.id.actionEditDocument).setVisibility(writable ? View.VISIBLE : View.INVISIBLE);
                 findViewById(R.id.actionUploadFile).setVisibility(writable ? View.VISIBLE : View.INVISIBLE);
                 findViewById(R.id.actionSharing).setVisibility(writable ? View.VISIBLE : View.INVISIBLE);
@@ -637,7 +649,36 @@ public class DocumentViewActivity extends AppCompatActivity {
 
                 // ACLs
                 ListView aclListView = (ListView) findViewById(R.id.aclListView);
-                aclListView.setAdapter(new AclListAdapter(document.optJSONArray("acls")));
+                final AclListAdapter aclListAdapter = new AclListAdapter(document.optJSONArray("acls"));
+                aclListView.setAdapter(aclListAdapter);
+                aclListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        AclListAdapter.AclItem acl = aclListAdapter.getItem(position);
+                        if (acl.getType().equals("USER")) {
+                            Intent intent = new Intent(DocumentViewActivity.this, UserProfileActivity.class);
+                            intent.putExtra("username", acl.getName());
+                            startActivity(intent);
+                        } else if (acl.getType().equals("GROUP")) {
+                            Intent intent = new Intent(DocumentViewActivity.this, GroupProfileActivity.class);
+                            intent.putExtra("name", acl.getName());
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+                // Remaining metadata
+                TextView creatorTextView = (TextView) findViewById(R.id.creatorTextView);
+                final String creator = document.optString("creator");
+                creatorTextView.setText(creator);
+                creatorTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(DocumentViewActivity.this, UserProfileActivity.class);
+                        intent.putExtra("username", creator);
+                        startActivity(intent);
+                    }
+                });
             }
         });
     }

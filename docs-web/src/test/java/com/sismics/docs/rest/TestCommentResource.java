@@ -108,7 +108,8 @@ public class TestCommentResource extends BaseJerseyTest {
                 .put(Entity.form(new Form()
                         .param("source", document1Id)
                         .param("perm", "READ")
-                        .param("username", "comment2")), JsonObject.class);
+                        .param("target", "comment2")
+                        .param("type", "USER")), JsonObject.class);
         
         // Create a comment with comment2
         json = target().path("/comment").request()

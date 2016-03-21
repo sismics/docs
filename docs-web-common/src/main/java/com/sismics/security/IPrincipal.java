@@ -1,6 +1,7 @@
 package com.sismics.security;
 
 import java.security.Principal;
+import java.util.Set;
 
 import org.joda.time.DateTimeZone;
 
@@ -23,6 +24,14 @@ public interface IPrincipal extends Principal {
      * @return ID of the connected user
      */
     public String getId();
+    
+    /**
+     * Returns the list of group ID of the connected user,
+     * or an empty list if the user is anonymous.
+     * 
+     * @return List of group ID
+     */
+    public Set<String> getGroupIdSet();
     
     /**
      * Returns the timezone of the principal.

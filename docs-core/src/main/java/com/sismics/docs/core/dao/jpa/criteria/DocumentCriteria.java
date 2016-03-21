@@ -11,9 +11,9 @@ import java.util.List;
  */
 public class DocumentCriteria {
     /**
-     * User ID.
+     * ACL target ID list.
      */
-    private String userId;
+    private List<String> targetIdList;
     
     /**
      * Search query.
@@ -55,12 +55,12 @@ public class DocumentCriteria {
      */
     private String creatorId;
     
-    public String getUserId() {
-        return userId;
+    public List<String> getTargetIdList() {
+        return targetIdList;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setTargetIdList(List<String> targetIdList) {
+        this.targetIdList = targetIdList;
     }
 
     public String getSearch() {

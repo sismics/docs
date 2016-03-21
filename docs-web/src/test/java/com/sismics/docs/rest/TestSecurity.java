@@ -38,11 +38,11 @@ public class TestSecurity extends BaseJerseyTest {
         Assert.assertEquals("You don't have access to this resource", json.getString("message"));
 
         // User testsecurity logs in
-        String testSecurityAuthenticationToken = clientUtil.login("testsecurity");
+        String testSecurityToken = clientUtil.login("testsecurity");
         
         // User testsecurity creates a new user KO : no permission
         response = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, testSecurityAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, testSecurityToken)
                 .put(Entity.form(new Form()));
         Assert.assertEquals(Status.FORBIDDEN, Status.fromStatusCode(response.getStatus()));
         Assert.assertEquals("ForbiddenError", json.getString("type"));
@@ -50,29 +50,29 @@ public class TestSecurity extends BaseJerseyTest {
         
         // User testsecurity changes his email OK
         json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, testSecurityAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, testSecurityToken)
                 .post(Entity.form(new Form()
                         .param("email", "testsecurity2@docs.com")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
 
         // User testsecurity logs out
         response = target().path("/user/logout").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, testSecurityAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, testSecurityToken)
                 .post(Entity.form(new Form()));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        testSecurityAuthenticationToken = clientUtil.getAuthenticationCookie(response);
-        Assert.assertTrue(StringUtils.isEmpty(testSecurityAuthenticationToken));
+        testSecurityToken = clientUtil.getAuthenticationCookie(response);
+        Assert.assertTrue(StringUtils.isEmpty(testSecurityToken));
 
         // User testsecurity logs out KO : he is not connected anymore
         response = target().path("/user/logout").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, testSecurityAuthenticationToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, testSecurityToken)
                 .post(Entity.form(new Form()));
         Assert.assertEquals(Status.FORBIDDEN, Status.fromStatusCode(response.getStatus()));
 
         // User testsecurity logs in with a long lived session
-        testSecurityAuthenticationToken = clientUtil.login("testsecurity", "12345678", true);
+        testSecurityToken = clientUtil.login("testsecurity", "12345678", true);
 
         // User testsecurity logs out
-        clientUtil.logout(testSecurityAuthenticationToken);
+        clientUtil.logout(testSecurityToken);
     }
 }

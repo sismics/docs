@@ -55,6 +55,7 @@ public class SearchFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.search_dialog, null);
         final EditText searchEditText = (EditText) view.findViewById(R.id.searchEditText);
         final EditText fulltextEditText = (EditText) view.findViewById(R.id.fulltextEditText);
+        final EditText creatorEditText = (EditText) view.findViewById(R.id.creatorEditText);
         final CheckBox sharedCheckbox = (CheckBox) view.findViewById(R.id.sharedCheckbox);
         final Spinner languageSpinner = (Spinner) view.findViewById(R.id.languageSpinner);
         final DatePickerView beforeDatePicker = (DatePickerView) view.findViewById(R.id.beforeDatePicker);
@@ -89,6 +90,7 @@ public class SearchFragment extends DialogFragment {
                         // Build the simple criterias
                         SearchQueryBuilder queryBuilder = new SearchQueryBuilder()
                                 .simpleSearch(searchEditText.getText().toString())
+                                .creator(creatorEditText.getText().toString())
                                 .shared(sharedCheckbox.isChecked())
                                 .language(((LanguageAdapter.Language) languageSpinner.getSelectedItem()).getId())
                                 .before(beforeDatePicker.getDate())
