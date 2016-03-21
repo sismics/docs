@@ -34,8 +34,8 @@ angular.module('docs').controller('SettingsVocabulary', function($scope, Restang
   // Add an entry
   $scope.addEntry = function(entry) {
     entry.name = $scope.vocabulary;
-    Restangular.one('vocabulary').put(entry).then(function() {
-      $scope.entries.push(entry);
+    Restangular.one('vocabulary').put(entry).then(function(data) {
+      $scope.entries.push(data);
       $scope.entry = {};
     });
   };
