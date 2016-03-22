@@ -56,11 +56,4 @@ angular.module('docs').controller('Navigation', function($scope, $http, $state, 
     });
     $event.preventDefault();
   };
-
-  /**
-   * Returns true if at least an asynchronous request is in progress.
-   */
-  $scope.isLoading = function() {
-    return $http.pendingRequests.length > 0;
-  };
 });
