@@ -55,8 +55,8 @@ import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.security.UserPrincipal;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
-import com.warrenstrange.googleauth.GoogleAuthenticator;
-import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import com.sismics.util.totp.GoogleAuthenticator;
+import com.sismics.util.totp.GoogleAuthenticatorKey;
 
 /**
  * User REST resources.
@@ -649,7 +649,6 @@ public class UserResource extends BaseResource {
         }
         
         // Create a new TOTP key and scratch codes
-        // TODO Copy library sources here to scrap useless dependencies and make verification code generation public for testing
         GoogleAuthenticator gAuth = new GoogleAuthenticator();
         final GoogleAuthenticatorKey key = gAuth.createCredentials();
         
