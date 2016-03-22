@@ -1,5 +1,6 @@
 package com.sismics.docs.rest;
 
+import java.util.Date;
 import java.util.Locale;
 
 import javax.json.JsonArray;
@@ -13,6 +14,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.sismics.util.filter.TokenBasedSecurityFilter;
+import com.sismics.util.totp.GoogleAuthenticator;
 
 /**
  * Exhaustive test of the user resource.
@@ -299,5 +301,27 @@ public class TestUserResource extends BaseJerseyTest {
                 .post(Entity.form(new Form()), JsonObject.class);
         String secret = json.getString("secret");
         Assert.assertNotNull(secret);
+        
+        // Try to login with totp1 without a validation code
+        Response response = target().path("/user/login").request()
+                .post(Entity.form(new Form()
+                        .param("username", "totp1")
+                        .param("password", "12345678")
+                        .param("remember", "false")));
+        Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        json = response.readEntity(JsonObject.class);
+        Assert.assertEquals("ValidationCodeRequired", json.getString("type"));
+        
+        // Generate a OTP
+        GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
+        int validationCode = googleAuthenticator.calculateCode(secret, new Date().getTime() / 30000);
+        
+        // Login with totp1 with a validation code
+        json = target().path("/user/login").request()
+                .post(Entity.form(new Form()
+                        .param("username", "totp1")
+                        .param("password", "12345678")
+                        .param("code", Integer.toString(validationCode))
+                        .param("remember", "false")), JsonObject.class);
     }
 }

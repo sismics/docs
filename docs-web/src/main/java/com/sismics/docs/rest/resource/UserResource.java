@@ -255,6 +255,7 @@ public class UserResource extends BaseResource {
     public Response login(
         @FormParam("username") String username,
         @FormParam("password") String password,
+        @FormParam("code") String validationCodeStr,
         @FormParam("remember") boolean longLasted) {
         // Validate the input data
         username = StringUtils.strip(username);
@@ -262,9 +263,24 @@ public class UserResource extends BaseResource {
 
         // Get the user
         UserDao userDao = new UserDao();
-        String userId = userDao.authenticate(username, password);
-        if (userId == null) {
+        User user = userDao.authenticate(username, password);
+        if (user == null) {
             throw new ForbiddenClientException();
+        }
+
+        // Two factor authentication
+        if (user.getTotpKey() != null) {
+            // If TOTP is enabled, ask a validation code
+            if (Strings.isNullOrEmpty(validationCodeStr)) {
+                throw new ClientException("ValidationCodeRequired", "An OTP validation code is required");
+            }
+            
+            // Check the validation code
+            int validationCode = ValidationUtil.validateInteger(validationCodeStr, "code");
+            GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
+            if (!googleAuthenticator.authorize(user.getTotpKey(), validationCode)) {
+                throw new ForbiddenClientException();
+            }
         }
         
         // Get the remote IP
@@ -275,15 +291,15 @@ public class UserResource extends BaseResource {
         
         // Create a new session token
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
-        AuthenticationToken authenticationToken = new AuthenticationToken();
-        authenticationToken.setUserId(userId);
-        authenticationToken.setLongLasted(longLasted);
-        authenticationToken.setIp(ip);
-        authenticationToken.setUserAgent(StringUtils.abbreviate(request.getHeader("user-agent"), 1000));
+        AuthenticationToken authenticationToken = new AuthenticationToken()
+            .setUserId(user.getId())
+            .setLongLasted(longLasted)
+            .setIp(ip)
+            .setUserAgent(StringUtils.abbreviate(request.getHeader("user-agent"), 1000));
         String token = authenticationTokenDao.create(authenticationToken);
         
         // Cleanup old session tokens
-        authenticationTokenDao.deleteOldSessionToken(userId);
+        authenticationTokenDao.deleteOldSessionToken(user.getId());
 
         JsonObjectBuilder response = Json.createObjectBuilder();
         int maxAge = longLasted ? TokenBasedSecurityFilter.TOKEN_LONG_LIFETIME : -1;
@@ -648,18 +664,18 @@ public class UserResource extends BaseResource {
             throw new ForbiddenClientException();
         }
         
-        // Create a new TOTP key and scratch codes
+        // Create a new TOTP key
         GoogleAuthenticator gAuth = new GoogleAuthenticator();
         final GoogleAuthenticatorKey key = gAuth.createCredentials();
         
-        JsonArrayBuilder scratchCodes = Json.createArrayBuilder();
-        for (int scratchCode : key.getScratchCodes()) {
-            scratchCodes.add(scratchCode);
-        }
+        // Save it
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveByUsername(principal.getName());
+        user.setTotpKey(key.getKey());
+        user = userDao.update(user, principal.getId());
         
         JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("secret", key.getKey())
-                .add("scratch_codes", scratchCodes);
+                .add("secret", key.getKey());
         return Response.ok().entity(response.build()).build();
     }
     

@@ -36,9 +36,9 @@ public class UserDao {
      * 
      * @param username User login
      * @param password User password
-     * @return ID of the authenticated user or null
+     * @return The authenticated user or null
      */
-    public String authenticate(String username, String password) {
+    public User authenticate(String username, String password) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select u from User u where u.username = :username and u.deleteDate is null");
         q.setParameter("username", username);
@@ -47,7 +47,7 @@ public class UserDao {
             if (!BCrypt.checkpw(password, user.getPassword())) {
                 return null;
             }
-            return user.getId();
+            return user;
         } catch (NoResultException e) {
             return null;
         }
@@ -104,6 +104,7 @@ public class UserDao {
         userFromDb.setEmail(user.getEmail());
         userFromDb.setStorageQuota(user.getStorageQuota());
         userFromDb.setStorageCurrent(user.getStorageCurrent());
+        userFromDb.setTotpKey(user.getTotpKey());
         
         // Create audit log
         AuditLogUtil.create(userFromDb, AuditLogType.UPDATE, userId);
