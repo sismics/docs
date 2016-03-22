@@ -20,8 +20,6 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 public class TestAuditLogResource extends BaseJerseyTest {
     /**
      * Test the audit log resource.
-     * 
-     * @throws JSONException
      */
     @Test
     public void testAuditLogResource() {

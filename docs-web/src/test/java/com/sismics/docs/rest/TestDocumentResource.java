@@ -359,9 +359,8 @@ public class TestDocumentResource extends BaseJerseyTest {
      * @param query Search query
      * @param token Authentication token
      * @return Number of documents found
-     * @throws Exception
      */
-    private int searchDocuments(String query, String token) throws Exception {
+    private int searchDocuments(String query, String token) {
         JsonObject json = target().path("/document/list")
                 .queryParam("search", query)
                 .request()

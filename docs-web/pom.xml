@@ -89,6 +89,11 @@
       <artifactId>servlet</artifactId>
     </dependency>
     
+    <dependency>
+      <groupId>com.warrenstrange</groupId>
+      <artifactId>googleauth</artifactId>
+    </dependency>
+    
     <!-- Test dependencies -->
     <dependency>
       <groupId>com.sismics.docs</groupId>

@@ -22,8 +22,6 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 public class TestUserResource extends BaseJerseyTest {
     /**
      * Test the user resource.
-     * 
-     * @throws JSONException
      */
     @Test
     public void testUserResource() {
@@ -229,8 +227,6 @@ public class TestUserResource extends BaseJerseyTest {
 
     /**
      * Test the user resource admin functions.
-     * 
-     * @throws JSONException
      */
     @Test
     public void testUserResourceAdmin() {
@@ -289,5 +285,19 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
         Assert.assertEquals("UserNotFound", json.getString("type"));
+    }
+    
+    @Test
+    public void testTotp() {
+        // Create totp1 user
+        clientUtil.createUser("totp1");
+        String totp1Token = clientUtil.login("totp1");
+        
+        // Enable TOTP for totp1
+        JsonObject json = target().path("/user/enable_totp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
+                .post(Entity.form(new Form()), JsonObject.class);
+        String secret = json.getString("secret");
+        Assert.assertNotNull(secret);
     }
 }

@@ -28,7 +28,6 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 public class TestShareResource extends BaseJerseyTest {
     /**
      * Test the share resource.
-     * @throws Exception 
      * 
      * @throws Exception
      */

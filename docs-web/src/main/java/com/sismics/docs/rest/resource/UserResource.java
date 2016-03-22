@@ -55,6 +55,8 @@ import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.security.UserPrincipal;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 
 /**
  * User REST resources.
@@ -636,6 +638,29 @@ public class UserResource extends BaseResource {
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+    
+    @POST
+    @Path("enable_totp")
+    public Response enableTotp() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        
+        // Create a new TOTP key and scratch codes
+        // TODO Copy library sources here to scrap useless dependencies and make verification code generation public for testing
+        GoogleAuthenticator gAuth = new GoogleAuthenticator();
+        final GoogleAuthenticatorKey key = gAuth.createCredentials();
+        
+        JsonArrayBuilder scratchCodes = Json.createArrayBuilder();
+        for (int scratchCode : key.getScratchCodes()) {
+            scratchCodes.add(scratchCode);
+        }
+        
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("secret", key.getKey())
+                .add("scratch_codes", scratchCodes);
         return Response.ok().entity(response.build()).build();
     }
     

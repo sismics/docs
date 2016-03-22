@@ -22,8 +22,6 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 public class TestGroupResource extends BaseJerseyTest {
     /**
      * Test the group resource.
-     * 
-     * @throws JSONException
      */
     @Test
     public void testGroupResource() {

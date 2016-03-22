@@ -21,8 +21,6 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 public class TestSecurity extends BaseJerseyTest {
     /**
      * Test of the security layer.
-     * 
-     * @throws JSONException
      */
     @Test
     public void testSecurity() {
