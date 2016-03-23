@@ -1,9 +1,10 @@
 <div class="row">
-  <div class="col-md-4">
+  <div class="col-md-3">
     <div class="panel panel-default">
       <div class="panel-heading"><strong>Personal settings</strong></div>
       <ul class="list-group">
         <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/account" href="#/settings/account">User account</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/security" href="#/settings/security">Two-factor authentication</a>
         <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/session" href="#/settings/session">Opened sessions</a>
       </ul>
     </div>
@@ -19,7 +20,7 @@
     </div>
   </div>
 
-  <div class="col-md-8">
+  <div class="col-md-9">
     <div ui-view="settings"></div>
   </div>
 </div>

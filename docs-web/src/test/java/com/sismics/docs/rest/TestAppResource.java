@@ -21,8 +21,6 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 public class TestAppResource extends BaseJerseyTest {
     /**
      * Test the API resource.
-     * 
-     * @throws JSONException
      */
     @Test
     public void testAppResource() {
@@ -63,8 +61,6 @@ public class TestAppResource extends BaseJerseyTest {
 
     /**
      * Test the log resource.
-     * 
-     * @throws JSONException
      */
     @Test
     public void testLogResource() {

@@ -23,8 +23,6 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 public class TestAclResource extends BaseJerseyTest {
     /**
      * Test the ACL resource.
-     * 
-     * @throws JSONException
      */
     @Test
     public void testAclResource() {

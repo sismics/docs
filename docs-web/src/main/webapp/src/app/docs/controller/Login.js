@@ -4,18 +4,28 @@
  * Login controller.
  */
 angular.module('docs').controller('Login', function($scope, $rootScope, $state, $dialog, User) {
+  $scope.codeRequired = false;
+
+  /**
+   * Login.
+   */
   $scope.login = function() {
     User.login($scope.user).then(function() {
       User.userInfo(true).then(function(data) {
         $rootScope.userInfo = data;
       });
       $state.go('document.default');
-    }, function() {
-      var title = 'Login failed';
-      var msg = 'Username or password invalid';
-      var btns = [{result:'ok', label: 'OK', cssClass: 'btn-primary'}];
-
-      $dialog.messageBox(title, msg, btns);
+    }, function(data) {
+      if (data.data.type == 'ValidationCodeRequired') {
+        // A TOTP validation code is required to login
+        $scope.codeRequired = true;
+      } else {
+        // Login truly failed
+        var title = 'Login failed';
+        var msg = 'Username or password invalid';
+        var btns = [{result: 'ok', label: 'OK', cssClass: 'btn-primary'}];
+        $dialog.messageBox(title, msg, btns);
+      }
     });
   };
 });

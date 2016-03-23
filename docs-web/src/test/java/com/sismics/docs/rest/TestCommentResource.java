@@ -21,11 +21,9 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 public class TestCommentResource extends BaseJerseyTest {
     /**
      * Test the comment resource.
-     * 
-     * @throws Exception 
      */
     @Test
-    public void testCommentResource() throws Exception {
+    public void testCommentResource() {
         // Login comment1
         clientUtil.createUser("comment1");
         String comment1Token = clientUtil.login("comment1");

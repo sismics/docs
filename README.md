@@ -23,11 +23,11 @@ Features
 - Optical character recognition
 - Support image, PDF, ODT and DOCX files
 - Flexible search engine
-- Full text search in image and PDF
+- Full text search in all supported files
 - All [Dublin Core](http://dublincore.org/) metadata
-- 256-bit AES encryption
-- Tag system with relations
-- Multi-users ACL system
+- 256-bit AES encryption of stored files
+- Tag system with nesting
+- User/group permission system
 - Hierarchical groups
 - Audit log
 - Comments

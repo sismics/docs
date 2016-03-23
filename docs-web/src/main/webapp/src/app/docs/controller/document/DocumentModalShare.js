@@ -5,7 +5,7 @@
  */
 angular.module('docs').controller('DocumentModalShare', function ($scope, $modalInstance) {
   $scope.name = '';
-  $scope.close = function (name) {
+  $scope.close = function(name) {
     $modalInstance.close(name);
   }
 });

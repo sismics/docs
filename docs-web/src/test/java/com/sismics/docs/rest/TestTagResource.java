@@ -21,8 +21,6 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 public class TestTagResource extends BaseJerseyTest {
     /**
      * Test the tag resource.
-     * 
-     * @throws JSONException
      */
     @Test
     public void testTagResource() {

@@ -64,56 +64,63 @@ public class AuthenticationToken {
         return id;
     }
 
-    public void setId(String id) {
+    public AuthenticationToken setId(String id) {
         this.id = id;
+        return this;
     }
 
     public String getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public AuthenticationToken setUserId(String userId) {
         this.userId = userId;
+        return this;
     }
 
     public boolean isLongLasted() {
         return longLasted;
     }
 
-    public void setLongLasted(boolean longLasted) {
+    public AuthenticationToken setLongLasted(boolean longLasted) {
         this.longLasted = longLasted;
+        return this;
     }
     
     public String getIp() {
         return ip;
     }
 
-    public void setIp(String ip) {
+    public AuthenticationToken setIp(String ip) {
         this.ip = ip;
+        return this;
     }
 
     public String getUserAgent() {
         return userAgent;
     }
 
-    public void setUserAgent(String userAgent) {
+    public AuthenticationToken setUserAgent(String userAgent) {
         this.userAgent = userAgent;
+        return this;
     }
 
     public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public AuthenticationToken setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+        return this;
     }
 
     public Date getLastConnectionDate() {
         return lastConnectionDate;
     }
 
-    public void setLastConnectionDate(Date lastConnectionDate) {
+    public AuthenticationToken setLastConnectionDate(Date lastConnectionDate) {
         this.lastConnectionDate = lastConnectionDate;
+        return this;
     }
 
     @Override

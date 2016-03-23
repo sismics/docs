@@ -95,12 +95,11 @@ public class ClientUtil {
      * @return Authentication token
      */
     public String login(String username, String password, Boolean remember) {
-        Form form = new Form();
-        form.param("username", username);
-        form.param("password", password);
-        form.param("remember", remember.toString());
         Response response = resource.path("/user/login").request()
-                .post(Entity.form(form));
+                .post(Entity.form(new Form()
+                        .param("username", username)
+                        .param("password", password)
+                        .param("remember", remember.toString())));
         
         return getAuthenticationCookie(response);
     }

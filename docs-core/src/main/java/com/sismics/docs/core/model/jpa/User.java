@@ -49,6 +49,12 @@ public class User implements Loggable {
     private String privateKey;
     
     /**
+     * TOTP secret key.
+     */
+    @Column(name = "USE_TOTPKEY_C", length = 100)
+    private String totpKey;
+    
+    /**
      * Email address.
      */
     @Column(name = "USE_EMAIL_C", nullable = false, length = 100)
@@ -82,48 +88,54 @@ public class User implements Loggable {
         return id;
     }
 
-    public void setId(String id) {
+    public User setId(String id) {
         this.id = id;
+        return this;
     }
 
     public String getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(String roleId) {
+    public User setRoleId(String roleId) {
         this.roleId = roleId;
+        return this;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public User setUsername(String username) {
         this.username = username;
+        return this;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public User setPassword(String password) {
         this.password = password;
+        return this;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public User setEmail(String email) {
         this.email = email;
+        return this;
     }
 
     public Date getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public User setCreateDate(Date createDate) {
         this.createDate = createDate;
+        return this;
     }
 
     @Override
@@ -131,32 +143,45 @@ public class User implements Loggable {
         return deleteDate;
     }
 
-    public void setDeleteDate(Date deleteDate) {
+    public User setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
+        return this;
     }
     
     public String getPrivateKey() {
         return privateKey;
     }
 
-    public void setPrivateKey(String privateKey) {
+    public User setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
+        return this;
     }
 
     public Long getStorageQuota() {
         return storageQuota;
     }
 
-    public void setStorageQuota(Long storageQuota) {
+    public User setStorageQuota(Long storageQuota) {
         this.storageQuota = storageQuota;
+        return this;
     }
 
     public Long getStorageCurrent() {
         return storageCurrent;
     }
 
-    public void setStorageCurrent(Long storageCurrent) {
+    public User setStorageCurrent(Long storageCurrent) {
         this.storageCurrent = storageCurrent;
+        return this;
+    }
+    
+    public String getTotpKey() {
+        return totpKey;
+    }
+
+    public User setTotpKey(String totpKey) {
+        this.totpKey = totpKey;
+        return this;
     }
 
     @Override

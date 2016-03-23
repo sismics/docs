@@ -395,13 +395,15 @@
         <version>${com.twelvemonkeys.imageio.version}</version>
       </dependency>
       
-      <dependency><!-- Only JBIG2 -->
+      <!-- Only JBIG2 -->
+      <dependency>
         <groupId>com.levigo.jbig2</groupId>
         <artifactId>levigo-jbig2-imageio</artifactId>
         <version>${com.levigo.jbig2.levigo-jbig2-imageio.version}</version>
       </dependency>
       
-      <dependency><!-- Essentially TIFF (for OCR) -->
+      <!-- Essentially TIFF (for OCR) -->
+      <dependency>
         <groupId>com.github.jai-imageio</groupId>
         <artifactId>jai-imageio-core</artifactId>
         <version>${com.github.jai-imageio.jai-imageio-core.version}</version>

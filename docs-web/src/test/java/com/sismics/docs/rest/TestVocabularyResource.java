@@ -19,11 +19,9 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 public class TestVocabularyResource extends BaseJerseyTest {
     /**
      * Test the vocabulary resource.
-     * 
-     * @throws Exception 
      */
     @Test
-    public void testVocabularyResource() throws Exception {
+    public void testVocabularyResource() {
         // Login vocabulary1
         clientUtil.createUser("vocabulary1");
         String vocabulary1Token = clientUtil.login("vocabulary1");

@@ -198,6 +198,11 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(1, files.size());
     }
     
+    /**
+     * Test orphan files (without linked document).
+     * 
+     * @throws Exception
+     */
     @Test
     public void testOrphanFile() throws Exception {
         // Login file2
@@ -283,6 +288,11 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals("ok", json.getString("status"));
     }
     
+    /**
+     * Test user quota.
+     * 
+     * @throws Exception
+     */
     @Test
     public void testQuota() throws Exception {
         // Login file_quota

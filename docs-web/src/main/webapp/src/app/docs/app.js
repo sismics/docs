@@ -5,7 +5,7 @@
  */
 angular.module('docs',
     // Dependencies
-    ['ui.router', 'ui.route', 'ui.bootstrap', 'ui.keypress', 'ui.validate', 'dialog',
+    ['ui.router', 'ui.route', 'ui.bootstrap', 'ui.keypress', 'ui.validate', 'dialog', 'ngProgress', 'monospaced.qrcode',
       'ui.sortable', 'restangular', 'ngSanitize', 'ngTouch', 'colorpicker.module', 'angularFileUpload']
   )
 
@@ -58,6 +58,15 @@ angular.module('docs',
         'settings': {
           templateUrl: 'partial/docs/settings.account.html',
           controller: 'SettingsAccount'
+        }
+      }
+    })
+    .state('settings.security', {
+      url: '/security',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.security.html',
+          controller: 'SettingsSecurity'
         }
       }
     })
@@ -343,6 +352,23 @@ angular.module('docs',
     if (redirect) {
       event.preventDefault();
       $state.go(redirect, toParams);
+    }
+  });
+})
+/**
+ * Initialize ngProgress.
+ */
+.run(function($rootScope, ngProgressFactory, $http) {
+  $rootScope.ngProgress = ngProgressFactory.createInstance();
+
+  // Watch for the number of XHR running
+  $rootScope.$watch(function() {
+    return $http.pendingRequests.length > 0
+  }, function(count) {
+    if (count == 0) {
+      $rootScope.ngProgress.complete();
+    } else {
+      $rootScope.ngProgress.start();
     }
   });
 });
