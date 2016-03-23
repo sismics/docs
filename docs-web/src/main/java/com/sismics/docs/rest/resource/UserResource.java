@@ -488,7 +488,8 @@ public class UserResource extends BaseResource {
             response.add("username", user.getUsername())
                     .add("email", user.getEmail())
                     .add("storage_quota", user.getStorageQuota())
-                    .add("storage_current", user.getStorageCurrent());
+                    .add("storage_current", user.getStorageCurrent())
+                    .add("totp_enabled", user.getTotpKey() != null);
             
             // Base functions
             JsonArrayBuilder baseFunctions = Json.createArrayBuilder();
@@ -657,6 +658,11 @@ public class UserResource extends BaseResource {
         return Response.ok().entity(response.build()).build();
     }
     
+    /**
+     * Enable time-based one-time password.
+     * 
+     * @return Response
+     */
     @POST
     @Path("enable_totp")
     public Response enableTotp() {
@@ -676,6 +682,39 @@ public class UserResource extends BaseResource {
         
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("secret", key.getKey());
+        return Response.ok().entity(response.build()).build();
+    }
+    
+    /**
+     * Disable time-based one-time password.
+     * 
+     * @param password Password
+     * @return Response
+     */
+    @POST
+    @Path("disable_totp")
+    public Response disableTotp(@FormParam("password") String password) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        
+        // Validate the input data
+        password = ValidationUtil.validateLength(password, "password", 1, 100, false);
+
+        // Check the password and get the user
+        UserDao userDao = new UserDao();
+        User user = userDao.authenticate(principal.getName(), password);
+        if (user == null) {
+            throw new ForbiddenClientException();
+        }
+        
+        // Remove the TOTP key
+        user.setTotpKey(null);
+        userDao.update(user, principal.getId());
+        
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
         return Response.ok().entity(response.build()).build();
     }
     

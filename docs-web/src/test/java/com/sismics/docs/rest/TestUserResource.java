@@ -295,8 +295,14 @@ public class TestUserResource extends BaseJerseyTest {
         clientUtil.createUser("totp1");
         String totp1Token = clientUtil.login("totp1");
         
+        // Check TOTP enablement
+        JsonObject json = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
+                .get(JsonObject.class);
+        Assert.assertFalse(json.getBoolean("totp_enabled"));
+        
         // Enable TOTP for totp1
-        JsonObject json = target().path("/user/enable_totp").request()
+        json = target().path("/user/enable_totp").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
                 .post(Entity.form(new Form()), JsonObject.class);
         String secret = json.getString("secret");
@@ -323,5 +329,30 @@ public class TestUserResource extends BaseJerseyTest {
                         .param("password", "12345678")
                         .param("code", Integer.toString(validationCode))
                         .param("remember", "false")), JsonObject.class);
+        
+        // Check TOTP enablement
+        json = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
+                .get(JsonObject.class);
+        Assert.assertTrue(json.getBoolean("totp_enabled"));
+        
+        // Disable TOTP for totp1
+        json = target().path("/user/disable_totp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
+                .post(Entity.form(new Form()
+                        .param("password", "12345678")), JsonObject.class);
+        
+        // Login with totp1 without a validation code
+        json = target().path("/user/login").request()
+                .post(Entity.form(new Form()
+                        .param("username", "totp1")
+                        .param("password", "12345678")
+                        .param("remember", "false")), JsonObject.class);
+        
+        // Check TOTP enablement
+        json = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
+                .get(JsonObject.class);
+        Assert.assertFalse(json.getBoolean("totp_enabled"));
     }
 }
