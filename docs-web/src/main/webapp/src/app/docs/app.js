@@ -61,6 +61,15 @@ angular.module('docs',
         }
       }
     })
+    .state('settings.security', {
+      url: '/security',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.security.html',
+          controller: 'SettingsSecurity'
+        }
+      }
+    })
     .state('settings.session', {
       url: '/session',
       views: {
