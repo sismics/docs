@@ -5,7 +5,7 @@
  */
 angular.module('docs',
     // Dependencies
-    ['ui.router', 'ui.route', 'ui.bootstrap', 'ui.keypress', 'ui.validate', 'dialog', 'ngProgress',
+    ['ui.router', 'ui.route', 'ui.bootstrap', 'ui.keypress', 'ui.validate', 'dialog', 'ngProgress', 'monospaced.qrcode',
       'ui.sortable', 'restangular', 'ngSanitize', 'ngTouch', 'colorpicker.module', 'angularFileUpload']
   )
 

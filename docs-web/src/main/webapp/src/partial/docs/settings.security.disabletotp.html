@@ -1,0 +1,18 @@
+<div class="modal-header">
+  <h3>Disable two-factor authentication</h3>
+</div>
+<div class="modal-body">
+  <p class="text-danger">
+    Your account will not be protected by the two-factor authentication anymore.
+  </p>
+  <p>
+    <label for="password">Confirm your password</label>
+    <input class="form-control" type="password" id="password" ng-model="password" />
+  </p>
+</div>
+<div class="modal-footer">
+  <button ng-click="close(password)" class="btn btn-warning">
+    Disable two-factor authentication
+  </button>
+  <button ng-click="close(null)" class="btn btn-default">Cancel</button>
+</div>
