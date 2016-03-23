@@ -155,10 +155,12 @@ public class FileDao {
      * @param id File ID
      * @return File
      */
-    public File getById(String id) {
+    public File getActiveById(String id) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select f from File f where f.id = :id and f.deleteDate is null");
+        q.setParameter("id", id);
         try {
-            return em.find(File.class, id);
+            return (File) q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
