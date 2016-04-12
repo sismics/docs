@@ -372,3 +372,7 @@ angular.module('docs',
     }
   });
 });
+
+if (location.search.indexOf("protractor") > -1) {
+  window.name = 'NG_DEFER_BOOTSTRAP!';
+}
