@@ -131,5 +131,6 @@
     <string name="email">E-mail</string>
     <string name="storage_quota">Storage quota</string>
     <string name="storage_display">%1$d/%2$d MB</string>
+    <string name="validation_code">Validation code</string>
 
 </resources>

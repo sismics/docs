@@ -24,12 +24,13 @@ public class UserResource extends BaseResource {
      * @param password Password
      * @param callback Callback
      */
-    public static void login(Context context, String username, String password, HttpCallback callback) {
+    public static void login(Context context, String username, String password, String code, HttpCallback callback) {
         Request request = new Request.Builder()
                 .url(HttpUrl.parse(getApiUrl(context) + "/user/login"))
                 .post(new FormBody.Builder()
                         .add("username", username)
                         .add("password", password)
+                        .add("code", code)
                         .add("remember", "true")
                         .build())
                 .build();
