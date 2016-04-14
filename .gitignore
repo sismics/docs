@@ -5,7 +5,7 @@
 /*/gen
 /*/target
 /*/build
-/*/*.iml
 /out
 /.idea
 /.project
+*.iml
