@@ -30,6 +30,11 @@
     <dependency>
       <groupId>com.sismics.docs</groupId>
       <artifactId>docs-web-common</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sismics.docs</groupId>
+      <artifactId>docs-web-common</artifactId>
       <type>test-jar</type>
     </dependency>
       
