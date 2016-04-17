@@ -25,7 +25,6 @@ public class FileDao {
      * @param file File
      * @param userId User ID
      * @return New ID
-     * @throws Exception
      */
     public String create(File file, String userId) {
         // Create the UUID
@@ -169,7 +168,7 @@ public class FileDao {
     /**
      * Get files by document ID or all orphan files of an user.
      * 
-     * @parma userId User ID
+     * @param userId User ID
      * @param documentId Document ID
      * @return List of files
      */

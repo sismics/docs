@@ -33,4 +33,23 @@ public class ConfigDao {
             return null;
         }
     }
+
+    /**
+     * Updates a configuration parameter.
+     *
+     * @param id Configuration parameter ID
+     * @param value Configuration parameter value
+     */
+    public void update(ConfigType id, String value) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Config config = getById(id);
+        if (config == null) {
+            config = new Config();
+            config.setId(id);
+            config.setValue(value);
+            em.persist(config);
+        } else {
+            config.setValue(value);
+        }
+    }
 }

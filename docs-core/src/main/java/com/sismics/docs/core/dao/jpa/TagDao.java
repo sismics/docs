@@ -108,7 +108,7 @@ public class TagDao {
         sb.append(" where dt.DOT_IDDOCUMENT_C = :documentId and t.TAG_DELETEDATE_D is null ");
         sb.append(" and t.TAG_IDUSER_C = :userId and dt.DOT_DELETEDATE_D is null ");
         sb.append(" order by t.TAG_NAME_C ");
-        
+
         // Perform the query
         Query q = em.createNativeQuery(sb.toString());
         q.setParameter("documentId", documentId);
@@ -116,14 +116,14 @@ public class TagDao {
         List<Object[]> l = q.getResultList();
         
         // Assemble results
-        List<TagDto> tagDtoList = new ArrayList<TagDto>();
+        List<TagDto> tagDtoList = new ArrayList<>();
         for (Object[] o : l) {
             int i = 0;
             TagDto tagDto = new TagDto();
             tagDto.setId((String) o[i++]);
             tagDto.setName((String) o[i++]);
             tagDto.setColor((String) o[i++]);
-            tagDto.setParentId((String) o[i++]);
+            tagDto.setParentId((String) o[i]);
             tagDtoList.add(tagDto);
         }
         return tagDtoList;
@@ -132,7 +132,7 @@ public class TagDao {
     /**
      * Returns stats on tags.
      * 
-     * @param documentId Document ID
+     * @param userId User ID
      * @return Stats by tag
      */
     @SuppressWarnings("unchecked")
@@ -145,14 +145,14 @@ public class TagDao {
         sb.append(" where t.TAG_IDUSER_C = :userId and t.TAG_DELETEDATE_D is null ");
         sb.append(" group by t.TAG_ID_C ");
         sb.append(" order by t.TAG_NAME_C ");
-        
+
         // Perform the query
         Query q = em.createNativeQuery(sb.toString());
         q.setParameter("userId", userId);
         List<Object[]> l = q.getResultList();
         
         // Assemble results
-        List<TagStatDto> tagStatDtoList = new ArrayList<TagStatDto>();
+        List<TagStatDto> tagStatDtoList = new ArrayList<>();
         for (Object[] o : l) {
             int i = 0;
             TagStatDto tagDto = new TagStatDto();
@@ -160,7 +160,7 @@ public class TagDao {
             tagDto.setName((String) o[i++]);
             tagDto.setColor((String) o[i++]);
             tagDto.setParentId((String) o[i++]);
-            tagDto.setCount(((Number) o[i++]).intValue());
+            tagDto.setCount(((Number) o[i]).intValue());
             tagStatDtoList.add(tagDto);
         }
         return tagStatDtoList;
@@ -172,7 +172,6 @@ public class TagDao {
      * @param tag Tag
      * @param userId User ID
      * @return New ID
-     * @throws Exception
      */
     public String create(Tag tag, String userId) {
         // Create the UUID

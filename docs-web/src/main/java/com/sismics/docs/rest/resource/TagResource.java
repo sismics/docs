@@ -64,7 +64,6 @@ public class TagResource extends BaseResource {
      * Returns stats on tags.
      * 
      * @return Response
-     * @throws JSONException
      */
     @GET
     @Path("/stats")

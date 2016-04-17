@@ -11,7 +11,7 @@ public class ThreadLocalContext {
     /**
      * ThreadLocal to store the context.
      */
-    public static final ThreadLocal<ThreadLocalContext> threadLocalContext = new ThreadLocal<ThreadLocalContext>();
+    private static final ThreadLocal<ThreadLocalContext> threadLocalContext = new ThreadLocal<>();
     
     /**
      * Entity manager.
@@ -46,15 +46,6 @@ public class ThreadLocalContext {
         threadLocalContext.set(null);
     }
     
-    /**
-     * Returns true only if the entity manager is defined.
-     * 
-     * @return Condition
-     */
-    public boolean isInTransactionalContext() {
-        return entityManager != null;
-    }
-
     /**
      * Getter of entityManager.
      *

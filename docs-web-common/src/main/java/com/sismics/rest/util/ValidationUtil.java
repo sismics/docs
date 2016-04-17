@@ -108,10 +108,9 @@ public class ValidationUtil {
      * @param s String to validate
      * @param name Name of the parameter
      * @param nullable True if the string can be empty or null
-     * @throws JSONException
      */
     public static void validateHexColor(String s, String name, boolean nullable) throws ClientException {
-        ValidationUtil.validateLength(s, "name", 7, 7, nullable);
+        ValidationUtil.validateLength(s, name, 7, 7, nullable);
     }
     
     /**

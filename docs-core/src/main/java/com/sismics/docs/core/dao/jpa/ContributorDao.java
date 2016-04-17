@@ -21,9 +21,7 @@ public class ContributorDao {
      * Creates a new contributor.
      * 
      * @param contributor Contributor
-     * @param userId User ID
      * @return New ID
-     * @throws Exception
      */
     public String create(Contributor contributor) {
         // Create the UUID
@@ -72,7 +70,7 @@ public class ContributorDao {
             int i = 0;
             ContributorDto contributorDto = new ContributorDto();
             contributorDto.setUsername((String) o[i++]);
-            contributorDto.setEmail((String) o[i++]);
+            contributorDto.setEmail((String) o[i]);
             contributorDtoList.add(contributorDto);
         }
         return contributorDtoList;
