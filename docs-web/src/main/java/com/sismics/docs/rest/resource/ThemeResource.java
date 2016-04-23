@@ -37,7 +37,7 @@ public class ThemeResource extends BaseResource {
         // Build the stylesheet
     	StringBuilder sb = new StringBuilder();
     	sb.append(new Selector(".navbar")
-            .rule("background-color", themeConfig.getString("color", "inherit")));
+            .rule("background-color", themeConfig.getString("color", "#263238")));
 
         return Response.ok().entity(sb.toString()).build();
     }

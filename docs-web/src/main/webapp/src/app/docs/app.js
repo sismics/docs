@@ -88,6 +88,15 @@ angular.module('docs',
         }
       }
     })
+    .state('settings.theme', {
+      url: '/theme',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.theme.html',
+          controller: 'SettingsTheme'
+        }
+      }
+    })
     .state('settings.user', {
       url: '/user',
       views: {

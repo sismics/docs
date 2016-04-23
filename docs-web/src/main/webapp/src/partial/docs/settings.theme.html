@@ -1,0 +1,8 @@
+<h1>Theme <small>customization</small></h1>
+<form class="form-horizontal" name="editColorForm" novalidate>
+  <div class="form-group">
+    <label class="col-sm-2 control-label" for="inputColor">Main color</label>
+    <span colorpicker class="col-sm-1 btn btn-default" id="inputColor" on-hide="updateColor(theme.color)"
+          data-color="" ng-model="theme.color" ng-style="{ 'background': theme.color }">&nbsp;</span>
+  </div>
+</form>
