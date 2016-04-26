@@ -10,8 +10,11 @@ import com.sismics.docs.core.dao.jpa.ConfigDao;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.css.Selector;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import java.io.StringReader;
 import java.util.Map;
@@ -38,13 +41,36 @@ public class ThemeResource extends BaseResource {
     	StringBuilder sb = new StringBuilder();
     	sb.append(new Selector(".navbar")
             .rule("background-color", themeConfig.getString("color", "#263238")));
+        sb.append(themeConfig.getString("css", ""));
 
         return Response.ok().entity(sb.toString()).build();
     }
 
+    /**
+     * Returns the theme configuration.
+     *
+     * @return Response
+     */
+    @GET
+    public Response get() {
+        JsonObject themeConfig = getThemeConfig();
+        JsonObjectBuilder json = Json.createObjectBuilder();
+        json.add("name", themeConfig.getString("name", "Sismics Docs"));
+        return Response.ok().entity(json.build()).build();
+    }
+
+    /**
+     * Change the theme configuration.
+     *
+     * @param color Theme color
+     * @param name Application name
+     * @param css Custom CSS
+     * @return Response
+     */
     @POST
-    @Path("/color")
-    public Response color(@FormParam("color") String color) {
+    public Response theme(@FormParam("color") String color,
+              @FormParam("name") String name,
+              @FormParam("css") String css) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -52,6 +78,7 @@ public class ThemeResource extends BaseResource {
 
         // Validate input data
         ValidationUtil.validateHexColor(color, "color", true);
+        name = ValidationUtil.validateLength(name, "name", 3, 30, true);
 
         // Update the JSON
         JsonObjectBuilder json = getMutableThemeConfig();
@@ -60,6 +87,12 @@ public class ThemeResource extends BaseResource {
         } else {
             json.add("color", color);
         }
+        if (Strings.isNullOrEmpty(name)) {
+            json.add("name", JsonValue.NULL);
+        } else {
+            json.add("name", name);
+        }
+        json.add("css", JsonUtil.nullable(css));
 
         // Persist the new configuration
         ConfigDao configDao = new ConfigDao();
@@ -69,6 +102,20 @@ public class ThemeResource extends BaseResource {
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
         return Response.ok().entity(response.build()).build();
+    }
+
+    @PUT
+    @Path("images")
+    @Consumes("multipart/form-data")
+    public Response images(
+            @FormDataParam("logo") FormDataBodyPart logoBodyPart,
+            @FormDataParam("background") FormDataBodyPart backgrounBodyPart) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        return Response.ok().build();
     }
 
     /**

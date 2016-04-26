@@ -25,17 +25,30 @@ public class TestThemeResource extends BaseJerseyTest {
         // Get the stylesheet anonymously
         String stylesheet = target().path("/theme/stylesheet").request()
                 .get(String.class);
-        Assert.assertTrue(stylesheet.contains("background-color: inherit;"));
+        Assert.assertTrue(stylesheet.contains("background-color: #263238;"));
+
+        // Get the theme configuration anonymously
+        JsonObject json = target().path("/theme").request()
+                .get(JsonObject.class);
+        Assert.assertEquals("Sismics Docs", json.getString("name"));
 
         // Update the main color as admin
-        target().path("/theme/color").request()
+        target().path("/theme").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()
-                        .param("color", "#ff0000")), JsonObject.class);
+                        .param("color", "#ff0000")
+                .param("name", "My App")
+                .param("css", ".body { content: 'Custom CSS'; }")), JsonObject.class);
 
         // Get the stylesheet anonymously
         stylesheet = target().path("/theme/stylesheet").request()
                 .get(String.class);
         Assert.assertTrue(stylesheet.contains("background-color: #ff0000;"));
+        Assert.assertTrue(stylesheet.contains("Custom CSS"));
+
+        // Get the theme configuration anonymously
+        json = target().path("/theme").request()
+                .get(JsonObject.class);
+        Assert.assertEquals("My App", json.getString("name"));
     }
 }
