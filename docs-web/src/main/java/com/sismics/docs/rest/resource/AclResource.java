@@ -48,7 +48,7 @@ public class AclResource extends BaseResource {
      * @param sourceId Source ID
      * @param permStr Permission
      * @param targetName Target name
-     * @param type ACL type
+     * @param typeStr ACL type
      * @return Response
      */
     @PUT

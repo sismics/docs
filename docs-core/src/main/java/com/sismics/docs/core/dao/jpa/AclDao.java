@@ -28,7 +28,6 @@ public class AclDao {
      * @param acl ACL
      * @param userId User ID
      * @return New ID
-     * @throws Exception
      */
     public String create(Acl acl, String userId) {
         // Create the UUID
@@ -82,7 +81,7 @@ public class AclDao {
         List<Object[]> l = q.getResultList();
         
         // Assemble results
-        List<AclDto> aclDtoList = new ArrayList<AclDto>();
+        List<AclDto> aclDtoList = new ArrayList<>();
         for (Object[] o : l) {
             int i = 0;
             AclDto aclDto = new AclDto();
@@ -92,7 +91,7 @@ public class AclDao {
             String userName = (String) o[i++];
             String shareId = (String) o[i++];
             String shareName = (String) o[i++];
-            String groupName = (String) o[i++];
+            String groupName = (String) o[i];
             if (userName != null) {
                 aclDto.setTargetName(userName);
                 aclDto.setTargetType(AclTargetType.USER.name());
@@ -114,11 +113,12 @@ public class AclDao {
      * Check if a source is accessible to a target.
      * 
      * @param sourceId ACL source entity ID
-     * @parm perm Necessary permission
-     * @param targetId ACL target entity ID
+     * @param perm Necessary permission
+     * @param targetIdList List of targets
      * @return True if the document is accessible
      */
     public boolean checkPermission(String sourceId, PermType perm, List<String> targetIdList) {
+        // TODO Handle tags as source for ACL
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select a from Acl a where a.sourceId = :sourceId and a.perm = :perm and a.targetId in (:targetIdList) and a.deleteDate is null");
         q.setParameter("sourceId", sourceId);
@@ -126,11 +126,7 @@ public class AclDao {
         q.setParameter("targetIdList", targetIdList);
         
         // We have a matching permission
-        if (q.getResultList().size() > 0) {
-            return true;
-        }
-        
-        return false;
+        return q.getResultList().size() > 0;
     }
 
     /**

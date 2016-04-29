@@ -71,7 +71,7 @@ public class TestAclResource extends BaseJerseyTest {
         String acl2Id = json.getString("id");
         
         // Add an ACL WRITE for acl2 with acl1
-        json = target().path("/acl").request()
+        target().path("/acl").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl1Token)
                 .put(Entity.form(new Form()
                         .param("source", document1Id)
@@ -80,7 +80,7 @@ public class TestAclResource extends BaseJerseyTest {
                         .param("type", "USER")), JsonObject.class);
         
         // Add an ACL WRITE for acl2 with acl1 (again)
-        json = target().path("/acl").request()
+        target().path("/acl").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl1Token)
                 .put(Entity.form(new Form()
                         .param("source", document1Id)
@@ -99,7 +99,7 @@ public class TestAclResource extends BaseJerseyTest {
         String aclGroup2Id = json.getString("id");
         
         // Add an ACL WRITE for aclGroup2 with acl1
-        json = target().path("/acl").request()
+        target().path("/acl").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl1Token)
                 .put(Entity.form(new Form()
                         .param("source", document1Id)
