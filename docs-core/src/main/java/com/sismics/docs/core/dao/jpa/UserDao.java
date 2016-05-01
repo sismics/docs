@@ -189,23 +189,6 @@ public class UserDao {
     }
     
     /**
-     * Gets an active user by its password recovery token.
-     * 
-     * @param passwordResetKey Password recovery token
-     * @return User
-     */
-    public User getActiveByPasswordResetKey(String passwordResetKey) {
-        EntityManager em = ThreadLocalContext.get().getEntityManager();
-        try {
-            Query q = em.createQuery("select u from User u where u.passwordResetKey = :passwordResetKey and u.deleteDate is null");
-            q.setParameter("passwordResetKey", passwordResetKey);
-            return (User) q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-    
-    /**
      * Deletes a user.
      * 
      * @param username User's username
@@ -258,7 +241,7 @@ public class UserDao {
      * @param password Clear password
      * @return Hashed password
      */
-    protected String hashPassword(String password) {
+    private String hashPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
     
@@ -270,8 +253,8 @@ public class UserDao {
      * @return List of users
      */
     public List<UserDto> findByCriteria(UserCriteria criteria, SortCriteria sortCriteria) {
-        Map<String, Object> parameterMap = new HashMap<String, Object>();
-        List<String> criteriaList = new ArrayList<String>();
+        Map<String, Object> parameterMap = new HashMap<>();
+        List<String> criteriaList = new ArrayList<>();
         
         StringBuilder sb = new StringBuilder("select u.USE_ID_C as c0, u.USE_USERNAME_C as c1, u.USE_EMAIL_C as c2, u.USE_CREATEDATE_D as c3, u.USE_STORAGECURRENT_N as c4, u.USE_STORAGEQUOTA_N as c5");
         sb.append(" from T_USER u ");
@@ -300,7 +283,7 @@ public class UserDao {
         List<Object[]> l = QueryUtil.getNativeQuery(queryParam).getResultList();
         
         // Assemble results
-        List<UserDto> userDtoList = new ArrayList<UserDto>();
+        List<UserDto> userDtoList = new ArrayList<>();
         for (Object[] o : l) {
             int i = 0;
             UserDto userDto = new UserDto();
@@ -309,7 +292,7 @@ public class UserDao {
             userDto.setEmail((String) o[i++]);
             userDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
             userDto.setStorageCurrent(((Number) o[i++]).longValue());
-            userDto.setStorageQuota(((Number) o[i++]).longValue());
+            userDto.setStorageQuota(((Number) o[i]).longValue());
             userDtoList.add(userDto);
         }
         return userDtoList;

@@ -46,6 +46,7 @@ public class TagDao {
      */
     @SuppressWarnings("unchecked")
     public List<Tag> getByUserId(String userId) {
+        // TODO Use ACLs
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select t from Tag t where t.userId = :userId and t.deleteDate is null order by t.name");
         q.setParameter("userId", userId);
@@ -96,12 +97,13 @@ public class TagDao {
 
     /**
      * Returns tag list on a document.
-     * 
+     *
      * @param documentId Document ID
      * @return List of tags
      */
     @SuppressWarnings("unchecked")
     public List<TagDto> getByDocumentId(String documentId, String userId) {
+        // TODO Use ACLs
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         StringBuilder sb = new StringBuilder("select t.TAG_ID_C, t.TAG_NAME_C, t.TAG_COLOR_C, t.TAG_IDPARENT_C from T_DOCUMENT_TAG dt ");
         sb.append(" join T_TAG t on t.TAG_ID_C = dt.DOT_IDTAG_C ");
@@ -196,6 +198,7 @@ public class TagDao {
      * @return Tag
      */
     public Tag getByName(String userId, String name) {
+        // TODO Use ACLs
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select t from Tag t where t.name = :name and t.userId = :userId and t.deleteDate is null");
         q.setParameter("userId", userId);
@@ -215,6 +218,7 @@ public class TagDao {
      * @return Tag
      */
     public Tag getByTagId(String userId, String tagId) {
+        // TODO Use ACLs
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select t from Tag t where t.id = :tagId and t.userId = :userId and t.deleteDate is null");
         q.setParameter("userId", userId);
@@ -249,6 +253,11 @@ public class TagDao {
         q.setParameter("dateNow", dateNow);
         q.setParameter("tagId", tagId);
         q.executeUpdate();
+
+        q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.sourceId = :tagId and a.deleteDate is null");
+        q.setParameter("tagId", tagId);
+        q.setParameter("dateNow", dateNow);
+        q.executeUpdate();
         
         // Create audit log
         AuditLogUtil.create(tagDb, AuditLogType.DELETE, userId);
@@ -262,6 +271,7 @@ public class TagDao {
      */
     @SuppressWarnings("unchecked")
     public List<Tag> findByName(String userId, String name) {
+        // TODO Use ACLs
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select t from Tag t where t.name like :name and t.userId = :userId and t.deleteDate is null");
         q.setParameter("userId", userId);

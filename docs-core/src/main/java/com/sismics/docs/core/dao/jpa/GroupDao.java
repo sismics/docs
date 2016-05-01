@@ -71,7 +71,6 @@ public class GroupDao {
      * @param group Group
      * @param userId User ID
      * @return New ID
-     * @throws Exception
      */
     public String create(Group group, String userId) {
         // Create the UUID
@@ -127,9 +126,8 @@ public class GroupDao {
     /**
      * Add an user to a group.
      * 
-     * @param group Group
+     * @param userGroup User group
      * @return New ID
-     * @throws Exception
      */
     public String addMember(UserGroup userGroup) {
         // Create the UUID
@@ -170,8 +168,8 @@ public class GroupDao {
      * @return List of groups
      */
     public List<GroupDto> findByCriteria(GroupCriteria criteria, SortCriteria sortCriteria) {
-        Map<String, Object> parameterMap = new HashMap<String, Object>();
-        List<String> criteriaList = new ArrayList<String>();
+        Map<String, Object> parameterMap = new HashMap<>();
+        List<String> criteriaList = new ArrayList<>();
         
         StringBuilder sb = new StringBuilder("select g.GRP_ID_C as c0, g.GRP_NAME_C as c1, g.GRP_IDPARENT_C as c2, gp.GRP_NAME_C as c3, g.GRP_IDROLE_C ");
         if (criteria.getUserId() != null) {
@@ -187,8 +185,8 @@ public class GroupDao {
         }
         if (criteria.getUserId() != null) {
             // Left join and post-filtering for recursive groups
-            sb.append((criteria.isRecursive() ? " left " : "")
-                    + " join T_USER_GROUP ug on ug.UGP_IDGROUP_C = g.GRP_ID_C and ug.UGP_IDUSER_C = :userId and ug.UGP_DELETEDATE_D is null ");
+            sb.append(criteria.isRecursive() ? " left " : "");
+            sb.append(" join T_USER_GROUP ug on ug.UGP_IDGROUP_C = g.GRP_ID_C and ug.UGP_IDUSER_C = :userId and ug.UGP_DELETEDATE_D is null ");
             parameterMap.put("userId", criteria.getUserId());
         }
         
@@ -216,7 +214,7 @@ public class GroupDao {
                 .setParentName((String) o[i++])
                 .setRoleId((String) o[i++]);
             groupDtoList.add(groupDto);
-            if (criteria.getUserId() != null && o[i++] != null) {
+            if (criteria.getUserId() != null && o[i] != null) {
                 userGroupDtoList.add(groupDto);
             }
         }

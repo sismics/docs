@@ -90,6 +90,11 @@ public class DocumentDao {
      * @return Document
      */
     public DocumentDto getDocument(String id, PermType perm, List<String> targetIdList) {
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(id, perm, targetIdList)) {
+            return null;
+        }
+
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C, d.DOC_TITLE_C, d.DOC_DESCRIPTION_C, d.DOC_SUBJECT_C, d.DOC_IDENTIFIER_C, d.DOC_PUBLISHER_C, d.DOC_FORMAT_C, d.DOC_SOURCE_C, d.DOC_TYPE_C, d.DOC_COVERAGE_C, d.DOC_RIGHTS_C, d.DOC_CREATEDATE_D, d.DOC_LANGUAGE_C, ");
         sb.append(" (select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null), ");
@@ -97,16 +102,11 @@ public class DocumentDao {
         sb.append(" u.USE_USERNAME_C ");
         sb.append(" from T_DOCUMENT d ");
         sb.append(" join T_USER u on d.DOC_IDUSER_C = u.USE_ID_C ");
-        sb.append(" left join T_ACL a on a.ACL_TARGETID_C in (:targetIdList) and a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_PERM_C = :perm and a.ACL_DELETEDATE_D is null ");
-        sb.append(" left join T_DOCUMENT_TAG dta on dta.DOT_IDDOCUMENT_C = d.DOC_ID_C and dta.DOT_DELETEDATE_D is null ");
-        sb.append(" left join T_ACL a2 on a2.ACL_TARGETID_C in (:targetIdList) and a2.ACL_SOURCEID_C = dta.DOT_IDTAG_C and a2.ACL_PERM_C = 'READ' and a2.ACL_DELETEDATE_D is null ");
-        sb.append(" where d.DOC_ID_C = :id and (a.ACL_ID_C is not null or a2.ACL_ID_C is not null) and d.DOC_DELETEDATE_D is null ");
+        sb.append(" where d.DOC_ID_C = :id and d.DOC_DELETEDATE_D is null ");
        
         Query q = em.createNativeQuery(sb.toString());
         q.setParameter("id", id);
-        q.setParameter("perm", perm.name());
-        q.setParameter("targetIdList", targetIdList);
-        
+
         Object[] o;
         try {
             o = (Object[]) q.getSingleResult();
