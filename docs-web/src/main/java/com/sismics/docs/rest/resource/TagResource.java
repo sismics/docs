@@ -15,6 +15,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import com.sismics.docs.core.constant.PermType;
+import com.sismics.docs.core.dao.jpa.AclDao;
+import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
+import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.model.jpa.Acl;
 import org.apache.commons.lang.StringUtils;
 
 import com.sismics.docs.core.dao.jpa.TagDao;
@@ -33,7 +38,7 @@ import com.sismics.rest.util.ValidationUtil;
 @Path("/tag")
 public class TagResource extends BaseResource {
     /**
-     * Returns the list of all tags.
+     * Returns the list of all visible tags.
      * 
      * @return Response
      */
@@ -45,14 +50,14 @@ public class TagResource extends BaseResource {
         }
         
         TagDao tagDao = new TagDao();
-        List<Tag> tagList = tagDao.getByUserId(principal.getId());
+        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()), null);
         JsonArrayBuilder items = Json.createArrayBuilder();
-        for (Tag tag : tagList) {
+        for (TagDto tagDto : tagDtoList) {
             items.add(Json.createObjectBuilder()
-                    .add("id", tag.getId())
-                    .add("name", tag.getName())
-                    .add("color", tag.getColor())
-                    .add("parent", JsonUtil.nullable(tag.getParentId())));
+                    .add("id", tagDto.getId())
+                    .add("name", tagDto.getName())
+                    .add("color", tagDto.getColor())
+                    .add("parent", JsonUtil.nullable(tagDto.getParentId())));
         }
         
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -93,6 +98,8 @@ public class TagResource extends BaseResource {
      * Creates a new tag.
      * 
      * @param name Name
+     * @param color Color
+     * @param parentId Parent ID
      * @return Response
      */
     @PUT
@@ -115,8 +122,8 @@ public class TagResource extends BaseResource {
         
         // Get the tag
         TagDao tagDao = new TagDao();
-        Tag tag = tagDao.getByName(principal.getId(), name);
-        if (tag != null) {
+        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setName(name), null);
+        if (tagDtoList.size() > 0) {
             throw new ClientException("AlreadyExistingTag", MessageFormat.format("Tag already exists: {0}", name));
         }
         
@@ -124,19 +131,35 @@ public class TagResource extends BaseResource {
         if (StringUtils.isEmpty(parentId)) {
             parentId = null;
         } else {
-            Tag parentTag = tagDao.getByTagId(principal.getId(), parentId);
-            if (parentTag == null) {
+            tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setId(parentId), null);
+            if (tagDtoList.size() == 0) {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
             }
+            parentId = tagDtoList.get(0).getId();
         }
         
         // Create the tag
-        tag = new Tag();
+        Tag tag = new Tag();
         tag.setName(name);
         tag.setColor(color);
         tag.setUserId(principal.getId());
         tag.setParentId(parentId);
         String id = tagDao.create(tag, principal.getId());
+
+        // Create read ACL
+        AclDao aclDao = new AclDao();
+        Acl acl = new Acl();
+        acl.setPerm(PermType.READ);
+        acl.setSourceId(id);
+        acl.setTargetId(principal.getId());
+        aclDao.create(acl, principal.getId());
+
+        // Create write ACL
+        acl = new Acl();
+        acl.setPerm(PermType.WRITE);
+        acl.setSourceId(id);
+        acl.setTargetId(principal.getId());
+        aclDao.create(acl, principal.getId());
         
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("id", id);
@@ -147,6 +170,8 @@ public class TagResource extends BaseResource {
      * Update a tag.
      * 
      * @param name Name
+     * @param color Color
+     * @param parentId Parent ID
      * @return Response
      */
     @POST
@@ -171,8 +196,8 @@ public class TagResource extends BaseResource {
         
         // Get the tag
         TagDao tagDao = new TagDao();
-        Tag tag = tagDao.getByTagId(principal.getId(), id);
-        if (tag == null) {
+        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setId(id), null);
+        if (tagDtoList.size() == 0) {
             throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", id));
         }
         
@@ -180,19 +205,21 @@ public class TagResource extends BaseResource {
         if (StringUtils.isEmpty(parentId)) {
             parentId = null;
         } else {
-            Tag parentTag = tagDao.getByTagId(principal.getId(), parentId);
-            if (parentTag == null) {
+            tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setId(parentId), null);
+            if (tagDtoList.size() == 0) {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
             }
+            parentId = tagDtoList.get(0).getId();
         }
         
         // Check for name duplicate
-        Tag tagDuplicate = tagDao.getByName(principal.getId(), name);
-        if (tagDuplicate != null && !tagDuplicate.getId().equals(id)) {
+        tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setName(name), null);
+        if (tagDtoList.size() > 0 && !tagDtoList.get(0).getId().equals(id)) {
             throw new ClientException("AlreadyExistingTag", MessageFormat.format("Tag already exists: {0}", name));
         }
         
         // Update the tag
+        Tag tag = tagDao.getById(id);
         if (!StringUtils.isEmpty(name)) {
             tag.setName(name);
         }
@@ -212,26 +239,26 @@ public class TagResource extends BaseResource {
     /**
      * Delete a tag.
      * 
-     * @param tagId Tag ID
+     * @param id Tag ID
      * @return Response
      */
     @DELETE
     @Path("{id: [a-z0-9\\-]+}")
     public Response delete(
-            @PathParam("id") String tagId) {
+            @PathParam("id") String id) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         
         // Get the tag
         TagDao tagDao = new TagDao();
-        Tag tag = tagDao.getByTagId(principal.getId(), tagId);
-        if (tag == null) {
-            throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", tagId));
+        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setId(id), null);
+        if (tagDtoList.size() == 0) {
+            throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", id));
         }
         
         // Delete the tag
-        tagDao.delete(tagId, principal.getId());
+        tagDao.delete(id, principal.getId());
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()

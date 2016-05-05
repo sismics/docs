@@ -27,6 +27,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 
+import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -83,6 +84,7 @@ public class DocumentResource extends BaseResource {
      * Returns a document.
      * 
      * @param documentId Document ID
+     * @param shareId Share ID
      * @return Response
      */
     @GET
@@ -114,7 +116,7 @@ public class DocumentResource extends BaseResource {
         } else {
             // Add tags added by the current user on this document
             TagDao tagDao = new TagDao();
-            List<TagDto> tagDtoList = tagDao.getByDocumentId(documentId, principal.getId());
+            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setDocumentId(documentId), new SortCriteria(1, true));
             JsonArrayBuilder tags = Json.createArrayBuilder();
             for (TagDto tagDto : tagDtoList) {
                 tags.add(Json.createObjectBuilder()
@@ -188,6 +190,11 @@ public class DocumentResource extends BaseResource {
      * Export a document to PDF.
      * 
      * @param documentId Document ID
+     * @param shareId Share ID
+     * @param metadata Export metadata
+     * @param comments Export comments
+     * @param fitImageToPage Fit images to page
+     * @param marginStr Margins
      * @return Response
      */
     @GET
@@ -231,7 +238,11 @@ public class DocumentResource extends BaseResource {
                 } catch (Exception e) {
                     throw new IOException(e);
                 } finally {
-                    outputStream.close();
+                    try {
+                        outputStream.close();
+                    } catch (IOException e) {
+                        // Ignore
+                    }
                 }
             }
         };
@@ -247,6 +258,9 @@ public class DocumentResource extends BaseResource {
      * 
      * @param limit Page limit
      * @param offset Page offset
+     * @param sortColumn Sort column
+     * @param asc Sorting
+     * @param search Search query
      * @return Response
      */
     @GET
@@ -278,7 +292,7 @@ public class DocumentResource extends BaseResource {
 
         for (DocumentDto documentDto : paginatedList.getResultList()) {
             // Get tags added by the current user on this document
-            List<TagDto> tagDtoList = tagDao.getByDocumentId(documentDto.getId(), principal.getId());
+            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setDocumentId(documentDto.getId()), new SortCriteria(1, true));
             JsonArrayBuilder tags = Json.createArrayBuilder();
             for (TagDto tagDto : tagDtoList) {
                 tags.add(Json.createObjectBuilder()
@@ -337,77 +351,87 @@ public class DocumentResource extends BaseResource {
                 query.add(criteria);
                 continue;
             }
-            
-            if (params[0].equals("tag")) {
-                // New tag criteria
-                List<Tag> tagList = tagDao.findByName(principal.getId(), params[1]);
-                if (documentCriteria.getTagIdList() == null) {
-                    documentCriteria.setTagIdList(new ArrayList<String>());
-                }
-                if (tagList.size() == 0) {
-                    // No tag found, the request must returns nothing
-                    documentCriteria.getTagIdList().add(UUID.randomUUID().toString());
-                }
-                for (Tag tag : tagList) {
-                    documentCriteria.getTagIdList().add(tag.getId());
-                }
-            } else if (params[0].equals("after") || params[0].equals("before")) {
-                // New date span criteria
-                try {
-                    DateTime date = formatter.parseDateTime(params[1]);
-                    if (params[0].equals("before")) documentCriteria.setCreateDateMax(date.toDate());
-                    else documentCriteria.setCreateDateMin(date.toDate());
-                } catch (IllegalArgumentException e) {
-                    // Invalid date, returns no documents
-                    if (params[0].equals("before")) documentCriteria.setCreateDateMax(new Date(0));
-                    else documentCriteria.setCreateDateMin(new Date(Long.MAX_VALUE / 2));
-                }
-            } else if (params[0].equals("at")) {
-                // New specific date criteria
-                try {
-                    if (params[1].length() == 10) {
-                        DateTime date = dayFormatter.parseDateTime(params[1]);
-                        documentCriteria.setCreateDateMin(date.toDate());
-                        documentCriteria.setCreateDateMax(date.plusDays(1).minusSeconds(1).toDate());
-                    } else if (params[1].length() == 7) {
-                        DateTime date = monthFormatter.parseDateTime(params[1]);
-                        documentCriteria.setCreateDateMin(date.toDate());
-                        documentCriteria.setCreateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
-                    } else if (params[1].length() == 4) {
-                        DateTime date = yearFormatter.parseDateTime(params[1]);
-                        documentCriteria.setCreateDateMin(date.toDate());
-                        documentCriteria.setCreateDateMax(date.plusYears(1).minusSeconds(1).toDate());
+
+            switch (params[0]) {
+                case "tag":
+                    // New tag criteria
+                    List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setNameLike(params[1]), null);
+                    if (documentCriteria.getTagIdList() == null) {
+                        documentCriteria.setTagIdList(new ArrayList<String>());
                     }
-                } catch (IllegalArgumentException e) {
-                    // Invalid date, returns no documents
-                    documentCriteria.setCreateDateMin(new Date(0));
-                    documentCriteria.setCreateDateMax(new Date(0));
-                }
-            } else if (params[0].equals("shared")) {
-                // New shared state criteria
-                if (params[1].equals("yes")) {
-                    documentCriteria.setShared(true);
-                }
-            } else if (params[0].equals("lang")) {
-                // New language criteria
-                if (Constants.SUPPORTED_LANGUAGES.contains(params[1])) {
-                    documentCriteria.setLanguage(params[1]);
-                }
-            } else if (params[0].equals("by")) {
-                // New creator criteria
-                User user = userDao.getActiveByUsername(params[1]);
-                if (user == null) {
-                    // This user doesn't exists, return nothing
-                    documentCriteria.setCreatorId(UUID.randomUUID().toString());
-                } else {
-                    // This user exists, search its documents
-                    documentCriteria.setCreatorId(user.getId());
-                }
-            } else if (params[0].equals("full")) {
-                // New full content search criteria
-                fullQuery.add(params[1]);
-            } else {
-                query.add(criteria);
+                    if (tagDtoList.size() == 0) {
+                        // No tag found, the request must returns nothing
+                        documentCriteria.getTagIdList().add(UUID.randomUUID().toString());
+                    }
+                    for (TagDto tagDto : tagDtoList) {
+                        documentCriteria.getTagIdList().add(tagDto.getId());
+                    }
+                    break;
+                case "after":
+                case "before":
+                    // New date span criteria
+                    try {
+                        DateTime date = formatter.parseDateTime(params[1]);
+                        if (params[0].equals("before")) documentCriteria.setCreateDateMax(date.toDate());
+                        else documentCriteria.setCreateDateMin(date.toDate());
+                    } catch (IllegalArgumentException e) {
+                        // Invalid date, returns no documents
+                        if (params[0].equals("before")) documentCriteria.setCreateDateMax(new Date(0));
+                        else documentCriteria.setCreateDateMin(new Date(Long.MAX_VALUE / 2));
+                    }
+                    break;
+                case "at":
+                    // New specific date criteria
+                    try {
+                        if (params[1].length() == 10) {
+                            DateTime date = dayFormatter.parseDateTime(params[1]);
+                            documentCriteria.setCreateDateMin(date.toDate());
+                            documentCriteria.setCreateDateMax(date.plusDays(1).minusSeconds(1).toDate());
+                        } else if (params[1].length() == 7) {
+                            DateTime date = monthFormatter.parseDateTime(params[1]);
+                            documentCriteria.setCreateDateMin(date.toDate());
+                            documentCriteria.setCreateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
+                        } else if (params[1].length() == 4) {
+                            DateTime date = yearFormatter.parseDateTime(params[1]);
+                            documentCriteria.setCreateDateMin(date.toDate());
+                            documentCriteria.setCreateDateMax(date.plusYears(1).minusSeconds(1).toDate());
+                        }
+                    } catch (IllegalArgumentException e) {
+                        // Invalid date, returns no documents
+                        documentCriteria.setCreateDateMin(new Date(0));
+                        documentCriteria.setCreateDateMax(new Date(0));
+                    }
+                    break;
+                case "shared":
+                    // New shared state criteria
+                    if (params[1].equals("yes")) {
+                        documentCriteria.setShared(true);
+                    }
+                    break;
+                case "lang":
+                    // New language criteria
+                    if (Constants.SUPPORTED_LANGUAGES.contains(params[1])) {
+                        documentCriteria.setLanguage(params[1]);
+                    }
+                    break;
+                case "by":
+                    // New creator criteria
+                    User user = userDao.getActiveByUsername(params[1]);
+                    if (user == null) {
+                        // This user doesn't exists, return nothing
+                        documentCriteria.setCreatorId(UUID.randomUUID().toString());
+                    } else {
+                        // This user exists, search its documents
+                        documentCriteria.setCreatorId(user.getId());
+                    }
+                    break;
+                case "full":
+                    // New full content search criteria
+                    fullQuery.add(params[1]);
+                    break;
+                default:
+                    query.add(criteria);
+                    break;
             }
         }
         
@@ -421,7 +445,16 @@ public class DocumentResource extends BaseResource {
      * 
      * @param title Title
      * @param description Description
-     * @param tags Tags
+     * @param subject Subject
+     * @param identifier Identifier
+     * @param publisher Publisher
+     * @param format Format
+     * @param source Source
+     * @param type Type
+     * @param coverage Coverage
+     * @param rights Rights
+     * @param tagList Tags
+     * @param relationList Relations
      * @param language Language
      * @param createDateStr Creation date
      * @return Response
@@ -594,7 +627,7 @@ public class DocumentResource extends BaseResource {
             document.setCreateDate(createDate);
         }
         
-        document = documentDao.update(document, principal.getId());
+        documentDao.update(document, principal.getId());
         
         // Update tags
         updateTagList(id, tagList);
@@ -624,9 +657,9 @@ public class DocumentResource extends BaseResource {
             TagDao tagDao = new TagDao();
             Set<String> tagSet = new HashSet<>();
             Set<String> tagIdSet = new HashSet<>();
-            List<Tag> tagDbList = tagDao.getByUserId(principal.getId());
-            for (Tag tagDb : tagDbList) {
-                tagIdSet.add(tagDb.getId());
+            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()), null);
+            for (TagDto tagDto : tagDtoList) {
+                tagIdSet.add(tagDto.getId());
             }
             for (String tagId : tagList) {
                 if (!tagIdSet.contains(tagId)) {

@@ -212,7 +212,7 @@ public class DocumentDao {
         sb.append(" (select count(f.FIL_ID_C) from T_FILE f where f.FIL_DELETEDATE_D is null and f.FIL_IDDOC_C = d.DOC_ID_C) c6 ");
         sb.append(" from T_DOCUMENT d ");
         
-        // Adds search criteria
+        // Add search criterias
         if (criteria.getTargetIdList() != null) {
             // Read permission is enough for searching
             sb.append(" left join T_ACL a on a.ACL_TARGETID_C in (:targetIdList) and a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_PERM_C = 'READ' and a.ACL_DELETEDATE_D is null ");

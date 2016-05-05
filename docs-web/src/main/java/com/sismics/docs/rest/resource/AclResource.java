@@ -18,18 +18,13 @@ import javax.ws.rs.core.Response;
 import com.google.common.collect.Lists;
 import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.docs.core.dao.jpa.DocumentDao;
-import com.sismics.docs.core.dao.jpa.GroupDao;
-import com.sismics.docs.core.dao.jpa.UserDao;
+import com.sismics.docs.core.dao.jpa.*;
 import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
 import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
 import com.sismics.docs.core.dao.jpa.dto.GroupDto;
+import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.dao.jpa.dto.UserDto;
-import com.sismics.docs.core.model.jpa.Acl;
-import com.sismics.docs.core.model.jpa.Document;
-import com.sismics.docs.core.model.jpa.Group;
-import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.model.jpa.*;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
@@ -156,7 +151,14 @@ public class AclResource extends BaseResource {
         if (document != null && document.getUserId().equals(targetId)) {
             throw new ClientException("AclError", "Cannot delete base ACL on a document");
         }
-        
+
+        // Cannot delete R/W on a source tag if the target is the creator
+        TagDao tagDao = new TagDao();
+        Tag tag = tagDao.getById(sourceId);
+        if (tag != null && tag.getUserId().equals(targetId)) {
+            throw new ClientException("AclError", "Cannot delete base ACL on a tag");
+        }
+
         // Delete the ACL
         aclDao.delete(sourceId, perm, targetId, principal.getId());
         
