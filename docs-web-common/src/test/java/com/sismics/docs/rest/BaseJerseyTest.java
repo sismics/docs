@@ -45,7 +45,7 @@ public abstract class BaseJerseyTest extends JerseyTest {
     @Override
     protected Application configure() {
         enable(TestProperties.LOG_TRAFFIC);
-        enable(TestProperties.DUMP_ENTITY);
+        // enable(TestProperties.DUMP_ENTITY);
         return new Application();
     }
     

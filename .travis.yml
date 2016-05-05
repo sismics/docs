@@ -3,7 +3,8 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get -y -q install tesseract-ocr tesseract-ocr-fra tesseract-ocr-jpn
 env:
-  - TESSDATA_PREFIX=/usr/share/tesseract-ocr
-  - LC_NUMERIC=C
+  global:
+    - TESSDATA_PREFIX=/usr/share/tesseract-ocr
+    - LC_NUMERIC=C
 before_script:
   - cd docs-parent

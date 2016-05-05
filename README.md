@@ -1,4 +1,4 @@
-Sismics Docs
+Sismics Docs [![Build Status](https://secure.travis-ci.org/sismics/docs.png)](http://travis-ci.org/sismics/docs)
 ============
 
 _Web interface_

@@ -37,27 +37,25 @@ import com.sismics.util.ResourceUtil;
  *
  * @author jtremeaux
  */
-public abstract class DbOpenHelper {
+abstract class DbOpenHelper {
     /**
      * Logger.
      */
     private static final Logger log = LoggerFactory.getLogger(DbOpenHelper.class);
 
-    private final SqlStatementLogger sqlStatementLogger;
-    
     private final JdbcConnectionAccess jdbcConnectionAccess;
     
-    private final List<Exception> exceptions = new ArrayList<Exception>();
+    private final List<Exception> exceptions = new ArrayList<>();
 
     private Formatter formatter;
 
     private boolean haltOnError;
-    
+
     private Statement stmt;
 
-    public DbOpenHelper(ServiceRegistry serviceRegistry) throws HibernateException {
+    DbOpenHelper(ServiceRegistry serviceRegistry) throws HibernateException {
         final JdbcServices jdbcServices = serviceRegistry.getService(JdbcServices.class);
-        sqlStatementLogger = jdbcServices.getSqlStatementLogger();
+        SqlStatementLogger sqlStatementLogger = jdbcServices.getSqlStatementLogger();
         jdbcConnectionAccess = jdbcServices.getBootstrapJdbcConnectionAccess();
         formatter = (sqlStatementLogger.isFormat() ? FormatStyle.DDL : FormatStyle.NONE).getFormatter();
     }
@@ -66,7 +64,6 @@ public abstract class DbOpenHelper {
         log.info("Opening database and executing incremental updates");
 
         Connection connection = null;
-        Writer outputFileWriter = null;
 
         exceptions.clear();
 
@@ -130,14 +127,6 @@ public abstract class DbOpenHelper {
                 exceptions.add(e);
                 log.error("Unable to close connection", e);
             }
-            try {
-                if (outputFileWriter != null) {
-                    outputFileWriter.close();
-                }
-            } catch (Exception e) {
-                exceptions.add(e);
-                log.error("Unable to close connection", e);
-            }
         }
     }
 
@@ -147,7 +136,7 @@ public abstract class DbOpenHelper {
      * @param version Version number
      * @throws Exception
      */
-    protected void executeAllScript(final int version) throws Exception {
+    void executeAllScript(final int version) throws Exception {
         List<String> fileNameList = ResourceUtil.list(getClass(), "/db/update/", new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -173,7 +162,7 @@ public abstract class DbOpenHelper {
      * @throws IOException
      * @throws SQLException
      */
-    protected void executeScript(InputStream inputScript) throws IOException, SQLException {
+    void executeScript(InputStream inputScript) throws IOException, SQLException {
         List<String> lines = CharStreams.readLines(new InputStreamReader(inputScript));
         
         for (String sql : lines) {
