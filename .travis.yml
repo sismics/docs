@@ -4,7 +4,7 @@ language: java
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get -y -q install tesseract-ocr tesseract-ocr-fra tesseract-ocr-jpn
-  - sudo apt-get install haveged && sudo service haveged start
+  - sudo apt-get -y -q install haveged && sudo service haveged start
 env:
   global:
     - TESSDATA_PREFIX=/usr/share/tesseract-ocr
