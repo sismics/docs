@@ -55,7 +55,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         
         // Create a document
-        json = target().path("/document").request()
+        target().path("/document").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
                 .put(Entity.form(new Form()
                         .param("title", "My super document 1")

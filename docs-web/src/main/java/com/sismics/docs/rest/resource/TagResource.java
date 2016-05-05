@@ -57,7 +57,7 @@ public class TagResource extends BaseResource {
                     .add("id", tagDto.getId())
                     .add("name", tagDto.getName())
                     .add("color", tagDto.getColor())
-                    .add("parent", JsonUtil.nullable(tagDto.getParentId())));
+                    .add("parent", JsonUtil.nullable(tagDto.getParentId()))); // TODO Don't return the parent if it's not visible
         }
         
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -120,18 +120,12 @@ public class TagResource extends BaseResource {
             throw new ClientException("SpacesNotAllowed", "Spaces are not allowed in tag name");
         }
         
-        // Get the tag
-        TagDao tagDao = new TagDao();
-        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setName(name), null);
-        if (tagDtoList.size() > 0) {
-            throw new ClientException("AlreadyExistingTag", MessageFormat.format("Tag already exists: {0}", name));
-        }
-        
         // Check the parent
+        TagDao tagDao = new TagDao();
         if (StringUtils.isEmpty(parentId)) {
             parentId = null;
         } else {
-            tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setId(parentId), null);
+            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setId(parentId), null);
             if (tagDtoList.size() == 0) {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
             }
@@ -210,12 +204,6 @@ public class TagResource extends BaseResource {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
             }
             parentId = tagDtoList.get(0).getId();
-        }
-        
-        // Check for name duplicate
-        tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setName(name), null);
-        if (tagDtoList.size() > 0 && !tagDtoList.get(0).getId().equals(id)) {
-            throw new ClientException("AlreadyExistingTag", MessageFormat.format("Tag already exists: {0}", name));
         }
         
         // Update the tag
