@@ -50,7 +50,7 @@ public class TagResource extends BaseResource {
         }
         
         TagDao tagDao = new TagDao();
-        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()), null);
+        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)), null);
         JsonArrayBuilder items = Json.createArrayBuilder();
         for (TagDto tagDto : tagDtoList) {
             items.add(Json.createObjectBuilder()
@@ -125,7 +125,7 @@ public class TagResource extends BaseResource {
         if (StringUtils.isEmpty(parentId)) {
             parentId = null;
         } else {
-            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setId(parentId), null);
+            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setId(parentId), null);
             if (tagDtoList.size() == 0) {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
             }
@@ -190,7 +190,7 @@ public class TagResource extends BaseResource {
         
         // Get the tag
         TagDao tagDao = new TagDao();
-        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setId(id), null);
+        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setId(id), null);
         if (tagDtoList.size() == 0) {
             throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", id));
         }
@@ -199,7 +199,7 @@ public class TagResource extends BaseResource {
         if (StringUtils.isEmpty(parentId)) {
             parentId = null;
         } else {
-            tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setId(parentId), null);
+            tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setId(parentId), null);
             if (tagDtoList.size() == 0) {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
             }
@@ -240,7 +240,7 @@ public class TagResource extends BaseResource {
         
         // Get the tag
         TagDao tagDao = new TagDao();
-        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setId(id), null);
+        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setId(id), null);
         if (tagDtoList.size() == 0) {
             throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", id));
         }

@@ -215,16 +215,15 @@ public class TagDao {
 
         StringBuilder sb = new StringBuilder("select t.TAG_ID_C as c0, t.TAG_NAME_C as c1, t.TAG_COLOR_C as c2, t.TAG_IDPARENT_C as c3 ");
         sb.append(" from T_TAG t ");
-        // TODO Use ACLs
 
         // Add search criterias
         if (criteria.getId() != null) {
             criteriaList.add("t.TAG_ID_C = :id");
             parameterMap.put("id", criteria.getId());
         }
-        if (criteria.getUserId() != null) {
-            criteriaList.add("t.TAG_IDUSER_C = :userId");
-            parameterMap.put("userId", criteria.getUserId());
+        if (criteria.getTargetIdList() != null) {
+            sb.append(" left join T_ACL a on a.ACL_TARGETID_C in (:targetIdList) and a.ACL_SOURCEID_C = t.TAG_ID_C and a.ACL_PERM_C = 'READ' and a.ACL_DELETEDATE_D is null ");
+            parameterMap.put("targetIdList", criteria.getTargetIdList());
         }
         if (criteria.getDocumentId() != null) {
             sb.append(" join T_DOCUMENT_TAG dt on dt.DOT_IDTAG_C = t.TAG_ID_C and dt.DOT_DELETEDATE_D is null ");

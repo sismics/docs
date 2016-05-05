@@ -1,5 +1,7 @@
 package com.sismics.docs.core.dao.jpa.criteria;
 
+import java.util.List;
+
 /**
  * Tag criteria.
  *
@@ -12,9 +14,9 @@ public class TagCriteria {
     private String id;
 
     /**
-     * User ID.
+     * ACL target ID list.
      */
-    private String userId;
+    private List<String> targetIdList;
 
     /**
      * Document ID.
@@ -40,12 +42,12 @@ public class TagCriteria {
         return this;
     }
 
-    public String getUserId() {
-        return userId;
+    public List<String> getTargetIdList() {
+        return targetIdList;
     }
 
-    public TagCriteria setUserId(String userId) {
-        this.userId = userId;
+    public TagCriteria setTargetIdList(List<String> targetIdList) {
+        this.targetIdList = targetIdList;
         return this;
     }
 

@@ -120,9 +120,9 @@
   </build>
         
   <modules>
-    <module>../docs-core</module>
-    <module>../docs-web-common</module>
-    <module>../docs-web</module>
+    <module>docs-core</module>
+    <module>docs-web-common</module>
+    <module>docs-web</module>
   </modules>
   
   <dependencyManagement>
@@ -374,8 +374,9 @@
         <artifactId>org.apache.poi.xwpf.converter.pdf</artifactId>
         <version>${fr.opensagres.xdocreport.version}</version>
       </dependency>
-      
-      <dependency> <!-- Servlet listener to register SPI ImageIO plugins -->
+
+      <!-- Servlet listener to register SPI ImageIO plugins -->
+      <dependency>
         <groupId>com.twelvemonkeys.servlet</groupId>
         <artifactId>servlet</artifactId>
         <version>${com.twelvemonkeys.imageio.version}</version>
@@ -389,7 +390,8 @@
       </dependency>
       
       <!-- ImageIO plugins -->
-      <dependency> <!-- Permissive JPEG plugin -->
+      <!-- Permissive JPEG plugin -->
+      <dependency>
         <groupId>com.twelvemonkeys.imageio</groupId>
         <artifactId>imageio-jpeg</artifactId>
         <version>${com.twelvemonkeys.imageio.version}</version>

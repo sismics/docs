@@ -116,7 +116,7 @@ public class DocumentResource extends BaseResource {
         } else {
             // Add tags added by the current user on this document
             TagDao tagDao = new TagDao();
-            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setDocumentId(documentId), new SortCriteria(1, true));
+            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setDocumentId(documentId), new SortCriteria(1, true));
             JsonArrayBuilder tags = Json.createArrayBuilder();
             for (TagDto tagDto : tagDtoList) {
                 tags.add(Json.createObjectBuilder()
@@ -292,7 +292,7 @@ public class DocumentResource extends BaseResource {
 
         for (DocumentDto documentDto : paginatedList.getResultList()) {
             // Get tags added by the current user on this document
-            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setDocumentId(documentDto.getId()), new SortCriteria(1, true));
+            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setDocumentId(documentDto.getId()), new SortCriteria(1, true));
             JsonArrayBuilder tags = Json.createArrayBuilder();
             for (TagDto tagDto : tagDtoList) {
                 tags.add(Json.createObjectBuilder()
@@ -355,7 +355,7 @@ public class DocumentResource extends BaseResource {
             switch (params[0]) {
                 case "tag":
                     // New tag criteria
-                    List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()).setNameLike(params[1]), null);
+                    List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setNameLike(params[1]), null);
                     if (documentCriteria.getTagIdList() == null) {
                         documentCriteria.setTagIdList(new ArrayList<String>());
                     }
@@ -657,7 +657,7 @@ public class DocumentResource extends BaseResource {
             TagDao tagDao = new TagDao();
             Set<String> tagSet = new HashSet<>();
             Set<String> tagIdSet = new HashSet<>();
-            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setUserId(principal.getId()), null);
+            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)), null);
             for (TagDto tagDto : tagDtoList) {
                 tagIdSet.add(tagDto.getId());
             }
