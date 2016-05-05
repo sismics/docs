@@ -9,5 +9,3 @@ env:
   global:
     - TESSDATA_PREFIX=/usr/share/tesseract-ocr
     - LC_NUMERIC=C
-before_script:
-  - cd docs-parent
