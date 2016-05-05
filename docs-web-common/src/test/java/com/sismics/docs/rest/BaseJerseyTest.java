@@ -30,7 +30,7 @@ public abstract class BaseJerseyTest extends JerseyTest {
     /**
      * Test HTTP server.
      */
-    protected HttpServer httpServer;
+    private HttpServer httpServer;
     
     /**
      * Utility class for the REST client.
@@ -45,7 +45,11 @@ public abstract class BaseJerseyTest extends JerseyTest {
     @Override
     protected Application configure() {
         enable(TestProperties.LOG_TRAFFIC);
-        // enable(TestProperties.DUMP_ENTITY);
+        String travisEnv = System.getenv("TRAVIS");
+        if (travisEnv == null || !travisEnv.equals("true")) {
+            // Travis don't like entity dumped in the logs
+            enable(TestProperties.DUMP_ENTITY);
+        }
         return new Application();
     }
     

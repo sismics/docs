@@ -1,20 +1,5 @@
 package com.sismics.docs.rest.resource;
 
-import java.util.List;
-
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.CommentDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
@@ -23,6 +8,13 @@ import com.sismics.docs.core.model.jpa.Comment;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.ImageUtil;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * Comment REST resource.
@@ -52,7 +44,7 @@ public class CommentResource extends BaseResource {
         // Read access on doc gives access to write comments 
         DocumentDao documentDao = new DocumentDao();
         if (documentDao.getDocument(documentId, PermType.READ, getTargetIdList(null)) == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Create the comment
@@ -90,7 +82,7 @@ public class CommentResource extends BaseResource {
         CommentDao commentDao = new CommentDao();
         Comment comment = commentDao.getActiveById(id);
         if (comment == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // If the current user owns the comment, skip ACL check
@@ -98,7 +90,7 @@ public class CommentResource extends BaseResource {
             // Get the associated document
             DocumentDao documentDao = new DocumentDao();
             if (documentDao.getDocument(comment.getDocumentId(), PermType.WRITE, getTargetIdList(null)) == null) {
-                return Response.status(Status.NOT_FOUND).build();
+                throw new NotFoundException();
             }
         }
         
@@ -126,7 +118,7 @@ public class CommentResource extends BaseResource {
         // Read access on doc gives access to read comments 
         DocumentDao documentDao = new DocumentDao();
         if (documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId)) == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Assemble results

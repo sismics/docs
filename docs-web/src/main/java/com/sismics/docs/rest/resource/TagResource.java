@@ -6,13 +6,7 @@ import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 import com.sismics.docs.core.constant.PermType;
@@ -20,6 +14,7 @@ import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
 import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.model.jpa.Acl;
+import com.sismics.docs.core.util.jpa.SortCriteria;
 import org.apache.commons.lang.StringUtils;
 
 import com.sismics.docs.core.dao.jpa.TagDao;
@@ -50,7 +45,7 @@ public class TagResource extends BaseResource {
         }
         
         TagDao tagDao = new TagDao();
-        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)), null);
+        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)), new SortCriteria(1, true));
         JsonArrayBuilder items = Json.createArrayBuilder();
         for (TagDto tagDto : tagDtoList) {
             items.add(Json.createObjectBuilder()
@@ -121,18 +116,17 @@ public class TagResource extends BaseResource {
         }
         
         // Check the parent
-        TagDao tagDao = new TagDao();
         if (StringUtils.isEmpty(parentId)) {
             parentId = null;
         } else {
-            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setId(parentId), null);
-            if (tagDtoList.size() == 0) {
+            AclDao aclDao = new AclDao();
+            if (!aclDao.checkPermission(parentId, PermType.READ, getTargetIdList(null))) {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
             }
-            parentId = tagDtoList.get(0).getId();
         }
         
         // Create the tag
+        TagDao tagDao = new TagDao();
         Tag tag = new Tag();
         tag.setName(name);
         tag.setColor(color);
@@ -188,25 +182,23 @@ public class TagResource extends BaseResource {
             throw new ClientException("SpacesNotAllowed", "Spaces are not allowed in tag name");
         }
         
-        // Get the tag
-        TagDao tagDao = new TagDao();
-        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setId(id), null);
-        if (tagDtoList.size() == 0) {
-            throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", id));
+        // Check permission
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(id, PermType.WRITE, getTargetIdList(null))) {
+            throw new NotFoundException();
         }
         
         // Check the parent
         if (StringUtils.isEmpty(parentId)) {
             parentId = null;
         } else {
-            tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setId(parentId), null);
-            if (tagDtoList.size() == 0) {
+            if (!aclDao.checkPermission(parentId, PermType.READ, getTargetIdList(null))) {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
             }
-            parentId = tagDtoList.get(0).getId();
         }
         
         // Update the tag
+        TagDao tagDao = new TagDao();
         Tag tag = tagDao.getById(id);
         if (!StringUtils.isEmpty(name)) {
             tag.setName(name);
@@ -239,13 +231,13 @@ public class TagResource extends BaseResource {
         }
         
         // Get the tag
-        TagDao tagDao = new TagDao();
-        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setId(id), null);
-        if (tagDtoList.size() == 0) {
-            throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", id));
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(id, PermType.WRITE, getTargetIdList(null))) {
+            throw new NotFoundException();
         }
         
         // Delete the tag
+        TagDao tagDao = new TagDao();
         tagDao.delete(id, principal.getId());
         
         // Always return OK

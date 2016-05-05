@@ -1,19 +1,6 @@
 package com.sismics.docs.rest.resource;
 
 
-import java.text.MessageFormat;
-import java.util.List;
-
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
@@ -25,6 +12,13 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
+
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * Share REST resources.
@@ -55,7 +49,7 @@ public class ShareResource extends BaseResource {
         // Get the document
         DocumentDao documentDao = new DocumentDao();
         if (documentDao.getDocument(documentId, PermType.WRITE, getTargetIdList(null)) == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Create the share

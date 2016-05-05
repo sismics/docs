@@ -1,57 +1,14 @@
 package com.sismics.docs.rest.resource;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.StreamingOutput;
-
-import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
-import org.joda.time.format.DateTimeParser;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.docs.core.dao.jpa.ContributorDao;
-import com.sismics.docs.core.dao.jpa.DocumentDao;
-import com.sismics.docs.core.dao.jpa.FileDao;
-import com.sismics.docs.core.dao.jpa.RelationDao;
-import com.sismics.docs.core.dao.jpa.TagDao;
-import com.sismics.docs.core.dao.jpa.UserDao;
+import com.sismics.docs.core.dao.jpa.*;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
-import com.sismics.docs.core.dao.jpa.dto.AclDto;
-import com.sismics.docs.core.dao.jpa.dto.ContributorDto;
-import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
-import com.sismics.docs.core.dao.jpa.dto.RelationDto;
-import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
+import com.sismics.docs.core.dao.jpa.dto.*;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
@@ -60,7 +17,6 @@ import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
@@ -72,6 +28,23 @@ import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.mime.MimeType;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+import org.joda.time.format.DateTimeParser;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.MessageFormat;
+import java.util.*;
 
 /**
  * Document REST resources.
@@ -98,7 +71,7 @@ public class DocumentResource extends BaseResource {
         AclDao aclDao = new AclDao();
         DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
         if (documentDto == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
             
         JsonObjectBuilder document = Json.createObjectBuilder()
@@ -215,7 +188,7 @@ public class DocumentResource extends BaseResource {
         DocumentDao documentDao = new DocumentDao();
         final DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
         if (documentDto == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Get files
@@ -606,7 +579,7 @@ public class DocumentResource extends BaseResource {
         DocumentDao documentDao = new DocumentDao();
         Document document = documentDao.getById(id);
         if (document == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Update the document
@@ -712,7 +685,7 @@ public class DocumentResource extends BaseResource {
         FileDao fileDao = new FileDao();
         DocumentDto documentDto = documentDao.getDocument(id, PermType.WRITE, getTargetIdList(null));
         if (documentDto == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         List<File> fileList = fileDao.getByDocumentId(principal.getId(), id);
         

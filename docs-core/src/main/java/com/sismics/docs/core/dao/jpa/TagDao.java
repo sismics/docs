@@ -213,7 +213,7 @@ public class TagDao {
         Map<String, Object> parameterMap = new HashMap<>();
         List<String> criteriaList = new ArrayList<>();
 
-        StringBuilder sb = new StringBuilder("select t.TAG_ID_C as c0, t.TAG_NAME_C as c1, t.TAG_COLOR_C as c2, t.TAG_IDPARENT_C as c3 ");
+        StringBuilder sb = new StringBuilder("select distinct t.TAG_ID_C as c0, t.TAG_NAME_C as c1, t.TAG_COLOR_C as c2, t.TAG_IDPARENT_C as c3 ");
         sb.append(" from T_TAG t ");
 
         // Add search criterias
@@ -223,6 +223,7 @@ public class TagDao {
         }
         if (criteria.getTargetIdList() != null) {
             sb.append(" left join T_ACL a on a.ACL_TARGETID_C in (:targetIdList) and a.ACL_SOURCEID_C = t.TAG_ID_C and a.ACL_PERM_C = 'READ' and a.ACL_DELETEDATE_D is null ");
+            criteriaList.add("a.ACL_ID_C is not null");
             parameterMap.put("targetIdList", criteria.getTargetIdList());
         }
         if (criteria.getDocumentId() != null) {
