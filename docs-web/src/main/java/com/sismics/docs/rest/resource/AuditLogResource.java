@@ -1,14 +1,5 @@
 package com.sismics.docs.rest.resource;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
@@ -20,6 +11,15 @@ import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.JsonUtil;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 
 /**
  * Audit log REST resources.
@@ -50,7 +50,7 @@ public class AuditLogResource extends BaseResource {
             // Check ACL on the document
             AclDao aclDao = new AclDao();
             if (!aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(null))) {
-                return Response.status(Status.NOT_FOUND).build();
+                throw new NotFoundException();
             }
             criteria.setDocumentId(documentId);
         }

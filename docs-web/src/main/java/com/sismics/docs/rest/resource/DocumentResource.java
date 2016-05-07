@@ -1,56 +1,14 @@
 package com.sismics.docs.rest.resource;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.StreamingOutput;
-
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
-import org.joda.time.format.DateTimeParser;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.docs.core.dao.jpa.ContributorDao;
-import com.sismics.docs.core.dao.jpa.DocumentDao;
-import com.sismics.docs.core.dao.jpa.FileDao;
-import com.sismics.docs.core.dao.jpa.RelationDao;
-import com.sismics.docs.core.dao.jpa.TagDao;
-import com.sismics.docs.core.dao.jpa.UserDao;
+import com.sismics.docs.core.dao.jpa.*;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
-import com.sismics.docs.core.dao.jpa.dto.AclDto;
-import com.sismics.docs.core.dao.jpa.dto.ContributorDto;
-import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
-import com.sismics.docs.core.dao.jpa.dto.RelationDto;
-import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
+import com.sismics.docs.core.dao.jpa.dto.*;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
@@ -59,7 +17,6 @@ import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
@@ -68,9 +25,27 @@ import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
+import com.sismics.rest.util.AclUtil;
 import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.mime.MimeType;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+import org.joda.time.format.DateTimeParser;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.MessageFormat;
+import java.util.*;
 
 /**
  * Document REST resources.
@@ -83,6 +58,7 @@ public class DocumentResource extends BaseResource {
      * Returns a document.
      * 
      * @param documentId Document ID
+     * @param shareId Share ID
      * @return Response
      */
     @GET
@@ -93,10 +69,9 @@ public class DocumentResource extends BaseResource {
         authenticate();
         
         DocumentDao documentDao = new DocumentDao();
-        AclDao aclDao = new AclDao();
         DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
         if (documentDto == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
             
         JsonObjectBuilder document = Json.createObjectBuilder()
@@ -114,7 +89,11 @@ public class DocumentResource extends BaseResource {
         } else {
             // Add tags added by the current user on this document
             TagDao tagDao = new TagDao();
-            List<TagDto> tagDtoList = tagDao.getByDocumentId(documentId, principal.getId());
+            List<TagDto> tagDtoList = tagDao.findByCriteria(
+                    new TagCriteria()
+                            .setTargetIdList(getTargetIdList(shareId))
+                            .setDocumentId(documentId),
+                    new SortCriteria(1, true));
             JsonArrayBuilder tags = Json.createArrayBuilder();
             for (TagDto tagDto : tagDtoList) {
                 tags.add(Json.createObjectBuilder()
@@ -135,28 +114,9 @@ public class DocumentResource extends BaseResource {
         document.add("coverage", JsonUtil.nullable(documentDto.getCoverage()));
         document.add("rights", JsonUtil.nullable(documentDto.getRights()));
         document.add("creator", documentDto.getCreator());
-        
+
         // Add ACL
-        List<AclDto> aclDtoList = aclDao.getBySourceId(documentId);
-        JsonArrayBuilder aclList = Json.createArrayBuilder();
-        boolean writable = false;
-        for (AclDto aclDto : aclDtoList) {
-            aclList.add(Json.createObjectBuilder()
-                    .add("perm", aclDto.getPerm().name())
-                    .add("id", aclDto.getTargetId())
-                    .add("name", JsonUtil.nullable(aclDto.getTargetName()))
-                    .add("type", aclDto.getTargetType()));
-            
-            if (!principal.isAnonymous()
-                    && (aclDto.getTargetId().equals(principal.getId())
-                            || principal.getGroupIdSet().contains(aclDto.getTargetId()))
-                    && aclDto.getPerm() == PermType.WRITE) {
-                // The document is writable for the current user
-                writable = true;
-            }
-        }
-        document.add("acls", aclList)
-                .add("writable", writable);
+        AclUtil.addAcls(document, documentId, getTargetIdList(shareId));
         
         // Add contributors
         ContributorDao contributorDao = new ContributorDao();
@@ -188,6 +148,11 @@ public class DocumentResource extends BaseResource {
      * Export a document to PDF.
      * 
      * @param documentId Document ID
+     * @param shareId Share ID
+     * @param metadata Export metadata
+     * @param comments Export comments
+     * @param fitImageToPage Fit images to page
+     * @param marginStr Margins
      * @return Response
      */
     @GET
@@ -208,7 +173,7 @@ public class DocumentResource extends BaseResource {
         DocumentDao documentDao = new DocumentDao();
         final DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
         if (documentDto == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Get files
@@ -231,7 +196,11 @@ public class DocumentResource extends BaseResource {
                 } catch (Exception e) {
                     throw new IOException(e);
                 } finally {
-                    outputStream.close();
+                    try {
+                        outputStream.close();
+                    } catch (IOException e) {
+                        // Ignore
+                    }
                 }
             }
         };
@@ -247,6 +216,9 @@ public class DocumentResource extends BaseResource {
      * 
      * @param limit Page limit
      * @param offset Page offset
+     * @param sortColumn Sort column
+     * @param asc Sorting
+     * @param search Search query
      * @return Response
      */
     @GET
@@ -278,7 +250,7 @@ public class DocumentResource extends BaseResource {
 
         for (DocumentDto documentDto : paginatedList.getResultList()) {
             // Get tags added by the current user on this document
-            List<TagDto> tagDtoList = tagDao.getByDocumentId(documentDto.getId(), principal.getId());
+            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setDocumentId(documentDto.getId()), new SortCriteria(1, true));
             JsonArrayBuilder tags = Json.createArrayBuilder();
             for (TagDto tagDto : tagDtoList) {
                 tags.add(Json.createObjectBuilder()
@@ -337,77 +309,87 @@ public class DocumentResource extends BaseResource {
                 query.add(criteria);
                 continue;
             }
-            
-            if (params[0].equals("tag")) {
-                // New tag criteria
-                List<Tag> tagList = tagDao.findByName(principal.getId(), params[1]);
-                if (documentCriteria.getTagIdList() == null) {
-                    documentCriteria.setTagIdList(new ArrayList<String>());
-                }
-                if (tagList.size() == 0) {
-                    // No tag found, the request must returns nothing
-                    documentCriteria.getTagIdList().add(UUID.randomUUID().toString());
-                }
-                for (Tag tag : tagList) {
-                    documentCriteria.getTagIdList().add(tag.getId());
-                }
-            } else if (params[0].equals("after") || params[0].equals("before")) {
-                // New date span criteria
-                try {
-                    DateTime date = formatter.parseDateTime(params[1]);
-                    if (params[0].equals("before")) documentCriteria.setCreateDateMax(date.toDate());
-                    else documentCriteria.setCreateDateMin(date.toDate());
-                } catch (IllegalArgumentException e) {
-                    // Invalid date, returns no documents
-                    if (params[0].equals("before")) documentCriteria.setCreateDateMax(new Date(0));
-                    else documentCriteria.setCreateDateMin(new Date(Long.MAX_VALUE / 2));
-                }
-            } else if (params[0].equals("at")) {
-                // New specific date criteria
-                try {
-                    if (params[1].length() == 10) {
-                        DateTime date = dayFormatter.parseDateTime(params[1]);
-                        documentCriteria.setCreateDateMin(date.toDate());
-                        documentCriteria.setCreateDateMax(date.plusDays(1).minusSeconds(1).toDate());
-                    } else if (params[1].length() == 7) {
-                        DateTime date = monthFormatter.parseDateTime(params[1]);
-                        documentCriteria.setCreateDateMin(date.toDate());
-                        documentCriteria.setCreateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
-                    } else if (params[1].length() == 4) {
-                        DateTime date = yearFormatter.parseDateTime(params[1]);
-                        documentCriteria.setCreateDateMin(date.toDate());
-                        documentCriteria.setCreateDateMax(date.plusYears(1).minusSeconds(1).toDate());
+
+            switch (params[0]) {
+                case "tag":
+                    // New tag criteria
+                    List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setNameLike(params[1]), null);
+                    if (documentCriteria.getTagIdList() == null) {
+                        documentCriteria.setTagIdList(new ArrayList<String>());
                     }
-                } catch (IllegalArgumentException e) {
-                    // Invalid date, returns no documents
-                    documentCriteria.setCreateDateMin(new Date(0));
-                    documentCriteria.setCreateDateMax(new Date(0));
-                }
-            } else if (params[0].equals("shared")) {
-                // New shared state criteria
-                if (params[1].equals("yes")) {
-                    documentCriteria.setShared(true);
-                }
-            } else if (params[0].equals("lang")) {
-                // New language criteria
-                if (Constants.SUPPORTED_LANGUAGES.contains(params[1])) {
-                    documentCriteria.setLanguage(params[1]);
-                }
-            } else if (params[0].equals("by")) {
-                // New creator criteria
-                User user = userDao.getActiveByUsername(params[1]);
-                if (user == null) {
-                    // This user doesn't exists, return nothing
-                    documentCriteria.setCreatorId(UUID.randomUUID().toString());
-                } else {
-                    // This user exists, search its documents
-                    documentCriteria.setCreatorId(user.getId());
-                }
-            } else if (params[0].equals("full")) {
-                // New full content search criteria
-                fullQuery.add(params[1]);
-            } else {
-                query.add(criteria);
+                    if (tagDtoList.size() == 0) {
+                        // No tag found, the request must returns nothing
+                        documentCriteria.getTagIdList().add(UUID.randomUUID().toString());
+                    }
+                    for (TagDto tagDto : tagDtoList) {
+                        documentCriteria.getTagIdList().add(tagDto.getId());
+                    }
+                    break;
+                case "after":
+                case "before":
+                    // New date span criteria
+                    try {
+                        DateTime date = formatter.parseDateTime(params[1]);
+                        if (params[0].equals("before")) documentCriteria.setCreateDateMax(date.toDate());
+                        else documentCriteria.setCreateDateMin(date.toDate());
+                    } catch (IllegalArgumentException e) {
+                        // Invalid date, returns no documents
+                        if (params[0].equals("before")) documentCriteria.setCreateDateMax(new Date(0));
+                        else documentCriteria.setCreateDateMin(new Date(Long.MAX_VALUE / 2));
+                    }
+                    break;
+                case "at":
+                    // New specific date criteria
+                    try {
+                        if (params[1].length() == 10) {
+                            DateTime date = dayFormatter.parseDateTime(params[1]);
+                            documentCriteria.setCreateDateMin(date.toDate());
+                            documentCriteria.setCreateDateMax(date.plusDays(1).minusSeconds(1).toDate());
+                        } else if (params[1].length() == 7) {
+                            DateTime date = monthFormatter.parseDateTime(params[1]);
+                            documentCriteria.setCreateDateMin(date.toDate());
+                            documentCriteria.setCreateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
+                        } else if (params[1].length() == 4) {
+                            DateTime date = yearFormatter.parseDateTime(params[1]);
+                            documentCriteria.setCreateDateMin(date.toDate());
+                            documentCriteria.setCreateDateMax(date.plusYears(1).minusSeconds(1).toDate());
+                        }
+                    } catch (IllegalArgumentException e) {
+                        // Invalid date, returns no documents
+                        documentCriteria.setCreateDateMin(new Date(0));
+                        documentCriteria.setCreateDateMax(new Date(0));
+                    }
+                    break;
+                case "shared":
+                    // New shared state criteria
+                    if (params[1].equals("yes")) {
+                        documentCriteria.setShared(true);
+                    }
+                    break;
+                case "lang":
+                    // New language criteria
+                    if (Constants.SUPPORTED_LANGUAGES.contains(params[1])) {
+                        documentCriteria.setLanguage(params[1]);
+                    }
+                    break;
+                case "by":
+                    // New creator criteria
+                    User user = userDao.getActiveByUsername(params[1]);
+                    if (user == null) {
+                        // This user doesn't exists, return nothing
+                        documentCriteria.setCreatorId(UUID.randomUUID().toString());
+                    } else {
+                        // This user exists, search its documents
+                        documentCriteria.setCreatorId(user.getId());
+                    }
+                    break;
+                case "full":
+                    // New full content search criteria
+                    fullQuery.add(params[1]);
+                    break;
+                default:
+                    query.add(criteria);
+                    break;
             }
         }
         
@@ -421,7 +403,16 @@ public class DocumentResource extends BaseResource {
      * 
      * @param title Title
      * @param description Description
-     * @param tags Tags
+     * @param subject Subject
+     * @param identifier Identifier
+     * @param publisher Publisher
+     * @param format Format
+     * @param source Source
+     * @param type Type
+     * @param coverage Coverage
+     * @param rights Rights
+     * @param tagList Tags
+     * @param relationList Relations
      * @param language Language
      * @param createDateStr Creation date
      * @return Response
@@ -573,7 +564,7 @@ public class DocumentResource extends BaseResource {
         DocumentDao documentDao = new DocumentDao();
         Document document = documentDao.getById(id);
         if (document == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Update the document
@@ -594,7 +585,7 @@ public class DocumentResource extends BaseResource {
             document.setCreateDate(createDate);
         }
         
-        document = documentDao.update(document, principal.getId());
+        documentDao.update(document, principal.getId());
         
         // Update tags
         updateTagList(id, tagList);
@@ -624,9 +615,9 @@ public class DocumentResource extends BaseResource {
             TagDao tagDao = new TagDao();
             Set<String> tagSet = new HashSet<>();
             Set<String> tagIdSet = new HashSet<>();
-            List<Tag> tagDbList = tagDao.getByUserId(principal.getId());
-            for (Tag tagDb : tagDbList) {
-                tagIdSet.add(tagDb.getId());
+            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)), null);
+            for (TagDto tagDto : tagDtoList) {
+                tagIdSet.add(tagDto.getId());
             }
             for (String tagId : tagList) {
                 if (!tagIdSet.contains(tagId)) {
@@ -679,7 +670,7 @@ public class DocumentResource extends BaseResource {
         FileDao fileDao = new FileDao();
         DocumentDto documentDto = documentDao.getDocument(id, PermType.WRITE, getTargetIdList(null));
         if (documentDto == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         List<File> fileList = fileDao.getByDocumentId(principal.getId(), id);
         

@@ -99,7 +99,7 @@ public class UserResource extends BaseResource {
         user.setPassword(password);
         user.setEmail(email);
         user.setStorageQuota(storageQuota);
-        user.setStorageCurrent(0l);
+        user.setStorageCurrent(0L);
         try {
             user.setPrivateKey(EncryptionUtil.generatePrivateKey());
         } catch (NoSuchAlgorithmException e) {
@@ -678,7 +678,7 @@ public class UserResource extends BaseResource {
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(principal.getName());
         user.setTotpKey(key.getKey());
-        user = userDao.update(user, principal.getId());
+        userDao.update(user, principal.getId());
         
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("secret", key.getKey());

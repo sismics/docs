@@ -13,9 +13,9 @@ angular.module('docs').directive('selectTag', function() {
       ref: '@',
       ngDisabled: '='
     },
-    controller: function($scope, Tag) {
+    controller: function($scope, Restangular) {
       // Retrieve tags
-      Tag.tags().then(function(data) {
+      Restangular.one('tag/list').get().then(function(data) {
         $scope.allTags = data.tags;
       });
       
@@ -48,7 +48,7 @@ angular.module('docs').directive('selectTag', function() {
         if ($event) {
           $event.preventDefault();
         }
-      }
+      };
       
       /**
        * Remove a tag.

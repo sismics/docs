@@ -97,10 +97,9 @@ public class TestFileUtil {
             File file4 = new File();
             file4.setId("document_odt");
             file4.setMimeType(MimeType.OPEN_DOCUMENT_TEXT);
-            
-            try (InputStream pdfInputStream = PdfUtil.convertToPdf(documentDto, Lists.newArrayList(file0, file1, file2, file3, file4), true, true, 10)) {
-                ByteStreams.copy(pdfInputStream, System.out);
-            }
+
+            InputStream is = PdfUtil.convertToPdf(documentDto, Lists.newArrayList(file0, file1, file2, file3, file4), true, true, 10);
+            is.close();
         }
     }
 }

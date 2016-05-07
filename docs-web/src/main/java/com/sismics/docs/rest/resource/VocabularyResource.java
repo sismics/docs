@@ -1,25 +1,17 @@
 package com.sismics.docs.rest.resource;
 
-import java.util.List;
-
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import com.sismics.docs.core.dao.jpa.VocabularyDao;
 import com.sismics.docs.core.model.jpa.Vocabulary;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * Vocabulary REST resources.
@@ -58,7 +50,7 @@ public class VocabularyResource extends BaseResource {
      * 
      * @param name Name
      * @param value Value
-     * @param order Order
+     * @param orderStr Order
      * @return Response
      */
     @PUT
@@ -95,10 +87,11 @@ public class VocabularyResource extends BaseResource {
     
     /**
      * Update a vocabulary.
-     * 
+     *
+     * @param id ID
      * @param name Name
      * @param value Value
-     * @param order Order
+     * @param orderStr Order
      * @return Response
      */
     @POST
@@ -127,7 +120,7 @@ public class VocabularyResource extends BaseResource {
         VocabularyDao vocabularyDao = new VocabularyDao();
         Vocabulary vocabulary = vocabularyDao.getById(id);
         if (vocabulary == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Update the vocabulary
@@ -169,7 +162,7 @@ public class VocabularyResource extends BaseResource {
         VocabularyDao vocabularyDao = new VocabularyDao();
         Vocabulary vocabulary = vocabularyDao.getById(id);
         if (vocabulary == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Delete the vocabulary

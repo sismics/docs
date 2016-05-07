@@ -26,35 +26,53 @@ public class TagDto {
      */
     private String parentId;
 
+    /**
+     * Creator.
+     */
+    private String creator;
+
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public TagDto setId(String id) {
         this.id = id;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public TagDto setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+    public TagDto setColor(String color) {
         this.color = color;
+        return this;
     }
     
     public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(String parentId) {
+    public TagDto setParentId(String parentId) {
         this.parentId = parentId;
+        return this;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public TagDto setCreator(String creator) {
+        this.creator = creator;
+        return this;
     }
 }

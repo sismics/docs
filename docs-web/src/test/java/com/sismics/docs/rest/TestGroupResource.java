@@ -106,7 +106,7 @@ public class TestGroupResource extends BaseJerseyTest {
         Assert.assertEquals(1, users.size());
         
         // Add group1 to g112 (again)
-        json = target().path("/group/g112").request()
+        target().path("/group/g112").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
                         .param("username", "group1")), JsonObject.class);
@@ -145,7 +145,7 @@ public class TestGroupResource extends BaseJerseyTest {
         Assert.assertEquals("group1", members.getString(0));
         
         // Remove group1 from g12new
-        json = target().path("/group/g12new/group1").request()
+        target().path("/group/g12new/group1").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .delete(JsonObject.class);
         
@@ -164,7 +164,7 @@ public class TestGroupResource extends BaseJerseyTest {
         Assert.assertTrue(groupList.contains("g112"));
         
         // Delete group g1
-        json = target().path("/group/g1").request()
+        target().path("/group/g1").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .delete(JsonObject.class);
         
