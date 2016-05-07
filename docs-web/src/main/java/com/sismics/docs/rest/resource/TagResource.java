@@ -5,12 +5,14 @@ import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
 import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
+import com.sismics.docs.core.dao.jpa.dto.AclDto;
 import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.rest.util.AclUtil;
 import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 import org.apache.commons.lang.StringUtils;
@@ -71,6 +73,38 @@ public class TagResource extends BaseResource {
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("tags", items);
         return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Returns a tag.
+     *
+     * @param id Tag ID
+     * @return Response
+     */
+    @GET
+    @Path("{id: [a-z0-9\\-]+}")
+    public Response get(@PathParam("id") String id) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        TagDao tagDao = new TagDao();
+        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setId(id), null);
+        if (tagDtoList.size() == 0) {
+            throw new NotFoundException();
+        }
+
+        // Add tag informatiosn
+        TagDto tagDto = tagDtoList.get(0);
+        JsonObjectBuilder tag = Json.createObjectBuilder()
+                .add("id", tagDto.getId())
+                .add("name", tagDto.getName())
+                .add("color", tagDto.getColor());
+
+        // Add ACL
+        AclUtil.addAcls(tag, id, principal);
+
+        return Response.ok().entity(tag.build()).build();
     }
 
     /**

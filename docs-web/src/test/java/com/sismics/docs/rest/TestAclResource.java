@@ -291,6 +291,12 @@ public class TestAclResource extends BaseJerseyTest {
         JsonArray tags = json.getJsonArray("tags");
         Assert.assertEquals(0, tags.size());
 
+        // acltag2 cannot see tag1
+        response = target().path("/tag/" + tag1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acltag2Token)
+                .get();
+        Assert.assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
+
         // acltag2 cannot see any document
         json = target().path("/document/list")
                 .queryParam("sort_column", 3)
@@ -326,6 +332,13 @@ public class TestAclResource extends BaseJerseyTest {
                         .param("perm", "READ")
                         .param("target", "acltag2")
                         .param("type", "USER")), JsonObject.class);
+
+        // acltag2 can see tag1
+        json = target().path("/tag/" + tag1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acltag2Token)
+                .get(JsonObject.class);
+        Assert.assertFalse(json.getBoolean("writable"));
+        Assert.assertEquals(3, json.getJsonArray("acls").size());
 
         // acltag2 still cannot edit tag1
         response = target().path("/tag/" + tag1Id).request()
@@ -378,6 +391,13 @@ public class TestAclResource extends BaseJerseyTest {
                         .param("perm", "WRITE")
                         .param("target", "acltag2")
                         .param("type", "USER")), JsonObject.class);
+
+        // acltag2 can see and edit tag1
+        json = target().path("/tag/" + tag1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acltag2Token)
+                .get(JsonObject.class);
+        Assert.assertTrue(json.getBoolean("writable"));
+        Assert.assertEquals(4, json.getJsonArray("acls").size());
 
         // acltag2 can edit tag1
         target().path("/tag/" + tag1Id).request()

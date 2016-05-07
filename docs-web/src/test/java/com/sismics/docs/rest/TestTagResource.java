@@ -46,6 +46,16 @@ public class TestTagResource extends BaseJerseyTest {
                         .param("parent", tag3Id)), JsonObject.class);
         String tag4Id = json.getString("id");
         Assert.assertNotNull(tag4Id);
+
+        // Get the tag
+        json = target().path("/tag/" + tag4Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .get(JsonObject.class);
+        Assert.assertEquals("Tag4", json.getString("name"));
+        Assert.assertEquals("#00ff00", json.getString("color"));
+        Assert.assertTrue(json.getBoolean("writable"));
+        JsonArray acls = json.getJsonArray("acls");
+        Assert.assertEquals(2, acls.size());
         
         // Create a tag with space (not allowed)
         Response response = target().path("/tag").request()

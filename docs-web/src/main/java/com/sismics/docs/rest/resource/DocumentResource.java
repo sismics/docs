@@ -25,6 +25,7 @@ import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
+import com.sismics.rest.util.AclUtil;
 import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.mime.MimeType;
@@ -110,28 +111,9 @@ public class DocumentResource extends BaseResource {
         document.add("coverage", JsonUtil.nullable(documentDto.getCoverage()));
         document.add("rights", JsonUtil.nullable(documentDto.getRights()));
         document.add("creator", documentDto.getCreator());
-        
+
         // Add ACL
-        List<AclDto> aclDtoList = aclDao.getBySourceId(documentId);
-        JsonArrayBuilder aclList = Json.createArrayBuilder();
-        boolean writable = false;
-        for (AclDto aclDto : aclDtoList) {
-            aclList.add(Json.createObjectBuilder()
-                    .add("perm", aclDto.getPerm().name())
-                    .add("id", aclDto.getTargetId())
-                    .add("name", JsonUtil.nullable(aclDto.getTargetName()))
-                    .add("type", aclDto.getTargetType()));
-            
-            if (!principal.isAnonymous()
-                    && (aclDto.getTargetId().equals(principal.getId())
-                            || principal.getGroupIdSet().contains(aclDto.getTargetId()))
-                    && aclDto.getPerm() == PermType.WRITE) {
-                // The document is writable for the current user
-                writable = true;
-            }
-        }
-        document.add("acls", aclList)
-                .add("writable", writable);
+        AclUtil.addAcls(document, documentId, principal);
         
         // Add contributors
         ContributorDao contributorDao = new ContributorDao();
