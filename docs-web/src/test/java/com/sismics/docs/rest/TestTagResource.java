@@ -152,7 +152,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertTrue(tags.size() > 0);
         Assert.assertEquals("UpdatedName", tags.getJsonObject(1).getString("name"));
         Assert.assertEquals("#0000ff", tags.getJsonObject(1).getString("color"));
-        Assert.assertEquals(JsonValue.NULL, tags.getJsonObject(1).get("parent"));
+        Assert.assertNull(tags.getJsonObject(1).get("parent"));
         
         // Deletes a tag
         target().path("/tag/" + tag4Id).request()
