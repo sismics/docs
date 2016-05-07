@@ -1,5 +1,6 @@
 package com.sismics.docs.rest.resource;
 
+import com.google.common.collect.Sets;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
@@ -17,10 +18,12 @@ import org.apache.commons.lang.StringUtils;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Tag REST resources.
@@ -43,13 +46,26 @@ public class TagResource extends BaseResource {
         
         TagDao tagDao = new TagDao();
         List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)), new SortCriteria(1, true));
+
+        // Extract tag IDs
+        Set<String> tagIdSet = Sets.newHashSet();
+        for (TagDto tagDto : tagDtoList) {
+            tagIdSet.add(tagDto.getId());
+        }
+
+        // Build the response
         JsonArrayBuilder items = Json.createArrayBuilder();
         for (TagDto tagDto : tagDtoList) {
-            items.add(Json.createObjectBuilder()
+            JsonObjectBuilder item = Json.createObjectBuilder()
                     .add("id", tagDto.getId())
                     .add("name", tagDto.getName())
-                    .add("color", tagDto.getColor())
-                    .add("parent", JsonUtil.nullable(tagDto.getParentId()))); // TODO Don't return the parent if it's not visible
+                    .add("color", tagDto.getColor());
+            if (tagIdSet.contains(tagDto.getParentId())) {
+                item.add("parent", tagDto.getParentId());
+            } else {
+                item.add("parent", JsonValue.NULL);
+            }
+            items.add(item);
         }
         
         JsonObjectBuilder response = Json.createObjectBuilder()
