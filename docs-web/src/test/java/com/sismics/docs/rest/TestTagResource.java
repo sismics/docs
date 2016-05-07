@@ -52,6 +52,7 @@ public class TestTagResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
                 .get(JsonObject.class);
         Assert.assertEquals("Tag4", json.getString("name"));
+        Assert.assertEquals("tag1", json.getString("creator"));
         Assert.assertEquals("#00ff00", json.getString("color"));
         Assert.assertTrue(json.getBoolean("writable"));
         JsonArray acls = json.getJsonArray("acls");

@@ -69,7 +69,6 @@ public class DocumentResource extends BaseResource {
         authenticate();
         
         DocumentDao documentDao = new DocumentDao();
-        AclDao aclDao = new AclDao();
         DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
         if (documentDto == null) {
             throw new NotFoundException();
@@ -90,7 +89,11 @@ public class DocumentResource extends BaseResource {
         } else {
             // Add tags added by the current user on this document
             TagDao tagDao = new TagDao();
-            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setDocumentId(documentId), new SortCriteria(1, true));
+            List<TagDto> tagDtoList = tagDao.findByCriteria(
+                    new TagCriteria()
+                            .setTargetIdList(getTargetIdList(shareId))
+                            .setDocumentId(documentId),
+                    new SortCriteria(1, true));
             JsonArrayBuilder tags = Json.createArrayBuilder();
             for (TagDto tagDto : tagDtoList) {
                 tags.add(Json.createObjectBuilder()
@@ -113,7 +116,7 @@ public class DocumentResource extends BaseResource {
         document.add("creator", documentDto.getCreator());
 
         // Add ACL
-        AclUtil.addAcls(document, documentId, principal);
+        AclUtil.addAcls(document, documentId, getTargetIdList(shareId));
         
         // Add contributors
         ContributorDao contributorDao = new ContributorDao();

@@ -21,29 +21,20 @@ public class AclUtil {
      *
      * @param json JSON
      * @param sourceId Source ID
-     * @param principal Principal
+     * @param targetIdList List of target ID
      */
-    public static void addAcls(JsonObjectBuilder json, String sourceId, IPrincipal principal) {
+    public static void addAcls(JsonObjectBuilder json, String sourceId, List<String> targetIdList) {
         AclDao aclDao = new AclDao();
         List<AclDto> aclDtoList = aclDao.getBySourceId(sourceId);
         JsonArrayBuilder aclList = Json.createArrayBuilder();
-        boolean writable = false;
         for (AclDto aclDto : aclDtoList) {
             aclList.add(Json.createObjectBuilder()
                     .add("perm", aclDto.getPerm().name())
                     .add("id", aclDto.getTargetId())
                     .add("name", JsonUtil.nullable(aclDto.getTargetName()))
                     .add("type", aclDto.getTargetType()));
-
-            if (!principal.isAnonymous()
-                    && (aclDto.getTargetId().equals(principal.getId())
-                    || principal.getGroupIdSet().contains(aclDto.getTargetId()))
-                    && aclDto.getPerm() == PermType.WRITE) {
-                // The source is writable for the current user
-                writable = true;
-            }
         }
         json.add("acls", aclList)
-                .add("writable", writable);
+                .add("writable", aclDao.checkPermission(sourceId, PermType.WRITE, targetIdList));
     }
 }

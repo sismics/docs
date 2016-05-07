@@ -176,8 +176,9 @@ public class TagDao {
         Map<String, Object> parameterMap = new HashMap<>();
         List<String> criteriaList = new ArrayList<>();
 
-        StringBuilder sb = new StringBuilder("select distinct t.TAG_ID_C as c0, t.TAG_NAME_C as c1, t.TAG_COLOR_C as c2, t.TAG_IDPARENT_C as c3 ");
+        StringBuilder sb = new StringBuilder("select distinct t.TAG_ID_C as c0, t.TAG_NAME_C as c1, t.TAG_COLOR_C as c2, t.TAG_IDPARENT_C as c3, u.USE_USERNAME_C as c4 ");
         sb.append(" from T_TAG t ");
+        sb.append(" join T_USER u on t.TAG_IDUSER_C = u.USE_ID_C ");
 
         // Add search criterias
         if (criteria.getId() != null) {
@@ -223,7 +224,8 @@ public class TagDao {
                     .setId((String) o[i++])
                     .setName((String) o[i++])
                     .setColor((String) o[i++])
-                    .setParentId((String) o[i]);
+                    .setParentId((String) o[i++])
+                    .setCreator((String) o[i]);
             tagDtoList.add(tagDto);
         }
 

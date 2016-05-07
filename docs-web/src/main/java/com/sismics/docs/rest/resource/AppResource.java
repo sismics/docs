@@ -20,6 +20,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
+import com.sismics.docs.core.constant.PermType;
+import com.sismics.docs.core.dao.jpa.AclDao;
+import com.sismics.docs.core.dao.jpa.TagDao;
+import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
+import com.sismics.docs.core.dao.jpa.dto.AclDto;
+import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.model.jpa.Acl;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Level;
@@ -284,12 +291,12 @@ public class AppResource extends BaseResource {
         Map<String, User> userMap = new HashMap<>();
         for (File file : fileList) {
             java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
-            User user = null;
+            User user;
             if (userMap.containsKey(file.getUserId())) {
                 user = userMap.get(file.getUserId());
             } else {
                 user = userDao.getById(file.getUserId());
-                user.setStorageCurrent(0l);
+                user.setStorageCurrent(0L);
                 userMap.put(user.getId(), user);
             }
             
@@ -307,6 +314,51 @@ public class AppResource extends BaseResource {
             }
         }
         
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Add base ACLs to tags.
+     *
+     * @return Response
+     */
+    @POST
+    @Path("batch/tag_acls")
+    public Response batchTagAcls() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        // Get all tags
+        TagDao tagDao = new TagDao();
+        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria(), null);
+
+        // Add READ and WRITE ACLs
+        for (TagDto tagDto : tagDtoList) {
+            AclDao aclDao = new AclDao();
+            List<AclDto> aclDtoList = aclDao.getBySourceId(tagDto.getId());
+
+            if (aclDtoList.size() == 0) {
+                // Create read ACL
+                Acl acl = new Acl();
+                acl.setPerm(PermType.READ);
+                acl.setSourceId(tagDto.getId());
+                acl.setTargetId(principal.getId());
+                aclDao.create(acl, principal.getId());
+
+                // Create write ACL
+                acl = new Acl();
+                acl.setPerm(PermType.WRITE);
+                acl.setSourceId(tagDto.getId());
+                acl.setTargetId(principal.getId());
+                aclDao.create(acl, principal.getId());
+            }
+        }
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");

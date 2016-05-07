@@ -5,7 +5,6 @@ import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
 import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
-import com.sismics.docs.core.dao.jpa.dto.AclDto;
 import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Tag;
@@ -13,14 +12,12 @@ import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.AclUtil;
-import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 import org.apache.commons.lang.StringUtils;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.text.MessageFormat;
@@ -64,8 +61,6 @@ public class TagResource extends BaseResource {
                     .add("color", tagDto.getColor());
             if (tagIdSet.contains(tagDto.getParentId())) {
                 item.add("parent", tagDto.getParentId());
-            } else {
-                item.add("parent", JsonValue.NULL);
             }
             items.add(item);
         }
@@ -98,11 +93,12 @@ public class TagResource extends BaseResource {
         TagDto tagDto = tagDtoList.get(0);
         JsonObjectBuilder tag = Json.createObjectBuilder()
                 .add("id", tagDto.getId())
+                .add("creator", tagDto.getCreator())
                 .add("name", tagDto.getName())
                 .add("color", tagDto.getColor());
 
         // Add ACL
-        AclUtil.addAcls(tag, id, principal);
+        AclUtil.addAcls(tag, id, getTargetIdList(null));
 
         return Response.ok().entity(tag.build()).build();
     }

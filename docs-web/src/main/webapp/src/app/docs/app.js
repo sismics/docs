@@ -13,36 +13,55 @@ angular.module('docs',
  * Configuring modules.
  */
 .config(function($stateProvider, $httpProvider, RestangularProvider) {
+
   // Configuring UI Router
   $stateProvider
-  .state('main', {
-    url: '',
-    views: {
-      'page': {
-        templateUrl: 'partial/docs/main.html',
-        controller: 'Main'
+    .state('main', {
+      url: '',
+      views: {
+        'page': {
+          templateUrl: 'partial/docs/main.html',
+          controller: 'Main'
+        }
       }
-    }
-  })
-  .state('tag', {
-    url: '/tag',
-    views: {
-      'page': {
-        templateUrl: 'partial/docs/tag.html',
-        controller: 'Tag'
+    })
+    .state('tag', {
+      url: '/tag',
+      abstract: true,
+      views: {
+        'page': {
+          templateUrl: 'partial/docs/tag.html',
+          controller: 'Tag'
+        }
       }
-    }
-  })
-  .state('settings', {
-    url: '/settings',
-    abstract: true,
-    views: {
-      'page': {
-        templateUrl: 'partial/docs/settings.html',
-        controller: 'Settings'
+    })
+    .state('tag.default', {
+      url: '',
+      views: {
+        'tag': {
+          templateUrl: 'partial/docs/tag.default.html'
+        }
       }
-    }
-  })
+    })
+    .state('tag.edit', {
+      url: '/:id',
+      views: {
+        'tag': {
+          templateUrl: 'partial/docs/tag.edit.html',
+          controller: 'TagEdit'
+        }
+      }
+    })
+    .state('settings', {
+      url: '/settings',
+      abstract: true,
+      views: {
+        'page': {
+          templateUrl: 'partial/docs/settings.html',
+          controller: 'Settings'
+        }
+      }
+    })
     .state('settings.default', {
       url: '',
       views: {
@@ -106,70 +125,70 @@ angular.module('docs',
         }
       }
     })
-      .state('settings.user.edit', {
-        url: '/edit/:username',
-        views: {
-          'user': {
-            templateUrl: 'partial/docs/settings.user.edit.html',
-            controller: 'SettingsUserEdit'
-          }
+    .state('settings.user.edit', {
+      url: '/edit/:username',
+      views: {
+        'user': {
+          templateUrl: 'partial/docs/settings.user.edit.html',
+          controller: 'SettingsUserEdit'
         }
-      })
-      .state('settings.user.add', {
-        url: '/add',
-        views: {
-          'user': {
-            templateUrl: 'partial/docs/settings.user.edit.html',
-            controller: 'SettingsUserEdit'
-          }
+      }
+    })
+    .state('settings.user.add', {
+      url: '/add',
+      views: {
+        'user': {
+          templateUrl: 'partial/docs/settings.user.edit.html',
+          controller: 'SettingsUserEdit'
         }
-      })
+      }
+    })
     .state('settings.group', {
-        url: '/group',
-        views: {
-          'settings': {
-            templateUrl: 'partial/docs/settings.group.html',
-            controller: 'SettingsGroup'
-          }
+      url: '/group',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.group.html',
+          controller: 'SettingsGroup'
         }
-      })
-      .state('settings.group.edit', {
-        url: '/edit/:name',
-        views: {
-          'group': {
-            templateUrl: 'partial/docs/settings.group.edit.html',
-            controller: 'SettingsGroupEdit'
-          }
-        }
-      })
-      .state('settings.group.add', {
-        url: '/add',
-        views: {
-          'group': {
-            templateUrl: 'partial/docs/settings.group.edit.html',
-            controller: 'SettingsGroupEdit'
-          }
-        }
-      })
-  .state('settings.vocabulary', {
-    url: '/vocabulary',
-    views: {
-      'settings': {
-        templateUrl: 'partial/docs/settings.vocabulary.html',
-        controller: 'SettingsVocabulary'
       }
-    }
-  })
-  .state('document', {
-    url: '/document',
-    abstract: true,
-    views: {
-      'page': {
-        templateUrl: 'partial/docs/document.html',
-        controller: 'Document'
+    })
+    .state('settings.group.edit', {
+      url: '/edit/:name',
+      views: {
+        'group': {
+          templateUrl: 'partial/docs/settings.group.edit.html',
+          controller: 'SettingsGroupEdit'
+        }
       }
-    }
-  })
+    })
+    .state('settings.group.add', {
+      url: '/add',
+      views: {
+        'group': {
+          templateUrl: 'partial/docs/settings.group.edit.html',
+          controller: 'SettingsGroupEdit'
+        }
+      }
+    })
+    .state('settings.vocabulary', {
+      url: '/vocabulary',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.vocabulary.html',
+          controller: 'SettingsVocabulary'
+        }
+      }
+    })
+    .state('document', {
+      url: '/document',
+      abstract: true,
+      views: {
+        'page': {
+          templateUrl: 'partial/docs/document.html',
+          controller: 'Document'
+        }
+      }
+    })
     .state('document.default', {
       url: '',
       views: {
@@ -179,17 +198,17 @@ angular.module('docs',
         }
       }
     })
-      .state('document.default.search', {
-        url: '/search/:search'
-      })
-      .state('document.default.file', {
-        url: '/file/:fileId',
-        views: {
-          'file': {
-            controller: 'FileView'
-          }
+    .state('document.default.search', {
+      url: '/search/:search'
+    })
+    .state('document.default.file', {
+      url: '/file/:fileId',
+      views: {
+        'file': {
+          controller: 'FileView'
         }
-      })
+      }
+    })
     .state('document.add', {
       url: '/add?files',
       views: {
@@ -218,59 +237,68 @@ angular.module('docs',
         }
       }
     })
-      .state('document.view.content', {
-        url: '/content',
-        views: {
-          'tab': {
-            templateUrl: 'partial/docs/document.view.content.html',
-            controller: 'DocumentViewContent'
-          }
+    .state('document.view.content', {
+      url: '/content',
+      views: {
+        'tab': {
+          templateUrl: 'partial/docs/document.view.content.html',
+          controller: 'DocumentViewContent'
         }
-      })
-      .state('document.view.content.file', {
-        url: '/file/:fileId',
-        views: {
-          'file': {
-            controller: 'FileView'
-          }
-        }
-      })
-      .state('document.view.permissions', {
-        url: '/permissions',
-        views: {
-          'tab': {
-            templateUrl: 'partial/docs/document.view.permissions.html',
-            controller: 'DocumentViewPermissions'
-          }
-        }
-      })
-      .state('document.view.activity', {
-        url: '/activity',
-        views: {
-          'tab': {
-            templateUrl: 'partial/docs/document.view.activity.html',
-            controller: 'DocumentViewActivity'
-          }
-        }
-      })
-  .state('login', {
-    url: '/login',
-    views: {
-      'page': {
-        templateUrl: 'partial/docs/login.html',
-        controller: 'Login'
       }
-    }
-  })
-  .state('user', {
-    url: '/user',
-    views: {
-      'page': {
-        templateUrl: 'partial/docs/usergroup.html',
-        controller: 'UserGroup'
+    })
+    .state('document.view.content.file', {
+      url: '/file/:fileId',
+      views: {
+        'file': {
+          controller: 'FileView'
+        }
       }
-    }
-  })
+    })
+    .state('document.view.permissions', {
+      url: '/permissions',
+      views: {
+        'tab': {
+          templateUrl: 'partial/docs/document.view.permissions.html',
+          controller: 'DocumentViewPermissions'
+        }
+      }
+    })
+    .state('document.view.activity', {
+      url: '/activity',
+      views: {
+        'tab': {
+          templateUrl: 'partial/docs/document.view.activity.html',
+          controller: 'DocumentViewActivity'
+        }
+      }
+    })
+    .state('login', {
+      url: '/login',
+      views: {
+        'page': {
+          templateUrl: 'partial/docs/login.html',
+          controller: 'Login'
+        }
+      }
+    })
+    .state('user', {
+      url: '/user',
+      abstract: true,
+      views: {
+        'page': {
+          templateUrl: 'partial/docs/usergroup.html',
+          controller: 'UserGroup'
+        }
+      }
+    })
+    .state('user.default', {
+      url: '',
+      views: {
+        'sub': {
+          templateUrl: 'partial/docs/usergroup.default.html'
+        }
+      }
+    })
     .state('user.profile', {
       url: '/:username',
       views: {
@@ -280,15 +308,24 @@ angular.module('docs',
         }
       }
     })
-  .state('group', {
-    url: '/group',
-    views: {
-      'page': {
-        templateUrl: 'partial/docs/usergroup.html',
-        controller: 'UserGroup'
+    .state('group', {
+      url: '/group',
+      abstract: true,
+      views: {
+        'page': {
+          templateUrl: 'partial/docs/usergroup.html',
+          controller: 'UserGroup'
+        }
       }
-    }
-  })
+    })
+    .state('group.default', {
+      url: '',
+      views: {
+        'sub': {
+          templateUrl: 'partial/docs/usergroup.default.html'
+        }
+      }
+    })
     .state('group.profile', {
       url: '/:name',
       views: {
@@ -298,7 +335,6 @@ angular.module('docs',
         }
       }
     });
-  
   // Configuring Restangular
   RestangularProvider.setBaseUrl('../api');
   

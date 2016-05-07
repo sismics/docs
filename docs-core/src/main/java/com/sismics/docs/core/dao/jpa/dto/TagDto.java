@@ -26,6 +26,11 @@ public class TagDto {
      */
     private String parentId;
 
+    /**
+     * Creator.
+     */
+    private String creator;
+
     public String getId() {
         return id;
     }
@@ -59,6 +64,15 @@ public class TagDto {
 
     public TagDto setParentId(String parentId) {
         this.parentId = parentId;
+        return this;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public TagDto setCreator(String creator) {
+        this.creator = creator;
         return this;
     }
 }

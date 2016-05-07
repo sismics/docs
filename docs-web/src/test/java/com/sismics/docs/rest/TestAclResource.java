@@ -357,12 +357,13 @@ public class TestAclResource extends BaseJerseyTest {
                         .param("language", "eng")));
         Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
 
-        // acltag2 can see document1 with tag1
+        // acltag2 can see document1 with tag1 (non-writable)
         json = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acltag2Token)
                 .get(JsonObject.class);
         tags = json.getJsonArray("tags");
         Assert.assertEquals(1, tags.size());
+        Assert.assertFalse(json.getBoolean("writable"));
         Assert.assertEquals(tag1Id, tags.getJsonObject(0).getString("id"));
 
         // acltag2 can see tag1
@@ -391,6 +392,15 @@ public class TestAclResource extends BaseJerseyTest {
                         .param("perm", "WRITE")
                         .param("target", "acltag2")
                         .param("type", "USER")), JsonObject.class);
+
+        // acltag2 can see document1 with tag1 (writable)
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acltag2Token)
+                .get(JsonObject.class);
+        tags = json.getJsonArray("tags");
+        Assert.assertEquals(1, tags.size());
+        Assert.assertTrue(json.getBoolean("writable"));
+        Assert.assertEquals(tag1Id, tags.getJsonObject(0).getString("id"));
 
         // acltag2 can see and edit tag1
         json = target().path("/tag/" + tag1Id).request()
