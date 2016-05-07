@@ -115,15 +115,6 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals(1, tags.size());
         Assert.assertEquals(tag4Id, tags.getJsonObject(0).getString("id"));
         
-        // Get tag stats
-        json = target().path("/tag/stats").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
-                .get(JsonObject.class);
-        JsonArray stats = json.getJsonArray("stats");
-        Assert.assertTrue(stats.size() == 2);
-        Assert.assertEquals(1, stats.getJsonObject(0).getInt("count"));
-        Assert.assertEquals(1, stats.getJsonObject(1).getInt("count"));
-        
         // Get all tags
         json = target().path("/tag/list").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)

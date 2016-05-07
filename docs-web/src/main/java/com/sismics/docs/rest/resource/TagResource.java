@@ -1,29 +1,26 @@
 package com.sismics.docs.rest.resource;
 
-import java.text.MessageFormat;
-import java.util.List;
+import com.sismics.docs.core.constant.PermType;
+import com.sismics.docs.core.dao.jpa.AclDao;
+import com.sismics.docs.core.dao.jpa.TagDao;
+import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
+import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.model.jpa.Acl;
+import com.sismics.docs.core.model.jpa.Tag;
+import com.sismics.docs.core.util.jpa.SortCriteria;
+import com.sismics.rest.exception.ClientException;
+import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.rest.util.JsonUtil;
+import com.sismics.rest.util.ValidationUtil;
+import org.apache.commons.lang.StringUtils;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-
-import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
-import com.sismics.docs.core.dao.jpa.dto.TagDto;
-import com.sismics.docs.core.model.jpa.Acl;
-import com.sismics.docs.core.util.jpa.SortCriteria;
-import org.apache.commons.lang.StringUtils;
-
-import com.sismics.docs.core.dao.jpa.TagDao;
-import com.sismics.docs.core.dao.jpa.dto.TagStatDto;
-import com.sismics.docs.core.model.jpa.Tag;
-import com.sismics.rest.exception.ClientException;
-import com.sismics.rest.exception.ForbiddenClientException;
-import com.sismics.rest.util.JsonUtil;
-import com.sismics.rest.util.ValidationUtil;
+import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * Tag REST resources.
@@ -59,36 +56,7 @@ public class TagResource extends BaseResource {
                 .add("tags", items);
         return Response.ok().entity(response.build()).build();
     }
-    
-    /**
-     * Returns stats on tags.
-     * 
-     * @return Response
-     */
-    @GET
-    @Path("/stats")
-    public Response stats() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
-        
-        TagDao tagDao = new TagDao();
-        List<TagStatDto> tagStatDtoList = tagDao.getStats(principal.getId());
-        JsonArrayBuilder items = Json.createArrayBuilder();
-        for (TagStatDto tagStatDto : tagStatDtoList) {
-            items.add(Json.createObjectBuilder()
-                    .add("id", tagStatDto.getId())
-                    .add("name", tagStatDto.getName())
-                    .add("color", tagStatDto.getColor())
-                    .add("parent", JsonUtil.nullable(tagStatDto.getParentId()))
-                    .add("count", tagStatDto.getCount()));
-        }
-        
-        JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("stats", items);
-        return Response.ok().entity(response.build()).build();
-    }
-    
+
     /**
      * Creates a new tag.
      * 

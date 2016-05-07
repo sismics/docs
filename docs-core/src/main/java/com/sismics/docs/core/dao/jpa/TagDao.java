@@ -85,43 +85,6 @@ public class TagDao {
     }
     
     /**
-     * Returns stats on tags.
-     * 
-     * @param userId User ID
-     * @return Stats by tag
-     */
-    @SuppressWarnings("unchecked")
-    public List<TagStatDto> getStats(String userId) {
-        EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select t.TAG_ID_C, t.TAG_NAME_C, t.TAG_COLOR_C, t.TAG_IDPARENT_C, count(d.DOC_ID_C) ");
-        sb.append(" from T_TAG t ");
-        sb.append(" left join T_DOCUMENT_TAG dt on t.TAG_ID_C = dt.DOT_IDTAG_C and dt.DOT_DELETEDATE_D is null ");
-        sb.append(" left join T_DOCUMENT d on d.DOC_ID_C = dt.DOT_IDDOCUMENT_C and d.DOC_DELETEDATE_D is null and d.DOC_IDUSER_C = :userId ");
-        sb.append(" where t.TAG_IDUSER_C = :userId and t.TAG_DELETEDATE_D is null ");
-        sb.append(" group by t.TAG_ID_C ");
-        sb.append(" order by t.TAG_NAME_C ");
-
-        // Perform the query
-        Query q = em.createNativeQuery(sb.toString());
-        q.setParameter("userId", userId);
-        List<Object[]> l = q.getResultList();
-        
-        // Assemble results
-        List<TagStatDto> tagStatDtoList = new ArrayList<>();
-        for (Object[] o : l) {
-            int i = 0;
-            TagStatDto tagDto = new TagStatDto();
-            tagDto.setId((String) o[i++]);
-            tagDto.setName((String) o[i++]);
-            tagDto.setColor((String) o[i++]);
-            tagDto.setParentId((String) o[i++]);
-            tagDto.setCount(((Number) o[i]).intValue());
-            tagStatDtoList.add(tagDto);
-        }
-        return tagStatDtoList;
-    }
-    
-    /**
      * Creates a new tag.
      * 
      * @param tag Tag
