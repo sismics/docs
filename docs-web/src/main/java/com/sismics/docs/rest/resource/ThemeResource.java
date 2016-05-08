@@ -56,6 +56,8 @@ public class ThemeResource extends BaseResource {
         JsonObject themeConfig = getThemeConfig();
         JsonObjectBuilder json = Json.createObjectBuilder();
         json.add("name", themeConfig.getString("name", "Sismics Docs"));
+        json.add("color", themeConfig.getString("color", "#263238"));
+        json.add("css", themeConfig.getString("css", ""));
         return Response.ok().entity(json.build()).build();
     }
 

@@ -95,7 +95,13 @@ angular.module('share',
 /**
  * Application initialization.
  */
-.run(function($rootScope, $state, $stateParams) {
+.run(function($rootScope, $state, $stateParams, Restangular) {
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
+
+  // Fetch the current theme configuration
+  $rootScope.appName = '';
+  Restangular.one('theme').get().then(function(data) {
+    $rootScope.appName = data.name;
+  });
 });

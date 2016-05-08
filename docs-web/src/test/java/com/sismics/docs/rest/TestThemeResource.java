@@ -31,6 +31,8 @@ public class TestThemeResource extends BaseJerseyTest {
         JsonObject json = target().path("/theme").request()
                 .get(JsonObject.class);
         Assert.assertEquals("Sismics Docs", json.getString("name"));
+        Assert.assertEquals("#263238", json.getString("color"));
+        Assert.assertEquals("", json.getString("css"));
 
         // Update the main color as admin
         target().path("/theme").request()
@@ -50,5 +52,7 @@ public class TestThemeResource extends BaseJerseyTest {
         json = target().path("/theme").request()
                 .get(JsonObject.class);
         Assert.assertEquals("My App", json.getString("name"));
+        Assert.assertEquals("#ff0000", json.getString("color"));
+        Assert.assertEquals(".body { content: 'Custom CSS'; }", json.getString("css"));
     }
 }

@@ -13,7 +13,6 @@ angular.module('docs',
  * Configuring modules.
  */
 .config(function($stateProvider, $httpProvider, RestangularProvider) {
-
   // Configuring UI Router
   $stateProvider
     .state('main', {
@@ -381,10 +380,15 @@ angular.module('docs',
 /**
  * Application initialization.
  */
-.run(function($rootScope, $state, $stateParams) {
+.run(function($rootScope, $state, $stateParams, Restangular) {
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
-  $rootScope.pageTitle = 'Sismics Docs';
+
+  // Fetch the current theme configuration
+  $rootScope.appName = '';
+  Restangular.one('theme').get().then(function(data) {
+    $rootScope.appName = data.name;
+  });
 })
 /**
  * Redirection support for ui-router.
