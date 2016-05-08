@@ -56,7 +56,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a file
-        String file1Id = null;
+        String file1Id;
         try (InputStream is = Resources.getResource("file/PIA00452.jpg").openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "PIA00452.jpg");
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
@@ -68,12 +68,12 @@ public class TestFileResource extends BaseJerseyTest {
                                 MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
                 file1Id = json.getString("id");
                 Assert.assertNotNull(file1Id);
-                Assert.assertEquals(163510l, json.getJsonNumber("size").longValue());
+                Assert.assertEquals(163510L, json.getJsonNumber("size").longValue());
             }
         }
         
         // Add a file
-        String file2Id = null;
+        String file2Id;
         try (InputStream is = Resources.getResource("file/PIA00452.jpg").openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "PIA00452.jpg");
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
@@ -136,11 +136,11 @@ public class TestFileResource extends BaseJerseyTest {
         JsonArray files = json.getJsonArray("files");
         Assert.assertEquals(2, files.size());
         Assert.assertEquals(file1Id, files.getJsonObject(0).getString("id"));
-        Assert.assertEquals(163510l, files.getJsonObject(0).getJsonNumber("size").longValue());
+        Assert.assertEquals(163510L, files.getJsonObject(0).getJsonNumber("size").longValue());
         Assert.assertEquals(file2Id, files.getJsonObject(1).getString("id"));
         
         // Reorder files
-        json = target().path("/file/reorder").request()
+        target().path("/file/reorder").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .post(Entity.form(new Form()
                         .param("id", document1Id)
@@ -210,7 +210,7 @@ public class TestFileResource extends BaseJerseyTest {
         String file2Token = clientUtil.login("file2");
         
         // Add a file
-        String file1Id = null;
+        String file1Id;
         try (InputStream is = Resources.getResource("file/PIA00452.jpg").openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "PIA00452.jpg");
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
@@ -251,7 +251,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Attach a file to a document
-        json = target().path("/file/" + file1Id).request()
+        target().path("/file/" + file1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2Token)
                 .post(Entity.form(new Form()
                         .param("id", document1Id)), JsonObject.class);
@@ -266,7 +266,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(1, files.size());
         
         // Add a file
-        String file2Id = null;
+        String file2Id;
         try (InputStream is0 = Resources.getResource("file/PIA00452.jpg").openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is0, "PIA00452.jpg");
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
@@ -300,7 +300,7 @@ public class TestFileResource extends BaseJerseyTest {
         String fileQuotaToken = clientUtil.login("file_quota");
         
         // Add a file (292641 bytes large)
-        String file1Id = null;
+        String file1Id;
         try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
@@ -319,7 +319,7 @@ public class TestFileResource extends BaseJerseyTest {
         JsonObject json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
-        Assert.assertEquals(292641l, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(292641L, json.getJsonNumber("storage_current").longValue());
         
         // Add a file (292641 bytes large)
         try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
@@ -338,7 +338,7 @@ public class TestFileResource extends BaseJerseyTest {
         json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
-        Assert.assertEquals(585282l, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(585282L, json.getJsonNumber("storage_current").longValue());
         
         // Add a file (292641 bytes large)
         try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
@@ -357,7 +357,7 @@ public class TestFileResource extends BaseJerseyTest {
         json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
-        Assert.assertEquals(877923l, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(877923L, json.getJsonNumber("storage_current").longValue());
         
         // Add a file (292641 bytes large)
         try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
@@ -383,6 +383,6 @@ public class TestFileResource extends BaseJerseyTest {
         json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
-        Assert.assertEquals(585282l, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(585282L, json.getJsonNumber("storage_current").longValue());
     }
 }

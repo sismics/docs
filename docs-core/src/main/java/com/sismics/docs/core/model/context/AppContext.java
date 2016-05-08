@@ -72,7 +72,7 @@ public class AppContext {
         eventBus = new EventBus();
         eventBus.register(new DeadEventListener());
         
-        asyncExecutorList = new ArrayList<ExecutorService>();
+        asyncExecutorList = new ArrayList<>();
         
         asyncEventBus = newAsyncEventBus();
         asyncEventBus.register(new FileCreatedAsyncListener());

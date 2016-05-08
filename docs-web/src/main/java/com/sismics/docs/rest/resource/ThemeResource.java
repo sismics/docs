@@ -1,22 +1,31 @@
 package com.sismics.docs.rest.resource;
 
-import javax.json.*;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-
 import com.google.common.base.Strings;
+import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.dao.jpa.ConfigDao;
 import com.sismics.docs.core.model.jpa.Config;
+import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.rest.constant.BaseFunction;
+import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.css.Selector;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import javax.json.*;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 /**
@@ -26,6 +35,10 @@ import java.util.Map;
  */
 @Path("/theme")
 public class ThemeResource extends BaseResource {
+    // Filenames for images in theme directory
+    private static final String LOGO_IMAGE = "logo";
+    private static final String BACKGROUND_IMAGE = "background";
+
 	/**
      * Returns custom CSS stylesheet.
      * 
@@ -116,8 +129,61 @@ public class ThemeResource extends BaseResource {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);
+        if (logoBodyPart == null && backgrounBodyPart == null) {
+            throw new ClientException("NoImageProvided", "logo or background is required");
+        }
+
+        // Only a background or a logo is handled
+        FormDataBodyPart bodyPart = logoBodyPart == null ? backgrounBodyPart : logoBodyPart;
+        String type = logoBodyPart == null ? BACKGROUND_IMAGE : LOGO_IMAGE;
+        java.nio.file.Path filePath = DirectoryUtil.getThemeDirectory().resolve(type);
+
+        // Copy the image to the theme directory
+        try (InputStream inputStream = bodyPart.getValueAs(InputStream.class)) {
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception e) {
+            throw new ServerException("CopyError", "Error copying the image to the theme directory", e);
+        }
 
         return Response.ok().build();
+    }
+
+    @GET
+    @Produces("image/*")
+    @Path("image/{type: logo|background}")
+    public Response getImage(@PathParam("type") final String type) {
+        if (!LOGO_IMAGE.equals(type) && !BACKGROUND_IMAGE.equals(type)) {
+            throw new ClientException("InvalidType", "Type must be logo or background");
+        }
+
+        final java.nio.file.Path filePath = DirectoryUtil.getThemeDirectory().resolve(type);
+
+        // Copy the image to the response output
+        return Response.ok(new StreamingOutput() {
+            @Override
+            public void write(OutputStream outputStream) throws IOException, WebApplicationException {
+                InputStream inputStream = null;
+                try {
+                    if (Files.exists(filePath)) {
+                        inputStream = Files.newInputStream(filePath);
+                    } else {
+                        inputStream = getClass().getResource("/image/" + (type.equals(LOGO_IMAGE) ? "logo.png" : "background.jpg")).openStream();
+                    }
+                    ByteStreams.copy(inputStream, outputStream);
+                } finally {
+                    try {
+                        if (inputStream != null) {
+                            inputStream.close();
+                        }
+                        outputStream.close();
+                    } catch (IOException e) {
+                        // Ignore
+                    }
+                }
+            }
+        })
+        .header("Content-Type", "image/*")
+        .build();
     }
 
     /**

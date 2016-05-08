@@ -1,5 +1,6 @@
 package com.sismics.util.mime;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
@@ -21,16 +22,16 @@ public class MimeTypeUtil {
      * 
      * @param is Stream to inspect
      * @return MIME type
-     * @throws Exception
+     * @throws IOException
      */
-    public static String guessMimeType(InputStream is) throws Exception {
+    public static String guessMimeType(InputStream is) throws IOException {
         byte[] headerBytes = new byte[64];
         is.mark(headerBytes.length);
         int readCount = is.read(headerBytes);
         is.reset();
         
         if (readCount <= 0) {
-            throw new Exception("Cannot read input file");
+            throw new IOException("Cannot read input file");
         }
         
         return guessMimeType(headerBytes);

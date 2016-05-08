@@ -87,6 +87,15 @@ public class DirectoryUtil {
     }
 
     /**
+     * Returns the theme directory.
+     *
+     * @return Theme directory.
+     */
+    public static Path getThemeDirectory() {
+        return getDataSubDirectory("theme");
+    }
+
+    /**
      * Returns a subdirectory of the base data directory
      * 
      * @return Subdirectory

@@ -107,7 +107,7 @@ public class FileResource extends BaseResource {
         String mimeType;
         try {
             mimeType = MimeTypeUtil.guessMimeType(fileInputStream);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new ServerException("ErrorGuessMime", "Error guessing mime type", e);
         }
         if (mimeType == null) {
