@@ -93,7 +93,7 @@ module.exports = function(grunt) {
     },
     replace: {
       dist: {
-        src: ['dist/docs.min.js', 'dist/share.min.js', 'dist/**/*.html'],
+        src: ['dist/docs.min.js', 'dist/share.min.js', 'dist/**/*.html', 'dist/style/style.min.css'],
         overwrite: true,
         replacements: [{
           from: '../api',

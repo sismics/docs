@@ -3,35 +3,19 @@
 /**
  * Tag controller.
  */
-angular.module('docs').controller('Tag', function($scope, $dialog, Tag, Restangular) {
+angular.module('docs').controller('Tag', function($scope, $dialog, Restangular, $state) {
   $scope.tag = { name: '', color: '#3a87ad' };
 
   // Retrieve tags
-  Tag.tags().then(function(data) {
+  Restangular.one('tag/list').get().then(function(data) {
     $scope.tags = data.tags;
   });
-  
-  // Retrieve tag stats
-  Restangular.one('tag/stats').get().then(function(data) {
-    $scope.stats = data.stats;
-  });
-  
+
   /**
-   * Returns total number of document from tag stats.
+   * Display a tag.
    */
-  $scope.getStatCount = function() {
-    return _.reduce($scope.stats, function(memo, stat) {
-      return memo + stat.count
-    }, 0);
-  };
-  
-  /**
-   * Validate a tag name for duplicate.
-   */
-  $scope.validateDuplicate = function(name) {
-    return !_.find($scope.tags, function(tag) {
-      return tag.name == name;
-    });
+  $scope.viewTag = function(id) {
+    $state.go('tag.edit', { id: id });
   };
   
   /**
@@ -62,23 +46,6 @@ angular.module('docs').controller('Tag', function($scope, $dialog, Tag, Restangu
             return tag.id == t.id;
           });
         });
-      }
-    });
-  };
-  
-  /**
-   * Update a tag.
-   */
-  $scope.updateTag = function(tag) {
-    // Update the server
-    return Restangular.one('tag', tag.id).post('', tag).then(function () {
-      // Update the stat object
-      var stat = _.find($scope.stats, function (t) {
-        return tag.id == t.id;
-      });
-
-      if (stat) {
-        _.extend(stat, tag);
       }
     });
   };

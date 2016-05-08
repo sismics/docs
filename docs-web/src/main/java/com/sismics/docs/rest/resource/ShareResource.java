@@ -1,23 +1,9 @@
 package com.sismics.docs.rest.resource;
 
 
-import java.text.MessageFormat;
-import java.util.List;
-
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.ShareDao;
 import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Share;
@@ -25,6 +11,13 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
+
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * Share REST resources.
@@ -52,10 +45,10 @@ public class ShareResource extends BaseResource {
         ValidationUtil.validateRequired(documentId, "id");
         name = ValidationUtil.validateLength(name, "name", 1, 36, true);
 
-        // Get the document
-        DocumentDao documentDao = new DocumentDao();
-        if (documentDao.getDocument(documentId, PermType.WRITE, getTargetIdList(null)) == null) {
-            return Response.status(Status.NOT_FOUND).build();
+        // Check write permission on the document
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(documentId, PermType.WRITE, getTargetIdList(null))) {
+            throw new NotFoundException();
         }
         
         // Create the share
@@ -65,7 +58,6 @@ public class ShareResource extends BaseResource {
         shareDao.create(share);
         
         // Create the ACL
-        AclDao aclDao = new AclDao();
         Acl acl = new Acl();
         acl.setSourceId(documentId);
         acl.setPerm(PermType.READ);

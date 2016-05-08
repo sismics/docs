@@ -48,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         final EditText txtServer = (EditText) findViewById(R.id.txtServer);
         final EditText txtUsername = (EditText) findViewById(R.id.txtUsername);
         final EditText txtPassword = (EditText) findViewById(R.id.txtPassword);
+        final EditText txtValidationCode = (EditText) findViewById(R.id.txtValidationCode);
         final Button btnConnect = (Button) findViewById(R.id.btnConnect);
         loginForm = findViewById(R.id.loginForm);
         progressBar = findViewById(R.id.progressBar);
@@ -87,7 +88,9 @@ public class LoginActivity extends AppCompatActivity {
                 PreferenceUtil.setServerUrl(LoginActivity.this, txtServer.getText().toString());
                 
                 try {
-                    UserResource.login(getApplicationContext(), txtUsername.getText().toString(), txtPassword.getText().toString(), new HttpCallback() {
+                    UserResource.login(getApplicationContext(), txtUsername.getText().toString(),
+                            txtPassword.getText().toString(), txtValidationCode.getText().toString(),
+                            new HttpCallback() {
                         @Override
                         public void onSuccess(JSONObject json) {
                             // Empty previous user caches
@@ -111,6 +114,10 @@ public class LoginActivity extends AppCompatActivity {
 
                             if (json != null && json.optString("type").equals("ForbiddenError")) {
                                 DialogUtil.showOkDialog(LoginActivity.this, R.string.login_fail_title, R.string.login_fail);
+                            } else if (json != null && json.optString("type").equals("ValidationCodeRequired")) {
+                                txtValidationCode.setVisibility(View.VISIBLE);
+                                validator.addValidable(txtValidationCode, new Required());
+                                validator.validate();
                             } else {
                                 DialogUtil.showOkDialog(LoginActivity.this, R.string.network_error_title, R.string.network_error);
                             }

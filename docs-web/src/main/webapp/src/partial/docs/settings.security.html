@@ -7,7 +7,7 @@
 
 <div ng-if="!user.totp_enabled">
   <p>
-    Two-factor authentication allows you to add a layer of security on your <strong>Sismics Docs</strong> account.<br/>
+    Two-factor authentication allows you to add a layer of security on your <strong>{{ appName }}</strong> account.<br/>
     Before activating this feature, make sure you have a TOTP-compatible app on your phone:
   </p>
   <ul>
@@ -17,7 +17,7 @@
   </ul>
   <p>
     Those applications automatically generate a validation code that changes after a certain period of time.<br/>
-    You will be required to enter this validation code each time you login on <strong>Sismics Docs</strong>.
+    You will be required to enter this validation code each time you login on <strong>{{ appName }}</strong>.
   </p>
   <p>
     <button class="btn btn-primary" ng-click="enableTotp()">Enable two-factor authentication</button>
@@ -34,7 +34,7 @@
   </div>
   <p>
     Two-factor authentication is enabled on your account.<br/>
-    Each time you login on <strong>Sismics Docs</strong>, you will be asked a validation code from your configured phone app.<br/>
+    Each time you login on <strong>{{ appName }}</strong>, you will be asked a validation code from your configured phone app.<br/>
     If you loose your phone, you will not be able to login into your account but active sessions will allow you to regenerate a secrey key.
   </p>
   <p>

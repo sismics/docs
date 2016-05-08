@@ -1,36 +1,29 @@
 package com.sismics.docs.stress;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.common.io.Resources;
+import com.sismics.docs.rest.util.ClientUtil;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
+import org.glassfish.jersey.client.ClientResponse;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.json.JsonObject;
+import javax.ws.rs.client.*;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-
-import javax.json.JsonObject;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status;
-
-import org.junit.Assert;
-
-import org.glassfish.jersey.client.ClientResponse;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.google.common.io.Resources;
-import com.sismics.docs.rest.util.ClientUtil;
-import com.sismics.util.filter.TokenBasedSecurityFilter;
 
 /**
  * Stress app for Sismics Docs.
@@ -47,11 +40,10 @@ public class Main {
     private static final int USER_COUNT = 50;
     private static final int DOCUMENT_PER_USER_COUNT = 2000;
     private static final int TAG_PER_USER_COUNT = 20;
-    private static final int FILE_PER_DOCUMENT_COUNT = 0;
+    private static final int FILE_PER_DOCUMENT_COUNT = 10;
     
     private static Client client = ClientBuilder.newClient();
-    private static ClientUtil clientUtil;
-    
+
     private static Set<User> userSet = Sets.newHashSet();
     
     /**
@@ -64,7 +56,7 @@ public class Main {
         log.info("Starting stress test...");
         
         WebTarget resource = client.target(API_URL);
-        clientUtil = new ClientUtil(resource);
+        ClientUtil clientUtil = new ClientUtil(resource);
         
         // Create users
         for (int i = 0; i < USER_COUNT; i++) {
@@ -131,11 +123,11 @@ public class Main {
     }
     
     private static class User {
-        public String username;
-        public List<String> tagList = Lists.newArrayList();
-        public String authToken;
+        String username;
+        List<String> tagList = Lists.newArrayList();
+        String authToken;
         
-        public User(String username, String authToken) {
+        User(String username, String authToken) {
             this.username = username;
             this.authToken = authToken;
         }

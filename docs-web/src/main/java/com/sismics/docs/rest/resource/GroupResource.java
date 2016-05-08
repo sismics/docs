@@ -1,22 +1,5 @@
 package com.sismics.docs.rest.resource;
 
-import java.text.MessageFormat;
-import java.util.List;
-
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import com.google.common.base.Strings;
 import com.sismics.docs.core.dao.jpa.GroupDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
@@ -33,6 +16,14 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * Group REST resources.
@@ -109,12 +100,12 @@ public class GroupResource extends BaseResource {
         GroupDao groupDao = new GroupDao();
         Group group = groupDao.getActiveByName(groupName);
         if (group == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Avoid duplicates
         Group existingGroup = groupDao.getActiveByName(name);
-        if (existingGroup != null && existingGroup.getId() != group.getId()) {
+        if (existingGroup != null && !existingGroup.getId().equals(group.getId())) {
             throw new ClientException("GroupAlreadyExists", MessageFormat.format("This group already exists: {0}", name));
         }
         
@@ -155,7 +146,7 @@ public class GroupResource extends BaseResource {
         GroupDao groupDao = new GroupDao();
         Group group = groupDao.getActiveByName(groupName);
         if (group == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Delete the group
@@ -191,14 +182,14 @@ public class GroupResource extends BaseResource {
         GroupDao groupDao = new GroupDao();
         Group group = groupDao.getActiveByName(groupName);
         if (group == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Get the user
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
         if (user == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Avoid duplicates
@@ -248,14 +239,14 @@ public class GroupResource extends BaseResource {
         GroupDao groupDao = new GroupDao();
         Group group = groupDao.getActiveByName(groupName);
         if (group == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Get the user
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
         if (user == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Remove the membership
@@ -315,7 +306,7 @@ public class GroupResource extends BaseResource {
         GroupDao groupDao = new GroupDao();
         Group group = groupDao.getActiveByName(groupName);
         if (group == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Build the response

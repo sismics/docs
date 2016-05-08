@@ -3,6 +3,7 @@ package com.sismics.docs.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -85,8 +87,11 @@ public class AuditLogListAdapter extends BaseAdapter {
         // Fill the view
         TextView usernameTextView = (TextView) view.findViewById(R.id.usernameTextView);
         TextView messageTextView = (TextView) view.findViewById(R.id.messageTextView);
+        TextView dateTextView = (TextView) view.findViewById(R.id.dateTextView);
         usernameTextView.setText(log.optString("username"));
         messageTextView.setText(message);
+        String date = DateFormat.getDateFormat(parent.getContext()).format(new Date(log.optLong("create_date")));
+        dateTextView.setText(date);
 
         return view;
     }

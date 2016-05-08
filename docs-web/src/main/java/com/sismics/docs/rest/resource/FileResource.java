@@ -16,17 +16,7 @@ import java.util.zip.ZipOutputStream;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -100,7 +90,7 @@ public class FileResource extends BaseResource {
             DocumentDao documentDao = new DocumentDao();
             documentDto = documentDao.getDocument(documentId, PermType.WRITE, getTargetIdList(null));
             if (documentDto == null) {
-                return Response.status(Status.NOT_FOUND).build();
+                throw new NotFoundException();
             }
         }
         
@@ -117,7 +107,7 @@ public class FileResource extends BaseResource {
         String mimeType;
         try {
             mimeType = MimeTypeUtil.guessMimeType(fileInputStream);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new ServerException("ErrorGuessMime", "Error guessing mime type", e);
         }
         if (mimeType == null) {
@@ -215,7 +205,7 @@ public class FileResource extends BaseResource {
         File file = fileDao.getFile(id, principal.getId());
         DocumentDto documentDto = documentDao.getDocument(documentId, PermType.WRITE, getTargetIdList(null));
         if (file == null || documentDto == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Check that the file is orphan
@@ -275,9 +265,9 @@ public class FileResource extends BaseResource {
         ValidationUtil.validateRequired(idList, "order");
         
         // Get the document
-        DocumentDao documentDao = new DocumentDao();
-        if (documentDao.getDocument(documentId, PermType.WRITE, getTargetIdList(null)) == null) {
-            return Response.status(Status.NOT_FOUND).build();
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(documentId, PermType.WRITE, getTargetIdList(null))) {
+            throw new NotFoundException();
         }
         
         // Reorder files
@@ -313,7 +303,7 @@ public class FileResource extends BaseResource {
         if (documentId != null) {
             AclDao aclDao = new AclDao();
             if (!aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(shareId))) {
-                return Response.status(Status.NOT_FOUND).build();
+                throw new NotFoundException();
             }
         } else if (!authenticated) {
             throw new ForbiddenClientException();
@@ -357,21 +347,20 @@ public class FileResource extends BaseResource {
 
         // Get the file
         FileDao fileDao = new FileDao();
-        DocumentDao documentDao = new DocumentDao();
+        AclDao aclDao = new AclDao();
         File file = fileDao.getFile(id);
         if (file == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
-        DocumentDto documentDto = null;
         if (file.getDocumentId() == null) {
             // It's an orphan file
             if (!file.getUserId().equals(principal.getId())) {
                 // But not ours
                 throw new ForbiddenClientException();
             }
-        } else if ((documentDto = documentDao.getDocument(file.getDocumentId(), PermType.WRITE, getTargetIdList(null))) == null) {
-            return Response.status(Status.NOT_FOUND).build();
+        } else if (!aclDao.checkPermission(file.getDocumentId(), PermType.WRITE, getTargetIdList(null))) {
+            throw new NotFoundException();
         }
         
         // Delete the file
@@ -394,11 +383,11 @@ public class FileResource extends BaseResource {
         fileDeletedAsyncEvent.setFile(file);
         AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
         
-        if (documentDto != null) {
+        if (file.getDocumentId() != null) {
             // Raise a new document updated
             DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
             documentUpdatedAsyncEvent.setUserId(principal.getId());
-            documentUpdatedAsyncEvent.setDocumentId(documentDto.getId());
+            documentUpdatedAsyncEvent.setDocumentId(file.getDocumentId());
             AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
         }
         
@@ -433,7 +422,7 @@ public class FileResource extends BaseResource {
         UserDao userDao = new UserDao();
         File file = fileDao.getFile(fileId);
         if (file == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         if (file.getDocumentId() == null) {
@@ -454,7 +443,7 @@ public class FileResource extends BaseResource {
         // Get the stored file
         java.nio.file.Path storedFile;
         String mimeType;
-        boolean decrypt = false;
+        boolean decrypt;
         if (size != null) {
             storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_" + size);
             mimeType = MimeType.IMAGE_JPEG; // Thumbnails are JPEG
@@ -488,8 +477,12 @@ public class FileResource extends BaseResource {
                     try {
                         ByteStreams.copy(responseInputStream, outputStream);
                     } finally {
-                        responseInputStream.close();
-                        outputStream.close();
+                        try {
+                            responseInputStream.close();
+                            outputStream.close();
+                        } catch (IOException e) {
+                            // Ignore
+                        }
                     }
                 }
             };
@@ -521,7 +514,7 @@ public class FileResource extends BaseResource {
         DocumentDao documentDao = new DocumentDao();
         DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
         if (documentDto == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            throw new NotFoundException();
         }
         
         // Get files and user associated with this document

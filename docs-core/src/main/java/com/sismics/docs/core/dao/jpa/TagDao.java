@@ -1,21 +1,24 @@
 package com.sismics.docs.core.dao.jpa;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import com.google.common.base.Joiner;
 import com.sismics.docs.core.constant.AuditLogType;
+import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
+import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
+import com.sismics.docs.core.dao.jpa.dto.GroupDto;
 import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.dao.jpa.dto.TagStatDto;
 import com.sismics.docs.core.model.jpa.DocumentTag;
 import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.docs.core.util.AuditLogUtil;
+import com.sismics.docs.core.util.jpa.QueryParam;
+import com.sismics.docs.core.util.jpa.QueryUtil;
+import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
 
 /**
@@ -39,19 +42,6 @@ public class TagDao {
         }
     }
     
-    /**
-     * Returns the list of all tags.
-     * 
-     * @return List of tags
-     */
-    @SuppressWarnings("unchecked")
-    public List<Tag> getByUserId(String userId) {
-        EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select t from Tag t where t.userId = :userId and t.deleteDate is null order by t.name");
-        q.setParameter("userId", userId);
-        return q.getResultList();
-    }
-
     /**
      * Update tags on a document.
      * 
@@ -93,78 +83,6 @@ public class TagDao {
             }
         }
     }
-
-    /**
-     * Returns tag list on a document.
-     * 
-     * @param documentId Document ID
-     * @return List of tags
-     */
-    @SuppressWarnings("unchecked")
-    public List<TagDto> getByDocumentId(String documentId, String userId) {
-        EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select t.TAG_ID_C, t.TAG_NAME_C, t.TAG_COLOR_C, t.TAG_IDPARENT_C from T_DOCUMENT_TAG dt ");
-        sb.append(" join T_TAG t on t.TAG_ID_C = dt.DOT_IDTAG_C ");
-        sb.append(" where dt.DOT_IDDOCUMENT_C = :documentId and t.TAG_DELETEDATE_D is null ");
-        sb.append(" and t.TAG_IDUSER_C = :userId and dt.DOT_DELETEDATE_D is null ");
-        sb.append(" order by t.TAG_NAME_C ");
-        
-        // Perform the query
-        Query q = em.createNativeQuery(sb.toString());
-        q.setParameter("documentId", documentId);
-        q.setParameter("userId", userId);
-        List<Object[]> l = q.getResultList();
-        
-        // Assemble results
-        List<TagDto> tagDtoList = new ArrayList<TagDto>();
-        for (Object[] o : l) {
-            int i = 0;
-            TagDto tagDto = new TagDto();
-            tagDto.setId((String) o[i++]);
-            tagDto.setName((String) o[i++]);
-            tagDto.setColor((String) o[i++]);
-            tagDto.setParentId((String) o[i++]);
-            tagDtoList.add(tagDto);
-        }
-        return tagDtoList;
-    }
-    
-    /**
-     * Returns stats on tags.
-     * 
-     * @param documentId Document ID
-     * @return Stats by tag
-     */
-    @SuppressWarnings("unchecked")
-    public List<TagStatDto> getStats(String userId) {
-        EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select t.TAG_ID_C, t.TAG_NAME_C, t.TAG_COLOR_C, t.TAG_IDPARENT_C, count(d.DOC_ID_C) ");
-        sb.append(" from T_TAG t ");
-        sb.append(" left join T_DOCUMENT_TAG dt on t.TAG_ID_C = dt.DOT_IDTAG_C and dt.DOT_DELETEDATE_D is null ");
-        sb.append(" left join T_DOCUMENT d on d.DOC_ID_C = dt.DOT_IDDOCUMENT_C and d.DOC_DELETEDATE_D is null and d.DOC_IDUSER_C = :userId ");
-        sb.append(" where t.TAG_IDUSER_C = :userId and t.TAG_DELETEDATE_D is null ");
-        sb.append(" group by t.TAG_ID_C ");
-        sb.append(" order by t.TAG_NAME_C ");
-        
-        // Perform the query
-        Query q = em.createNativeQuery(sb.toString());
-        q.setParameter("userId", userId);
-        List<Object[]> l = q.getResultList();
-        
-        // Assemble results
-        List<TagStatDto> tagStatDtoList = new ArrayList<TagStatDto>();
-        for (Object[] o : l) {
-            int i = 0;
-            TagStatDto tagDto = new TagStatDto();
-            tagDto.setId((String) o[i++]);
-            tagDto.setName((String) o[i++]);
-            tagDto.setColor((String) o[i++]);
-            tagDto.setParentId((String) o[i++]);
-            tagDto.setCount(((Number) o[i++]).intValue());
-            tagStatDtoList.add(tagDto);
-        }
-        return tagStatDtoList;
-    }
     
     /**
      * Creates a new tag.
@@ -172,7 +90,6 @@ public class TagDao {
      * @param tag Tag
      * @param userId User ID
      * @return New ID
-     * @throws Exception
      */
     public String create(Tag tag, String userId) {
         // Create the UUID
@@ -187,44 +104,6 @@ public class TagDao {
         AuditLogUtil.create(tag, AuditLogType.CREATE, userId);
         
         return tag.getId();
-    }
-
-    /**
-     * Returns a tag by name.
-     * 
-     * @param userId User ID
-     * @param name Name
-     * @return Tag
-     */
-    public Tag getByName(String userId, String name) {
-        EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select t from Tag t where t.name = :name and t.userId = :userId and t.deleteDate is null");
-        q.setParameter("userId", userId);
-        q.setParameter("name", name);
-        try {
-            return (Tag) q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-    
-    /**
-     * Returns a tag by ID.
-     * 
-     * @param userId User ID
-     * @param tagId Tag ID
-     * @return Tag
-     */
-    public Tag getByTagId(String userId, String tagId) {
-        EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select t from Tag t where t.id = :tagId and t.userId = :userId and t.deleteDate is null");
-        q.setParameter("userId", userId);
-        q.setParameter("tagId", tagId);
-        try {
-            return (Tag) q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
     }
     
     /**
@@ -250,24 +129,14 @@ public class TagDao {
         q.setParameter("dateNow", dateNow);
         q.setParameter("tagId", tagId);
         q.executeUpdate();
+
+        q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.sourceId = :tagId and a.deleteDate is null");
+        q.setParameter("tagId", tagId);
+        q.setParameter("dateNow", dateNow);
+        q.executeUpdate();
         
         // Create audit log
         AuditLogUtil.create(tagDb, AuditLogType.DELETE, userId);
-    }
-
-    /**
-     * Search tags by name.
-     * 
-     * @param name Tag name
-     * @return List of found tags
-     */
-    @SuppressWarnings("unchecked")
-    public List<Tag> findByName(String userId, String name) {
-        EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select t from Tag t where t.name like :name and t.userId = :userId and t.deleteDate is null");
-        q.setParameter("userId", userId);
-        q.setParameter("name", "%" + name + "%");
-        return q.getResultList();
     }
     
     /**
@@ -294,6 +163,73 @@ public class TagDao {
         AuditLogUtil.create(tagFromDb, AuditLogType.UPDATE, userId);
         
         return tagFromDb;
+    }
+
+    /**
+     * Returns the list of all tags.
+     *
+     * @param criteria Search criteria
+     * @param sortCriteria Sort criteria
+     * @return List of groups
+     */
+    public List<TagDto> findByCriteria(TagCriteria criteria, SortCriteria sortCriteria) {
+        Map<String, Object> parameterMap = new HashMap<>();
+        List<String> criteriaList = new ArrayList<>();
+
+        StringBuilder sb = new StringBuilder("select distinct t.TAG_ID_C as c0, t.TAG_NAME_C as c1, t.TAG_COLOR_C as c2, t.TAG_IDPARENT_C as c3, u.USE_USERNAME_C as c4 ");
+        sb.append(" from T_TAG t ");
+        sb.append(" join T_USER u on t.TAG_IDUSER_C = u.USE_ID_C ");
+
+        // Add search criterias
+        if (criteria.getId() != null) {
+            criteriaList.add("t.TAG_ID_C = :id");
+            parameterMap.put("id", criteria.getId());
+        }
+        if (criteria.getTargetIdList() != null) {
+            sb.append(" left join T_ACL a on a.ACL_TARGETID_C in (:targetIdList) and a.ACL_SOURCEID_C = t.TAG_ID_C and a.ACL_PERM_C = 'READ' and a.ACL_DELETEDATE_D is null ");
+            criteriaList.add("a.ACL_ID_C is not null");
+            parameterMap.put("targetIdList", criteria.getTargetIdList());
+        }
+        if (criteria.getDocumentId() != null) {
+            sb.append(" join T_DOCUMENT_TAG dt on dt.DOT_IDTAG_C = t.TAG_ID_C and dt.DOT_DELETEDATE_D is null ");
+            criteriaList.add("dt.DOT_IDDOCUMENT_C = :documentId");
+            parameterMap.put("documentId", criteria.getDocumentId());
+        }
+        if (criteria.getName() != null) {
+            criteriaList.add("t.TAG_NAME_C = :name");
+            parameterMap.put("name", criteria.getName());
+        }
+        if (criteria.getNameLike() != null) {
+            criteriaList.add("t.TAG_NAME_C like :nameLike");
+            parameterMap.put("nameLike", "%" + criteria.getNameLike() + "%");
+        }
+
+        criteriaList.add("t.TAG_DELETEDATE_D is null");
+
+        if (!criteriaList.isEmpty()) {
+            sb.append(" where ");
+            sb.append(Joiner.on(" and ").join(criteriaList));
+        }
+
+        // Perform the search
+        QueryParam queryParam = QueryUtil.getSortedQueryParam(new QueryParam(sb.toString(), parameterMap), sortCriteria);
+        @SuppressWarnings("unchecked")
+        List<Object[]> l = QueryUtil.getNativeQuery(queryParam).getResultList();
+
+        // Assemble results
+        List<TagDto> tagDtoList = new ArrayList<>();
+        for (Object[] o : l) {
+            int i = 0;
+            TagDto tagDto = new TagDto()
+                    .setId((String) o[i++])
+                    .setName((String) o[i++])
+                    .setColor((String) o[i++])
+                    .setParentId((String) o[i++])
+                    .setCreator((String) o[i]);
+            tagDtoList.add(tagDto);
+        }
+
+        return tagDtoList;
     }
 }
 

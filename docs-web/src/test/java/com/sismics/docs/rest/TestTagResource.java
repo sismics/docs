@@ -46,6 +46,18 @@ public class TestTagResource extends BaseJerseyTest {
                         .param("parent", tag3Id)), JsonObject.class);
         String tag4Id = json.getString("id");
         Assert.assertNotNull(tag4Id);
+
+        // Get the tag
+        json = target().path("/tag/" + tag4Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .get(JsonObject.class);
+        Assert.assertEquals("Tag4", json.getString("name"));
+        Assert.assertEquals("tag1", json.getString("creator"));
+        Assert.assertEquals("#00ff00", json.getString("color"));
+        Assert.assertEquals(tag3Id, json.getString("parent"));
+        Assert.assertTrue(json.getBoolean("writable"));
+        JsonArray acls = json.getJsonArray("acls");
+        Assert.assertEquals(2, acls.size());
         
         // Create a tag with space (not allowed)
         Response response = target().path("/tag").request()
@@ -55,7 +67,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         
         // Create a document
-        json = target().path("/document").request()
+        target().path("/document").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
                 .put(Entity.form(new Form()
                         .param("title", "My super document 1")
@@ -115,15 +127,6 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals(1, tags.size());
         Assert.assertEquals(tag4Id, tags.getJsonObject(0).getString("id"));
         
-        // Get tag stats
-        json = target().path("/tag/stats").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
-                .get(JsonObject.class);
-        JsonArray stats = json.getJsonArray("stats");
-        Assert.assertTrue(stats.size() == 2);
-        Assert.assertEquals(1, stats.getJsonObject(0).getInt("count"));
-        Assert.assertEquals(1, stats.getJsonObject(1).getInt("count"));
-        
         // Get all tags
         json = target().path("/tag/list").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
@@ -150,7 +153,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertTrue(tags.size() > 0);
         Assert.assertEquals("UpdatedName", tags.getJsonObject(1).getString("name"));
         Assert.assertEquals("#0000ff", tags.getJsonObject(1).getString("color"));
-        Assert.assertEquals(JsonValue.NULL, tags.getJsonObject(1).get("parent"));
+        Assert.assertNull(tags.getJsonObject(1).get("parent"));
         
         // Deletes a tag
         target().path("/tag/" + tag4Id).request()

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="share">
   <head>
-    <title>Sismics Docs</title>
+    <title>{{ appName }}</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="favicon.png" />
@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="style/bootstrap.css" type="text/css" />
     <link rel="stylesheet/less" href="style/main.less" type="text/css" />
     <!-- endref -->
+    <link rel="stylesheet" href="../api/theme/stylesheet" type="text/css" />
     <!-- ref:remove -->
     <script>
       less = {
@@ -45,10 +46,10 @@
     <div class="navbar navbar-default" role="navigation">
       <div class="navbar-header">
         <div class="hidden-xs navbar-text navbar-logo">
-          <img src="favicon.png" />
+          <img src="../api/theme/image/logo" />
         </div>
 
-        <a class="navbar-brand" href="#"> Sismics Docs</a>
+        <a class="navbar-brand" href="#"> {{ appName }}</a>
       </div>
     </div>
 

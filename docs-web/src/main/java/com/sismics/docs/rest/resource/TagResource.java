@@ -1,29 +1,28 @@
 package com.sismics.docs.rest.resource;
 
-import java.text.MessageFormat;
-import java.util.List;
+import com.google.common.collect.Sets;
+import com.sismics.docs.core.constant.PermType;
+import com.sismics.docs.core.dao.jpa.AclDao;
+import com.sismics.docs.core.dao.jpa.TagDao;
+import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
+import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.model.jpa.Acl;
+import com.sismics.docs.core.model.jpa.Tag;
+import com.sismics.docs.core.util.jpa.SortCriteria;
+import com.sismics.rest.exception.ClientException;
+import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.rest.util.AclUtil;
+import com.sismics.rest.util.ValidationUtil;
+import org.apache.commons.lang.StringUtils;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.sismics.docs.core.dao.jpa.TagDao;
-import com.sismics.docs.core.dao.jpa.dto.TagStatDto;
-import com.sismics.docs.core.model.jpa.Tag;
-import com.sismics.rest.exception.ClientException;
-import com.sismics.rest.exception.ForbiddenClientException;
-import com.sismics.rest.util.JsonUtil;
-import com.sismics.rest.util.ValidationUtil;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Tag REST resources.
@@ -33,7 +32,7 @@ import com.sismics.rest.util.ValidationUtil;
 @Path("/tag")
 public class TagResource extends BaseResource {
     /**
-     * Returns the list of all tags.
+     * Returns the list of all visible tags.
      * 
      * @return Response
      */
@@ -45,55 +44,79 @@ public class TagResource extends BaseResource {
         }
         
         TagDao tagDao = new TagDao();
-        List<Tag> tagList = tagDao.getByUserId(principal.getId());
+        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)), new SortCriteria(1, true));
+
+        // Extract tag IDs
+        Set<String> tagIdSet = Sets.newHashSet();
+        for (TagDto tagDto : tagDtoList) {
+            tagIdSet.add(tagDto.getId());
+        }
+
+        // Build the response
         JsonArrayBuilder items = Json.createArrayBuilder();
-        for (Tag tag : tagList) {
-            items.add(Json.createObjectBuilder()
-                    .add("id", tag.getId())
-                    .add("name", tag.getName())
-                    .add("color", tag.getColor())
-                    .add("parent", JsonUtil.nullable(tag.getParentId())));
+        for (TagDto tagDto : tagDtoList) {
+            JsonObjectBuilder item = Json.createObjectBuilder()
+                    .add("id", tagDto.getId())
+                    .add("name", tagDto.getName())
+                    .add("color", tagDto.getColor());
+            if (tagIdSet.contains(tagDto.getParentId())) {
+                item.add("parent", tagDto.getParentId());
+            }
+            items.add(item);
         }
         
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("tags", items);
         return Response.ok().entity(response.build()).build();
     }
-    
+
     /**
-     * Returns stats on tags.
-     * 
+     * Returns a tag.
+     *
+     * @param id Tag ID
      * @return Response
-     * @throws JSONException
      */
     @GET
-    @Path("/stats")
-    public Response stats() {
+    @Path("{id: [a-z0-9\\-]+}")
+    public Response get(@PathParam("id") String id) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         TagDao tagDao = new TagDao();
-        List<TagStatDto> tagStatDtoList = tagDao.getStats(principal.getId());
-        JsonArrayBuilder items = Json.createArrayBuilder();
-        for (TagStatDto tagStatDto : tagStatDtoList) {
-            items.add(Json.createObjectBuilder()
-                    .add("id", tagStatDto.getId())
-                    .add("name", tagStatDto.getName())
-                    .add("color", tagStatDto.getColor())
-                    .add("parent", JsonUtil.nullable(tagStatDto.getParentId()))
-                    .add("count", tagStatDto.getCount()));
+        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setId(id), null);
+        if (tagDtoList.size() == 0) {
+            throw new NotFoundException();
         }
-        
-        JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("stats", items);
-        return Response.ok().entity(response.build()).build();
+
+        // Add tag informatiosn
+        TagDto tagDto = tagDtoList.get(0);
+        JsonObjectBuilder tag = Json.createObjectBuilder()
+                .add("id", tagDto.getId())
+                .add("creator", tagDto.getCreator())
+                .add("name", tagDto.getName())
+                .add("color", tagDto.getColor());
+
+        // Add the parent if its visible
+        if (tagDto.getParentId() != null) {
+            AclDao aclDao = new AclDao();
+            if (aclDao.checkPermission(tagDto.getParentId(), PermType.READ, getTargetIdList(null))) {
+                tag.add("parent", tagDto.getParentId());
+            }
+        }
+
+        // Add ACL
+        AclUtil.addAcls(tag, id, getTargetIdList(null));
+
+        return Response.ok().entity(tag.build()).build();
     }
-    
+
     /**
      * Creates a new tag.
      * 
      * @param name Name
+     * @param color Color
+     * @param parentId Parent ID
      * @return Response
      */
     @PUT
@@ -114,30 +137,39 @@ public class TagResource extends BaseResource {
             throw new ClientException("SpacesNotAllowed", "Spaces are not allowed in tag name");
         }
         
-        // Get the tag
-        TagDao tagDao = new TagDao();
-        Tag tag = tagDao.getByName(principal.getId(), name);
-        if (tag != null) {
-            throw new ClientException("AlreadyExistingTag", MessageFormat.format("Tag already exists: {0}", name));
-        }
-        
         // Check the parent
         if (StringUtils.isEmpty(parentId)) {
             parentId = null;
         } else {
-            Tag parentTag = tagDao.getByTagId(principal.getId(), parentId);
-            if (parentTag == null) {
+            AclDao aclDao = new AclDao();
+            if (!aclDao.checkPermission(parentId, PermType.READ, getTargetIdList(null))) {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
             }
         }
         
         // Create the tag
-        tag = new Tag();
+        TagDao tagDao = new TagDao();
+        Tag tag = new Tag();
         tag.setName(name);
         tag.setColor(color);
         tag.setUserId(principal.getId());
         tag.setParentId(parentId);
         String id = tagDao.create(tag, principal.getId());
+
+        // Create read ACL
+        AclDao aclDao = new AclDao();
+        Acl acl = new Acl();
+        acl.setPerm(PermType.READ);
+        acl.setSourceId(id);
+        acl.setTargetId(principal.getId());
+        aclDao.create(acl, principal.getId());
+
+        // Create write ACL
+        acl = new Acl();
+        acl.setPerm(PermType.WRITE);
+        acl.setSourceId(id);
+        acl.setTargetId(principal.getId());
+        aclDao.create(acl, principal.getId());
         
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("id", id);
@@ -148,6 +180,8 @@ public class TagResource extends BaseResource {
      * Update a tag.
      * 
      * @param name Name
+     * @param color Color
+     * @param parentId Parent ID
      * @return Response
      */
     @POST
@@ -170,30 +204,24 @@ public class TagResource extends BaseResource {
             throw new ClientException("SpacesNotAllowed", "Spaces are not allowed in tag name");
         }
         
-        // Get the tag
-        TagDao tagDao = new TagDao();
-        Tag tag = tagDao.getByTagId(principal.getId(), id);
-        if (tag == null) {
-            throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", id));
+        // Check permission
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(id, PermType.WRITE, getTargetIdList(null))) {
+            throw new NotFoundException();
         }
         
         // Check the parent
         if (StringUtils.isEmpty(parentId)) {
             parentId = null;
         } else {
-            Tag parentTag = tagDao.getByTagId(principal.getId(), parentId);
-            if (parentTag == null) {
+            if (!aclDao.checkPermission(parentId, PermType.READ, getTargetIdList(null))) {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
             }
         }
         
-        // Check for name duplicate
-        Tag tagDuplicate = tagDao.getByName(principal.getId(), name);
-        if (tagDuplicate != null && !tagDuplicate.getId().equals(id)) {
-            throw new ClientException("AlreadyExistingTag", MessageFormat.format("Tag already exists: {0}", name));
-        }
-        
         // Update the tag
+        TagDao tagDao = new TagDao();
+        Tag tag = tagDao.getById(id);
         if (!StringUtils.isEmpty(name)) {
             tag.setName(name);
         }
@@ -213,26 +241,26 @@ public class TagResource extends BaseResource {
     /**
      * Delete a tag.
      * 
-     * @param tagId Tag ID
+     * @param id Tag ID
      * @return Response
      */
     @DELETE
     @Path("{id: [a-z0-9\\-]+}")
     public Response delete(
-            @PathParam("id") String tagId) {
+            @PathParam("id") String id) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         
         // Get the tag
-        TagDao tagDao = new TagDao();
-        Tag tag = tagDao.getByTagId(principal.getId(), tagId);
-        if (tag == null) {
-            throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", tagId));
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(id, PermType.WRITE, getTargetIdList(null))) {
+            throw new NotFoundException();
         }
         
         // Delete the tag
-        tagDao.delete(tagId, principal.getId());
+        TagDao tagDao = new TagDao();
+        tagDao.delete(id, principal.getId());
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()

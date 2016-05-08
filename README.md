@@ -1,4 +1,4 @@
-Sismics Docs
+Sismics Docs [![Build Status](https://secure.travis-ci.org/sismics/docs.png)](http://travis-ci.org/sismics/docs)
 ============
 
 _Web interface_
@@ -50,7 +50,6 @@ Prerequisites: JDK 7 with JCE, Maven 3, Tesseract 3.02
 
 Docs is organized in several Maven modules:
 
-  - docs-parent
   - docs-core
   - docs-web
   - docs-web-common
@@ -60,7 +59,7 @@ or download the sources from GitHub.
 
 #### Launch the build
 
-From the `docs-parent` directory:
+From the root directory:
 
     mvn clean -DskipTests install
 

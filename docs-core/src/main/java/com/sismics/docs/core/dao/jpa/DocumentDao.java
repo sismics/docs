@@ -40,7 +40,6 @@ public class DocumentDao {
      * @param document Document
      * @param userId User ID
      * @return New ID
-     * @throws Exception
      */
     public String create(Document document, String userId) {
         // Create the UUID
@@ -87,10 +86,15 @@ public class DocumentDao {
      * 
      * @param id Document ID
      * @param perm Permission needed
-     * @param userId User ID
+     * @param targetIdList List of targets
      * @return Document
      */
     public DocumentDto getDocument(String id, PermType perm, List<String> targetIdList) {
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(id, perm, targetIdList)) {
+            return null;
+        }
+
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C, d.DOC_TITLE_C, d.DOC_DESCRIPTION_C, d.DOC_SUBJECT_C, d.DOC_IDENTIFIER_C, d.DOC_PUBLISHER_C, d.DOC_FORMAT_C, d.DOC_SOURCE_C, d.DOC_TYPE_C, d.DOC_COVERAGE_C, d.DOC_RIGHTS_C, d.DOC_CREATEDATE_D, d.DOC_LANGUAGE_C, ");
         sb.append(" (select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null), ");
@@ -98,15 +102,12 @@ public class DocumentDao {
         sb.append(" u.USE_USERNAME_C ");
         sb.append(" from T_DOCUMENT d ");
         sb.append(" join T_USER u on d.DOC_IDUSER_C = u.USE_ID_C ");
-        sb.append(" left join T_ACL a on a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_TARGETID_C in (:targetIdList) and a.ACL_PERM_C = :perm and a.ACL_DELETEDATE_D is null ");
-        sb.append(" where d.DOC_ID_C = :id and a.ACL_ID_C is not null and d.DOC_DELETEDATE_D is null ");
+        sb.append(" where d.DOC_ID_C = :id and d.DOC_DELETEDATE_D is null ");
        
         Query q = em.createNativeQuery(sb.toString());
         q.setParameter("id", id);
-        q.setParameter("perm", perm.name());
-        q.setParameter("targetIdList", targetIdList);
-        
-        Object[] o = null;
+
+        Object[] o;
         try {
             o = (Object[]) q.getSingleResult();
         } catch (NoResultException e) {
@@ -130,7 +131,7 @@ public class DocumentDao {
         documentDto.setLanguage((String) o[i++]);
         documentDto.setShared(((Number) o[i++]).intValue() > 0);
         documentDto.setFileCount(((Number) o[i++]).intValue());
-        documentDto.setCreator((String) o[i++]);
+        documentDto.setCreator((String) o[i]);
         return documentDto;
     }
     
@@ -200,22 +201,24 @@ public class DocumentDao {
      * @param paginatedList List of documents (updated by side effects)
      * @param criteria Search criteria
      * @param sortCriteria Sort criteria
-     * @return List of documents
-     * @throws Exception 
+     * @throws Exception
      */
     public void findByCriteria(PaginatedList<DocumentDto> paginatedList, DocumentCriteria criteria, SortCriteria sortCriteria) throws Exception {
-        Map<String, Object> parameterMap = new HashMap<String, Object>();
-        List<String> criteriaList = new ArrayList<String>();
+        Map<String, Object> parameterMap = new HashMap<>();
+        List<String> criteriaList = new ArrayList<>();
         
         StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, ");
         sb.append(" (select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null) c5, ");
         sb.append(" (select count(f.FIL_ID_C) from T_FILE f where f.FIL_DELETEDATE_D is null and f.FIL_IDDOC_C = d.DOC_ID_C) c6 ");
         sb.append(" from T_DOCUMENT d ");
         
-        // Adds search criteria
+        // Add search criterias
         if (criteria.getTargetIdList() != null) {
             // Read permission is enough for searching
-            sb.append(" join T_ACL a on a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_TARGETID_C in (:targetIdList) and a.ACL_PERM_C = 'READ' and a.ACL_DELETEDATE_D is null ");
+            sb.append(" left join T_ACL a on a.ACL_TARGETID_C in (:targetIdList) and a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_PERM_C = 'READ' and a.ACL_DELETEDATE_D is null ");
+            sb.append(" left join T_DOCUMENT_TAG dta on dta.DOT_IDDOCUMENT_C = d.DOC_ID_C and dta.DOT_DELETEDATE_D is null ");
+            sb.append(" left join T_ACL a2 on a2.ACL_TARGETID_C in (:targetIdList) and a2.ACL_SOURCEID_C = dta.DOT_IDTAG_C and a2.ACL_PERM_C = 'READ' and a2.ACL_DELETEDATE_D is null ");
+            criteriaList.add("(a.ACL_ID_C is not null or a2.ACL_ID_C is not null)");
             parameterMap.put("targetIdList", criteria.getTargetIdList());
         }
         if (!Strings.isNullOrEmpty(criteria.getSearch()) || !Strings.isNullOrEmpty(criteria.getFullSearch())) {
@@ -239,7 +242,7 @@ public class DocumentDao {
         if (criteria.getTagIdList() != null && !criteria.getTagIdList().isEmpty()) {
             int index = 0;
             for (String tagId : criteria.getTagIdList()) {
-                sb.append(" join T_DOCUMENT_TAG dt" + index + " on dt" + index + ".DOT_IDDOCUMENT_C = d.DOC_ID_C and dt" + index + ".DOT_IDTAG_C = :tagId" + index + " and dt" + index + ".DOT_DELETEDATE_D is null ");
+                sb.append(String.format(" join T_DOCUMENT_TAG dt%d on dt%d.DOT_IDDOCUMENT_C = d.DOC_ID_C and dt%d.DOT_IDTAG_C = :tagId%d and dt%d.DOT_DELETEDATE_D is null ", index, index, index, index, index));
                 parameterMap.put("tagId" + index, tagId);
                 index++;
             }
@@ -278,7 +281,7 @@ public class DocumentDao {
             documentDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
             documentDto.setLanguage((String) o[i++]);
             documentDto.setShared(((Number) o[i++]).intValue() > 0);
-            documentDto.setFileCount(((Number) o[i++]).intValue());
+            documentDto.setFileCount(((Number) o[i]).intValue());
             documentDtoList.add(documentDto);
         }
 

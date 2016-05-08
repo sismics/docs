@@ -99,6 +99,10 @@ public class PdfPage implements Closeable {
      * @throws IOException
      */
     private void drawText(float paragraphWidth, PDFont font, int fontSize, String text, boolean centered) throws IOException {
+        if (text == null) {
+            return;
+        }
+        
         pdContent.setFont(font, fontSize);
         int start = 0;
         int end = 0;

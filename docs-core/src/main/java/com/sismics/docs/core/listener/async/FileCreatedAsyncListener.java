@@ -54,7 +54,7 @@ public class FileCreatedAsyncListener {
             @Override
             public void run() {
                 FileDao fileDao = new FileDao();
-                if (fileDao.getById(file.getId()) == null) {
+                if (fileDao.getActiveById(file.getId()) == null) {
                     // The file has been deleted since the text extraction started, ignore the result
                     return;
                 }

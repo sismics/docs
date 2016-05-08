@@ -25,7 +25,6 @@ public class FileDao {
      * @param file File
      * @param userId User ID
      * @return New ID
-     * @throws Exception
      */
     public String create(File file, String userId) {
         // Create the UUID
@@ -155,10 +154,12 @@ public class FileDao {
      * @param id File ID
      * @return File
      */
-    public File getById(String id) {
+    public File getActiveById(String id) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select f from File f where f.id = :id and f.deleteDate is null");
+        q.setParameter("id", id);
         try {
-            return em.find(File.class, id);
+            return (File) q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -167,7 +168,7 @@ public class FileDao {
     /**
      * Get files by document ID or all orphan files of an user.
      * 
-     * @parma userId User ID
+     * @param userId User ID
      * @param documentId Document ID
      * @return List of files
      */

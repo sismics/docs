@@ -80,7 +80,7 @@ public class RequestContextFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        EntityManager em = null;
+        EntityManager em;
         
         try {
             em = EMF.get().createEntityManager();

@@ -9,7 +9,6 @@ import javax.json.JsonValue;
  * @author bgamard
  */
 public class JsonUtil {
-
     /**
      * Returns a JsonValue from a String.
      * 

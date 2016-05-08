@@ -87,7 +87,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document2Id);
         
         // Add a file
-        String file1Id = null;
+        String file1Id;
         try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
@@ -103,7 +103,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         }
         
         // Share this document
-        json = target().path("/share").request()
+        target().path("/share").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
                 .put(Entity.form(new Form().param("id", document1Id)), JsonObject.class);
         
@@ -148,7 +148,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document3Id);
         
         // Add a file
-        String file3Id = null;
+        String file3Id;
         try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
@@ -393,7 +393,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a PDF file
-        String file1Id = null;
+        String file1Id;
         try (InputStream is = Resources.getResource("file/document.odt").openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "document.odt");
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
@@ -452,7 +452,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a PDF file
-        String file1Id = null;
+        String file1Id;
         try (InputStream is = Resources.getResource("file/document.docx").openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "document.docx");
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
@@ -511,7 +511,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a PDF file
-        String file1Id = null;
+        String file1Id;
         try (InputStream is = Resources.getResource("file/wikipedia.pdf").openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "wikipedia.pdf");
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
