@@ -1,6 +1,6 @@
 <h1>{{ tag.name }}</h1>
 
-<p>Permissions on this tag will also be applied to documents tagged <span class="label label-info">{{ tag.name }}</span></p>
+<p>Permissions on this tag will also be applied to documents tagged <span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span></p>
 
 <acl-edit source="tag.id"
           acls="tag.acls"
