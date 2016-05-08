@@ -335,28 +335,32 @@ public class AppResource extends BaseResource {
 
         // Get all tags
         TagDao tagDao = new TagDao();
+        UserDao userDao = new UserDao();
         List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria(), null);
 
         // Add READ and WRITE ACLs
         for (TagDto tagDto : tagDtoList) {
+            // Remove old ACLs
             AclDao aclDao = new AclDao();
             List<AclDto> aclDtoList = aclDao.getBySourceId(tagDto.getId());
-
-            if (aclDtoList.size() == 0) {
-                // Create read ACL
-                Acl acl = new Acl();
-                acl.setPerm(PermType.READ);
-                acl.setSourceId(tagDto.getId());
-                acl.setTargetId(principal.getId());
-                aclDao.create(acl, principal.getId());
-
-                // Create write ACL
-                acl = new Acl();
-                acl.setPerm(PermType.WRITE);
-                acl.setSourceId(tagDto.getId());
-                acl.setTargetId(principal.getId());
-                aclDao.create(acl, principal.getId());
+            String userId = userDao.getActiveByUsername(tagDto.getCreator()).getId();
+            for (AclDto aclDto : aclDtoList) {
+                aclDao.delete(aclDto.getSourceId(), aclDto.getPerm(), aclDto.getTargetId(), userId);
             }
+
+            // Create read ACL
+            Acl acl = new Acl();
+            acl.setPerm(PermType.READ);
+            acl.setSourceId(tagDto.getId());
+            acl.setTargetId(userId);
+            aclDao.create(acl, userId);
+
+            // Create write ACL
+            acl = new Acl();
+            acl.setPerm(PermType.WRITE);
+            acl.setSourceId(tagDto.getId());
+            acl.setTargetId(userId);
+            aclDao.create(acl, userId);
         }
 
         // Always return OK
