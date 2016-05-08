@@ -72,11 +72,11 @@ public class TestThemeResource extends BaseJerseyTest {
 
         // Change the logo
         try (InputStream is = Resources.getResource("file/PIA00452.jpg").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("logo", is, "PIA00452.jpg");
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("image", is, "PIA00452.jpg");
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
                 target()
                         .register(MultiPartFeature.class)
-                        .path("/theme/images").request()
+                        .path("/theme/image/logo").request()
                         .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                         .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
                                 MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
@@ -85,11 +85,11 @@ public class TestThemeResource extends BaseJerseyTest {
 
         // Change the background
         try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("background", is, "Einstein-Roosevelt-letter.png");
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("image", is, "Einstein-Roosevelt-letter.png");
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
                 target()
                         .register(MultiPartFeature.class)
-                        .path("/theme/images").request()
+                        .path("/theme/image/background").request()
                         .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                         .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
                                 MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);

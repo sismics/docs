@@ -18,5 +18,36 @@ angular.module('docs').controller('SettingsTheme', function($scope, $rootScope, 
       stylesheet.href = stylesheet.href.replace(/\?.*|$/, '?' + new Date().getTime());
       $rootScope.appName = $scope.theme.name;
     });
-  }
+  };
+  
+  // Send an image
+  $scope.sendingImage = false;
+  $scope.sendImage = function(type, image) {
+    // Build the payload
+    var formData = new FormData();
+    formData.append('image', image);
+
+    // Send the file
+    var done = function() {
+      $scope.$apply(function() {
+        $scope.sendingImage = false;
+        $scope[type] = null;
+      });
+    };
+    $scope.sendingImage = true;
+    $.ajax({
+      type: 'PUT',
+      url: '../api/theme/image/' + type,
+      data: formData,
+      cache: false,
+      contentType: false,
+      processData: false,
+      success: function() {
+        done();
+      },
+      error: function() {
+        done();
+      }
+    });
+  };
 });

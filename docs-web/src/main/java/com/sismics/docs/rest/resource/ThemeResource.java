@@ -120,26 +120,23 @@ public class ThemeResource extends BaseResource {
     }
 
     @PUT
-    @Path("images")
+    @Path("image/{type: logo|background}")
     @Consumes("multipart/form-data")
-    public Response images(
-            @FormDataParam("logo") FormDataBodyPart logoBodyPart,
-            @FormDataParam("background") FormDataBodyPart backgrounBodyPart) {
+    public Response images(@PathParam("type") String type,
+            @FormDataParam("image") FormDataBodyPart imageBodyPart) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);
-        if (logoBodyPart == null && backgrounBodyPart == null) {
-            throw new ClientException("NoImageProvided", "logo or background is required");
+        if (imageBodyPart == null) {
+            throw new ClientException("NoImageProvided", "An image is required");
         }
 
         // Only a background or a logo is handled
-        FormDataBodyPart bodyPart = logoBodyPart == null ? backgrounBodyPart : logoBodyPart;
-        String type = logoBodyPart == null ? BACKGROUND_IMAGE : LOGO_IMAGE;
         java.nio.file.Path filePath = DirectoryUtil.getThemeDirectory().resolve(type);
 
         // Copy the image to the theme directory
-        try (InputStream inputStream = bodyPart.getValueAs(InputStream.class)) {
+        try (InputStream inputStream = imageBodyPart.getValueAs(InputStream.class)) {
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
             throw new ServerException("CopyError", "Error copying the image to the theme directory", e);
@@ -152,10 +149,6 @@ public class ThemeResource extends BaseResource {
     @Produces("image/*")
     @Path("image/{type: logo|background}")
     public Response getImage(@PathParam("type") final String type) {
-        if (!LOGO_IMAGE.equals(type) && !BACKGROUND_IMAGE.equals(type)) {
-            throw new ClientException("InvalidType", "Type must be logo or background");
-        }
-
         final java.nio.file.Path filePath = DirectoryUtil.getThemeDirectory().resolve(type);
 
         // Copy the image to the response output

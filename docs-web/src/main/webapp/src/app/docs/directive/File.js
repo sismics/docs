@@ -10,12 +10,11 @@ angular.module('docs').directive('file', function() {
     replace: true,
     require: 'ngModel',
     link: function(scope, element, attr, ctrl) {
-      var listener = function() {
+      element.bind('change', function() {
         scope.$apply(function() {
-            attr.multiple ? ctrl.$setViewValue(element[0].files) : ctrl.$setViewValue(element[0].files[0]);
+          attr.multiple ? ctrl.$setViewValue(element[0].files) : ctrl.$setViewValue(element[0].files[0]);
         });
-      }
-      element.bind('change', listener);
+      });
     }
   }
 });
