@@ -92,7 +92,7 @@ public class DocumentResource extends BaseResource {
             TagDao tagDao = new TagDao();
             tagDtoList = tagDao.findByCriteria(
                     new TagCriteria()
-                            .setTargetIdList(getTargetIdList(shareId))
+                            .setTargetIdList(getTargetIdList(null)) // No tags for shares
                             .setDocumentId(documentId),
                     new SortCriteria(1, true));
             JsonArrayBuilder tags = Json.createArrayBuilder();
@@ -270,7 +270,9 @@ public class DocumentResource extends BaseResource {
 
         for (DocumentDto documentDto : paginatedList.getResultList()) {
             // Get tags added by the current user on this document
-            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setDocumentId(documentDto.getId()), new SortCriteria(1, true));
+            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria()
+                    .setTargetIdList(getTargetIdList(null))
+                    .setDocumentId(documentDto.getId()), new SortCriteria(1, true));
             JsonArrayBuilder tags = Json.createArrayBuilder();
             for (TagDto tagDto : tagDtoList) {
                 tags.add(Json.createObjectBuilder()

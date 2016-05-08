@@ -47,7 +47,7 @@ public class TestShareResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a file
-        String file1Id = null;
+        String file1Id;
         try (InputStream is = Resources.getResource("file/PIA00452.jpg").openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "PIA00452.jpg");
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
