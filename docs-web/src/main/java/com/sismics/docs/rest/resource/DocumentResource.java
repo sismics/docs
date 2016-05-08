@@ -668,14 +668,14 @@ public class DocumentResource extends BaseResource {
         // Get the document
         DocumentDao documentDao = new DocumentDao();
         FileDao fileDao = new FileDao();
-        DocumentDto documentDto = documentDao.getDocument(id, PermType.WRITE, getTargetIdList(null));
-        if (documentDto == null) {
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(id, PermType.WRITE, getTargetIdList(null))) {
             throw new NotFoundException();
         }
         List<File> fileList = fileDao.getByDocumentId(principal.getId(), id);
         
         // Delete the document
-        documentDao.delete(documentDto.getId(), principal.getId());
+        documentDao.delete(id, principal.getId());
         
         // Raise file deleted events (don't bother sending document updated event)
         for (File file : fileList) {
@@ -688,7 +688,7 @@ public class DocumentResource extends BaseResource {
         // Raise a document deleted event
         DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
         documentDeletedAsyncEvent.setUserId(principal.getId());
-        documentDeletedAsyncEvent.setDocumentId(documentDto.getId());
+        documentDeletedAsyncEvent.setDocumentId(id);
         AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
         
         // Always return OK

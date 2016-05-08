@@ -265,8 +265,8 @@ public class FileResource extends BaseResource {
         ValidationUtil.validateRequired(idList, "order");
         
         // Get the document
-        DocumentDao documentDao = new DocumentDao();
-        if (documentDao.getDocument(documentId, PermType.WRITE, getTargetIdList(null)) == null) {
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(documentId, PermType.WRITE, getTargetIdList(null))) {
             throw new NotFoundException();
         }
         
@@ -347,20 +347,19 @@ public class FileResource extends BaseResource {
 
         // Get the file
         FileDao fileDao = new FileDao();
-        DocumentDao documentDao = new DocumentDao();
+        AclDao aclDao = new AclDao();
         File file = fileDao.getFile(id);
         if (file == null) {
             throw new NotFoundException();
         }
         
-        DocumentDto documentDto = null;
         if (file.getDocumentId() == null) {
             // It's an orphan file
             if (!file.getUserId().equals(principal.getId())) {
                 // But not ours
                 throw new ForbiddenClientException();
             }
-        } else if ((documentDto = documentDao.getDocument(file.getDocumentId(), PermType.WRITE, getTargetIdList(null))) == null) {
+        } else if (!aclDao.checkPermission(file.getDocumentId(), PermType.WRITE, getTargetIdList(null))) {
             throw new NotFoundException();
         }
         
@@ -384,11 +383,11 @@ public class FileResource extends BaseResource {
         fileDeletedAsyncEvent.setFile(file);
         AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
         
-        if (documentDto != null) {
+        if (file.getDocumentId() != null) {
             // Raise a new document updated
             DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
             documentUpdatedAsyncEvent.setUserId(principal.getId());
-            documentUpdatedAsyncEvent.setDocumentId(documentDto.getId());
+            documentUpdatedAsyncEvent.setDocumentId(file.getDocumentId());
             AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
         }
         

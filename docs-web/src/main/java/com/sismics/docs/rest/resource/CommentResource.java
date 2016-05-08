@@ -1,8 +1,8 @@
 package com.sismics.docs.rest.resource;
 
 import com.sismics.docs.core.constant.PermType;
+import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.CommentDao;
-import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.dto.CommentDto;
 import com.sismics.docs.core.model.jpa.Comment;
 import com.sismics.rest.exception.ForbiddenClientException;
@@ -42,8 +42,8 @@ public class CommentResource extends BaseResource {
         content = ValidationUtil.validateLength(content, "content", 1, 4000, false);
         
         // Read access on doc gives access to write comments 
-        DocumentDao documentDao = new DocumentDao();
-        if (documentDao.getDocument(documentId, PermType.READ, getTargetIdList(null)) == null) {
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(null))) {
             throw new NotFoundException();
         }
         
@@ -88,8 +88,8 @@ public class CommentResource extends BaseResource {
         // If the current user owns the comment, skip ACL check
         if (!comment.getUserId().equals(principal.getId())) {
             // Get the associated document
-            DocumentDao documentDao = new DocumentDao();
-            if (documentDao.getDocument(comment.getDocumentId(), PermType.WRITE, getTargetIdList(null)) == null) {
+            AclDao aclDao = new AclDao();
+            if (!aclDao.checkPermission(comment.getDocumentId(), PermType.WRITE, getTargetIdList(null))) {
                 throw new NotFoundException();
             }
         }
@@ -116,8 +116,8 @@ public class CommentResource extends BaseResource {
         authenticate();
         
         // Read access on doc gives access to read comments 
-        DocumentDao documentDao = new DocumentDao();
-        if (documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId)) == null) {
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(shareId))) {
             throw new NotFoundException();
         }
         
