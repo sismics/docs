@@ -1,8 +1,54 @@
-<h1>{{ tag.name }}</h1>
+<h1>{{ tag.name }}&nbsp;</h1>
 
-<p>Permissions on this tag will also be applied to documents tagged <span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span></p>
+<div class="well col-lg-8">
+  <form class="form-horizontal" name="editTagForm" novalidate>
+    <div class="form-group" ng-class="{ 'has-error': !editTagForm.name.$valid, success: editTagForm.name.$valid }">
+      <label class="col-sm-2 control-label" for="inputName">Name</label>
 
-<acl-edit source="tag.id"
-          acls="tag.acls"
-          writable="tag.writable"
-          creator="tag.creator"></acl-edit>
+      <div class="col-sm-6">
+        <input type="text" name="name" class="form-control" id="inputName"
+          ng-maxlength="36" required ng-model="tag.name" ui-validate="{ space: '!$value || $value.indexOf(\' \') == -1' }">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label" for="inputColor">Color</label>
+
+      <div class="col-sm-2">
+        <span colorpicker class="btn" data-color="" id="inputColor"
+          ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-sm-2 control-label" for="inputParent">Parent</label>
+
+      <div class="col-sm-6">
+        <select class="form-control" ng-model="tag.parent" id="inputParent">
+          <option value="" ng-selected="!tag.parent"></option>
+          <option ng-repeat="tag0 in tags"
+                  ng-if="tag0.id != tag.id"
+                  ng-selected="tag.parent == tag0.id"
+                  value="{{ tag0.id }}">Parent: {{ tag0.name }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editTagForm.$valid">
+          <span class="glyphicon glyphicon-pencil"></span> Save
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="well col-lg-8">
+  <p>Permissions on this tag will also be applied to documents tagged <span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span></p>
+
+  <acl-edit source="tag.id"
+            acls="tag.acls"
+            writable="tag.writable"
+            creator="tag.creator"></acl-edit>
+</div>

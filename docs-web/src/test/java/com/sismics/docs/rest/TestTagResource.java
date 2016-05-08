@@ -54,6 +54,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals("Tag4", json.getString("name"));
         Assert.assertEquals("tag1", json.getString("creator"));
         Assert.assertEquals("#00ff00", json.getString("color"));
+        Assert.assertEquals(tag3Id, json.getString("parent"));
         Assert.assertTrue(json.getBoolean("writable"));
         JsonArray acls = json.getJsonArray("acls");
         Assert.assertEquals(2, acls.size());

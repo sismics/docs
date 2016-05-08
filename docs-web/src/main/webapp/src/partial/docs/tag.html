@@ -16,22 +16,24 @@
         <input type="search" class="form-control" placeholder="Search" ng-model="search.name">
       </p>
 
-      <table class="row table table-striped table-hover">
+      <table class="row table table-striped table-hover table-tags">
         <tbody>
-          <tr ng-repeat="tag in tags | filter:search">
-            <td><inline-edit value="tag.name" on-edit="updateTag(tag)" ></inline-edit></td>
-            <td class="col-xs-4">
-              <select class="form-control" ng-model="tag.parent" ng-change="updateTag(tag)">
-                <option value="" ng-selected="!tag.parent"></option>
-                <option ng-repeat="tag0 in tags"
-                        ng-if="tag0.id != tag.id"
-                        ng-selected="tag.parent == tag0.id"
-                        value="{{ tag0.id }}">Parent: {{ tag0.name }}</option>
-              </select>
+          <tr ng-repeat="tag in tags | filter:search" class="pointer"
+              ng-class="{ active: $stateParams.id == tag.id }" ng-click="viewTag(tag.id)">
+            <td>
+              <span class="glyphicon glyphicon-tag"></span>&nbsp;
+              <span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span>
             </td>
-            <td class="col-xs-1"><span colorpicker class="btn" on-hide="updateTag(tag)" data-color="" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span></td>
-            <td class="col-xs-1"><a href="#/tag/{{ tag.id }}" class="btn btn-default pull-right" title="Edit permissions"><span class="glyphicon glyphicon-user"></span></a></td>
-            <td class="col-xs-1"><button class="btn btn-danger pull-right" ng-click="deleteTag(tag)" title="Delete this tag"><span class="glyphicon glyphicon-trash"></span></button></td>
+            <td class="col-xs-1">
+              <a href="#/tag/{{ tag.id }}" class="btn btn-primary pull-right" title="Edit tag">
+                <span class="glyphicon glyphicon-pencil"></span>
+              </a>
+            </td>
+            <td class="col-xs-1">
+              <button class="btn btn-danger pull-right" ng-click="deleteTag(tag)" title="Delete this tag">
+                <span class="glyphicon glyphicon-trash"></span>
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>

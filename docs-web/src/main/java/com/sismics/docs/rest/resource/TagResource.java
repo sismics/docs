@@ -97,6 +97,14 @@ public class TagResource extends BaseResource {
                 .add("name", tagDto.getName())
                 .add("color", tagDto.getColor());
 
+        // Add the parent if its visible
+        if (tagDto.getParentId() != null) {
+            AclDao aclDao = new AclDao();
+            if (aclDao.checkPermission(tagDto.getParentId(), PermType.READ, getTargetIdList(null))) {
+                tag.add("parent", tagDto.getParentId());
+            }
+        }
+
         // Add ACL
         AclUtil.addAcls(tag, id, getTargetIdList(null));
 

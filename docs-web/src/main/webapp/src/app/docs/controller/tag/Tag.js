@@ -3,13 +3,20 @@
 /**
  * Tag controller.
  */
-angular.module('docs').controller('Tag', function($scope, $dialog, Restangular) {
+angular.module('docs').controller('Tag', function($scope, $dialog, Restangular, $state) {
   $scope.tag = { name: '', color: '#3a87ad' };
 
   // Retrieve tags
   Restangular.one('tag/list').get().then(function(data) {
     $scope.tags = data.tags;
   });
+
+  /**
+   * Display a tag.
+   */
+  $scope.viewTag = function(id) {
+    $state.go('tag.edit', { id: id });
+  };
   
   /**
    * Add a tag.
@@ -41,13 +48,5 @@ angular.module('docs').controller('Tag', function($scope, $dialog, Restangular) 
         });
       }
     });
-  };
-  
-  /**
-   * Update a tag.
-   */
-  $scope.updateTag = function(tag) {
-    // Update the server
-    return Restangular.one('tag', tag.id).post('', tag);
   };
 });
