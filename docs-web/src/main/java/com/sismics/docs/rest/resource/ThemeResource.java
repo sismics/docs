@@ -26,6 +26,8 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -176,6 +178,7 @@ public class ThemeResource extends BaseResource {
             }
         })
         .header("Content-Type", "image/*")
+        .header("Expires", new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z").format(new Date().getTime() + 3600000 * 24 * 15))
         .build();
     }
 
