@@ -1,5 +1,14 @@
 <p class="well-sm">Permissions can be applied directly to this document, or can come from <a href="#/tag">tags</a>.</p>
 
+<div class="well">
+  <h3>Permissions on this document</h3>
+
+  <acl-edit source="document.id"
+            acls="document.acls"
+            writable="document.writable"
+            creator="document.creator"></acl-edit>
+</div>
+
 <div class="well" ng-show="document.inherited_acls.length > 0">
   <h3>Permissions inherited by tags</h3>
 
@@ -25,13 +34,4 @@
       </td>
     </tr>
   </table>
-</div>
-
-<div class="well">
-  <h3>Permissions on this document</h3>
-
-  <acl-edit source="document.id"
-            acls="document.acls"
-            writable="document.writable"
-            creator="document.creator"></acl-edit>
 </div>
