@@ -82,14 +82,15 @@ public class DocumentResource extends BaseResource {
                 .add("language", documentDto.getLanguage())
                 .add("shared", documentDto.getShared())
                 .add("file_count", documentDto.getFileCount());
-        
+
+        List<TagDto> tagDtoList = null;
         if (principal.isAnonymous()) {
             // No tags in anonymous mode (sharing)
             document.add("tags", Json.createArrayBuilder());
         } else {
-            // Add tags added by the current user on this document
+            // Add tags visible by the current user on this document
             TagDao tagDao = new TagDao();
-            List<TagDto> tagDtoList = tagDao.findByCriteria(
+            tagDtoList = tagDao.findByCriteria(
                     new TagCriteria()
                             .setTargetIdList(getTargetIdList(shareId))
                             .setDocumentId(documentId),
@@ -117,6 +118,25 @@ public class DocumentResource extends BaseResource {
 
         // Add ACL
         AclUtil.addAcls(document, documentId, getTargetIdList(shareId));
+
+        // Add computed ACL
+        if (tagDtoList != null) {
+            JsonArrayBuilder aclList = Json.createArrayBuilder();
+            for (TagDto tagDto : tagDtoList) {
+                AclDao aclDao = new AclDao();
+                List<AclDto> aclDtoList = aclDao.getBySourceId(tagDto.getId());
+                for (AclDto aclDto : aclDtoList) {
+                    aclList.add(Json.createObjectBuilder()
+                            .add("perm", aclDto.getPerm().name())
+                            .add("source_id", tagDto.getId())
+                            .add("source_name", tagDto.getName())
+                            .add("id", aclDto.getTargetId())
+                            .add("name", JsonUtil.nullable(aclDto.getTargetName()))
+                            .add("type", aclDto.getTargetType()));
+                }
+            }
+            document.add("inherited_acls", aclList);
+        }
         
         // Add contributors
         ContributorDao contributorDao = new ContributorDao();

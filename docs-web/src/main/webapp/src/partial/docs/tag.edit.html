@@ -1,3 +1,7 @@
+<h1>{{ tag.name }}</h1>
+
+<p>Permissions on this tag will also be applied to documents tagged <span class="label label-info">{{ tag.name }}</span></p>
+
 <acl-edit source="tag.id"
           acls="tag.acls"
           writable="tag.writable"

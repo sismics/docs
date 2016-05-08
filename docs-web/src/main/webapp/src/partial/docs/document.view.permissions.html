@@ -1,4 +1,37 @@
-<acl-edit source="document.id"
-          acls="document.acls"
-          writable="document.writable"
-          creator="document.creator"></acl-edit>
+<p class="well-sm">Permissions can be applied directly to this document, or can come from <a href="#/tag">tags</a>.</p>
+
+<div class="well" ng-show="document.inherited_acls.length > 0">
+  <h3>Permissions inherited by tags</h3>
+
+  <table class="table">
+    <tr>
+      <th style="width: 30%">From</th>
+      <th style="width: 30%">For</th>
+      <th style="width: 30%">Permission</th>
+    </tr>
+
+    <tr ng-repeat="(id, acl) in inheritedAcls">
+      <td>
+        <a href="#/tag/{{ acl[0].source_id }}">
+          <span class="glyphicon glyphicon-tags"></span>&nbsp;
+          {{ acl[0].source_name }}
+        </a>
+      </td>
+      <td><acl data="acl[0]"></acl></td>
+      <td>
+        <span class="label label-default" style="margin-right: 6px;" ng-repeat="a in acl | orderBy: 'perm'">
+          {{ a.perm }}
+        </span>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="well">
+  <h3>Permissions on this document</h3>
+
+  <acl-edit source="document.id"
+            acls="document.acls"
+            writable="document.writable"
+            creator="document.creator"></acl-edit>
+</div>

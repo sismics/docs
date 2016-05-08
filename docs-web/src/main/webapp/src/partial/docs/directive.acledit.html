@@ -8,12 +8,12 @@
     <tr ng-repeat="(id, acl) in groupedAcls">
       <td><acl data="acl[0]"></acl></td>
       <td>
-              <span class="label label-default" style="margin-right: 6px;" ng-repeat="a in acl | orderBy: 'perm'">
-                {{ a.perm }}
-                <span ng-show="(creator != a.name && a.type == 'USER' || a.type != 'USER') && writable"
-                      class="glyphicon glyphicon-remove pointer"
-                      ng-click="deleteAcl(a)"></span>
-              </span>
+        <span class="label label-default" style="margin-right: 6px;" ng-repeat="a in acl | orderBy: 'perm'">
+          {{ a.perm }}
+          <span ng-show="(creator != a.name && a.type == 'USER' || a.type != 'USER') && writable"
+                class="glyphicon glyphicon-remove pointer"
+                ng-click="deleteAcl(a)"></span>
+        </span>
       </td>
     </tr>
   </table>

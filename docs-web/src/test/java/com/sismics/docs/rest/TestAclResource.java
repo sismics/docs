@@ -365,6 +365,10 @@ public class TestAclResource extends BaseJerseyTest {
         Assert.assertEquals(1, tags.size());
         Assert.assertFalse(json.getBoolean("writable"));
         Assert.assertEquals(tag1Id, tags.getJsonObject(0).getString("id"));
+        JsonArray inheritedAcls = json.getJsonArray("inherited_acls");
+        Assert.assertEquals(3, inheritedAcls.size());
+        Assert.assertEquals("AclTag1", inheritedAcls.getJsonObject(0).getString("source_name"));
+        Assert.assertEquals(tag1Id, inheritedAcls.getJsonObject(0).getString("source_id"));
 
         // acltag2 can see tag1
         json = target().path("/tag/list").request()
@@ -401,6 +405,10 @@ public class TestAclResource extends BaseJerseyTest {
         Assert.assertEquals(1, tags.size());
         Assert.assertTrue(json.getBoolean("writable"));
         Assert.assertEquals(tag1Id, tags.getJsonObject(0).getString("id"));
+        inheritedAcls = json.getJsonArray("inherited_acls");
+        Assert.assertEquals(4, inheritedAcls.size());
+        Assert.assertEquals("AclTag1", inheritedAcls.getJsonObject(0).getString("source_name"));
+        Assert.assertEquals(tag1Id, inheritedAcls.getJsonObject(0).getString("source_id"));
 
         // acltag2 can see and edit tag1
         json = target().path("/tag/" + tag1Id).request()

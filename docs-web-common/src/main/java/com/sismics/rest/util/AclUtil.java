@@ -3,7 +3,6 @@ package com.sismics.rest.util;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.dto.AclDto;
-import com.sismics.security.IPrincipal;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
