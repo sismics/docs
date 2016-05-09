@@ -9,7 +9,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
-import com.google.common.io.ByteStreams;
 import com.google.common.io.Resources;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.model.jpa.File;

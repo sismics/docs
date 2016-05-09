@@ -1,6 +1,12 @@
 package com.sismics.docs.core.dao.jpa;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -8,11 +14,8 @@ import javax.persistence.Query;
 
 import com.google.common.base.Joiner;
 import com.sismics.docs.core.constant.AuditLogType;
-import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
 import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
-import com.sismics.docs.core.dao.jpa.dto.GroupDto;
 import com.sismics.docs.core.dao.jpa.dto.TagDto;
-import com.sismics.docs.core.dao.jpa.dto.TagStatDto;
 import com.sismics.docs.core.model.jpa.DocumentTag;
 import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.docs.core.util.AuditLogUtil;
