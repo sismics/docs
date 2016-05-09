@@ -69,7 +69,7 @@ public class ClientUtil {
      * Creates a group.
      * 
      * @param name Name
-     * @param parent Parent
+     * @param parentId Parent ID
      */
     public void createGroup(String name, String parentId) {
         // Login admin to create the group

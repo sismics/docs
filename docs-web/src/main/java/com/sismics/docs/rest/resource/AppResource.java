@@ -209,7 +209,8 @@ public class AppResource extends BaseResource {
         sb.append(" left join T_FILE f on f.FIL_ID_C = al.LOG_IDENTITY_C and f.FIL_DELETEDATE_D is null ");
         sb.append(" left join T_TAG t on t.TAG_ID_C = al.LOG_IDENTITY_C and t.TAG_DELETEDATE_D is null ");
         sb.append(" left join T_USER u on u.USE_ID_C = al.LOG_IDENTITY_C and u.USE_DELETEDATE_D is null ");
-        sb.append(" where d.DOC_ID_C is null and a.ACL_ID_C is null and c.COM_ID_C is null and f.FIL_ID_C is null and t.TAG_ID_C is null and u.USE_ID_C is null)");
+        sb.append(" left join T_GROUP g on g.GRP_ID_C = al.LOG_IDENTITY_C and g.GRP_DELETEDATE_D is null ");
+        sb.append(" where d.DOC_ID_C is null and a.ACL_ID_C is null and c.COM_ID_C is null and f.FIL_ID_C is null and t.TAG_ID_C is null and u.USE_ID_C is null and g.GRP_ID_C is null)");
         Query q = em.createNativeQuery(sb.toString());
         log.info("Deleting {} orphan audit logs", q.executeUpdate());
         
@@ -217,8 +218,10 @@ public class AppResource extends BaseResource {
         sb = new StringBuilder("update T_ACL a set ACL_DELETEDATE_D = :dateNow where a.ACL_ID_C in (select a.ACL_ID_C from T_ACL a ");
         sb.append(" left join T_SHARE s on s.SHA_ID_C = a.ACL_TARGETID_C ");
         sb.append(" left join T_USER u on u.USE_ID_C = a.ACL_TARGETID_C ");
+        sb.append(" left join T_GROUP g on g.GRP_ID_C = a.ACL_TARGETID_C ");
         sb.append(" left join T_DOCUMENT d on d.DOC_ID_C = a.ACL_SOURCEID_C ");
-        sb.append(" where s.SHA_ID_C is null and u.USE_ID_C is null or d.DOC_ID_C is null)");
+        sb.append(" left join T_TAG t on t.TAG_ID_C = a.ACL_SOURCEID_C ");
+        sb.append(" where s.SHA_ID_C is null and u.USE_ID_C is null and g.GRP_ID_C is null or d.DOC_ID_C is null and t.TAG_ID_C is null)");
         q = em.createNativeQuery(sb.toString());
         q.setParameter("dateNow", new Date());
         log.info("Deleting {} orphan ACLs", q.executeUpdate());
@@ -262,6 +265,7 @@ public class AppResource extends BaseResource {
         log.info("Deleting {} soft deleted files", em.createQuery("delete File f where f.deleteDate is not null").executeUpdate());
         log.info("Deleting {} soft deleted documents", em.createQuery("delete Document d where d.deleteDate is not null").executeUpdate());
         log.info("Deleting {} soft deleted users", em.createQuery("delete User u where u.deleteDate is not null").executeUpdate());
+        log.info("Deleting {} soft deleted groups", em.createQuery("delete Group g where g.deleteDate is not null").executeUpdate());
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -344,23 +348,22 @@ public class AppResource extends BaseResource {
             AclDao aclDao = new AclDao();
             List<AclDto> aclDtoList = aclDao.getBySourceId(tagDto.getId());
             String userId = userDao.getActiveByUsername(tagDto.getCreator()).getId();
-            for (AclDto aclDto : aclDtoList) {
-                aclDao.delete(aclDto.getSourceId(), aclDto.getPerm(), aclDto.getTargetId(), userId);
+
+            if (aclDtoList.size() == 0) {
+                // Create read ACL
+                Acl acl = new Acl();
+                acl.setPerm(PermType.READ);
+                acl.setSourceId(tagDto.getId());
+                acl.setTargetId(userId);
+                aclDao.create(acl, userId);
+
+                // Create write ACL
+                acl = new Acl();
+                acl.setPerm(PermType.WRITE);
+                acl.setSourceId(tagDto.getId());
+                acl.setTargetId(userId);
+                aclDao.create(acl, userId);
             }
-
-            // Create read ACL
-            Acl acl = new Acl();
-            acl.setPerm(PermType.READ);
-            acl.setSourceId(tagDto.getId());
-            acl.setTargetId(userId);
-            aclDao.create(acl, userId);
-
-            // Create write ACL
-            acl = new Acl();
-            acl.setPerm(PermType.WRITE);
-            acl.setSourceId(tagDto.getId());
-            acl.setTargetId(userId);
-            aclDao.create(acl, userId);
         }
 
         // Always return OK

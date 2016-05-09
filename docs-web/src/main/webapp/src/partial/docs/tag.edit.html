@@ -1,6 +1,12 @@
-<h1>{{ tag.name }}&nbsp;</h1>
+<div class="pull-right" ng-show="tag.writable">
+  <button class="btn btn-danger" ng-click="deleteTag(tag)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+</div>
 
-<div class="well col-lg-8">
+<div class="page-header">
+  <h1>{{ tag.name }}&nbsp;</h1>
+</div>
+
+<div class="well col-lg-8" ng-show="tag.writable">
   <form class="form-horizontal" name="editTagForm" novalidate>
     <div class="form-group" ng-class="{ 'has-error': !editTagForm.name.$valid, success: editTagForm.name.$valid }">
       <label class="col-sm-2 control-label" for="inputName">Name</label>
@@ -29,7 +35,7 @@
           <option ng-repeat="tag0 in tags"
                   ng-if="tag0.id != tag.id"
                   ng-selected="tag.parent == tag0.id"
-                  value="{{ tag0.id }}">Parent: {{ tag0.name }}</option>
+                  value="{{ tag0.id }}">{{ tag0.name }}</option>
         </select>
       </div>
     </div>

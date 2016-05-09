@@ -37,10 +37,6 @@ import java.util.Map;
  */
 @Path("/theme")
 public class ThemeResource extends BaseResource {
-    // Filenames for images in theme directory
-    private static final String LOGO_IMAGE = "logo";
-    private static final String BACKGROUND_IMAGE = "background";
-
 	/**
      * Returns custom CSS stylesheet.
      * 
@@ -162,7 +158,7 @@ public class ThemeResource extends BaseResource {
                     if (Files.exists(filePath)) {
                         inputStream = Files.newInputStream(filePath);
                     } else {
-                        inputStream = getClass().getResource("/image/" + (type.equals(LOGO_IMAGE) ? "logo.png" : "background.jpg")).openStream();
+                        inputStream = getClass().getResource("/image/" + (type.equals("logo") ? "logo.png" : "background.jpg")).openStream();
                     }
                     ByteStreams.copy(inputStream, outputStream);
                 } finally {
