@@ -29,7 +29,7 @@
           <option ng-repeat="tag0 in tags"
                   ng-if="tag0.id != tag.id"
                   ng-selected="tag.parent == tag0.id"
-                  value="{{ tag0.id }}">Parent: {{ tag0.name }}</option>
+                  value="{{ tag0.id }}">{{ tag0.name }}</option>
         </select>
       </div>
     </div>
