@@ -41,9 +41,10 @@
       <label class="col-sm-2 control-label">Groups</label>
 
       <div class="col-sm-7">
-        <a class="btn btn-default"
-           ng-repeat="group in user.groups"
-           href="#/settings/group/edit/{{ group }}">{{ group }}</a>
+        <span ng-repeat="group in user.groups">
+          <a class="btn btn-default"
+            href="#/settings/group/edit/{{ group }}">{{ group }}</a>&nbsp;
+        </span>
       </div>
     </div>
     <div class="form-group" ng-class="{ 'has-error': !editUserForm.storage_quota.$valid, success: editUserForm.storage_quota.$valid }">
