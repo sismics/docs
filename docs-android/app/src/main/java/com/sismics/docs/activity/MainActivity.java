@@ -87,13 +87,13 @@ public class MainActivity extends AppCompatActivity {
         tagListView.setEmptyView(tagProgressView);
         JSONObject cacheTags = PreferenceUtil.getCachedJson(this, PreferenceUtil.PREF_CACHED_TAGS_JSON);
         if (cacheTags != null) {
-            tagListView.setAdapter(new TagListAdapter(cacheTags.optJSONArray("stats")));
+            tagListView.setAdapter(new TagListAdapter(cacheTags.optJSONArray("tags")));
         }
-        TagResource.stats(this, new HttpCallback() {
+        TagResource.list(this, new HttpCallback() {
             @Override
             public void onSuccess(JSONObject response) {
                 PreferenceUtil.setCachedJson(MainActivity.this, PreferenceUtil.PREF_CACHED_TAGS_JSON, response);
-                tagListView.setAdapter(new TagListAdapter(response.optJSONArray("stats")));
+                tagListView.setAdapter(new TagListAdapter(response.optJSONArray("tags")));
                 tagProgressView.setVisibility(View.GONE);
                 tagListView.setEmptyView(tagEmptyView);
             }

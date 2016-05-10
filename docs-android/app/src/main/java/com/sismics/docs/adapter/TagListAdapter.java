@@ -46,7 +46,7 @@ public class TagListAdapter extends BaseAdapter {
 
         // Reorder tags by parent/child relation and compute depth
         int depth = 0;
-        initTags(tags, JSONObject.NULL.toString(), depth);
+        initTags(tags, "", depth);
     }
 
     /**
@@ -60,11 +60,10 @@ public class TagListAdapter extends BaseAdapter {
         // Get all tags with this parent
         for (JSONObject tag : tags) {
             String tagParentId = tag.optString("parent");
-            if (tagParentId.equals(parentId)) {
+            if (parentId.equals(tagParentId)) {
                 TagItem tagItem = new TagItem();
                 tagItem.id = tag.optString("id");
                 tagItem.name = tag.optString("name");
-                tagItem.count = tag.optInt("count");
                 tagItem.color = tag.optString("color");
                 tagItem.depth = depth;
                 tagItemList.add(tagItem);
@@ -99,8 +98,6 @@ public class TagListAdapter extends BaseAdapter {
         TagItem tagItem = getItem(position);
         TextView tagTextView = (TextView) view.findViewById(R.id.tagTextView);
         tagTextView.setText(tagItem.name);
-        TextView tagCountTextView = (TextView) view.findViewById(R.id.tagCountTextView);
-        tagCountTextView.setText(String.format(Locale.ENGLISH, "%d", tagItem.count));
 
         // Label color filtering
         ImageView labelImageView = (ImageView) view.findViewById(R.id.labelImageView);
@@ -125,7 +122,6 @@ public class TagListAdapter extends BaseAdapter {
     public static class TagItem {
         private String id;
         private String name;
-        private int count;
         private String color;
         private int depth;
 
