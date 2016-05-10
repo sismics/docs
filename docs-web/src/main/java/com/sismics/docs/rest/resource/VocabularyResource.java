@@ -20,6 +20,24 @@ import java.util.List;
  */
 @Path("/vocabulary")
 public class VocabularyResource extends BaseResource {
+    /**
+     * Get a vocabulary.
+     *
+     * @api {get} /vocabulary/:name Get a vocabulary
+     * @apiName GetVocabularyName
+     * @apiGroup Vocabulary
+     * @apiParam {String} name Vocabulary name
+     * @apiSuccess {String[]} entries List of vocabulary entries
+     * @apiSuccess {String} entries.id ID
+     * @apiSuccess {String} entries.name Name
+     * @apiSuccess {String} entries.value Value
+     * @apiSuccess {Number} entries.order Order
+     * @apiPermission user
+     * @apiVersion 1.0.0
+     *
+     * @param name Name
+     * @return Response
+     */
     @GET
     @Path("{name: [a-z0-9\\-]+}")
     public Response get(@PathParam("name") String name) {
@@ -46,8 +64,21 @@ public class VocabularyResource extends BaseResource {
     }
     
     /**
-     * Add a vocabulary.
-     * 
+     * Add a vocabulary entry.
+     *
+     * @api {put} /vocabulary Add a vocabulary entry
+     * @apiName PutVocabulary
+     * @apiGroup Vocabulary
+     * @apiParam {String{1..50}} name Vocabulary name
+     * @apiParam {String{1..500}} value Entry value
+     * @apiParam {Number} order Entry order
+     * @apiSuccess {String} id ID
+     * @apiSuccess {String} name Name
+     * @apiSuccess {String} value Value
+     * @apiSuccess {Number} order Order
+     * @apiPermission admin
+     * @apiVersion 1.0.0
+     *
      * @param name Name
      * @param value Value
      * @param orderStr Order
@@ -86,7 +117,21 @@ public class VocabularyResource extends BaseResource {
     }
     
     /**
-     * Update a vocabulary.
+     * Update a vocabulary entry.
+     *
+     * @api {post} /vocabulary/:id Update a vocabulary entry
+     * @apiName PostVocabularyId
+     * @apiGroup Vocabulary
+     * @apiParam {String} id Entry ID
+     * @apiParam {String{1..50}} name Vocabulary name
+     * @apiParam {String{1..500}} value Entry value
+     * @apiParam {Number} order Entry order
+     * @apiSuccess {String} id ID
+     * @apiSuccess {String} name Name
+     * @apiSuccess {String} value Value
+     * @apiSuccess {Number} order Order
+     * @apiPermission admin
+     * @apiVersion 1.0.0
      *
      * @param id ID
      * @param name Name
@@ -145,8 +190,16 @@ public class VocabularyResource extends BaseResource {
     }
     
     /**
-     * Delete a vocabulary.
-     * 
+     * Delete a vocabulary entry.
+     *
+     * @api {delete} /vocabulary/:id Delete vocabulary entry
+     * @apiName DeleteVocabularyId
+     * @apiGroup Vocabulary
+     * @apiParam {String} id Entry ID
+     * @apiSuccess {String} status Status OK
+     * @apiPermission admin
+     * @apiVersion 1.0.0
+     *
      * @param id ID
      * @return Response
      */

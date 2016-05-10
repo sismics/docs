@@ -67,7 +67,21 @@ import com.sismics.util.totp.GoogleAuthenticatorKey;
 public class UserResource extends BaseResource {
     /**
      * Creates a new user.
-     * 
+     *
+     * @api {put} /user Register a new user
+     * @apiName PutUser
+     * @apiGroup User
+     * @apiParam {String{3..50}} username Username
+     * @apiParam {String{8..50}} password Password
+     * @apiParam {String{1..100}} email E-mail
+     * @apiParam {Number} storage_quota Storage quota (in bytes)
+     * @apiSuccess {String} status Status OK
+     * @apiError (server) PrivateKeyError Error while generating a private key
+     * @apiError (client) AlreadyExistingUsername Login already used
+     * @apiError (server) UnknownError Unknown server error
+     * @apiPermission admin
+     * @apiVersion 1.0.0
+     *
      * @param username User's username
      * @param password Password
      * @param email E-Mail
@@ -88,7 +102,7 @@ public class UserResource extends BaseResource {
         username = ValidationUtil.validateLength(username, "username", 3, 50);
         ValidationUtil.validateAlphanumeric(username, "username");
         password = ValidationUtil.validateLength(password, "password", 8, 50);
-        email = ValidationUtil.validateLength(email, "email", 3, 50);
+        email = ValidationUtil.validateLength(email, "email", 1, 100);
         Long storageQuota = ValidationUtil.validateLong(storageQuotaStr, "storage_quota");
         ValidationUtil.validateEmail(email, "email");
         
@@ -115,7 +129,7 @@ public class UserResource extends BaseResource {
             if ("AlreadyExistingUsername".equals(e.getMessage())) {
                 throw new ServerException("AlreadyExistingUsername", "Login already used", e);
             } else {
-                throw new ServerException("UnknownError", "Unknown Server Error", e);
+                throw new ServerException("UnknownError", "Unknown server error", e);
             }
         }
         
@@ -126,8 +140,17 @@ public class UserResource extends BaseResource {
     }
 
     /**
-     * Updates user informations.
-     * 
+     * Updates the current user informations.
+     *
+     * @api {post} /user Update the current user
+     * @apiName PostUser
+     * @apiGroup User
+     * @apiParam {String{8..50}} password Password
+     * @apiParam {String{1..100}} email E-mail
+     * @apiSuccess {String} status Status OK
+     * @apiPermission user
+     * @apiVersion 1.0.0
+     *
      * @param password Password
      * @param email E-Mail
      * @return Response
@@ -142,7 +165,7 @@ public class UserResource extends BaseResource {
         
         // Validate the input data
         password = ValidationUtil.validateLength(password, "password", 8, 50, true);
-        email = ValidationUtil.validateLength(email, "email", null, 100, true);
+        email = ValidationUtil.validateLength(email, "email", 1, 100, true);
         
         // Update the user
         UserDao userDao = new UserDao();
@@ -165,8 +188,20 @@ public class UserResource extends BaseResource {
     }
 
     /**
-     * Updates user informations.
-     * 
+     * Updates a user informations.
+     *
+     * @api {post} /user/:username Update a user
+     * @apiName PostUserUsername
+     * @apiGroup User
+     * @apiParam {String} username Username
+     * @apiParam {String{8..50}} password Password
+     * @apiParam {String{1..100}} email E-mail
+     * @apiParam {Number} storage_quota Storage quota (in bytes)
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) UserNotFound User not found
+     * @apiPermission admin
+     * @apiVersion 1.0.0
+     *
      * @param username Username
      * @param password Password
      * @param email E-Mail
@@ -186,7 +221,7 @@ public class UserResource extends BaseResource {
         
         // Validate the input data
         password = ValidationUtil.validateLength(password, "password", 8, 50, true);
-        email = ValidationUtil.validateLength(email, "email", null, 100, true);
+        email = ValidationUtil.validateLength(email, "email", 1, 100, true);
         
         // Check if the user exists
         UserDao userDao = new UserDao();
@@ -218,8 +253,17 @@ public class UserResource extends BaseResource {
     }
 
     /**
-     * Checks if a username is available. Search only on active accounts.
-     * 
+     * Checks if a username is available.
+     * Search only on active accounts.
+     *
+     * @api {get} /user/check_username Check username availability
+     * @apiName GetUserCheckUsername
+     * @apiGroup User
+     * @apiParam {String} username Username
+     * @apiSuccess {String} status Status OK or KO
+     * @apiPermission none
+     * @apiVersion 1.0.0
+     *
      * @param username Username to check
      * @return Response
      */
@@ -244,7 +288,21 @@ public class UserResource extends BaseResource {
     /**
      * This resource is used to authenticate the user and create a user session.
      * The "session" is only used to identify the user, no other data is stored in the session.
-     * 
+     *
+     * @api {post} /user/login Login a user
+     * @apiDescription This resource creates an authentication token and gives it back in a cookie.
+     * All authenticated resources will check this cookie to find the user currently logged in.
+     * @apiName PostUserLogin
+     * @apiGroup User
+     * @apiParam {String} username Username
+     * @apiParam {String} password Password
+     * @apiParam {String} code TOTP validation code
+     * @apiParam {Boolean} remember If true, create a long lasted token
+     * @apiSuccess {String} auth_token A cookie named auth_token containing the token ID
+     * @apiError (client) ValidationCodeRequired A TOTP validation code is required
+     * @apiPermission none
+     * @apiVersion 1.0.0
+     *
      * @param username Username
      * @param password Password
      * @param longLasted Remember the user next time, create a long lasted session.
@@ -309,7 +367,16 @@ public class UserResource extends BaseResource {
 
     /**
      * Logs out the user and deletes the active session.
-     * 
+     *
+     * @api {post} /user/logout Logout a user
+     * @apiDescription This resource deletes the authentication token created by POST /user/login and removes the cookie.
+     * @apiName PostUserLogout
+     * @apiGroup User
+     * @apiSuccess {String} auth_token An expired cookie named auth_token containing no value
+     * @apiError (server) AuthenticationTokenError Error deleting the authentication token
+     * @apiPermission user
+     * @apiVersion 1.0.0
+     *
      * @return Response
      */
     @POST
@@ -337,7 +404,7 @@ public class UserResource extends BaseResource {
         try {
             authenticationTokenDao.delete(authToken);
         } catch (Exception e) {
-            throw new ServerException("AuthenticationTokenError", "Error deleting authentication token: " + authToken, e);
+            throw new ServerException("AuthenticationTokenError", "Error deleting the authentication token: " + authToken, e);
         }
         
         // Deletes the client token in the HTTP response
@@ -347,8 +414,17 @@ public class UserResource extends BaseResource {
     }
 
     /**
-     * Delete a user.
-     * 
+     * Deletes the current user.
+     *
+     * @api {delete} /user Delete the current user
+     * @apiDescription All associated entities will be deleted as well.
+     * @apiName DeleteUser
+     * @apiGroup User
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError The admin user cannot be deleted
+     * @apiPermission user
+     * @apiVersion 1.0.0
+     *
      * @return Response
      */
     @DELETE
@@ -396,7 +472,17 @@ public class UserResource extends BaseResource {
     
     /**
      * Deletes a user.
-     * 
+     *
+     * @api {delete} /user/:username Delete a user
+     * @apiDescription All associated entities will be deleted as well.
+     * @apiName DeleteUserUsername
+     * @apiGroup User
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) UserNotFound The user does not exist
+     * @apiError (client) ForbiddenError The admin user cannot be deleted
+     * @apiPermission admin
+     * @apiVersion 1.0.0
+     *
      * @param username Username
      * @return Response
      */
@@ -412,7 +498,7 @@ public class UserResource extends BaseResource {
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
         if (user == null) {
-            throw new ClientException("UserNotFound", "The user doesn't exist");
+            throw new ClientException("UserNotFound", "The user does not exist");
         }
         
         // Ensure that the admin user is not deleted
@@ -455,7 +541,22 @@ public class UserResource extends BaseResource {
     
     /**
      * Returns the information about the connected user.
-     * 
+     *
+     * @api {get} /user Get the current user
+     * @apiName GetUser
+     * @apiGroup User
+     * @apiSuccess {Boolean} anonymous True if no user is connected
+     * @apiSuccess {Boolean} is_default_password True if the admin has the default password
+     * @apiSuccess {String} username Username
+     * @apiSuccess {String} email E-mail
+     * @apiSuccess {Number} storage_quota Storage quota (in bytes)
+     * @apiSuccess {Number} storage_current Quota used (in bytes)
+     * @apiSuccess {Boolean} totp_enabled True if TOTP authentication is enabled
+     * @apiSuccess {String[]} base_functions Base functions
+     * @apiSuccess {String[]} groups Groups
+     * @apiPermission none
+     * @apiVersion 1.0.0
+     *
      * @return Response
      */
     @GET
@@ -513,7 +614,20 @@ public class UserResource extends BaseResource {
 
     /**
      * Returns the information about a user.
-     * 
+     *
+     * @api {get} /user/:username Get a user
+     * @apiName GetUserUsername
+     * @apiGroup User
+     * @apiParam {String} username Username
+     * @apiSuccess {String} username Username
+     * @apiSuccess {String} email E-mail
+     * @apiSuccess {Number} storage_quota Storage quota (in bytes)
+     * @apiSuccess {Number} storage_current Quota used (in bytes)
+     * @apiSuccess {String[]} groups Groups
+     * @apiError (client) UserNotFound The user does not exist
+     * @apiPermission user
+     * @apiVersion 1.0.0
+     *
      * @param username Username
      * @return Response
      */
@@ -528,7 +642,7 @@ public class UserResource extends BaseResource {
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
         if (user == null) {
-            throw new ClientException("UserNotFound", "The user doesn't exist");
+            throw new ClientException("UserNotFound", "The user does not exist");
         }
         
         // Groups
@@ -552,7 +666,21 @@ public class UserResource extends BaseResource {
     
     /**
      * Returns all active users.
-     * 
+     *
+     * @api {get} /user/list Get users
+     * @apiName GetUserList
+     * @apiGroup User
+     * @apiParam {Number} sort_column Column index to sort on
+     * @apiSuccess {String[]} users List of users
+     * @apiSuccess {String} users.id ID
+     * @apiSuccess {String} users.username Username
+     * @apiSuccess {String} users.email E-mail
+     * @apiSuccess {Number} users.storage_quota Storage quota (in bytes)
+     * @apiSuccess {Number} users.storage_current Quota used (in bytes)
+     * @apiSuccess {Number} users.create_date Create date (timestamp)
+     * @apiPermission user
+     * @apiVersion 1.0.0
+     *
      * @param sortColumn Sort index
      * @param asc If true, ascending sorting, else descending
      * @param groupName Only return users from this group
@@ -600,7 +728,20 @@ public class UserResource extends BaseResource {
     
     /**
      * Returns all active sessions.
-     * 
+     *
+     * @api {get} /user/session Get active sessions
+     * @apiDescription This resource lists all active token which can be used to log in to the current user account.
+     * @apiName GetUserSession
+     * @apiGroup User
+     * @apiSuccess {String[]} sessions List of sessions
+     * @apiSuccess {Number} create_date Create date of this token
+     * @apiSuccess {String} ip IP used to log in
+     * @apiSuccess {String} user_agent User agent used to log in
+     * @apiSuccess {Number} last_connection_date Last connection date (timestamp)
+     * @apiSuccess {Boolean} current If true, this token is the current one
+     * @apiPermission user
+     * @apiVersion 1.0.0
+     *
      * @return Response
      */
     @GET
@@ -635,7 +776,15 @@ public class UserResource extends BaseResource {
     
     /**
      * Deletes all active sessions except the one used for this request.
-     * 
+     *
+     * @api {delete} /user/session Delete all sessions
+     * @apiDescription This resource deletes all active token linked to this account, except the one used to make this request.
+     * @apiName DeleteUserSession
+     * @apiGroup User
+     * @apiSuccess {String} status Status OK
+     * @apiPermission user
+     * @apiVersion 1.0.0
+     *
      * @return Response
      */
     @DELETE
@@ -660,7 +809,16 @@ public class UserResource extends BaseResource {
     
     /**
      * Enable time-based one-time password.
-     * 
+     *
+     * @api {post} /user/enable_totp Enable TOTP authentication
+     * @apiDescription This resource enables the Time-based One-time Password authentication.
+     * All following login will need a validation code generated from the given secret seed.
+     * @apiName PostUserEnableTotp
+     * @apiGroup User
+     * @apiSuccess {String} secret Secret TOTP seed to initiate the algorithm
+     * @apiPermission user
+     * @apiVersion 1.0.0
+     *
      * @return Response
      */
     @POST
@@ -687,7 +845,15 @@ public class UserResource extends BaseResource {
     
     /**
      * Disable time-based one-time password.
-     * 
+     *
+     * @api {post} /user/disable_totp Disable TOTP authentication
+     * @apiName PostUserDisableTotp
+     * @apiGroup User
+     * @apiParam {String{1..100}} password Password
+     * @apiSuccess {String} status Status OK
+     * @apiPermission user
+     * @apiVersion 1.0.0
+     *
      * @param password Password
      * @return Response
      */
@@ -720,7 +886,7 @@ public class UserResource extends BaseResource {
     
     /**
      * Returns the authentication token value.
-     * 
+     *
      * @return Token value
      */
     private String getAuthToken() {

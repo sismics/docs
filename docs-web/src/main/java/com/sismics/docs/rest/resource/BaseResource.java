@@ -22,6 +22,29 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
  */
 public abstract class BaseResource {
     /**
+     * @apiDefine admin Admin
+     * Only the admin user can access this resource
+     */
+
+    /**
+     * @apiDefine user Authenticated user
+     * All authenticated users can access this resource
+     */
+
+    /**
+     * @apiDefine none Anonymous user
+     * This resource can be accessed anonymously
+     */
+
+    /**
+     * @apiDefine server Server error
+     */
+
+    /**
+     * @apiDefine client Client error
+     */
+
+    /**
      * Injects the HTTP request.
      */
     @Context
