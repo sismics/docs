@@ -158,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onFinish() {
                         // Force logout in all cases, so the user is not stuck in case of network error
+                        PreferenceUtil.clearAuthToken(MainActivity.this);
                         ApplicationContext.getInstance().setUserInfo(getApplicationContext(), null);
                         startActivity(new Intent(MainActivity.this, LoginActivity.class));
                         finish();

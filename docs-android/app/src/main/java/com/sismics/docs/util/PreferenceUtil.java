@@ -126,6 +126,7 @@ public class PreferenceUtil {
     /**
      * Returns auth token cookie from shared preferences.
      *
+     * @param context Context
      * @return Auth token
      */
     public static String getAuthToken(Context context) {
@@ -138,6 +139,16 @@ public class PreferenceUtil {
         }
         
         return null;
+    }
+
+    /**
+     * Clear all auth tokens.
+     *
+     * @param context Context
+     */
+    public static void clearAuthToken(Context context) {
+        PersistentCookieStore cookieStore = new PersistentCookieStore(context);
+        cookieStore.removeAll();
     }
 
     /**
