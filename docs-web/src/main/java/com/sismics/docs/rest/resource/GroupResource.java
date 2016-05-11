@@ -34,7 +34,20 @@ import java.util.List;
 public class GroupResource extends BaseResource {
     /**
      * Add a group.
-     * 
+     *
+     * @api {put} /group Add a group
+     * @apiName PutGroup
+     * @apiGroup Group
+     * @apiParam {String} name Group name
+     * @apiParam {String} [parent] Parent group name
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) GroupAlreadyExists This group already exists
+     * @apiError (client) ParentGroupNotFound Parent group not found
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
      * @return Response
      */
     @PUT
@@ -79,7 +92,21 @@ public class GroupResource extends BaseResource {
     
     /**
      * Update a group.
-     * 
+     *
+     * @api {post} /group/:name Update a group
+     * @apiName PostGroup
+     * @apiGroup Group
+     * @apiParam {String} name Group name
+     * @apiParam {String} [parent] Parent group name
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) GroupAlreadyExists This group already exists
+     * @apiError (client) ParentGroupNotFound Parent group not found
+     * @apiError (client) NotFound Group not found
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
      * @return Response
      */
     @POST
@@ -131,7 +158,17 @@ public class GroupResource extends BaseResource {
     
     /**
      * Delete a group.
-     * 
+     *
+     * @api {delete} /group/:name Delete a group
+     * @apiName DeleteGroup
+     * @apiGroup Group
+     * @apiParam {String} name Group name
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) NotFound Group not found
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
      * @return Response
      */
     @DELETE
@@ -160,7 +197,19 @@ public class GroupResource extends BaseResource {
     
     /**
      * Add a user to a group.
-     * 
+     *
+     * @api {put} /group/:name Add a user to a group
+     * @apiName PutGroupMember
+     * @apiGroup Group
+     * @apiParam {String} name Group name
+     * @apiParam {String} username Username
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) NotFound Group or user not found
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
      * @param groupName Group name
      * @param username Username
      * @return Response
@@ -217,7 +266,19 @@ public class GroupResource extends BaseResource {
     
     /**
      * Remove an user from a group.
-     * 
+     *
+     * @api {delete} /group/:name/:username Remove a user from a group
+     * @apiName DeleteGroupMember
+     * @apiGroup Group
+     * @apiParam {String} name Group name
+     * @apiParam {String} username Username
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) NotFound Group or user not found
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
      * @param groupName Group name
      * @param username Username
      * @return Response
@@ -260,7 +321,19 @@ public class GroupResource extends BaseResource {
     
     /**
      * Returns all active groups.
-     * 
+     *
+     * @api {get} /group Get groups
+     * @apiName GetGroupList
+     * @apiGroup Group
+     * @apiParam {Number} sort_column Column index to sort on
+     * @apiParam {Boolean} asc If true, sort in ascending order
+     * @apiSuccess {Object[]} groups List of groups
+     * @apiSuccess {String} groups.name Name
+     * @apiSuccess {String} groups.parent Parent name
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param sortColumn Sort index
      * @param asc If true, ascending sorting, else descending
      * @return Response
@@ -291,7 +364,19 @@ public class GroupResource extends BaseResource {
     
     /**
      * Get a group.
-     * 
+     *
+     * @api {get} /group/:name Get a group
+     * @apiName GetGroup
+     * @apiGroup Group
+     * @apiParam {String} name Group name
+     * @apiSuccess {String} name Group name
+     * @apiSuccess {String} parent Parent name
+     * @apiSuccess {String[]} members List of members
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) NotFound Group not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param groupName Group name
      * @return Response
      */

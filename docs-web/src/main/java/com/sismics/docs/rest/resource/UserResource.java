@@ -76,11 +76,13 @@ public class UserResource extends BaseResource {
      * @apiParam {String{1..100}} email E-mail
      * @apiParam {Number} storage_quota Storage quota (in bytes)
      * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
      * @apiError (server) PrivateKeyError Error while generating a private key
      * @apiError (client) AlreadyExistingUsername Login already used
      * @apiError (server) UnknownError Unknown server error
      * @apiPermission admin
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @param username User's username
      * @param password Password
@@ -148,8 +150,10 @@ public class UserResource extends BaseResource {
      * @apiParam {String{8..50}} password Password
      * @apiParam {String{1..100}} email E-mail
      * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
      * @apiPermission user
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @param password Password
      * @param email E-Mail
@@ -198,9 +202,11 @@ public class UserResource extends BaseResource {
      * @apiParam {String{1..100}} email E-mail
      * @apiParam {Number} storage_quota Storage quota (in bytes)
      * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
      * @apiError (client) UserNotFound User not found
      * @apiPermission admin
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @param username Username
      * @param password Password
@@ -262,7 +268,7 @@ public class UserResource extends BaseResource {
      * @apiParam {String} username Username
      * @apiSuccess {String} status Status OK or KO
      * @apiPermission none
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @param username Username to check
      * @return Response
@@ -299,9 +305,10 @@ public class UserResource extends BaseResource {
      * @apiParam {String} code TOTP validation code
      * @apiParam {Boolean} remember If true, create a long lasted token
      * @apiSuccess {String} auth_token A cookie named auth_token containing the token ID
+     * @apiError (client) ForbiddenError Access denied
      * @apiError (client) ValidationCodeRequired A TOTP validation code is required
      * @apiPermission none
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @param username Username
      * @param password Password
@@ -373,9 +380,10 @@ public class UserResource extends BaseResource {
      * @apiName PostUserLogout
      * @apiGroup User
      * @apiSuccess {String} auth_token An expired cookie named auth_token containing no value
+     * @apiError (client) ForbiddenError Access denied
      * @apiError (server) AuthenticationTokenError Error deleting the authentication token
      * @apiPermission user
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @return Response
      */
@@ -421,9 +429,9 @@ public class UserResource extends BaseResource {
      * @apiName DeleteUser
      * @apiGroup User
      * @apiSuccess {String} status Status OK
-     * @apiError (client) ForbiddenError The admin user cannot be deleted
+     * @apiError (client) ForbiddenError Access denied or the admin user cannot be deleted
      * @apiPermission user
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @return Response
      */
@@ -478,10 +486,10 @@ public class UserResource extends BaseResource {
      * @apiName DeleteUserUsername
      * @apiGroup User
      * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied or the admin user cannot be deleted
      * @apiError (client) UserNotFound The user does not exist
-     * @apiError (client) ForbiddenError The admin user cannot be deleted
      * @apiPermission admin
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @param username Username
      * @return Response
@@ -555,7 +563,7 @@ public class UserResource extends BaseResource {
      * @apiSuccess {String[]} base_functions Base functions
      * @apiSuccess {String[]} groups Groups
      * @apiPermission none
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @return Response
      */
@@ -624,9 +632,10 @@ public class UserResource extends BaseResource {
      * @apiSuccess {Number} storage_quota Storage quota (in bytes)
      * @apiSuccess {Number} storage_current Quota used (in bytes)
      * @apiSuccess {String[]} groups Groups
+     * @apiError (client) ForbiddenError Access denied
      * @apiError (client) UserNotFound The user does not exist
      * @apiPermission user
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @param username Username
      * @return Response
@@ -671,15 +680,18 @@ public class UserResource extends BaseResource {
      * @apiName GetUserList
      * @apiGroup User
      * @apiParam {Number} sort_column Column index to sort on
-     * @apiSuccess {String[]} users List of users
+     * @apiParam {Boolean} asc If true, sort in ascending order
+     * @apiParam {String} group Filter on this group
+     * @apiSuccess {Object[]} users List of users
      * @apiSuccess {String} users.id ID
      * @apiSuccess {String} users.username Username
      * @apiSuccess {String} users.email E-mail
      * @apiSuccess {Number} users.storage_quota Storage quota (in bytes)
      * @apiSuccess {Number} users.storage_current Quota used (in bytes)
      * @apiSuccess {Number} users.create_date Create date (timestamp)
+     * @apiError (client) ForbiddenError Access denied
      * @apiPermission user
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @param sortColumn Sort index
      * @param asc If true, ascending sorting, else descending
@@ -733,14 +745,15 @@ public class UserResource extends BaseResource {
      * @apiDescription This resource lists all active token which can be used to log in to the current user account.
      * @apiName GetUserSession
      * @apiGroup User
-     * @apiSuccess {String[]} sessions List of sessions
+     * @apiSuccess {Object[]} sessions List of sessions
      * @apiSuccess {Number} create_date Create date of this token
      * @apiSuccess {String} ip IP used to log in
      * @apiSuccess {String} user_agent User agent used to log in
      * @apiSuccess {Number} last_connection_date Last connection date (timestamp)
      * @apiSuccess {Boolean} current If true, this token is the current one
+     * @apiError (client) ForbiddenError Access denied
      * @apiPermission user
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @return Response
      */
@@ -782,8 +795,9 @@ public class UserResource extends BaseResource {
      * @apiName DeleteUserSession
      * @apiGroup User
      * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
      * @apiPermission user
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @return Response
      */
@@ -816,8 +830,9 @@ public class UserResource extends BaseResource {
      * @apiName PostUserEnableTotp
      * @apiGroup User
      * @apiSuccess {String} secret Secret TOTP seed to initiate the algorithm
+     * @apiError (client) ForbiddenError Access denied
      * @apiPermission user
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @return Response
      */
@@ -851,8 +866,10 @@ public class UserResource extends BaseResource {
      * @apiGroup User
      * @apiParam {String{1..100}} password Password
      * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
      * @apiPermission user
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @param password Password
      * @return Response

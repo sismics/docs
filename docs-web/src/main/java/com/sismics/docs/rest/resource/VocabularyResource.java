@@ -27,13 +27,14 @@ public class VocabularyResource extends BaseResource {
      * @apiName GetVocabularyName
      * @apiGroup Vocabulary
      * @apiParam {String} name Vocabulary name
-     * @apiSuccess {String[]} entries List of vocabulary entries
+     * @apiSuccess {Object[]} entries List of vocabulary entries
      * @apiSuccess {String} entries.id ID
      * @apiSuccess {String} entries.name Name
      * @apiSuccess {String} entries.value Value
      * @apiSuccess {Number} entries.order Order
+     * @apiError (client) ForbiddenError Access denied
      * @apiPermission user
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @param name Name
      * @return Response
@@ -76,8 +77,10 @@ public class VocabularyResource extends BaseResource {
      * @apiSuccess {String} name Name
      * @apiSuccess {String} value Value
      * @apiSuccess {Number} order Order
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
      * @apiPermission admin
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @param name Name
      * @param value Value
@@ -130,8 +133,11 @@ public class VocabularyResource extends BaseResource {
      * @apiSuccess {String} name Name
      * @apiSuccess {String} value Value
      * @apiSuccess {Number} order Order
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) NotFound Vocabulary not found
      * @apiPermission admin
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @param id ID
      * @param name Name
@@ -197,8 +203,10 @@ public class VocabularyResource extends BaseResource {
      * @apiGroup Vocabulary
      * @apiParam {String} id Entry ID
      * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) NotFound Vocabulary not found
      * @apiPermission admin
-     * @apiVersion 1.0.0
+     * @apiVersion 1.5.0
      *
      * @param id ID
      * @return Response

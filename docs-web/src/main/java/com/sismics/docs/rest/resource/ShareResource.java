@@ -29,6 +29,21 @@ public class ShareResource extends BaseResource {
     /**
      * Add a share to a document.
      *
+     * @api {put} /share Share a document
+     * @apiName PutShare
+     * @apiGroup Share
+     * @apiParam {String} id Document ID
+     * @apiParam {String} name Share name
+     * @apiSuccess {String} id Acl ID
+     * @apiSuccess {String="READ","WRITE"} perm Permission
+     * @apiSuccess {String} name Share name
+     * @apiSuccess {String="SHARE"} type ACL type (always SHARE)
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) NotFound Share not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param documentId Document ID
      * @param name Share name
      * @return Response
@@ -75,6 +90,17 @@ public class ShareResource extends BaseResource {
 
     /**
      * Deletes a share.
+     *
+     * @api {delete} /share/:id Unshare a document
+     * @apiName DeleteShare
+     * @apiGroup Share
+     * @apiParam {String} id Acl ID
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ShareNotFound Share not found
+     * @apiError (client) DocumentNotFound Document not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
      *
      * @param id Share ID
      * @return Response

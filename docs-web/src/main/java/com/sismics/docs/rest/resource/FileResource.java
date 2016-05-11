@@ -61,7 +61,28 @@ import com.sismics.util.mime.MimeTypeUtil;
 public class FileResource extends BaseResource {
     /**
      * Add a file (with or without a document).
-     * 
+     *
+     * @api {put} /file Add a file
+     * @apiDescription A file can be added without associated document, and will go in a temporary storage waiting for one.
+     * This resource accepts only multipart/form-data.
+     * @apiName PutFile
+     * @apiGroup File
+     * @apiParam {String} id Document ID
+     * @apiParam {String} file File data
+     * @apiSuccess {String} status Status OK
+     * @apiSuccess {String} id File ID
+     * @apiSuccess {Number} size File size (in bytes)
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) NotFound Document not found
+     * @apiError (server) StreamError Error reading the input file
+     * @apiError (server) ErrorGuessMime Error guessing mime type
+     * @apiError (client) InvalidFileType File type not recognized
+     * @apiError (client) QuotaReached Quota limit reached
+     * @apiError (server) FileError Error adding a file
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param documentId Document ID
      * @param fileBodyPart File to add
      * @return Response
@@ -179,7 +200,20 @@ public class FileResource extends BaseResource {
     
     /**
      * Attach a file to a document.
-     * 
+     *
+     * @api {post} /file/:fileId Attach a file to a document
+     * @apiName PostFile
+     * @apiGroup File
+     * @apiParam {String} fileId File ID
+     * @apiParam {String} id Document ID
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) IllegalFile File not orphan
+     * @apiError (server) AttachError Error attaching file to document
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param id File ID
      * @return Response
      */
@@ -235,7 +269,7 @@ public class FileResource extends BaseResource {
             documentUpdatedAsyncEvent.setDocumentId(documentId);
             AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
         } catch (Exception e) {
-            throw new ClientException("AttachError", "Error attaching file to document", e);
+            throw new ServerException("AttachError", "Error attaching file to document", e);
         }
         
         // Always return OK
@@ -246,7 +280,19 @@ public class FileResource extends BaseResource {
     
     /**
      * Reorder files.
-     * 
+     *
+     * @api {post} /file/:reorder Reorder files
+     * @apiName PostFileReorder
+     * @apiGroup File
+     * @apiParam {String} id Document ID
+     * @apiParam {String[]} order List of files ID
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) NotFound Document not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param documentId Document ID
      * @param idList List of files ID in the new order
      * @return Response
@@ -287,7 +333,24 @@ public class FileResource extends BaseResource {
     
     /**
      * Returns files linked to a document or not linked to any document.
-     * 
+     *
+     * @api {post} /file/list Get files
+     * @apiName GetFileList
+     * @apiGroup File
+     * @apiParam {String} id Document ID
+     * @apiParam {String} share Share ID
+     * @apiSuccess {Object[]} files List of files
+     * @apiSuccess {String} files.id ID
+     * @apiSuccess {String} files.mimetype MIME type
+     * @apiSuccess {String} files.document_id Document ID
+     * @apiSuccess {String} files.create_date Create date (timestamp)
+     * @apiSuccess {String} files.size File size (in bytes)
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) NotFound Document not found
+     * @apiError (server) FileError Unable to get the size of a file
+     * @apiPermission none
+     * @apiVersion 1.5.0
+     *
      * @param documentId Document ID
      * @param shareId Sharing ID
      * @return Response
@@ -333,7 +396,18 @@ public class FileResource extends BaseResource {
     
     /**
      * Deletes a file.
-     * 
+     *
+     * @api {delete} /file/:id Delete a file
+     * @apiName DeleteFile
+     * @apiGroup File
+     * @apiParam {String} id File ID
+     * @apiParam {String} share Share ID
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) NotFound File or document not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param id File ID
      * @return Response
      */
@@ -399,7 +473,21 @@ public class FileResource extends BaseResource {
     
     /**
      * Returns a file.
-     * 
+     *
+     * @api {delete} /file/:id/data Get a file data
+     * @apiName GetFile
+     * @apiGroup File
+     * @apiParam {String} id File ID
+     * @apiParam {String} share Share ID
+     * @apiParam {String="web","thumb"} [size] Size variation
+     * @apiSuccess {Object} file The file data is the whole response
+     * @apiError (client) SizeError Size must be web or thumb
+     * @apiError (client) ForbiddenError Access denied or document not visible
+     * @apiError (client) NotFound File not found
+     * @apiError (server) ServiceUnavailable Error reading the file
+     * @apiPermission none
+     * @apiVersion 1.5.0
+     *
      * @param fileId File ID
      * @return Response
      */
@@ -498,7 +586,18 @@ public class FileResource extends BaseResource {
     
     /**
      * Returns all files from a document, zipped.
-     * 
+     *
+     * @api {get} /file/zip Get zipped files
+     * @apiName GetFileZip
+     * @apiGroup File
+     * @apiParam {String} id Document ID
+     * @apiParam {String} share Share ID
+     * @apiSuccess {Object} file The ZIP file is the whole response
+     * @apiError (client) NotFound Document not found
+     * @apiError (server) InternalServerError Error creating the ZIP file
+     * @apiPermission none
+     * @apiVersion 1.5.0
+     *
      * @param documentId Document ID
      * @return Response
      */
@@ -542,7 +641,6 @@ public class FileResource extends BaseResource {
                             ByteStreams.copy(decryptedStream, zipOutputStream);
                             zipOutputStream.closeEntry();
                         } catch (Exception e) {
-                            e.printStackTrace();
                             throw new WebApplicationException(e);
                         }
                         index++;

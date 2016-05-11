@@ -31,7 +31,24 @@ import java.util.List;
 public class AclResource extends BaseResource {
     /**
      * Add an ACL.
-     * 
+     *
+     * @api {put} /acl Add an ACL
+     * @apiName PutAcl
+     * @apiGroup Acl
+     * @apiParam {String} source Source ID
+     * @apiParam {String="READ","WRITE"} perm Permission
+     * @apiParam {String} target Target ID
+     * @apiParam {String="USER","GROUP","SHARE"} type Target type
+     * @apiSuccess {String} id Acl ID
+     * @apiSuccess {String} perm Permission
+     * @apiSuccess {String} name Target name
+     * @apiSuccess {String="USER","GROUP","SHARE"} type Target type
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) InvalidTarget This target does not exist
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param sourceId Source ID
      * @param permStr Permission
      * @param targetName Target name
@@ -110,6 +127,19 @@ public class AclResource extends BaseResource {
     
     /**
      * Deletes an ACL.
+     *
+     * @api {delete} /acl/:source/:perm/:target Delete an ACL
+     * @apiName DeleteAcl
+     * @apiGroup Acl
+     * @apiParam {String} source Source ID
+     * @apiParam {String="READ","WRITE"} perm Permission
+     * @apiParam {String} target Target ID
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) AclError Cannot delete base ACL on a document or a tag
+     * @apiPermission user
+     * @apiVersion 1.5.0
      * 
      * @param sourceId Source ID
      * @param permStr Permission
@@ -162,6 +192,19 @@ public class AclResource extends BaseResource {
     
     /**
      * Search possible ACL target.
+     *
+     * @api {get} /acl/target/search Search in ACL targets
+     * @apiName GetAclTargetSearch
+     * @apiGroup Acl
+     * @apiParam {String} search Search query
+     * @apiSuccess {Object[]} users List of users
+     * @apiSuccess {String} users.name Username
+     * @apiSuccess {Object[]} groups List of groups
+     * @apiSuccess {String} groups.name Group name
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission user
+     * @apiVersion 1.5.0
      * 
      * @param search Search query
      * @return Response

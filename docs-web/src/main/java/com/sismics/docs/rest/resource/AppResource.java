@@ -63,8 +63,19 @@ public class AppResource extends BaseResource {
     private static final Logger log = LoggerFactory.getLogger(AppResource.class);
     
     /**
-     * Return the information about the application.
-     * 
+     * Returns informations about the application.
+     *
+     * @api {get} /app Get application informations
+     * @apiName GetApp
+     * @apiGroup App
+     * @apiSuccess {String} current_version API current version
+     * @apiSuccess {String} min_version API minimum version
+     * @apiSuccess {String} total_memory Allocated JVM memory (in bytes)
+     * @apiSuccess {String} free_memory Free JVM memory (in bytes)
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @return Response
      */
     @GET
@@ -88,7 +99,26 @@ public class AppResource extends BaseResource {
     
     /**
      * Retrieve the application logs.
-     * 
+     *
+     * @api {get} /app/log Get application logs
+     * @apiName GetAppLog
+     * @apiGroup App
+     * @apiParam {String="FATAL","ERROR","WARN","INFO","DEBUG"} level Minimum log level
+     * @apiParam {String} tag Filter on this logger tag
+     * @apiParam {String} message Filter on this message
+     * @apiParam {Number} limit Total number of logs to return
+     * @apiParam {Number} offset Start at this index
+     * @apiSuccess {String} total Total number of logs
+     * @apiSuccess {Object[]} logs List of logs
+     * @apiSuccess {String} logs.date Date
+     * @apiSuccess {String} logs.level Level
+     * @apiSuccess {String} logs.tag Tag
+     * @apiSuccess {String} logs.message Message
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (server) ServerError MEMORY appender not configured
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param minLevel Filter on logging level
      * @param tag Filter on logger name / tag
      * @param message Filter on message
@@ -107,6 +137,7 @@ public class AppResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
+
         // Get the memory appender
         org.apache.log4j.Logger logger = org.apache.log4j.Logger.getRootLogger();
         Appender appender = logger.getAppender("MEMORY");
@@ -141,7 +172,16 @@ public class AppResource extends BaseResource {
     
     /**
      * Destroy and rebuild Lucene index.
-     * 
+     *
+     * @api {post} /app/batch/reindex Rebuild the search index
+     * @apiName PostAppBatchReindex
+     * @apiGroup App
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (server) IndexingError Error rebuilding the index
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
      * @return Response
      */
     @POST
@@ -155,7 +195,7 @@ public class AppResource extends BaseResource {
         try {
             AppContext.getInstance().getIndexingService().rebuildIndex();
         } catch (Exception e) {
-            throw new ServerException("IndexingError", "Error rebuilding index", e);
+            throw new ServerException("IndexingError", "Error rebuilding the index", e);
         }
         
         // Always return OK
@@ -166,7 +206,16 @@ public class AppResource extends BaseResource {
     
     /**
      * Clean storage.
-     * 
+     *
+     * @api {post} /app/batch/clean_storage Clean the file and DB storage
+     * @apiName PostAppBatchCleanStorage
+     * @apiGroup App
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (server) FileError Error deleting orphan files
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
      * @return Response
      */
     @POST
@@ -275,7 +324,16 @@ public class AppResource extends BaseResource {
     
     /**
      * Recompute the quota for each user.
-     * 
+     *
+     * @api {post} /app/batch/recompute_quote Recompute user quotas
+     * @apiName PostAppBatchRecomputeQuota
+     * @apiGroup App
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (server) MissingFile File does not exist
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
      * @return Response
      */
     @POST
@@ -326,6 +384,16 @@ public class AppResource extends BaseResource {
 
     /**
      * Add base ACLs to tags.
+     *
+     * @api {post} /app/batch/recompute_quote Add base ACL to tags
+     * @apiDescription This resource must be used after migrating to 1.5.
+     * It will not do anything if base ACL are already present on tags.
+     * @apiName PostAppBatchTagAcls
+     * @apiGroup App
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.5.0
      *
      * @return Response
      */
