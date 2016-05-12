@@ -56,7 +56,56 @@ import java.util.*;
 public class DocumentResource extends BaseResource {
     /**
      * Returns a document.
-     * 
+     *
+     * @api {get} /document/:id Get a document
+     * @apiName GetDocument
+     * @apiGroup Document
+     * @apiParam {String} id Document ID
+     * @apiParam {String} share Share ID
+     * @apiSuccess {String} id ID
+     * @apiSuccess {String} title Title
+     * @apiSuccess {String} description Description
+     * @apiSuccess {Number} create_date Create date (timestamp)
+     * @apiSuccess {String="eng","fra","jpn"} language Language
+     * @apiSuccess {Boolean} shared True if the document is shared
+     * @apiSuccess {Number} file_count Number of files in this document
+     * @apiSuccess {Object[]} tags List of tags
+     * @apiSuccess {String} tags.id ID
+     * @apiSuccess {String} tags.name Name
+     * @apiSuccess {String} tags.color Color
+     * @apiSuccess {String} subject Subject
+     * @apiSuccess {String} identifier Identifier
+     * @apiSuccess {String} publisher Publisher
+     * @apiSuccess {String} format Format
+     * @apiSuccess {String} source Source
+     * @apiSuccess {String} type Type
+     * @apiSuccess {String} coverage Coverage
+     * @apiSuccess {String} rights Rights
+     * @apiSuccess {String} creator Username of the creator
+     * @apiSuccess {Boolean} writable True if the document is writable by the current user
+     * @apiSuccess {Object[]} acls List of ACL
+     * @apiSuccess {String} acls.id ID
+     * @apiSuccess {String="READ","WRITE"} acls.perm Permission
+     * @apiSuccess {String} acls.name Target name
+     * @apiSuccess {String="USER","GROUP","SHARE"} acls.type Target type
+     * @apiSuccess {Object[]} inherited_acls List of ACL not directly applied to this document
+     * @apiSuccess {String="READ","WRITE"} inherited_acls.perm Permission
+     * @apiSuccess {String} inherited_acls.source_id Source ID
+     * @apiSuccess {String} inherited_acls.source_name Source name
+     * @apiSuccess {String} inherited_acls.id ID
+     * @apiSuccess {String} inherited_acls.name Target name
+     * @apiSuccess {String="USER","GROUP","SHARE"} inherited_acls.type Target type
+     * @apiSuccess {Object[]} contributors List of users having contributed to this document
+     * @apiSuccess {String} contributors.username Username
+     * @apiSuccess {String} contributors.email E-mail
+     * @apiSuccess {Object[]} relations List of document related to this one
+     * @apiSuccess {String} relations.id ID
+     * @apiSuccess {String} relations.title Title
+     * @apiSuccess {String} relations.source True if this document is the source of the relation
+     * @apiError (client) NotFound Document not found
+     * @apiPermission none
+     * @apiVersion 1.5.0
+     *
      * @param documentId Document ID
      * @param shareId Share ID
      * @return Response
@@ -166,7 +215,22 @@ public class DocumentResource extends BaseResource {
     
     /**
      * Export a document to PDF.
-     * 
+     *
+     * @api {get} /document/:id/pdf Export a document to PDF
+     * @apiName GetDocumentPdf
+     * @apiGroup Document
+     * @apiParam {String} id Document ID
+     * @apiParam {String} share Share ID
+     * @apiParam {Boolean} metadata If true, export metadata
+     * @apiParam {Boolean} comments If true, export comments
+     * @apiParam {Boolean} fitimagetopage If true, fit the images to pages
+     * @apiParam {Number} margin Margin around the pages, in millimeter
+     * @apiSuccess {String} pdf The whole response is the PDF file
+     * @apiError (client) NotFound Document not found
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission none
+     * @apiVersion 1.5.0
+     *
      * @param documentId Document ID
      * @param shareId Share ID
      * @param metadata Export metadata
@@ -233,7 +297,33 @@ public class DocumentResource extends BaseResource {
     
     /**
      * Returns all documents.
-     * 
+     *
+     * @api {get} /document/list Get documents
+     * @apiName GetDocumentList
+     * @apiGroup Document
+     * @apiParam {String} limit Total number of documents to return
+     * @apiParam {String} offset Start at this index
+     * @apiParam {Number} sort_column Column index to sort on
+     * @apiParam {Boolean} asc If true, sort in ascending order
+     * @apiParam {String} search Search query
+     * @apiSuccess {Number} total Total number of documents
+     * @apiSuccess {Object[]} documents List of documents
+     * @apiSuccess {String} documents.id ID
+     * @apiSuccess {String} documents.title Title
+     * @apiSuccess {String} documents.description Description
+     * @apiSuccess {Number} documents.create_date Create date (timestamp)
+     * @apiSuccess {String="eng","fra","jpn"} documents.language Language
+     * @apiSuccess {Boolean} documents.shared True if the document is shared
+     * @apiSuccess {Number} documents.file_count Number of files in this document
+     * @apiSuccess {Object[]} documents.tags List of tags
+     * @apiSuccess {String} documents.tags.id ID
+     * @apiSuccess {String} documents.tags.name Name
+     * @apiSuccess {String} documents.tags.color Color
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (server) SearchError Error searching in documents
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param limit Page limit
      * @param offset Page offset
      * @param sortColumn Sort column
@@ -422,7 +512,30 @@ public class DocumentResource extends BaseResource {
 
     /**
      * Creates a new document.
-     * 
+     *
+     * @api {put} /document Add a document
+     * @apiName PutDocument
+     * @apiGroup Document
+     * @apiParam {String} title Title
+     * @apiParam {String} [description] Description
+     * @apiParam {String} [subject] Subject
+     * @apiParam {String} [identifier] Identifier
+     * @apiParam {String} [publisher] Publisher
+     * @apiParam {String} [format] Format
+     * @apiParam {String} [source] Source
+     * @apiParam {String} [type] Type
+     * @apiParam {String} [coverage] Coverage
+     * @apiParam {String} [rights] Rights
+     * @apiParam {String[]} [tags] List of tags ID
+     * @apiParam {String[]} [relations] List of related documents ID
+     * @apiParam {String="eng","fra","jpn"} language Language
+     * @apiParam {Number} [create_date] Create date (timestamp)
+     * @apiSuccess {String} id Document ID
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param title Title
      * @param description Description
      * @param subject Subject
@@ -532,7 +645,32 @@ public class DocumentResource extends BaseResource {
     
     /**
      * Updates the document.
-     * 
+     *
+     * @api {post} /document/:id Update a document
+     * @apiName PostDocument
+     * @apiGroup Document
+     * @apiParam {String} id ID
+     * @apiParam {String} title Title
+     * @apiParam {String} [description] Description
+     * @apiParam {String} [subject] Subject
+     * @apiParam {String} [identifier] Identifier
+     * @apiParam {String} [publisher] Publisher
+     * @apiParam {String} [format] Format
+     * @apiParam {String} [source] Source
+     * @apiParam {String} [type] Type
+     * @apiParam {String} [coverage] Coverage
+     * @apiParam {String} [rights] Rights
+     * @apiParam {String[]} [tags] List of tags ID
+     * @apiParam {String[]} [relations] List of related documents ID
+     * @apiParam {String="eng","fra","jpn"} language Language
+     * @apiParam {Number} [create_date] Create date (timestamp)
+     * @apiSuccess {String} id Document ID
+     * @apiError (client) ForbiddenError Access denied or document not writable
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) NotFound Document not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param title Title
      * @param description Description
      * @return Response
@@ -675,7 +813,17 @@ public class DocumentResource extends BaseResource {
     
     /**
      * Deletes a document.
-     * 
+     *
+     * @api {delete} /document/:id Delete a document
+     * @apiName DeleteDocument
+     * @apiGroup Document
+     * @apiParam {String} id ID
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) NotFound Document not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param id Document ID
      * @return Response
      */

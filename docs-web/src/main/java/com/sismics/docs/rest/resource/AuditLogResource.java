@@ -30,7 +30,26 @@ import javax.ws.rs.core.Response;
 public class AuditLogResource extends BaseResource {
     /**
      * Returns the list of all logs for a document or user.
-     * 
+     *
+     * @api {get} /auditlog Get audit logs
+     * @apiDescription If no document ID is provided, logs for the current user will be returned.
+     * @apiName GetAuditlog
+     * @apiGroup Auditlog
+     * @apiParam {String} [document] Document ID
+     * @apiSuccess {String} total Total number of logs
+     * @apiSuccess {Object[]} logs List of logs
+     * @apiSuccess {String} logs.id ID
+     * @apiSuccess {String} logs.username Username
+     * @apiSuccess {String} logs.target Entity ID
+     * @apiSuccess {String="Acl","Comment","Document","File","Group","Tag","User"} logs.class Entity type
+     * @apiSuccess {String="CREATE","UPDATE","DELETE"} logs.type Type
+     * @apiSuccess {String} logs.message Message
+     * @apiSuccess {Number} logs.create_date Create date (timestamp)
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) NotFound Document not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @return Response
      */
     @GET

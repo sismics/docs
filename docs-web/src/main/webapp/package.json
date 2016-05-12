@@ -2,25 +2,48 @@
   "name": "sismics-docs",
   "description": "Lightweight document management system",
   "readme": "See http://github.com/simics/docs for more informations.",
-  "version": "0.0.1",
+  "version": "1.5.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/sismics/docs.git"
   },
+  "apidoc": {
+    "name": "Sismics Docs API",
+    "title": "Sismics Docs API",
+    "url": "/api",
+    "template": {
+      "withCompare": false,
+      "withGenerator": false
+    },
+    "order": [
+      "User",
+      "Group",
+      "Document",
+      "File",
+      "Tag",
+      "Comment",
+      "Share",
+      "Acl",
+      "Auditlog",
+      "App",
+      "Theme",
+      "Vocabulary"
+    ]
+  },
   "devDependencies": {
-    "grunt": "~0.4.2",
-    "grunt-contrib-uglify": "~0.3.2",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-copy": "~0.5.0",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-cleanempty": "~0.2.0",
-    "grunt-htmlrefs": "~0.5.0",
-    "grunt-css": "~0.5.4",
-    "grunt-contrib-less": "~0.9.0",
-    "grunt-remove": "~0.1.0",
+    "grunt": "^1.0.1",
+    "grunt-apidoc": "^0.11.0",
+    "grunt-cleanempty": "^1.0.4",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-less": "^1.3.0",
+    "grunt-contrib-uglify": "^1.0.1",
+    "grunt-css": "^0.5.4",
+    "grunt-htmlrefs": "^0.5.0",
     "grunt-ngmin": "0.0.3",
-    "grunt-text-replace": "~0.3.11",
-    "protractor": "~3.2.2",
-    "selenium": "~2.20.0"
+    "grunt-text-replace": "^0.4.0",
+    "protractor": "^3.3.0",
+    "selenium": "^2.20.0"
   }
 }

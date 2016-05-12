@@ -16,14 +16,14 @@ import okhttp3.Request;
  */
 public class TagResource extends BaseResource {
     /**
-     * GET /tag/stats.
+     * GET /tag/list.
      *
      * @param context Context
      * @param callback Callback
      */
-    public static void stats(Context context, HttpCallback callback) {
+    public static void list(Context context, HttpCallback callback) {
         Request request = new Request.Builder()
-                .url(HttpUrl.parse(getApiUrl(context) + "/tag/stats"))
+                .url(HttpUrl.parse(getApiUrl(context) + "/tag/list"))
                 .get()
                 .build();
         OkHttpUtil.buildClient(context)

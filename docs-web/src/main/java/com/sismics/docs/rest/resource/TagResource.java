@@ -33,7 +33,19 @@ import java.util.Set;
 public class TagResource extends BaseResource {
     /**
      * Returns the list of all visible tags.
-     * 
+     *
+     * @api {get} /tag/list Get tags
+     * @apiName GetTagList
+     * @apiGroup Tag
+     * @apiSuccess {Object[]} tags List of tags
+     * @apiSuccess {String} tags.id ID
+     * @apiSuccess {String} tags.name Name
+     * @apiSuccess {String} tags.color Color
+     * @apiSuccess {String} tags.parent Parent
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @return Response
      */
     @GET
@@ -72,6 +84,25 @@ public class TagResource extends BaseResource {
 
     /**
      * Returns a tag.
+     *
+     * @api {get} /tag/:id Get a tag
+     * @apiName GetTag
+     * @apiGroup Tag
+     * @apiSuccess {String} id ID
+     * @apiSuccess {String} name Name
+     * @apiSuccess {String} creator Username of the creator
+     * @apiSuccess {String} color Color
+     * @apiSuccess {String} parent Parent
+     * @apiSuccess {Boolean} writable True if the tag is writable by the current user
+     * @apiSuccess {Object[]} acls List of ACL
+     * @apiSuccess {String} acls.id ID
+     * @apiSuccess {String="READ","WRITE"} acls.perm Permission
+     * @apiSuccess {String} acls.name Target name
+     * @apiSuccess {String="USER","GROUP","SHARE"} acls.type Target type
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) NotFound Tag not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
      *
      * @param id Tag ID
      * @return Response
@@ -113,7 +144,21 @@ public class TagResource extends BaseResource {
 
     /**
      * Creates a new tag.
-     * 
+     *
+     * @api {put} /tag Create a tag
+     * @apiName PutTag
+     * @apiGroup Tag
+     * @apiParam {String} name Name
+     * @apiParam {String} color Color
+     * @apiParam {String} parent Parent ID
+     * @apiSuccess {String} id Tag ID
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) SpacesNotAllowed Spaces are not allowed in tag name
+     * @apiError (client) ParentNotFound Parent not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param name Name
      * @param color Color
      * @param parentId Parent ID
@@ -178,7 +223,23 @@ public class TagResource extends BaseResource {
     
     /**
      * Update a tag.
-     * 
+     *
+     * @api {post} /tag/:id Update a tag
+     * @apiName PostTag
+     * @apiGroup Tag
+     * @apiParam {String} id Tag ID
+     * @apiParam {String} name Name
+     * @apiParam {String} color Color
+     * @apiParam {String} parent Parent ID
+     * @apiSuccess {String} id Tag ID
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) SpacesNotAllowed Spaces are not allowed in tag name
+     * @apiError (client) ParentNotFound Parent not found
+     * @apiError (client) NotFound Tag not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param name Name
      * @param color Color
      * @param parentId Parent ID
@@ -240,6 +301,16 @@ public class TagResource extends BaseResource {
     
     /**
      * Delete a tag.
+     *
+     * @api {delete} /tag/:id Delete a tag
+     * @apiName DeleteTag
+     * @apiGroup Tag
+     * @apiParam {String} id Tag ID
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) NotFound Tag not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
      * 
      * @param id Tag ID
      * @return Response

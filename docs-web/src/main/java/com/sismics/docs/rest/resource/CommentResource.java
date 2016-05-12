@@ -25,6 +25,22 @@ import java.util.List;
 public class CommentResource extends BaseResource {
     /**
      * Add a comment.
+     *
+     * @api {put} /comment Add a comment
+     * @apiName PutComment
+     * @apiGroup Comment
+     * @apiParam {String} id Document ID
+     * @apiParam {String} content Comment content
+     * @apiSuccess {String} id Comment ID
+     * @apiSuccess {String} content Content
+     * @apiSuccess {String} creator Username
+     * @apiSuccess {String} creator_gravatar Creator Gravatar hash
+     * @apiSuccess {Number} create_date Create date (timestamp)
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (client) NotFound Document not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
      * 
      * @param documentId Document ID
      * @param content Comment content
@@ -67,7 +83,17 @@ public class CommentResource extends BaseResource {
     
     /**
      * Delete a comment.
-     * 
+     *
+     * @api {delete} /comment/:id Delete a comment
+     * @apiName DeleteComment
+     * @apiGroup Comment
+     * @apiParam {String} id Comment ID
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) NotFound Comment or document not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
      * @param id Comment ID
      * @return Response
      */
@@ -105,7 +131,22 @@ public class CommentResource extends BaseResource {
     
     /**
      * Get all comments on a document.
-     * 
+     *
+     * @api {get} /comment/:id Get comments
+     * @apiName GetComment
+     * @apiGroup Comment
+     * @apiParam {String} id Document ID
+     * @apiParam {String} share Share ID
+     * @apiSuccess {Object[]} comments List of comments
+     * @apiSuccess {String} comments.id Comment ID
+     * @apiSuccess {String} comments.content Content
+     * @apiSuccess {String} comments.creator Username
+     * @apiSuccess {String} comments.creator_gravatar Creator Gravatar hash
+     * @apiSuccess {Number} comments.create_date Create date (timestamp)
+     * @apiError (client) NotFound Document not found
+     * @apiPermission none
+     * @apiVersion 1.5.0
+     *
      * @param documentId DocumentID
      * @return Response
      */

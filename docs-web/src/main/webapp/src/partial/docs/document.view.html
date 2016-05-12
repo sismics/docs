@@ -12,8 +12,8 @@
 </div>
 
 <div ng-show="document">
-	<div class="pull-right" ng-show="document.writable">
-	  <div class="btn-group dropdown" dropdown>
+	<div class="pull-right">
+	  <div class="dropdown btn-export" dropdown ng-class="{ 'btn-group': document.writable }">
       <button class="btn btn-default" dropdown-toggle>
         <span class="glyphicon glyphicon-export"></span>
         Export
@@ -33,8 +33,8 @@
           </a>
         </li>
       </ul>
-	    <button class="btn btn-danger" ng-click="deleteDocument(document)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
-	    <a href="#/document/edit/{{ document.id }}" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+	    <button class="btn btn-danger" ng-show="document.writable" ng-click="deleteDocument(document)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+	    <a href="#/document/edit/{{ document.id }}" ng-show="document.writable" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
 	  </div>
 	</div>
 	

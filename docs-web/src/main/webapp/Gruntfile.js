@@ -4,9 +4,8 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     clean: {
-      dist: {
-        src: ['dist']
-      }
+      init: ['dist'],
+      after: ['dist/style.css', 'dist/docs.js', 'dist/share.js', 'dist/less.css', 'dist/app']
     },
     ngmin: {
       dist: {
@@ -78,12 +77,6 @@ module.exports = function(grunt) {
         dest: 'dist/share.html'
       }
     },
-    remove: {
-      dist: {
-        fileList: ['dist/style.css', 'dist/docs.js', 'dist/share.js', 'dist/less.css'],
-        dirList: ['dist/app']
-      }
-    },
     cleanempty: {
       options: {
         files: false,
@@ -100,6 +93,12 @@ module.exports = function(grunt) {
           to: grunt.option('apiurl') || '../api'
         }]
       }
+    },
+    apidoc: {
+      generate: {
+        src: '../java/',
+        dest: 'dist/apidoc/'
+      }
     }
   });
 
@@ -111,12 +110,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-htmlrefs');
   grunt.loadNpmTasks('grunt-css');
   grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-remove');
   grunt.loadNpmTasks('grunt-ngmin');
   grunt.loadNpmTasks('grunt-text-replace');
+  grunt.loadNpmTasks('grunt-apidoc');
 
   // Default tasks.
-  grunt.registerTask('default', ['clean', 'ngmin', 'concat:docs', 'concat:share', 'less', 'concat:css', 'cssmin',
-    'uglify:docs', 'uglify:share', 'copy', 'remove', 'cleanempty', 'htmlrefs:index', 'htmlrefs:share', 'replace']);
+  grunt.registerTask('default', ['clean:init', 'ngmin', 'concat:docs', 'concat:share', 'less', 'concat:css', 'cssmin',
+    'uglify:docs', 'uglify:share', 'copy', 'clean:after', 'cleanempty', 'htmlrefs:index', 'htmlrefs:share', 'replace', 'apidoc']);
 
 };
