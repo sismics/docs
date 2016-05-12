@@ -14,7 +14,21 @@
     "template": {
       "withCompare": false,
       "withGenerator": false
-    }
+    },
+    "order": [
+      "User",
+      "Group",
+      "Document",
+      "File",
+      "Tag",
+      "Comment",
+      "Share",
+      "Acl",
+      "Auditlog",
+      "App",
+      "Theme",
+      "Vocabulary"
+    ]
   },
   "devDependencies": {
     "grunt": "^1.0.1",

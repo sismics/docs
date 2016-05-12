@@ -98,7 +98,7 @@ public class TagResource extends BaseResource {
      * @apiSuccess {String} acls.id ID
      * @apiSuccess {String="READ","WRITE"} acls.perm Permission
      * @apiSuccess {String} acls.name Target name
-     * @apiSuccess {String="USER","GROUP","SHARE"} type Target type
+     * @apiSuccess {String="USER","GROUP","SHARE"} acls.type Target type
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) NotFound Tag not found
      * @apiPermission user
