@@ -167,34 +167,34 @@
                 style="?android:buttonBarStyle">
 
                 <Button
-                    android:id="@+id/actionEditDocument"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableTop="@drawable/ic_create_grey600_24dp"
-                    style="?android:buttonBarButtonStyle"
-                    android:text="@string/edit_document"
-                    android:textColor="#ff5a595b"
-                    android:textAllCaps="false"
-                    android:layout_margin="8dp"/>
-
-                <Button
-                    android:id="@+id/actionUploadFile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableTop="@drawable/ic_file_upload_grey600_24dp"
-                    style="?android:buttonBarButtonStyle"
-                    android:text="@string/upload_file"
-                    android:textColor="#ff5a595b"
-                    android:textAllCaps="false"
-                    android:layout_margin="8dp"/>
-
-                <Button
                     android:id="@+id/actionDownload"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableTop="@drawable/ic_file_download_grey600_24dp"
                     style="?android:buttonBarButtonStyle"
                     android:text="@string/download_document"
+                    android:textColor="#ff5a595b"
+                    android:textAllCaps="false"
+                    android:layout_margin="8dp"/>
+
+                <Button
+                    android:id="@+id/actionExportPdf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/ic_description_grey600_24dp"
+                    style="?android:buttonBarButtonStyle"
+                    android:text="@string/export_pdf"
+                    android:textColor="#ff5a595b"
+                    android:textAllCaps="false"
+                    android:layout_margin="8dp"/>
+
+                <Button
+                    android:id="@+id/actionAuditLog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/ic_assignment_grey600_24dp"
+                    style="?android:buttonBarButtonStyle"
+                    android:text="@string/activity"
                     android:textColor="#ff5a595b"
                     android:textAllCaps="false"
                     android:layout_margin="8dp"/>
@@ -208,12 +208,23 @@
                 style="?android:buttonBarStyle">
 
                 <Button
-                    android:id="@+id/actionExportPdf"
+                    android:id="@+id/actionEditDocument"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableTop="@drawable/ic_description_grey600_24dp"
+                    android:drawableTop="@drawable/ic_create_grey600_24dp"
                     style="?android:buttonBarButtonStyle"
-                    android:text="@string/export_pdf"
+                    android:text="@string/edit_document"
+                    android:textColor="#ff5a595b"
+                    android:textAllCaps="false"
+                    android:layout_margin="0dp"/>
+
+                <Button
+                    android:id="@+id/actionUploadFile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/ic_file_upload_grey600_24dp"
+                    style="?android:buttonBarButtonStyle"
+                    android:text="@string/upload_file"
                     android:textColor="#ff5a595b"
                     android:textAllCaps="false"
                     android:layout_margin="0dp"/>
@@ -225,17 +236,6 @@
                     android:drawableTop="@drawable/ic_share_grey600_24dp"
                     style="?android:buttonBarButtonStyle"
                     android:text="@string/share"
-                    android:textColor="#ff5a595b"
-                    android:textAllCaps="false"
-                    android:layout_margin="0dp"/>
-
-                <Button
-                    android:id="@+id/actionAuditLog"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableTop="@drawable/ic_assignment_grey600_24dp"
-                    style="?android:buttonBarButtonStyle"
-                    android:text="@string/activity"
                     android:textColor="#ff5a595b"
                     android:textAllCaps="false"
                     android:layout_margin="0dp"/>

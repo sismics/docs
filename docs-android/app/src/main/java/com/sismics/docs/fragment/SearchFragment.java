@@ -73,7 +73,7 @@ public class SearchFragment extends DialogFragment {
             dialog.cancel();
             return dialog;
         }
-        JSONArray tagArray = tags.optJSONArray("stats");
+        JSONArray tagArray = tags.optJSONArray("tags");
 
         List<JSONObject> tagList = new ArrayList<>();
         for (int i = 0; i < tagArray.length(); i++) {

@@ -642,10 +642,10 @@ public class DocumentViewActivity extends AppCompatActivity {
                 }
 
                 // Action only available if the document is writable
-                findViewById(R.id.actionEditDocument).setVisibility(writable ? View.VISIBLE : View.INVISIBLE);
-                findViewById(R.id.actionUploadFile).setVisibility(writable ? View.VISIBLE : View.INVISIBLE);
-                findViewById(R.id.actionSharing).setVisibility(writable ? View.VISIBLE : View.INVISIBLE);
-                findViewById(R.id.actionDelete).setVisibility(writable ? View.VISIBLE : View.INVISIBLE);
+                findViewById(R.id.actionEditDocument).setVisibility(writable ? View.VISIBLE : View.GONE);
+                findViewById(R.id.actionUploadFile).setVisibility(writable ? View.VISIBLE : View.GONE);
+                findViewById(R.id.actionSharing).setVisibility(writable ? View.VISIBLE : View.GONE);
+                findViewById(R.id.actionDelete).setVisibility(writable ? View.VISIBLE : View.GONE);
 
                 // ACLs
                 ListView aclListView = (ListView) findViewById(R.id.aclListView);
