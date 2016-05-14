@@ -28,7 +28,11 @@
       "App",
       "Theme",
       "Vocabulary"
-    ]
+    ],
+    "header": {
+      "title": "Getting started",
+      "filename": "header.md"
+    }
   },
   "devDependencies": {
     "grunt": "^1.0.1",
