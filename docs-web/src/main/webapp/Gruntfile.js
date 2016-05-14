@@ -7,12 +7,17 @@ module.exports = function(grunt) {
       init: ['dist'],
       after: ['dist/style.css', 'dist/docs.js', 'dist/share.js', 'dist/less.css', 'dist/app']
     },
-    ngmin: {
+    ngAnnotate: {
+      options: {
+        singleQuotes: true
+      },
       dist: {
-        expand: true,
-        cwd: 'src',
-        src: ['app/**/*.js'],
-        dest: 'dist'
+        files: [{
+          expand: true,
+          cwd: 'src',
+          src: ['app/**/*.js'],
+          dest: 'dist'
+        }]
       }
     },
     concat: {
@@ -110,12 +115,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-htmlrefs');
   grunt.loadNpmTasks('grunt-css');
   grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-ngmin');
+  grunt.loadNpmTasks('grunt-ng-annotate');
   grunt.loadNpmTasks('grunt-text-replace');
   grunt.loadNpmTasks('grunt-apidoc');
 
   // Default tasks.
-  grunt.registerTask('default', ['clean:init', 'ngmin', 'concat:docs', 'concat:share', 'less', 'concat:css', 'cssmin',
+  grunt.registerTask('default', ['clean:init', 'ngAnnotate', 'concat:docs', 'concat:share', 'less', 'concat:css', 'cssmin',
     'uglify:docs', 'uglify:share', 'copy', 'clean:after', 'cleanempty', 'htmlrefs:index', 'htmlrefs:share', 'replace', 'apidoc']);
 
 };
