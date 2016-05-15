@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.text.method.LinkMovementMethod;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,7 +52,7 @@ import com.sismics.docs.resource.FileResource;
 import com.sismics.docs.service.FileUploadService;
 import com.sismics.docs.util.NetworkUtil;
 import com.sismics.docs.util.PreferenceUtil;
-import com.sismics.docs.util.TagUtil;
+import com.sismics.docs.util.SpannableUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -176,9 +177,11 @@ public class DocumentViewActivity extends AppCompatActivity {
         }
 
         // Fill the layout
+        // Create date
         TextView createdDateTextView = (TextView) findViewById(R.id.createdDateTextView);
         createdDateTextView.setText(date);
 
+        // Description
         TextView descriptionTextView = (TextView) findViewById(R.id.descriptionTextView);
         if (description.isEmpty() || document.isNull("description")) {
             descriptionTextView.setVisibility(View.GONE);
@@ -187,17 +190,20 @@ public class DocumentViewActivity extends AppCompatActivity {
             descriptionTextView.setText(description);
         }
 
+        // Tags
         TextView tagTextView = (TextView) findViewById(R.id.tagTextView);
         if (tags.length() == 0) {
             tagTextView.setVisibility(View.GONE);
         } else {
             tagTextView.setVisibility(View.VISIBLE);
-            tagTextView.setText(TagUtil.buildSpannable(tags));
+            tagTextView.setText(SpannableUtil.buildSpannableTags(tags));
         }
 
+        // Language
         ImageView languageImageView = (ImageView) findViewById(R.id.languageImageView);
         languageImageView.setImageResource(getResources().getIdentifier(language, "drawable", getPackageName()));
 
+        // Shared status
         ImageView sharedImageView = (ImageView) findViewById(R.id.sharedImageView);
         sharedImageView.setVisibility(shared ? View.VISIBLE : View.GONE);
 
@@ -679,8 +685,52 @@ public class DocumentViewActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
+
+                // Contributors
+                TextView contributorsTextView = (TextView) findViewById(R.id.contributorsTextView);
+                contributorsTextView.setText(SpannableUtil.buildSpannableContributors(document.optJSONArray("contributors")));
+
+                // Relations
+                JSONArray relations = document.optJSONArray("relations");
+                if (relations.length() > 0) {
+                    TextView relationsTextView = (TextView) findViewById(R.id.relationsTextView);
+                    relationsTextView.setMovementMethod(LinkMovementMethod.getInstance());
+                    relationsTextView.setText(SpannableUtil.buildSpannableRelations(relations));
+                } else {
+                    findViewById(R.id.relationsLayout).setVisibility(View.GONE);
+                }
+
+                // Additional dublincore metadata
+                displayDublincoreMetadata(R.id.subjectTextView, R.id.subjectLayout, "subject");
+                displayDublincoreMetadata(R.id.identifierTextView, R.id.identifierLayout, "identifier");
+                displayDublincoreMetadata(R.id.publisherTextView, R.id.publisherLayout, "publisher");
+                displayDublincoreMetadata(R.id.formatTextView, R.id.formatLayout, "format");
+                displayDublincoreMetadata(R.id.sourceTextView, R.id.sourceLayout, "source");
+                displayDublincoreMetadata(R.id.typeTextView, R.id.typeLayout, "type");
+                displayDublincoreMetadata(R.id.coverageTextView, R.id.coverageLayout, "coverage");
+                displayDublincoreMetadata(R.id.rightsTextView, R.id.rightsLayout, "rights");
             }
         });
+    }
+
+    /**
+     * Display a dublincore metadata.
+     *
+     * @param textViewId TextView ID
+     * @param blockViewId View ID
+     * @param name Name
+     */
+    private void displayDublincoreMetadata(int textViewId, int blockViewId, String name) {
+        if (document == null) return;
+        String value = document.optString(name);
+        if (document.isNull(name) || value.isEmpty()) {
+            findViewById(blockViewId).setVisibility(View.GONE);
+            return;
+        }
+
+        findViewById(blockViewId).setVisibility(View.VISIBLE);
+        TextView textView = (TextView) findViewById(textViewId);
+        textView.setText(value);
     }
 
     @Override
