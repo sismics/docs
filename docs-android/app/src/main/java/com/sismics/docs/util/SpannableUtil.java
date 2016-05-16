@@ -11,7 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * Utility class for tags.
+ * Utility class for spannable.
  *
  * @author bgamard.
  */

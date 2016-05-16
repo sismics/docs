@@ -26,15 +26,30 @@
     <url-pattern>*.jsp</url-pattern>
   </filter-mapping>
 
-  <!-- This filter is used to secure URLs -->
+  <!-- These filters are used to secure URLs -->
   <filter>
     <filter-name>tokenBasedSecurityFilter</filter-name>
     <filter-class>com.sismics.util.filter.TokenBasedSecurityFilter</filter-class>
     <async-supported>true</async-supported>
   </filter>
+
+  <filter>
+    <filter-name>headerBasedSecurityFilter</filter-name>
+    <filter-class>com.sismics.util.filter.HeaderBasedSecurityFilter</filter-class>
+    <async-supported>true</async-supported>
+    <init-param>
+      <param-name>enabled</param-name>
+      <param-value>false</param-value>
+    </init-param>
+  </filter>
   
   <filter-mapping>
     <filter-name>tokenBasedSecurityFilter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>headerBasedSecurityFilter</filter-name>
     <url-pattern>/api/*</url-pattern>
   </filter-mapping>
 
