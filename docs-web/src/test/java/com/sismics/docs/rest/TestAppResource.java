@@ -35,17 +35,15 @@ public class TestAppResource extends BaseJerseyTest {
         
         // Check the application info
         JsonObject json = target().path("/app").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
-        String currentVersion = json.getString("current_version");
-        Assert.assertNotNull(currentVersion);
-        String minVersion = json.getString("min_version");
-        Assert.assertNotNull(minVersion);
+        Assert.assertNotNull(json.getString("current_version"));
+        Assert.assertNotNull(json.getString("min_version"));
         Long freeMemory = json.getJsonNumber("free_memory").longValue();
         Assert.assertTrue(freeMemory > 0);
         Long totalMemory = json.getJsonNumber("total_memory").longValue();
         Assert.assertTrue(totalMemory > 0 && totalMemory > freeMemory);
-        
+        Assert.assertFalse(json.getBoolean("guest_login"));
+
         // Rebuild Lucene index
         Response response = target().path("/app/batch/reindex").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
@@ -126,5 +124,25 @@ public class TestAppResource extends BaseJerseyTest {
         Long date3 = logs.getJsonObject(0).getJsonNumber("date").longValue();
         Long date4 = logs.getJsonObject(9).getJsonNumber("date").longValue();
         Assert.assertTrue(date3 >= date4);
+    }
+
+    /**
+     * Test the guest login.
+     */
+    @Test
+    public void testGuestLogin() {
+        // Login admin
+        String adminToken = clientUtil.login("admin", "admin", false);
+
+        // Try to login without credentials
+        Response response = target().path("/user/login").request()
+                .post(Entity.form(new Form()));
+        Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
+
+        // Enable guest login
+        target().path("/app/guest_login").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("enabled", "true")), JsonObject.class);
     }
 }
