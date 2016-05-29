@@ -9,14 +9,14 @@
       </ul>
     </div>
 
-    <div class="panel panel-default">
-      <div class="panel-heading" ng-show="isAdmin"><strong>General settings</strong></div>
+    <div class="panel panel-default" ng-show="isAdmin">
+      <div class="panel-heading"><strong>General settings</strong></div>
       <ul class="list-group">
-        <a class="list-group-item" ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/user.*" href="#/settings/user">Users</a>
-        <a class="list-group-item" ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/group.*" href="#/settings/group">Groups</a>
-        <a class="list-group-item" ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/vocabulary.*" href="#/settings/vocabulary">Vocabularies</a>
-        <a class="list-group-item" ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/theme" href="#/settings/theme">Theme</a>
-        <a class="list-group-item" ng-show="isAdmin" ng-class="{active: $uiRoute}" ui-route="/settings/log" href="#/settings/log">Server logs</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/user.*" href="#/settings/user">Users</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/group.*" href="#/settings/group">Groups</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/vocabulary.*" href="#/settings/vocabulary">Vocabularies</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/config" href="#/settings/config">Configuration</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/log" href="#/settings/log">Server logs</a>
       </ul>
     </div>
   </div>

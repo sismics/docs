@@ -3,12 +3,24 @@
 /**
  * Login controller.
  */
-angular.module('docs').controller('Login', function($scope, $rootScope, $state, $dialog, User) {
+angular.module('docs').controller('Login', function(Restangular, $scope, $rootScope, $state, $dialog, User) {
   $scope.codeRequired = false;
 
-  /**
-   * Login.
-   */
+  // Get the app configuration
+  Restangular.one('app').get().then(function(data) {
+    $scope.app = data;
+  });
+
+  // Login as guest
+  $scope.loginAsGuest = function() {
+    $scope.user = {
+      username: 'guest',
+      password: ''
+    };
+    $scope.login();
+  };
+  
+  // Login
   $scope.login = function() {
     User.login($scope.user).then(function() {
       User.userInfo(true).then(function(data) {

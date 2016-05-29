@@ -1,3 +1,18 @@
+<h1>
+  Guest <small>access</small>
+  <span class="label" ng-class="{ 'label-success': app.guest_login, 'label-danger': !app.guest_login }">
+    {{ app.guest_login ? 'Enabled' : 'Disabled' }}
+  </span>
+</h1>
+<p>
+  Guest access is a mode where anyone can access {{ appName }} without password.<br/>
+  Like a normal user, the guest user can only access its documents and those accessible through permissions.<br/>
+</p>
+<div ng-if="app">
+  <button ng-if="!app.guest_login" class="btn btn-primary" ng-click="changeGuestLogin(true)">Enable guest access</button>
+  <button ng-if="app.guest_login" class="btn btn-danger" ng-click="changeGuestLogin(false)">Disable guest access</button>
+</div>
+
 <h1>Theme <small>customization</small></h1>
 <form class="form-horizontal" name="editColorForm" novalidate>
   <div class="form-group">

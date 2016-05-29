@@ -1,9 +1,23 @@
 'use strict';
 
 /**
- * Settings theme page controller.
+ * Settings config page controller.
  */
-angular.module('docs').controller('SettingsTheme', function($scope, $rootScope, Restangular) {
+angular.module('docs').controller('SettingsConfig', function($scope, $rootScope, Restangular) {
+  // Get the app configuration
+  Restangular.one('app').get().then(function(data) {
+    $scope.app = data;
+  });
+
+  // Enable/disable guest login
+  $scope.changeGuestLogin = function(enabled) {
+    Restangular.one('app').post('guest_login', {
+      enabled: enabled
+    }).then(function() {
+      $scope.app.guest_login = enabled;
+    });
+  };
+
   // Fetch the current theme configuration
   Restangular.one('theme').get().then(function(data) {
     $scope.theme = data;

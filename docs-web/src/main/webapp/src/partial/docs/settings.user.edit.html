@@ -62,7 +62,7 @@
         <span class="help-block" ng-show="editUserForm.storage_quota.$error.pattern">Number required</span>
       </div>
     </div>
-    <div class="form-group" ng-class="{ 'has-error': !editUserForm.password.$valid, success: editUserForm.password.$valid }">
+    <div class="form-group" ng-if="user.username != 'guest'" ng-class="{ 'has-error': !editUserForm.password.$valid, success: editUserForm.password.$valid }">
       <label class="col-sm-2 control-label" for="inputPassword">Password</label>
   
       <div class="col-sm-7">
@@ -76,7 +76,7 @@
         <span class="help-block" ng-show="editUserForm.password.$error.maxlength">Too long</span>
       </div>
     </div>
-    <div class="form-group" ng-class="{ 'has-error': !editUserForm.passwordconfirm.$valid, success: editUserForm.passwordconfirm.$valid }">
+    <div class="form-group" ng-if="user.username != 'guest'" ng-class="{ 'has-error': !editUserForm.passwordconfirm.$valid, success: editUserForm.passwordconfirm.$valid }">
       <label class="col-sm-2 -label" for="inputPasswordConfirm">Password (confirm)</label>
   
       <div class="col-sm-7">
@@ -94,7 +94,7 @@
         <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editUserForm.$valid">
           <span class="glyphicon glyphicon-pencil"></span> {{ isEdit() ? 'Edit' : 'Add' }}
         </button>
-        <button type="button" class="btn btn-danger" ng-click="remove()" ng-show="isEdit()">
+        <button type="button" class="btn btn-danger" ng-click="remove()" ng-show="isEdit() && user.username != 'guest'">
           <span class="glyphicon glyphicon-trash"></span> Delete
         </button>
       </div>
