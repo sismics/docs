@@ -1,5 +1,13 @@
 package com.sismics.docs.rest;
 
+import com.sismics.docs.core.constant.PermType;
+import com.sismics.docs.core.dao.jpa.AclDao;
+import com.sismics.util.context.ThreadLocalContext;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
+import com.sismics.util.jpa.EMF;
+import org.junit.Assert;
+import org.junit.Test;
+
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.persistence.EntityManager;
@@ -8,15 +16,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.util.context.ThreadLocalContext;
-import com.sismics.util.jpa.EMF;
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.sismics.util.filter.TokenBasedSecurityFilter;
 
 
 /**
@@ -134,9 +133,10 @@ public class TestAppResource extends BaseJerseyTest {
         // Login admin
         String adminToken = clientUtil.login("admin", "admin", false);
 
-        // Try to login without credentials
+        // Try to login as guest
         Response response = target().path("/user/login").request()
-                .post(Entity.form(new Form()));
+                .post(Entity.form(new Form()
+                        .param("username", "guest")));
         Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
 
         // Enable guest login
@@ -144,5 +144,49 @@ public class TestAppResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()
                         .param("enabled", "true")), JsonObject.class);
+
+        // Login as guest
+        String guestToken = clientUtil.login("guest", "", false);
+
+        // Guest cannot delete himself
+        response = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, guestToken)
+                .delete();
+        Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+
+        // Guest cannot see opened sessions
+        JsonObject json = target().path("/user/session").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, guestToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(0, json.getJsonArray("sessions").size());
+
+        // Guest cannot delete opened sessions
+        response = target().path("/user/session").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, guestToken)
+                .delete();
+        Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
+
+        // Guest cannot enable TOTP
+        response = target().path("/user/enable_totp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, guestToken)
+                .post(Entity.form(new Form()));
+        Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
+
+        // Guest cannot disable TOTP
+        response = target().path("/user/disable_totp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, guestToken)
+                .post(Entity.form(new Form()));
+        Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
+
+        // Guest cannot update itself
+        response = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, guestToken)
+                .post(Entity.form(new Form()));
+        Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
+
+        // Guest can see its documents
+        target().path("/document/list").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, guestToken)
+                .get(JsonObject.class);
     }
 }

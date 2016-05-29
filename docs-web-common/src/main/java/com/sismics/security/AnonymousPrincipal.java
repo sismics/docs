@@ -59,4 +59,9 @@ public class AnonymousPrincipal implements IPrincipal {
     public Set<String> getGroupIdSet() {
         return Sets.newHashSet();
     }
+
+    @Override
+    public boolean isGuest() {
+        return false;
+    }
 }

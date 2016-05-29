@@ -22,6 +22,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
+import com.sismics.docs.core.constant.ConfigType;
+import com.sismics.docs.core.util.ConfigUtil;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Strings;
@@ -150,7 +152,7 @@ public class UserResource extends BaseResource {
      * @apiParam {String{8..50}} password Password
      * @apiParam {String{1..100}} email E-mail
      * @apiSuccess {String} status Status OK
-     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ForbiddenError Access denied or connected as guest
      * @apiError (client) ValidationError Validation error
      * @apiPermission user
      * @apiVersion 1.5.0
@@ -163,7 +165,7 @@ public class UserResource extends BaseResource {
     public Response update(
         @FormParam("password") String password,
         @FormParam("email") String email) {
-        if (!authenticate()) {
+        if (!authenticate() || principal.isGuest()) {
             throw new ForbiddenClientException();
         }
         
@@ -301,7 +303,7 @@ public class UserResource extends BaseResource {
      * @apiName PostUserLogin
      * @apiGroup User
      * @apiParam {String} username Username
-     * @apiParam {String} password Password
+     * @apiParam {String} password Password (optional for guest login)
      * @apiParam {String} code TOTP validation code
      * @apiParam {Boolean} remember If true, create a long lasted token
      * @apiSuccess {String} auth_token A cookie named auth_token containing the token ID
@@ -328,7 +330,16 @@ public class UserResource extends BaseResource {
 
         // Get the user
         UserDao userDao = new UserDao();
-        User user = userDao.authenticate(username, password);
+        User user = null;
+        if (username.equals(Constants.GUEST_USER_ID)) {
+            if (ConfigUtil.getConfigBooleanValue(ConfigType.GUEST_LOGIN)) {
+                // Login as guest
+                user = userDao.getActiveByUsername(Constants.GUEST_USER_ID);
+            }
+        } else {
+            // Login as a normal user
+            user = userDao.authenticate(username, password);
+        }
         if (user == null) {
             throw new ForbiddenClientException();
         }
@@ -429,7 +440,7 @@ public class UserResource extends BaseResource {
      * @apiName DeleteUser
      * @apiGroup User
      * @apiSuccess {String} status Status OK
-     * @apiError (client) ForbiddenError Access denied or the admin user cannot be deleted
+     * @apiError (client) ForbiddenError Access denied or the user cannot be deleted
      * @apiPermission user
      * @apiVersion 1.5.0
      *
@@ -442,8 +453,8 @@ public class UserResource extends BaseResource {
         }
         
         // Ensure that the admin user is not deleted
-        if (hasBaseFunction(BaseFunction.ADMIN)) {
-            throw new ClientException("ForbiddenError", "The admin user cannot be deleted");
+        if (hasBaseFunction(BaseFunction.ADMIN) || principal.isGuest()) {
+            throw new ClientException("ForbiddenError", "This user cannot be deleted");
         }
         
         // Find linked data
@@ -486,7 +497,7 @@ public class UserResource extends BaseResource {
      * @apiName DeleteUserUsername
      * @apiGroup User
      * @apiSuccess {String} status Status OK
-     * @apiError (client) ForbiddenError Access denied or the admin user cannot be deleted
+     * @apiError (client) ForbiddenError Access denied or the user cannot be deleted
      * @apiError (client) UserNotFound The user does not exist
      * @apiPermission admin
      * @apiVersion 1.5.0
@@ -501,7 +512,12 @@ public class UserResource extends BaseResource {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);
-        
+
+        // Cannot delete the guest user
+        if (Constants.GUEST_USER_ID.equals(username)) {
+            throw new ClientException("ForbiddenError", "The guest user cannot be deleted");
+        }
+
         // Check if the user exists
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
@@ -768,18 +784,21 @@ public class UserResource extends BaseResource {
         String authToken = getAuthToken();
         
         JsonArrayBuilder sessions = Json.createArrayBuilder();
-        AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
 
-        for (AuthenticationToken authenticationToken : authenticationTokenDao.getByUserId(principal.getId())) {
-            JsonObjectBuilder session = Json.createObjectBuilder()
-                    .add("create_date", authenticationToken.getCreationDate().getTime())
-                    .add("ip", JsonUtil.nullable(authenticationToken.getIp()))
-                    .add("user_agent", JsonUtil.nullable(authenticationToken.getUserAgent()));
-            if (authenticationToken.getLastConnectionDate() != null) {
-                session.add("last_connection_date", authenticationToken.getLastConnectionDate().getTime());
+        // The guest user cannot see other sessions
+        if (!principal.isGuest()) {
+            AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
+            for (AuthenticationToken authenticationToken : authenticationTokenDao.getByUserId(principal.getId())) {
+                JsonObjectBuilder session = Json.createObjectBuilder()
+                        .add("create_date", authenticationToken.getCreationDate().getTime())
+                        .add("ip", JsonUtil.nullable(authenticationToken.getIp()))
+                        .add("user_agent", JsonUtil.nullable(authenticationToken.getUserAgent()));
+                if (authenticationToken.getLastConnectionDate() != null) {
+                    session.add("last_connection_date", authenticationToken.getLastConnectionDate().getTime());
+                }
+                session.add("current", authenticationToken.getId().equals(authToken));
+                sessions.add(session);
             }
-            session.add("current", authenticationToken.getId().equals(authToken));
-            sessions.add(session);
         }
         
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -795,7 +814,7 @@ public class UserResource extends BaseResource {
      * @apiName DeleteUserSession
      * @apiGroup User
      * @apiSuccess {String} status Status OK
-     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ForbiddenError Access denied or connected as guest
      * @apiPermission user
      * @apiVersion 1.5.0
      *
@@ -804,10 +823,10 @@ public class UserResource extends BaseResource {
     @DELETE
     @Path("session")
     public Response deleteSession() {
-        if (!authenticate()) {
+        if (!authenticate() || principal.isGuest()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Get the value of the session token
         String authToken = getAuthToken();
         
@@ -830,7 +849,7 @@ public class UserResource extends BaseResource {
      * @apiName PostUserEnableTotp
      * @apiGroup User
      * @apiSuccess {String} secret Secret TOTP seed to initiate the algorithm
-     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ForbiddenError Access denied or connected as guest
      * @apiPermission user
      * @apiVersion 1.5.0
      *
@@ -839,7 +858,7 @@ public class UserResource extends BaseResource {
     @POST
     @Path("enable_totp")
     public Response enableTotp() {
-        if (!authenticate()) {
+        if (!authenticate() || principal.isGuest()) {
             throw new ForbiddenClientException();
         }
         
@@ -866,7 +885,7 @@ public class UserResource extends BaseResource {
      * @apiGroup User
      * @apiParam {String{1..100}} password Password
      * @apiSuccess {String} status Status OK
-     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ForbiddenError Access denied or connected as guest
      * @apiError (client) ValidationError Validation error
      * @apiPermission user
      * @apiVersion 1.5.0
@@ -877,7 +896,7 @@ public class UserResource extends BaseResource {
     @POST
     @Path("disable_totp")
     public Response disableTotp(@FormParam("password") String password) {
-        if (!authenticate()) {
+        if (!authenticate() || principal.isGuest()) {
             throw new ForbiddenClientException();
         }
         

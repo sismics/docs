@@ -29,7 +29,12 @@ public class Constants {
      * File Lucene directory storage.
      */
     public static final String LUCENE_DIRECTORY_STORAGE_FILE = "FILE";
-    
+
+    /**
+     * Guest user ID.
+     */
+    public static final String GUEST_USER_ID = "guest";
+
     /**
      * Default generic user role.
      */
