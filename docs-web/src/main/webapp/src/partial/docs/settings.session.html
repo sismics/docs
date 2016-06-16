@@ -13,10 +13,12 @@
       <td>{{ session.create_date | date: 'yyyy-MM-dd HH:mm' }}</td>
       <td>{{ session.last_connection_date | date: 'yyyy-MM-dd HH:mm' }}</td>
       <td title="{{ session.user_agent }}">{{ session.ip }}</td>
-      <td><span ng-show="session.current" class="glyphicon glyphicon-ok"></span></td>
+      <td>
+        <span ng-show="session.current" class="glyphicon glyphicon-ok" title="This is the current session"></span>
+      </td>
     </tr>
   </tbody>
 </table>
 <div class="form-actions">
-  <button type="submit" class="btn btn-warning" ng-click="deleteSession()">Clear all other sessions</button>
+  <button type="submit" class="btn btn-warning" title="All other devices connected to this account will be disconnected" ng-click="deleteSession()">Clear all other sessions</button>
 </div>
