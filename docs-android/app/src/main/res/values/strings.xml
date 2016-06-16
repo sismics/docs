@@ -132,5 +132,17 @@
     <string name="storage_quota">Storage quota</string>
     <string name="storage_display">%1$d/%2$d MB</string>
     <string name="validation_code">Validation code</string>
+    <string name="shared">Shared</string>
+    <string name="language">Language</string>
+    <string name="coverage">Coverage</string>
+    <string name="type">Type</string>
+    <string name="source">Source</string>
+    <string name="format">Format</string>
+    <string name="publisher">Publisher</string>
+    <string name="identifier">Identifier</string>
+    <string name="subject">Subject</string>
+    <string name="rights">Rights</string>
+    <string name="contributors">Contributors</string>
+    <string name="relations">Relations</string>
 
 </resources>

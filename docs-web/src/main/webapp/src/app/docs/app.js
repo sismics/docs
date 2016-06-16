@@ -106,12 +106,12 @@ angular.module('docs',
         }
       }
     })
-    .state('settings.theme', {
-      url: '/theme',
+    .state('settings.config', {
+      url: '/config',
       views: {
         'settings': {
-          templateUrl: 'partial/docs/settings.theme.html',
-          controller: 'SettingsTheme'
+          templateUrl: 'partial/docs/settings.config.html',
+          controller: 'SettingsConfig'
         }
       }
     })

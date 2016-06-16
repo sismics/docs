@@ -14,15 +14,12 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
+import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.docs.core.dao.jpa.TagDao;
+import com.sismics.docs.core.dao.jpa.*;
 import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
 import com.sismics.docs.core.dao.jpa.dto.AclDto;
 import com.sismics.docs.core.dao.jpa.dto.TagDto;
@@ -33,8 +30,6 @@ import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sismics.docs.core.dao.jpa.FileDao;
-import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
@@ -70,31 +65,57 @@ public class AppResource extends BaseResource {
      * @apiGroup App
      * @apiSuccess {String} current_version API current version
      * @apiSuccess {String} min_version API minimum version
+     * @apiSuccess {Boolean} guest_login True if guest login is enabled
      * @apiSuccess {String} total_memory Allocated JVM memory (in bytes)
      * @apiSuccess {String} free_memory Free JVM memory (in bytes)
-     * @apiError (client) ForbiddenError Access denied
-     * @apiPermission user
+     * @apiPermission none
      * @apiVersion 1.5.0
      *
      * @return Response
      */
     @GET
     public Response info() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
-        
         ResourceBundle configBundle = ConfigUtil.getConfigBundle();
         String currentVersion = configBundle.getString("api.current_version");
         String minVersion = configBundle.getString("api.min_version");
+        Boolean guestLogin = ConfigUtil.getConfigBooleanValue(ConfigType.GUEST_LOGIN);
 
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("current_version", currentVersion.replace("-SNAPSHOT", ""))
                 .add("min_version", minVersion)
+                .add("guest_login", guestLogin)
                 .add("total_memory", Runtime.getRuntime().totalMemory())
                 .add("free_memory", Runtime.getRuntime().freeMemory());
         
         return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Enable/disable guest login.
+     *
+     * @api {post} /app/guest_login Enable/disable guest login
+     * @apiName PostAppGuestLogin
+     * @apiGroup App
+     * @apiParam {Boolean} enabled If true, enable guest login
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @param enabled If true, enable guest login
+     * @return Response
+     */
+    @POST
+    @Path("guest_login")
+    public Response guestLogin(@FormParam("enabled") Boolean enabled) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        ConfigDao configDao = new ConfigDao();
+        configDao.update(ConfigType.GUEST_LOGIN, enabled.toString());
+
+        return Response.ok().build();
     }
     
     /**
@@ -325,7 +346,7 @@ public class AppResource extends BaseResource {
     /**
      * Recompute the quota for each user.
      *
-     * @api {post} /app/batch/recompute_quote Recompute user quotas
+     * @api {post} /app/batch/recompute_quota Recompute user quotas
      * @apiName PostAppBatchRecomputeQuota
      * @apiGroup App
      * @apiSuccess {String} status Status OK
@@ -385,7 +406,7 @@ public class AppResource extends BaseResource {
     /**
      * Add base ACLs to tags.
      *
-     * @api {post} /app/batch/recompute_quote Add base ACL to tags
+     * @api {post} /app/batch/tag_acls Add base ACL to tags
      * @apiDescription This resource must be used after migrating to 1.5.
      * It will not do anything if base ACL are already present on tags.
      * @apiName PostAppBatchTagAcls

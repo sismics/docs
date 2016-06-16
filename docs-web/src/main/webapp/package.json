@@ -28,7 +28,11 @@
       "App",
       "Theme",
       "Vocabulary"
-    ]
+    ],
+    "header": {
+      "title": "Getting started",
+      "filename": "header.md"
+    }
   },
   "devDependencies": {
     "grunt": "^1.0.1",
@@ -41,7 +45,7 @@
     "grunt-contrib-uglify": "^1.0.1",
     "grunt-css": "^0.5.4",
     "grunt-htmlrefs": "^0.5.0",
-    "grunt-ngmin": "0.0.3",
+    "grunt-ng-annotate": "^2.0.2",
     "grunt-text-replace": "^0.4.0",
     "protractor": "^3.3.0",
     "selenium": "^2.20.0"

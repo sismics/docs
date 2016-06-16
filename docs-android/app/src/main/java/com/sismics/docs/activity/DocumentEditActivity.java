@@ -101,7 +101,7 @@ public class DocumentEditActivity extends AppCompatActivity {
             finish();
             return;
         }
-        JSONArray tagArray = tags.optJSONArray("stats");
+        JSONArray tagArray = tags.optJSONArray("tags");
 
         List<JSONObject> tagList = new ArrayList<>();
         for (int i = 0; i < tagArray.length(); i++) {

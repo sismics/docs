@@ -19,6 +19,13 @@ public interface IPrincipal extends Principal {
     boolean isAnonymous();
 
     /**
+     * Checks if the principal is a guest.
+     *
+     * @return True if the principal is a guest
+     */
+    boolean isGuest();
+
+    /**
      * Returns the ID of the connected user, or null if the user is anonymous
      * 
      * @return ID of the connected user

@@ -35,6 +35,12 @@
       <button type="submit" class="btn btn-primary btn-block" ng-click="login()">
         <span class="glyphicon glyphicon-ok"></span> Sign in
       </button>
+
+      <p class="text-center lead" ng-if="app.guest_login">&nbsp;</p>
+
+      <button type="submit" class="btn btn-default btn-block" ng-if="app.guest_login" ng-click="loginAsGuest()">
+        <span class="glyphicon glyphicon-user"></span> Login as guest
+      </button>
     </form>
   </div>
 </div>

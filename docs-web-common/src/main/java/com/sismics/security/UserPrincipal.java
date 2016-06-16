@@ -2,6 +2,7 @@ package com.sismics.security;
 
 import java.util.Set;
 
+import com.sismics.docs.core.constant.Constants;
 import org.joda.time.DateTimeZone;
 
 /**
@@ -107,5 +108,10 @@ public class UserPrincipal implements IPrincipal {
     
     public void setGroupIdSet(Set<String> groupIdSet) {
         this.groupIdSet = groupIdSet;
+    }
+
+    @Override
+    public boolean isGuest() {
+        return Constants.GUEST_USER_ID.equals(id);
     }
 }

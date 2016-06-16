@@ -46,6 +46,19 @@
         </tr>
         </thead>
         <tbody>
+        <tr ng-if="!documents">
+          <td colspan="3" class="text-center">
+            <img src="img/loader.gif" />
+          </td>
+        </tr>
+
+        <tr ng-if="totalDocuments == 0">
+          <td colspan="3" class="text-center">
+            <span ng-if="search.length == 0">No document in the database</span>
+            <span ng-if="search.length > 0">No matches for <strong>"{{ search }}"</strong></span>
+          </td>
+        </tr>
+
         <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents" ng-class="{ active: $stateParams.id == document.id }">
           <td>
             {{ document.title }} ({{ document.file_count }})
@@ -79,8 +92,11 @@
         used on {{ userInfo.storage_quota / 1000000 | number: 0 }}MB
       </div>
 
-      <div class="text-right">
-        {{ totalDocuments }} document{{ totalDocuments > 1 ? 's' : '' }} found
+      <div class="text-right" >
+        <span ng-if="totalDocuments">
+          {{ totalDocuments }} document{{ totalDocuments > 1 ? 's' : '' }} found
+        </span>
+        <span ng-if="!totalDocuments">&nbsp;</span>
       </div>
     </div>
   </div>

@@ -5,6 +5,7 @@ import java.net.URI;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.UriBuilder;
 
+import com.sismics.util.filter.HeaderBasedSecurityFilter;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.servlet.ServletRegistration;
 import org.glassfish.grizzly.servlet.WebappContext;
@@ -62,7 +63,8 @@ public abstract class BaseJerseyTest extends JerseyTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        
+        System.setProperty("docs.header_authentication", "true");
+
         clientUtil = new ClientUtil(target());
         
         httpServer = HttpServer.createSimpleServer(getClass().getResource("/").getFile(), "localhost", getPort());
@@ -70,6 +72,8 @@ public abstract class BaseJerseyTest extends JerseyTest {
         context.addFilter("requestContextFilter", RequestContextFilter.class)
                 .addMappingForUrlPatterns(null, "/*");
         context.addFilter("tokenBasedSecurityFilter", TokenBasedSecurityFilter.class)
+                .addMappingForUrlPatterns(null, "/*");
+        context.addFilter("headerBasedSecurityFilter", HeaderBasedSecurityFilter.class)
                 .addMappingForUrlPatterns(null, "/*");
         ServletRegistration reg = context.addServlet("jerseyServlet", ServletContainer.class);
         reg.setInitParameter("jersey.config.server.provider.packages", "com.sismics.docs.rest.resource");

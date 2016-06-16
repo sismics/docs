@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sismics.docs.R;
-import com.sismics.docs.util.TagUtil;
+import com.sismics.docs.util.SpannableUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -69,7 +69,7 @@ public class DocListAdapter extends RecyclerView.Adapter<DocListAdapter.ViewHold
         holder.titleTextView.setText(document.optString("title"));
 
         JSONArray tags = document.optJSONArray("tags");
-        holder.subtitleTextView.setText(TagUtil.buildSpannable(tags));
+        holder.subtitleTextView.setText(SpannableUtil.buildSpannableTags(tags));
 
         String date = DateFormat.getDateFormat(holder.dateTextView.getContext()).format(new Date(document.optLong("create_date")));
         holder.dateTextView.setText(date);

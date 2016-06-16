@@ -6,6 +6,7 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.sismics.util.filter.HeaderBasedSecurityFilter;
 import org.junit.Assert;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,7 +29,7 @@ public class TestSecurity extends BaseJerseyTest {
         clientUtil.createUser("testsecurity");
 
         // Changes a user's email KO : the user is not connected
-        Response response = target().path("/user/update").request()
+        Response response = target().path("/user").request()
                 .post(Entity.form(new Form().param("email", "testsecurity2@docs.com")));
         Assert.assertEquals(Status.FORBIDDEN, Status.fromStatusCode(response.getStatus()));
         JsonObject json = response.readEntity(JsonObject.class);
@@ -72,5 +73,30 @@ public class TestSecurity extends BaseJerseyTest {
 
         // User testsecurity logs out
         clientUtil.logout(testSecurityToken);
+    }
+
+    @Test
+    public void testHeaderBasedAuthentication() {
+        clientUtil.createUser("header_auth_test");
+
+        Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), target()
+                .path("/user/session")
+                .request()
+                .get()
+                .getStatus());
+
+        Assert.assertEquals(Status.OK.getStatusCode(), target()
+                .path("/user/session")
+                .request()
+                .header(HeaderBasedSecurityFilter.AUTHENTICATED_USER_HEADER, "header_auth_test")
+                .get()
+                .getStatus());
+
+        Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), target()
+                .path("/user/session")
+                .request()
+                .header(HeaderBasedSecurityFilter.AUTHENTICATED_USER_HEADER, "idontexist")
+                .get()
+                .getStatus());
     }
 }

@@ -60,7 +60,7 @@
     <script src="app/docs/controller/settings/Settings.js" type="text/javascript"></script>
     <script src="app/docs/controller/settings/SettingsDefault.js" type="text/javascript"></script>
     <script src="app/docs/controller/settings/SettingsAccount.js" type="text/javascript"></script>
-    <script src="app/docs/controller/settings/SettingsTheme.js" type="text/javascript"></script>
+    <script src="app/docs/controller/settings/SettingsConfig.js" type="text/javascript"></script>
     <script src="app/docs/controller/settings/SettingsSecurity.js" type="text/javascript"></script>
     <script src="app/docs/controller/settings/SettingsSecurityModalDisableTotp.js" type="text/javascript"></script>
     <script src="app/docs/controller/settings/SettingsSession.js" type="text/javascript"></script>
@@ -125,12 +125,13 @@
               </a>
           </li>
           <li>
-            <a href="#/settings/account" title="Logged in as {{ userInfo.username }}">
+            <a href="{{ userInfo.username == 'guest' ? '#/user/guest' : '#/settings/account' }}"
+               title="Logged in as {{ userInfo.username }}">
               <span class="glyphicon glyphicon-user"></span>
               {{ userInfo.username }}
             </a>
           </li>
-          <li ng-class="{active: $uiRoute}" ui-route="/settings.*">
+          <li ng-class="{active: $uiRoute}" ui-route="/settings.*" ng-show="userInfo.username != 'guest'">
             <a href="#/settings/account">
               <span class="glyphicon glyphicon-cog"></span> Settings
             </a>

@@ -13,5 +13,10 @@ public enum ConfigType {
     /**
      * Theme configuration.
      */
-    THEME
+    THEME,
+
+    /**
+     * Guest login.
+     */
+    GUEST_LOGIN
 }
