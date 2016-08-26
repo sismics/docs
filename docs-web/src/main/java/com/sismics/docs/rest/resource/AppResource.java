@@ -23,6 +23,7 @@ import com.sismics.docs.core.dao.jpa.*;
 import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
 import com.sismics.docs.core.dao.jpa.dto.AclDto;
 import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
 import com.sismics.docs.core.model.jpa.Acl;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Appender;
@@ -213,12 +214,9 @@ public class AppResource extends BaseResource {
         }
         checkBaseFunction(BaseFunction.ADMIN);
         
-        try {
-            AppContext.getInstance().getIndexingService().rebuildIndex();
-        } catch (Exception e) {
-            throw new ServerException("IndexingError", "Error rebuilding the index", e);
-        }
-        
+        RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
+        ThreadLocalContext.get().addAsyncEvent(rebuildIndexAsyncEvent);
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");

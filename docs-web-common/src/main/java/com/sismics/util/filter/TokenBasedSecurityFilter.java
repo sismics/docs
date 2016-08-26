@@ -104,7 +104,6 @@ public class TokenBasedSecurityFilter extends SecurityFilter {
             return null;
         }
 
-        authTokenDao.updateLastConnectionDate(authToken.getId());
         return new UserDao().getById(authToken.getUserId());
     }
 }

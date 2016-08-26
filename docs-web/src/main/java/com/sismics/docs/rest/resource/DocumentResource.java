@@ -28,6 +28,7 @@ import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.AclUtil;
 import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeType;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -636,8 +637,8 @@ public class DocumentResource extends BaseResource {
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
         documentCreatedAsyncEvent.setUserId(principal.getId());
         documentCreatedAsyncEvent.setDocument(document);
-        AppContext.getInstance().getAsyncEventBus().post(documentCreatedAsyncEvent);
-        
+        ThreadLocalContext.get().addAsyncEvent(documentCreatedAsyncEvent);
+
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("id", documentId);
         return Response.ok().entity(response.build()).build();
@@ -757,7 +758,7 @@ public class DocumentResource extends BaseResource {
         DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
         documentUpdatedAsyncEvent.setUserId(principal.getId());
         documentUpdatedAsyncEvent.setDocumentId(id);
-        AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
+        ThreadLocalContext.get().addAsyncEvent(documentUpdatedAsyncEvent);
         
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("id", id);
@@ -852,14 +853,14 @@ public class DocumentResource extends BaseResource {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
             fileDeletedAsyncEvent.setFile(file);
-            AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
+            ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
         
         // Raise a document deleted event
         DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
         documentDeletedAsyncEvent.setUserId(principal.getId());
         documentDeletedAsyncEvent.setDocumentId(id);
-        AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
+        ThreadLocalContext.get().addAsyncEvent(documentDeletedAsyncEvent);
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()

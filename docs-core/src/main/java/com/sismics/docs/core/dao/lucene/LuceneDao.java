@@ -34,7 +34,7 @@ public class LuceneDao {
     /**
      * Destroy and rebuild index.
      * 
-     * @param fileList
+     * @param fileList List of files
      */
     public void rebuildIndex(final List<Document> documentList, final List<File> fileList) {
         LuceneUtil.handle(new LuceneRunnable() {
@@ -104,21 +104,6 @@ public class LuceneDao {
     }
     
     /**
-     * Update file index.
-     * 
-     * @param file Updated file
-     */
-    public void updateFile(final File file) {
-        LuceneUtil.handle(new LuceneRunnable() {
-            @Override
-            public void run(IndexWriter indexWriter) throws Exception {
-                org.apache.lucene.document.Document luceneDocument = getDocumentFromFile(file);
-                indexWriter.updateDocument(new Term("id", file.getId()), luceneDocument);
-            }
-        });
-    }
-    
-    /**
      * Delete document from the index.
      * 
      * @param id Document ID to delete
@@ -166,7 +151,7 @@ public class LuceneDao {
         
         // Search
         DirectoryReader directoryReader = AppContext.getInstance().getIndexingService().getDirectoryReader();
-        Set<String> documentIdList = new HashSet<String>();
+        Set<String> documentIdList = new HashSet<>();
         if (directoryReader == null) {
             // The directory reader is not yet initialized (probably because there is nothing indexed)
             return documentIdList;
@@ -176,8 +161,8 @@ public class LuceneDao {
         ScoreDoc[] docs = topDocs.scoreDocs;
         
         // Extract document IDs
-        for (int i = 0; i < docs.length; i++) {
-            org.apache.lucene.document.Document document = searcher.doc(docs[i].doc);
+        for (ScoreDoc doc : docs) {
+            org.apache.lucene.document.Document document = searcher.doc(doc.doc);
             String type = document.get("doctype");
             String documentId = null;
             if (type.equals("document")) {
@@ -194,7 +179,7 @@ public class LuceneDao {
     /**
      * Build Lucene document from database document.
      * 
-     * @param documentDto Document
+     * @param document Document
      * @return Document
      */
     private org.apache.lucene.document.Document getDocumentFromDocument(Document document) {

@@ -22,12 +22,12 @@ public class TransactionUtil {
     /**
      * Encapsulate a process into a transactionnal context.
      * 
-     * @param runnable
+     * @param runnable Runnable
      */
     public static void handle(Runnable runnable) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         
-        if (em != null) {
+        if (em != null && em.isOpen()) {
             // We are already in a transactional context, nothing to do
             runnable.run();
             return;

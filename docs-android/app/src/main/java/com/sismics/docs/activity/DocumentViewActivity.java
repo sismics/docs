@@ -77,11 +77,6 @@ public class DocumentViewActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_ADD_FILE = 1;
 
     /**
-     * Request code of editing document.
-     */
-    public static final int REQUEST_CODE_EDIT_DOCUMENT = 2;
-
-    /**
      * File view pager.
      */
     private ViewPager fileViewPager;
@@ -214,7 +209,7 @@ public class DocumentViewActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(DocumentViewActivity.this, DocumentEditActivity.class);
                 intent.putExtra("document", DocumentViewActivity.this.document.toString());
-                startActivityForResult(intent, REQUEST_CODE_EDIT_DOCUMENT);
+                startActivity(intent);
             }
         });
 

@@ -2,6 +2,7 @@
   "name": "sismics-docs",
   "description": "Lightweight document management system",
   "readme": "See http://github.com/simics/docs for more informations.",
+  "license": "GPL-2.0",
   "version": "1.5.0",
   "repository": {
     "type": "git",

@@ -43,5 +43,4 @@ public class HeaderBasedSecurityFilter extends SecurityFilter {
         }
         return new UserDao().getActiveByUsername(username);
     }
-
 }
