@@ -1,30 +1,5 @@
 package com.sismics.docs.rest.resource;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.StreamingOutput;
-
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataParam;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
@@ -37,7 +12,6 @@ import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
-import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.DirectoryUtil;
@@ -49,8 +23,32 @@ import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeType;
 import com.sismics.util.mime.MimeTypeUtil;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * File REST resources.
@@ -179,12 +177,12 @@ public class FileResource extends BaseResource {
                 fileCreatedAsyncEvent.setFile(file);
                 fileCreatedAsyncEvent.setInputStream(fileInputStream);
                 fileCreatedAsyncEvent.setPdfInputStream(pdfIntputStream);
-                AppContext.getInstance().getAsyncEventBus().post(fileCreatedAsyncEvent);
+                ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
                 
                 DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
                 documentUpdatedAsyncEvent.setUserId(principal.getId());
                 documentUpdatedAsyncEvent.setDocumentId(documentId);
-                AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
+                ThreadLocalContext.get().addAsyncEvent(documentUpdatedAsyncEvent);
             }
 
             // Always return OK
@@ -262,12 +260,12 @@ public class FileResource extends BaseResource {
             fileCreatedAsyncEvent.setLanguage(documentDto.getLanguage());
             fileCreatedAsyncEvent.setFile(file);
             fileCreatedAsyncEvent.setInputStream(responseInputStream);
-            AppContext.getInstance().getAsyncEventBus().post(fileCreatedAsyncEvent);
+            ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
             
             DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
             documentUpdatedAsyncEvent.setUserId(principal.getId());
             documentUpdatedAsyncEvent.setDocumentId(documentId);
-            AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
+            ThreadLocalContext.get().addAsyncEvent(documentUpdatedAsyncEvent);
         } catch (Exception e) {
             throw new ServerException("AttachError", "Error attaching file to document", e);
         }
@@ -455,14 +453,14 @@ public class FileResource extends BaseResource {
         FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
         fileDeletedAsyncEvent.setUserId(principal.getId());
         fileDeletedAsyncEvent.setFile(file);
-        AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
+        ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         
         if (file.getDocumentId() != null) {
             // Raise a new document updated
             DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
             documentUpdatedAsyncEvent.setUserId(principal.getId());
             documentUpdatedAsyncEvent.setDocumentId(file.getDocumentId());
-            AppContext.getInstance().getAsyncEventBus().post(documentUpdatedAsyncEvent);
+            ThreadLocalContext.get().addAsyncEvent(documentUpdatedAsyncEvent);
         }
         
         // Always return OK

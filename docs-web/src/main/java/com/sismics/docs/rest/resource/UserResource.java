@@ -1,52 +1,18 @@
 package com.sismics.docs.rest.resource;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.servlet.http.Cookie;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.core.Response;
-
-import com.sismics.docs.core.constant.ConfigType;
-import com.sismics.docs.core.util.ConfigUtil;
-import org.apache.commons.lang.StringUtils;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
-import com.sismics.docs.core.dao.jpa.AuthenticationTokenDao;
-import com.sismics.docs.core.dao.jpa.DocumentDao;
-import com.sismics.docs.core.dao.jpa.FileDao;
-import com.sismics.docs.core.dao.jpa.GroupDao;
-import com.sismics.docs.core.dao.jpa.RoleBaseFunctionDao;
-import com.sismics.docs.core.dao.jpa.UserDao;
+import com.sismics.docs.core.dao.jpa.*;
 import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
 import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
 import com.sismics.docs.core.dao.jpa.dto.GroupDto;
 import com.sismics.docs.core.dao.jpa.dto.UserDto;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
-import com.sismics.docs.core.model.context.AppContext;
-import com.sismics.docs.core.model.jpa.AuthenticationToken;
-import com.sismics.docs.core.model.jpa.Document;
-import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.model.jpa.Group;
-import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.model.jpa.*;
+import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.EncryptionUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
@@ -56,9 +22,24 @@ import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.security.UserPrincipal;
+import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 import com.sismics.util.totp.GoogleAuthenticator;
 import com.sismics.util.totp.GoogleAuthenticatorKey;
+import org.apache.commons.lang.StringUtils;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+import javax.servlet.http.Cookie;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * User REST resources.
@@ -472,7 +453,7 @@ public class UserResource extends BaseResource {
             DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
             documentDeletedAsyncEvent.setUserId(principal.getId());
             documentDeletedAsyncEvent.setDocumentId(document.getId());
-            AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
+            ThreadLocalContext.get().addAsyncEvent(documentDeletedAsyncEvent);
         }
         
         // Raise deleted events for files (don't bother sending document updated event)
@@ -480,7 +461,7 @@ public class UserResource extends BaseResource {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
             fileDeletedAsyncEvent.setFile(file);
-            AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
+            ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
         
         // Always return OK
@@ -546,7 +527,7 @@ public class UserResource extends BaseResource {
             DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
             documentDeletedAsyncEvent.setUserId(principal.getId());
             documentDeletedAsyncEvent.setDocumentId(document.getId());
-            AppContext.getInstance().getAsyncEventBus().post(documentDeletedAsyncEvent);
+            ThreadLocalContext.get().addAsyncEvent(documentDeletedAsyncEvent);
         }
         
         // Raise deleted events for files (don't bother sending document updated event)
@@ -554,7 +535,7 @@ public class UserResource extends BaseResource {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
             fileDeletedAsyncEvent.setFile(file);
-            AppContext.getInstance().getAsyncEventBus().post(fileDeletedAsyncEvent);
+            ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
         
         // Always return OK

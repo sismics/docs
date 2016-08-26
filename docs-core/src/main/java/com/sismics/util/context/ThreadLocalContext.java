@@ -1,6 +1,10 @@
 package com.sismics.util.context;
 
+import com.google.common.collect.Lists;
+import com.sismics.docs.core.model.context.AppContext;
+
 import javax.persistence.EntityManager;
+import java.util.List;
 
 /**
  * Context associated to a user request, and stored in a ThreadLocal.
@@ -17,7 +21,12 @@ public class ThreadLocalContext {
      * Entity manager.
      */
     private EntityManager entityManager;
-    
+
+    /**
+     * List of async events posted during this request.
+     */
+    private List<Object> asyncEventList = Lists.newArrayList();
+
     /**
      * Private constructor.
      */
@@ -62,5 +71,23 @@ public class ThreadLocalContext {
      */
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
+    }
+
+    /**
+     * Add an async event to the queue to be fired after the current request.
+     *
+     * @param asyncEvent Async event
+     */
+    public void addAsyncEvent(Object asyncEvent) {
+        asyncEventList.add(asyncEvent);
+    }
+
+    /**
+     * Fire all pending async events.
+     */
+    public void fireAllAsyncEvents() {
+        for (Object asyncEvent : asyncEventList) {
+            AppContext.getInstance().getAsyncEventBus().post(asyncEvent);
+        }
     }
 }
