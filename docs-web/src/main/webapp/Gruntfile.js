@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     clean: {
       init: ['dist'],
-      after: ['dist/style.css', 'dist/docs.js', 'dist/share.js', 'dist/less.css', 'dist/app']
+      after: ['dist/style.css', 'dist/docs.js', 'dist/share.js', 'dist/less.css', 'dist/app', 'dist/partial']
     },
     ngAnnotate: {
       options: {
@@ -64,6 +64,44 @@ module.exports = function(grunt) {
         dest: 'dist/share.min.js'
       }
     },
+    ngtemplates: {
+      docs: {
+        cwd: 'src',
+        src: 'partial/docs/*.html',
+        dest: 'dist/docs.min.js',
+        options: {
+          append: true,
+          htmlmin: {
+            collapseBooleanAttributes: true,
+            collapseWhitespace: true,
+            removeAttributeQuotes: true,
+            removeComments: true,
+            removeEmptyAttributes: true,
+            removeRedundantAttributes: true,
+            removeScriptTypeAttributes: true,
+            removeStyleLinkTypeAttributes: true
+          }
+        }
+      },
+      share: {
+        cwd: 'src',
+        src: 'partial/share/*.html',
+        dest: 'dist/share.min.js',
+        options: {
+          append: true,
+          htmlmin: {
+            collapseBooleanAttributes: true,
+            collapseWhitespace: true,
+            removeAttributeQuotes: true,
+            removeComments: true,
+            removeEmptyAttributes: true,
+            removeRedundantAttributes: true,
+            removeScriptTypeAttributes: true,
+            removeStyleLinkTypeAttributes: true
+          }
+        }
+      }
+    },
     copy: {
       dist: {
         expand: true,
@@ -118,9 +156,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-ng-annotate');
   grunt.loadNpmTasks('grunt-text-replace');
   grunt.loadNpmTasks('grunt-apidoc');
+  grunt.loadNpmTasks('grunt-angular-templates');
 
   // Default tasks.
-  grunt.registerTask('default', ['clean:init', 'ngAnnotate', 'concat:docs', 'concat:share', 'less', 'concat:css', 'cssmin',
-    'uglify:docs', 'uglify:share', 'copy', 'clean:after', 'cleanempty', 'htmlrefs:index', 'htmlrefs:share', 'replace', 'apidoc']);
+  grunt.registerTask('default', ['clean:init', 'ngAnnotate', 'concat:docs', 'concat:share', 'less', 'concat:css',
+    'cssmin', 'uglify:docs', 'uglify:share', 'ngtemplates:docs', 'ngtemplates:share', 'copy', 'clean:after',
+    'cleanempty', 'htmlrefs:index', 'htmlrefs:share', 'replace', 'apidoc']);
 
 };

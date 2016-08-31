@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "grunt": "^1.0.1",
+    "grunt-angular-templates": "^1.1.0",
     "grunt-apidoc": "^0.11.0",
     "grunt-cleanempty": "^1.0.4",
     "grunt-contrib-clean": "^1.0.0",
