@@ -60,7 +60,7 @@ public class MimeTypeUtil {
             return MimeType.APPLICATION_PDF;
         }
         
-        return null;
+        return MimeType.DEFAULT;
     }
     
     /**

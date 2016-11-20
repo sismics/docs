@@ -64,7 +64,7 @@ public class PdfUtil {
             PDFTextStripper stripper = new PDFTextStripper();
             pdfDocument = PDDocument.load(inputStream);
             content = stripper.getText(pdfDocument);
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Error while extracting text from the PDF", e);
         } finally {
             if (pdfDocument != null) {
