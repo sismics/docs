@@ -94,6 +94,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
     
     // Upload files after edition
     promise.then(function(data) {
+      console.log('document created, adding file', $scope.newFiles);
       $scope.fileProgress = 0;
       
       // When all files upload are over, attach orphan files and move on
@@ -133,6 +134,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
           };
 
           // Build the payload
+          console.log('sending file', key, $scope.newFiles[key], data);
           var file = $scope.newFiles[key];
           var formData = new FormData();
           formData.append('id', data.id);
@@ -147,6 +149,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
             contentType: false,
             processData: false,
             success: function(response) {
+              console.log('file uploaded successfully', formData);
               deferred.resolve(response);
             },
             error: function(jqXHR) {
@@ -192,11 +195,13 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
         var then = function() {
           key++;
           if ($scope.newFiles[key]) {
+            console.log('sending new file');
             sendFile(key).then(then);
           } else {
             $scope.fileIsUploading = false;
             $scope.fileProgress = 0;
             $rootScope.pageTitle = 'Sismics Docs';
+            console.log('finished sending files, bye');
             navigateNext();
           }
         };
