@@ -41,6 +41,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -129,10 +130,7 @@ public class FileResource extends BaseResource {
         } catch (IOException e) {
             throw new ServerException("ErrorGuessMime", "Error guessing mime type", e);
         }
-        if (mimeType == null) {
-            throw new ClientException("InvalidFileType", "File type not recognized");
-        }
-        
+
         // Validate quota
         if (user.getStorageCurrent() + fileData.length > user.getStorageQuota()) {
             throw new ClientException("QuotaReached", "Quota limit reached");
@@ -535,7 +533,11 @@ public class FileResource extends BaseResource {
             mimeType = MimeType.IMAGE_JPEG; // Thumbnails are JPEG
             decrypt = true; // Thumbnails are encrypted
             if (!Files.exists(storedFile)) {
-                storedFile = Paths.get(getClass().getResource("/image/file.png").getFile());
+                try {
+                    storedFile = Paths.get(getClass().getResource("/image/file.png").toURI());
+                } catch (URISyntaxException e) {
+                    // Ignore
+                }
                 mimeType = MimeType.IMAGE_PNG;
                 decrypt = false;
             }

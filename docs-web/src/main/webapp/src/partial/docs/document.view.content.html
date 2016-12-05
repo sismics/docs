@@ -39,7 +39,7 @@
 </dl>
 
 <div ng-file-drop drag-over-class="bg-success" ng-multiple="true" allow-dir="false" ng-model="dropFiles"
-     accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
+     ng-file-change="fileDropped($files, $event, $rejectedFiles)">
   <div class="row upload-zone" ui-sortable="fileSortableOptions" ng-model="files">
     <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 text-center" ng-repeat="file in files">
       <div class="thumbnail" ng-if="file.id">
