@@ -10,6 +10,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
+import com.sismics.util.mime.MimeTypeUtil;
 
 /**
  * File entity.
@@ -39,11 +41,17 @@ public class File implements Loggable {
     private String userId;
     
     /**
+     * Name.
+     */
+    @Column(name = "FIL_NAME_C", length = 200)
+    private String name;
+
+    /**
      * MIME type.
      */
     @Column(name = "FIL_MIMETYPE_C", length = 100)
     private String mimeType;
-    
+
     /**
      * OCR-ized content.
      */
@@ -90,6 +98,15 @@ public class File implements Loggable {
 
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public File setName(String name) {
+        this.name = name;
+        return this;
     }
 
     public String getMimeType() {
@@ -153,11 +170,25 @@ public class File implements Loggable {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
+                .add("name", name)
                 .toString();
     }
 
     @Override
     public String toMessage() {
         return documentId;
+    }
+
+    /**
+     * Build the full file name.
+     *
+     * @param def Default name if the file doesn't have one.
+     * @return File name
+     */
+    public String getFullName(String def) {
+        if (Strings.isNullOrEmpty(name)) {
+            return def + "." + MimeTypeUtil.getFileExtension(mimeType);
+        }
+        return name;
     }
 }

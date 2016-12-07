@@ -21,32 +21,30 @@ public class MimeTypeUtil {
      * Try to guess the MIME type of a file by its magic number (header).
      * 
      * @param is Stream to inspect
+     * @param name File name
      * @return MIME type
-     * @throws IOException
+     * @throws IOException e
      */
-    public static String guessMimeType(InputStream is) throws IOException {
+    public static String guessMimeType(InputStream is, String name) throws IOException {
         byte[] headerBytes = new byte[64];
         is.mark(headerBytes.length);
-        int readCount = is.read(headerBytes);
+        is.read(headerBytes);
         is.reset();
-        
-        if (readCount <= 0) {
-            throw new IOException("Cannot read input file");
-        }
-        
-        return guessMimeType(headerBytes);
+        return guessMimeType(headerBytes, name);
     }
 
     /**
      * Try to guess the MIME type of a file by its magic number (header).
      * 
      * @param headerBytes File header (first bytes)
+     * @param name File name
      * @return MIME type
-     * @throws UnsupportedEncodingException
+     * @throws UnsupportedEncodingException e
      */
-    public static String guessMimeType(byte[] headerBytes) throws UnsupportedEncodingException {
+    public static String guessMimeType(byte[] headerBytes, String name) throws UnsupportedEncodingException {
         String header = new String(headerBytes, "US-ASCII");
-        
+
+        // Detect by header bytes
         if (header.startsWith("PK")) {
             return MimeType.APPLICATION_ZIP;
         } else if (header.startsWith("GIF87a") || header.startsWith("GIF89a")) {
@@ -59,7 +57,16 @@ public class MimeTypeUtil {
         } else if (headerBytes[0] == ((byte) 0x25) && headerBytes[1] == ((byte) 0x50) && headerBytes[2] == ((byte) 0x44) && headerBytes[3] == ((byte) 0x46)) {
             return MimeType.APPLICATION_PDF;
         }
-        
+
+        // Detect by file extension
+        if (name != null) {
+            if (name.endsWith(".txt")) {
+                return MimeType.TEXT_PLAIN;
+            } else if (name.endsWith(".csv")) {
+                return MimeType.TEXT_CSV;
+            }
+        }
+
         return MimeType.DEFAULT;
     }
     
@@ -86,7 +93,7 @@ public class MimeTypeUtil {
         case MimeType.OFFICE_DOCUMENT:
             return "docx";
         default:
-            return null;
+            return "bin";
         }
     }
     

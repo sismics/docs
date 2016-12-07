@@ -94,7 +94,7 @@ public class TestFileResource extends BaseJerseyTest {
                 .get();
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
-        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
         Assert.assertTrue(fileBytes.length > 0);
         
         // Get the thumbnail data
@@ -106,7 +106,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         is = (InputStream) response.getEntity();
         fileBytes = ByteStreams.toByteArray(is);
-        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
         Assert.assertTrue(fileBytes.length > 0);
         
         // Get the web data
@@ -118,13 +118,13 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         is = (InputStream) response.getEntity();
         fileBytes = ByteStreams.toByteArray(is);
-        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
         Assert.assertTrue(fileBytes.length > 0);
         
         // Check that the files are not readable directly from FS
         Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file1Id);
         try (InputStream storedFileInputStream = new BufferedInputStream(Files.newInputStream(storedFile))) {
-            Assert.assertEquals(MimeType.DEFAULT, MimeTypeUtil.guessMimeType(storedFileInputStream));
+            Assert.assertEquals(MimeType.DEFAULT, MimeTypeUtil.guessMimeType(storedFileInputStream, null));
         }
         
         // Get all files from a document
@@ -136,8 +136,10 @@ public class TestFileResource extends BaseJerseyTest {
         JsonArray files = json.getJsonArray("files");
         Assert.assertEquals(2, files.size());
         Assert.assertEquals(file1Id, files.getJsonObject(0).getString("id"));
+        Assert.assertEquals("PIA00452.jpg", files.getJsonObject(0).getString("name"));
         Assert.assertEquals(163510L, files.getJsonObject(0).getJsonNumber("size").longValue());
         Assert.assertEquals(file2Id, files.getJsonObject(1).getString("id"));
+        Assert.assertEquals("PIA00452.jpg", files.getJsonObject(1).getString("name"));
         
         // Reorder files
         target().path("/file/reorder").request()
@@ -166,7 +168,7 @@ public class TestFileResource extends BaseJerseyTest {
                 .get();
         is = (InputStream) response.getEntity();
         fileBytes = ByteStreams.toByteArray(is);
-        Assert.assertEquals(MimeType.APPLICATION_ZIP, MimeTypeUtil.guessMimeType(fileBytes));
+        Assert.assertEquals(MimeType.APPLICATION_ZIP, MimeTypeUtil.guessMimeType(fileBytes, null));
         
         // Deletes a file
         json = target().path("/file/" + file1Id).request()
@@ -278,7 +280,7 @@ public class TestFileResource extends BaseJerseyTest {
                 .get();
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
-        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
         Assert.assertEquals(163510, fileBytes.length);
         
         // Create a document

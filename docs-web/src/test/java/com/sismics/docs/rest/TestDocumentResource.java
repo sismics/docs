@@ -34,7 +34,7 @@ public class TestDocumentResource extends BaseJerseyTest {
     /**
      * Test the document resource.
      * 
-     * @throws Exception 
+     * @throws Exception e
      */
     @Test
     public void testDocumentResource() throws Exception {
@@ -372,7 +372,7 @@ public class TestDocumentResource extends BaseJerseyTest {
     /**
      * Test ODT extraction.
      * 
-     * @throws Exception 
+     * @throws Exception e
      */
     @Test
     public void testOdtExtraction() throws Exception {
@@ -425,13 +425,13 @@ public class TestDocumentResource extends BaseJerseyTest {
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
-        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
     }
     
     /**
      * Test DOCX extraction.
      * 
-     * @throws Exception 
+     * @throws Exception e
      */
     @Test
     public void testDocxExtraction() throws Exception {
@@ -484,13 +484,13 @@ public class TestDocumentResource extends BaseJerseyTest {
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
-        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
     }
     
     /**
      * Test PDF extraction.
      * 
-     * @throws Exception 
+     * @throws Exception e
      */
     @Test
     public void testPdfExtraction() throws Exception {
@@ -543,6 +543,6 @@ public class TestDocumentResource extends BaseJerseyTest {
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
-        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes));
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
     }
 }

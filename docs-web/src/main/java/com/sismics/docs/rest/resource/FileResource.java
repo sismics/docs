@@ -124,9 +124,11 @@ public class FileResource extends BaseResource {
         InputStream fileInputStream = new ByteArrayInputStream(fileData);
         
         // Validate mime type
+        String name = fileBodyPart.getContentDisposition() != null ?
+                fileBodyPart.getContentDisposition().getFileName() : null;
         String mimeType;
         try {
-            mimeType = MimeTypeUtil.guessMimeType(fileInputStream);
+            mimeType = MimeTypeUtil.guessMimeType(fileInputStream, name);
         } catch (IOException e) {
             throw new ServerException("ErrorGuessMime", "Error guessing mime type", e);
         }
@@ -150,6 +152,7 @@ public class FileResource extends BaseResource {
             File file = new File();
             file.setOrder(order);
             file.setDocumentId(documentId);
+            file.setName(name);
             file.setMimeType(mimeType);
             file.setUserId(principal.getId());
             String fileId = fileDao.create(file, principal.getId());
@@ -338,6 +341,7 @@ public class FileResource extends BaseResource {
      * @apiSuccess {Object[]} files List of files
      * @apiSuccess {String} files.id ID
      * @apiSuccess {String} files.mimetype MIME type
+     * @apiSuccess {String} files.name File name
      * @apiSuccess {String} files.document_id Document ID
      * @apiSuccess {String} files.create_date Create date (timestamp)
      * @apiSuccess {String} files.size File size (in bytes)
@@ -376,6 +380,7 @@ public class FileResource extends BaseResource {
             try {
                 files.add(Json.createObjectBuilder()
                         .add("id", fileDb.getId())
+                        .add("name", JsonUtil.nullable(fileDb.getName()))
                         .add("mimetype", fileDb.getMimeType())
                         .add("document_id", JsonUtil.nullable(fileDb.getDocumentId()))
                         .add("create_date", fileDb.getCreateDate().getTime())
@@ -579,6 +584,7 @@ public class FileResource extends BaseResource {
         }
 
         return Response.ok(stream)
+                .header("Content-Disposition", "inline; filename=" + file.getFullName("data"))
                 .header("Content-Type", mimeType)
                 .header("Expires", new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z").format(new Date().getTime() + 3600000 * 24))
                 .build();
@@ -636,7 +642,7 @@ public class FileResource extends BaseResource {
                         // Files are encrypted by the creator of them
                         User user = userDao.getById(file.getUserId());
                         try (InputStream decryptedStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey())) {
-                            ZipEntry zipEntry = new ZipEntry(index + "." + MimeTypeUtil.getFileExtension(file.getMimeType()));
+                            ZipEntry zipEntry = new ZipEntry(file.getFullName(Integer.toString(index)));
                             zipOutputStream.putNextEntry(zipEntry);
                             ByteStreams.copy(decryptedStream, zipOutputStream);
                             zipOutputStream.closeEntry();

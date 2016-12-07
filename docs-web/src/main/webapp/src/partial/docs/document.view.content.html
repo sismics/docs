@@ -46,6 +46,7 @@
         <a ng-click="openFile(file)">
           <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
         </a>
+        <div class="caption btn btn-link file-name" ng-click="openFile(file)">{{ file.name }}</div>
         <div class="caption" ng-show="document.writable">
           <div class="pull-left">
             <div class="btn btn-default handle"><span class="glyphicon glyphicon-resize-horizontal"></span></div>

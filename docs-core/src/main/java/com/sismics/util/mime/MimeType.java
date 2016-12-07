@@ -20,5 +20,9 @@ public class MimeType {
     
     public static final String OFFICE_DOCUMENT = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
+    public static final String TEXT_PLAIN = "text/plain";
+
+    public static final String TEXT_CSV = "text/csv";
+
     public static final String DEFAULT = "application/octet-stream";
 }
