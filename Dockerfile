@@ -1,4 +1,4 @@
-FROM sismics/jetty:9.3.11-jdk7
+FROM sismics/jetty:9.2.20-jdk7
 MAINTAINER benjamin.gam@gmail.com
 
 RUN apt-get -y -q install tesseract-ocr tesseract-ocr-fra tesseract-ocr-jpn
