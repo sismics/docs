@@ -6,7 +6,8 @@ before_install:
   - sudo apt-get -y -q install tesseract-ocr tesseract-ocr-fra tesseract-ocr-jpn
   - sudo apt-get -y -q install haveged && sudo service haveged start
 after_success:
-  - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  - mvn -Pprod -DskipTests clean install
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
   - export REPO=sismics/docs
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
   - docker build -f Dockerfile -t $REPO:$COMMIT .
