@@ -107,7 +107,7 @@
           <p>
             {{ comment.content }}<br />
             <span class="text-muted">{{ comment.create_date | date: 'yyyy-MM-dd' }}</span>
-          <span class="text-muted pull-right btn-link"
+          <span class="text-muted pull-right btn-link pointer"
                 ng-show="document.writable || userInfo.username == comment.creator"
                 ng-click="deleteComment(comment)">Delete</span>
           </p>
