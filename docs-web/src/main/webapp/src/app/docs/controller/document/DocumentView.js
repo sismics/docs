@@ -100,7 +100,8 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
     var title = 'Shared document';
     var msg = 'You can share this document by giving this link. ' +
         'Note that everyone having this link can see the document.<br/>' +
-        '<input class="form-control share-link" type="text" readonly="readonly" value="' + link + '" />';
+        '<input class="form-control share-link" type="text" readonly="readonly" value="' + link + '"' +
+        ' onclick="this.select(); document.execCommand(\'copy\');" />';
     var btns = [
       {result: 'unshare', label: 'Unshare', cssClass: 'btn-danger'},
       {result: 'close', label: 'Close'}
