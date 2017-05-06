@@ -10,9 +10,9 @@
           <a ng-click="openFile(file)">
             <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
           </a>
-          <div class="caption pointer" ng-click="file.checked = !file.checked">
+          <div class="caption">
             <div class="pull-left">
-              <input type="checkbox" ng-model="file.checked" />
+              <input type="checkbox" ng-model="file.checked" style="width: 26px; height: 26px" />
             </div>
             <div class="pull-right">
               <button class="btn btn-danger" ng-click="deleteFile($event, file)"><span class="glyphicon glyphicon-trash"></span></button>
