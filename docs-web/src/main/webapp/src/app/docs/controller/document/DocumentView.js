@@ -23,7 +23,7 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
    */
   $scope.comment = '';
   $scope.addComment = function() {
-    if ($scope.comment.length == 0) {
+    if ($scope.comment.length === 0) {
       return;
     }
 
@@ -40,8 +40,19 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
    * Delete a comment.
    */
   $scope.deleteComment = function(comment) {
-    Restangular.one('comment', comment.id).remove().then(function() {
-      $scope.comments.splice($scope.comments.indexOf(comment), 1);
+    var title = 'Delete comment';
+    var msg = 'Do you really want to delete this comment?';
+    var btns = [
+      {result: 'cancel', label: 'Cancel'},
+      {result: 'ok', label: 'OK', cssClass: 'btn-primary'}
+    ];
+
+    $dialog.messageBox(title, msg, btns, function (result) {
+      if (result === 'ok') {
+        Restangular.one('comment', comment.id).remove().then(function() {
+          $scope.comments.splice($scope.comments.indexOf(comment), 1);
+        });
+      }
     });
   };
 
@@ -57,7 +68,7 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
     ];
 
     $dialog.messageBox(title, msg, btns, function (result) {
-      if (result == 'ok') {
+      if (result === 'ok') {
         Restangular.one('document', document.id).remove().then(function() {
           $scope.loadDocuments();
           $state.go('document.default');
@@ -74,7 +85,7 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
       templateUrl: 'partial/docs/document.share.html',
       controller: 'DocumentModalShare'
     }).result.then(function (name) {
-          if (name == null) {
+          if (name === null) {
             return;
           }
 
@@ -108,11 +119,11 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
     ];
 
     $dialog.messageBox(title, msg, btns, function (result) {
-      if (result == 'unshare') {
+      if (result === 'unshare') {
         // Unshare this document and update the local shares
         Restangular.one('share', share.id).remove().then(function () {
           $scope.document.acls = _.reject($scope.document.acls, function(s) {
-            return share.id == s.id;
+            return share.id === s.id;
           });
         });
       }
