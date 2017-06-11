@@ -86,7 +86,6 @@ public class PdfUtil {
      * @param inputStream InputStream
      * @param reset Reset the stream after usage
      * @return PDF input stream
-     * @throws Exception 
      */
     public static InputStream convertToPdf(File file, InputStream inputStream, boolean reset) throws Exception {
         if (file.getMimeType().equals(MimeType.APPLICATION_PDF)) {
@@ -101,18 +100,36 @@ public class PdfUtil {
         if (file.getMimeType().equals(MimeType.OPEN_DOCUMENT_TEXT)) {
             return convertOpenDocumentText(inputStream, reset);
         }
-        
+
+        if (file.getMimeType().equals(MimeType.TEXT_PLAIN) || file.getMimeType().equals(MimeType.TEXT_CSV)) {
+            return convertTextPlain(inputStream, reset);
+        }
+
         // PDF conversion not necessary/possible
         return null;
     }
-    
+
+    /**
+     * Convert a text plain document to PDF.
+     *
+     * @param inputStream Unecnrypted input stream
+     * @param reset Reset the stream after usage
+     * @return PDF input stream
+     */
+    private static InputStream convertTextPlain(InputStream inputStream, boolean reset) throws Exception {
+        if (reset) {
+            inputStream.reset();
+        }
+        // TODO Create a PDF from the text plain
+        return null;
+    }
+
     /**
      * Convert an open document text file to PDF.
      * 
      * @param inputStream Unencrypted input stream
      * @param reset Reset the stream after usage
      * @return PDF input stream
-     * @throws Exception 
      */
     private static InputStream convertOpenDocumentText(InputStream inputStream, boolean reset) throws Exception {
         ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
@@ -131,7 +148,6 @@ public class PdfUtil {
      * @param inputStream Unencrypted input stream
      * @param reset Reset the stream after usage
      * @return PDF input stream
-     * @throws Exception 
      */
     private static InputStream convertOfficeDocument(InputStream inputStream, boolean reset) throws Exception {
         ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
@@ -153,7 +169,6 @@ public class PdfUtil {
      * @param metadata Add a page with metadata
      * @param margin Margins in millimeters
      * @return PDF input stream
-     * @throws IOException 
      */
     public static InputStream convertToPdf(DocumentDto documentDto, List<File> fileList,
             boolean fitImageToPage, boolean metadata, int margin) throws Exception {
@@ -282,7 +297,6 @@ public class PdfUtil {
      * 
      * @param inputStream PDF document
      * @return Render of the first page
-     * @throws IOException
      */
     public static BufferedImage renderFirstPage(InputStream inputStream) throws IOException {
         try (PDDocument pdfDocument = PDDocument.load(inputStream)) {
