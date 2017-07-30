@@ -78,22 +78,26 @@ public class MimeTypeUtil {
      */
     public static String getFileExtension(String mimeType) {
         switch (mimeType) {
-        case MimeType.APPLICATION_ZIP:
-            return "zip";
-        case MimeType.IMAGE_GIF:
-            return "gif";
-        case MimeType.IMAGE_JPEG:
-            return "jpg";
-        case MimeType.IMAGE_PNG:
-            return "png";
-        case MimeType.APPLICATION_PDF:
-            return "pdf";
-        case MimeType.OPEN_DOCUMENT_TEXT:
-            return "odt";
-        case MimeType.OFFICE_DOCUMENT:
-            return "docx";
-        default:
-            return "bin";
+            case MimeType.APPLICATION_ZIP:
+                return "zip";
+            case MimeType.IMAGE_GIF:
+                return "gif";
+            case MimeType.IMAGE_JPEG:
+                return "jpg";
+            case MimeType.IMAGE_PNG:
+                return "png";
+            case MimeType.APPLICATION_PDF:
+                return "pdf";
+            case MimeType.OPEN_DOCUMENT_TEXT:
+                return "odt";
+            case MimeType.OFFICE_DOCUMENT:
+                return "docx";
+            case MimeType.TEXT_PLAIN:
+                return "txt";
+            case MimeType.TEXT_CSV:
+                return "csv";
+            default:
+                return "bin";
         }
     }
     

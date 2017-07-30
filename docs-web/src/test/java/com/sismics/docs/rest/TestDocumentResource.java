@@ -1,7 +1,17 @@
 package com.sismics.docs.rest;
 
-import java.io.InputStream;
-import java.util.Date;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Resources;
+import com.sismics.docs.core.util.DirectoryUtil;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
+import com.sismics.util.mime.MimeType;
+import com.sismics.util.mime.MimeTypeUtil;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import org.joda.time.format.DateTimeFormat;
+import org.junit.Assert;
+import org.junit.Test;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -10,20 +20,8 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
-import org.joda.time.format.DateTimeFormat;
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Resources;
-import com.sismics.docs.core.util.DirectoryUtil;
-import com.sismics.util.filter.TokenBasedSecurityFilter;
-import com.sismics.util.mime.MimeType;
-import com.sismics.util.mime.MimeTypeUtil;
+import java.io.InputStream;
+import java.util.Date;
 
 /**
  * Exhaustive test of the document resource.
@@ -539,6 +537,65 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .queryParam("size", "thumb")
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPdfToken)
+                .get();
+        InputStream is = (InputStream) response.getEntity();
+        byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+    }
+
+    /**
+     * Test plain text extraction.
+     *
+     * @throws Exception e
+     */
+    @Test
+    public void testPlainTextExtraction() throws Exception {
+        // Login document_docx
+        clientUtil.createUser("document_plain");
+        String documentPlainToken = clientUtil.login("document_plain");
+
+        // Create a document
+        long create1Date = new Date().getTime();
+        JsonObject json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
+                .put(Entity.form(new Form()
+                        .param("title", "My super title document 1")
+                        .param("description", "My super description for document 1")
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
+        String document1Id = json.getString("id");
+        Assert.assertNotNull(document1Id);
+
+        // Add a plain text file
+        String file1Id;
+        try (InputStream is = Resources.getResource("file/document.txt").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "document.txt");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                json = target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
+                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+                file1Id = json.getString("id");
+                Assert.assertNotNull(file1Id);
+            }
+        }
+
+        // Search documents by query in full content
+        json = target().path("/document/list")
+                .queryParam("search", "full:love")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
+                .get(JsonObject.class);
+        Assert.assertTrue(json.getJsonArray("documents").size() == 1);
+
+        // Get the file thumbnail data
+        Response response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "thumb")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
                 .get();
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);

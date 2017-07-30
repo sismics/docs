@@ -1,26 +1,24 @@
 package com.sismics.docs.core.util;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
-import javax.imageio.ImageIO;
-
+import com.sismics.docs.core.model.jpa.File;
+import com.sismics.tess4j.Tesseract;
+import com.sismics.util.ImageUtil;
 import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Method;
 import org.imgscalr.Scalr.Mode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sismics.docs.core.model.jpa.File;
-import com.sismics.tess4j.Tesseract;
-import com.sismics.util.ImageUtil;
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * File entity utilities.
@@ -64,11 +62,12 @@ public class FileUtil {
     private static String ocrFile(InputStream inputStream, String language) {
         Tesseract instance = Tesseract.getInstance();
         String content = null;
-        BufferedImage image = null;
+        BufferedImage image;
         try {
             image = ImageIO.read(inputStream);
         } catch (IOException e) {
             log.error("Error reading the image", e);
+            return null;
         }
         
         // Upscale and grayscale the image
@@ -92,10 +91,9 @@ public class FileUtil {
      * Save a file on the storage filesystem.
      * 
      * @param inputStream Unencrypted input stream
-     * @param pdf
+     * @param pdfInputStream PDF input stream
      * @param file File to save
      * @param privateKey Private key used for encryption
-     * @throws Exception
      */
     public static void save(InputStream inputStream, InputStream pdfInputStream, File file, String privateKey) throws Exception {
         Cipher cipher = EncryptionUtil.getEncryptionCipher(privateKey);
@@ -114,9 +112,8 @@ public class FileUtil {
      * @param inputStream Unencrypted input stream
      * @param pdfInputStream Unencrypted PDF input stream
      * @param cipher Cipher to use for encryption
-     * @throws Exception
      */
-    public static void saveVariations(File file, InputStream inputStream, InputStream pdfInputStream, Cipher cipher) throws Exception {
+    private static void saveVariations(File file, InputStream inputStream, InputStream pdfInputStream, Cipher cipher) throws Exception {
         BufferedImage image = null;
         if (ImageUtil.isImage(file.getMimeType())) {
             image = ImageIO.read(inputStream);
@@ -151,7 +148,6 @@ public class FileUtil {
      * Remove a file from the storage filesystem.
      * 
      * @param file File to delete
-     * @throws IOException 
      */
     public static void delete(File file) throws IOException {
         Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
