@@ -1,18 +1,16 @@
 package com.sismics.docs.core.util;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import javax.imageio.ImageIO;
-
+import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Closer;
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.PdfWriter;
+import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.util.pdf.PdfPage;
+import com.sismics.util.ImageUtil;
+import com.sismics.util.mime.MimeType;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -32,13 +30,14 @@ import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-import com.google.common.io.Closer;
-import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
-import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.util.pdf.PdfPage;
-import com.sismics.util.ImageUtil;
-import com.sismics.util.mime.MimeType;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * PDF utilities.
@@ -120,8 +119,20 @@ public class PdfUtil {
         if (reset) {
             inputStream.reset();
         }
-        // TODO Create a PDF from the text plain
-        return null;
+
+        Document output = new Document(PageSize.A4, 40, 40, 40, 40);
+        ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
+        PdfWriter.getInstance(output, pdfOutputStream);
+
+        output.open();
+        String content = CharStreams.toString(new InputStreamReader(inputStream, Charsets.UTF_8));
+        Font font = FontFactory.getFont(FontFactory.COURIER);
+        Paragraph paragraph = new Paragraph(content, font);
+        paragraph.setAlignment(Element.ALIGN_LEFT);
+        output.add(paragraph);
+        output.close();
+
+        return new ByteArrayInputStream(pdfOutputStream.toByteArray());
     }
 
     /**
