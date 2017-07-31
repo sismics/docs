@@ -551,7 +551,7 @@ public class TestDocumentResource extends BaseJerseyTest {
      */
     @Test
     public void testPlainTextExtraction() throws Exception {
-        // Login document_docx
+        // Login document_plain
         clientUtil.createUser("document_plain");
         String documentPlainToken = clientUtil.login("document_plain");
 
