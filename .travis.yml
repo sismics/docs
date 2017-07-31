@@ -3,7 +3,7 @@ dist: trusty
 language: java
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get -y -q install tesseract-ocr tesseract-ocr-fra tesseract-ocr-jpn ttf-mscorefonts-installer
+  - sudo apt-get -y -q install tesseract-ocr tesseract-ocr-fra tesseract-ocr-jpn
   - sudo apt-get -y -q install haveged && sudo service haveged start
 after_success:
   - mvn -Pprod -DskipTests clean install

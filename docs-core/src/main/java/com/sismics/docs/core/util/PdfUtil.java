@@ -2,8 +2,10 @@ package com.sismics.docs.core.util;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Closer;
+import com.google.common.io.Resources;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfWriter;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
@@ -33,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -122,7 +125,7 @@ public class PdfUtil {
 
         output.open();
         String content = CharStreams.toString(new InputStreamReader(inputStream, Charsets.UTF_8));
-        Font font = FontFactory.getFont(FontFactory.COURIER);
+        Font font = FontFactory.getFont("LiberationMono-Regular");
         Paragraph paragraph = new Paragraph(content, font);
         paragraph.setAlignment(Element.ALIGN_LEFT);
         output.add(paragraph);
@@ -313,6 +316,22 @@ public class PdfUtil {
         try (PDDocument pdfDocument = PDDocument.load(inputStream)) {
             PDFRenderer renderer = new PDFRenderer(pdfDocument);
             return renderer.renderImage(0);
+        }
+    }
+
+    /**
+     * Register fonts.
+     */
+    public static void registerFonts() {
+        URL url = Resources.getResource("fonts/LiberationMono-Regular.ttf");
+        try (InputStream is = url.openStream()) {
+            Path file = Files.createTempFile("sismics_docs_font_mono", ".ttf");
+            try (OutputStream os = Files.newOutputStream(file)) {
+                ByteStreams.copy(is, os);
+            }
+            FontFactory.register(file.toAbsolutePath().toString(), "LiberationMono-Regular");
+        } catch (IOException e) {
+            log.error("Error loading font", e);
         }
     }
 }

@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
+import com.lowagie.text.FontFactory;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.dao.jpa.ConfigDao;
 import com.sismics.docs.core.listener.async.DocumentCreatedAsyncListener;
@@ -20,6 +21,7 @@ import com.sismics.docs.core.listener.async.RebuildIndexAsyncListener;
 import com.sismics.docs.core.listener.sync.DeadEventListener;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.service.IndexingService;
+import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.util.EnvironmentUtil;
 
 /**
@@ -58,11 +60,14 @@ public class AppContext {
      */
     private AppContext() {
         resetEventBus();
-        
+
+        // Start indexing service
         ConfigDao configDao = new ConfigDao();
         Config luceneStorageConfig = configDao.getById(ConfigType.LUCENE_DIRECTORY_STORAGE);
         indexingService = new IndexingService(luceneStorageConfig != null ? luceneStorageConfig.getValue() : null);
         indexingService.startAsync();
+
+        PdfUtil.registerFonts();
     }
     
     /**
