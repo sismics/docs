@@ -41,7 +41,16 @@ Download
 --------
 
 The latest release is downloadable here: <https://github.com/sismics/docs/releases> in WAR format.
-You will need a Java webapp server to run it, like [Jetty](http://eclipse.org/jetty/) or [Tomcat](http://tomcat.apache.org/)
+You will need a Java webapp server to run it, like [Jetty](http://eclipse.org/jetty/) or [Tomcat](http://tomcat.apache.org/).
+The default admin password is "admin". Don't forget to change it before going to production.
+
+Install with Docker
+-------------------
+
+From a Docker host, run this command to download and install Sismics Docs. The server will run on <http://[your-docker-host-ip]:8100>.
+The default admin password is "admin". Don't forget to change it before going to production.
+
+    docker run --rm --name sismics_docs_latest -d -p 8100:8080 -v sismics_docs_latest:/data sismics/docs:latest
 
 How to build Docs from the sources
 ----------------------------------

@@ -40,9 +40,10 @@
 	
 	<div class="page-header">
 	  <h1>
-      {{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }}
+      {{ document.title }}
+      <img ng-if="document" ng-src="img/flag/{{ document.language }}.png" title="Document language: {{ document.language }}" />
+      <small>{{ document.create_date | date: 'yyyy-MM-dd' }}
       by <a href="#/user/{{ document.creator }}">{{ document.creator }}</a></small>
-      <img ng-if="document" ng-src="img/flag/{{ document.language }}.png" title="{{ document.language }}" />
     </h1>
 
 	  <p ng-show="document.writable">
@@ -107,7 +108,7 @@
           <p>
             {{ comment.content }}<br />
             <span class="text-muted">{{ comment.create_date | date: 'yyyy-MM-dd' }}</span>
-          <span class="text-muted pull-right btn-link"
+          <span class="text-muted pull-right btn-link pointer"
                 ng-show="document.writable || userInfo.username == comment.creator"
                 ng-click="deleteComment(comment)">Delete</span>
           </p>

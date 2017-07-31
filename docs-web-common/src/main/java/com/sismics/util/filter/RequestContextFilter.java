@@ -13,6 +13,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+import com.lowagie.text.FontFactory;
 import org.apache.log4j.Level;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
@@ -71,6 +72,9 @@ public class RequestContextFilter implements Filter {
                 AppContext.getInstance();
             }
         });
+
+        // Register fonts
+        FontFactory.registerDirectories();
     }
 
     @Override

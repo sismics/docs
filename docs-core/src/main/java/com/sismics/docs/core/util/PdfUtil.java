@@ -1,18 +1,18 @@
 package com.sismics.docs.core.util;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import javax.imageio.ImageIO;
-
+import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Closer;
+import com.google.common.io.Resources;
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.PdfWriter;
+import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.util.pdf.PdfPage;
+import com.sismics.util.ImageUtil;
+import com.sismics.util.mime.MimeType;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -32,13 +32,15 @@ import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-import com.google.common.io.Closer;
-import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
-import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.util.pdf.PdfPage;
-import com.sismics.util.ImageUtil;
-import com.sismics.util.mime.MimeType;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * PDF utilities.
@@ -86,7 +88,6 @@ public class PdfUtil {
      * @param inputStream InputStream
      * @param reset Reset the stream after usage
      * @return PDF input stream
-     * @throws Exception 
      */
     public static InputStream convertToPdf(File file, InputStream inputStream, boolean reset) throws Exception {
         if (file.getMimeType().equals(MimeType.APPLICATION_PDF)) {
@@ -101,18 +102,48 @@ public class PdfUtil {
         if (file.getMimeType().equals(MimeType.OPEN_DOCUMENT_TEXT)) {
             return convertOpenDocumentText(inputStream, reset);
         }
-        
+
+        if (file.getMimeType().equals(MimeType.TEXT_PLAIN) || file.getMimeType().equals(MimeType.TEXT_CSV)) {
+            return convertTextPlain(inputStream, reset);
+        }
+
         // PDF conversion not necessary/possible
         return null;
     }
-    
+
+    /**
+     * Convert a text plain document to PDF.
+     *
+     * @param inputStream Unecnrypted input stream
+     * @param reset Reset the stream after usage
+     * @return PDF input stream
+     */
+    private static InputStream convertTextPlain(InputStream inputStream, boolean reset) throws Exception {
+        Document output = new Document(PageSize.A4, 40, 40, 40, 40);
+        ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
+        PdfWriter.getInstance(output, pdfOutputStream);
+
+        output.open();
+        String content = CharStreams.toString(new InputStreamReader(inputStream, Charsets.UTF_8));
+        Font font = FontFactory.getFont("LiberationMono-Regular");
+        Paragraph paragraph = new Paragraph(content, font);
+        paragraph.setAlignment(Element.ALIGN_LEFT);
+        output.add(paragraph);
+        output.close();
+
+        if (reset) {
+            inputStream.reset();
+        }
+
+        return new ByteArrayInputStream(pdfOutputStream.toByteArray());
+    }
+
     /**
      * Convert an open document text file to PDF.
      * 
      * @param inputStream Unencrypted input stream
      * @param reset Reset the stream after usage
      * @return PDF input stream
-     * @throws Exception 
      */
     private static InputStream convertOpenDocumentText(InputStream inputStream, boolean reset) throws Exception {
         ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
@@ -131,7 +162,6 @@ public class PdfUtil {
      * @param inputStream Unencrypted input stream
      * @param reset Reset the stream after usage
      * @return PDF input stream
-     * @throws Exception 
      */
     private static InputStream convertOfficeDocument(InputStream inputStream, boolean reset) throws Exception {
         ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
@@ -153,7 +183,6 @@ public class PdfUtil {
      * @param metadata Add a page with metadata
      * @param margin Margins in millimeters
      * @return PDF input stream
-     * @throws IOException 
      */
     public static InputStream convertToPdf(DocumentDto documentDto, List<File> fileList,
             boolean fitImageToPage, boolean metadata, int margin) throws Exception {
@@ -282,12 +311,27 @@ public class PdfUtil {
      * 
      * @param inputStream PDF document
      * @return Render of the first page
-     * @throws IOException
      */
     public static BufferedImage renderFirstPage(InputStream inputStream) throws IOException {
         try (PDDocument pdfDocument = PDDocument.load(inputStream)) {
             PDFRenderer renderer = new PDFRenderer(pdfDocument);
             return renderer.renderImage(0);
+        }
+    }
+
+    /**
+     * Register fonts.
+     */
+    public static void registerFonts() {
+        URL url = Resources.getResource("fonts/LiberationMono-Regular.ttf");
+        try (InputStream is = url.openStream()) {
+            Path file = Files.createTempFile("sismics_docs_font_mono", ".ttf");
+            try (OutputStream os = Files.newOutputStream(file)) {
+                ByteStreams.copy(is, os);
+            }
+            FontFactory.register(file.toAbsolutePath().toString(), "LiberationMono-Regular");
+        } catch (IOException e) {
+            log.error("Error loading font", e);
         }
     }
 }
