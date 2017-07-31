@@ -116,10 +116,6 @@ public class PdfUtil {
      * @return PDF input stream
      */
     private static InputStream convertTextPlain(InputStream inputStream, boolean reset) throws Exception {
-        if (reset) {
-            inputStream.reset();
-        }
-
         Document output = new Document(PageSize.A4, 40, 40, 40, 40);
         ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
         PdfWriter.getInstance(output, pdfOutputStream);
@@ -131,6 +127,10 @@ public class PdfUtil {
         paragraph.setAlignment(Element.ALIGN_LEFT);
         output.add(paragraph);
         output.close();
+
+        if (reset) {
+            inputStream.reset();
+        }
 
         return new ByteArrayInputStream(pdfOutputStream.toByteArray());
     }
