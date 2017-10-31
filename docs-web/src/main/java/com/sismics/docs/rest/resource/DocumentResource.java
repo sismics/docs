@@ -574,7 +574,7 @@ public class DocumentResource extends BaseResource {
         
         // Validate input data
         title = ValidationUtil.validateLength(title, "title", 1, 100, false);
-        language = ValidationUtil.validateLength(language, "language", 3, 3, false);
+        language = ValidationUtil.validateLength(language, "language", 3, 7, false);
         description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
         subject = ValidationUtil.validateLength(subject, "subject", 0, 500, true);
         identifier = ValidationUtil.validateLength(identifier, "identifier", 0, 500, true);
