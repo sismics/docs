@@ -3,7 +3,7 @@ dist: trusty
 language: java
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get -y -q install tesseract-ocr tesseract-ocr-fra tesseract-ocr-jpn
+  - sudo apt-get -y -q install tesseract-ocr tesseract-ocr-fra tesseract-ocr-ita tesseract-ocr-kor tesseract-ocr-rus tesseract-ocr-ukr tesseract-ocr-spa tesseract-ocr-ara tesseract-ocr-hin tesseract-ocr-deu tesseract-ocr-pol tesseract-ocr-jpn tesseract-ocr-por tesseract-ocr-tha tesseract-ocr-jpn tesseract-ocr-chi-sim tesseract-ocr-chi-tra
   - sudo apt-get -y -q install haveged && sudo service haveged start
 after_success:
   - mvn -Pprod -DskipTests clean install
