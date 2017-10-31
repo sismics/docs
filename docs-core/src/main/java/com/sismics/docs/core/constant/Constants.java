@@ -1,8 +1,8 @@
 package com.sismics.docs.core.constant;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
+
+import java.util.List;
 
 /**
  * Application constants.
@@ -43,5 +43,5 @@ public class Constants {
     /**
      * Supported document languages.
      */
-    public static final List<String> SUPPORTED_LANGUAGES = Lists.newArrayList("eng", "fra", "jpn");
+    public static final List<String> SUPPORTED_LANGUAGES = Lists.newArrayList("eng", "fra", "ita", "deu", "spa", "por", "pol", "rus", "ukr", "ara", "hin", "chi_sim", "chi_tra", "jpn", "tha", "kor");
 }
