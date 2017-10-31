@@ -41,7 +41,6 @@
 	<div class="page-header">
 	  <h1>
       {{ document.title }}
-      <img ng-if="document" ng-src="img/flag/{{ document.language }}.png" title="Document language: {{ document.language }}" />
       <small>{{ document.create_date | date: 'yyyy-MM-dd' }}
       by <a href="#/user/{{ document.creator }}">{{ document.creator }}</a></small>
     </h1>

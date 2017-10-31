@@ -13,7 +13,6 @@ import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
-import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
@@ -67,7 +66,7 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String} title Title
      * @apiSuccess {String} description Description
      * @apiSuccess {Number} create_date Create date (timestamp)
-     * @apiSuccess {String="eng","fra","jpn"} language Language
+     * @apiSuccess {String} language Language
      * @apiSuccess {Boolean} shared True if the document is shared
      * @apiSuccess {Number} file_count Number of files in this document
      * @apiSuccess {Object[]} tags List of tags
@@ -313,7 +312,7 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String} documents.title Title
      * @apiSuccess {String} documents.description Description
      * @apiSuccess {Number} documents.create_date Create date (timestamp)
-     * @apiSuccess {String="eng","fra","jpn"} documents.language Language
+     * @apiSuccess {String} documents.language Language
      * @apiSuccess {Boolean} documents.shared True if the document is shared
      * @apiSuccess {Number} documents.file_count Number of files in this document
      * @apiSuccess {Object[]} documents.tags List of tags
@@ -529,7 +528,7 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String} [rights] Rights
      * @apiParam {String[]} [tags] List of tags ID
      * @apiParam {String[]} [relations] List of related documents ID
-     * @apiParam {String="eng","fra","jpn"} language Language
+     * @apiParam {String} language Language
      * @apiParam {Number} [create_date] Create date (timestamp)
      * @apiSuccess {String} id Document ID
      * @apiError (client) ForbiddenError Access denied
@@ -663,7 +662,7 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String} [rights] Rights
      * @apiParam {String[]} [tags] List of tags ID
      * @apiParam {String[]} [relations] List of related documents ID
-     * @apiParam {String="eng","fra","jpn"} language Language
+     * @apiParam {String} language Language
      * @apiParam {Number} [create_date] Create date (timestamp)
      * @apiSuccess {String} id Document ID
      * @apiError (client) ForbiddenError Access denied or document not writable
