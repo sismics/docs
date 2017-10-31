@@ -1,14 +1,13 @@
 package com.sismics.rest.util;
 
-import java.text.MessageFormat;
-import java.util.Date;
-import java.util.regex.Pattern;
-
+import com.google.common.base.Strings;
+import com.sismics.rest.exception.ClientException;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 
-import com.google.common.base.Strings;
-import com.sismics.rest.exception.ClientException;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  * Utility class to validate parameters.
@@ -58,7 +57,7 @@ public class ValidationUtil {
             throw new ClientException("ValidationError", MessageFormat.format("{0} must be more than {1} characters", name, lengthMin));
         }
         if (lengthMax != null && s.length() > lengthMax) {
-            throw new ClientException("ValidationError", MessageFormat.format("{0} must be more than {1} characters", name, lengthMax));
+            throw new ClientException("ValidationError", MessageFormat.format("{0} must be less than {1} characters", name, lengthMax));
         }
         return s;
     }
