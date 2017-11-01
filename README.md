@@ -1,14 +1,6 @@
 Sismics Docs [![Build Status](https://secure.travis-ci.org/sismics/docs.png)](http://travis-ci.org/sismics/docs)
 ============
 
-_Web interface_
-
-![Web interface](http://sismics.com/docs/screenshot1.png)
-
-_Android application_
-
-![Android documents list](http://sismics.com/docs/android1.png) ![Android navigation](http://sismics.com/docs/android2.png) ![Android document details](http://sismics.com/docs/android3.png) ![Android document actions](http://sismics.com/docs/android4.png)
-
 What is Docs?
 ---------------
 
