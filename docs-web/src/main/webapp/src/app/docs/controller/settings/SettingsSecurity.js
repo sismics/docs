@@ -3,7 +3,7 @@
 /**
  * Settings security controller.
  */
-angular.module('docs').controller('SettingsSecurity', function($scope, User, $dialog, $modal, Restangular) {
+angular.module('docs').controller('SettingsSecurity', function($scope, User, $dialog, $modal, Restangular, $translate) {
   User.userInfo().then(function(data) {
     $scope.user = data;
   });
@@ -12,9 +12,12 @@ angular.module('docs').controller('SettingsSecurity', function($scope, User, $di
    * Enable TOTP.
    */
   $scope.enableTotp = function() {
-    var title = 'Enable two-factor authentication';
-    var msg = 'Make sure you have a TOTP-compatible application on your phone ready to add a new account';
-    var btns = [{result:'cancel', label: 'Cancel'}, {result:'ok', label: 'OK', cssClass: 'btn-primary'}];
+    var title = $translate.instant('settings.security.enable_totp_title');
+    var msg = $translate.instant('settings.security.enable_totp_message');
+    var btns = [
+      { result:'cancel', label: $translate.instant('cancel') },
+      { result:'ok', label: $translate.instant('ok'), cssClass: 'btn-primary' }
+    ];
 
     $dialog.messageBox(title, msg, btns, function(result) {
       if (result == 'ok') {

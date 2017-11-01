@@ -3,7 +3,7 @@
 /**
  * Document default controller.
  */
-angular.module('docs').controller('DocumentDefault', function($scope, $rootScope, $state, Restangular, $upload) {
+angular.module('docs').controller('DocumentDefault', function($scope, $rootScope, $state, Restangular, $upload, $translate) {
   // Load app data
   Restangular.one('app').get().then(function(data) {
     $scope.app = data;
@@ -39,7 +39,7 @@ angular.module('docs').controller('DocumentDefault', function($scope, $rootScope
           name: file.name,
           create_date: new Date().getTime(),
           mimetype: file.type,
-          status: 'Pending...'
+          status: $translate.instant('document.default.upload_pending')
         };
         $scope.files.push(newfile);
         newfiles.push(newfile);
@@ -63,7 +63,7 @@ angular.module('docs').controller('DocumentDefault', function($scope, $rootScope
    */
   $scope.uploadFile = function(file, newfile) {
     // Upload the file
-    newfile.status = 'Uploading...';
+    newfile.status = $translate.instant('document.default.upload_progress');
     return $upload.upload({
       method: 'PUT',
       url: '../api/file',
@@ -81,9 +81,9 @@ angular.module('docs').controller('DocumentDefault', function($scope, $rootScope
           $rootScope.userInfo.storage_current += data.size;
         })
         .error(function (data) {
-          newfile.status = 'Upload error';
+          newfile.status = $translate.instant('document.default.upload_error');
           if (data.type == 'QuotaReached') {
-            newfile.status += ' - Quota reached';
+            newfile.status += ' - ' + $translate.instant('document.default.upload_error_quota');
           }
         });
   };

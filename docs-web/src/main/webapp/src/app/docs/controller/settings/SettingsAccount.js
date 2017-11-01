@@ -3,7 +3,7 @@
 /**
  * Settings account controller.
  */
-angular.module('docs').controller('SettingsAccount', function($scope, Restangular) {
+angular.module('docs').controller('SettingsAccount', function($scope, Restangular, $translate) {
   $scope.editUserAlert = false;
   
   // Alerts
@@ -22,7 +22,7 @@ angular.module('docs').controller('SettingsAccount', function($scope, Restangula
   $scope.editUser = function() {
     Restangular.one('user').post('', $scope.user).then(function() {
       $scope.user = {};
-      $scope.alerts.push({ type: 'success', msg: 'Account successfully updated' });
+      $scope.alerts.push({ type: 'success', msg: $translate.instant('settings.account.updated') });
     });
   };
 });

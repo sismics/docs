@@ -3,7 +3,7 @@
 /**
  * Document view controller.
  */
-angular.module('docs').controller('DocumentView', function ($scope, $state, $stateParams, $location, $dialog, $modal, Restangular, $timeout) {
+angular.module('docs').controller('DocumentView', function ($scope, $state, $stateParams, $location, $dialog, $modal, Restangular, $translate) {
   // Load document data from server
   Restangular.one('document', $stateParams.id).get().then(function(data) {
     $scope.document = data;
@@ -40,11 +40,11 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
    * Delete a comment.
    */
   $scope.deleteComment = function(comment) {
-    var title = 'Delete comment';
-    var msg = 'Do you really want to delete this comment?';
+    var title = $translate.instant('document.view.delete_comment_title');
+    var msg = $translate.instant('document.view.delete_comment_message');
     var btns = [
-      {result: 'cancel', label: 'Cancel'},
-      {result: 'ok', label: 'OK', cssClass: 'btn-primary'}
+      {result: 'cancel', label: $translate.instant('cancel')},
+      {result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}
     ];
 
     $dialog.messageBox(title, msg, btns, function (result) {
@@ -60,11 +60,11 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
    * Delete a document.
    */
   $scope.deleteDocument = function (document) {
-    var title = 'Delete document';
-    var msg = 'Do you really want to delete this document?';
+    var title = $translate.instant('document.view.delete_document_title');
+    var msg = $translate.instant('document.view.delete_document_message');
     var btns = [
-      {result: 'cancel', label: 'Cancel'},
-      {result: 'ok', label: 'OK', cssClass: 'btn-primary'}
+      {result: 'cancel', label: $translate.instant('cancel')},
+      {result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}
     ];
 
     $dialog.messageBox(title, msg, btns, function (result) {
@@ -108,14 +108,11 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
   $scope.showShare = function(share) {
     // Show the link
     var link = $location.absUrl().replace($location.path(), '').replace('#', '') + 'share.html#/share/' + $stateParams.id + '/' + share.id;
-    var title = 'Shared document';
-    var msg = 'You can share this document by giving this link. ' +
-        'Note that everyone having this link can see the document.<br/>' +
-        '<input class="form-control share-link" type="text" readonly="readonly" value="' + link + '"' +
-        ' onclick="this.select(); document.execCommand(\'copy\');" />';
+    var title = $translate.instant('document.view.shared_document_title');
+    var msg = $translate.instant('document.view.shared_document_message', { link: link });
     var btns = [
-      {result: 'unshare', label: 'Unshare', cssClass: 'btn-danger'},
-      {result: 'close', label: 'Close'}
+      {result: 'unshare', label: $translate.instant('unshare'), cssClass: 'btn-danger'},
+      {result: 'close', label: $translate.instant('close')}
     ];
 
     $dialog.messageBox(title, msg, btns, function (result) {

@@ -3,7 +3,7 @@
 /**
  * Settings group edition page controller.
  */
-angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog, $state, $stateParams, Restangular, $q) {
+angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog, $state, $stateParams, Restangular, $q, $translate) {
   /**
    * Returns true if in edit mode (false in add mode).
    */
@@ -52,9 +52,12 @@ angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog,
    * Delete the current group.
    */
   $scope.remove = function() {
-    var title = 'Delete group';
-    var msg = 'Do you really want to delete this group?';
-    var btns = [{result:'cancel', label: 'Cancel'}, {result:'ok', label: 'OK', cssClass: 'btn-primary'}];
+    var title = $translate.instant('settings.group.edit.delete_group_title');
+    var msg = $translate.instant('settings.group.edit.delete_group_message');
+    var btns = [
+      { result:'cancel', label: $translate.instant('cancel') },
+      { result:'ok', label: $translate.instant('ok'), cssClass: 'btn-primary' }
+    ];
 
     $dialog.messageBox(title, msg, btns, function(result) {
       if (result == 'ok') {

@@ -3,7 +3,7 @@
 /**
  * Document view content controller.
  */
-angular.module('docs').controller('DocumentViewContent', function ($scope, $rootScope, $stateParams, Restangular, $dialog, $state, $upload) {
+angular.module('docs').controller('DocumentViewContent', function ($scope, $rootScope, $stateParams, Restangular, $dialog, $state, $upload, $translate) {
   /**
    * Configuration for file sorting.
    */
@@ -45,11 +45,11 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
    * Delete a file.
    */
   $scope.deleteFile = function (file) {
-    var title = 'Delete file';
-    var msg = 'Do you really want to delete this file?';
+    var title = $translate.instant('document.view.content.delete_file_title');
+    var msg = $translate.instant('document.view.content.delete_file_message');
     var btns = [
-      {result: 'cancel', label: 'Cancel'},
-      {result: 'ok', label: 'OK', cssClass: 'btn-primary'}
+      {result: 'cancel', label: $translate.instant('cancel')},
+      {result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}
     ];
 
     $dialog.messageBox(title, msg, btns, function (result) {
@@ -82,7 +82,7 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
           name: file.name,
           create_date: new Date().getTime(),
           mimetype: file.type,
-          status: 'Pending...'
+          status: $translate.instant('document.view.content.upload_pending')
         };
         $scope.files.push(newfile);
         newfiles.push(newfile);
@@ -104,7 +104,7 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
    */
   $scope.uploadFile = function(file, newfile) {
     // Upload the file
-    newfile.status = 'Uploading...';
+    newfile.status = $translate.instant('document.view.content.upload_progress');
     return $upload.upload({
       method: 'PUT',
       url: '../api/file',
@@ -125,9 +125,9 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
           $rootScope.userInfo.storage_current += data.size;
         })
         .error(function (data) {
-          newfile.status = 'Upload error';
+          newfile.status = $translate.instant('document.view.content.upload_error');
           if (data.type == 'QuotaReached') {
-            newfile.status += ' - Quota reached';
+            newfile.status += ' - ' + $translate.instant('document.view.content.upload_error_quota');
           }
         });
   };

@@ -3,7 +3,7 @@
 /**
  * Login controller.
  */
-angular.module('docs').controller('Login', function(Restangular, $scope, $rootScope, $state, $dialog, User) {
+angular.module('docs').controller('Login', function(Restangular, $scope, $rootScope, $state, $dialog, User, $translate) {
   $scope.codeRequired = false;
 
   // Get the app configuration
@@ -33,9 +33,9 @@ angular.module('docs').controller('Login', function(Restangular, $scope, $rootSc
         $scope.codeRequired = true;
       } else {
         // Login truly failed
-        var title = 'Login failed';
-        var msg = 'Username or password invalid';
-        var btns = [{result: 'ok', label: 'OK', cssClass: 'btn-primary'}];
+        var title = $translate.instant('login.login_failed_title');
+        var msg = $translate.instant('login.login_failed_message');
+        var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
         $dialog.messageBox(title, msg, btns);
       }
     });

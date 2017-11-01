@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="docs">
   <head>
-    <title ng-bind-template="{{ appName }}">Sismics Docs</title>
+    <title ng-bind-template="{{ pageTitle ? pageTitle : appName }}">Sismics Docs</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="../api/theme/image/logo" />
@@ -29,6 +29,7 @@
     <script src="lib/underscore.js" type="text/javascript"></script>
     <script src="lib/colorpicker.js" type="text/javascript"></script>
     <script src="lib/angular.js" type="text/javascript"></script>
+    <script src="lib/angular.translate.js" type="text/javascript"></script>
     <script src="lib/angular.sanitize.js" type="text/javascript"></script>
     <script src="lib/angular.touch.js" type="text/javascript"></script>
     <script src="lib/angular.ui-router.js" type="text/javascript"></script>
@@ -92,7 +93,7 @@
         <button type="button" class="navbar-toggle"
                 ng-init="isCollapsed = true"
                 ng-click="isCollapsed = !isCollapsed">
-          <span class="sr-only">Toggle navigation</span>
+          <span class="sr-only">{{ 'index.toggle_navigation' | translate }}</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
@@ -108,37 +109,37 @@
       <div class="collapse navbar-collapse" collapse="isCollapsed">
         <ul class="nav navbar-nav" ng-show="!userInfo.anonymous">
           <li ng-class="{active: $uiRoute}" ui-route="/document.*">
-            <a href="#/document"><span class="glyphicon glyphicon-book"></span> Documents</a>
+            <a href="#/document"><span class="glyphicon glyphicon-book"></span> {{ 'index.nav_documents' | translate }}</a>
           </li>
           <li ng-class="{active: $uiRoute}" ui-route="/tag.*">
-            <a href="#/tag"><span class="glyphicon glyphicon-tags"></span> Tags</a>
+            <a href="#/tag"><span class="glyphicon glyphicon-tags"></span> {{ 'index.nav_tags' | translate }}</a>
           </li>
           <li ng-class="{active: $uiRoute}" ui-route="/user.*">
-            <a href="#/user"><span class="glyphicon glyphicon-user"></span> Users &amp; Groups</a>
+            <a href="#/user"><span class="glyphicon glyphicon-user"></span> {{ 'index.nav_users_groups' | translate }}</a>
           </li>
         </ul>
 
         <ul class="nav navbar-nav navbar-right" ng-show="!userInfo.anonymous">
           <li ng-show="errorNumber > 0">
               <a href="#/settings/log" ng-click="openLogs()" class="nav-text-error">
-                <span class="glyphicon glyphicon-warning-sign"></span> {{ errorNumber }} new error{{ errorNumber > 1 ? 's' : '' }}
+                <span class="glyphicon glyphicon-warning-sign"></span> {{ 'index.error_info' | translate: '{ count: errorNumber }' }}
               </a>
           </li>
           <li>
             <a href="{{ userInfo.username == 'guest' ? '#/user/guest' : '#/settings/account' }}"
-               title="Logged in as {{ userInfo.username }}">
+               title="{{ 'index.logged_as' | translate: '{ username: userInfo.username }' }}">
               <span class="glyphicon glyphicon-user"></span>
               {{ userInfo.username }}
             </a>
           </li>
           <li ng-class="{active: $uiRoute}" ui-route="/settings.*" ng-show="userInfo.username != 'guest'">
             <a href="#/settings/account">
-              <span class="glyphicon glyphicon-cog"></span> Settings
+              <span class="glyphicon glyphicon-cog"></span> {{ 'index.nav_settings' | translate }}
             </a>
           </li>
           <li>
             <a href="#" ng-click="logout($event)">
-              <span class="glyphicon glyphicon-off"></span> Logout
+              <span class="glyphicon glyphicon-off"></span> {{ 'index.logout' | translate }}
             </a>
           </li>
         </ul>

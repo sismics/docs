@@ -3,7 +3,7 @@
 /**
  * Tag edit controller.
  */
-angular.module('docs').controller('TagEdit', function($scope, $stateParams, Restangular, $dialog, $state) {
+angular.module('docs').controller('TagEdit', function($scope, $stateParams, Restangular, $dialog, $state, $translate) {
   // Retrieve the tag
   Restangular.one('tag', $stateParams.id).get().then(function(data) {
     $scope.tag = data;
@@ -28,11 +28,11 @@ angular.module('docs').controller('TagEdit', function($scope, $stateParams, Rest
    * Delete a tag.
    */
   $scope.deleteTag = function(tag) {
-    var title = 'Delete tag';
-    var msg = 'Do you really want to delete this tag?';
+    var title = $translate.instant('tag.edit.delete_tag_title');
+    var msg = $translate.instant('tag.edit.delete_tag_message');
     var btns = [
-      {result: 'cancel', label: 'Cancel'},
-      {result: 'ok', label: 'OK', cssClass: 'btn-primary'}
+      {result: 'cancel', label: $translate.instant('cancel')},
+      {result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}
     ];
 
     $dialog.messageBox(title, msg, btns, function(result) {

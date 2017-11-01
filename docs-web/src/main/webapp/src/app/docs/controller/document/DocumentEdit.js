@@ -94,7 +94,6 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
     
     // Upload files after edition
     promise.then(function(data) {
-      console.log('document created, adding file', $scope.newFiles);
       $scope.fileProgress = 0;
       
       // When all files upload are over, attach orphan files and move on
@@ -122,7 +121,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
         navigateNext();
       } else {
         $scope.fileIsUploading = true;
-        $rootScope.pageTitle = '0% - Sismics Docs';
+        $rootScope.pageTitle = '0% - ' + $rootScope.appName;
         
         // Send a file from the input file array and return a promise
         var sendFile = function(key) {
@@ -134,7 +133,6 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
           };
 
           // Build the payload
-          console.log('sending file', key, $scope.newFiles[key], data);
           var file = $scope.newFiles[key];
           var formData = new FormData();
           formData.append('id', data.id);
@@ -149,7 +147,6 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
             contentType: false,
             processData: false,
             success: function(response) {
-              console.log('file uploaded successfully', formData);
               deferred.resolve(response);
             },
             error: function(jqXHR) {
@@ -172,19 +169,19 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
             // Error uploading a file, we stop here
             $scope.alerts.unshift({
               type: 'danger',
-              msg: 'Document successfully ' + ($scope.isEdit() ? 'edited' : 'added') + ' but some files cannot be uploaded'
-                + (data.responseJSON.type == 'QuotaReached' ? ' - Quota reached' : '')
+              msg: $translate.instant('document.edit.document_' + ($scope.isEdit() ? 'edited' : 'added') + '_with_errors')
+                + (data.responseJSON.type == 'QuotaReached' ? (' - ' + $translate.instant('document.edit.quota_reached')) : '')
             });
 
             // Reset view and title
             $scope.fileIsUploading = false;
             $scope.fileProgress = 0;
-            $rootScope.pageTitle = 'Sismics Docs';
+            $rootScope.pageTitle = $rootScope.appName;
           }, function(e) {
             var done = 1 - (e.total - e.loaded) / e.total;
             var chunk = 100 / _.size($scope.newFiles);
             $scope.fileProgress = startProgress + done * chunk;
-            $rootScope.pageTitle = Math.round($scope.fileProgress) + '% - Sismics Docs';
+            $rootScope.pageTitle = Math.round($scope.fileProgress) + '% - ' + $rootScope.appName;
           });
 
           return deferred.promise;
@@ -195,13 +192,11 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
         var then = function() {
           key++;
           if ($scope.newFiles[key]) {
-            console.log('sending new file');
             sendFile(key).then(then);
           } else {
             $scope.fileIsUploading = false;
             $scope.fileProgress = 0;
-            $rootScope.pageTitle = 'Sismics Docs';
-            console.log('finished sending files, bye');
+            $rootScope.pageTitle = $rootScope.appName;
             navigateNext();
           }
         };

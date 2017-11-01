@@ -6,13 +6,13 @@
 angular.module('docs',
     // Dependencies
     ['ui.router', 'ui.route', 'ui.bootstrap', 'ui.keypress', 'ui.validate', 'dialog', 'ngProgress', 'monospaced.qrcode',
-      'ui.sortable', 'restangular', 'ngSanitize', 'ngTouch', 'colorpicker.module', 'angularFileUpload']
+      'ui.sortable', 'restangular', 'ngSanitize', 'ngTouch', 'colorpicker.module', 'angularFileUpload', 'pascalprecht.translate']
   )
 
 /**
  * Configuring modules.
  */
-.config(function($stateProvider, $httpProvider, RestangularProvider) {
+.config(function($stateProvider, $httpProvider, RestangularProvider, $translateProvider) {
   // Configuring UI Router
   $stateProvider
     .state('main', {
@@ -334,9 +334,25 @@ angular.module('docs',
         }
       }
     });
+
   // Configuring Restangular
   RestangularProvider.setBaseUrl('../api');
-  
+
+  // Configuring Angular Translate
+  $translateProvider
+    .useSanitizeValueStrategy(null)
+    .useStaticFilesLoader({
+      prefix: 'locale/',
+      suffix: '.json'
+    })
+    .registerAvailableLanguageKeys(['en', 'fr'], {
+      'en_*': 'en',
+      'fr_*': 'fr',
+      '*': 'en'
+    })
+    .determinePreferredLanguage()
+    .fallbackLanguage('en');
+
   // Configuring $http to act like jQuery.ajax
   $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
   $httpProvider.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
