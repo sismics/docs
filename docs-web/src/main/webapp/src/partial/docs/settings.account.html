@@ -1,34 +1,34 @@
 <h1>User <small>account</small></h1>
 <form class="form-horizontal" name="editUserForm" novalidate>
   <div class="form-group" ng-class="{ 'has-error': !editUserForm.password.$valid, success: editUserForm.password.$valid }">
-    <label class="col-sm-2 control-label" for="inputPassword">Password</label>
+    <label class="col-sm-2 control-label" for="inputPassword">{{ 'settings.account.password' | translate }}</label>
     <div class="col-sm-7">
       <input name="password" type="password" id="inputPassword" required class="form-control"
-        ng-minlength="8" ng-maxlength="50" placeholder="Password" ng-model="user.password" />
+        ng-minlength="8" ng-maxlength="50" placeholder="{{ 'settings.account.password' | translate }}" ng-model="user.password" />
     </div>
     <div class="col-sm-3">
-      <span class="help-block" ng-show="editUserForm.password.$error.required">Required</span>
-      <span class="help-block" ng-show="editUserForm.password.$error.minlength">Too short</span>
-      <span class="help-block" ng-show="editUserForm.password.$error.maxlength">Too long</span>
+      <span class="help-block" ng-show="editUserForm.password.$error.required">{{ 'validation.required' | translate }}</span>
+      <span class="help-block" ng-show="editUserForm.password.$error.minlength">{{ 'validation.too_short' | translate }}</span>
+      <span class="help-block" ng-show="editUserForm.password.$error.maxlength">{{ 'validation.too_long' | translate }}</span>
     </div>
   </div>
 
   <div class="form-group" ng-class="{ 'has-error': !editUserForm.passwordconfirm.$valid, success: editUserForm.passwordconfirm.$valid }">
-    <label class="col-sm-2 control-label" for="inputPasswordConfirm">Password (confirm)</label>
+    <label class="col-sm-2 control-label" for="inputPasswordConfirm">{{ 'settings.account.password_confirm' | translate }}</label>
     <div class="col-sm-7">
       <input name="passwordconfirm" type="password" id="inputPasswordConfirm" required class="form-control"
         ui-validate="'$value == user.password'" ui-validate-watch="'user.password'"
-        placeholder="Password (confirm)" ng-model="user.passwordconfirm" />
+        placeholder="{{ 'settings.account.password_confirm' | translate }}" ng-model="user.passwordconfirm" />
     </div>
     <div class="col-sm-3">
-      <span class="help-block" ng-show="editUserForm.passwordconfirm.$error.validator">Password and password confirmation must match</span>
+      <span class="help-block" ng-show="editUserForm.passwordconfirm.$error.validator">{{ 'validation.password_confirm' | translate }}</span>
     </div>
   </div>
 
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
       <button type="submit" class="btn btn-primary" ng-click="editUser()" ng-disabled="!editUserForm.$valid">
-        <span class="glyphicon glyphicon-pencil"></span> Edit
+        <span class="glyphicon glyphicon-pencil"></span> {{ 'edit' | translate }}
       </button>
     </div>
   </div>

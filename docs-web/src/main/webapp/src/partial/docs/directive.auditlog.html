@@ -10,9 +10,9 @@
     <td>
       {{ log.class }}
           <span ng-switch="log.type">
-            <span ng-switch-when="CREATE">created</span>
-            <span ng-switch-when="UPDATE">updated</span>
-            <span ng-switch-when="DELETE">deleted</span>
+            <span ng-switch-when="CREATE">{{ 'directive.auditlog.log_created' | translate }}</span>
+            <span ng-switch-when="UPDATE">{{ 'directive.auditlog.log_updated' | translate }}</span>
+            <span ng-switch-when="DELETE">{{ 'directive.auditlog.log_deleted' | translate }}</span>
           </span>
 
           <span ng-switch="log.class">
@@ -21,11 +21,11 @@
               <a ng-href="#/document/view/{{ log.target }}">{{ log.message }}</a>
             </span>
             <span ng-switch-when="File">
-              <a ng-if="log.message" ng-href="#/document/view/{{ log.message }}/content/file/{{ log.target }}">Open</a>
-              <a ng-if="!log.message" ng-href="#/document/file/{{ log.target }}">Open</a>
+              <a ng-if="log.message" ng-href="#/document/view/{{ log.message }}/content/file/{{ log.target }}">{{ 'open' | translate }}</a>
+              <a ng-if="!log.message" ng-href="#/document/file/{{ log.target }}">{{ 'open' | translate }}</a>
             </span>
             <span ng-switch-when="Comment">
-              <a ng-href="#/document/view/{{ log.message }}">See</a>
+              <a ng-href="#/document/view/{{ log.message }}">{{ 'see' | translate }}</a>
             </span>
             <span ng-switch-when="Acl">
               {{ log.message }}

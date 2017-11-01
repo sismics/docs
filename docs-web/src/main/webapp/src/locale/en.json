@@ -22,38 +22,138 @@
     "logout": "Logout"
   },
   "document": {
+    "add_document": "Add a document",
+    "tags": "Tags",
+    "no_tags": "No tags",
+    "no_documents": "No document in the database",
+    "search": "Search",
+    "search_empty": "No matches for <strong>\"{{ search }}\"</strong>",
+    "shared": "Shared",
+    "title": "Title",
+    "description": "Description",
+    "contributors": "Contributors",
+    "language": "Language",
+    "creation_date": "Creation date",
+    "subject": "Subject",
+    "identifier": "Identifier",
+    "publisher": "Publisher",
+    "format": "Format",
+    "source": "Source",
+    "type": "Type",
+    "coverage": "Coverage",
+    "rights": "Rights",
+    "relations": "Relations",
+    "page_size": "Page size",
+    "page_size_10": "10 per page",
+    "page_size_20": "20 per page",
+    "page_size_30": "20 per page",
+    "upgrade_quota": "To upgrade your quota, ask your administrator",
+    "quota": "{{ current | number: 0 }}MB ({{ percent | number: 1 }}%) used on {{ total | number: 0 }}MB",
+    "count": "{{ count }} document{{ count > 1 ? 's' : '' }} found",
     "view": {
-      "content": {
-        "delete_file_title": "Delete file",
-        "delete_file_message": "Do you really want to delete this file?",
-        "upload_pending": "Pending...",
-        "upload_progress": "Uploading...",
-        "upload_error": "Upload error",
-        "upload_error_quota": "Quota reached"
-      },
       "delete_comment_title": "Delete comment",
       "delete_comment_message": "Do you really want to delete this comment?",
       "delete_document_title": "Delete document",
       "delete_document_message": "Do you really want to delete this document?",
       "shared_document_title": "Shared document",
-      "shared_document_message": "You can share this document by giving this link. Note that everyone having this link can see the document.<br/><input class=\"form-control share-link\" type=\"text\" readonly=\"readonly\" value=\"{{ link }}\" onclick=\"this.select(); document.execCommand('copy');\" />"
+      "shared_document_message": "You can share this document by giving this link. Note that everyone having this link can see the document.<br/><input class=\"form-control share-link\" type=\"text\" readonly=\"readonly\" value=\"{{ link }}\" onclick=\"this.select(); document.execCommand('copy');\" />",
+      "not_found": "Document not found",
+      "forbidden": "Access forbidden",
+      "download_files": "Download files",
+      "export_pdf": "Export to PDF",
+      "by_creator": "by",
+      "comments": "Comments",
+      "no_comments": "No comments on this document yet",
+      "add_comment": "Add a comment",
+      "error_loading_comments": "Error loading comments",
+      "content": {
+        "content": "Content",
+        "delete_file_title": "Delete file",
+        "delete_file_message": "Do you really want to delete this file?",
+        "upload_pending": "Pending...",
+        "upload_progress": "Uploading...",
+        "upload_error": "Upload error",
+        "upload_error_quota": "Quota reached",
+        "drop_zone": "Drag & drop files here to upload"
+      },
+      "permissions": {
+        "permissions": "Permissions",
+        "message": "Permissions can be applied directly to this document, or can come from <a href=\"#/tag\">tags</a>.",
+        "title": "Permissions on this document",
+        "inherited_tags": "Permissions inherited by tags",
+        "acl_source": "From",
+        "acl_target": "For",
+        "acl_permission": "Permission"
+      },
+      "activity": {
+        "activity": "Activity",
+        "message": "Every actions on this document are logged here."
+      }
     },
     "edit": {
       "document_edited_with_errors": "Document successfully edited but some files cannot be uploaded",
       "document_added_with_errors": "Document successfully added but some files cannot be uploaded",
-      "quota_reached": "Quota reached"
+      "quota_reached": "Quota reached",
+      "primary_metadata": "Primary metadata",
+      "title_placeholder": "The nature or genre of the resource",
+      "description_placeholder": "An account of the resource",
+      "new_files": "New files",
+      "orphan_files": "+ {{ count }} file{{ count > 1 ? 's' : '' }}",
+      "additional_metadata": "Additional metadata",
+      "subject_placeholder": "The topic of the resource",
+      "identifier_placeholder": "An unambiguous reference to the resource within a given context",
+      "publisher_placeholder": "An entity responsible for making the resource available",
+      "format_placeholder": "The file format, physical medium, or dimensions of the resource",
+      "source_placeholder": "A related resource from which the described resource is derived",
+      "uploading_files": "Uploading files..."
     },
     "default": {
       "upload_pending": "Pending...",
       "upload_progress": "Uploading...",
       "upload_error": "Upload error",
-      "upload_error_quota": "Quota reached"
+      "upload_error_quota": "Quota reached",
+      "quick_upload": "Quick upload",
+      "drop_zone": "Drag & drop files here to upload",
+      "add_new_document": "Add to new document",
+      "latest_activity": "Latest activity",
+      "footer_sismics": "Crafted with <span class=\"glyphicon glyphicon-heart\"></span> by <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
+      "api_documentation": "API Documentation",
+      "version": "Version:",
+      "memory": "Memory:"
+    },
+    "pdf": {
+      "export_title": "Export to PDF",
+      "export_metadata": "Export metadata",
+      "export_comments": "Export comments",
+      "fit_to_page": "Fit image to page",
+      "margin": "Margin",
+      "millimeter": "mm"
+    },
+    "share": {
+      "title": "Share document",
+      "message": "Name the sharing if you want to share multiple times the same document.",
+      "submit": "Share"
+    }
+  },
+  "file": {
+    "view": {
+      "previous": "Previous",
+      "next": "Next",
+      "not_found": "File not found"
     }
   },
   "tag": {
     "edit": {
       "delete_tag_title": "Delete tag",
       "delete_tag_message": "Do you really want to delete this tag?"
+    }
+  },
+  "group": {
+    "rofile": {
+      "members": "Members",
+      "no_members": "No member",
+      "related_links": "Related links",
+      "edit_group": "Edit {{ name }} group"
     }
   },
   "settings": {
@@ -74,11 +174,76 @@
       }
     },
     "account": {
+      "password": "Password",
+      "password_confirm": "Password (confirm)",
       "updated": "Account successfully updated"
+    },
+    "config": {
+      "title_guest_access": "Guest <small>access</small>",
+      "message_guest_access": "Guest access is a mode where anyone can access {{ appName }} without password.<br/>Like a normal user, the guest user can only access its documents and those accessible through permissions.<br/>",
+      "enable_guest_access": "Enable guest access",
+      "disable_guest_access": "Disable guest access",
+      "title_theme": "Theme <small>customization</small>",
+      "application_name": "Application name",
+      "main_color": "Main color",
+      "custom_css": "Custom CSS",
+      "custom_css_placeholder": "Custom CSS to add after the main stylesheet",
+      "logo": "Logo (squared size)",
+      "background_image": "Background image",
+      "uploading_image": "Uploading the image..."
     }
+  },
+  "directive": {
+    "acledit": {
+      "acl_target": "For",
+      "acl_permission": "Permission",
+      "add_permission": "Add a permission",
+      "search_user_group": "Search a user or group"
+    },
+    "auditlog": {
+      "log_created": "created",
+      "log_updated": "updated",
+      "log_deleted": "deleted"
+    },
+    "selectrelation": {
+      "typeahead": "Type a document title"
+    },
+    "selecttag": {
+      "typeahead": "Type a tag"
+    }
+  },
+  "filter": {
+    "filesize": {
+      "mb": "MB",
+      "kb": "kB"
+    }
+  },
+  "acl": {
+    "READ": "Can read",
+    "READWRITE": "Can write",
+    "WRITE": "Can write",
+    "USER": "User",
+    "GROUP": "Group",
+    "SHARE": "Shared"
+  },
+  "validation": {
+    "required": "Required",
+    "too_short": "Too short",
+    "too_long": "Too long",
+    "password_confirm": "Password and password confirmation must match"
   },
   "ok": "OK",
   "cancel": "Cancel",
+  "share": "Share",
   "unshare": "Unshare",
-  "close": "Close"
+  "close": "Close",
+  "add": "Add",
+  "open": "Open",
+  "see": "See",
+  "save": "Save",
+  "export": "Export",
+  "edit": "Edit",
+  "delete": "Delete",
+  "loading": "Loading...",
+  "send": "Send"
 }

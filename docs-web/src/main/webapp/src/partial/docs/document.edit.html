@@ -3,32 +3,32 @@
 <div ng-show="document || !isEdit()">
   <form name="documentForm" class="form-horizontal">
     <fieldset>
-      <legend>Primary metadata</legend>
+      <legend>{{ 'document.edit.primary_metadata' | translate }}</legend>
       <div class="form-group" ng-class="{ 'has-error': !documentForm.title.$valid }">
-        <label class="col-sm-2 control-label" for="inputTitle">Title</label>
+        <label class="col-sm-2 control-label" for="inputTitle">{{ 'document.title' | translate }}</label>
         <div class="col-sm-10">
           <input required ng-maxlength="100" class="form-control" type="text" id="inputTitle"
-            placeholder="The nature or genre of the resource" name="title" ng-model="document.title" autocomplete="off"
+            placeholder="{{ 'document.edit.title_placeholder' | translate }}" name="title" ng-model="document.title" autocomplete="off"
             typeahead="document for document in getTitleTypeahead($viewValue)"
             typeahead-wait-ms="200" ng-disabled="fileIsUploading" />
         </div>
       </div>
       <div class="form-group" ng-class="{ 'has-error': !documentForm.description.$valid }">
-        <label class="col-sm-2 control-label" for="inputDescription">Description</label>
+        <label class="col-sm-2 control-label" for="inputDescription">{{ 'document.description' | translate }}</label>
         <div class="col-sm-10">
-          <textarea ng-maxlength="4000" class="form-control" rows="5" id="inputDescription" placeholder="An account of the resource"
+          <textarea ng-maxlength="4000" class="form-control" rows="5" id="inputDescription" placeholder="{{ 'document.edit.description_placeholder' | translate }}"
             name="description" ng-model="document.description" ng-disabled="fileIsUploading"></textarea>
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label" for="inputCreateDate">Creation date</label>
+        <label class="col-sm-2 control-label" for="inputCreateDate">{{ 'document.creation_date' | translate }}</label>
         <div class="col-sm-10">
           <input type="text" id="inputCreateDate" ng-readonly="true" datepicker-popup="yyyy-MM-dd" class="form-control"
             ng-model="document.create_date" starting-day="1" show-weeks="false" ng-disabled="fileIsUploading" />
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label" for="inputLanguage">Language</label>
+        <label class="col-sm-2 control-label" for="inputLanguage">{{ 'document.language' | translate }}</label>
         <div class="col-sm-10">
           <select class="form-control" id="inputLanguage" ng-model="document.language" ng-disabled="fileIsUploading">
             <option value="eng">English</option>
@@ -42,8 +42,8 @@
             <option value="ukr">українська</option>
             <option value="ara">العربية</option>
             <option value="hin">हिन्दी</option>
-            <option value="chi_sim">官话</option>
-            <option value="chi_tra">官話</option>
+            <option value="chi_sim">简体中文</option>
+            <option value="chi_tra">繁体中文</option>
             <option value="jpn">日本語</option>
             <option value="tha">ภาษาไทย</option>
             <option value="kor">한국어</option>
@@ -51,16 +51,17 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label" for="inputFiles">New files</label>
+        <label class="col-sm-2 control-label" for="inputFiles">{{ 'document.edit.new_files' | translate }}</label>
         <div class="col-sm-6">
           <file class="form-control" id="inputFiles" multiple="multiple" ng-model="newFiles" ng-disabled="fileIsUploading"></file>
         </div>
         <div class="col-sm-4" ng-if="orphanFiles.length > 0">
           + {{ orphanFiles.length }} file{{ orphanFiles.length > 1 ? 's' : '' }}
+          {{ 'document.edit.orphan_files' | translate: '{ count: orphanFiles.length }' }}
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label" for="inputTags">Tags</label>
+        <label class="col-sm-2 control-label" for="inputTags">{{ 'document.tags' | translate }}</label>
         <div class="col-sm-10">
           <select-tag tags="document.tags" ref="inputTags" ng-disabled="fileIsUploading"></select-tag>
         </div>
@@ -68,45 +69,45 @@
     </fieldset>
 
     <fieldset>
-      <legend>Additional metadata</legend>
+      <legend>{{ 'document.edit.additional_metadata' | translate }}</legend>
       <div class="form-group" ng-class="{ 'has-error': !documentForm.subject.$valid }">
-        <label class="col-sm-2 control-label" for="inputSubject">Subject</label>
+        <label class="col-sm-2 control-label" for="inputSubject">{{ 'document.subject' | translate }}</label>
         <div class="col-sm-10">
           <input ng-maxlength="500" class="form-control" type="text" id="inputSubject"
-                 placeholder="The topic of the resource" name="subject" ng-model="document.subject" ng-disabled="fileIsUploading" />
+                 placeholder="{{ 'document.edit.subject_placeholder' | translate }}" name="subject" ng-model="document.subject" ng-disabled="fileIsUploading" />
         </div>
       </div>
       <div class="form-group" ng-class="{ 'has-error': !documentForm.identifier.$valid }">
-        <label class="col-sm-2 control-label" for="inputIdentifier">Identifier</label>
+        <label class="col-sm-2 control-label" for="inputIdentifier">{{ 'document.identifier' | translate }}</label>
         <div class="col-sm-10">
           <input ng-maxlength="500" class="form-control" type="text" id="inputIdentifier"
-                 placeholder="An unambiguous reference to the resource within a given context" name="identifier" ng-model="document.identifier" ng-disabled="fileIsUploading" />
+                 placeholder="{{ 'document.edit.identifier_placeholder' | translate }}" name="identifier" ng-model="document.identifier" ng-disabled="fileIsUploading" />
         </div>
       </div>
       <div class="form-group" ng-class="{ 'has-error': !documentForm.publisher.$valid }">
-        <label class="col-sm-2 control-label" for="inputPublisher">Publisher</label>
+        <label class="col-sm-2 control-label" for="inputPublisher">{{ 'document.publisher' | translate }}</label>
         <div class="col-sm-10">
           <input ng-maxlength="500" class="form-control" type="text" id="inputPublisher"
-                 placeholder="An entity responsible for making the resource available" name="publisher" ng-model="document.publisher" ng-disabled="fileIsUploading" />
+                 placeholder="{{ 'document.edit.publisher_placeholder' | translate }}" name="publisher" ng-model="document.publisher" ng-disabled="fileIsUploading" />
         </div>
       </div>
       <div class="form-group" ng-class="{ 'has-error': !documentForm.format.$valid }">
-        <label class="col-sm-2 control-label" for="inputFormat">Format</label>
+        <label class="col-sm-2 control-label" for="inputFormat">{{ 'document.format' | translate }}</label>
         <div class="col-sm-10">
           <input ng-maxlength="500" class="form-control" type="text" id="inputFormat"
-                 placeholder="The file format, physical medium, or dimensions of the resource" name="format" ng-model="document.format" ng-disabled="fileIsUploading" />
+                 placeholder="{{ 'document.edit.format_placeholder' | translate }}" name="format" ng-model="document.format" ng-disabled="fileIsUploading" />
         </div>
       </div>
       <div class="form-group" ng-class="{ 'has-error': !documentForm.source.$valid }">
-        <label class="col-sm-2 control-label" for="inputSource">Source</label>
+        <label class="col-sm-2 control-label" for="inputSource">{{ 'document.source' | translate }}</label>
         <div class="col-sm-10">
           <input ng-maxlength="500" class="form-control" type="text" id="inputSource"
-                 placeholder="A related resource from which the described resource is derived" name="source" ng-model="document.source" ng-disabled="fileIsUploading" />
+                 placeholder="{{ 'document.edit.source_placeholder' | translate }}" name="source" ng-model="document.source" ng-disabled="fileIsUploading" />
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-sm-2 control-label" for="inputType">Type</label>
+        <label class="col-sm-2 control-label" for="inputType">{{ 'document.type' | translate }}</label>
         <div class="col-sm-10">
           <select class="form-control" id="inputType" name="type" ng-model="document.type" ng-disabled="fileIsUploading">
             <option value=""></option>
@@ -115,7 +116,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label" for="inputCoverage">Coverage</label>
+        <label class="col-sm-2 control-label" for="inputCoverage">{{ 'document.coverage' | translate }}</label>
         <div class="col-sm-10">
           <select class="form-control" id="inputCoverage" name="coverage" ng-model="document.coverage" ng-disabled="fileIsUploading">
             <option value=""></option>
@@ -124,7 +125,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label" for="inputRights">Rights</label>
+        <label class="col-sm-2 control-label" for="inputRights">{{ 'document.rights' | translate }}</label>
         <div class="col-sm-10">
           <select class="form-control" id="inputRights" name="rights" ng-model="document.rights" ng-disabled="fileIsUploading">
             <option value=""></option>
@@ -133,7 +134,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="col-sm-2 control-label" for="inputRelations">Relations</label>
+        <label class="col-sm-2 control-label" for="inputRelations">{{ 'document.relations' | translate }}</label>
         <div class="col-sm-10">
           <select-relation relations="document.relations" ref="inputRelations" ng-disabled="fileIsUploading"></select-relation>
         </div>
@@ -142,14 +143,14 @@
 
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-primary" ng-disabled="!documentForm.$valid || fileIsUploading" ng-click="edit()">Save</button>
-        <button type="submit" class="btn btn-default" ng-click="cancel()" ng-disabled="fileIsUploading">Cancel</button>
+        <button type="submit" class="btn btn-primary" ng-disabled="!documentForm.$valid || fileIsUploading" ng-click="edit()">{{ 'save' | translate }}</button>
+        <button type="submit" class="btn btn-default" ng-click="cancel()" ng-disabled="fileIsUploading">{{ 'cancel' | translate }}</button>
       </div>
     </div>
   </form>
   
   <div class="row" ng-show="fileIsUploading">
-    <h4>Uploading files...</h4>
+    <h4>{{ 'document.edit.uploading_files' | translate }}</h4>
     <div class="col-md-6"><progressbar value="fileProgress" class="progress-info active"></progressbar></div>
   </div>
   

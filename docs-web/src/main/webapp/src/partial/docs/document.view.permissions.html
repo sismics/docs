@@ -1,7 +1,7 @@
-<p class="well-sm">Permissions can be applied directly to this document, or can come from <a href="#/tag">tags</a>.</p>
+<p class="well-sm" translate="document.view.permissions.message"></p>
 
 <div class="well">
-  <h3>Permissions on this document</h3>
+  <h3>{{ 'document.view.permissions.title' | translate }}</h3>
 
   <acl-edit source="document.id"
             acls="document.acls"
@@ -10,13 +10,13 @@
 </div>
 
 <div class="well" ng-show="document.inherited_acls.length > 0">
-  <h3>Permissions inherited by tags</h3>
+  <h3>{{ 'document.view.permissions.inherited_tags' | translate }}</h3>
 
-  <table class="table">
+  <table class="table table-permissions">
     <tr>
-      <th style="width: 30%">From</th>
-      <th style="width: 30%">For</th>
-      <th style="width: 30%">Permission</th>
+      <th style="width: 30%">{{ 'document.view.permissions.acl_source' | translate }}</th>
+      <th style="width: 30%">{{ 'document.view.permissions.acl_target' | translate }}</th>
+      <th style="width: 30%">{{ 'document.view.permissions.acl_permission' | translate }}</th>
     </tr>
 
     <tr ng-repeat="(id, acl) in inheritedAcls">
@@ -28,8 +28,8 @@
       </td>
       <td><acl data="acl[0]"></acl></td>
       <td>
-        <span class="label label-default" style="margin-right: 6px;" ng-repeat="a in acl | orderBy: 'perm'">
-          {{ a.perm }}
+        <span class="label label-default label-acl" ng-repeat="a in acl | orderBy: 'perm'">
+          {{ 'acl.' + a.perm | translate }}
         </span>
       </td>
     </tr>

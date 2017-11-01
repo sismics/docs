@@ -6,7 +6,7 @@
       </span>
     </li>
   </ul>
-  <input class="form-control" type="text" id="{{ ref }}" placeholder="Type a document title" ng-model="input" ng-disabled="ngDisabled"
+  <input class="form-control" type="text" id="{{ ref }}" placeholder="{{ 'directive.selectrelation.typeahead' | translate }}" ng-model="input" ng-disabled="ngDisabled"
     autocomplete="off" typeahead="document.title for document in getDocumentTypeahead($viewValue)"
     typeahead-wait-ms="200" typeahead-on-select="addRelation($item)" />
 </div>

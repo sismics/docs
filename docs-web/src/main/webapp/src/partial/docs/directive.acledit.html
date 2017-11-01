@@ -1,8 +1,8 @@
 <div>
   <table class="table">
     <tr>
-      <th style="width: 40%">For</th>
-      <th style="width: 40%">Permission</th>
+      <th style="width: 40%">{{ 'directive.acledit.acl_target' | translate }}</th>
+      <th style="width: 40%">{{ 'directive.acledit.acl_permission' | translate }}</th>
     </tr>
 
     <tr ng-repeat="(id, acl) in groupedAcls">
@@ -19,14 +19,14 @@
   </table>
 
   <div ng-show="writable">
-    <h4>Add a permission</h4>
+    <h4>{{ 'directive.acledit.add_permission' | translate }}</h4>
 
     <form name="aclForm" class="form-horizontal">
       <div class="form-group">
-        <label class="col-sm-2 control-label" for="inputTarget">For</label>
+        <label class="col-sm-2 control-label" for="inputTarget">{{ 'directive.acledit.acl_target' | translate }}</label>
         <div class="col-sm-3">
           <input required ng-maxlength="50" class="form-control" type="text" id="inputTarget"
-                 placeholder="Search a user or group" name="target" ng-model="acl.target" autocomplete="off"
+                 placeholder="{{ 'directive.acledit.search_user_group' | translate }}" name="target" ng-model="acl.target" autocomplete="off"
                  typeahead="target as target.name for target in getTargetAclTypeahead($viewValue) | filter: $viewValue"
                  typeahead-template-url="partial/docs/directive.typeahead.acl.html"
                  typeahead-wait-ms="200" />
@@ -39,11 +39,11 @@
       </div>
 
       <div class="form-group">
-        <label class=" col-sm-2 control-label" for="inputPermission">Permission</label>
+        <label class=" col-sm-2 control-label" for="inputPermission">{{ 'directive.acledit.acl_permission' | translate }}</label>
         <div class="col-sm-3">
           <select class="form-control" ng-model="acl.perm" id="inputPermission">
-            <option value="READ">Can read</option>
-            <option value="READWRITE">Can edit</option>
+            <option value="READ">{{ 'acl.READ' | translate }}</option>
+            <option value="READWRITE">{{ 'acl.READWRITE' | translate }}</option>
           </select>
         </div>
       </div>
@@ -52,7 +52,7 @@
         <div class="col-sm-offset-2 col-sm-10">
           <button type="submit" class="btn btn-primary"  ng-disabled="!acl.target.type" ng-click="addAcl()">
             <span class="glyphicon glyphicon-plus"></span>
-            Add
+            {{ 'add' | translate }}
           </button>
         </div>
       </div>

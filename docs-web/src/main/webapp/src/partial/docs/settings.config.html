@@ -1,22 +1,20 @@
 <h1>
-  Guest <small>access</small>
+  <span translate="settings.config.title_guest_access"></span>
   <span class="label" ng-class="{ 'label-success': app.guest_login, 'label-danger': !app.guest_login }">
     {{ app.guest_login ? 'Enabled' : 'Disabled' }}
   </span>
 </h1>
-<p>
-  Guest access is a mode where anyone can access {{ appName }} without password.<br/>
-  Like a normal user, the guest user can only access its documents and those accessible through permissions.<br/>
+<p translate="settings.config.message_guest_access" translate-values="{ appName: appName }">
 </p>
 <div ng-if="app">
-  <button ng-if="!app.guest_login" class="btn btn-primary" ng-click="changeGuestLogin(true)">Enable guest access</button>
-  <button ng-if="app.guest_login" class="btn btn-danger" ng-click="changeGuestLogin(false)">Disable guest access</button>
+  <button ng-if="!app.guest_login" class="btn btn-primary" ng-click="changeGuestLogin(true)">{{ 'settings.config.enable_guest_access' | translate }}</button>
+  <button ng-if="app.guest_login" class="btn btn-danger" ng-click="changeGuestLogin(false)">{{ 'settings.config.disable_guest_access' | translate }}</button>
 </div>
 
-<h1>Theme <small>customization</small></h1>
+<h1 translate="settings.config.title_theme"></h1>
 <form class="form-horizontal" name="editColorForm" novalidate>
   <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputName">Application name</label>
+    <label class="col-sm-2 control-label" for="inputName">{{ 'settings.config.application_name' | translate }}</label>
     <div class="col-sm-8">
       <input type="text" class="form-control"
         id="inputName" ng-model="theme.name" ng-blur="update()" />
@@ -24,7 +22,7 @@
   </div>
 
   <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputColor">Main color</label>
+    <label class="col-sm-2 control-label" for="inputColor">{{ 'settings.config.main_color' | translate }}</label>
     <div class="col-sm-1">
       <span colorpicker class="btn btn-default" id="inputColor" on-hide="update()"
         data-color="" ng-model="theme.color" ng-style="{ 'background': theme.color }">&nbsp;&nbsp;&nbsp;</span>
@@ -32,15 +30,15 @@
   </div>
 
   <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputCss">Custom CSS</label>
+    <label class="col-sm-2 control-label" for="inputCss">{{ 'settings.config.custom_css' | translate }}</label>
     <div class="col-sm-8">
-      <textarea class="form-control" rows="6" placeholder="Custom CSS to add after the main stylesheet"
+      <textarea class="form-control" rows="6" placeholder="{{ 'settings.config.custom_css_placeholder' | translate }}"
         id="inputCss" ng-model="theme.css" ng-blur="update()"></textarea>
     </div>
   </div>
 
   <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputLogo">Logo</label>
+    <label class="col-sm-2 control-label" for="inputLogo">{{ 'settings.config.logo' | translate }}</label>
     <div class="col-sm-2">
       <file accept="image/gif,image/png,image/jpg,image/jpeg"
         class="form-control" id="inputLogo" ng-model="logo" ng-disabled="sendingImage" />
@@ -48,13 +46,13 @@
     <div class="col-sm-2">
       <button class="btn btn-default" ng-click="sendImage('logo', logo)" ng-disabled="sendingImage || !logo">
         <span class="glyphicon glyphicon-save"></span>
-        Send
+        {{ 'send' | translate }}
       </button>
     </div>
   </div>
 
   <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputBackground">Background image</label>
+    <label class="col-sm-2 control-label" for="inputBackground">{{ 'settings.config.background_image' | translate }}</label>
     <div class="col-sm-2">
       <file accept="image/gif,image/png,image/jpg,image/jpeg"
             class="form-control" id="inputLogo" ng-model="background" ng-disabled="sendingImage" />
@@ -62,7 +60,7 @@
     <div class="col-sm-2">
       <button class="btn btn-default" ng-click="sendImage('background', background)" ng-disabled="sendingImage || !background">
         <span class="glyphicon glyphicon-save"></span>
-        Send
+        {{ 'send' | translate }}
       </button>
     </div>
   </div>
@@ -71,7 +69,7 @@
     <label class="col-sm-2 control-label"></label>
     <div class="col-sm-10">
       <p class="form-control-static text-info" ng-if="sendingImage">
-        Uploading the image...
+        {{ 'settings.config.uploading_image' | translate }}
       </p>
     </div>
   </div>

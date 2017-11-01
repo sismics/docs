@@ -3,11 +3,11 @@
 <div ng-show="error" class="well-lg">
   <p class="text-center" ng-show="error.status == 404">
     <span class="glyphicon glyphicon-warning-sign"></span>
-    Document not found
+    {{ 'document.view.not_found' | translate }}
   </p>
   <p class="text-center" ng-show="error.status == 403">
     <span class="glyphicon glyphicon-warning-sign"></span>
-    Access forbidden
+    {{ 'document.view.forbidden' | translate }}
   </p>
 </div>
 
@@ -16,25 +16,25 @@
 	  <div class="dropdown btn-export" dropdown ng-class="{ 'btn-group': document.writable }">
       <button class="btn btn-default" dropdown-toggle>
         <span class="glyphicon glyphicon-export"></span>
-        Export
+        {{ 'export' | translate }}
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu">
         <li>
           <a ng-href="../api/file/zip?id={{ document.id }}" title="Download all files">
             <span class="glyphicon glyphicon glyphicon-compressed"></span>
-            Download files
+            {{ 'document.view.download_files' | translate }}
           </a>
         </li>
         <li>
           <a ng-click="exportPdf()" title="Export document to PDF" class="pointer">
             <span class="glyphicon glyphicon glyphicon-save-file"></span>
-            Export to PDF
+            {{ 'document.view.export_pdf' | translate }}
           </a>
         </li>
       </ul>
-	    <button class="btn btn-danger" ng-show="document.writable" ng-click="deleteDocument(document)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
-	    <a href="#/document/edit/{{ document.id }}" ng-show="document.writable" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> Edit</a>
+	    <button class="btn btn-danger" ng-show="document.writable" ng-click="deleteDocument(document)"><span class="glyphicon glyphicon-trash"></span> {{ 'delete' | translate }}</button>
+	    <a href="#/document/edit/{{ document.id }}" ng-show="document.writable" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> {{ 'edit' | translate }}</a>
 	  </div>
 	</div>
 	
@@ -42,12 +42,12 @@
 	  <h1>
       {{ document.title }}
       <small>{{ document.create_date | date: 'yyyy-MM-dd' }}
-      by <a href="#/user/{{ document.creator }}">{{ document.creator }}</a></small>
+      {{ 'document.view.by_creator' | translate }} <a href="#/user/{{ document.creator }}">{{ document.creator }}</a></small>
     </h1>
 
 	  <p ng-show="document.writable">
 	    <button class="btn btn-sm btn-info" ng-click="share()">
-        <span class="glyphicon glyphicon-share"></span> Share
+        <span class="glyphicon glyphicon-share"></span> {{ 'share' | translate }}
       </button>
 
       <span ng-repeat="share in document.acls | filter: { 'type': 'SHARE' }">
@@ -69,17 +69,17 @@
       <ul class="nav nav-tabs">
         <li ng-class="{ active: $state.current.name == 'document.view.content' }">
           <a href="#/document/view/{{ document.id }}/content">
-            <span class="glyphicon glyphicon-file"></span> Content
+            <span class="glyphicon glyphicon-file"></span> {{ 'document.view.content' | translate }}
           </a>
         </li>
         <li ng-class="{ active: $state.current.name == 'document.view.permissions' }">
           <a href="#/document/view/{{ document.id }}/permissions">
-            <span class="glyphicon glyphicon-user"></span> Permissions
+            <span class="glyphicon glyphicon-user"></span> {{ 'document.view.permissions' | translate }}
           </a>
         </li>
         <li ng-class="{ active: $state.current.name == 'document.view.activity' }">
           <a href="#/document/view/{{ document.id }}/activity">
-            <span class="glyphicon glyphicon-tasks"></span> Activity
+            <span class="glyphicon glyphicon-tasks"></span> {{ 'document.view.activity' | translate }}
           </a>
         </li>
       </ul>
@@ -88,14 +88,14 @@
     <div class="col-md-3">
       <p class="page-header">
         <span class="glyphicon glyphicon-comment"></span>
-        Comments
+        {{ 'document.view.comments' | translate }}
       </p>
 
       <div ng-show="!comments || comments.length == 0" class="text-center text-muted">
         <h1 class="glyphicon glyphicon-comment"></h1>
-        <p ng-show="!comments && !commentsError">Loading...</p>
-        <p ng-show="comments.length == 0">No comments on this document yet</p>
-        <p ng-show="!comments && commentsError">Error loading comments</p>
+        <p ng-show="!comments && !commentsError">{{ 'loading' | translate }}</p>
+        <p ng-show="comments.length == 0">{{ 'document.view.no_comments' | translate }}</p>
+        <p ng-show="!comments && commentsError">{{ 'document.view.error_loading_comments' | translate }}</p>
       </div>
 
       <div ng-repeat="comment in comments" class="media" style="overflow: hidden">
@@ -109,15 +109,15 @@
             <span class="text-muted">{{ comment.create_date | date: 'yyyy-MM-dd' }}</span>
           <span class="text-muted pull-right btn-link pointer"
                 ng-show="document.writable || userInfo.username == comment.creator"
-                ng-click="deleteComment(comment)">Delete</span>
+                ng-click="deleteComment(comment)">{{ 'delete' | translate }}</span>
           </p>
         </div>
       </div>
 
       <form ng-submit="addComment()">
         <div class="form-group">
-          <label class="sr-only" for="commentInput">Email address</label>
-          <input type="text" class="form-control" id="commentInput" ng-model="comment" placeholder="Add a comment">
+          <label class="sr-only" for="commentInput">{{ 'document.view.add_comment' | translate }}</label>
+          <input type="text" class="form-control" id="commentInput" ng-model="comment" placeholder="{{ 'document.view.add_comment' | translate }}">
         </div>
       </form>
     </div>

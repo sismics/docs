@@ -113,6 +113,11 @@
 }
 
 // File thumbnails
+.thumbnail input[type="checkbox"] {
+  width: 26px;
+  height: 26px;
+}
+
 .thumbnail-file {
 	cursor: pointer;
 }
@@ -130,6 +135,13 @@
   word-wrap: break-word;
   white-space: normal;
   display: block;
+}
+
+// Permissions table
+.table-permissions {
+  .label-acl {
+    margin-right: 6px;
+  }
 }
 
 // Fields bound to datepicker
@@ -249,6 +261,7 @@ input[readonly].share-link {
 // Login
 .login-box-container {
   background: url('../../api/theme/image/background') no-repeat center;
+  background-size: cover;
 }
 
 .login-box {

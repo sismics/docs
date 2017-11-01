@@ -2,9 +2,9 @@
 
 <div ng-show="app">
   <div class="well">
-    <h3><span class="glyphicon glyphicon-cloud-upload"></span> Quick upload</h3>
+    <h3><span class="glyphicon glyphicon-cloud-upload"></span> {{ 'document.default.quick_upload' | translate }}</h3>
     <div class="row upload-zone" ng-model="dropFiles" ng-file-drop drag-over-class="bg-success"
-         ng-multiple="true" allow-dir="false" accept="image/*,application/pdf,application/zip" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
+         ng-multiple="true" allow-dir="false" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
       <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
         <div class="thumbnail" ng-class="{ 'thumbnail-checked': file.checked }" ng-if="file.id">
           <a ng-click="openFile(file)">
@@ -12,7 +12,7 @@
           </a>
           <div class="caption">
             <div class="pull-left">
-              <input type="checkbox" ng-model="file.checked" style="width: 26px; height: 26px" />
+              <input type="checkbox" ng-model="file.checked" />
             </div>
             <div class="pull-right">
               <button class="btn btn-danger" ng-click="deleteFile($event, file)"><span class="glyphicon glyphicon-trash"></span></button>
@@ -33,28 +33,28 @@
 
       <p class="text-center well-lg" ng-if="files.length == 0">
         <span class="glyphicon glyphicon-move"></span>
-        Drag &amp; drop files here to upload
+        {{ 'document.default.drop_zone' | translate }}
       </p>
     </div>
 
     <div class="btn-group" ng-show="checkedFiles().length > 0">
-      <button class="btn btn-primary" ng-click="addDocument()"><span class="glyphicon glyphicon-plus"></span> Add to new document</button>
+      <button class="btn btn-primary" ng-click="addDocument()"><span class="glyphicon glyphicon-plus"></span> {{ 'document.default.add_new_document' | translate }}</button>
     </div>
   </div>
 
   <div ui-view="file"></div>
 
   <div>
-    <h3><span class="glyphicon glyphicon-tasks"></span> Latest activity</h3>
+    <h3><span class="glyphicon glyphicon-tasks"></span> {{ 'document.default.latest_activity' | translate }}</h3>
     <audit-log logs="logs" />
   </div>
 
   <div class="text-muted text-right">
     <ul class="list-inline">
-      <li>Crafted with <span class="glyphicon glyphicon-heart"></span> by <a href="https://www.sismics.com" target="_blank">Sismics</a></li>
-      <li><a href="apidoc/">API Documentation</a></li>
-      <li><strong>Version:</strong> {{ app.current_version }}</li>
-      <li><strong>Memory:</strong> {{ app.free_memory / 1000000 | number: 0 }}/{{ app.total_memory / 1000000 | number: 0 }} MB</li>
+      <li translate="document.default.footer_sismics"></li>
+      <li><a href="apidoc/">{{ 'document.default.api_documentation' | translate }}</a></li>
+      <li><strong>{{ 'document.default.version' | translate }}</strong> {{ app.current_version }}</li>
+      <li><strong>{{ 'document.default.memory' | translate }}</strong> {{ app.free_memory / 1000000 | number: 0 }}/{{ app.total_memory / 1000000 | number: 0 }} MB</li>
     </ul>
   </div>
 </div>

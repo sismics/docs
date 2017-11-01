@@ -2,16 +2,16 @@
   <div class="col-md-4">
     <div class="well">
       <p class="text-center">
-        <a href="#/document/add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add a document</a>
+        <a href="#/document/add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> {{ 'document.add_document' | translate }}</a>
       </p>
 
       <div class="row">
         <div class="dropdown col-md-2 tag-tree-dropdown" dropdown>
           <button class="btn btn-block btn-default" dropdown-toggle ng-disabled="disabled">
-            Tags <span class="caret"></span>
+            {{ 'document.tags' | translate }} <span class="caret"></span>
           </button>
           <ul class="dropdown-menu tag-tree">
-            <li ng-if="getChildrenTags().length == 0">No tags</li>
+            <li ng-if="getChildrenTags().length == 0">{{ 'document.no_tags' | translate }}</li>
             <li ng-repeat="tag in getChildrenTags()" ng-include="'tag-tree-item'"></li>
           </ul>
         </div>
@@ -29,7 +29,7 @@
               lang:fra<br/>
               by:user1"></span>
           </span>
-          <input type="search" class="form-control" placeholder="Search" ng-model="search" />
+          <input type="search" class="form-control" placeholder="{{ 'document.search' | translate }}" ng-model="search" />
           <span class="input-group-addon">
             <span class="glyphicon glyphicon-search" ng-show="search.length == 0"></span>
             <span class="glyphicon glyphicon-remove" ng-show="search.length > 0" ng-click="search = ''"></span>
@@ -40,9 +40,9 @@
       <table class="row table table-striped table-hover table-documents">
         <thead>
         <tr>
-          <th class="col-xs-6" ng-click="sortDocuments(1)"><span class="glyphicon glyphicon-chevron-{{ sortColumn == 1 ? (asc ? 'down' : 'up') : '' }}"></span> Title</th>
-          <th class="col-xs-3" ng-click="sortDocuments(3)"><span class="glyphicon glyphicon-chevron-{{ sortColumn == 3 ? (asc ? 'down' : 'up') : '' }}"></span> Creation date</th>
-          <th class="col-xs-3 hidden-xs">Tags</th>
+          <th class="col-xs-6" ng-click="sortDocuments(1)"><span class="glyphicon glyphicon-chevron-{{ sortColumn == 1 ? (asc ? 'down' : 'up') : '' }}"></span> {{ 'document.title' | translate }}</th>
+          <th class="col-xs-3" ng-click="sortDocuments(3)"><span class="glyphicon glyphicon-chevron-{{ sortColumn == 3 ? (asc ? 'down' : 'up') : '' }}"></span> {{ 'document.creation_date' | translate }}</th>
+          <th class="col-xs-3 hidden-xs">{{ 'document.tags' | translate }}</th>
         </tr>
         </thead>
         <tbody>
@@ -54,15 +54,15 @@
 
         <tr ng-if="totalDocuments == 0">
           <td colspan="3" class="text-center">
-            <span ng-if="search.length == 0">No document in the database</span>
-            <span ng-if="search.length > 0">No matches for <strong>"{{ search }}"</strong></span>
+            <span ng-if="search.length == 0">{{ 'document.no_documents' | translate }}</span>
+            <span ng-if="search.length > 0" translate="document.search_empty" translate-values="{ search: search }"></span>
           </td>
         </tr>
 
         <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents" ng-class="{ active: $stateParams.id == document.id }">
           <td>
             {{ document.title }} ({{ document.file_count }})
-            <span class="glyphicon glyphicon-share" ng-if="document.shared" tooltip="Shared"></span>
+            <span class="glyphicon glyphicon-share" ng-if="document.shared" tooltip="{{ 'document.shared' | translate }}"></span>
             <a href="#/document/view/{{ document.id }}" target="_blank" ng-click="$event.stopPropagation()"><span class="glyphicon glyphicon-link"></span></a>
           </td>
           <td>{{ document.create_date | date: 'yyyy-MM-dd' }}</td>
@@ -79,22 +79,21 @@
 
       <div class="text-center pagination-box">
         <pagination total-items="totalDocuments" items-per-page="limit" max-size="5" page="currentPage"></pagination>
-        <label class="sr-only" for="pagesizeSelect">Page size</label>
+        <label class="sr-only" for="pagesizeSelect">{{ 'document.page_size' | translate }}</label>
         <select ng-model="limit" id="pagesizeSelect" class="form-control">
-          <option value="10">10 per page</option>
-          <option value="20">20 per page</option>
-          <option value="30">30 per page</option>
+          <option value="10">{{ 'document.page_size_10' | translate }}</option>
+          <option value="20">{{ 'document.page_size_20' | translate }}</option>
+          <option value="30">{{ 'document.page_size_30' | translate }}</option>
         </select>
       </div>
 
-      <div class="pull-left" title="To upgrade your quota, ask your administrator">
-        {{ userInfo.storage_current / 1000000 | number: 0  }}MB ({{ userInfo.storage_current / userInfo.storage_quota * 100 | number: 1 }}%)
-        used on {{ userInfo.storage_quota / 1000000 | number: 0 }}MB
+      <div class="pull-left" title="{{ 'document.upgrade_quota' | translate }}">
+        {{ 'document.quota' | translate: '{ current: userInfo.storage_current / 1000000, percent: userInfo.storage_current / userInfo.storage_quota * 100, total: userInfo.storage_quota / 1000000 }' }}
       </div>
 
       <div class="text-right" >
         <span ng-if="totalDocuments">
-          {{ totalDocuments }} document{{ totalDocuments > 1 ? 's' : '' }} found
+          {{ 'document.count' | translate: '{ count: totalDocuments }' }}
         </span>
         <span ng-if="!totalDocuments">&nbsp;</span>
       </div>
