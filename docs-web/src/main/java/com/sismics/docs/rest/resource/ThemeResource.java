@@ -58,7 +58,7 @@ public class ThemeResource extends BaseResource {
         // Build the stylesheet
     	StringBuilder sb = new StringBuilder();
     	sb.append(new Selector(".navbar")
-            .rule("background-color", themeConfig.getString("color", "#263238")));
+            .rule("background-color", themeConfig.getString("color", "#24292e")));
         sb.append(themeConfig.getString("css", ""));
 
         return Response.ok().entity(sb.toString()).build();
@@ -83,7 +83,7 @@ public class ThemeResource extends BaseResource {
         JsonObject themeConfig = getThemeConfig();
         JsonObjectBuilder json = Json.createObjectBuilder();
         json.add("name", themeConfig.getString("name", "Sismics Docs"));
-        json.add("color", themeConfig.getString("color", "#263238"));
+        json.add("color", themeConfig.getString("color", "#24292e"));
         json.add("css", themeConfig.getString("css", ""));
         return Response.ok().entity(json.build()).build();
     }

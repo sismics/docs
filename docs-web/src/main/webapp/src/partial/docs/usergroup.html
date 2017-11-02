@@ -6,7 +6,7 @@
         <input type="search" class="form-control" placeholder="{{ 'usergroup.search_groups' | translate }}" ng-model="searchGroup">
       </p>
 
-      <table class="row table table-striped table-hover">
+      <table class="row table table-hover">
         <tbody>
         <tr class="pointer" ng-repeat="group in groups | filter: searchGroup"
             ng-click="openGroup(group)" ng-class="{ active: $stateParams.name == group.name }">
@@ -24,7 +24,7 @@
         <input type="search" class="form-control" placeholder="{{ 'usergroup.search_users' | translate }}" ng-model="searchUser">
       </p>
 
-      <table class="row table table-striped table-hover">
+      <table class="row table table-hover">
         <tbody>
         <tr class="pointer" ng-repeat="user in users | filter: searchUser"
             ng-click="openUser(user)" ng-class="{ active: $stateParams.username == user.username }">

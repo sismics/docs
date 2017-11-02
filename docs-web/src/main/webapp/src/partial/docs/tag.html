@@ -16,7 +16,7 @@
         <input type="search" class="form-control" placeholder="{{ 'tag.search' | translate }}" ng-model="search.name">
       </p>
 
-      <table class="row table table-striped table-hover table-tags">
+      <table class="row table table-hover table-tags">
         <tbody>
           <tr ng-repeat="tag in tags | filter:search" class="pointer"
               ng-class="{ active: $stateParams.id == tag.id }" ng-click="viewTag(tag.id)">
