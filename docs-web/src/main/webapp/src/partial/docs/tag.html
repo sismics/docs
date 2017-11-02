@@ -4,16 +4,16 @@
       <form name="tagForm" novalidate>
         <p class="input-group" ng-class="{ 'has-error': !tagForm.name.$valid }">
           <span colorpicker class="input-group-addon btn btn-default" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
-          <input type="text" name="name" placeholder="New tag" class="form-control"
+          <input type="text" name="name" placeholder="{{ 'tag.new_tag' | translate }}" class="form-control"
             ng-maxlength="36" required ng-model="tag.name" ui-validate="{ space: '!$value || $value.indexOf(\' \') == -1' }">
-          <span class="input-group-addon btn btn-primary" ng-disabled="!tagForm.$valid" ng-click="addTag()">Add</span>
+          <span class="input-group-addon btn btn-primary" ng-disabled="!tagForm.$valid" ng-click="addTag()">{{ 'add' | translate }}</span>
         </p>
-        <span class="help-block" ng-show="tagForm.name.$error.space">Space are not allowed</span>
+        <span class="help-block" ng-show="tagForm.name.$error.space">{{ 'validation.no_space' | translate }}</span>
       </form>
 
       <p class="input-group">
         <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-        <input type="search" class="form-control" placeholder="Search" ng-model="search.name">
+        <input type="search" class="form-control" placeholder="{{ 'tag.search' | translate }}" ng-model="search.name">
       </p>
 
       <table class="row table table-striped table-hover table-tags">
@@ -25,7 +25,7 @@
               <span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span>
             </td>
             <td class="col-xs-1">
-              <a href="#/tag/{{ tag.id }}" class="btn btn-primary pull-right" title="Edit tag">
+              <a href="#/tag/{{ tag.id }}" class="btn btn-primary pull-right" title="{{ 'tag.edit_tag' | translate }}">
                 <span class="glyphicon glyphicon-pencil"></span>
               </a>
             </td>

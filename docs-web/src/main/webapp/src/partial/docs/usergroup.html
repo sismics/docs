@@ -3,7 +3,7 @@
     <div class="well">
       <p class="input-group">
         <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-        <input type="search" class="form-control" placeholder="Search in groups" ng-model="searchGroup">
+        <input type="search" class="form-control" placeholder="{{ 'usergroup.search_groups' | translate }}" ng-model="searchGroup">
       </p>
 
       <table class="row table table-striped table-hover">
@@ -21,7 +21,7 @@
     <div class="well">
       <p class="input-group">
         <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-        <input type="search" class="form-control" placeholder="Search in users" ng-model="searchUser">
+        <input type="search" class="form-control" placeholder="{{ 'usergroup.search_users' | translate }}" ng-model="searchUser">
       </p>
 
       <table class="row table table-striped table-hover">
@@ -31,7 +31,7 @@
           <td class="col-xs-4">
             <span class="glyphicon glyphicon-user"></span>
             {{ user.username }}
-            <span class="text-muted" ng-if="userInfo.username == user.username">It's you!</span>
+            <span class="text-muted" ng-if="userInfo.username == user.username">{{ 'usergroup.you' | translate }}</span>
           </td>
         </tr>
         </tbody>

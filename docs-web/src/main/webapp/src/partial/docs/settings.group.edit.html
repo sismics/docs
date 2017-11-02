@@ -1,33 +1,29 @@
 <img src="img/loader.gif" ng-show="!group && isEdit()" />
 
 <div ng-show="group || !isEdit()">
-  <h2 ng-show="isEdit()">Edit
-    <small>"{{ group.name }}"</small>
-  </h2>
-  <h2 ng-show="!isEdit()">Add
-    <small>group</small>
-  </h2>
+  <h2 ng-show="isEdit()" translate="settings.group.edit.edit_group_title" translate-values="{ name: group.name }"></h2>
+  <h2 ng-show="!isEdit()" translate="settings.group.edit.add_group_title"></h2>
+
   <form class="form-horizontal" name="editGroupForm" novalidate>
     <div class="form-group" ng-class="{ 'has-error': !editGroupForm.name.$valid, success: editGroupForm.name.$valid }">
-      <label class="col-sm-2 control-label" for="inputName">Name</label>
-  
+      <label class="col-sm-2 control-label" for="inputName">{{ 'settings.group.edit.name' | translate }}</label>
       <div class="col-sm-7">
         <input name="name" type="text" id="inputName" required class="form-control"
-               ng-minlength="3" ng-maxlength="50" placeholder="Name" ng-model="group.name"/>
+               ng-minlength="3" ng-maxlength="50" placeholder="{{ 'settings.group.edit.name' | translate }}" ng-model="group.name"/>
       </div>
 
       <div class="col-sm-3">
-        <span class="help-block" ng-show="editGroupForm.name.$error.required">Required</span>
-        <span class="help-block" ng-show="editGroupForm.name.$error.minlength">Too short</span>
-        <span class="help-block" ng-show="editGroupForm.name.$error.maxlength">Too long</span>
+        <span class="help-block" ng-show="editGroupForm.name.$error.required">{{ 'validation.required' | translate }}</span>
+        <span class="help-block" ng-show="editGroupForm.name.$error.minlength">{{ 'validation.too_short' | translate }}</span>
+        <span class="help-block" ng-show="editGroupForm.name.$error.maxlength">{{ 'validation.too_long' | translate }}</span>
       </div>
     </div>
     <div class="form-group">
-      <label class="col-sm-2 control-label" for="inputName">Parent group</label>
+      <label class="col-sm-2 control-label" for="inputName">{{ 'settings.group.edit.parent_group' | translate }}</label>
 
       <div class="col-sm-7">
         <input name="name" type="text" id="inputParent" class="form-control" autocomplete="off"
-               placeholder="Search a group" ng-model="group.parent"
+               placeholder="{{ 'settings.group.edit.search_group' | translate }}" ng-model="group.parent"
                typeahead="group for group in getGroupTypeahead($viewValue)"
                typeahead-wait-ms="200" typeahead-editable="false" />
       </div>
@@ -35,29 +31,30 @@
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editGroupForm.$valid">
-          <span class="glyphicon glyphicon-pencil"></span> {{ isEdit() ? 'Edit' : 'Add' }}
+          <span class="glyphicon glyphicon-pencil"></span> {{ isEdit() ? 'edit' : 'add' | translate }}
         </button>
         <button type="button" class="btn btn-danger" ng-click="remove()" ng-show="isEdit()">
-          <span class="glyphicon glyphicon-trash"></span> Delete
+          <span class="glyphicon glyphicon-trash"></span> {{ 'delete' | translate }}
         </button>
       </div>
     </div>
   </form>
 
   <div ng-show="isEdit()">
-    <h3>Members</h3>
+    <h3>{{ 'settings.group.edit.members' | translate }}</h3>
     <form class="form-horizontal" novalidate>
       <div class="form-group">
-        <label class="col-sm-2 control-label" for="inputMember">New member</label>
+        <label class="col-sm-2 control-label" for="inputMember">{{ 'settings.group.edit.new_member' | translate }}</label>
         <div class="col-sm-7">
-          <input name="member" type="text" id="inputMember" class="form-control" ng-model="member" placeholder="Search a user"
+          <input name="member" type="text" id="inputMember" class="form-control" ng-model="member"
+                 placeholder="{{ 'settings.group.edit.search_user' | translate }}"
                  typeahead="user for user in getUserTypeahead($viewValue)" typeahead-on-select="addMember($item)"
                  typeahead-wait-ms="200" typeahead-editable="false" autocomplete="off" />
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-sm-2 control-label">Members</label>
+        <label class="col-sm-2 control-label">{{ 'settings.group.edit.members' | translate }}</label>
         <div class="col-sm-7">
           <span ng-repeat="member in group.members">
             <span class="btn btn-default"

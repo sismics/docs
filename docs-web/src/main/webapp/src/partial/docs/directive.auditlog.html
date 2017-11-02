@@ -28,7 +28,7 @@
               <a ng-href="#/document/view/{{ log.message }}">{{ 'see' | translate }}</a>
             </span>
             <span ng-switch-when="Acl">
-              {{ log.message }}
+              {{ 'acl.' + log.message | translate }}
             </span>
             <span ng-switch-when="Tag">
               <a href="#/tag">{{ log.message }}</a>

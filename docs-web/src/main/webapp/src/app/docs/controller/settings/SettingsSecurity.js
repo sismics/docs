@@ -12,7 +12,7 @@ angular.module('docs').controller('SettingsSecurity', function($scope, User, $di
    * Enable TOTP.
    */
   $scope.enableTotp = function() {
-    var title = $translate.instant('settings.security.enable_totp_title');
+    var title = $translate.instant('settings.security.enable_totp');
     var msg = $translate.instant('settings.security.enable_totp_message');
     var btns = [
       { result:'cancel', label: $translate.instant('cancel') },

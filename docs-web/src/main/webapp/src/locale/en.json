@@ -143,34 +143,117 @@
     }
   },
   "tag": {
+    "new_tag": "New tag",
+    "search": "Search",
+    "edit_tag": "Edit tag",
+    "default": {
+      "title": "Tags",
+      "message_1": "<strong>Tags</strong> are labels associated to documents.",
+      "message_2": "A document can be tagged by multiple tags, and a tag can be applied to multiple documents.",
+      "message_3": "Using the <span class=\"glyphicon glyphicon-pencil\"></span> button, you can edit permissions on a tag.",
+      "message_4": "If a tag can be read by another user or group, associated documents can also be read by those people.",
+      "message_5": "For example, tag your company documents with a tag <span class=\"label label-info\">MyCompany</span> and add the permission <strong>Read</strong> to a group <span class=\"btn btn-default\">employees</span>"
+    },
     "edit": {
       "delete_tag_title": "Delete tag",
-      "delete_tag_message": "Do you really want to delete this tag?"
+      "delete_tag_message": "Do you really want to delete this tag?",
+      "name": "Name",
+      "color": "Color",
+      "parent": "Parent",
+      "info": "Permissions on this tag will also be applied to documents tagged <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>"
     }
   },
   "group": {
-    "rofile": {
+    "profile": {
       "members": "Members",
       "no_members": "No member",
       "related_links": "Related links",
       "edit_group": "Edit {{ name }} group"
     }
   },
+  "user": {
+    "profile": {
+      "groups": "Groups",
+      "quota_used": "Quota used",
+      "percent_used": "{{ percent | number: 0 }}% Used",
+      "related_links": "Related links",
+      "document_created": "Documents created by {{ username }}",
+      "edit_user": "Edit {{ username }} user"
+    }
+  },
+  "usergroup": {
+    "search_groups": "Search in groups",
+    "search_users": "Search in users",
+    "you": "It's you!",
+    "default": {
+      "title": "Users & Groups",
+      "message": "Here you can view informations about users and groups."
+    }
+  },
   "settings": {
+    "menu_personal_settings": "Personal settings",
+    "menu_user_account": "User account",
+    "menu_two_factor_auth": "Two-factor authentication",
+    "menu_opened_sessions": "Opened sessions",
+    "menu_general_settings": "General settings",
+    "menu_users": "Users",
+    "menu_groups": "Groups",
+    "menu_vocabularies": "Vocabularies",
+    "menu_configuration": "Configuration",
+    "menu_server_logs": "Server logs",
     "user": {
+      "title": "Users <small>management</small>",
+      "add_user": "Add a user",
+      "username": "Username",
+      "create_date": "Create date",
       "edit": {
         "delete_user_title": "Delete user",
-        "delete_user_message": "Do you really want to delete this user? All associated documents, files and tags will be deleted"
+        "delete_user_message": "Do you really want to delete this user? All associated documents, files and tags will be deleted",
+        "edit_user_title": "Edit <small>\"{{ username }}\"</small>",
+        "add_user_title": "Add <small>user</small>",
+        "username": "Username",
+        "email": "E-mail",
+        "groups": "Groups",
+        "storage_quota": "Storage quota",
+        "storage_quota_placeholder": "Storage quota (in MB)",
+        "password": "Password",
+        "password_confirm": "Password (confirm)"
       }
     },
     "security": {
-      "enable_totp_title": "Enable two-factor authentication",
-      "enable_totp_message": "Make sure you have a TOTP-compatible application on your phone ready to add a new account"
+      "enable_totp": "Enable two-factor authentication",
+      "enable_totp_message": "Make sure you have a TOTP-compatible application on your phone ready to add a new account",
+      "title": "Two-factor <small>authentication</small>",
+      "message_1": "Two-factor authentication allows you to add a layer of security on your <strong>{{ appName }}</strong> account.<br/>Before activating this feature, make sure you have a TOTP-compatible app on your phone:",
+      "message_google_authenticator": "For Android, iOS, and Blackberry: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>",
+      "message_duo_mobile": "For Android and iOS: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
+      "message_authenticator": "For Windows Phone: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">Authenticator</a>",
+      "message_2": "Those applications automatically generate a validation code that changes after a certain period of time.<br/>You will be required to enter this validation code each time you login on <strong>{{ appName }}</strong>.",
+      "secret_key": "Your secret key is: <strong>{{ secret }}</strong>",
+      "secret_key_warning": "Configure your TOTP app on your phone with this secret key now, you will not be able to access it later.",
+      "totp_enabled_message": "Two-factor authentication is enabled on your account.<br/>Each time you login on <strong>{{ appName }}</strong>, you will be asked a validation code from your configured phone app.<br/>If you loose your phone, you will not be able to login into your account but active sessions will allow you to regenerate a secrey key.",
+      "disable_totp": {
+        "disable_totp": "Disable two-factor authentication",
+        "message": "Your account will not be protected by the two-factor authentication anymore.",
+        "confirm_password": "Confirm your password",
+        "submit": "Disable two-factor authentication"
+      }
     },
     "group": {
+      "title": "Groups <small>management</small>",
+      "add_group": "Add a group",
+      "name": "Name",
       "edit": {
         "delete_group_title": "Delete group",
-        "delete_group_message": "Do you really want to delete this group?"
+        "delete_group_message": "Do you really want to delete this group?",
+        "edit_group_title": "Edit <small>\"{{ name }}\"</small>",
+        "add_group_title": "Add <small>group</small>",
+        "name": "Name",
+        "parent_group": "Parent group",
+        "search_group": "Search a group",
+        "members": "Members",
+        "new_member": "New member",
+        "search_user": "Search a user"
       }
     },
     "account": {
@@ -191,6 +274,31 @@
       "logo": "Logo (squared size)",
       "background_image": "Background image",
       "uploading_image": "Uploading the image..."
+    },
+    "log": {
+      "title": "Server <small>logs</small>",
+      "date": "Date",
+      "tag": "Tag",
+      "message": "Message"
+    },
+    "session": {
+      "title": "Opened <small>sessions</small>",
+      "created_date": "Created date",
+      "last_connection_date": "Last connection date",
+      "user_agent": "From",
+      "current": "Current",
+      "current_session": "This is the current session",
+      "clear_message": "All other devices connected to this account will be disconnected",
+      "clear": "Clear all other sessions"
+    },
+    "vocabulary": {
+      "title": "Vocabulary <small>entries</small>",
+      "choose_vocabulary": "Choose a vocabulary to edit",
+      "type": "Type",
+      "coverage": "Coverage",
+      "rights": "Rights",
+      "value": "Value",
+      "order": "Order"
     }
   },
   "directive": {
@@ -230,7 +338,10 @@
     "required": "Required",
     "too_short": "Too short",
     "too_long": "Too long",
-    "password_confirm": "Password and password confirmation must match"
+    "email": "Must be a valid e-mail",
+    "password_confirm": "Password and password confirmation must match",
+    "number": "Number required",
+    "no_space": "Space are not allowed"
   },
   "ok": "OK",
   "cancel": "Cancel",

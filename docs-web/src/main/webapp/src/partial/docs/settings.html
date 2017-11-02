@@ -1,22 +1,22 @@
 <div class="row">
   <div class="col-md-3">
     <div class="panel panel-default">
-      <div class="panel-heading"><strong>Personal settings</strong></div>
+      <div class="panel-heading"><strong>{{ 'settings.menu_personal_settings' | translate }}</strong></div>
       <ul class="list-group">
-        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/account" href="#/settings/account">User account</a>
-        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/security" href="#/settings/security">Two-factor authentication</a>
-        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/session" href="#/settings/session">Opened sessions</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/account" href="#/settings/account">{{ 'settings.menu_user_account' | translate }}</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/security" href="#/settings/security">{{ 'settings.menu_two_factor_auth' | translate }}</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/session" href="#/settings/session">{{ 'settings.menu_opened_sessions' | translate }}</a>
       </ul>
     </div>
 
     <div class="panel panel-default" ng-show="isAdmin">
-      <div class="panel-heading"><strong>General settings</strong></div>
+      <div class="panel-heading"><strong>{{ 'settings.menu_general_settings' | translate }}</strong></div>
       <ul class="list-group">
-        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/user.*" href="#/settings/user">Users</a>
-        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/group.*" href="#/settings/group">Groups</a>
-        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/vocabulary.*" href="#/settings/vocabulary">Vocabularies</a>
-        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/config" href="#/settings/config">Configuration</a>
-        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/log" href="#/settings/log">Server logs</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/user.*" href="#/settings/user">{{ 'settings.menu_users' | translate }}</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/group.*" href="#/settings/group">{{ 'settings.menu_groups' | translate }}</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/vocabulary.*" href="#/settings/vocabulary">{{ 'settings.menu_vocabularies' | translate }}</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/config" href="#/settings/config">{{ 'settings.menu_configuration' | translate }}</a>
+        <a class="list-group-item" ng-class="{active: $uiRoute}" ui-route="/settings/log" href="#/settings/log">{{ 'settings.menu_server_logs' | translate }}</a>
       </ul>
     </div>
   </div>

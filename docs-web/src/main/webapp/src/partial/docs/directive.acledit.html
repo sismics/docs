@@ -9,7 +9,7 @@
       <td><acl data="acl[0]"></acl></td>
       <td>
         <span class="label label-default" style="margin-right: 6px;" ng-repeat="a in acl | orderBy: 'perm'">
-          {{ a.perm }}
+          {{ 'acl.' + a.perm | translate }}
           <span ng-show="(creator != a.name && a.type == 'USER' || a.type != 'USER') && writable"
                 class="glyphicon glyphicon-remove pointer"
                 ng-click="deleteAcl(a)"></span>
