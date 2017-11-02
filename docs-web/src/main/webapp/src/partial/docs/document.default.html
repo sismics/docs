@@ -10,6 +10,7 @@
           <a ng-click="openFile(file)">
             <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
           </a>
+          <div class="caption btn btn-link file-name" ng-click="openFile(file)" ng-if="file.name">{{ file.name }}</div>
           <div class="caption">
             <div class="pull-left">
               <input type="checkbox" ng-model="file.checked" />
@@ -35,6 +36,16 @@
         <span class="glyphicon glyphicon-move"></span>
         {{ 'document.default.drop_zone' | translate }}
       </p>
+
+      <div class="clearfix"></div>
+      <div class="text-center">
+        <button class="btn btn-primary" ng-file-select
+                 ng-file-change="fileDropped($files, $event)"
+                 input-file-multiple="multiple"
+                 ng-multiple="true">
+          {{ 'document.default.add_files' | translate }}
+        </button>
+      </div>
     </div>
 
     <div class="btn-group" ng-show="checkedFiles().length > 0">

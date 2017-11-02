@@ -74,7 +74,8 @@
         "upload_progress": "Uploading...",
         "upload_error": "Upload error",
         "upload_error_quota": "Quota reached",
-        "drop_zone": "Drag & drop files here to upload"
+        "drop_zone": "Drag & drop files here to upload",
+        "add_files": "Add files"
       },
       "permissions": {
         "permissions": "Permissions",
@@ -114,6 +115,7 @@
       "upload_error_quota": "Quota reached",
       "quick_upload": "Quick upload",
       "drop_zone": "Drag & drop files here to upload",
+      "add_files": "Add files",
       "add_new_document": "Add to new document",
       "latest_activity": "Latest activity",
       "footer_sismics": "Crafted with <span class=\"glyphicon glyphicon-heart\"></span> by <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",

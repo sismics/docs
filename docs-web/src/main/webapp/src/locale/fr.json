@@ -74,7 +74,8 @@
         "upload_progress": "Envoi...",
         "upload_error": "Erreur d'envoi",
         "upload_error_quota": "Quota atteint",
-        "drop_zone": "Glisser & déposer des fichiers ici pour les envoyer"
+        "drop_zone": "Glisser & déposer des fichiers ici pour les envoyer",
+        "add_files": "Ajouter des fichiers"
       },
       "permissions": {
         "permissions": "Permissions",
@@ -114,6 +115,7 @@
       "upload_error_quota": "Quota atteint",
       "quick_upload": "Envoi rapide",
       "drop_zone": "Glisser & déposer des fichiers ici pour les envoyer",
+      "add_files": "Ajouter des fichiers",
       "add_new_document": "Ajouter à un nouveau document",
       "latest_activity": "Activité récente",
       "footer_sismics": "Conçu avec <span class=\"glyphicon glyphicon-heart\"></span> par <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",

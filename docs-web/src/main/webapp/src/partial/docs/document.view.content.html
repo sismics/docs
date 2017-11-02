@@ -72,6 +72,16 @@
       <span class="glyphicon glyphicon-move"></span>
       {{ 'document.view.content.drop_zone' | translate }}
     </p>
+
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <button class="btn btn-primary" ng-file-select
+              ng-file-change="fileDropped($files, $event)"
+              input-file-multiple="multiple"
+              ng-multiple="true">
+        {{ 'document.view.content.add_files' | translate }}
+      </button>
+    </div>
   </div>
 </div>
 
