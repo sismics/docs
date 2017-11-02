@@ -1,7 +1,7 @@
 <h1>
   <span translate="settings.security.title"></span>
   <span class="label" ng-class="{ 'label-success': user.totp_enabled, 'label-danger': !user.totp_enabled }">
-    {{ user.totp_enabled ? 'Enabled' : 'Disabled' }}
+    {{ user.totp_enabled ? 'enabled' : 'disabled' | translate }}
   </span>
 </h1>
 
