@@ -1,2 +1,370 @@
 {
+  "login": {
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "validation_code_required": "Un code de validation est requis",
+    "validation_code_title": "Vous avez activé l'authentification en deux étapes sur votre compte. Veuillez entrer un code de validation généré par l'application mobile que vous avez configurée.",
+    "validation_code": "Code de validation",
+    "remember_me": "Se souvenir de moi",
+    "submit": "Connexion",
+    "login_as_guest": "Connexion en invité",
+    "login_failed_title": "Echec de connexion",
+    "login_failed_message": "Nom d'utilisateur ou mot de passe invalide"
+  },
+  "index": {
+    "toggle_navigation": "Afficher/cacher la navigation",
+    "nav_documents": "Documents",
+    "nav_tags": "Tags",
+    "nav_users_groups": "Utilisateurs & Groupes",
+    "error_info": "{{ count }} nouvelle{{ count > 1 ? 's' : '' }} erreur{{ count > 1 ? 's' : '' }}",
+    "logged_as": "Connecté en tant que {{ username }}",
+    "nav_settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "document": {
+    "add_document": "Ajouter un document",
+    "tags": "Tags",
+    "no_tags": "Aucun tag",
+    "no_documents": "Aucun document dans la base de données",
+    "search": "Rechercher",
+    "search_empty": "Aucun résultat pour <strong>\"{{ search }}\"</strong>",
+    "shared": "Partagé",
+    "title": "Titre",
+    "description": "Description",
+    "contributors": "Contributeurs",
+    "language": "Langue",
+    "creation_date": "Date de création",
+    "subject": "Sujet",
+    "identifier": "Identifiant",
+    "publisher": "Editeur",
+    "format": "Format",
+    "source": "Source",
+    "type": "Type",
+    "coverage": "Couverture",
+    "rights": "Droits",
+    "relations": "Relations",
+    "page_size": "Taille de page",
+    "page_size_10": "10 par page",
+    "page_size_20": "20 par page",
+    "page_size_30": "20 par page",
+    "upgrade_quota": "Pour augmenter votre quota, veuillez contacter votre administrateur",
+    "quota": "{{ current | number: 0 }}Mo ({{ percent | number: 1 }}%) utilisé sur {{ total | number: 0 }}MB",
+    "count": "{{ count }} document{{ count > 1 ? 's' : '' }} trouvé{{ count > 1 ? 's' : '' }}",
+    "view": {
+      "delete_comment_title": "Supprimer un commentaire",
+      "delete_comment_message": "Etes-vous sûr de vouloir supprimer ce commentaire ?",
+      "delete_document_title": "Supprimer un document",
+      "delete_document_message": "Etes-vous sûr de vouloir supprimer ce document ?",
+      "shared_document_title": "Document partagé",
+      "shared_document_message": "Vous pouvez partager ce document avec ce lien. Veuillez noter que toute personne ayant ce lien peut accéder au document.<br/><input class=\"form-control share-link\" type=\"text\" readonly=\"readonly\" value=\"{{ link }}\" onclick=\"this.select(); document.execCommand('copy');\" />",
+      "not_found": "Document introuvable",
+      "forbidden": "Accès non autorisé",
+      "download_files": "Télécharger les fichiers",
+      "export_pdf": "Exporter en PDF",
+      "by_creator": "par",
+      "comments": "Commentaires",
+      "no_comments": "Aucun commentaire sur ce document",
+      "add_comment": "Ajouter un commentaire",
+      "error_loading_comments": "Erreur au chargement des commentaires",
+      "content": {
+        "content": "Contenu",
+        "delete_file_title": "Supprimer un fichier",
+        "delete_file_message": "Etes-vous sûr de vouloir supprimer ce fichier ?",
+        "upload_pending": "En attente...",
+        "upload_progress": "Envoi...",
+        "upload_error": "Erreur d'envoi",
+        "upload_error_quota": "Quota atteint",
+        "drop_zone": "Glisser & déposer des fichiers ici pour les envoyer"
+      },
+      "permissions": {
+        "permissions": "Permissions",
+        "message": "Les permissions peuvent être appliquées directement sur ce document, ou provenir de <a href=\"#/tag\">tags</a>.",
+        "title": "Permissions sur ce document",
+        "inherited_tags": "Permissions héritées par tags",
+        "acl_source": "De",
+        "acl_target": "Pour",
+        "acl_permission": "Permission"
+      },
+      "activity": {
+        "activity": "Activité",
+        "message": "Toutes les actions sur ce document sont consignées ici."
+      }
+    },
+    "edit": {
+      "document_edited_with_errors": "Document modifié avec succès, mais certains fichiers n'ont pu être envoyés",
+      "document_added_with_errors": "Document ajouté avec succès, mais certains fichiers n'ont pu être envoyés",
+      "quota_reached": "Quota atteint",
+      "primary_metadata": "Métadonnées principales",
+      "title_placeholder": "La nature ou le genre de la ressource",
+      "description_placeholder": "Un résumé de la ressource",
+      "new_files": "Nouveaux fichiers",
+      "orphan_files": "+ {{ count }} fichier{{ count > 1 ? 's' : '' }}",
+      "additional_metadata": "Métadonnées secondaires",
+      "subject_placeholder": "Le sujet de la ressource",
+      "identifier_placeholder": "Une référence unique de la ressource dans un contexte donné",
+      "publisher_placeholder": "Une entité responsable de la mise à disposition de la ressource",
+      "format_placeholder": "Le format physique ou numérique de la ressource",
+      "source_placeholder": "Une ressource liée à cette ressource",
+      "uploading_files": "Envoi des fichiers..."
+    },
+    "default": {
+      "upload_pending": "En attente...",
+      "upload_progress": "Envoi...",
+      "upload_error": "Erreur d'envoi",
+      "upload_error_quota": "Quota atteint",
+      "quick_upload": "Envoi rapide",
+      "drop_zone": "Glisser & déposer des fichiers ici pour les envoyer",
+      "add_new_document": "Ajouter à un nouveau document",
+      "latest_activity": "Activité récente",
+      "footer_sismics": "Conçu avec <span class=\"glyphicon glyphicon-heart\"></span> par <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
+      "api_documentation": "Documentation API",
+      "version": "Version :",
+      "memory": "Mémoire :"
+    },
+    "pdf": {
+      "export_title": "Exporter en PDF",
+      "export_metadata": "Exporter les métadonnées",
+      "export_comments": "Exporter les commentaires",
+      "fit_to_page": "Ajuster les images à la page",
+      "margin": "Marge",
+      "millimeter": "mm"
+    },
+    "share": {
+      "title": "Partager un document",
+      "message": "Nommez le partage si vous souhaitez partager plusieurs fois le même document.",
+      "submit": "Partager"
+    }
+  },
+  "file": {
+    "view": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "not_found": "Fichier introuvable"
+    }
+  },
+  "tag": {
+    "new_tag": "Nouveau tag",
+    "search": "Rechercher",
+    "edit_tag": "Modifier le tag",
+    "default": {
+      "title": "Tags",
+      "message_1": "Les <strong>Tags</strong> sont des libellés associés aux documents.",
+      "message_2": "Un document peut être taggé par plusieurs tags, et un tag peut être appliqué à plusieurs documents.",
+      "message_3": "En utilisant le bouton <span class=\"glyphicon glyphicon-pencil\"></span>, vous pouvez modifier les permissions sur un tag.",
+      "message_4": "Si un tag peut être lu par un autre utilisateur ou groupe, les documents associés peuvent également être lus par ces personnes.",
+      "message_5": "Par exemple, taggez les documents de votre entreprise avec un tag <span class=\"label label-info\">MonEntreprise</span> et ajoutez la permission <strong>Lecture</strong> à un groupe <span class=\"btn btn-default\">employés</span>"
+    },
+    "edit": {
+      "delete_tag_title": "Supprimer un tag",
+      "delete_tag_message": "Etes-vous sûr de vouloir supprimer ce tag ?",
+      "name": "Nom",
+      "color": "Couleur",
+      "parent": "Parent",
+      "info": "Les permissions sur ce tag seront également appliquées aux documents taggés avec <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>"
+    }
+  },
+  "group": {
+    "profile": {
+      "members": "Membres",
+      "no_members": "Aucun membre",
+      "related_links": "Liens relatifs",
+      "edit_group": "Modifer le groupe {{ name }}"
+    }
+  },
+  "user": {
+    "profile": {
+      "groups": "Groupes",
+      "quota_used": "Quota utilisé",
+      "percent_used": "{{ percent | number: 0 }}% utilisé",
+      "related_links": "Liens relatifs",
+      "document_created": "Documents créés par {{ username }}",
+      "edit_user": "Modifier l'utilisateur {{ username }}"
+    }
+  },
+  "usergroup": {
+    "search_groups": "Rechercher dans les groupes",
+    "search_users": "Rechercher dans les utilisateurs",
+    "you": "C'est vous !",
+    "default": {
+      "title": "Utilisateurs & Groupes",
+      "message": "Vous pouvez consulter ici les informations sur les utilisateurs et les groupes."
+    }
+  },
+  "settings": {
+    "menu_personal_settings": "Paramètres personnels",
+    "menu_user_account": "Compte utilisateur",
+    "menu_two_factor_auth": "Authentification en deux étapes",
+    "menu_opened_sessions": "Sessions ouvertes",
+    "menu_general_settings": "Paramètres généraux",
+    "menu_users": "Utilisateurs",
+    "menu_groups": "Groupes",
+    "menu_vocabularies": "Vocabulaires",
+    "menu_configuration": "Configuration",
+    "menu_server_logs": "Logs serveur",
+    "user": {
+      "title": "<small>Gestion des</small> utilisateurs",
+      "add_user": "Ajouter un utilisateur",
+      "username": "Nom d'utilisateur",
+      "create_date": "Date de création",
+      "edit": {
+        "delete_user_title": "Supprimer un utilisateur",
+        "delete_user_message": "Etes-vous sûr de vouloir supprimer cet utilisateur ? Tous les documents, fichiers et tags associés seront supprimés",
+        "edit_user_title": "<small>Modifier</small> \"{{ username }}\"",
+        "add_user_title": "<small>Ajouter un</small> utilisateur",
+        "username": "Nom d'utilisateur",
+        "email": "E-mail",
+        "groups": "Groupes",
+        "storage_quota": "Quota de stockage",
+        "storage_quota_placeholder": "Quota de stockage (en Mo)",
+        "password": "Mot de passe",
+        "password_confirm": "Mot de passe (confirmation)"
+      }
+    },
+    "security": {
+      "enable_totp": "Activer l'authentification en deux étapes",
+      "enable_totp_message": "Assurez-vous d'avoir une application compatible TOTP sur votre téléphone prête à être configurée",
+      "title": "<small>Authentification</small> en deux étapes",
+      "message_1": "L'authentification en deux étapes vous permet d'ajouter une couche de sécurité supplémentaire sur votre compte <strong>{{ appName }}</strong>.<br/>Avant d'activer cette fonctionnalité, assurez-vous d'avoir une application compatible TOTP sur votre téléphone :",
+      "message_google_authenticator": "Pour Android, iOS, et Blackberry: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>",
+      "message_duo_mobile": "Pour Android et iOS: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
+      "message_authenticator": "Pour Windows Phone: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">Authenticator</a>",
+      "message_2": "Ces applications génèrent automatique un code de validation changeant après un intervalle de temps donné.<br/>Il sera nécessaire d'entrer ce code de validation à chaque connexion à <strong>{{ appName }}</strong>.",
+      "secret_key": "Votre clé secrète est : <strong>{{ secret }}</strong>",
+      "secret_key_warning": "Configurez votre application TOTP sur votre téléphone avec cette clé secrète maintenant, elle ne sera plus disponible ensuite.",
+      "totp_enabled_message": "L'authentification en deux étapes est activée sur votre compte.<br/>A chaque connexion sur <strong>{{ appName }}</strong>, un code de validation provenant de votre application mobile vous sera demandé.<br/>Si vous perdez votre téléphone, il ne sera plus possible de vous connecter à votre compte, mais les sessions actives vous permettront de générer une nouvelle clé secrète.",
+      "disable_totp": {
+        "disable_totp": "Désactiver l'authentification en deux étapes",
+        "message": "Votre compte ne sera plus protégé par l'authentification en deux étapes.",
+        "confirm_password": "Confirmez votre mot de passe",
+        "submit": "Désactiver l'authentification en deux étapes"
+      }
+    },
+    "group": {
+      "title": "<small>Gestion des</small> groupes",
+      "add_group": "Ajouter un groupe",
+      "name": "Nom",
+      "edit": {
+        "delete_group_title": "Supprimer un groupe",
+        "delete_group_message": "Etes-vous sûr de vouloir supprimer ce groupe ?",
+        "edit_group_title": "<small>Modifier</small> \"{{ name }}\"",
+        "add_group_title": "<small>Ajouter un</small> groupe",
+        "name": "Nom",
+        "parent_group": "Groupe parent",
+        "search_group": "Rechercher un groupe",
+        "members": "Membres",
+        "new_member": "Nouveau membre",
+        "search_user": "Rechercher un utilisateur"
+      }
+    },
+    "account": {
+      "password": "Mot de passe",
+      "password_confirm": "Mot de passe (confirmation)",
+      "updated": "Compte mis à jout avec succès"
+    },
+    "config": {
+      "title_guest_access": "<small>Accès</small> invité",
+      "message_guest_access": "L'accès invité est un mode dans lequel quiconque peut accéder à {{ appName }} sans mot de passe.<br/>Comme un utilisateur normal, l'invité ne pourra accéder qu'aux documents auquel il a accès via les permissions.<br/>",
+      "enable_guest_access": "Activer l'accès invité",
+      "disable_guest_access": "Désactiver l'accès invité",
+      "title_theme": "<small>Personnalisation</small> de l'interface",
+      "application_name": "Nom de l'application",
+      "main_color": "Couleur principale",
+      "custom_css": "CSS personnalisée",
+      "custom_css_placeholder": "CSS personnalisée ajoutée après la feuille de style principale",
+      "logo": "Logo (Taille carrée)",
+      "background_image": "Image de fond",
+      "uploading_image": "Envoi de l'image..."
+    },
+    "log": {
+      "title": "<small>Logs</small> serveur",
+      "date": "Date",
+      "tag": "Tag",
+      "message": "Message"
+    },
+    "session": {
+      "title": "Sessions <small>ouvertes</small>",
+      "created_date": "Date de création",
+      "last_connection_date": "Date de dernière connexion",
+      "user_agent": "Depuis",
+      "current": "Courante",
+      "current_session": "Ceci est la session courante",
+      "clear_message": "Tous les autres appareils connectés à ce compte seront déconnectés",
+      "clear": "Fermeture des autres sessions"
+    },
+    "vocabulary": {
+      "title": "<small>Entrées</small> de vocabulaire",
+      "choose_vocabulary": "Choisissez un vocabulaire à modifier",
+      "type": "Type",
+      "coverage": "Couverture",
+      "rights": "Droits",
+      "value": "Valeur",
+      "order": "Ordre",
+      "new_entry": "Nouvelle entrée"
+    }
+  },
+  "directive": {
+    "acledit": {
+      "acl_target": "Pour",
+      "acl_permission": "Permission",
+      "add_permission": "Ajouter une permission",
+      "search_user_group": "Rechercher un utilisateur ou un groupe"
+    },
+    "auditlog": {
+      "log_created": "créé",
+      "log_updated": "mis à jour",
+      "log_deleted": "supprimé",
+      "Acl": "ACL",
+      "Comment": "Commentaire",
+      "Document": "Document",
+      "File": "Fichier",
+      "Group": "Groupe",
+      "Tag": "Tag",
+      "User": "Utilisateur"
+    },
+    "selectrelation": {
+      "typeahead": "Entrez un titre de document"
+    },
+    "selecttag": {
+      "typeahead": "Entrez un tag"
+    }
+  },
+  "filter": {
+    "filesize": {
+      "mb": "Mo",
+      "kb": "Ko"
+    }
+  },
+  "acl": {
+    "READ": "Lecture",
+    "READWRITE": "Ecriture",
+    "WRITE": "Ecriture",
+    "USER": "Utilisateur",
+    "GROUP": "Groupe",
+    "SHARE": "Partage"
+  },
+  "validation": {
+    "required": "Requis",
+    "too_short": "Trop court",
+    "too_long": "Trop long",
+    "email": "Doit être une adresse e-mail valide",
+    "password_confirm": "Le mot de passe et sa confirmation doivent être identiques",
+    "number": "Nombre requis",
+    "no_space": "Les espaces ne sont pas autorisés"
+  },
+  "ok": "OK",
+  "cancel": "Annuler",
+  "share": "Partager",
+  "unshare": "Départager",
+  "close": "Fermer",
+  "add": "Ajouter",
+  "open": "Ouvrir",
+  "see": "Voir",
+  "save": "Enregistrer",
+  "export": "Exporter",
+  "edit": "Modifier",
+  "delete": "Supprimer",
+  "loading": "Chargement...",
+  "send": "Envoyer",
+  "enabled": "Activé",
+  "disabled": "Désactivé"
 }

@@ -209,8 +209,8 @@
       "edit": {
         "delete_user_title": "Delete user",
         "delete_user_message": "Do you really want to delete this user? All associated documents, files and tags will be deleted",
-        "edit_user_title": "Edit <small>\"{{ username }}\"</small>",
-        "add_user_title": "Add <small>user</small>",
+        "edit_user_title": "<small>Edit</small> \"{{ username }}\"",
+        "add_user_title": "<small>Add a</small> user",
         "username": "Username",
         "email": "E-mail",
         "groups": "Groups",
@@ -298,7 +298,8 @@
       "coverage": "Coverage",
       "rights": "Rights",
       "value": "Value",
-      "order": "Order"
+      "order": "Order",
+      "new_entry": "New entry"
     }
   },
   "directive": {
@@ -311,7 +312,14 @@
     "auditlog": {
       "log_created": "created",
       "log_updated": "updated",
-      "log_deleted": "deleted"
+      "log_deleted": "deleted",
+      "Acl": "ACL",
+      "Comment": "Comment",
+      "Document": "Document",
+      "File": "File",
+      "Group": "Group",
+      "Tag": "Tag",
+      "User": "User"
     },
     "selectrelation": {
       "typeahead": "Type a document title"
@@ -341,7 +349,7 @@
     "email": "Must be a valid e-mail",
     "password_confirm": "Password and password confirmation must match",
     "number": "Number required",
-    "no_space": "Space are not allowed"
+    "no_space": "Spaces are not allowed"
   },
   "ok": "OK",
   "cancel": "Cancel",
@@ -356,5 +364,7 @@
   "edit": "Edit",
   "delete": "Delete",
   "loading": "Loading...",
-  "send": "Send"
+  "send": "Send",
+  "enabled": "Enabled",
+  "disabled": "Disabled"
 }

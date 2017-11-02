@@ -1,7 +1,7 @@
 <h1>
   <span translate="settings.config.title_guest_access"></span>
   <span class="label" ng-class="{ 'label-success': app.guest_login, 'label-danger': !app.guest_login }">
-    {{ app.guest_login ? 'Enabled' : 'Disabled' }}
+    {{ app.guest_login ? 'enabled' : 'disabled' | translate }}
   </span>
 </h1>
 <p translate="settings.config.message_guest_access" translate-values="{ appName: appName }">
