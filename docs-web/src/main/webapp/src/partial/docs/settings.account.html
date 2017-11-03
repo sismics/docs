@@ -1,19 +1,19 @@
 <h1>User <small>account</small></h1>
 <form class="form-horizontal" name="editUserForm" novalidate>
-  <div class="form-group" ng-class="{ 'has-error': !editUserForm.password.$valid, success: editUserForm.password.$valid }">
+  <div class="form-group" ng-class="{ 'has-error': !editUserForm.password.$valid && editUserForm.$dirty, success: editUserForm.password.$valid }">
     <label class="col-sm-2 control-label" for="inputPassword">{{ 'settings.account.password' | translate }}</label>
     <div class="col-sm-7">
       <input name="password" type="password" id="inputPassword" required class="form-control"
         ng-minlength="8" ng-maxlength="50" placeholder="{{ 'settings.account.password' | translate }}" ng-model="user.password" />
     </div>
     <div class="col-sm-3">
-      <span class="help-block" ng-show="editUserForm.password.$error.required">{{ 'validation.required' | translate }}</span>
-      <span class="help-block" ng-show="editUserForm.password.$error.minlength">{{ 'validation.too_short' | translate }}</span>
-      <span class="help-block" ng-show="editUserForm.password.$error.maxlength">{{ 'validation.too_long' | translate }}</span>
+      <span class="help-block" ng-show="editUserForm.password.$error.required && editUserForm.$dirty">{{ 'validation.required' | translate }}</span>
+      <span class="help-block" ng-show="editUserForm.password.$error.minlength && editUserForm.$dirty">{{ 'validation.too_short' | translate }}</span>
+      <span class="help-block" ng-show="editUserForm.password.$error.maxlength && editUserForm.$dirty">{{ 'validation.too_long' | translate }}</span>
     </div>
   </div>
 
-  <div class="form-group" ng-class="{ 'has-error': !editUserForm.passwordconfirm.$valid, success: editUserForm.passwordconfirm.$valid }">
+  <div class="form-group" ng-class="{ 'has-error': !editUserForm.passwordconfirm.$valid && editUserForm.$dirty, success: editUserForm.passwordconfirm.$valid }">
     <label class="col-sm-2 control-label" for="inputPasswordConfirm">{{ 'settings.account.password_confirm' | translate }}</label>
     <div class="col-sm-7">
       <input name="passwordconfirm" type="password" id="inputPasswordConfirm" required class="form-control"
@@ -21,7 +21,7 @@
         placeholder="{{ 'settings.account.password_confirm' | translate }}" ng-model="user.passwordconfirm" />
     </div>
     <div class="col-sm-3">
-      <span class="help-block" ng-show="editUserForm.passwordconfirm.$error.validator">{{ 'validation.password_confirm' | translate }}</span>
+      <span class="help-block" ng-show="editUserForm.passwordconfirm.$error.validator && editUserForm.$dirty">{{ 'validation.password_confirm' | translate }}</span>
     </div>
   </div>
 

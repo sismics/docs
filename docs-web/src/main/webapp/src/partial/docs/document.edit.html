@@ -9,7 +9,7 @@
   <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{ alert.msg }}</alert>
 
   <form name="documentForm" class="form-horizontal">
-    <div class="pull-right btn-group">
+    <div class="pull-right btn-group" ng-init="form = documentForm">
       <button type="submit" class="btn btn-primary" ng-disabled="!documentForm.$valid || fileIsUploading" ng-click="edit()">
         <span class="glyphicon glyphicon-floppy-disk"></span>
         {{ 'save' | translate }}
@@ -21,7 +21,7 @@
 
     <fieldset>
       <legend>{{ 'document.edit.primary_metadata' | translate }}</legend>
-      <div class="form-group" ng-class="{ 'has-error': !documentForm.title.$valid }">
+      <div class="form-group" ng-class="{ 'has-error': !documentForm.title.$valid && documentForm.$dirty }">
         <label class="col-sm-2 control-label" for="inputTitle">{{ 'document.title' | translate }}</label>
         <div class="col-sm-10">
           <input required ng-maxlength="100" class="form-control" type="text" id="inputTitle"

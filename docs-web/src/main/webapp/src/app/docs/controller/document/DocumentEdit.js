@@ -54,6 +54,9 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
       language: 'fra'
     };
     $scope.newFiles = [];
+    if ($scope.form) {
+      $scope.form.$setPristine();
+    }
   };
 
   /**

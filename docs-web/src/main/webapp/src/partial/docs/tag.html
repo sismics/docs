@@ -2,13 +2,13 @@
   <div class="col-md-4">
     <div class="well">
       <form name="tagForm" novalidate>
-        <p class="input-group" ng-class="{ 'has-error': !tagForm.name.$valid }">
+        <p class="input-group" ng-class="{ 'has-error': !tagForm.name.$valid && tagForm.$dirty }">
           <span colorpicker class="input-group-addon btn btn-default" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
           <input type="text" name="name" placeholder="{{ 'tag.new_tag' | translate }}" class="form-control"
             ng-maxlength="36" required ng-model="tag.name" ui-validate="{ space: '!$value || $value.indexOf(\' \') == -1' }">
           <span class="input-group-addon btn btn-primary" ng-disabled="!tagForm.$valid" ng-click="addTag()">{{ 'add' | translate }}</span>
         </p>
-        <span class="help-block" ng-show="tagForm.name.$error.space">{{ 'validation.no_space' | translate }}</span>
+        <span class="help-block" ng-show="tagForm.name.$error.space && tagForm.$dirty">{{ 'validation.no_space' | translate }}</span>
       </form>
 
       <p class="input-group">

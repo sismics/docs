@@ -5,7 +5,7 @@
   <h2 ng-show="!isEdit()" translate="settings.group.edit.add_group_title"></h2>
 
   <form class="form-horizontal" name="editGroupForm" novalidate>
-    <div class="form-group" ng-class="{ 'has-error': !editGroupForm.name.$valid, success: editGroupForm.name.$valid }">
+    <div class="form-group" ng-class="{ 'has-error': !editGroupForm.name.$valid && editGroupForm.$dirty, success: editGroupForm.name.$valid }">
       <label class="col-sm-2 control-label" for="inputName">{{ 'settings.group.edit.name' | translate }}</label>
       <div class="col-sm-7">
         <input name="name" type="text" id="inputName" required class="form-control"
@@ -13,21 +13,23 @@
       </div>
 
       <div class="col-sm-3">
-        <span class="help-block" ng-show="editGroupForm.name.$error.required">{{ 'validation.required' | translate }}</span>
-        <span class="help-block" ng-show="editGroupForm.name.$error.minlength">{{ 'validation.too_short' | translate }}</span>
-        <span class="help-block" ng-show="editGroupForm.name.$error.maxlength">{{ 'validation.too_long' | translate }}</span>
+        <span class="help-block" ng-show="editGroupForm.name.$error.required && editGroupForm.$dirty">{{ 'validation.required' | translate }}</span>
+        <span class="help-block" ng-show="editGroupForm.name.$error.minlength && editGroupForm.$dirty">{{ 'validation.too_short' | translate }}</span>
+        <span class="help-block" ng-show="editGroupForm.name.$error.maxlength && editGroupForm.$dirty">{{ 'validation.too_long' | translate }}</span>
       </div>
     </div>
+
     <div class="form-group">
-      <label class="col-sm-2 control-label" for="inputName">{{ 'settings.group.edit.parent_group' | translate }}</label>
+      <label class="col-sm-2 control-label" for="inputParent">{{ 'settings.group.edit.parent_group' | translate }}</label>
 
       <div class="col-sm-7">
-        <input name="name" type="text" id="inputParent" class="form-control" autocomplete="off"
+        <input name="parent" type="text" id="inputParent" class="form-control" autocomplete="off"
                placeholder="{{ 'settings.group.edit.search_group' | translate }}" ng-model="group.parent"
                typeahead="group for group in getGroupTypeahead($viewValue)"
                typeahead-wait-ms="200" typeahead-editable="false" />
       </div>
     </div>
+
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editGroupForm.$valid">

@@ -261,7 +261,7 @@
     "account": {
       "password": "Mot de passe",
       "password_confirm": "Mot de passe (confirmation)",
-      "updated": "Compte mis à jout avec succès"
+      "updated": "Compte mis à jour avec succès"
     },
     "config": {
       "title_guest_access": "<small>Accès</small> invité",
