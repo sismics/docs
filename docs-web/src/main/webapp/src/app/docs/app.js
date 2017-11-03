@@ -5,14 +5,14 @@
  */
 angular.module('docs',
     // Dependencies
-    ['ui.router', 'ui.route', 'ui.bootstrap', 'ui.keypress', 'ui.validate', 'dialog', 'ngProgress', 'monospaced.qrcode',
+    ['ui.router', 'ui.route', 'ui.bootstrap', 'ui.keypress', 'ui.validate', 'dialog', 'ngProgress', 'monospaced.qrcode', 'yaru22.angular-timeago',
       'ui.sortable', 'restangular', 'ngSanitize', 'ngTouch', 'colorpicker.module', 'angularFileUpload', 'pascalprecht.translate']
   )
 
 /**
  * Configuring modules.
  */
-.config(function($stateProvider, $httpProvider, RestangularProvider, $translateProvider) {
+.config(function($stateProvider, $httpProvider, RestangularProvider, $translateProvider, timeAgoSettings) {
   // Configuring UI Router
   $stateProvider
     .state('main', {
@@ -352,6 +352,10 @@ angular.module('docs',
     })
     .determinePreferredLanguage()
     .fallbackLanguage('en');
+
+  // Configuring Timago
+  timeAgoSettings.overrideLang = $translateProvider.proposedLanguage;
+  timeAgoSettings.fullDateAfterSeconds = 60 * 60 * 24 * 30; // 30 days
 
   // Configuring $http to act like jQuery.ajax
   $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';

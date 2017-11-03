@@ -46,7 +46,7 @@
     "page_size": "Page size",
     "page_size_10": "10 per page",
     "page_size_20": "20 per page",
-    "page_size_30": "20 per page",
+    "page_size_30": "30 per page",
     "upgrade_quota": "To upgrade your quota, ask your administrator",
     "quota": "{{ current | number: 0 }}MB ({{ percent | number: 1 }}%) used on {{ total | number: 0 }}MB",
     "count": "{{ count }} document{{ count > 1 ? 's' : '' }} found",

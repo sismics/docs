@@ -41,35 +41,49 @@
 	
 	tbody tr {
       cursor: pointer;
-	}
-	
-	.cell-tags {
-    padding: 2px;
-    
-    .label {
-      margin-left: 2px;
-      
-      .full {
-        display: none;
-      }
-    }
-    
-    &:hover {
-      .tags {
-        position: absolute;
 
+      td {
         .label {
-          .full {
-            display: inline;
-          }
-          
-          .shorten {
-            display: none;
-          }
+          margin-left: 5px;
         }
       }
-    }
 	}
+}
+
+@media (min-width: 992px) {
+  .row-full {
+    overflow: hidden;
+    margin-top: -20px !important;
+  }
+
+  .well-full {
+    margin-left: -15px;
+    padding-bottom: 1000px;
+    margin-bottom: -980px;
+    height: 100%;
+    background-color: #f5f5f5;
+    box-shadow: inset -2px 0 0 #e5e5e5;
+  }
+
+  .col-full {
+    margin-top: 20px;
+  }
+}
+
+// Footer
+.footer {
+  border-top: 1px #e1e4e8 solid;
+  padding: 20px;
+
+  img {
+    opacity: 0.1;
+  }
+}
+
+// Drop zone
+.drop-zone {
+  background: none;
+  border: 2px dashed #eee;
 }
 
 // $http loader
@@ -199,6 +213,11 @@ input[readonly].share-link {
   color: #b94a48 !important;
 }
 
+// Comments
+.page-header-comments {
+  margin: 14px 0 20px;
+}
+
 // Dirty Bootstrap 3 fix, see https://github.com/twbs/bootstrap/issues/6686
 .row { margin: 0; padding: 0 }
 .navbar-nav.navbar-right:last-child {
@@ -308,4 +327,24 @@ input[readonly].share-link {
   left: 0;
   right: 0;
   z-index: 99999;
+}
+
+// Heart
+.glyphicon-heart {
+  &:hover {
+    color: #e74c3c;
+    animation: pulse 1s linear infinite;
+  }
+}
+
+@keyframes pulse{
+  0% {
+    transform:scale(1.1);
+  }
+  50%{
+    transform:scale(0.8);
+  }
+  100%{
+    transform:scale(1.1);
+  }
 }

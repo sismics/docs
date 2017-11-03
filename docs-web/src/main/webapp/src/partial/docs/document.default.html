@@ -1,7 +1,7 @@
 <img src="img/loader.gif" ng-show="!app" />
 
 <div ng-show="app">
-  <div class="well">
+  <div class="well drop-zone">
     <h3><span class="glyphicon glyphicon-cloud-upload"></span> {{ 'document.default.quick_upload' | translate }}</h3>
     <div class="row upload-zone" ng-model="dropFiles" ng-file-drop drag-over-class="bg-success"
          ng-multiple="true" allow-dir="false" ng-file-change="fileDropped($files, $event, $rejectedFiles)">

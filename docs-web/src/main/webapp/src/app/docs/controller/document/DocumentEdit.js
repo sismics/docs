@@ -120,7 +120,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
         });
       };
       
-      if ($scope.newFiles.length === 0) {
+      if (!$scope.newFiles || $scope.newFiles.length === 0) {
         navigateNext();
       } else {
         $scope.fileIsUploading = true;

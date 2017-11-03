@@ -1,6 +1,6 @@
-<div class="row">
+<div class="row row-full">
   <div class="col-md-4">
-    <div class="well">
+    <div class="well well-full">
       <p class="text-center">
         <a href="#/document/add" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> {{ 'document.add_document' | translate }}</a>
       </p>
@@ -42,35 +42,34 @@
         <tr>
           <th class="col-xs-6" ng-click="sortDocuments(1)"><span class="glyphicon glyphicon-chevron-{{ sortColumn == 1 ? (asc ? 'down' : 'up') : '' }}"></span> {{ 'document.title' | translate }}</th>
           <th class="col-xs-3" ng-click="sortDocuments(3)"><span class="glyphicon glyphicon-chevron-{{ sortColumn == 3 ? (asc ? 'down' : 'up') : '' }}"></span> {{ 'document.creation_date' | translate }}</th>
-          <th class="col-xs-3 hidden-xs">{{ 'document.tags' | translate }}</th>
         </tr>
         </thead>
         <tbody>
         <tr ng-if="!documents">
-          <td colspan="3" class="text-center">
+          <td colspan="2" class="text-center">
             <img src="img/loader.gif" />
           </td>
         </tr>
 
         <tr ng-if="totalDocuments == 0">
-          <td colspan="3" class="text-center">
+          <td colspan="2" class="text-center">
             <span ng-if="search.length == 0">{{ 'document.no_documents' | translate }}</span>
             <span ng-if="search.length > 0" translate="document.search_empty" translate-values="{ search: search }"></span>
           </td>
         </tr>
 
         <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents" ng-class="{ active: $stateParams.id == document.id }">
-          <td>
+          <td colspan="2">
             {{ document.title }} ({{ document.file_count }})
             <span class="glyphicon glyphicon-share" ng-if="document.shared" tooltip="{{ 'document.shared' | translate }}"></span>
             <a href="#/document/view/{{ document.id }}" target="_blank" ng-click="$event.stopPropagation()"><span class="glyphicon glyphicon-link"></span></a>
-          </td>
-          <td>{{ document.create_date | date: 'yyyy-MM-dd' }}</td>
-          <td class="hidden-xs cell-tags">
-            <div class="tags">
-            <span class="label label-info" ng-repeat="tag in document.tags" ng-style="{ 'background': tag.color }">
-              <span class="shorten">{{ tag.name | shorten }}</span><span class="full">{{ tag.name }}</span>
-            </span>
+
+            <div class="pull-right text-muted small">{{ document.create_date | timeAgo: 'yyyy-MM-dd' }}</div>
+
+            <div class="tags small">
+              <span class="label label-info" ng-repeat="tag in document.tags" ng-style="{ 'background': tag.color }">
+                {{ tag.name }}
+              </span>
             </div>
           </td>
         </tr>
@@ -100,7 +99,7 @@
     </div>
   </div>
 
-  <div class="col-md-8">
+  <div class="col-md-8 col-full">
     <div ui-view="document"></div>
   </div>
 </div>

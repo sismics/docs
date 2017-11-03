@@ -46,7 +46,7 @@
     "page_size": "Taille de page",
     "page_size_10": "10 par page",
     "page_size_20": "20 par page",
-    "page_size_30": "20 par page",
+    "page_size_30": "30 par page",
     "upgrade_quota": "Pour augmenter votre quota, veuillez contacter votre administrateur",
     "quota": "{{ current | number: 0 }}Mo ({{ percent | number: 1 }}%) utilisé sur {{ total | number: 0 }}MB",
     "count": "{{ count }} document{{ count > 1 ? 's' : '' }} trouvé{{ count > 1 ? 's' : '' }}",
