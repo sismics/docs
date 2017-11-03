@@ -3,7 +3,7 @@
 /**
  * Document edition controller.
  */
-angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $q, $http, $state, $stateParams, Restangular) {
+angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $q, $http, $state, $stateParams, Restangular, $translate) {
   // Alerts
   $scope.alerts = [];
 
@@ -120,7 +120,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
         });
       };
       
-      if (_.size($scope.newFiles) == 0) {
+      if ($scope.newFiles.length === 0) {
         navigateNext();
       } else {
         $scope.fileIsUploading = true;
