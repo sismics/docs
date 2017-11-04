@@ -3,7 +3,7 @@
 /**
  * Navigation controller.
  */
-angular.module('docs').controller('Navigation', function($scope, $http, $state, $rootScope, User, Restangular) {
+angular.module('docs').controller('Navigation', function($scope, $state, $rootScope, User, Restangular) {
   User.userInfo().then(function(data) {
     $rootScope.userInfo = data;
   });

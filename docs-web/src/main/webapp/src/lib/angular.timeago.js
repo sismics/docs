@@ -196,7 +196,7 @@ angular.module('yaru22.angular-timeago').config(["timeAgoSettings", function(tim
 'use strict';
 
 angular.module('yaru22.angular-timeago').config(["timeAgoSettings", function(timeAgoSettings) {
-  timeAgoSettings.strings['fr_FR'] = {
+  timeAgoSettings.strings['fr'] = {
     prefixAgo: 'il y a',
     prefixFromNow: 'dans',
     suffixAgo: null,

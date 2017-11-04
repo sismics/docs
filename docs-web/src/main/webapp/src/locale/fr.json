@@ -96,16 +96,16 @@
       "document_added_with_errors": "Document ajouté avec succès, mais certains fichiers n'ont pu être envoyés",
       "quota_reached": "Quota atteint",
       "primary_metadata": "Métadonnées principales",
-      "title_placeholder": "La nature ou le genre de la ressource",
-      "description_placeholder": "Un résumé de la ressource",
+      "title_placeholder": "Titre principal du document",
+      "description_placeholder": "Résumé, table des matières, ou texte libre",
       "new_files": "Nouveaux fichiers",
       "orphan_files": "+ {{ count }} fichier{{ count > 1 ? 's' : '' }}",
       "additional_metadata": "Métadonnées secondaires",
-      "subject_placeholder": "Le sujet de la ressource",
-      "identifier_placeholder": "Une référence unique de la ressource dans un contexte donné",
-      "publisher_placeholder": "Une entité responsable de la mise à disposition de la ressource",
-      "format_placeholder": "Le format physique ou numérique de la ressource",
-      "source_placeholder": "Une ressource liée à cette ressource",
+      "subject_placeholder": "Mots-clefs, phrases de résumé, ou codes de classement",
+      "identifier_placeholder": "Identificateur non ambigu",
+      "publisher_placeholder": "Nom de la personne, de l'organisation ou du service à l'origine de la publication du document",
+      "format_placeholder": "Type MIME, ou format physique du document",
+      "source_placeholder": "Ressource dont dérive le document",
       "uploading_files": "Envoi des fichiers..."
     },
     "default": {
@@ -119,9 +119,7 @@
       "add_new_document": "Ajouter à un nouveau document",
       "latest_activity": "Activité récente",
       "footer_sismics": "Conçu avec <span class=\"glyphicon glyphicon-heart\"></span> par <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
-      "api_documentation": "Documentation API",
-      "version": "Version :",
-      "memory": "Mémoire :"
+      "api_documentation": "Documentation API"
     },
     "pdf": {
       "export_title": "Exporter en PDF",
@@ -259,6 +257,7 @@
       }
     },
     "account": {
+      "title": "<small>Compte</small> utilisateur",
       "password": "Mot de passe",
       "password_confirm": "Mot de passe (confirmation)",
       "updated": "Compte mis à jour avec succès"
@@ -352,6 +351,12 @@
     "password_confirm": "Le mot de passe et sa confirmation doivent être identiques",
     "number": "Nombre requis",
     "no_space": "Les espaces ne sont pas autorisés"
+  },
+  "pagination": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "first": "Première",
+    "last": "Dernière"
   },
   "ok": "OK",
   "cancel": "Annuler",

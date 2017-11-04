@@ -4,11 +4,6 @@
  * Document default controller.
  */
 angular.module('docs').controller('DocumentDefault', function($scope, $rootScope, $state, Restangular, $upload, $translate) {
-  // Load app data
-  Restangular.one('app').get().then(function(data) {
-    $scope.app = data;
-  });
-
   // Load user audit log
   Restangular.one('auditlog').get().then(function(data) {
     $scope.logs = data.logs;

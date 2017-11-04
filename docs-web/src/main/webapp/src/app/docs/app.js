@@ -345,7 +345,8 @@ angular.module('docs',
       prefix: 'locale/',
       suffix: '.json'
     })
-    .registerAvailableLanguageKeys(['en', 'fr'], {
+    .registerAvailableLanguageKeys(['en', 'fr', 'zh_CN', 'zh_HK', 'zh_TW'], {
+      'zh_*': 'zh_CN',
       'en_*': 'en',
       'fr_*': 'fr',
       '*': 'en'
@@ -354,7 +355,7 @@ angular.module('docs',
     .fallbackLanguage('en');
 
   // Configuring Timago
-  timeAgoSettings.overrideLang = $translateProvider.proposedLanguage;
+  timeAgoSettings.overrideLang = $translateProvider.preferredLanguage();
   timeAgoSettings.fullDateAfterSeconds = 60 * 60 * 24 * 30; // 30 days
 
   // Configuring $http to act like jQuery.ajax

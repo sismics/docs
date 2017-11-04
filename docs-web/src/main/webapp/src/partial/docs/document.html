@@ -77,7 +77,12 @@
       </table>
 
       <div class="text-center pagination-box">
-        <pagination total-items="totalDocuments" items-per-page="limit" max-size="5" page="currentPage"></pagination>
+        <pagination
+            previous-text="{{ 'pagination.previous' | translate }}"
+            next-text="{{ 'pagination.next' | translate }}"
+            first-text="{{ 'pagination.first' | translate }}"
+            last-text="{{ 'pagination.last' | translate }}"
+            total-items="totalDocuments" items-per-page="limit" max-size="5" page="currentPage"></pagination>
         <label class="sr-only" for="pagesizeSelect">{{ 'document.page_size' | translate }}</label>
         <select ng-model="limit" id="pagesizeSelect" class="form-control">
           <option value="10">{{ 'document.page_size_10' | translate }}</option>

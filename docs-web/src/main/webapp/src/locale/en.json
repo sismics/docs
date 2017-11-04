@@ -96,7 +96,7 @@
       "document_added_with_errors": "Document successfully added but some files cannot be uploaded",
       "quota_reached": "Quota reached",
       "primary_metadata": "Primary metadata",
-      "title_placeholder": "The nature or genre of the resource",
+      "title_placeholder": "A name given to the resource",
       "description_placeholder": "An account of the resource",
       "new_files": "New files",
       "orphan_files": "+ {{ count }} file{{ count > 1 ? 's' : '' }}",
@@ -119,9 +119,7 @@
       "add_new_document": "Add to new document",
       "latest_activity": "Latest activity",
       "footer_sismics": "Crafted with <span class=\"glyphicon glyphicon-heart\"></span> by <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
-      "api_documentation": "API Documentation",
-      "version": "Version:",
-      "memory": "Memory:"
+      "api_documentation": "API Documentation"
     },
     "pdf": {
       "export_title": "Export to PDF",
@@ -233,7 +231,7 @@
       "message_2": "Those applications automatically generate a validation code that changes after a certain period of time.<br/>You will be required to enter this validation code each time you login on <strong>{{ appName }}</strong>.",
       "secret_key": "Your secret key is: <strong>{{ secret }}</strong>",
       "secret_key_warning": "Configure your TOTP app on your phone with this secret key now, you will not be able to access it later.",
-      "totp_enabled_message": "Two-factor authentication is enabled on your account.<br/>Each time you login on <strong>{{ appName }}</strong>, you will be asked a validation code from your configured phone app.<br/>If you loose your phone, you will not be able to login into your account but active sessions will allow you to regenerate a secrey key.",
+      "totp_enabled_message": "Two-factor authentication is enabled on your account.<br/>Each time you login on <strong>{{ appName }}</strong>, you will be asked a validation code from your configured phone app.<br/>If you lose your phone, you will not be able to login into your account but active sessions will allow you to regenerate a secrey key.",
       "disable_totp": {
         "disable_totp": "Disable two-factor authentication",
         "message": "Your account will not be protected by the two-factor authentication anymore.",
@@ -259,6 +257,7 @@
       }
     },
     "account": {
+      "title": "User <small>account</small>",
       "password": "Password",
       "password_confirm": "Password (confirm)",
       "updated": "Account successfully updated"
@@ -352,6 +351,12 @@
     "password_confirm": "Password and password confirmation must match",
     "number": "Number required",
     "no_space": "Spaces are not allowed"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "first": "First",
+    "last": "Last"
   },
   "ok": "OK",
   "cancel": "Cancel",

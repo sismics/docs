@@ -1,6 +1,6 @@
-<img src="img/loader.gif" ng-show="!app" />
+<img src="img/loader.gif" ng-show="!logs" />
 
-<div ng-show="app">
+<div ng-show="logs">
   <div class="well drop-zone">
     <h3><span class="glyphicon glyphicon-cloud-upload"></span> {{ 'document.default.quick_upload' | translate }}</h3>
     <div class="row upload-zone" ng-model="dropFiles" ng-file-drop drag-over-class="bg-success"
@@ -55,17 +55,6 @@
 
   <div ui-view="file"></div>
 
-  <div>
-    <h3><span class="glyphicon glyphicon-tasks"></span> {{ 'document.default.latest_activity' | translate }}</h3>
-    <audit-log logs="logs" />
-  </div>
-
-  <div class="text-muted text-right">
-    <ul class="list-inline">
-      <li translate="document.default.footer_sismics"></li>
-      <li><a href="apidoc/">{{ 'document.default.api_documentation' | translate }}</a></li>
-      <li><strong>{{ 'document.default.version' | translate }}</strong> {{ app.current_version }}</li>
-      <li><strong>{{ 'document.default.memory' | translate }}</strong> {{ app.free_memory / 1000000 | number: 0 }}/{{ app.total_memory / 1000000 | number: 0 }} MB</li>
-    </ul>
-  </div>
+  <h3><span class="glyphicon glyphicon-tasks"></span> {{ 'document.default.latest_activity' | translate }}</h3>
+  <audit-log logs="logs" />
 </div>
