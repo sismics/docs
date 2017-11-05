@@ -48,12 +48,21 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
    * Reset the form to add a new document.
    */
   $scope.resetForm = function() {
+    var languages = {
+      en: 'eng',
+      fr: 'fra',
+      zh_CN: 'chi_sim'
+    };
+    var language = languages[$translate.use()];
+
     $scope.document = {
       tags: [],
       relations: [],
-      language: 'fra'
+      language: language ? language : 'eng'
     };
+
     $scope.newFiles = [];
+
     if ($scope.form) {
       $scope.form.$setPristine();
     }
