@@ -72,12 +72,12 @@ module.exports = function(grunt) {
         options: {
           append: true,
           htmlmin: {
-            collapseBooleanAttributes: true,
+            collapseBooleanAttributes: false,
             collapseWhitespace: true,
-            removeAttributeQuotes: true,
+            removeAttributeQuotes: false,
             removeComments: true,
-            removeEmptyAttributes: true,
-            removeRedundantAttributes: true,
+            removeEmptyAttributes: false,
+            removeRedundantAttributes: false,
             removeScriptTypeAttributes: true,
             removeStyleLinkTypeAttributes: true
           }
@@ -90,12 +90,12 @@ module.exports = function(grunt) {
         options: {
           append: true,
           htmlmin: {
-            collapseBooleanAttributes: true,
+            collapseBooleanAttributes: false,
             collapseWhitespace: true,
-            removeAttributeQuotes: true,
+            removeAttributeQuotes: false,
             removeComments: true,
-            removeEmptyAttributes: true,
-            removeRedundantAttributes: true,
+            removeEmptyAttributes: false,
+            removeRedundantAttributes: false,
             removeScriptTypeAttributes: true,
             removeStyleLinkTypeAttributes: true
           }
