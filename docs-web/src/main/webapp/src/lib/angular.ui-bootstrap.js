@@ -1794,6 +1794,20 @@ angular.module('ui.bootstrap.pagination', [])
             });
           }
 
+          if (attrs.nextText) {
+            attrs.$observe('nextText', function(value) {
+              nextText = paginationCtrl.getAttributeValue(value, config.nextText, true);
+              paginationCtrl.render();
+            });
+          }
+
+          if (attrs.previousText) {
+            attrs.$observe('previousText', function(value) {
+              previousText = paginationCtrl.getAttributeValue(value, config.previousText, true);
+              paginationCtrl.render();
+            });
+          }
+
           // Create page object used in template
           function makePage(number, text, isActive, isDisabled) {
             return {

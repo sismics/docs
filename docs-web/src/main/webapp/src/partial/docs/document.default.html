@@ -1,6 +1,6 @@
 <img src="img/loader.gif" ng-show="!logs" />
 
-<div ng-show="logs">
+<div>
   <div class="well drop-zone">
     <h3><span class="glyphicon glyphicon-cloud-upload"></span> {{ 'document.default.quick_upload' | translate }}</h3>
     <div class="row upload-zone" ng-model="dropFiles" ng-file-drop drag-over-class="bg-success"
@@ -55,6 +55,8 @@
 
   <div ui-view="file"></div>
 
-  <h3><span class="glyphicon glyphicon-tasks"></span> {{ 'document.default.latest_activity' | translate }}</h3>
-  <audit-log logs="logs" />
+  <div ng-show="logs.length > 0">
+    <h3><span class="glyphicon glyphicon-tasks"></span> {{ 'document.default.latest_activity' | translate }}</h3>
+    <audit-log logs="logs" />
+  </div>
 </div>

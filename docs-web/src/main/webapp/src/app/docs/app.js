@@ -350,9 +350,15 @@ angular.module('docs',
       'en_*': 'en',
       'fr_*': 'fr',
       '*': 'en'
-    })
-    .determinePreferredLanguage()
-    .fallbackLanguage('en');
+    });
+
+  if (!_.isUndefined(localStorage.overrideLang)) {
+    // Set the current language if an override is saved in local storage
+    $translateProvider.use(localStorage.overrideLang);
+  } else {
+    // Or else determine the language based on the user's browser
+    $translateProvider.determinePreferredLanguage();
+  }
 
   // Configuring Timago
   timeAgoSettings.overrideLang = $translateProvider.preferredLanguage();
