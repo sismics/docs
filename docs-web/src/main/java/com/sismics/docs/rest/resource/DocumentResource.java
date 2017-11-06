@@ -275,16 +275,10 @@ public class DocumentResource extends BaseResource {
         StreamingOutput stream = new StreamingOutput() {
             @Override
             public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                try (InputStream inputStream = PdfUtil.convertToPdf(documentDto, fileList, fitImageToPage, metadata, margin)) {
-                    ByteStreams.copy(inputStream, outputStream);
+                try {
+                    PdfUtil.convertToPdf(documentDto, fileList, fitImageToPage, metadata, margin, outputStream);
                 } catch (Exception e) {
                     throw new IOException(e);
-                } finally {
-                    try {
-                        outputStream.close();
-                    } catch (IOException e) {
-                        // Ignore
-                    }
                 }
             }
         };

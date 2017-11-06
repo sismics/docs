@@ -14,10 +14,7 @@ import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
-import com.sismics.docs.core.util.DirectoryUtil;
-import com.sismics.docs.core.util.EncryptionUtil;
-import com.sismics.docs.core.util.FileUtil;
-import com.sismics.docs.core.util.PdfUtil;
+import com.sismics.docs.core.util.*;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
@@ -37,13 +34,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -114,27 +109,29 @@ public class FileResource extends BaseResource {
             }
         }
         
-        // Keep unencrypted data in memory, because we will need it two times
-        byte[] fileData;
+        // Keep unencrypted data temporary on disk, because we will need it two times
+        java.nio.file.Path unencryptedFile;
+        long fileSize;
         try {
-            fileData = ByteStreams.toByteArray(fileBodyPart.getValueAs(InputStream.class));
+            unencryptedFile = ThreadLocalContext.get().createTemporaryFile();
+            Files.copy(fileBodyPart.getValueAs(InputStream.class), unencryptedFile, StandardCopyOption.REPLACE_EXISTING);
+            fileSize = Files.size(unencryptedFile);
         } catch (IOException e) {
             throw new ServerException("StreamError", "Error reading the input file", e);
         }
-        InputStream fileInputStream = new ByteArrayInputStream(fileData);
-        
+
         // Validate mime type
         String name = fileBodyPart.getContentDisposition() != null ?
                 fileBodyPart.getContentDisposition().getFileName() : null;
         String mimeType;
         try {
-            mimeType = MimeTypeUtil.guessMimeType(fileInputStream, name);
+            mimeType = MimeTypeUtil.guessMimeType(unencryptedFile, name);
         } catch (IOException e) {
             throw new ServerException("ErrorGuessMime", "Error guessing mime type", e);
         }
 
         // Validate quota
-        if (user.getStorageCurrent() + fileData.length > user.getStorageQuota()) {
+        if (user.getStorageCurrent() + fileSize > user.getStorageQuota()) {
             throw new ClientException("QuotaReached", "Quota limit reached");
         }
         
@@ -158,16 +155,16 @@ public class FileResource extends BaseResource {
             String fileId = fileDao.create(file, principal.getId());
             
             // Guess the mime type a second time, for open document format (first detected as simple ZIP file)
-            file.setMimeType(MimeTypeUtil.guessOpenDocumentFormat(file, fileInputStream));
-            
+            file.setMimeType(MimeTypeUtil.guessOpenDocumentFormat(file, unencryptedFile));
+
             // Convert to PDF if necessary (for thumbnail and text extraction)
-            InputStream pdfIntputStream = PdfUtil.convertToPdf(file, fileInputStream, true);
-            
+            java.nio.file.Path unencryptedPdfFile = PdfUtil.convertToPdf(file, unencryptedFile);
+
             // Save the file
-            FileUtil.save(fileInputStream, pdfIntputStream, file, user.getPrivateKey());
+            FileUtil.save(unencryptedFile, unencryptedPdfFile, file, user.getPrivateKey());
             
             // Update the user quota
-            user.setStorageCurrent(user.getStorageCurrent() + fileData.length);
+            user.setStorageCurrent(user.getStorageCurrent() + fileSize);
             userDao.updateQuota(user);
             
             // Raise a new file created event and document updated event if we have a document
@@ -176,8 +173,8 @@ public class FileResource extends BaseResource {
                 fileCreatedAsyncEvent.setUserId(principal.getId());
                 fileCreatedAsyncEvent.setLanguage(documentDto.getLanguage());
                 fileCreatedAsyncEvent.setFile(file);
-                fileCreatedAsyncEvent.setInputStream(fileInputStream);
-                fileCreatedAsyncEvent.setPdfInputStream(pdfIntputStream);
+                fileCreatedAsyncEvent.setUnencryptedFile(unencryptedFile);
+                fileCreatedAsyncEvent.setUnencryptedPdfFile(unencryptedPdfFile);
                 ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
                 
                 DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
@@ -190,7 +187,7 @@ public class FileResource extends BaseResource {
             JsonObjectBuilder response = Json.createObjectBuilder()
                     .add("status", "ok")
                     .add("id", fileId)
-                    .add("size", fileData.length);
+                    .add("size", fileSize);
             return Response.ok().entity(response.build()).build();
         } catch (Exception e) {
             throw new ServerException("FileError", "Error adding a file", e);
@@ -254,13 +251,13 @@ public class FileResource extends BaseResource {
         // Raise a new file created event and document updated event (it wasn't sent during file creation)
         try {
             java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
-            InputStream fileInputStream = Files.newInputStream(storedFile);
-            final InputStream responseInputStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey());
+            java.nio.file.Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey());
             FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
             fileCreatedAsyncEvent.setUserId(principal.getId());
             fileCreatedAsyncEvent.setLanguage(documentDto.getLanguage());
             fileCreatedAsyncEvent.setFile(file);
-            fileCreatedAsyncEvent.setInputStream(responseInputStream);
+            fileCreatedAsyncEvent.setUnencryptedFile(unencryptedFile);
+            fileCreatedAsyncEvent.setUnencryptedPdfFile(PdfUtil.convertToPdf(file, unencryptedFile));
             ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
             
             DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();

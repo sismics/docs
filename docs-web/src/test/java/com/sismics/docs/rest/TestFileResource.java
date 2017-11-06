@@ -1,10 +1,16 @@
 package com.sismics.docs.rest;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Date;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Resources;
+import com.sismics.docs.core.util.DirectoryUtil;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
+import com.sismics.util.mime.MimeType;
+import com.sismics.util.mime.MimeTypeUtil;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import org.junit.Assert;
+import org.junit.Test;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -13,19 +19,10 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Resources;
-import com.sismics.docs.core.util.DirectoryUtil;
-import com.sismics.util.filter.TokenBasedSecurityFilter;
-import com.sismics.util.mime.MimeType;
-import com.sismics.util.mime.MimeTypeUtil;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Date;
 
 /**
  * Exhaustive test of the file resource.
@@ -123,10 +120,8 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Check that the files are not readable directly from FS
         Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file1Id);
-        try (InputStream storedFileInputStream = new BufferedInputStream(Files.newInputStream(storedFile))) {
-            Assert.assertEquals(MimeType.DEFAULT, MimeTypeUtil.guessMimeType(storedFileInputStream, null));
-        }
-        
+        Assert.assertEquals(MimeType.DEFAULT, MimeTypeUtil.guessMimeType(storedFile, null));
+
         // Get all files from a document
         json = target().path("/file/list")
                 .queryParam("id", document1Id)

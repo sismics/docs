@@ -36,34 +36,34 @@ public class FileUtil {
      * 
      * @param language Language to extract
      * @param file File to extract
-     * @param inputStream Unencrypted input stream
-     * @param pdfInputStream Unencrypted PDF input stream
+     * @param unencryptedFile Unencrypted file
+     * @param unencryptedPdfFile Unencrypted PDF file
      * @return Content extract
      */
-    public static String extractContent(String language, File file, InputStream inputStream, InputStream pdfInputStream) {
+    public static String extractContent(String language, File file, Path unencryptedFile, Path unencryptedPdfFile) {
         String content = null;
         
         if (ImageUtil.isImage(file.getMimeType())) {
-            content = ocrFile(inputStream, language);
-        } else if (pdfInputStream != null) {
-            content = PdfUtil.extractPdf(pdfInputStream);
+            content = ocrFile(unencryptedFile, language);
+        } else if (unencryptedPdfFile != null) {
+            content = PdfUtil.extractPdf(unencryptedPdfFile);
         }
         
         return content;
     }
     
     /**
-     * Optical character recognition on a stream.
+     * Optical character recognition on a file.
      * 
-     * @param inputStream Unencrypted input stream
+     * @param unecryptedFile Unencrypted file
      * @param language Language to OCR
      * @return Content extracted
      */
-    private static String ocrFile(InputStream inputStream, String language) {
+    private static String ocrFile(Path unecryptedFile, String language) {
         Tesseract instance = Tesseract.getInstance();
         String content = null;
         BufferedImage image;
-        try {
+        try (InputStream inputStream = Files.newInputStream(unecryptedFile)) {
             image = ImageIO.read(inputStream);
         } catch (IOException e) {
             log.error("Error reading the image", e);
@@ -90,38 +90,39 @@ public class FileUtil {
     /**
      * Save a file on the storage filesystem.
      * 
-     * @param inputStream Unencrypted input stream
-     * @param pdfInputStream PDF input stream
+     * @param unencryptedFile Unencrypted file
+     * @param unencryptedPdfFile Unencrypted PDF file
      * @param file File to save
      * @param privateKey Private key used for encryption
      */
-    public static void save(InputStream inputStream, InputStream pdfInputStream, File file, String privateKey) throws Exception {
+    public static void save(Path unencryptedFile, Path unencryptedPdfFile, File file, String privateKey) throws Exception {
         Cipher cipher = EncryptionUtil.getEncryptionCipher(privateKey);
         Path path = DirectoryUtil.getStorageDirectory().resolve(file.getId());
-        Files.copy(new CipherInputStream(inputStream, cipher), path);
-        inputStream.reset();
-        
+        try (InputStream inputStream = Files.newInputStream(unencryptedFile)) {
+            Files.copy(new CipherInputStream(inputStream, cipher), path);
+        }
+
         // Generate file variations
-        saveVariations(file, inputStream, pdfInputStream, cipher);
+        saveVariations(file, unencryptedFile, unencryptedPdfFile, cipher);
     }
 
     /**
      * Generate file variations.
      * 
      * @param file File from database
-     * @param inputStream Unencrypted input stream
-     * @param pdfInputStream Unencrypted PDF input stream
+     * @param unencryptedFile Unencrypted file
+     * @param unencryptedPdfFile Unencrypted PDF file
      * @param cipher Cipher to use for encryption
      */
-    private static void saveVariations(File file, InputStream inputStream, InputStream pdfInputStream, Cipher cipher) throws Exception {
+    private static void saveVariations(File file, Path unencryptedFile, Path unencryptedPdfFile, Cipher cipher) throws Exception {
         BufferedImage image = null;
         if (ImageUtil.isImage(file.getMimeType())) {
-            image = ImageIO.read(inputStream);
-            inputStream.reset();
-        } else if(pdfInputStream != null) {
+            try (InputStream inputStream = Files.newInputStream(unencryptedFile)) {
+                image = ImageIO.read(inputStream);
+            }
+        } else if (unencryptedPdfFile != null) {
             // Generate preview from the first page of the PDF
-            image = PdfUtil.renderFirstPage(pdfInputStream);
-            pdfInputStream.reset();
+            image = PdfUtil.renderFirstPage(unencryptedPdfFile);
         }
         
         if (image != null) {

@@ -1,9 +1,13 @@
 package com.sismics.util.context;
 
 import com.google.common.collect.Lists;
+import com.sismics.docs.core.event.TemporaryFileCleanupAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
 
 import javax.persistence.EntityManager;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -26,6 +30,12 @@ public class ThreadLocalContext {
      * List of async events posted during this request.
      */
     private List<Object> asyncEventList = Lists.newArrayList();
+
+    /**
+     * List of temporary files created during this request.
+     * They are deleted at the end of each request.
+     */
+    private List<Path> temporaryFileList = Lists.newArrayList();
 
     /**
      * Private constructor.
@@ -83,11 +93,28 @@ public class ThreadLocalContext {
     }
 
     /**
+     * Create a temporary file linked to the request.
+     *
+     * @return New temporary file
+     */
+    public Path createTemporaryFile() throws IOException {
+        Path path = Files.createTempFile("sismics_docs", null);
+        temporaryFileList.add(path);
+        return path;
+    }
+
+    /**
      * Fire all pending async events.
      */
     public void fireAllAsyncEvents() {
         for (Object asyncEvent : asyncEventList) {
             AppContext.getInstance().getAsyncEventBus().post(asyncEvent);
+        }
+
+        if (!temporaryFileList.isEmpty()) {
+            // Some files were created during this request, add a cleanup event to the queue
+            // It works because we are using a one thread executor
+            AppContext.getInstance().getAsyncEventBus().post(new TemporaryFileCleanupAsyncEvent(temporaryFileList));
         }
     }
 }

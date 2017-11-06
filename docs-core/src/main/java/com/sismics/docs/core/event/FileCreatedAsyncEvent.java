@@ -1,6 +1,7 @@
 package com.sismics.docs.core.event;
 
 import java.io.InputStream;
+import java.nio.file.Path;
 
 import com.google.common.base.MoreObjects;
 import com.sismics.docs.core.model.jpa.File;
@@ -22,16 +23,16 @@ public class FileCreatedAsyncEvent extends UserEvent {
     private String language;
     
     /**
-     * Unencrypted input stream containing the file.
+     * Unencrypted original file.
      */
-    private InputStream inputStream;
+    private Path unencryptedFile;
     
     /**
-     * Unencrypted input stream containing a PDF representation
-     * of the file. May be null if the PDF conversion is not
+     * Unencrypted file containing PDF representation
+     * of the original file. May be null if the PDF conversion is not
      * necessary or not possible.
      */
-    private InputStream pdfInputStream;
+    private Path unencryptedPdfFile;
     
     public File getFile() {
         return file;
@@ -48,21 +49,23 @@ public class FileCreatedAsyncEvent extends UserEvent {
     public void setLanguage(String language) {
         this.language = language;
     }
-    
-    public InputStream getInputStream() {
-        return inputStream;
+
+    public Path getUnencryptedFile() {
+        return unencryptedFile;
     }
 
-    public void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
-    }
-    
-    public InputStream getPdfInputStream() {
-        return pdfInputStream;
+    public FileCreatedAsyncEvent setUnencryptedFile(Path unencryptedFile) {
+        this.unencryptedFile = unencryptedFile;
+        return this;
     }
 
-    public void setPdfInputStream(InputStream pdfInputStream) {
-        this.pdfInputStream = pdfInputStream;
+    public Path getUnencryptedPdfFile() {
+        return unencryptedPdfFile;
+    }
+
+    public FileCreatedAsyncEvent setUnencryptedPdfFile(Path unencryptedPdfFile) {
+        this.unencryptedPdfFile = unencryptedPdfFile;
+        return this;
     }
 
     @Override

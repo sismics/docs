@@ -1,18 +1,20 @@
 package com.sismics.docs.core.util;
 
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.Date;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.util.mime.MimeType;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Date;
 
 /**
  * Test of the file entity utilities.
@@ -22,26 +24,22 @@ import com.sismics.util.mime.MimeType;
 public class TestFileUtil {
     @Test
     public void extractContentOpenDocumentTextTest() throws Exception {
-        try (InputStream inputStream = Resources.getResource("file/document.odt").openStream()) {
-            File file = new File();
-            file.setMimeType(MimeType.OPEN_DOCUMENT_TEXT);
-            try (InputStream pdfInputStream = PdfUtil.convertToPdf(file, inputStream, false)) {
-                String content = FileUtil.extractContent(null, file, inputStream, pdfInputStream);
-                Assert.assertTrue(content.contains("Lorem ipsum dolor sit amen."));
-            }
-        }
+        Path path = Paths.get(ClassLoader.getSystemResource("file/document.odt").toURI());
+        File file = new File();
+        file.setMimeType(MimeType.OPEN_DOCUMENT_TEXT);
+        Path pdfPath = PdfUtil.convertToPdf(file, path);
+        String content = FileUtil.extractContent(null, file, path, pdfPath);
+        Assert.assertTrue(content.contains("Lorem ipsum dolor sit amen."));
     }
     
     @Test
     public void extractContentOfficeDocumentTest() throws Exception {
-        try (InputStream inputStream = Resources.getResource("file/document.docx").openStream()) {
-            File file = new File();
-            file.setMimeType(MimeType.OFFICE_DOCUMENT);
-            try (InputStream pdfInputStream = PdfUtil.convertToPdf(file, inputStream, false)) {
-                String content = FileUtil.extractContent(null, file, inputStream, pdfInputStream);
-                Assert.assertTrue(content.contains("Lorem ipsum dolor sit amen."));
-            }
-        }
+        Path path = Paths.get(ClassLoader.getSystemResource("file/document.docx").toURI());
+        File file = new File();
+        file.setMimeType(MimeType.OFFICE_DOCUMENT);
+        Path pdfPath = PdfUtil.convertToPdf(file, path);
+        String content = FileUtil.extractContent(null, file, path, pdfPath);
+        Assert.assertTrue(content.contains("Lorem ipsum dolor sit amen."));
     }
     
     @Test
@@ -97,8 +95,9 @@ public class TestFileUtil {
             file4.setId("document_odt");
             file4.setMimeType(MimeType.OPEN_DOCUMENT_TEXT);
 
-            InputStream is = PdfUtil.convertToPdf(documentDto, Lists.newArrayList(file0, file1, file2, file3, file4), true, true, 10);
-            is.close();
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            PdfUtil.convertToPdf(documentDto, Lists.newArrayList(file0, file1, file2, file3, file4), true, true, 10, outputStream);
+            Assert.assertTrue(outputStream.toByteArray().length > 0);
         }
     }
 }

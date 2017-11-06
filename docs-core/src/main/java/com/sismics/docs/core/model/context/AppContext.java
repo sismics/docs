@@ -12,12 +12,8 @@ import com.google.common.eventbus.EventBus;
 import com.lowagie.text.FontFactory;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.dao.jpa.ConfigDao;
-import com.sismics.docs.core.listener.async.DocumentCreatedAsyncListener;
-import com.sismics.docs.core.listener.async.DocumentDeletedAsyncListener;
-import com.sismics.docs.core.listener.async.DocumentUpdatedAsyncListener;
-import com.sismics.docs.core.listener.async.FileCreatedAsyncListener;
-import com.sismics.docs.core.listener.async.FileDeletedAsyncListener;
-import com.sismics.docs.core.listener.async.RebuildIndexAsyncListener;
+import com.sismics.docs.core.event.TemporaryFileCleanupAsyncEvent;
+import com.sismics.docs.core.listener.async.*;
 import com.sismics.docs.core.listener.sync.DeadEventListener;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.service.IndexingService;
@@ -86,6 +82,7 @@ public class AppContext {
         asyncEventBus.register(new DocumentUpdatedAsyncListener());
         asyncEventBus.register(new DocumentDeletedAsyncListener());
         asyncEventBus.register(new RebuildIndexAsyncListener());
+        asyncEventBus.register(new TemporaryFileCleanupAsyncListener());
     }
 
     /**
@@ -132,6 +129,7 @@ public class AppContext {
         if (EnvironmentUtil.isUnitTest()) {
             return new EventBus();
         } else {
+            // /!\ Don't add more threads because a cleanup event is fired at the end of each request
             ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1,
                     0L, TimeUnit.MILLISECONDS,
                     new LinkedBlockingQueue<Runnable>());

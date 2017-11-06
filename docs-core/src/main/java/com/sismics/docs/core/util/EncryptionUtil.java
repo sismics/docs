@@ -1,20 +1,22 @@
 package com.sismics.docs.core.util;
 
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.Security;
+import com.google.common.base.Strings;
+import com.sismics.util.context.ThreadLocalContext;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import com.google.common.base.Strings;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.Security;
 
 /**
  * Encryption utilities.
@@ -55,7 +57,28 @@ public class EncryptionUtil {
     public static InputStream decryptInputStream(InputStream is, String privateKey) throws Exception {
         return new CipherInputStream(is, getCipher(privateKey, Cipher.DECRYPT_MODE));
     }
-    
+
+    /**
+     * Decrypt a file to a temporary file using the specified private key.
+     *
+     * @param file Encrypted file
+     * @param privateKey Private key
+     * @return Decrypted temporary file
+     * @throws Exception
+     */
+    public static Path decryptFile(Path file, String privateKey) throws Exception {
+        if (privateKey == null) {
+            // For unit testing
+            return file;
+        }
+
+        Path tmpFile = ThreadLocalContext.get().createTemporaryFile();
+        try (InputStream is = Files.newInputStream(file)) {
+            Files.copy(new CipherInputStream(is, getCipher(privateKey, Cipher.DECRYPT_MODE)), tmpFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+        return tmpFile;
+    }
+
     /**
      * Return an encryption cipher.
      * 

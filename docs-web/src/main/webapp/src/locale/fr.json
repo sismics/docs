@@ -332,7 +332,7 @@
   "filter": {
     "filesize": {
       "mb": "Mo",
-      "kb": "Ko"
+      "kb": "ko"
     }
   },
   "acl": {
