@@ -26,7 +26,7 @@
         <label class="col-sm-2 control-label" for="inputTarget">{{ 'directive.acledit.acl_target' | translate }}</label>
         <div class="col-sm-4">
           <input required ng-maxlength="50" class="form-control" type="text" id="inputTarget"
-                 placeholder="{{ 'directive.acledit.search_user_group' | translate }}" name="target" ng-model="acl.target" autocomplete="off"
+                 ng-attr-placeholder="{{ 'directive.acledit.search_user_group' | translate }}" name="target" ng-model="acl.target" autocomplete="off"
                  typeahead="target as target.name for target in getTargetAclTypeahead($viewValue) | filter: $viewValue"
                  typeahead-template-url="partial/docs/directive.typeahead.acl.html"
                  typeahead-wait-ms="200" />

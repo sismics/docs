@@ -9,7 +9,7 @@
       <label class="col-sm-2 control-label" for="inputName">{{ 'settings.group.edit.name' | translate }}</label>
       <div class="col-sm-7">
         <input name="name" type="text" id="inputName" required class="form-control"
-               ng-minlength="3" ng-maxlength="50" placeholder="{{ 'settings.group.edit.name' | translate }}" ng-model="group.name"/>
+               ng-minlength="3" ng-maxlength="50" ng-attr-placeholder="{{ 'settings.group.edit.name' | translate }}" ng-model="group.name"/>
       </div>
 
       <div class="col-sm-3">
@@ -24,7 +24,7 @@
 
       <div class="col-sm-7">
         <input name="parent" type="text" id="inputParent" class="form-control" autocomplete="off"
-               placeholder="{{ 'settings.group.edit.search_group' | translate }}" ng-model="group.parent"
+               ng-attr-placeholder="{{ 'settings.group.edit.search_group' | translate }}" ng-model="group.parent"
                typeahead="group for group in getGroupTypeahead($viewValue)"
                typeahead-wait-ms="200" typeahead-editable="false" />
       </div>
@@ -49,7 +49,7 @@
         <label class="col-sm-2 control-label" for="inputMember">{{ 'settings.group.edit.new_member' | translate }}</label>
         <div class="col-sm-7">
           <input name="member" type="text" id="inputMember" class="form-control" ng-model="member"
-                 placeholder="{{ 'settings.group.edit.search_user' | translate }}"
+                 ng-attr-placeholder="{{ 'settings.group.edit.search_user' | translate }}"
                  typeahead="user for user in getUserTypeahead($viewValue)" typeahead-on-select="addMember($item)"
                  typeahead-wait-ms="200" typeahead-editable="false" autocomplete="off" />
         </div>

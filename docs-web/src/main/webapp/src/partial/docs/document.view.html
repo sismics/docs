@@ -117,7 +117,7 @@
       <form ng-submit="addComment()">
         <div class="form-group">
           <label class="sr-only" for="commentInput">{{ 'document.view.add_comment' | translate }}</label>
-          <input type="text" class="form-control" id="commentInput" ng-model="comment" placeholder="{{ 'document.view.add_comment' | translate }}">
+          <input type="text" class="form-control" id="commentInput" ng-model="comment" ng-attr-placeholder="{{ 'document.view.add_comment' | translate }}">
         </div>
       </form>
     </div>

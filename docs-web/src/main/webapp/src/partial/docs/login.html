@@ -17,12 +17,12 @@
     <form>
       <div class="form-group">
         <label class="sr-only" for="inputUsername">{{ 'login.username' | translate }}</label>
-        <input class="form-control" type="text" id="inputUsername" placeholder="{{ 'login.username' | translate }}" ng-model="user.username" />
+        <input class="form-control" type="text" id="inputUsername" ng-attr-placeholder="{{ 'login.username' | translate }}" ng-model="user.username" />
       </div>
 
       <div class="form-group">
         <label class="sr-only" for="inputPassword">{{ 'login.password' | translate }}</label>
-        <input class="form-control" type="password" id="inputPassword" placeholder="{{ 'login.password' | translate }}" ng-model="user.password" />
+        <input class="form-control" type="password" id="inputPassword" ng-attr-placeholder="{{ 'login.password' | translate }}" ng-model="user.password" />
       </div>
 
       <span class="help-block" ng-if="codeRequired">
@@ -31,7 +31,7 @@
       </span>
       <div class="form-group" ng-if="codeRequired">
         <label class="sr-only" for="inputCode">{{ 'login.validation_code' | translate }}</label>
-        <input class="form-control" type="text" id="inputCode" placeholder="{{ 'login.validation_code' | translate }}" ng-model="user.code" />
+        <input class="form-control" type="text" id="inputCode" ng-attr-placeholder="{{ 'login.validation_code' | translate }}" ng-model="user.code" />
       </div>
 
       <div class="checkbox">

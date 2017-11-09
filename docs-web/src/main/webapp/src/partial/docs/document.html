@@ -29,7 +29,7 @@
               lang:fra<br/>
               by:user1"></span>
           </span>
-          <input type="search" class="form-control" placeholder="{{ 'document.search' | translate }}" ng-model="search" />
+          <input type="search" class="form-control" ng-attr-placeholder="{{ 'document.search' | translate }}" ng-model="search" />
           <span class="input-group-addon">
             <span class="glyphicon glyphicon-search" ng-show="search.length == 0"></span>
             <span class="glyphicon glyphicon-remove" ng-show="search.length > 0" ng-click="search = ''"></span>

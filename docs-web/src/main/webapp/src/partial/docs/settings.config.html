@@ -32,7 +32,7 @@
   <div class="form-group">
     <label class="col-sm-2 control-label" for="inputCss">{{ 'settings.config.custom_css' | translate }}</label>
     <div class="col-sm-8">
-      <textarea class="form-control" rows="6" placeholder="{{ 'settings.config.custom_css_placeholder' | translate }}"
+      <textarea class="form-control" rows="6" ng-attr-placeholder="{{ 'settings.config.custom_css_placeholder' | translate }}"
         id="inputCss" ng-model="theme.css" ng-blur="update()"></textarea>
     </div>
   </div>

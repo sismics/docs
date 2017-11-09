@@ -4,7 +4,7 @@
     <label class="col-sm-2 control-label" for="inputPassword">{{ 'settings.account.password' | translate }}</label>
     <div class="col-sm-7">
       <input name="password" type="password" id="inputPassword" required class="form-control"
-        ng-minlength="8" ng-maxlength="50" placeholder="{{ 'settings.account.password' | translate }}" ng-model="user.password" />
+        ng-minlength="8" ng-maxlength="50" ng-attr-placeholder="{{ 'settings.account.password' | translate }}" ng-model="user.password" />
     </div>
     <div class="col-sm-3">
       <span class="help-block" ng-show="editUserForm.password.$error.required && editUserForm.$dirty">{{ 'validation.required' | translate }}</span>
@@ -18,7 +18,7 @@
     <div class="col-sm-7">
       <input name="passwordconfirm" type="password" id="inputPasswordConfirm" required class="form-control"
         ui-validate="'$value == user.password'" ui-validate-watch="'user.password'"
-        placeholder="{{ 'settings.account.password_confirm' | translate }}" ng-model="user.passwordconfirm" />
+        ng-attr-placeholder="{{ 'settings.account.password_confirm' | translate }}" ng-model="user.passwordconfirm" />
     </div>
     <div class="col-sm-3">
       <span class="help-block" ng-show="editUserForm.passwordconfirm.$error.validator && editUserForm.$dirty">{{ 'validation.password_confirm' | translate }}</span>
