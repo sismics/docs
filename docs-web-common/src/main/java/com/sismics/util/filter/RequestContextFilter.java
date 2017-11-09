@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.HttpHeaders;
 
 import com.lowagie.text.FontFactory;
 import org.apache.log4j.Level;
@@ -97,6 +98,7 @@ public class RequestContextFilter implements Filter {
         tx.begin();
         
         try {
+            addCacheHeaders(response);
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             ThreadLocalContext.cleanup();
@@ -150,5 +152,16 @@ public class RequestContextFilter implements Filter {
         context.fireAllAsyncEvents();
 
         ThreadLocalContext.cleanup();
+    }
+
+    /**
+     * Add no-cache header.
+     *
+     * @param response Response
+     */
+    private void addCacheHeaders(ServletResponse response) {
+        HttpServletResponse r = (HttpServletResponse) response;
+        r.addHeader(HttpHeaders.CACHE_CONTROL, "no-cache");
+        r.addHeader(HttpHeaders.EXPIRES, "0");
     }
 }
