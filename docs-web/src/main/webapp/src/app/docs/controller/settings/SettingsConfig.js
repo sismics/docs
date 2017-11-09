@@ -39,7 +39,7 @@ angular.module('docs').controller('SettingsConfig', function($scope, $rootScope,
   $scope.sendImage = function(type, image) {
     // Build the payload
     var formData = new FormData();
-    formData.append('image', image);
+    formData.append('image', image[0]);
 
     // Send the file
     var done = function() {

@@ -148,7 +148,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
           var file = $scope.newFiles[key];
           var formData = new FormData();
           formData.append('id', data.id);
-          formData.append('file', file);
+          formData.append('file', file, file.name);
 
           // Send the file
           $.ajax({

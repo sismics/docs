@@ -70,12 +70,12 @@
       <div class="form-group">
         <label class="col-sm-2 control-label" for="inputFiles">{{ 'document.edit.new_files' | translate }}</label>
         <div class="col-sm-6">
-          <file class="form-control" id="inputFiles" multiple="multiple" ng-model="newFiles" ng-disabled="fileIsUploading"></file>
+          <input type="file" ng-file-select class="form-control" id="inputFiles" multiple="multiple" ng-model="newFiles" ng-disabled="fileIsUploading"></input>
         </div>
         <div class="col-sm-4" ng-if="orphanFiles.length > 0">
           + {{ orphanFiles.length }} file{{ orphanFiles.length > 1 ? 's' : '' }}
           {{ 'document.edit.orphan_files' | translate: '{ count: orphanFiles.length }' }}
-        </div>{{newFiles}}
+        </div>
       </div>
       <div class="form-group">
         <label class="col-sm-2 control-label" for="inputTags">{{ 'document.tags' | translate }}</label>
