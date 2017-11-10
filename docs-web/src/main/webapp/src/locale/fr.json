@@ -94,6 +94,7 @@
     "edit": {
       "document_edited_with_errors": "Document modifié avec succès, mais certains fichiers n'ont pu être envoyés",
       "document_added_with_errors": "Document ajouté avec succès, mais certains fichiers n'ont pu être envoyés",
+      "document_added": "Document ajouté avec succès (avec {{ count }} fichier{{ count > 1 ? 's' : '' }})",
       "quota_reached": "Quota atteint",
       "primary_metadata": "Métadonnées principales",
       "title_placeholder": "Titre principal du document",

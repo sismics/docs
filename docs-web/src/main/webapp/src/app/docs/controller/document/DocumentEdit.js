@@ -120,7 +120,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
             var fileUploadCount = _.size($scope.newFiles) + resolve.length;
             $scope.alerts.unshift({
               type: 'success',
-              msg: 'Document successfully added (with ' + fileUploadCount + ' file' + (fileUploadCount > 1 ? 's' :  '') + ')'
+              msg: $translate.instant('document.edit.document_added', { count: fileUploadCount })
             });
 
             $scope.resetForm();
@@ -182,7 +182,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
             $scope.alerts.unshift({
               type: 'danger',
               msg: $translate.instant('document.edit.document_' + ($scope.isEdit() ? 'edited' : 'added') + '_with_errors')
-                + (data.responseJSON.type == 'QuotaReached' ? (' - ' + $translate.instant('document.edit.quota_reached')) : '')
+                + (data.responseJSON.type === 'QuotaReached' ? (' - ' + $translate.instant('document.edit.quota_reached')) : '')
             });
 
             // Reset view and title
