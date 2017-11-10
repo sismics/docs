@@ -10,7 +10,7 @@
   <tbody>
     <tr ng-repeat="log in logs"
       ng-class="{ info: log.level == 'INFO' || log.level == 'DEBUG', warning: log.level == 'WARN', danger: log.level == 'ERROR' || log.level == 'FATAL' }">
-      <td>{{ log.date | date: 'yyyy-MM-dd HH:mm' }}</td>
+      <td>{{ log.date | date: dateTimeFormat }}</td>
       <td>{{ log.tag }}</td>
       <td class="cell-message">{{ log.message }}</td>
     </tr>

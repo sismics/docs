@@ -6,13 +6,15 @@
 angular.module('docs',
     // Dependencies
     ['ui.router', 'ui.bootstrap', 'dialog', 'ngProgress', 'monospaced.qrcode', 'yaru22.angular-timeago', 'ui.validate',
-      'ui.sortable', 'restangular', 'ngSanitize', 'ngTouch', 'colorpicker.module', 'ngFileUpload', 'pascalprecht.translate']
+      'ui.sortable', 'restangular', 'ngSanitize', 'ngTouch', 'colorpicker.module', 'ngFileUpload', 'pascalprecht.translate',
+      'tmh.dynamicLocale']
   )
 
 /**
  * Configuring modules.
  */
-.config(function($locationProvider, $urlRouterProvider, $stateProvider, $httpProvider, RestangularProvider, $translateProvider, timeAgoSettings) {
+.config(function($locationProvider, $urlRouterProvider, $stateProvider, $httpProvider,
+                 RestangularProvider, $translateProvider, timeAgoSettings, tmhDynamicLocaleProvider) {
   $locationProvider.hashPrefix('');
 
   // Configuring UI Router
@@ -363,8 +365,10 @@ angular.module('docs',
   }
 
   // Configuring Timago
-  timeAgoSettings.overrideLang = $translateProvider.preferredLanguage();
   timeAgoSettings.fullDateAfterSeconds = 60 * 60 * 24 * 30; // 30 days
+
+  // Configuring tmhDynamicLocale
+  tmhDynamicLocaleProvider.localeLocationPattern('locale/angular-locale_{{locale}}.js');
 
   // Configuring $http to act like jQuery.ajax
   $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
@@ -428,8 +432,8 @@ angular.module('docs',
   // Watch for the number of XHR running
   $rootScope.$watch(function() {
     return $http.pendingRequests.length > 0
-  }, function(count) {
-    if (count == 0) {
+  }, function(loading) {
+    if (!loading) {
       $rootScope.ngProgress.complete();
     } else {
       $rootScope.ngProgress.start();

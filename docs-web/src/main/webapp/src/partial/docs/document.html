@@ -64,7 +64,7 @@
             <span class="glyphicon glyphicon-share" ng-if="document.shared" tooltip="{{ 'document.shared' | translate }}"></span>
             <a href="#/document/view/{{ document.id }}" target="_blank" ng-click="$event.stopPropagation()"><span class="glyphicon glyphicon-link"></span></a>
 
-            <div class="pull-right text-muted small">{{ document.create_date | timeAgo: 'yyyy-MM-dd' }}</div>
+            <div class="pull-right text-muted small">{{ document.create_date | timeAgo: dateFormat }}</div>
 
             <div class="tags small">
               <span class="label label-info" ng-repeat="tag in document.tags" ng-style="{ 'background': tag.color }">

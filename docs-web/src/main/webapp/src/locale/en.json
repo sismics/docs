@@ -328,6 +328,11 @@
     },
     "selecttag": {
       "typeahead": "Type a tag"
+    },
+    "datepicker": {
+      "current": "Today",
+      "clear": "Clear",
+      "close": "Done"
     }
   },
   "filter": {

@@ -16,7 +16,7 @@
         <tr ng-repeat="user in users | orderBy: 'username'" ng-click="editUser(user)"
             ng-class="{ active: $stateParams.username == user.username }">
           <td>{{ user.username }}</td>
-          <td>{{ user.create_date | date: 'yyyy-MM-dd' }}</td>
+          <td>{{ user.create_date | date: dateFormat }}</td>
         </tr>
       </tbody>
     </table>

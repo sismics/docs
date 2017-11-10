@@ -328,6 +328,11 @@
     },
     "selecttag": {
       "typeahead": "Entrez un tag"
+    },
+    "datepicker": {
+      "current": "Aujourd'hui",
+      "clear": "Vider",
+      "close": "Fermer"
     }
   },
   "filter": {

@@ -1,6 +1,6 @@
 <table class="table">
   <tr ng-repeat="log in logs">
-    <td width="20%">{{ log.create_date | date: 'yyyy-MM-dd HH:mm' }}</td>
+    <td width="20%">{{ log.create_date | date: $root.dateTimeFormat }}</td>
     <td width="20%">
       <a ng-href="#/user/{{ log.username }}">
         <span class="glyphicon glyphicon-user"></span>
