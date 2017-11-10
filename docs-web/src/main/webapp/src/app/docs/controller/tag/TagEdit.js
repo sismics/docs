@@ -10,7 +10,7 @@ angular.module('docs').controller('TagEdit', function($scope, $stateParams, Rest
 
     // Replace the tag from the list with this reference
     _.each($scope.tags, function(tag, i) {
-      if (tag.id == $scope.tag.id) {
+      if (tag.id === $scope.tag.id) {
         $scope.tags[i] = $scope.tag;
       }
     });
@@ -36,7 +36,7 @@ angular.module('docs').controller('TagEdit', function($scope, $stateParams, Rest
     ];
 
     $dialog.messageBox(title, msg, btns, function(result) {
-      if (result == 'ok') {
+      if (result === 'ok') {
         Restangular.one('tag', tag.id).remove().then(function() {
           $scope.loadTags();
           $state.go('tag.default');

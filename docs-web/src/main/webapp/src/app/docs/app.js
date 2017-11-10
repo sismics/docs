@@ -5,14 +5,16 @@
  */
 angular.module('docs',
     // Dependencies
-    ['ui.router', 'ui.route', 'ui.bootstrap', 'ui.keypress', 'ui.validate', 'dialog', 'ngProgress', 'monospaced.qrcode', 'yaru22.angular-timeago',
-      'ui.sortable', 'restangular', 'ngSanitize', 'ngTouch', 'colorpicker.module', 'angularFileUpload', 'pascalprecht.translate']
+    ['ui.router', 'ui.bootstrap', 'dialog', 'ngProgress', 'monospaced.qrcode', 'yaru22.angular-timeago', 'ui.validate',
+      'ui.sortable', 'restangular', 'ngSanitize', 'ngTouch', 'colorpicker.module', 'ngFileUpload', 'pascalprecht.translate']
   )
 
 /**
  * Configuring modules.
  */
-.config(function($stateProvider, $httpProvider, RestangularProvider, $translateProvider, timeAgoSettings) {
+.config(function($locationProvider, $urlRouterProvider, $stateProvider, $httpProvider, RestangularProvider, $translateProvider, timeAgoSettings) {
+  $locationProvider.hashPrefix('');
+
   // Configuring UI Router
   $stateProvider
     .state('main', {
@@ -415,20 +417,6 @@ angular.module('docs',
   $rootScope.appName = '';
   Restangular.one('theme').get().then(function(data) {
     $rootScope.appName = data.name;
-  });
-})
-/**
- * Redirection support for ui-router.
- * Thanks to https://github.com/acollard
- * See https://github.com/angular-ui/ui-router/issues/1584#issuecomment-76993045
- */
-.run(function($rootScope, $state){
-  $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
-    var redirect = toState.redirectTo;
-    if (redirect) {
-      event.preventDefault();
-      $state.go(redirect, toParams);
-    }
   });
 })
 /**

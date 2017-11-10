@@ -12,7 +12,7 @@ angular.module('docs').factory('User', function(Restangular) {
      * @param force If true, force reloading data
      */
     userInfo: function(force) {
-      if (userInfo == null || force) {
+      if (userInfo === null || force) {
         userInfo = Restangular.one('user').get();
       }
       return userInfo;

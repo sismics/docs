@@ -60,7 +60,7 @@ angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog,
     ];
 
     $dialog.messageBox(title, msg, btns, function(result) {
-      if (result == 'ok') {
+      if (result === 'ok') {
         Restangular.one('group', $stateParams.name).remove().then(function() {
           $scope.loadGroups();
           $state.go('settings.group');
@@ -77,7 +77,7 @@ angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog,
   $scope.getGroupTypeahead = function($viewValue) {
     var deferred = $q.defer();
     Restangular.one('group')
-        .getList('', {
+        .get({
           sort_column: 1,
           asc: true
         }).then(function(data) {
@@ -93,8 +93,8 @@ angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog,
    */
   $scope.getUserTypeahead = function($viewValue) {
     var deferred = $q.defer();
-    Restangular.one('user')
-        .getList('list', {
+    Restangular.one('user/list')
+        .get({
           search: $viewValue,
           sort_column: 1,
           asc: true

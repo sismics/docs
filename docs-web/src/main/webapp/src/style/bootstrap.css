@@ -4549,6 +4549,11 @@ fieldset[disabled] .navbar-default .btn-link:focus {
 .navbar-inverse .navbar-nav > .active > a:focus {
   color: #fff;
 }
+.navbar-inverse .navbar-nav > .active2 > a,
+.navbar-inverse .navbar-nav > .active2 > a:hover,
+.navbar-inverse .navbar-nav > .active2 > a:focus {
+  color: #fff;
+}
 .navbar-inverse .navbar-nav > .disabled > a,
 .navbar-inverse .navbar-nav > .disabled > a:hover,
 .navbar-inverse .navbar-nav > .disabled > a:focus {

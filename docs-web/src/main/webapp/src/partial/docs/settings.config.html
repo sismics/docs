@@ -40,7 +40,7 @@
   <div class="form-group">
     <label class="col-sm-2 control-label" for="inputLogo">{{ 'settings.config.logo' | translate }}</label>
     <div class="col-sm-2">
-      <input type="file" ng-file-select accept="image/gif,image/png,image/jpg,image/jpeg"
+      <input type="file" ngf-select ngf-accept="'image/gif,image/png,image/jpg,image/jpeg'"
         class="form-control" id="inputLogo" ng-model="logo" ng-disabled="sendingImage" />
     </div>
     <div class="col-sm-2">
@@ -54,7 +54,7 @@
   <div class="form-group">
     <label class="col-sm-2 control-label" for="inputBackground">{{ 'settings.config.background_image' | translate }}</label>
     <div class="col-sm-2">
-      <input type="file" ng-file-select accept="image/gif,image/png,image/jpg,image/jpeg"
+      <input type="file" ngf-select ngf-accept="'image/gif,image/png,image/jpg,image/jpeg'"
             class="form-control" id="inputBackground" ng-model="background" ng-disabled="sendingImage" />
     </div>
     <div class="col-sm-2">

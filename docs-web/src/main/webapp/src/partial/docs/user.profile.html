@@ -12,9 +12,9 @@
 <h4>{{ 'user.profile.quota_used' | translate }}</h4>
 <div class="row">
   <div class="col-md-6">
-    <div class="progress" title="{{ 'user.profile.percent_used' | translate: '{ percent: user.storage_current / user.storage_quota * 100 }' }}">
+    <div class="progress" translate-attr="{ title: 'user.profile.percent_used' }" translate-values="{ percent: user.storage_current / user.storage_quota * 100 }">
       <div class="progress-bar" ng-style="{ 'width': (user.storage_current / user.storage_quota * 100) + '%' }">
-        <span class="sr-only">{{ 'user.profile.percent_used' | translate: '{ percent: user.storage_current / user.storage_quota * 100 }' }}</span>
+        <span class="sr-only" translate="user.profile.percent_used" translate-values="{ percent: user.storage_current / user.storage_quota * 100 }"></span>
       </div>
     </div>
   </div>
@@ -23,13 +23,15 @@
 <h4>{{ 'user.profile.related_links' | translate }}</h4>
 <ul>
   <li>
-    <a ng-href="#/document/search/by:{{ user.username }}">
-      {{ 'user.profile.document_created' | translate: '{ username: user.username }' }}
+    <a ng-href="#/document/search/by:{{ user.username }}"
+       translate="user.profile.document_created"
+       translate-values="{ username: user.username }">
     </a>
   </li>
   <li ng-if="userInfo.base_functions.indexOf('ADMIN') != -1">
-    <a ng-href="#/settings/user/edit/{{ user.username }}">
-      {{ 'user.profile.edit_user' | translate: '{ username: user.username }' }}
+    <a ng-href="#/settings/user/edit/{{ user.username }}"
+       translate="user.profile.edit_user"
+       translate-values="{ username: user.username }">
     </a>
   </li>
 </ul>

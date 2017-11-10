@@ -25,7 +25,7 @@
       <div class="col-sm-7">
         <input name="parent" type="text" id="inputParent" class="form-control" autocomplete="off"
                ng-attr-placeholder="{{ 'settings.group.edit.search_group' | translate }}" ng-model="group.parent"
-               typeahead="group for group in getGroupTypeahead($viewValue)"
+               uib-typeahead="group for group in getGroupTypeahead($viewValue)"
                typeahead-wait-ms="200" typeahead-editable="false" />
       </div>
     </div>
@@ -50,7 +50,7 @@
         <div class="col-sm-7">
           <input name="member" type="text" id="inputMember" class="form-control" ng-model="member"
                  ng-attr-placeholder="{{ 'settings.group.edit.search_user' | translate }}"
-                 typeahead="user for user in getUserTypeahead($viewValue)" typeahead-on-select="addMember($item)"
+                 uib-typeahead="user for user in getUserTypeahead($viewValue)" typeahead-on-select="addMember($item)"
                  typeahead-wait-ms="200" typeahead-editable="false" autocomplete="off" />
         </div>
       </div>

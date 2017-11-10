@@ -3,8 +3,8 @@
 /**
  * File view controller.
  */
-angular.module('docs').controller('FileView', function($modal, $state, $stateParams) {
-  var modal = $modal.open({
+angular.module('docs').controller('FileView', function($uibModal, $state, $stateParams) {
+  var modal = $uibModal.open({
     windowClass: 'modal modal-fileview',
     templateUrl: 'partial/docs/file.view.html',
     controller: 'FileModalView'

@@ -14,8 +14,9 @@
   <h4>{{ 'group.profile.related_links' | translate }}</h4>
   <ul>
     <li>
-      <a ng-href="#/settings/group/edit/{{ group.name }}">
-        {{ 'group.profile.edit_group' | translate: '{ name: group.name }' }}
+      <a ng-href="#/settings/group/edit/{{ group.name }}"
+         translate="group.profile.edit_group"
+         translate-values="{ name: group.name }">
       </a>
     </li>
   </ul>

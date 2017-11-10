@@ -25,14 +25,14 @@ angular.module('docs').directive('selectTag', function() {
       $scope.addTag = function($event) {
         // Does the new tag exists
         var tag = _.find($scope.allTags, function(tag) {
-          if (tag.name == $scope.input) {
+          if (tag.name === $scope.input) {
             return tag;
           }
         });
         
         // Does the new tag is already in the model
         var duplicate = _.find($scope.tags, function(tag2) {
-          if (tag && tag2.id == tag.id) {
+          if (tag && tag2.id === tag.id) {
             return tag2;
           }
         });
@@ -55,7 +55,7 @@ angular.module('docs').directive('selectTag', function() {
        */
       $scope.deleteTag = function(deleteTag) {
         $scope.tags = _.reject($scope.tags, function(tag) {
-          return tag.id == deleteTag.id;
+          return tag.id === deleteTag.id;
         })
       };
     },

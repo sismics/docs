@@ -3,7 +3,7 @@
 /**
  * Document modal PDF controller.
  */
-angular.module('docs').controller('DocumentModalPdf', function ($scope, $window, $stateParams, $modalInstance) {
+angular.module('docs').controller('DocumentModalPdf', function ($scope, $window, $stateParams, $uibModalInstance) {
   $scope.export = {
     metadata: false,
     comments: false,
@@ -19,11 +19,11 @@ angular.module('docs').controller('DocumentModalPdf', function ($scope, $window,
         + '&fitimagetopage=' + $scope.export.fitimagetopage
         + '&margin=' + $scope.export.margin);
 
-    $modalInstance.close();
+    $uibModalInstance.close();
   };
 
   // Close the modal
   $scope.close = function () {
-    $modalInstance.close();
+    $uibModalInstance.close();
   }
 });

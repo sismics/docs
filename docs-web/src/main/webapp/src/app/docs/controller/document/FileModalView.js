@@ -3,14 +3,14 @@
 /**
  * File modal view controller.
  */
-angular.module('docs').controller('FileModalView', function($rootScope, $modalInstance, $scope, $state, $stateParams, Restangular) {
+angular.module('docs').controller('FileModalView', function($uibModalInstance, $scope, $state, $stateParams, Restangular, $transitions) {
   // Load files
-  Restangular.one('file').getList('list', { id: $stateParams.id }).then(function(data) {
+  Restangular.one('file/list').get({ id: $stateParams.id }).then(function(data) {
     $scope.files = data.files;
 
     // Search current file
     _.each($scope.files, function(value) {
-      if (value.id == $stateParams.fileId) {
+      if (value.id === $stateParams.fileId) {
         $scope.file = value;
       }
     });
@@ -21,7 +21,7 @@ angular.module('docs').controller('FileModalView', function($rootScope, $modalIn
    */
   $scope.nextFile = function() {
     _.each($scope.files, function(value, key) {
-      if (value.id == $stateParams.fileId) {
+      if (value.id === $stateParams.fileId) {
         var next = $scope.files[key + 1];
         if (next) {
           $state.go('^.file', { id: $stateParams.id, fileId: next.id });
@@ -35,7 +35,7 @@ angular.module('docs').controller('FileModalView', function($rootScope, $modalIn
    */
   $scope.previousFile = function() {
     _.each($scope.files, function(value, key) {
-      if (value.id == $stateParams.fileId) {
+      if (value.id === $stateParams.fileId) {
         var previous = $scope.files[key - 1];
         if (previous) {
           $state.go('^.file', { id: $stateParams.id, fileId: previous.id });
@@ -66,16 +66,16 @@ angular.module('docs').controller('FileModalView', function($rootScope, $modalIn
    * Close the file preview.
    */
   $scope.closeFile = function () {
-    $modalInstance.dismiss();
+    $uibModalInstance.dismiss();
   };
 
   // Close the modal when the user exits this state
-  var off = $rootScope.$on('$stateChangeStart', function(event, toState) {
-    if (!$modalInstance.closed) {
-      if (toState.name == $state.current.name) {
-        $modalInstance.close();
+  var off = $transitions.onStart({}, function(transition) {
+    if (!$uibModalInstance.closed) {
+      if (transition.to().name === $state.current.name) {
+        $uibModalInstance.close();
       } else {
-        $modalInstance.dismiss();
+        $uibModalInstance.dismiss();
       }
     }
     off();

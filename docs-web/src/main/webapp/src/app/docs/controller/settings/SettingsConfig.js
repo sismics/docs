@@ -26,7 +26,7 @@ angular.module('docs').controller('SettingsConfig', function($scope, $rootScope,
 
   // Update the theme
   $scope.update = function() {
-    $scope.theme.name = $scope.theme.name.length == 0 ? 'Sismics Docs' : $scope.theme.name;
+    $scope.theme.name = $scope.theme.name.length === 0 ? 'Sismics Docs' : $scope.theme.name;
     Restangular.one('theme').post('', $scope.theme).then(function() {
       var stylesheet = $('#theme-stylesheet')[0];
       stylesheet.href = stylesheet.href.replace(/\?.*|$/, '?' + new Date().getTime());
@@ -39,7 +39,7 @@ angular.module('docs').controller('SettingsConfig', function($scope, $rootScope,
   $scope.sendImage = function(type, image) {
     // Build the payload
     var formData = new FormData();
-    formData.append('image', image[0]);
+    formData.append('image', image);
 
     // Send the file
     var done = function() {

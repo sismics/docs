@@ -13,8 +13,8 @@
 
 <div ng-show="document">
 	<div class="pull-right">
-	  <div class="dropdown btn-export" dropdown ng-class="{ 'btn-group': document.writable }">
-      <button class="btn btn-default" dropdown-toggle>
+	  <div class="dropdown" uib-dropdown ng-class="{ 'btn-group': document.writable }">
+      <button class="btn btn-default" uib-dropdown-toggle>
         <span class="glyphicon glyphicon-export"></span>
         {{ 'export' | translate }}
         <span class="caret"></span>

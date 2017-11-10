@@ -33,4 +33,4 @@
     </div>
   </div>
 </form>
-<alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{ alert.msg }}</alert>
+<div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + alert.type" close="closeAlert($index)">{{ alert.msg }}</div>

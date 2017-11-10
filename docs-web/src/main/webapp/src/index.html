@@ -36,8 +36,8 @@
     <script src="lib/angular.touch.js" type="text/javascript"></script>
     <script src="lib/angular.ui-router.js" type="text/javascript"></script>
     <script src="lib/angular.ui-bootstrap.js" type="text/javascript"></script>
-    <script src="lib/angular.ui-utils.js" type="text/javascript"></script>
     <script src="lib/angular.ui-sortable.js" type="text/javascript"></script>
+    <script src="lib/angular.ui-validate.js" type="text/javascript"></script>
     <script src="lib/angular.restangular.js" type="text/javascript"></script>
     <script src="lib/angular.colorpicker.js" type="text/javascript"></script>
     <script src="lib/angular.file-upload.js" type="text/javascript"></script>
@@ -89,7 +89,7 @@
     <script src="app/docs/directive/AclEdit.js" type="text/javascript"></script>
     <!-- endref -->
   </head>
-  <body translate-cloak>
+  <body translate-cloak ng-cloak>
     <nav class="navbar navbar-inverse" role="navigation" ng-controller="Navigation">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle"
@@ -110,13 +110,13 @@
 
       <div class="collapse navbar-collapse" collapse="isCollapsed">
         <ul class="nav navbar-nav" ng-show="!userInfo.anonymous">
-          <li ng-class="{active: $uiRoute}" ui-route="/document.*">
+          <li ui-sref-active="{ active: 'document.**' }">
             <a href="#/document"><span class="glyphicon glyphicon-book"></span> {{ 'index.nav_documents' | translate }}</a>
           </li>
-          <li ng-class="{active: $uiRoute}" ui-route="/tag.*">
+          <li ui-sref-active="{ active: 'tag.**' }">
             <a href="#/tag"><span class="glyphicon glyphicon-tags"></span> {{ 'index.nav_tags' | translate }}</a>
           </li>
-          <li ng-class="{active: $uiRoute}" ui-route="/user.*|/group.*">
+          <li ui-sref-active="{ active: 'user.**', active2: 'group.**' }">
             <a href="#/user"><span class="glyphicon glyphicon-user"></span> {{ 'index.nav_users_groups' | translate }}</a>
           </li>
         </ul>
@@ -124,17 +124,18 @@
         <ul class="nav navbar-nav navbar-right" ng-show="!userInfo.anonymous">
           <li ng-show="errorNumber > 0">
               <a href="#/settings/log" ng-click="openLogs()" class="nav-text-error">
-                <span class="glyphicon glyphicon-warning-sign"></span> {{ 'index.error_info' | translate: '{ count: errorNumber }' }}
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                <span translate="index.error_info" translate-values="{ count: errorNumber }"></span>
               </a>
           </li>
           <li>
             <a href="{{ userInfo.username == 'guest' ? '#/user/guest' : '#/settings/account' }}"
-               title="{{ 'index.logged_as' | translate: '{ username: userInfo.username }' }}">
+               translate-attr="{ title: 'index.logged_as' }" translate-values="{ username: userInfo.username }">
               <span class="glyphicon glyphicon-user"></span>
               {{ userInfo.username }}
             </a>
           </li>
-          <li ng-class="{active: $uiRoute}" ui-route="/settings.*" ng-show="userInfo.username != 'guest'">
+          <li ui-sref-active="{ active: 'settings.**' }" ng-show="userInfo.username != 'guest'">
             <a href="#/settings/account">
               <span class="glyphicon glyphicon-cog"></span> {{ 'index.nav_settings' | translate }}
             </a>
@@ -154,8 +155,8 @@
     <div class="row" ng-controller="Footer">
       <div class="col-md-12 footer text-center text-muted">
         <ul class="list-inline">
-          <li dropdown class="dropdown">
-            <a href dropdown-toggle>
+          <li uib-dropdown class="dropdown">
+            <a href uib-dropdown-toggle>
               <span ng-switch="currentLang">
                 <span ng-switch-when="en">English</span>
                 <span ng-switch-when="fr">Français</span>

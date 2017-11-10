@@ -8,7 +8,7 @@ angular.module('docs').controller('SettingsSession', function($scope, Restangula
    * Load sessions.
    */
   $scope.loadSession = function() {
-    Restangular.one('user').getList('session').then(function(data) {
+    Restangular.one('user/session').get().then(function(data) {
       $scope.sessions = data.sessions;
     });
   };

@@ -3,9 +3,9 @@
 /**
  * Document modal share controller.
  */
-angular.module('docs').controller('DocumentModalShare', function ($scope, $modalInstance) {
+angular.module('docs').controller('DocumentModalShare', function ($scope, $uibModalInstance) {
   $scope.name = '';
   $scope.close = function(name) {
-    $modalInstance.close(name);
+    $uibModalInstance.close(name);
   }
 });

@@ -3,7 +3,7 @@
 /**
  * Settings security controller.
  */
-angular.module('docs').controller('SettingsSecurity', function($scope, User, $dialog, $modal, Restangular, $translate) {
+angular.module('docs').controller('SettingsSecurity', function($scope, User, $dialog, $uibModal, Restangular, $translate) {
   User.userInfo().then(function(data) {
     $scope.user = data;
   });
@@ -20,7 +20,7 @@ angular.module('docs').controller('SettingsSecurity', function($scope, User, $di
     ];
 
     $dialog.messageBox(title, msg, btns, function(result) {
-      if (result == 'ok') {
+      if (result === 'ok') {
         Restangular.one('user/enable_totp').post().then(function(data) {
           $scope.secret = data.secret;
           User.userInfo(true).then(function(data) {
@@ -35,11 +35,11 @@ angular.module('docs').controller('SettingsSecurity', function($scope, User, $di
    * Disable TOTP.
    */
   $scope.disableTotp = function() {
-    $modal.open({
+    $uibModal.open({
       templateUrl: 'partial/docs/settings.security.disabletotp.html',
       controller: 'SettingsSecurityModalDisableTotp'
     }).result.then(function (password) {
-      if (password == null) {
+      if (password === null) {
         return;
       }
 

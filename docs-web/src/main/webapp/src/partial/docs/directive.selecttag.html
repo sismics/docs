@@ -7,5 +7,5 @@
     </li>
   </ul>
   <input class="form-control" type="text" id="{{ ref }}" ng-attr-placeholder="{{ 'directive.selecttag.typeahead' | translate }}" ng-model="input" ng-disabled="ngDisabled"
-    autocomplete="off" typeahead="tag.name for tag in allTags | filter: $viewValue" typeahead-on-select="addTag()" />
+    autocomplete="off" uib-typeahead="tag.name for tag in allTags | filter: $viewValue" typeahead-on-select="addTag()" />
 </div>

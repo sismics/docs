@@ -11,7 +11,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
   $scope.vocabularies = [];
 
   // Orphan files to add
-  $scope.orphanFiles = $stateParams.files ? $stateParams.files.split(',') : [];
+  $scope.orphanFiles = $stateParams.files ? $stateParams.files : [];
 
   /**
    * Close an alert.
@@ -25,8 +25,8 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
    */
   $scope.getTitleTypeahead = function($viewValue) {
     var deferred = $q.defer();
-    Restangular.one('document')
-    .getList('list', {
+    Restangular.one('document/list')
+    .get({
       limit: 5,
       sort_column: 1,
       asc: true,

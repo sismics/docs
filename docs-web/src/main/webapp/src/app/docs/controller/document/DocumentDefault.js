@@ -3,7 +3,7 @@
 /**
  * Document default controller.
  */
-angular.module('docs').controller('DocumentDefault', function($scope, $rootScope, $state, Restangular, $upload, $translate) {
+angular.module('docs').controller('DocumentDefault', function($scope, $rootScope, $state, Restangular, Upload, $translate) {
   // Load user audit log
   Restangular.one('auditlog').get().then(function(data) {
     $scope.logs = data.logs;
@@ -13,7 +13,7 @@ angular.module('docs').controller('DocumentDefault', function($scope, $rootScope
    * Load unlinked files.
    */
   $scope.loadFiles = function() {
-    Restangular.one('file').getList('list').then(function (data) {
+    Restangular.one('file/list').get().then(function (data) {
       $scope.files = data.files;
       // TODO Keep currently uploading files
     });
@@ -59,7 +59,7 @@ angular.module('docs').controller('DocumentDefault', function($scope, $rootScope
   $scope.uploadFile = function(file, newfile) {
     // Upload the file
     newfile.status = $translate.instant('document.default.upload_progress');
-    return $upload.upload({
+    return Upload.upload({
       method: 'PUT',
       url: '../api/file',
       file: file

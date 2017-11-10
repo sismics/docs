@@ -3,7 +3,7 @@
 /**
  * Document view controller.
  */
-angular.module('docs').controller('DocumentView', function ($scope, $state, $stateParams, $location, $dialog, $modal, Restangular, $translate) {
+angular.module('docs').controller('DocumentView', function ($scope, $state, $stateParams, $location, $dialog, $uibModal, Restangular, $translate) {
   // Load document data from server
   Restangular.one('document', $stateParams.id).get().then(function(data) {
     $scope.document = data;
@@ -81,7 +81,7 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
    * Open the share dialog.
    */
   $scope.share = function () {
-    $modal.open({
+    $uibModal.open({
       templateUrl: 'partial/docs/document.share.html',
       controller: 'DocumentModalShare'
     }).result.then(function (name) {
@@ -131,7 +131,7 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
    * Export the current document to PDF.
    */
   $scope.exportPdf = function() {
-    $modal.open({
+    $uibModal.open({
       templateUrl: 'partial/docs/document.pdf.html',
       controller: 'DocumentModalPdf'
     });

@@ -38,8 +38,7 @@
   </dd>
 </dl>
 
-<div ng-file-drop drag-over-class="bg-success" ng-multiple="true" allow-dir="false" ng-model="dropFiles"
-     ng-file-change="fileDropped($files, $event, $rejectedFiles)">
+<div ngf-drop="fileDropped($files)" ngf-drag-over-class="'bg-success'" ngf-multiple="true" ngf-allow-dir="false" ng-model="dropFiles">
   <div class="row upload-zone" ui-sortable="fileSortableOptions" ng-model="files">
     <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 text-center" ng-repeat="file in files">
       <div class="thumbnail" ng-if="file.id">
@@ -63,7 +62,7 @@
           {{ file.status }}
         </p>
         <div class="caption">
-          <progressbar value="file.progress" class="progress-info active"></progressbar>
+          <uib-progressbar value="file.progress" class="progress-info active"></uib-progressbar>
         </div>
       </div>
     </div>
@@ -75,10 +74,10 @@
   </div>
 
   <div class="text-center">
-    <button class="btn btn-primary" ng-file-select
-      ng-file-change="fileDropped($files, $event)"
+    <button class="btn btn-primary" ngf-select
+      ngf-change="fileDropped($files, $event)"
       input-file-multiple="multiple"
-      ng-multiple="true">
+      ngf-multiple="true">
       {{ 'document.view.content.add_files' | translate }}
     </button>
   </div>

@@ -3,8 +3,8 @@
 <div>
   <div class="well drop-zone">
     <h3><span class="glyphicon glyphicon-cloud-upload"></span> {{ 'document.default.quick_upload' | translate }}</h3>
-    <div class="row upload-zone" ng-model="dropFiles" ng-file-drop drag-over-class="bg-success"
-         ng-multiple="true" allow-dir="false" ng-file-change="fileDropped($files, $event, $rejectedFiles)">
+    <div class="row upload-zone" ng-model="dropFiles" ngf-drop="fileDropped($files)"
+         ngf-drag-over-class="'bg-success'" ngf-multiple="true" ngf-allow-dir="false">
       <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
         <div class="thumbnail" ng-class="{ 'thumbnail-checked': file.checked }" ng-if="file.id">
           <a ng-click="openFile(file)">
@@ -27,7 +27,7 @@
             {{ file.status }}
           </p>
           <div class="caption">
-            <progressbar value="file.progress" class="progress-info active"></progressbar>
+            <uib-progressbar value="file.progress" class="progress-info active"></uib-progressbar>
           </div>
         </div>
       </div>
@@ -39,10 +39,10 @@
 
       <div class="clearfix"></div>
       <div class="text-center">
-        <button class="btn btn-primary" ng-file-select
-                 ng-file-change="fileDropped($files, $event)"
+        <button class="btn btn-primary" ngf-select
+                 ngf-change="fileDropped($files, $event)"
                  input-file-multiple="multiple"
-                 ng-multiple="true">
+                 ngf-multiple="true">
           {{ 'document.default.add_files' | translate }}
         </button>
       </div>

@@ -3,7 +3,7 @@
 /**
  * Document view content controller.
  */
-angular.module('docs').controller('DocumentViewContent', function ($scope, $rootScope, $stateParams, Restangular, $dialog, $state, $upload, $translate) {
+angular.module('docs').controller('DocumentViewContent', function ($scope, $rootScope, $stateParams, Restangular, $dialog, $state, Upload, $translate) {
   /**
    * Configuration for file sorting.
    */
@@ -27,7 +27,7 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
    * Load files from server.
    */
   $scope.loadFiles = function () {
-    Restangular.one('file').getList('list', { id: $stateParams.id }).then(function (data) {
+    Restangular.one('file/list').get({ id: $stateParams.id }).then(function (data) {
       $scope.files = data.files;
       // TODO Keep currently uploading files
     });
@@ -53,7 +53,7 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
     ];
 
     $dialog.messageBox(title, msg, btns, function (result) {
-      if (result == 'ok') {
+      if (result === 'ok') {
         Restangular.one('file', file.id).remove().then(function () {
           // File deleted, decrease used quota
           $rootScope.userInfo.storage_current -= file.size;
@@ -105,7 +105,7 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
   $scope.uploadFile = function(file, newfile) {
     // Upload the file
     newfile.status = $translate.instant('document.view.content.upload_progress');
-    return $upload.upload({
+    return Upload.upload({
       method: 'PUT',
       url: '../api/file',
       file: file,
@@ -126,7 +126,7 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
         })
         .error(function (data) {
           newfile.status = $translate.instant('document.view.content.upload_error');
-          if (data.type == 'QuotaReached') {
+          if (data.type === 'QuotaReached') {
             newfile.status += ' - ' + $translate.instant('document.view.content.upload_error_quota');
           }
         });

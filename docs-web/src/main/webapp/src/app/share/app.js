@@ -11,7 +11,9 @@ angular.module('share',
 /**
  * Configuring modules.
  */
-.config(function($stateProvider, $httpProvider, RestangularProvider) {
+.config(function($locationProvider, $stateProvider, $httpProvider, RestangularProvider) {
+  $locationProvider.hashPrefix('');
+
   // Configuring UI Router
   $stateProvider
   .state('main', {
