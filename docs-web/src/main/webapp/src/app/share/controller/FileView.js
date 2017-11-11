@@ -7,7 +7,8 @@ angular.module('share').controller('FileView', function($uibModal, $state, $stat
   var modal = $uibModal.open({
     windowClass: 'modal modal-fileview',
     templateUrl: 'partial/share/file.view.html',
-    controller: 'FileModalView'
+    controller: 'FileModalView',
+    size: 'lg'
   });
 
   // Returns to share view on file close

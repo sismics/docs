@@ -11,7 +11,10 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
   $scope.vocabularies = [];
 
   // Orphan files to add
-  $scope.orphanFiles = $stateParams.files ? $stateParams.files : [];
+  $scope.orphanFiles = [];
+  if ($stateParams.files) {
+    $scope.orphanFiles = _.isArray($stateParams.files) ? $stateParams.files : [ $stateParams.files ];
+  }
 
   /**
    * Close an alert.

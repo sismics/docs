@@ -7,7 +7,8 @@ angular.module('docs').controller('FileView', function($uibModal, $state, $state
   var modal = $uibModal.open({
     windowClass: 'modal modal-fileview',
     templateUrl: 'partial/docs/file.view.html',
-    controller: 'FileModalView'
+    controller: 'FileModalView',
+    size: 'lg'
   });
 
   // Returns to document view on file close

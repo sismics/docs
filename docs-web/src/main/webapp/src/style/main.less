@@ -64,11 +64,6 @@
     background-color: #f5f5f5;
     box-shadow: inset -2px 0 0 #e5e5e5;
   }
-
-  .col-full {
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
 }
 
 // Footer
@@ -84,12 +79,6 @@
     top: -10px;
     transform: translateY(-100%);
   }
-}
-
-// Drop zone
-.drop-zone {
-  background: none;
-  border: 2px dashed #eee;
 }
 
 // $http loader
@@ -134,21 +123,48 @@
 }
 
 // File thumbnails
-.thumbnail input[type="checkbox"] {
-  width: 26px;
-  height: 26px;
-}
+.thumbnail {
+  a {
+    height: 200px;
+    display: block;
+    overflow: hidden;
+    background: #eee;
+  }
 
-.thumbnail-file {
-	cursor: pointer;
-}
+  .caption {
+    height: 60px;
+    overflow: hidden;
+  }
 
-.thumbnails-file [class*="span"]:first-child {
-    margin-left: 2.5641%;
-}
+  input[type="checkbox"] {
+    width: 26px;
+    height: 26px;
+  }
 
-.collapse[style="height: auto;"] {
-	overflow: visible;
+  img {
+    width: 100%;
+    cursor: pointer;
+    margin-top: 100px;
+    transform: translateY(-50%);
+  }
+
+  .caption-hover {
+    display: none;
+  }
+
+  .caption-hover-inverse {
+    display: block;
+  }
+
+  &:hover {
+    .caption-hover {
+      display: block;
+    }
+
+    .caption-hover-inverse {
+      display: none;
+    }
+  }
 }
 
 // File name
@@ -231,16 +247,22 @@ input[readonly].share-link {
 }
 
 // Drag & drop related
+.upload-zone {
+  min-height: 150px;
+  background: none;
+  border: 2px dashed #eee;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
 .bg-success {
   background-color: #dff0d8;
 }
 
-.upload-zone {
-  min-height: 150px;
-}
-
 .thumbnail-checked {
-  background-color: #dff0d8;
+  box-shadow: inset 0 1px 2px rgba(27,31,35,0.075), 0 0 0 0.2em rgba(3,102,214,0.3);
+  transition: box-shadow ease-in-out .15s;
 }
 
 .pointer {

@@ -1,62 +1,70 @@
 <img src="img/loader.gif" ng-show="!logs" />
 
 <div>
-  <div class="well drop-zone">
-    <h3><span class="glyphicon glyphicon-cloud-upload"></span> {{ 'document.default.quick_upload' | translate }}</h3>
-    <div class="row upload-zone" ng-model="dropFiles" ngf-drop="fileDropped($files)"
-         ngf-drag-over-class="'bg-success'" ngf-multiple="true" ngf-allow-dir="false">
-      <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
-        <div class="thumbnail" ng-class="{ 'thumbnail-checked': file.checked }" ng-if="file.id">
-          <a ng-click="openFile(file)">
-            <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
-          </a>
-          <div class="caption btn btn-link file-name" ng-click="openFile(file)" ng-if="file.name">{{ file.name }}</div>
-          <div class="caption">
-            <div class="pull-left">
-              <input type="checkbox" ng-model="file.checked" />
-            </div>
-            <div class="pull-right">
-              <button class="btn btn-danger" ng-click="deleteFile($event, file)"><span class="glyphicon glyphicon-trash"></span></button>
-            </div>
-            <div class="clearfix"></div>
+  <h3 class="page-header">
+    <span class="glyphicon glyphicon-cloud-upload"></span> {{ 'document.default.quick_upload' | translate }}
+  </h3>
+  <div class="row upload-zone"
+       ngf-drop="fileDropped($files)"
+       ngf-drag-over-class="'bg-success'"
+       ngf-multiple="true"
+       ngf-allow-dir="false">
+    <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
+      <div class="thumbnail" ng-class="{ 'thumbnail-checked': file.checked }" ng-if="file.id">
+        <a ng-click="openFile(file)">
+          <img ng-src="../api/file/{{ file.id }}/data?size=thumb" uib-tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
+        </a>
+        <div class="caption caption-hover-inverse btn btn-link file-name" ng-click="openFile(file)" ng-if="file.name">{{ file.name }}</div>
+        <div class="caption caption-hover">
+          <div class="pull-left">
+            <input type="checkbox" ng-model="file.checked" />
           </div>
-        </div>
-
-        <div class="thumbnail" ng-if="!file.id">
-          <p class="text-center lead">
-            {{ file.status }}
-          </p>
-          <div class="caption">
-            <uib-progressbar value="file.progress" class="progress-info active"></uib-progressbar>
+          <div class="pull-right">
+            <button class="btn btn-danger" ng-click="deleteFile($event, file)"><span class="glyphicon glyphicon-trash"></span></button>
           </div>
+          <div class="clearfix"></div>
         </div>
       </div>
 
-      <p class="text-center well-lg" ng-if="files.length == 0">
-        <span class="glyphicon glyphicon-move"></span>
-        {{ 'document.default.drop_zone' | translate }}
-      </p>
-
-      <div class="clearfix"></div>
-      <div class="text-center">
-        <button class="btn btn-primary" ngf-select
-                 ngf-change="fileDropped($files, $event)"
-                 input-file-multiple="multiple"
-                 ngf-multiple="true">
-          {{ 'document.default.add_files' | translate }}
-        </button>
+      <div class="thumbnail" ng-if="!file.id">
+        <p class="text-center lead">
+          {{ file.status }}
+        </p>
+        <div class="caption">
+          <uib-progressbar value="file.progress" class="progress-info active"></uib-progressbar>
+        </div>
       </div>
     </div>
 
-    <div class="btn-group" ng-show="checkedFiles().length > 0">
-      <button class="btn btn-primary" ng-click="addDocument()"><span class="glyphicon glyphicon-plus"></span> {{ 'document.default.add_new_document' | translate }}</button>
-    </div>
+    <p class="text-center well-lg" ng-if="files.length == 0">
+      <span class="glyphicon glyphicon-move"></span>
+      {{ 'document.default.drop_zone' | translate }}
+    </p>
+  </div>
+
+  <div class="text-center">
+    <button ng-show="checkedFiles().length > 0"
+            class="btn btn-primary"
+            ng-click="addDocument()">
+      <span class="glyphicon glyphicon-plus"></span> {{ 'document.default.add_new_document' | translate }}
+    </button>
+
+    <button ng-show="checkedFiles().length == 0"
+            class="btn btn-primary"
+            ngf-select
+            ngf-change="fileDropped($files, $event)"
+            input-file-multiple="multiple"
+            ngf-multiple="true">
+      {{ 'document.default.add_files' | translate }}
+    </button>
   </div>
 
   <div ui-view="file"></div>
 
   <div ng-show="logs.length > 0">
-    <h3><span class="glyphicon glyphicon-tasks"></span> {{ 'document.default.latest_activity' | translate }}</h3>
+    <h3 class="page-header">
+      <span class="glyphicon glyphicon-tasks"></span> {{ 'document.default.latest_activity' | translate }}
+    </h3>
     <audit-log logs="logs" />
   </div>
 </div>

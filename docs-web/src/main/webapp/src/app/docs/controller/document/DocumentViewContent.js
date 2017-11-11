@@ -113,22 +113,22 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
         id: $stateParams.id
       }
     })
-        .progress(function(e) {
-          newfile.progress = parseInt(100.0 * e.loaded / e.total);
-        })
-        .success(function(data) {
-          // Update local model with real data
-          newfile.id = data.id;
-          newfile.size = data.size;
+    .progress(function(e) {
+      newfile.progress = parseInt(100.0 * e.loaded / e.total);
+    })
+    .success(function(data) {
+      // Update local model with real data
+      newfile.id = data.id;
+      newfile.size = data.size;
 
-          // New file uploaded, increase used quota
-          $rootScope.userInfo.storage_current += data.size;
-        })
-        .error(function (data) {
-          newfile.status = $translate.instant('document.view.content.upload_error');
-          if (data.type === 'QuotaReached') {
-            newfile.status += ' - ' + $translate.instant('document.view.content.upload_error_quota');
-          }
-        });
+      // New file uploaded, increase used quota
+      $rootScope.userInfo.storage_current += data.size;
+    })
+    .error(function (data) {
+      newfile.status = $translate.instant('document.view.content.upload_error');
+      if (data.type === 'QuotaReached') {
+        newfile.status += ' - ' + $translate.instant('document.view.content.upload_error_quota');
+      }
+    });
   };
 });

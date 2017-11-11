@@ -6,8 +6,6 @@
     <div class="col-md-6"><uib-progressbar value="fileProgress" class="progress-info active"></uib-progressbar></div>
   </div>
 
-  <div uib-alert ng-class="'alert-' + alert.type" ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{ alert.msg }}</div>
-
   <form name="documentForm" class="form-horizontal">
     <div class="pull-right btn-group" ng-init="form = documentForm">
       <button type="submit" class="btn btn-primary" ng-disabled="!documentForm.$valid || fileIsUploading" ng-click="edit()">
@@ -15,9 +13,9 @@
         {{ 'save' | translate }}
       </button>
     </div>
-    <div class="page-header">
-      <h1>{{ document.title }}&nbsp;</h1>
-    </div>
+    <h1 class="page-header">{{ document.title }}&nbsp;</h1>
+
+    <div uib-alert ng-class="'alert-' + alert.type" ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{ alert.msg }}</div>
 
     <fieldset>
       <legend>{{ 'document.edit.primary_metadata' | translate }}</legend>

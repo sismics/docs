@@ -38,15 +38,19 @@
   </dd>
 </dl>
 
-<div ngf-drop="fileDropped($files)" ngf-drag-over-class="'bg-success'" ngf-multiple="true" ngf-allow-dir="false" ng-model="dropFiles">
-  <div class="row upload-zone" ui-sortable="fileSortableOptions" ng-model="files">
+<div class="row upload-zone"
+     ngf-drop="fileDropped($files)"
+     ngf-drag-over-class="'bg-success'"
+     ngf-multiple="true"
+     ngf-allow-dir="false">
+  <div ui-sortable="fileSortableOptions" ng-model="files">
     <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 text-center" ng-repeat="file in files">
-      <div class="thumbnail" ng-if="file.id">
+      <div class="thumbnail handle" ng-if="file.id">
         <a ng-click="openFile(file)">
-          <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
+          <img ng-src="../api/file/{{ file.id }}/data?size=thumb" uib-tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
         </a>
-        <div class="caption btn btn-link file-name" ng-click="openFile(file)" ng-if="file.name">{{ file.name }}</div>
-        <div class="caption" ng-show="document.writable">
+        <div class="caption caption-hover-inverse btn btn-link file-name" ng-click="openFile(file)" ng-if="file.name">{{ file.name }}</div>
+        <div class="caption caption-hover" ng-show="document.writable">
           <div class="pull-left">
             <div class="btn btn-default handle"><span class="glyphicon glyphicon-resize-horizontal"></span></div>
           </div>
@@ -66,21 +70,21 @@
         </div>
       </div>
     </div>
-
-    <p class="text-center well-lg" ng-if="files.length == 0">
-      <span class="glyphicon glyphicon-move"></span>
-      {{ 'document.view.content.drop_zone' | translate }}
-    </p>
   </div>
 
-  <div class="text-center">
-    <button class="btn btn-primary" ngf-select
-      ngf-change="fileDropped($files, $event)"
-      input-file-multiple="multiple"
-      ngf-multiple="true">
-      {{ 'document.view.content.add_files' | translate }}
-    </button>
-  </div>
+  <p class="text-center well-lg" ng-if="files.length == 0">
+    <span class="glyphicon glyphicon-move"></span>
+    {{ 'document.view.content.drop_zone' | translate }}
+  </p>
 </div>
+
+<p class="text-center">
+  <button class="btn btn-primary" ngf-select
+    ngf-change="fileDropped($files, $event)"
+    input-file-multiple="multiple"
+    ngf-multiple="true">
+    {{ 'document.view.content.add_files' | translate }}
+  </button>
+</p>
 
 <div ui-view="file"></div>
