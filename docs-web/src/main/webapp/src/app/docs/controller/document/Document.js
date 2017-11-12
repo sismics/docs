@@ -3,7 +3,7 @@
 /**
  * Document controller.
  */
-angular.module('docs').controller('Document', function ($scope, $rootScope, $timeout, $state, Restangular) {
+angular.module('docs').controller('Document', function ($scope, $rootScope, $timeout, $state, Restangular, $q) {
   /**
    * Documents table sort status.
    */
@@ -13,6 +13,7 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
   $scope.currentPage = 1;
   $scope.limit = _.isUndefined(localStorage.documentsPageSize) ? 10 : localStorage.documentsPageSize;
   $scope.search = $state.params.search ? $state.params.search : '';
+  $scope.searchOpened = false;
   $scope.setSearch = function (search) { $scope.search = search };
 
   // A timeout promise is used to slow down search requests to the server
@@ -115,9 +116,9 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
   };
 
   // Load tags
-  var tags = [];
+  $scope.tags = [];
   Restangular.one('tag/list').get().then(function (data) {
-    tags = data.tags;
+    $scope.tags = data.tags;
   });
 
   /**
@@ -125,9 +126,27 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
    * @param parent
    */
   $scope.getChildrenTags = function(parent) {
-    return _.filter(tags, function(tag) {
+    return _.filter($scope.tags, function(tag) {
       return tag.parent === parent;
     });
+  };
+
+  /**
+   * Returns a promise for typeahead user.
+   */
+  $scope.getUserTypeahead = function($viewValue) {
+    var deferred = $q.defer();
+    Restangular.one('user/list')
+      .get({
+        search: $viewValue,
+        sort_column: 1,
+        asc: true
+      }).then(function(data) {
+      deferred.resolve(_.pluck(_.filter(data.users, function(user) {
+        return user.username.indexOf($viewValue) !== -1;
+      }), 'username'));
+    });
+    return deferred.promise;
   };
 
   // Hack to reload the pagination directive after language change
@@ -138,4 +157,13 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
       $scope.paginationShown = true;
     });
   })
+
+  // Advanced search
+  $scope.searchDropdownAnchor = angular.element(document.querySelector('.search-dropdown-anchor'));
+  $scope.openSearch = function () {
+    var opened = $scope.searchOpened;
+    $timeout(function () {
+      $scope.searchOpened = !opened;
+    });
+  }
 });

@@ -422,6 +422,26 @@ angular.module('docs',
   Restangular.one('theme').get().then(function(data) {
     $rootScope.appName = data.name;
   });
+
+  // Languages
+  $rootScope.acceptedLanguages = [
+    { key: 'eng', label: 'English' },
+    { key: 'fra', label: 'Français' },
+    { key: 'ita', label: 'Italiano' },
+    { key: 'deu', label: 'Deutsch' },
+    { key: 'spa', label: 'Español' },
+    { key: 'por', label: 'Português' },
+    { key: 'pol', label: 'Polski' },
+    { key: 'rus', label: 'русский' },
+    { key: 'ukr', label: 'українська' },
+    { key: 'ara', label: 'العربية' },
+    { key: 'hin', label: 'हिन्दी' },
+    { key: 'chi_sim', label: '简体中文' },
+    { key: 'chi_tra', label: '繁体中文' },
+    { key: 'jpn', label: '日本語' },
+    { key: 'tha', label: 'ภาษาไทย' },
+    { key: 'kor', label: '한국어' }
+  ];
 })
 /**
  * Initialize ngProgress.
