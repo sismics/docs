@@ -1,19 +1,19 @@
 package com.sismics.util;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Iterator;
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
+import com.sismics.util.mime.MimeType;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
-
-import com.google.common.base.Charsets;
-import com.google.common.hash.Hashing;
-import com.sismics.util.mime.MimeType;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Iterator;
 
 /**
  * Image processing utilities.
@@ -34,7 +34,7 @@ public class ImageUtil {
         ImageWriter writer = null;
         ImageOutputStream imageOutputStream = null;
         try {
-            writer = (ImageWriter) iter.next();
+            writer = iter.next();
             ImageWriteParam iwp = writer.getDefaultWriteParam();
             iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             iwp.setCompressionQuality(1.f);
@@ -69,7 +69,7 @@ public class ImageUtil {
      * Compute Gravatar hash.
      * See https://en.gravatar.com/site/implement/hash/.
      * 
-     * @param email
+     * @param email Email
      * @return Gravatar hash
      */
     public static String computeGravatar(String email) {
@@ -80,5 +80,41 @@ public class ImageUtil {
         return Hashing.md5().hashString(
                 email.trim().toLowerCase(), Charsets.UTF_8)
                 .toString();
+    }
+
+    public static boolean isBlack(BufferedImage image, int x, int y) {
+        if (image.getType() == BufferedImage.TYPE_BYTE_BINARY) {
+            WritableRaster raster = image.getRaster();
+            int pixelRGBValue = raster.getSample(x, y, 0);
+            return pixelRGBValue == 0;
+        }
+
+        int luminanceValue = 140;
+        return isBlack(image, x, y, luminanceValue);
+    }
+
+    public static boolean isBlack(BufferedImage image, int x, int y, int luminanceCutOff) {
+        int pixelRGBValue;
+        int r;
+        int g;
+        int b;
+        double luminance = 0.0;
+
+        // return white on areas outside of image boundaries
+        if (x < 0 || y < 0 || x > image.getWidth() || y > image.getHeight()) {
+            return false;
+        }
+
+        try {
+            pixelRGBValue = image.getRGB(x, y);
+            r = (pixelRGBValue >> 16) & 0xff;
+            g = (pixelRGBValue >> 8) & 0xff;
+            b = (pixelRGBValue) & 0xff;
+            luminance = (r * 0.299) + (g * 0.587) + (b * 0.114);
+        } catch (Exception e) {
+            // ignore.
+        }
+
+        return luminance < luminanceCutOff;
     }
 }

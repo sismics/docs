@@ -2,10 +2,9 @@ package com.sismics.docs.core.util;
 
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.tess4j.Tesseract;
+import com.sismics.util.ImageDeskew;
 import com.sismics.util.ImageUtil;
-import org.imgscalr.Scalr;
-import org.imgscalr.Scalr.Method;
-import org.imgscalr.Scalr.Mode;
+import com.sismics.util.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,10 +69,13 @@ public class FileUtil {
             return null;
         }
         
-        // Upscale and grayscale the image
-        BufferedImage resizedImage = Scalr.resize(image, Method.AUTOMATIC, Mode.AUTOMATIC, 3500, Scalr.OP_ANTIALIAS, Scalr.OP_GRAYSCALE);
+        // Upscale, grayscale and deskew the image
+        BufferedImage resizedImage = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 3500, Scalr.OP_ANTIALIAS, Scalr.OP_GRAYSCALE);
         image.flush();
-        image = resizedImage;
+        ImageDeskew imageDeskew = new ImageDeskew(resizedImage);
+        BufferedImage deskewedImage = Scalr.rotate(resizedImage, - imageDeskew.getSkewAngle(), Scalr.OP_ANTIALIAS, Scalr.OP_GRAYSCALE);
+        resizedImage.flush();
+        image = deskewedImage;
 
         // OCR the file
         try {

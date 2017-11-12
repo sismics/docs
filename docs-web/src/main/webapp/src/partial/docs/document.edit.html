@@ -1,11 +1,6 @@
 <img src="img/loader.gif" ng-show="!document && isEdit()" />
 
 <div ng-show="document || !isEdit()">
-  <div class="row" ng-show="fileIsUploading">
-    <h4>{{ 'document.edit.uploading_files' | translate }}</h4>
-    <div class="col-md-6"><uib-progressbar value="fileProgress" class="progress-info active"></uib-progressbar></div>
-  </div>
-
   <form name="documentForm" class="form-horizontal">
     <div class="pull-right btn-group" ng-init="form = documentForm">
       <button type="submit" class="btn btn-primary" ng-disabled="!documentForm.$valid || fileIsUploading" ng-click="edit()">
@@ -16,6 +11,11 @@
     <h1 class="page-header">{{ document.title }}&nbsp;</h1>
 
     <div uib-alert ng-class="'alert-' + alert.type" ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{ alert.msg }}</div>
+
+    <div class="row" ng-show="fileIsUploading">
+      <h4>{{ 'document.edit.uploading_files' | translate }}</h4>
+      <div class="col-md-6"><uib-progressbar value="fileProgress" class="progress-info active"></uib-progressbar></div>
+    </div>
 
     <fieldset>
       <legend>{{ 'document.edit.primary_metadata' | translate }}</legend>
