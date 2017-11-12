@@ -3,7 +3,7 @@
 /**
  * File view controller.
  */
-angular.module('docs').controller('FileView', function($uibModal, $state, $stateParams) {
+angular.module('docs').controller('FileView', function($uibModal, $state, $stateParams, $timeout) {
   var modal = $uibModal.open({
     windowClass: 'modal modal-fileview',
     templateUrl: 'partial/docs/file.view.html',
@@ -17,6 +17,12 @@ angular.module('docs').controller('FileView', function($uibModal, $state, $state
     modal.closed = true;
   }, function() {
     modal.closed = true;
-    $state.go('^', { id: $stateParams.id });
+    $timeout(function () {
+      // After all router transitions are passed,
+      // if we are still on the file route, go back to the document
+      if ($state.current.name === 'document.view.content.file') {
+        $state.go('^', {id: $stateParams.id});
+      }
+    });
   });
 });
