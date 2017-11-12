@@ -14,12 +14,12 @@ public interface Loggable {
      * 
      * @return Entity message
      */
-    public String toMessage();
+    String toMessage();
     
     /**
      * Loggable are soft deletable.
      * 
      * @return deleteDate
      */
-    public Date getDeleteDate();
+    Date getDeleteDate();
 }

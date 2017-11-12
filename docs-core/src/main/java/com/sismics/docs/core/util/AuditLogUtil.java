@@ -1,12 +1,12 @@
 package com.sismics.docs.core.util;
 
-import javax.persistence.EntityManager;
-
 import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.dao.jpa.AuditLogDao;
 import com.sismics.docs.core.model.jpa.AuditLog;
 import com.sismics.docs.core.model.jpa.Loggable;
 import com.sismics.util.context.ThreadLocalContext;
+
+import javax.persistence.EntityManager;
 
 /**
  * Audit log utilities.
@@ -17,8 +17,9 @@ public class AuditLogUtil {
     /**
      * Create an audit log.
      * 
-     * @param entity Entity
+     * @param loggable Loggable
      * @param type Audit log type
+     * @param userId User ID
      */
     public static void create(Loggable loggable, AuditLogType type, String userId) {
         // Get the entity ID
