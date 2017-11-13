@@ -72,7 +72,7 @@
                              datepicker-append-to-body="true"
                              ng-readonly="true" uib-datepicker-popup="{{ dateFormat }}" class="form-control"
                              ng-model="advsearch.after_date" datepicker-options="{ startingDay:1, showWeeks: false }"
-                             ng-click="datepickerAfterOpened = true" is-open="datepickerAfterOpened" />
+                             ng-click="datepickerAfterOpened = !datepickerAfterOpened" is-open="datepickerAfterOpened" />
                     </div>
                   </div>
 
@@ -87,7 +87,7 @@
                              datepicker-append-to-body="true"
                              ng-readonly="true" uib-datepicker-popup="{{ dateFormat }}" class="form-control"
                              ng-model="advsearch.before_date" datepicker-options="{ startingDay:1, showWeeks: false }"
-                             ng-click="datepickerBeforeOpened = true" is-open="datepickerBeforeOpened" />
+                             ng-click="datepickerBeforeOpened = !datepickerBeforeOpened" is-open="datepickerBeforeOpened" />
                     </div>
                   </div>
 
@@ -113,7 +113,7 @@
         </div>
       </div>
 
-      {{advsearch}}
+      {{advsearch.before_date | date: 'yyyy-MM-dd'}}
 
       <table class="row table table-hover table-documents">
         <thead>

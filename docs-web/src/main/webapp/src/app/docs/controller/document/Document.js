@@ -3,7 +3,7 @@
 /**
  * Document controller.
  */
-angular.module('docs').controller('Document', function ($scope, $rootScope, $timeout, $state, Restangular, $q) {
+angular.module('docs').controller('Document', function ($scope, $rootScope, $timeout, $state, Restangular, $q, $filter) {
   /**
    * Scope variables.
    */
@@ -189,11 +189,15 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
     if (!_.isEmpty($scope.advsearch.language)) {
       search += 'lang:' + $scope.advsearch.language + ' ';
     }
-    $scope.advsearch.after_date;
-    $scope.advsearch.before_date;
+    if (!_.isUndefined($scope.advsearch.after_date)) {
+      search += 'after:' + $filter('date')($scope.advsearch.after_date, 'yyyy-MM-dd') + ' ';
+    }
+    if (!_.isUndefined($scope.advsearch.before_date)) {
+      search += 'before:' + $filter('date')($scope.advsearch.before_date, 'yyyy-MM-dd') + ' ';
+    }
     if (!_.isEmpty($scope.advsearch.tags)) {
       search += _.reduce($scope.advsearch.tags, function(s, t) {
-          return s + 'tag:' + t + ' ';
+          return s + 'tag:' + t.name + ' ';
         }, '');
     }
     $scope.search = search;

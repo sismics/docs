@@ -22,6 +22,15 @@
     "logout": "Déconnexion"
   },
   "document": {
+    "search_simple": "Recherche simple",
+    "search_fulltext": "Recherche texte intégral",
+    "search_creator": "Créateur",
+    "search_language": "Langue",
+    "search_before_date": "Avant cette date",
+    "search_after_date": "Après cette date",
+    "search_tags": "Tags",
+    "search_clear": "Réinitialiser",
+    "any_language": "Toutes les langues",
     "add_document": "Ajouter un document",
     "tags": "Tags",
     "no_tags": "Aucun tag",
