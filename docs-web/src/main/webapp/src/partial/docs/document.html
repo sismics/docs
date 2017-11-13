@@ -20,7 +20,7 @@
           <input type="search" class="form-control" ng-attr-placeholder="{{ 'document.search' | translate }}" ng-model="search" />
           <span class="input-group-addon pointer" ng-click="openSearch()">
             <div uib-dropdown
-                 auto-close="outsideClick" is-open="searchOpened" dropdown-append-to="searchDropdownAnchor">
+                 auto-close="disabled" is-open="searchOpened" dropdown-append-to="searchDropdownAnchor">
               <span class="btn-open-search">
                 <span class="glyphicon glyphicon-search"></span>
                 <span class="caret"></span>
@@ -61,12 +61,49 @@
                     </div>
                   </div>
 
+                  <div class="form-group">
+                    <label class="control-label sr-only" for="inputSearchAfterDate">{{ 'document.search_after_date' | translate }}</label>
+                    <div class="col-sm-12">
+                      <input type="text" id="inputSearchAfterDate"
+                             ng-attr-placeholder="{{ 'document.search_after_date' | translate }}"
+                             current-text="{{ 'directive.datepicker.current' | translate }}"
+                             clear-text="{{ 'directive.datepicker.clear' | translate }}"
+                             close-text="{{ 'directive.datepicker.close' | translate }}"
+                             datepicker-append-to-body="true"
+                             ng-readonly="true" uib-datepicker-popup="{{ dateFormat }}" class="form-control"
+                             ng-model="advsearch.after_date" datepicker-options="{ startingDay:1, showWeeks: false }"
+                             ng-click="datepickerAfterOpened = true" is-open="datepickerAfterOpened" />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="control-label sr-only" for="inputSearchBeforeDate">{{ 'document.search_before_date' | translate }}</label>
+                    <div class="col-sm-12">
+                      <input type="text" id="inputSearchBeforeDate"
+                             ng-attr-placeholder="{{ 'document.search_before_date' | translate }}"
+                             current-text="{{ 'directive.datepicker.current' | translate }}"
+                             clear-text="{{ 'directive.datepicker.clear' | translate }}"
+                             close-text="{{ 'directive.datepicker.close' | translate }}"
+                             datepicker-append-to-body="true"
+                             ng-readonly="true" uib-datepicker-popup="{{ dateFormat }}" class="form-control"
+                             ng-model="advsearch.before_date" datepicker-options="{ startingDay:1, showWeeks: false }"
+                             ng-click="datepickerBeforeOpened = true" is-open="datepickerBeforeOpened" />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="control-label sr-only" for="inputSearchTags">{{ 'document.search_tags' | translate }}</label>
+                    <div class="col-sm-12">
+                      <select-tag tags="advsearch.tags" ref="inputSearchTags"></select-tag>
+                    </div>
+                  </div>
+
                   <div class="form-group text-center">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" ng-click="startSearch()" class="btn btn-primary">
                       <span class="glyphicon glyphicon-search"></span> {{ 'document.search' | translate }}
                     </button>
-                    <button class="btn" ng-click="advsearch = {}">
-                      {{ 'document.clear' | translate }}
+                    <button class="btn" ng-click="clearSearch()">
+                      {{ 'document.search_clear' | translate }}
                     </button>
                   </div>
                 </form>

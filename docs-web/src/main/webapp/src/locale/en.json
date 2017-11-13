@@ -22,6 +22,15 @@
     "logout": "Logout"
   },
   "document": {
+    "search_simple": "Simple search",
+    "search_fulltext": "Fulltext search",
+    "search_creator": "Creator",
+    "search_language": "Language",
+    "search_before_date": "Before this date",
+    "search_after_date": "After this date",
+    "search_tags": "Tags",
+    "search_clear": "Clear",
+    "any_language": "Any language",
     "add_document": "Add a document",
     "tags": "Tags",
     "no_tags": "No tags",

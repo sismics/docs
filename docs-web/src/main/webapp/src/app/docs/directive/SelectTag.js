@@ -40,6 +40,7 @@ angular.module('docs').directive('selectTag', function() {
         // Add the new tag
         if (tag) {
           if (!duplicate) {
+            if (!$scope.tags) $scope.tags = [];
             $scope.tags.push(tag);
           }
           $scope.input = '';

@@ -5,7 +5,7 @@
  */
 angular.module('docs').controller('Document', function ($scope, $rootScope, $timeout, $state, Restangular, $q) {
   /**
-   * Documents table sort status.
+   * Scope variables.
    */
   $scope.sortColumn = 3;
   $scope.asc = false;
@@ -15,6 +15,9 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
   $scope.search = $state.params.search ? $state.params.search : '';
   $scope.searchOpened = false;
   $scope.setSearch = function (search) { $scope.search = search };
+  $scope.searchDropdownAnchor = angular.element(document.querySelector('.search-dropdown-anchor'));
+  $scope.paginationShown = true;
+  $scope.advsearch = {};
 
   // A timeout promise is used to slow down search requests to the server
   // We keep track of it for cancellation purpose
@@ -149,21 +152,57 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
     return deferred.promise;
   };
 
-  // Hack to reload the pagination directive after language change
-  $scope.paginationShown = true;
+  /**
+   * Hack to reload the pagination directive after language change.
+   */
   $rootScope.$on('$translateChangeSuccess', function () {
     $scope.paginationShown = false;
     $timeout(function () {
       $scope.paginationShown = true;
     });
-  })
+  });
 
-  // Advanced search
-  $scope.searchDropdownAnchor = angular.element(document.querySelector('.search-dropdown-anchor'));
+  /**
+   * Open the advanced search panel.
+   */
   $scope.openSearch = function () {
     var opened = $scope.searchOpened;
     $timeout(function () {
       $scope.searchOpened = !opened;
     });
-  }
+  };
+
+  /**
+   * Start the advanced search.
+   */
+  $scope.startSearch = function () {
+    var search = '';
+    if (!_.isEmpty($scope.advsearch.search_simple)) {
+      search += $scope.advsearch.search_simple + ' ';
+    }
+    if (!_.isEmpty($scope.advsearch.search_fulltext)) {
+      search += 'full:' + $scope.advsearch.search_fulltext + ' ';
+    }
+    if (!_.isEmpty($scope.advsearch.creator)) {
+      search += 'by:' + $scope.advsearch.creator + ' ';
+    }
+    if (!_.isEmpty($scope.advsearch.language)) {
+      search += 'lang:' + $scope.advsearch.language + ' ';
+    }
+    $scope.advsearch.after_date;
+    $scope.advsearch.before_date;
+    if (!_.isEmpty($scope.advsearch.tags)) {
+      search += _.reduce($scope.advsearch.tags, function(s, t) {
+          return s + 'tag:' + t + ' ';
+        }, '');
+    }
+    $scope.search = search;
+    $scope.searchOpened = false;
+  };
+
+  $scope.clearSearch = function () {
+    $scope.advsearch = {};
+    $scope.search = '';
+    $scope.searchOpened = false;
+  };
 });
