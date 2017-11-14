@@ -9,10 +9,10 @@
     <string name="validate_error_alphanumeric">Only letters and numbers</string>
 
     <!-- App -->
-    <string name="app_name">Sismics Docs</string>
+    <string name="app_name" translatable="false">Sismics Docs</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    <string name="login_explain"><![CDATA[To start, you must download and install Sismics Docs Server on <a href="http://www.sismics.com/docs">www.sismics.com/docs</a> and enter your server URL below]]></string>
+    <string name="login_explain"><![CDATA[To start, you must download and install Sismics Docs Server on <a href="https://github.com/sismics/docs">github.com/sismics/docs</a> and enter its below]]></string>
     <string name="server">Server</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -46,7 +46,7 @@
     <string name="add_share_hint">Name the share (optional)</string>
     <string name="document_not_shared">This document is not currently shared</string>
     <string name="delete_share">Delete this share</string>
-    <string name="send_share">Send this share</string>
+    <string name="send_share">Send this share link</string>
     <string name="error_loading_shares">Error loading shares</string>
     <string name="error_adding_share">Error adding share</string>
     <string name="share_default_name">Share link</string>
@@ -69,9 +69,8 @@
     <string name="pref_clear_history_summary">Wipe the recent search suggestions</string>
     <string name="pref_clear_history_success">Search history cleared</string>
     <string name="pref_cache_size">Cache size</string>
-    <string name="language_french">French</string>
-    <string name="language_english">English</string>
-    <string name="language_japanese">Japanese</string>
+    <string name="language_french" translatable="false">Français</string>
+    <string name="language_english" translatable="false">English</string>
     <string name="save">Save</string>
     <string name="edit_document">Edit</string>
     <string name="error_editing_document">Network error, please try again</string>
