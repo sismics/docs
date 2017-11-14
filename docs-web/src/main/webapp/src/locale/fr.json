@@ -313,6 +313,13 @@
       "new_entry": "Nouvelle entrée"
     }
   },
+  "app_share": {
+    "main": "Demandez un lien de partage d'un document pour y accéder",
+    "403": {
+      "title": "Non autorisé",
+      "message": "Le document que vous tentez de consulter n'est plus disponible"
+    }
+  },
   "directive": {
     "acledit": {
       "acl_target": "Pour",

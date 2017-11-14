@@ -21,13 +21,13 @@
       </button>
       <ul class="dropdown-menu">
         <li>
-          <a ng-href="../api/file/zip?id={{ document.id }}" title="Download all files">
+          <a ng-href="../api/file/zip?id={{ document.id }}">
             <span class="glyphicon glyphicon glyphicon-compressed"></span>
             {{ 'document.view.download_files' | translate }}
           </a>
         </li>
         <li>
-          <a ng-click="exportPdf()" title="Export document to PDF" class="pointer">
+          <a href ng-click="exportPdf()">
             <span class="glyphicon glyphicon glyphicon-save-file"></span>
             {{ 'document.view.export_pdf' | translate }}
           </a>

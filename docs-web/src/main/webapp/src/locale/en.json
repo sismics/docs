@@ -313,6 +313,13 @@
       "new_entry": "New entry"
     }
   },
+  "app_share": {
+    "main": "Ask a shared document link to access it",
+    "403": {
+      "title": "Not authorized",
+      "message": "The document you are trying to view is not shared anymore"
+    }
+  },
   "directive": {
     "acledit": {
       "acl_target": "For",
