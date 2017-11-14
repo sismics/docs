@@ -168,7 +168,7 @@
       "members": "组成员",
       "no_members": "无组成员",
       "related_links": "相关链接",
-      "edit_group": "编辑 {{ Name }} 组"
+      "edit_group": "编辑 {{ name }} 组"
     }
   },
   "user": {
