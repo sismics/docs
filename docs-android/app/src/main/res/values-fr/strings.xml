@@ -25,9 +25,9 @@
     <string name="invalid_url_title">URL invalide</string>
     <string name="invalid_url">Veuillez vérifier l\URL du serveur et réessayer</string>
     <string name="crash_toast_text">Une erreur s\'est produite, un rapport a été envoyé afin de corriger ce problème</string>
-    <string name="created_date">Date de création</string>
+    <string name="created_date">Date création</string>
     <string name="download_file">Télécharger ce fichier</string>
-    <string name="download_document">Téléchagrer</string>
+    <string name="download_document">Télécharger</string>
     <string name="action_search">Rechercher dans les documents</string>
     <string name="all_documents">Tous les documents</string>
     <string name="shared_documents">Documents partagés</string>
@@ -51,7 +51,7 @@
     <string name="share_default_name">Lien de partage</string>
     <string name="error_deleting_share">Erreur lors de la suppression de ce partage</string>
     <string name="send_share_to">Envoi ce lien de partage à</string>
-    <string name="upload_file">Ajouter un fichier</string>
+    <string name="upload_file">Aj. fichier</string>
     <string name="upload_from">Envoyer un fichier depuis</string>
     <string name="settings">Paramètres</string>
     <string name="logout">Déconnexion</string>
@@ -73,7 +73,7 @@
     <string name="error_editing_document">Erreur réseau, veuillez réessayer</string>
     <string name="please_wait">Veuillez patienter</string>
     <string name="document_editing_message">Envoi des données</string>
-    <string name="delete_document">Supprimer</string>
+    <string name="delete_document">Suppr.</string>
     <string name="delete_document_title">Supprimer le document</string>
     <string name="delete_document_message">Etes-vous sûr de vouloir supprimer ce document et tous les fichiers associés ?</string>
     <string name="document_delete_failure">Erreur réseau lors de la suppression de ce document</string>
@@ -86,7 +86,7 @@
     <string name="upload_notification_title">Sismics Docs</string>
     <string name="upload_notification_message">Envoi du nouveau fichier</string>
     <string name="upload_notification_error">Erreur lors de l\'envoi du nouveau fichier</string>
-    <string name="delete_file">Suppression de ce fichier</string>
+    <string name="delete_file">Supprimer ce fichier</string>
     <string name="advanced_search">Recherche avancée</string>
     <string name="search">Rechercher</string>
     <string name="add_tags">Ajouter des tags</string>
