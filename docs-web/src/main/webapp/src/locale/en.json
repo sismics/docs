@@ -257,7 +257,7 @@
         "delete_group_title": "Delete group",
         "delete_group_message": "Do you really want to delete this group?",
         "edit_group_title": "Edit <small>\"{{ name }}\"</small>",
-        "add_group_title": "Add <small>group</small>",
+        "add_group_title": "<small>Add a</small> group",
         "name": "Name",
         "parent_group": "Parent group",
         "search_group": "Search a group",
