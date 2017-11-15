@@ -42,7 +42,7 @@
     </p>
   </div>
 
-  <div class="text-center">
+  <p class="text-center">
     <button ng-show="checkedFiles().length > 0"
             class="btn btn-primary"
             ng-click="addDocument()">
@@ -57,7 +57,7 @@
             ngf-multiple="true">
       {{ 'document.default.add_files' | translate }}
     </button>
-  </div>
+  </p>
 
   <div ui-view="file"></div>
 
