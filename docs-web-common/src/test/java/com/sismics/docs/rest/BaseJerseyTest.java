@@ -127,5 +127,8 @@ public abstract class BaseJerseyTest extends JerseyTest {
         if (httpServer != null) {
             httpServer.shutdownNow();
         }
+        if (wiser != null) {
+            wiser.stop();
+        }
     }
 }
