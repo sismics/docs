@@ -28,6 +28,15 @@ angular.module('docs',
         }
       }
     })
+    .state('passwordreset', {
+      url: '/passwordreset/:key',
+      views: {
+        'page': {
+          templateUrl: 'partial/docs/passwordreset.html',
+          controller: 'PasswordReset'
+        }
+      }
+    })
     .state('tag', {
       url: '/tag',
       abstract: true,

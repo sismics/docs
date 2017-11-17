@@ -12,14 +12,20 @@
     "login_failed_message": "Username or password invalid",
     "password_lost_btn": "Password lost?",
     "password_lost_sent_title": "Password reset email sent",
-    "password_lost_sent_message": "An email has been sent to <strong>{{ email }}</strong> to reset your password",
+    "password_lost_sent_message": "An email has been sent to <strong>{{ username }}</strong> to reset your password",
     "password_lost_error_title": "Password reset error",
     "password_lost_error_message": "Unable to send a password reset email, please contact your administrator for a manual reset"
   },
   "passwordlost": {
     "title": "Password lost",
-    "message": "Please enter your email address to receive a password reset link",
+    "message": "Please enter your username to receive a password reset link. If you don't remember your username, please contact your administrator",
     "submit": "Reset my password"
+  },
+  "passwordreset": {
+    "message": "Please enter a new password",
+    "submit": "Change my password",
+    "error_title": "Error changing your password",
+    "error_message": "Your password recovery request is expired, please ask a new one on the login page"
   },
   "index": {
     "toggle_navigation": "Toggle navigation",
@@ -295,7 +301,14 @@
       "custom_css_placeholder": "Custom CSS to add after the main stylesheet",
       "logo": "Logo (squared size)",
       "background_image": "Background image",
-      "uploading_image": "Uploading the image..."
+      "uploading_image": "Uploading the image...",
+      "title_smtp": "Email <small>configuration</small>",
+      "smtp_hostname": "SMTP hostname",
+      "smtp_port": "SMTP port",
+      "smtp_from": "Sender e-mail",
+      "smtp_username": "SMTP username",
+      "smtp_password": "SMTP password",
+      "smtp_updated": "SMTP configuration updated successfully"
     },
     "log": {
       "title": "Server <small>logs</small>",

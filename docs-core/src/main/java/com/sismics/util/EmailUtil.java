@@ -75,6 +75,8 @@ public class EmailUtil {
             email.setCharset("UTF-8");
             email.setHostName(ConfigUtil.getConfigStringValue(ConfigType.SMTP_HOSTNAME));
             email.setSmtpPort(ConfigUtil.getConfigIntegerValue(ConfigType.SMTP_PORT));
+            email.setAuthentication(ConfigUtil.getConfigStringValue(ConfigType.SMTP_USERNAME),
+                    ConfigUtil.getConfigStringValue(ConfigType.SMTP_PASSWORD));
             email.addTo(recipientUser.getEmail(), recipientUser.getUsername());
             ConfigDao configDao = new ConfigDao();
             Config themeConfig = configDao.getById(ConfigType.THEME);
@@ -87,7 +89,7 @@ public class EmailUtil {
             }
             email.setFrom(ConfigUtil.getConfigStringValue(ConfigType.SMTP_FROM), appName);
             java.util.Locale userLocale = LocaleUtil.getLocale(System.getenv(Constants.DEFAULT_LANGUAGE_ENV));
-            email.setSubject(subject);
+            email.setSubject(appName + " - " + subject);
             email.setTextMsg(MessageUtil.getMessage(userLocale, "email.no_html.error"));
 
             // Add automatic parameters

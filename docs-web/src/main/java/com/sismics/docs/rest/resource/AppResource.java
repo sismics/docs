@@ -1,32 +1,11 @@
 package com.sismics.docs.rest.resource;
 
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-
+import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.ConfigType;
-import com.sismics.docs.core.dao.jpa.*;
+import com.sismics.docs.core.dao.jpa.ConfigDao;
+import com.sismics.docs.core.dao.jpa.FileDao;
+import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
-import com.sismics.rest.util.ValidationUtil;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Appender;
-import org.apache.log4j.Level;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.ConfigUtil;
@@ -36,10 +15,28 @@ import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
+import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.log4j.LogCriteria;
 import com.sismics.util.log4j.LogEntry;
 import com.sismics.util.log4j.MemoryAppender;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Appender;
+import org.apache.log4j.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.util.*;
 
 /**
  * General app REST resource.
@@ -126,6 +123,7 @@ public class AppResource extends BaseResource {
      * @apiParam {String} username SMTP username
      * @apiParam {String} password SMTP password
      * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
      * @apiPermission admin
      * @apiVersion 1.5.0
      *
@@ -147,18 +145,25 @@ public class AppResource extends BaseResource {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);
-        ValidationUtil.validateRequired(hostname, "hostname");
-        ValidationUtil.validateInteger(portStr, "port");
-        ValidationUtil.validateRequired(from, "from");
+        if (!Strings.isNullOrEmpty(portStr)) {
+            ValidationUtil.validateInteger(portStr, "port");
+        }
 
+        // Just update the changed configuration
         ConfigDao configDao = new ConfigDao();
-        configDao.update(ConfigType.SMTP_HOSTNAME, hostname);
-        configDao.update(ConfigType.SMTP_PORT, portStr);
-        configDao.update(ConfigType.SMTP_FROM, from);
-        if (username != null) {
+        if (!Strings.isNullOrEmpty(hostname)) {
+            configDao.update(ConfigType.SMTP_HOSTNAME, hostname);
+        }
+        if (!Strings.isNullOrEmpty(portStr)) {
+            configDao.update(ConfigType.SMTP_PORT, portStr);
+        }
+        if (!Strings.isNullOrEmpty(from)) {
+            configDao.update(ConfigType.SMTP_FROM, from);
+        }
+        if (!Strings.isNullOrEmpty(username)) {
             configDao.update(ConfigType.SMTP_USERNAME, username);
         }
-        if (password != null) {
+        if (!Strings.isNullOrEmpty(password)) {
             configDao.update(ConfigType.SMTP_PASSWORD, password);
         }
 
