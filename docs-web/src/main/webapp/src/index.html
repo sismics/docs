@@ -109,7 +109,7 @@
         <a class="navbar-brand" href="#"> {{ appName }}</a>
       </div>
 
-      <div class="collapse navbar-collapse" collapse="isCollapsed">
+      <div class="collapse navbar-collapse" uib-collapse="isCollapsed">
         <ul class="nav navbar-nav" ng-show="!userInfo.anonymous">
           <li ui-sref-active="{ active: 'document.**' }">
             <a href="#/document"><span class="glyphicon glyphicon-book"></span> {{ 'index.nav_documents' | translate }}</a>
