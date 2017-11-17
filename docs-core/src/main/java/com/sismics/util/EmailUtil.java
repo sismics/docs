@@ -75,10 +75,13 @@ public class EmailUtil {
             email.setCharset("UTF-8");
             email.setHostName(ConfigUtil.getConfigStringValue(ConfigType.SMTP_HOSTNAME));
             email.setSmtpPort(ConfigUtil.getConfigIntegerValue(ConfigType.SMTP_PORT));
-            email.setAuthentication(ConfigUtil.getConfigStringValue(ConfigType.SMTP_USERNAME),
-                    ConfigUtil.getConfigStringValue(ConfigType.SMTP_PASSWORD));
-            email.addTo(recipientUser.getEmail(), recipientUser.getUsername());
             ConfigDao configDao = new ConfigDao();
+            Config usernameConfig = configDao.getById(ConfigType.SMTP_USERNAME);
+            Config passwordConfig = configDao.getById(ConfigType.SMTP_PASSWORD);
+            if (usernameConfig != null && passwordConfig != null) {
+                email.setAuthentication(usernameConfig.getValue(), passwordConfig.getValue());
+            }
+            email.addTo(recipientUser.getEmail(), recipientUser.getUsername());
             Config themeConfig = configDao.getById(ConfigType.THEME);
             String appName = "Sismics Docs";
             if (themeConfig != null) {
