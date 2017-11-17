@@ -216,6 +216,7 @@
       "add_user": "Add a user",
       "username": "Username",
       "create_date": "Create date",
+      "totp_enabled": "Two-factor authentication enabled for this account",
       "edit": {
         "delete_user_title": "Delete user",
         "delete_user_message": "Do you really want to delete this user? All associated documents, files and tags will be deleted",

@@ -724,6 +724,7 @@ public class UserResource extends BaseResource {
             users.add(Json.createObjectBuilder()
                     .add("id", userDto.getId())
                     .add("username", userDto.getUsername())
+                    .add("totp_enabled", userDto.getTotpKey() != null)
                     .add("email", userDto.getEmail())
                     .add("storage_quota", userDto.getStorageQuota())
                     .add("storage_current", userDto.getStorageCurrent())

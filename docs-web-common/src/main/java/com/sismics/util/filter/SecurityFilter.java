@@ -90,8 +90,8 @@ public abstract class SecurityFilter implements Filter {
 
         // Add base functions
         groupRoleIdSet.add(user.getRoleId());
-        RoleBaseFunctionDao userBaseFuction = new RoleBaseFunctionDao();
-        Set<String> baseFunctionSet = userBaseFuction.findByRoleId(groupRoleIdSet);
+        RoleBaseFunctionDao userBaseFunction = new RoleBaseFunctionDao();
+        Set<String> baseFunctionSet = userBaseFunction.findByRoleId(groupRoleIdSet);
         userPrincipal.setBaseFunctionSet(baseFunctionSet);
 
         // Add email

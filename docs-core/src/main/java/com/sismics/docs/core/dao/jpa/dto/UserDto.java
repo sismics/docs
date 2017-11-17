@@ -35,7 +35,12 @@ public class UserDto {
      * Storage current usage.
      */
     private Long storageCurrent;
-    
+
+    /**
+     * TOTP key.
+     */
+    private String totpKey;
+
     public String getId() {
         return id;
     }
@@ -82,5 +87,13 @@ public class UserDto {
 
     public void setStorageCurrent(Long storageCurrent) {
         this.storageCurrent = storageCurrent;
+    }
+
+    public String getTotpKey() {
+        return totpKey;
+    }
+
+    public void setTotpKey(String totpKey) {
+        this.totpKey = totpKey;
     }
 }

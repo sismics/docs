@@ -1,7 +1,9 @@
 package com.sismics.docs.rest;
 
-import java.util.Date;
-import java.util.Locale;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
+import com.sismics.util.totp.GoogleAuthenticator;
+import org.junit.Assert;
+import org.junit.Test;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -9,12 +11,8 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.sismics.util.filter.TokenBasedSecurityFilter;
-import com.sismics.util.totp.GoogleAuthenticator;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Exhaustive test of the user resource.
@@ -55,7 +53,8 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertNotNull(user.getJsonNumber("storage_quota"));
         Assert.assertNotNull(user.getJsonNumber("storage_current"));
         Assert.assertNotNull(user.getJsonNumber("create_date"));
-        
+        Assert.assertFalse(user.getBoolean("totp_enabled"));
+
         // Create a user KO (login length validation)
         Response response = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
@@ -114,7 +113,7 @@ public class TestUserResource extends BaseJerseyTest {
                 .param("email", " bob@docs.com ")
                 .param("password", " 12345678 ")
                 .param("storage_quota", "10");
-        json = target().path("/user").request()
+        target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(form), JsonObject.class);
 
@@ -178,8 +177,8 @@ public class TestUserResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         Assert.assertEquals("alice@docs.com", json.getString("email"));
         Assert.assertFalse(json.getBoolean("is_default_password"));
-        Assert.assertEquals(0l, json.getJsonNumber("storage_current").longValue());
-        Assert.assertEquals(1000000l, json.getJsonNumber("storage_quota").longValue());
+        Assert.assertEquals(0L, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(1000000L, json.getJsonNumber("storage_quota").longValue());
         
         // Check bob user information
         json = target().path("/user").request()
@@ -243,8 +242,8 @@ public class TestUserResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
         Assert.assertTrue(json.getBoolean("is_default_password"));
-        Assert.assertEquals(0l, json.getJsonNumber("storage_current").longValue());
-        Assert.assertEquals(10000000000l, json.getJsonNumber("storage_quota").longValue());
+        Assert.assertEquals(0L, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(10000000000L, json.getJsonNumber("storage_quota").longValue());
 
         // User admin updates his information
         json = target().path("/user").request()
@@ -323,7 +322,7 @@ public class TestUserResource extends BaseJerseyTest {
         int validationCode = googleAuthenticator.calculateCode(secret, new Date().getTime() / 30000);
         
         // Login with totp1 with a validation code
-        json = target().path("/user/login").request()
+        target().path("/user/login").request()
                 .post(Entity.form(new Form()
                         .param("username", "totp1")
                         .param("password", "12345678")
@@ -337,13 +336,13 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertTrue(json.getBoolean("totp_enabled"));
         
         // Disable TOTP for totp1
-        json = target().path("/user/disable_totp").request()
+        target().path("/user/disable_totp").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
                 .post(Entity.form(new Form()
                         .param("password", "12345678")), JsonObject.class);
         
         // Login with totp1 without a validation code
-        json = target().path("/user/login").request()
+        target().path("/user/login").request()
                 .post(Entity.form(new Form()
                         .param("username", "totp1")
                         .param("password", "12345678")
