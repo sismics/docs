@@ -1,17 +1,11 @@
 package com.sismics.docs.rest;
 
-import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
-import com.sismics.util.jpa.EMF;
 import org.junit.Assert;
 import org.junit.Test;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
@@ -60,35 +54,6 @@ public class TestAppResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-
-        // Create a tag
-        json = target().path("/tag").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
-                .put(Entity.form(new Form()
-                        .param("name", "Tag4")
-                        .param("color", "#00ff00")), JsonObject.class);
-        String tagId = json.getString("id");
-
-        // Init transactional context
-        EntityManager em = EMF.get().createEntityManager();
-        ThreadLocalContext context = ThreadLocalContext.get();
-        context.setEntityManager(em);
-        EntityTransaction tx = em.getTransaction();
-        tx.begin();
-
-        // Remove base ACLs
-        AclDao aclDao = new AclDao();
-        aclDao.delete(tagId, PermType.READ, "admin", "admin");
-        aclDao.delete(tagId, PermType.WRITE, "admin", "admin");
-        Assert.assertEquals(0, aclDao.getBySourceId(tagId).size());
-        tx.commit();
-
-        // Add base ACLs to tags
-        response = target().path("/app/batch/tag_acls").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
-                .post(Entity.form(new Form()));
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        Assert.assertEquals(2, aclDao.getBySourceId(tagId).size());
     }
 
     /**
