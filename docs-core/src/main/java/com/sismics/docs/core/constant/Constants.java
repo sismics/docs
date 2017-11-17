@@ -44,4 +44,24 @@ public class Constants {
      * Supported document languages.
      */
     public static final List<String> SUPPORTED_LANGUAGES = Lists.newArrayList("eng", "fra", "ita", "deu", "spa", "por", "pol", "rus", "ukr", "ara", "hin", "chi_sim", "chi_tra", "jpn", "tha", "kor");
+
+    /**
+     * Base URL environnement variable.
+     */
+    public static final String BASE_URL_ENV = "DOCS_BASE_URL";
+
+    /**
+     * Default language environnement variable.
+     */
+    public static final String DEFAULT_LANGUAGE_ENV = "DOCS_DEFAULT_LANGUAGE";
+
+    /**
+     * Expiration time of the password recovery in hours.
+     */
+    public static final int PASSWORD_RECOVERY_EXPIRATION_HOUR = 2;
+
+    /**
+     * Email template for password recovery.
+     */
+    public static final String EMAIL_TEMPLATE_PASSWORD_RECOVERY = "password_recovery";
 }

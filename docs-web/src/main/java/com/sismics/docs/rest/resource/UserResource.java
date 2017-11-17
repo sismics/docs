@@ -11,6 +11,8 @@ import com.sismics.docs.core.dao.jpa.dto.GroupDto;
 import com.sismics.docs.core.dao.jpa.dto.UserDto;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
+import com.sismics.docs.core.event.PasswordLostEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.*;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.EncryptionUtil;
@@ -901,7 +903,110 @@ public class UserResource extends BaseResource {
                 .add("status", "ok");
         return Response.ok().entity(response.build()).build();
     }
-    
+
+    /**
+     * Create a key to reset a password and send it by email.
+     *
+     * @api {post} /user/password_lost Create a key to reset a password and send it by email
+     * @apiName PostUserPasswordLost
+     * @apiGroup User
+     * @apiParam {String} username Username
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) UserNotFound The user is not found
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission none
+     * @apiVersion 1.5.0
+     *
+     * @param username Username
+     * @return Response
+     */
+    @POST
+    @Path("password_lost")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response passwordLost(@FormParam("username") String username) {
+        authenticate();
+
+        // Validate input data
+        ValidationUtil.validateStringNotBlank("username", username);
+
+        // Check for user existence
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveByUsername(username);
+        if (user == null) {
+            throw new ClientException("UserNotFound", "User not found: " + username);
+        }
+
+        // Create the password recovery key
+        PasswordRecoveryDao passwordRecoveryDao = new PasswordRecoveryDao();
+        PasswordRecovery passwordRecovery = new PasswordRecovery();
+        passwordRecovery.setUsername(user.getUsername());
+        passwordRecoveryDao.create(passwordRecovery);
+
+        // Fire a password lost event
+        PasswordLostEvent passwordLostEvent = new PasswordLostEvent();
+        passwordLostEvent.setUser(user);
+        passwordLostEvent.setPasswordRecovery(passwordRecovery);
+        AppContext.getInstance().getMailEventBus().post(passwordLostEvent);
+
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Reset the user's password.
+     *
+     * @api {post} /user/password_reset Reset the user's password
+     * @apiName PostUserPasswordReset
+     * @apiGroup User
+     * @apiParam {String} key Password recovery key
+     * @apiParam {String} password New password
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) KeyNotFound Password recovery key not found
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission none
+     * @apiVersion 1.5.0
+     *
+     * @param passwordResetKey Password reset key
+     * @param password New password
+     * @return Response
+     */
+    @POST
+    @Path("password_reset")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response passwordReset(
+            @FormParam("key") String passwordResetKey,
+            @FormParam("password") String password) {
+        authenticate();
+
+        // Validate input data
+        ValidationUtil.validateRequired("key", passwordResetKey);
+        password = ValidationUtil.validateLength(password, "password", 8, 50, true);
+
+        // Load the password recovery key
+        PasswordRecoveryDao passwordRecoveryDao = new PasswordRecoveryDao();
+        PasswordRecovery passwordRecovery = passwordRecoveryDao.getActiveById(passwordResetKey);
+        if (passwordRecovery == null) {
+            throw new ClientException("KeyNotFound", "Password recovery key not found");
+        }
+
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveByUsername(passwordRecovery.getUsername());
+
+        // Change the password
+        user.setPassword(password);
+        user = userDao.updatePassword(user, principal.getId());
+
+        // Deletes password recovery requests
+        passwordRecoveryDao.deleteActiveByLogin(user.getUsername());
+
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+
     /**
      * Returns the authentication token value.
      *

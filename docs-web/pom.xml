@@ -121,6 +121,12 @@
       <artifactId>jersey-container-grizzly2-servlet</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.subethamail</groupId>
+      <artifactId>subethasmtp-wiser</artifactId>
+      <scope>test</scope>
+    </dependency>
     
   </dependencies>
 

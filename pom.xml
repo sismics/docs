@@ -19,6 +19,8 @@
     <org.apache.commons.commons-compress.version>1.10</org.apache.commons.commons-compress.version>
     <commons-lang.commons-lang.version>2.6</commons-lang.commons-lang.version>
     <commons-io.commons-io.version>2.4</commons-io.commons-io.version>
+    <org.apache.commons.commons-email.version>1.5</org.apache.commons.commons-email.version>
+    <org.freemarker.freemarker.version>2.3.23</org.freemarker.freemarker.version>
     <commons-dbcp.version>1.4</commons-dbcp.version>
     <com.google.guava.guava.version>19.0</com.google.guava.guava.version>
     <log4j.log4j.version>1.2.16</log4j.log4j.version>
@@ -27,6 +29,7 @@
     <junit.junit.version>4.12</junit.junit.version>
     <com.h2database.h2.version>1.4.191</com.h2database.h2.version>
     <org.glassfish.jersey.version>2.22.2</org.glassfish.jersey.version>
+    <org.glassfish.javax.json.version>1.0.4</org.glassfish.javax.json.version>
     <org.mindrot.jbcrypt>0.3m</org.mindrot.jbcrypt>
     <org.apache.lucene.version>5.5.0</org.apache.lucene.version>
     <org.imgscalr.imgscalr-lib.version>4.2</org.imgscalr.imgscalr-lib.version>
@@ -40,6 +43,7 @@
     <com.twelvemonkeys.imageio.version>3.2.1</com.twelvemonkeys.imageio.version>
     <com.levigo.jbig2.levigo-jbig2-imageio.version>1.6.5</com.levigo.jbig2.levigo-jbig2-imageio.version>
     <com.github.jai-imageio.jai-imageio-core.version>1.3.1</com.github.jai-imageio.jai-imageio-core.version>
+    <org.subethamail.subethasmtp-wiser.version>1.2</org.subethamail.subethasmtp-wiser.version>
 
     <org.eclipse.jetty.jetty-server.version>9.2.13.v20150730</org.eclipse.jetty.jetty-server.version>
     <org.eclipse.jetty.jetty-webapp.version>9.2.13.v20150730</org.eclipse.jetty.jetty-webapp.version>
@@ -193,6 +197,12 @@
         <artifactId>commons-io</artifactId>
         <version>${commons-io.commons-io.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-email</artifactId>
+        <version>${org.apache.commons.commons-email.version}</version>
+      </dependency>
       
       <dependency>
         <groupId>com.google.guava</groupId>
@@ -284,7 +294,13 @@
         <artifactId>jersey-container-grizzly2-servlet</artifactId>
         <version>${org.glassfish.jersey.version}</version>
       </dependency>
-      
+
+      <dependency>
+        <groupId>org.glassfish</groupId>
+        <artifactId>javax.json</artifactId>
+        <version>${org.glassfish.javax.json.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>com.h2database</groupId>
         <artifactId>h2</artifactId>
@@ -314,7 +330,13 @@
         <artifactId>commons-dbcp</artifactId>
         <version>${commons-dbcp.version}</version>
       </dependency>
-      
+
+      <dependency>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>${org.freemarker.freemarker.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>joda-time</groupId>
         <artifactId>joda-time</artifactId>
@@ -373,6 +395,12 @@
         <groupId>fr.opensagres.xdocreport</groupId>
         <artifactId>org.apache.poi.xwpf.converter.pdf</artifactId>
         <version>${fr.opensagres.xdocreport.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.subethamail</groupId>
+        <artifactId>subethasmtp-wiser</artifactId>
+        <version>${org.subethamail.subethasmtp-wiser.version}</version>
       </dependency>
 
       <!-- Servlet listener to register SPI ImageIO plugins -->
