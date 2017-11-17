@@ -18,20 +18,15 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 import com.sismics.docs.core.constant.ConfigType;
-import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.*;
-import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
-import com.sismics.docs.core.dao.jpa.dto.AclDto;
-import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
-import com.sismics.docs.core.model.jpa.Acl;
+import com.sismics.rest.util.ValidationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.ConfigUtil;
@@ -119,6 +114,57 @@ public class AppResource extends BaseResource {
         return Response.ok().build();
     }
     
+    /**
+     * Configure the SMTP server.
+     *
+     * @api {post} /app/config_smtp Configure the SMTP server
+     * @apiName PostAppConfigSmtp
+     * @apiGroup App
+     * @apiParam {String} hostname SMTP hostname
+     * @apiParam {Integer} port SMTP port
+     * @apiParam {String} from From address
+     * @apiParam {String} username SMTP username
+     * @apiParam {String} password SMTP password
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @param hostname SMTP hostname
+     * @param portStr SMTP port
+     * @param from From address
+     * @param username SMTP username
+     * @param password SMTP password
+     * @return Response
+     */
+    @POST
+    @Path("config_smtp")
+    public Response configSmtp(@FormParam("hostname") String hostname,
+                               @FormParam("port") String portStr,
+                               @FormParam("from") String from,
+                               @FormParam("username") String username,
+                               @FormParam("password") String password) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        ValidationUtil.validateRequired(hostname, "hostname");
+        ValidationUtil.validateInteger(portStr, "port");
+        ValidationUtil.validateRequired(from, "from");
+
+        ConfigDao configDao = new ConfigDao();
+        configDao.update(ConfigType.SMTP_HOSTNAME, hostname);
+        configDao.update(ConfigType.SMTP_PORT, portStr);
+        configDao.update(ConfigType.SMTP_FROM, from);
+        if (username != null) {
+            configDao.update(ConfigType.SMTP_USERNAME, username);
+        }
+        if (password != null) {
+            configDao.update(ConfigType.SMTP_PASSWORD, password);
+        }
+
+        return Response.ok().build();
+    }
+
     /**
      * Retrieve the application logs.
      *
@@ -395,64 +441,6 @@ public class AppResource extends BaseResource {
             }
         }
         
-        // Always return OK
-        JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("status", "ok");
-        return Response.ok().entity(response.build()).build();
-    }
-
-    /**
-     * Add base ACLs to tags.
-     *
-     * @api {post} /app/batch/tag_acls Add base ACL to tags
-     * @apiDescription This resource must be used after migrating to 1.5.
-     * It will not do anything if base ACL are already present on tags.
-     * @apiName PostAppBatchTagAcls
-     * @apiGroup App
-     * @apiSuccess {String} status Status OK
-     * @apiError (client) ForbiddenError Access denied
-     * @apiPermission admin
-     * @apiVersion 1.5.0
-     *
-     * @return Response
-     */
-    @POST
-    @Path("batch/tag_acls")
-    public Response batchTagAcls() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
-        checkBaseFunction(BaseFunction.ADMIN);
-
-        // Get all tags
-        TagDao tagDao = new TagDao();
-        UserDao userDao = new UserDao();
-        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria(), null);
-
-        // Add READ and WRITE ACLs
-        for (TagDto tagDto : tagDtoList) {
-            // Remove old ACLs
-            AclDao aclDao = new AclDao();
-            List<AclDto> aclDtoList = aclDao.getBySourceId(tagDto.getId());
-            String userId = userDao.getActiveByUsername(tagDto.getCreator()).getId();
-
-            if (aclDtoList.size() == 0) {
-                // Create read ACL
-                Acl acl = new Acl();
-                acl.setPerm(PermType.READ);
-                acl.setSourceId(tagDto.getId());
-                acl.setTargetId(userId);
-                aclDao.create(acl, userId);
-
-                // Create write ACL
-                acl = new Acl();
-                acl.setPerm(PermType.WRITE);
-                acl.setSourceId(tagDto.getId());
-                acl.setTargetId(userId);
-                aclDao.create(acl, userId);
-            }
-        }
-
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");

@@ -18,5 +18,14 @@ public enum ConfigType {
     /**
      * Guest login.
      */
-    GUEST_LOGIN
+    GUEST_LOGIN,
+
+    /**
+     * SMTP server configuration.
+     */
+    SMTP_HOSTNAME,
+    SMTP_PORT,
+    SMTP_FROM,
+    SMTP_USERNAME,
+    SMTP_PASSWORD
 }

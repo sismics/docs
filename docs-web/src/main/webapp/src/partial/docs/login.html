@@ -44,7 +44,11 @@
         <span class="glyphicon glyphicon-ok"></span> {{ 'login.submit' | translate }}
       </button>
 
-      <p class="text-center lead" ng-if="app.guest_login">&nbsp;</p>
+      <div class="text-center well-sm btn-password-lost">
+        <a href ng-click="openPasswordLost()">{{ 'login.password_lost_btn' | translate }}</a>
+      </div>
+
+      <p class="text-center" ng-if="app.guest_login">&nbsp;</p>
 
       <button type="submit" class="btn btn-default btn-block" ng-if="app.guest_login" ng-click="loginAsGuest()">
         <span class="glyphicon glyphicon-user"></span> {{ 'login.login_as_guest' | translate }}

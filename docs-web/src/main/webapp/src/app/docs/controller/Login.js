@@ -3,7 +3,7 @@
 /**
  * Login controller.
  */
-angular.module('docs').controller('Login', function(Restangular, $scope, $rootScope, $state, $dialog, User, $translate) {
+angular.module('docs').controller('Login', function(Restangular, $scope, $rootScope, $state, $dialog, User, $translate, $uibModal) {
   $scope.codeRequired = false;
 
   // Get the app configuration
@@ -28,7 +28,7 @@ angular.module('docs').controller('Login', function(Restangular, $scope, $rootSc
       });
       $state.go('document.default');
     }, function(data) {
-      if (data.data.type == 'ValidationCodeRequired') {
+      if (data.data.type === 'ValidationCodeRequired') {
         // A TOTP validation code is required to login
         $scope.codeRequired = true;
       } else {
@@ -38,6 +38,33 @@ angular.module('docs').controller('Login', function(Restangular, $scope, $rootSc
         var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
         $dialog.messageBox(title, msg, btns);
       }
+    });
+  };
+
+  // Password lost
+  $scope.openPasswordLost = function () {
+    $uibModal.open({
+      templateUrl: 'partial/docs/passwordlost.html',
+      controller: 'LoginModalPasswordLost'
+    }).result.then(function (email) {
+      if (name === null) {
+        return;
+      }
+
+      // Send a password lost email
+      Restangular.one('user').post('passwordLost', {
+        email: email
+      }).then(function () {
+        var title = $translate.instant('login.password_lost_sent_title');
+        var msg = $translate.instant('login.password_lost_sent_message', { email: email });
+        var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
+        $dialog.messageBox(title, msg, btns);
+      }, function () {
+        var title = $translate.instant('login.password_lost_error_title');
+        var msg = $translate.instant('login.password_lost_error_message', { email: email });
+        var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
+        $dialog.messageBox(title, msg, btns);
+      });
     });
   };
 });

@@ -9,7 +9,17 @@
     "submit": "Sign in",
     "login_as_guest": "Login as guest",
     "login_failed_title": "Login failed",
-    "login_failed_message": "Username or password invalid"
+    "login_failed_message": "Username or password invalid",
+    "password_lost_btn": "Password lost?",
+    "password_lost_sent_title": "Password reset email sent",
+    "password_lost_sent_message": "An email has been sent to <strong>{{ email }}</strong> to reset your password",
+    "password_lost_error_title": "Password reset error",
+    "password_lost_error_message": "Unable to send a password reset email, please contact your administrator for a manual reset"
+  },
+  "passwordlost": {
+    "title": "Password lost",
+    "message": "Please enter your email address to receive a password reset link",
+    "submit": "Reset my password"
   },
   "index": {
     "toggle_navigation": "Toggle navigation",

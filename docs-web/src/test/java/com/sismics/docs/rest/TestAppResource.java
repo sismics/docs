@@ -189,4 +189,23 @@ public class TestAppResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, guestToken)
                 .get(JsonObject.class);
     }
+
+    /**
+     * Test SMTP configuration changes.
+     */
+    @Test
+    public void testSmtpConfiguration() {
+        // Login admin
+        String adminToken = clientUtil.login("admin", "admin", false);
+
+        // Change SMTP configuration
+        target().path("/app/config_smtp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("hostname", "smtp.sismics.com")
+                        .param("port", "1234")
+                        .param("from", "contact@sismics.com")
+                        .param("username", "sismics")
+                ), JsonObject.class);
+    }
 }
