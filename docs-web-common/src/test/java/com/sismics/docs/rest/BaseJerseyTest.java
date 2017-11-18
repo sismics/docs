@@ -55,10 +55,10 @@ public abstract class BaseJerseyTest extends JerseyTest {
     
     @Override
     protected Application configure() {
-        enable(TestProperties.LOG_TRAFFIC);
         String travisEnv = System.getenv("TRAVIS");
         if (travisEnv == null || !travisEnv.equals("true")) {
-            // Travis don't like entity dumped in the logs
+            // Travis doesn't like big logs
+            enable(TestProperties.LOG_TRAFFIC);
             enable(TestProperties.DUMP_ENTITY);
         }
         return new Application();
@@ -103,7 +103,7 @@ public abstract class BaseJerseyTest extends JerseyTest {
     /**
      * Extract an email from the list and consume it.
      *
-     * @return Texte de l'email
+     * @return Email content
      * @throws MessagingException e
      * @throws IOException e
      */
