@@ -56,6 +56,14 @@ public class Constants {
     public static final String DEFAULT_LANGUAGE_ENV = "DOCS_DEFAULT_LANGUAGE";
 
     /**
+     * SMTP configuration environnement variables.
+     */
+    public static final String SMTP_HOSTNAME_ENV = "DOCS_SMTP_HOSTNAME";
+    public static final String SMTP_PORT_ENV = "DOCS_SMTP_PORT";
+    public static final String SMTP_USERNAME_ENV = "DOCS_SMTP_USERNAME";
+    public static final String SMTP_PASSWORD_ENV = "DOCS_SMTP_PASSWORD";
+
+    /**
      * Expiration time of the password recovery in hours.
      */
     public static final int PASSWORD_RECOVERY_EXPIRATION_HOUR = 2;

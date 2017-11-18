@@ -65,10 +65,13 @@ angular.module('docs').controller('SettingsConfig', function($scope, $rootScope,
     });
   };
 
+  // Load SMTP config
+  Restangular.one('app/config_smtp').get().then(function (data) {
+    $scope.smtp = data;
+  });
+
   // Edit SMTP config
   $scope.editSmtpConfig = function () {
-    Restangular.one('app').post('config_smtp', $scope.smtp).then(function () {
-      $scope.smtpUpdated = true;
-    });
+    Restangular.one('app').post('config_smtp', $scope.smtp);
   };
 });

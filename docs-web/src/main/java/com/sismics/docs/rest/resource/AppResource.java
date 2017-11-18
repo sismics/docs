@@ -2,10 +2,12 @@ package com.sismics.docs.rest.resource;
 
 import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.ConfigType;
+import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.ConfigDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
+import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.ConfigUtil;
@@ -110,6 +112,75 @@ public class AppResource extends BaseResource {
 
         return Response.ok().build();
     }
+
+    /**
+     * Get the SMTP server configuration.
+     *
+     * @api {get} /app/config_smtp Get the SMTP server configuration
+     * @apiName GetAppConfigSmtp
+     * @apiGroup App
+     * @apiSuccess {String} hostname SMTP hostname
+     * @apiSuccess {String} port
+     * @apiSuccess {String} username
+     * @apiSuccess {String} password
+     * @apiSuccess {String} from
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @return Response
+     */
+    @GET
+    @Path("config_smtp")
+    public Response getConfigSmtp() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        ConfigDao configDao = new ConfigDao();
+        Config hostnameConfig = configDao.getById(ConfigType.SMTP_HOSTNAME);
+        Config portConfig = configDao.getById(ConfigType.SMTP_PORT);
+        Config usernameConfig = configDao.getById(ConfigType.SMTP_USERNAME);
+        Config passwordConfig = configDao.getById(ConfigType.SMTP_PASSWORD);
+        Config fromConfig = configDao.getById(ConfigType.SMTP_FROM);
+        JsonObjectBuilder response = Json.createObjectBuilder();
+        if (System.getenv(Constants.SMTP_HOSTNAME_ENV) == null) {
+            if (hostnameConfig == null) {
+                response.addNull("hostname");
+            } else {
+                response.add("hostname", hostnameConfig.getValue());
+            }
+        }
+        if (System.getenv(Constants.SMTP_PORT_ENV) == null) {
+            if (portConfig == null) {
+                response.addNull("port");
+            } else {
+                response.add("port", Integer.valueOf(portConfig.getValue()));
+            }
+        }
+        if (System.getenv(Constants.SMTP_USERNAME_ENV) == null) {
+            if (usernameConfig == null) {
+                response.addNull("username");
+            } else {
+                response.add("username", usernameConfig.getValue());
+            }
+        }
+        if (System.getenv(Constants.SMTP_PASSWORD_ENV) == null) {
+            if (passwordConfig == null) {
+                response.addNull("password");
+            } else {
+                response.add("password", passwordConfig.getValue());
+            }
+        }
+        if (fromConfig == null) {
+            response.addNull("from");
+        } else {
+            response.add("from", fromConfig.getValue());
+        }
+
+        return Response.ok().entity(response.build()).build();
+    }
     
     /**
      * Configure the SMTP server.
@@ -119,9 +190,9 @@ public class AppResource extends BaseResource {
      * @apiGroup App
      * @apiParam {String} hostname SMTP hostname
      * @apiParam {Integer} port SMTP port
-     * @apiParam {String} from From address
      * @apiParam {String} username SMTP username
      * @apiParam {String} password SMTP password
+     * @apiParam {String} from From address
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) ValidationError Validation error
      * @apiPermission admin
@@ -129,18 +200,18 @@ public class AppResource extends BaseResource {
      *
      * @param hostname SMTP hostname
      * @param portStr SMTP port
-     * @param from From address
      * @param username SMTP username
      * @param password SMTP password
+     * @param from From address
      * @return Response
      */
     @POST
     @Path("config_smtp")
     public Response configSmtp(@FormParam("hostname") String hostname,
                                @FormParam("port") String portStr,
-                               @FormParam("from") String from,
                                @FormParam("username") String username,
-                               @FormParam("password") String password) {
+                               @FormParam("password") String password,
+                               @FormParam("from") String from) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -157,14 +228,14 @@ public class AppResource extends BaseResource {
         if (!Strings.isNullOrEmpty(portStr)) {
             configDao.update(ConfigType.SMTP_PORT, portStr);
         }
-        if (!Strings.isNullOrEmpty(from)) {
-            configDao.update(ConfigType.SMTP_FROM, from);
-        }
         if (!Strings.isNullOrEmpty(username)) {
             configDao.update(ConfigType.SMTP_USERNAME, username);
         }
         if (!Strings.isNullOrEmpty(password)) {
             configDao.update(ConfigType.SMTP_PASSWORD, password);
+        }
+        if (!Strings.isNullOrEmpty(from)) {
+            configDao.update(ConfigType.SMTP_FROM, from);
         }
 
         return Response.ok().build();

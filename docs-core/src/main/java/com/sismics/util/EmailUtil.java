@@ -73,15 +73,41 @@ public class EmailUtil {
             // Build email headers
             HtmlEmail email = new HtmlEmail();
             email.setCharset("UTF-8");
-            email.setHostName(ConfigUtil.getConfigStringValue(ConfigType.SMTP_HOSTNAME));
-            email.setSmtpPort(ConfigUtil.getConfigIntegerValue(ConfigType.SMTP_PORT));
             ConfigDao configDao = new ConfigDao();
-            Config usernameConfig = configDao.getById(ConfigType.SMTP_USERNAME);
-            Config passwordConfig = configDao.getById(ConfigType.SMTP_PASSWORD);
-            if (usernameConfig != null && passwordConfig != null) {
-                email.setAuthentication(usernameConfig.getValue(), passwordConfig.getValue());
+
+            // Hostname
+            String envHostname = System.getenv(Constants.SMTP_HOSTNAME_ENV);
+            if (envHostname == null) {
+                email.setHostName(ConfigUtil.getConfigStringValue(ConfigType.SMTP_HOSTNAME));
+            } else {
+                email.setHostName(envHostname);
             }
+
+            // Port
+            String envPort = System.getenv(Constants.SMTP_PORT_ENV);
+            if (envPort == null) {
+                email.setSmtpPort(ConfigUtil.getConfigIntegerValue(ConfigType.SMTP_PORT));
+            } else {
+                email.setSmtpPort(Integer.valueOf(envPort));
+            }
+
+            // Username and password
+            String envUsername = System.getenv(Constants.SMTP_USERNAME_ENV);
+            String envPassword = System.getenv(Constants.SMTP_PASSWORD_ENV);
+            if (envUsername == null || envPassword == null) {
+                Config usernameConfig = configDao.getById(ConfigType.SMTP_USERNAME);
+                Config passwordConfig = configDao.getById(ConfigType.SMTP_PASSWORD);
+                if (usernameConfig != null && passwordConfig != null) {
+                    email.setAuthentication(usernameConfig.getValue(), passwordConfig.getValue());
+                }
+            } else {
+                email.setAuthentication(envUsername, envPassword);
+            }
+
+            // Recipient
             email.addTo(recipientUser.getEmail(), recipientUser.getUsername());
+
+            // Application name
             Config themeConfig = configDao.getById(ConfigType.THEME);
             String appName = "Sismics Docs";
             if (themeConfig != null) {
@@ -90,8 +116,14 @@ public class EmailUtil {
                     appName = themeJson.getString("name", "Sismics Docs");
                 }
             }
+
+            // From email address (defined only by configuration value in the database)
             email.setFrom(ConfigUtil.getConfigStringValue(ConfigType.SMTP_FROM), appName);
+
+            // Locale (defined only by environment variable)
             java.util.Locale userLocale = LocaleUtil.getLocale(System.getenv(Constants.DEFAULT_LANGUAGE_ENV));
+
+            // Subject and content
             email.setSubject(appName + " - " + subject);
             email.setTextMsg(MessageUtil.getMessage(userLocale, "email.no_html.error"));
 

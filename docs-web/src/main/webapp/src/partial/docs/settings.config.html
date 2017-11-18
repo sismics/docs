@@ -76,19 +76,32 @@
 </form>
 
 <h1 translate="settings.config.title_smtp"></h1>
-<div uib-alert ng-class="'alert-success'" ng-show="smtpUpdated">{{ 'settings.config.smtp_updated' | translate }}</div>
-<form class="form-horizontal" name="smtpForm" ng-show="!smtpUpdated" novalidate>
-  <div class="form-group" ng-class="{ 'has-error': !smtpForm.hostname.$valid && smtpForm.$dirty }">
+<form class="form-horizontal" name="smtpForm" novalidate>
+  <div class="form-group" ng-show="smtp.hasOwnProperty('hostname')" ng-class="{ 'has-error': !smtpForm.hostname.$valid && smtpForm.$dirty }">
     <label class="col-sm-2 control-label" for="smtpHostname">{{ 'settings.config.smtp_hostname' | translate }}</label>
     <div class="col-sm-7">
       <input name="hostname" type="text" class="form-control" id="smtpHostname" ng-model="smtp.hostname" />
     </div>
   </div>
 
-  <div class="form-group" ng-class="{ 'has-error': !smtpForm.port.$valid && smtpForm.$dirty }">
+  <div class="form-group" ng-show="smtp.hasOwnProperty('port')" ng-class="{ 'has-error': !smtpForm.port.$valid && smtpForm.$dirty }">
     <label class="col-sm-2 control-label" for="smtpPort">{{ 'settings.config.smtp_port' | translate }}</label>
     <div class="col-sm-7">
       <input name="port" type="number" class="form-control" id="smtpPort" ng-model="smtp.port" />
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="smtp.hasOwnProperty('username')">
+    <label class="col-sm-2 control-label" for="smtpUsername">{{ 'settings.config.smtp_username' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="username" type="text" class="form-control" id="smtpUsername" ng-model="smtp.username" />
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="smtp.hasOwnProperty('password')">
+    <label class="col-sm-2 control-label" for="smtpPassword">{{ 'settings.config.smtp_password' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="password" type="password" class="form-control" id="smtpPassword" ng-model="smtp.password" />
     </div>
   </div>
 
@@ -99,20 +112,6 @@
     </div>
     <div class="col-sm-3">
       <span class="help-block" ng-show="smtpForm.from.$error.email && smtpForm.$dirty">{{ 'validation.email' | translate }}</span>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="col-sm-2 control-label" for="smtpUsername">{{ 'settings.config.smtp_username' | translate }}</label>
-    <div class="col-sm-7">
-      <input name="username" type="text" class="form-control" id="smtpUsername" ng-model="smtp.username" />
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="col-sm-2 control-label" for="smtpPassword">{{ 'settings.config.smtp_password' | translate }}</label>
-    <div class="col-sm-7">
-      <input name="password" type="password" class="form-control" id="smtpPassword" ng-model="smtp.password" />
     </div>
   </div>
 

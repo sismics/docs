@@ -163,14 +163,34 @@ public class TestAppResource extends BaseJerseyTest {
         // Login admin
         String adminToken = clientUtil.login("admin", "admin", false);
 
+        // Get SMTP configuration
+        JsonObject json = target().path("/app/config_smtp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertTrue(json.isNull("hostname"));
+        Assert.assertTrue(json.isNull("port"));
+        Assert.assertTrue(json.isNull("username"));
+        Assert.assertTrue(json.isNull("password"));
+        Assert.assertTrue(json.isNull("from"));
+
         // Change SMTP configuration
         target().path("/app/config_smtp").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()
                         .param("hostname", "smtp.sismics.com")
                         .param("port", "1234")
-                        .param("from", "contact@sismics.com")
                         .param("username", "sismics")
+                        .param("from", "contact@sismics.com")
                 ), JsonObject.class);
+
+        // Get SMTP configuration
+        json = target().path("/app/config_smtp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertEquals("smtp.sismics.com", json.getString("hostname"));
+        Assert.assertEquals(1234, json.getInt("port"));
+        Assert.assertEquals("sismics", json.getString("username"));
+        Assert.assertTrue(json.isNull("password"));
+        Assert.assertEquals("contact@sismics.com", json.getString("from"));
     }
 }
