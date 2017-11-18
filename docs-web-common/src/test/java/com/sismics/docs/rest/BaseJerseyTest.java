@@ -77,10 +77,6 @@ public abstract class BaseJerseyTest extends JerseyTest {
 
         clientUtil = new ClientUtil(target());
 
-        wiser = new Wiser();
-        wiser.setPort(2500);
-        wiser.start();
-
         httpServer = HttpServer.createSimpleServer(getClass().getResource("/").getFile(), "localhost", getPort());
         WebappContext context = new WebappContext("GrizzlyContext", "/docs");
         context.addFilter("requestContextFilter", RequestContextFilter.class)
@@ -98,6 +94,10 @@ public abstract class BaseJerseyTest extends JerseyTest {
         reg.setAsyncSupported(true);
         context.deploy(httpServer);
         httpServer.start();
+
+        wiser = new Wiser();
+        wiser.setPort(2500);
+        wiser.start();
     }
 
     /**
@@ -124,11 +124,11 @@ public abstract class BaseJerseyTest extends JerseyTest {
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        if (httpServer != null) {
-            httpServer.shutdownNow();
-        }
         if (wiser != null) {
             wiser.stop();
+        }
+        if (httpServer != null) {
+            httpServer.shutdownNow();
         }
     }
 }
