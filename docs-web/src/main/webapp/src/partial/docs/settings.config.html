@@ -80,28 +80,28 @@
   <div class="form-group" ng-show="smtp.hasOwnProperty('hostname')" ng-class="{ 'has-error': !smtpForm.hostname.$valid && smtpForm.$dirty }">
     <label class="col-sm-2 control-label" for="smtpHostname">{{ 'settings.config.smtp_hostname' | translate }}</label>
     <div class="col-sm-7">
-      <input name="hostname" type="text" class="form-control" id="smtpHostname" ng-model="smtp.hostname" />
+      <input name="hostname" type="text" ng-disabled="!smtp.hasOwnProperty('hostname')" class="form-control" id="smtpHostname" ng-model="smtp.hostname" />
     </div>
   </div>
 
   <div class="form-group" ng-show="smtp.hasOwnProperty('port')" ng-class="{ 'has-error': !smtpForm.port.$valid && smtpForm.$dirty }">
     <label class="col-sm-2 control-label" for="smtpPort">{{ 'settings.config.smtp_port' | translate }}</label>
     <div class="col-sm-7">
-      <input name="port" type="number" class="form-control" id="smtpPort" ng-model="smtp.port" />
+      <input name="port" type="number" ng-disabled="!smtp.hasOwnProperty('port')" class="form-control" id="smtpPort" ng-model="smtp.port" />
     </div>
   </div>
 
   <div class="form-group" ng-show="smtp.hasOwnProperty('username')">
     <label class="col-sm-2 control-label" for="smtpUsername">{{ 'settings.config.smtp_username' | translate }}</label>
     <div class="col-sm-7">
-      <input name="username" type="text" class="form-control" id="smtpUsername" ng-model="smtp.username" />
+      <input name="username" type="text" ng-disabled="!smtp.hasOwnProperty('username')" class="form-control" id="smtpUsername" ng-model="smtp.username" />
     </div>
   </div>
 
   <div class="form-group" ng-show="smtp.hasOwnProperty('password')">
     <label class="col-sm-2 control-label" for="smtpPassword">{{ 'settings.config.smtp_password' | translate }}</label>
     <div class="col-sm-7">
-      <input name="password" type="password" class="form-control" id="smtpPassword" ng-model="smtp.password" />
+      <input name="password" type="password" ng-disabled="!smtp.hasOwnProperty('password')" class="form-control" id="smtpPassword" ng-model="smtp.password" />
     </div>
   </div>
 
