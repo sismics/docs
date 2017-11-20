@@ -63,6 +63,8 @@ public class AppResource extends BaseResource {
      * @apiSuccess {Boolean} guest_login True if guest login is enabled
      * @apiSuccess {String} total_memory Allocated JVM memory (in bytes)
      * @apiSuccess {String} free_memory Free JVM memory (in bytes)
+     * @apiSuccess {String} global_storage_current Global storage currently used (in bytes)
+     * @apiSuccess {String} global_storage_quota Maximum global storage (in bytes)
      * @apiPermission none
      * @apiVersion 1.5.0
      *
@@ -74,14 +76,24 @@ public class AppResource extends BaseResource {
         String currentVersion = configBundle.getString("api.current_version");
         String minVersion = configBundle.getString("api.min_version");
         Boolean guestLogin = ConfigUtil.getConfigBooleanValue(ConfigType.GUEST_LOGIN);
+        UserDao userDao = new UserDao();
+        String globalQuotaStr = System.getenv(Constants.GLOBAL_QUOTA_ENV);
+        long globalQuota = 0;
+        if (!Strings.isNullOrEmpty(globalQuotaStr)) {
+            globalQuota = Long.valueOf(globalQuotaStr);
+        }
 
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("current_version", currentVersion.replace("-SNAPSHOT", ""))
                 .add("min_version", minVersion)
                 .add("guest_login", guestLogin)
                 .add("total_memory", Runtime.getRuntime().totalMemory())
-                .add("free_memory", Runtime.getRuntime().freeMemory());
-        
+                .add("free_memory", Runtime.getRuntime().freeMemory())
+                .add("global_storage_current", userDao.getGlobalStorageCurrent());
+        if (globalQuota > 0) {
+            response.add("global_storage_quota", globalQuota);
+        }
+
         return Response.ok().entity(response.build()).build();
     }
 

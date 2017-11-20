@@ -35,7 +35,8 @@
     "error_info": "{{ count }} new error{{ count > 1 ? 's' : '' }}",
     "logged_as": "Logged in as {{ username }}",
     "nav_settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "global_quota_warning": "<strong>Warning!</strong> Global quota almost reached at {{ current | number: 0 }}MB ({{ percent | number: 1 }}%) used on {{ total | number: 0 }}MB"
   },
   "document": {
     "search_simple": "Simple search",

@@ -77,7 +77,7 @@ angular.module('docs').controller('DocumentDefault', function($scope, $rootScope
         })
         .error(function (data) {
           newfile.status = $translate.instant('document.default.upload_error');
-          if (data.type == 'QuotaReached') {
+          if (data.type === 'QuotaReached') {
             newfile.status += ' - ' + $translate.instant('document.default.upload_error_quota');
           }
         });

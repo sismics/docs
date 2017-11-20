@@ -1,19 +1,5 @@
 package com.sismics.docs.core.dao.jpa;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
-import org.mindrot.jbcrypt.BCrypt;
-
 import com.google.common.base.Joiner;
 import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
@@ -24,6 +10,13 @@ import com.sismics.docs.core.util.jpa.QueryParam;
 import com.sismics.docs.core.util.jpa.QueryUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
+import org.mindrot.jbcrypt.BCrypt;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * User DAO.
@@ -59,7 +52,7 @@ public class UserDao {
      * @param user User to create
      * @param userId User ID
      * @return User ID
-     * @throws Exception
+     * @throws Exception e
      */
     public String create(User user, String userId) throws Exception {
         // Create the user UUID
@@ -116,9 +109,8 @@ public class UserDao {
      * Updates a user's quota.
      * 
      * @param user User to update
-     * @return Updated user
      */
-    public User updateQuota(User user) {
+    public void updateQuota(User user) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         
         // Get the user
@@ -128,8 +120,6 @@ public class UserDao {
 
         // Update the user
         userFromDb.setStorageQuota(user.getStorageQuota());
-        
-        return user;
     }
     
     /**
@@ -297,5 +287,16 @@ public class UserDao {
             userDtoList.add(userDto);
         }
         return userDtoList;
+    }
+
+    /**
+     * Returns the global storage used by all users.
+     *
+     * @return Current global storage
+     */
+    public long getGlobalStorageCurrent() {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query query = em.createNativeQuery("select sum(u.USE_STORAGECURRENT_N) from T_USER u where u.USE_DELETEDATE_D is null");
+        return ((Number) query.getSingleResult()).longValue();
     }
 }

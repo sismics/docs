@@ -3,6 +3,7 @@ package com.sismics.docs.rest.resource;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
+import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
@@ -14,7 +15,10 @@ import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
-import com.sismics.docs.core.util.*;
+import com.sismics.docs.core.util.DirectoryUtil;
+import com.sismics.docs.core.util.EncryptionUtil;
+import com.sismics.docs.core.util.FileUtil;
+import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
@@ -34,7 +38,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -130,11 +136,21 @@ public class FileResource extends BaseResource {
             throw new ServerException("ErrorGuessMime", "Error guessing mime type", e);
         }
 
-        // Validate quota
+        // Validate user quota
         if (user.getStorageCurrent() + fileSize > user.getStorageQuota()) {
             throw new ClientException("QuotaReached", "Quota limit reached");
         }
-        
+
+        // Validate global quota
+        String globalStorageQuotaStr = System.getenv(Constants.GLOBAL_QUOTA_ENV);
+        if (!Strings.isNullOrEmpty(globalStorageQuotaStr)) {
+            long globalStorageQuota = Long.valueOf(globalStorageQuotaStr);
+            long globalStorageCurrent = userDao.getGlobalStorageCurrent();
+            if (globalStorageCurrent + fileSize > globalStorageQuota) {
+                throw new ClientException("QuotaReached", "Global quota limit reached");
+            }
+        }
+
         try {
             // Get files of this document
             FileDao fileDao = new FileDao();
