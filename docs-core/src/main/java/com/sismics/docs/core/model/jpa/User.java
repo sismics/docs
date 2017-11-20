@@ -1,13 +1,12 @@
 package com.sismics.docs.core.model.jpa;
 
-import java.util.Date;
+import com.google.common.base.MoreObjects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import com.google.common.base.MoreObjects;
+import java.util.Date;
 
 /**
  * User entity.
@@ -84,6 +83,12 @@ public class User implements Loggable {
     @Column(name = "USE_DELETEDATE_D")
     private Date deleteDate;
     
+    /**
+     * Disable date.
+     */
+    @Column(name = "USE_DISABLEDATE_D")
+    private Date disableDate;
+
     public String getId() {
         return id;
     }
@@ -147,7 +152,16 @@ public class User implements Loggable {
         this.deleteDate = deleteDate;
         return this;
     }
-    
+
+    public Date getDisableDate() {
+        return disableDate;
+    }
+
+    public User setDisableDate(Date disableDate) {
+        this.disableDate = disableDate;
+        return this;
+    }
+
     public String getPrivateKey() {
         return privateKey;
     }

@@ -10,6 +10,7 @@ import com.sismics.docs.core.util.jpa.QueryParam;
 import com.sismics.docs.core.util.jpa.QueryUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
+import org.joda.time.DateTime;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.persistence.EntityManager;
@@ -37,7 +38,7 @@ public class UserDao {
         q.setParameter("username", username);
         try {
             User user = (User) q.getSingleResult();
-            if (!BCrypt.checkpw(password, user.getPassword())) {
+            if (!BCrypt.checkpw(password, user.getPassword()) || user.getDisableDate() != null) {
                 return null;
             }
             return user;
@@ -98,7 +99,8 @@ public class UserDao {
         userFromDb.setStorageQuota(user.getStorageQuota());
         userFromDb.setStorageCurrent(user.getStorageCurrent());
         userFromDb.setTotpKey(user.getTotpKey());
-        
+        userFromDb.setDisableDate(user.getDisableDate());
+
         // Create audit log
         AuditLogUtil.create(userFromDb, AuditLogType.UPDATE, userId);
         
@@ -246,7 +248,7 @@ public class UserDao {
         Map<String, Object> parameterMap = new HashMap<>();
         List<String> criteriaList = new ArrayList<>();
         
-        StringBuilder sb = new StringBuilder("select u.USE_ID_C as c0, u.USE_USERNAME_C as c1, u.USE_EMAIL_C as c2, u.USE_CREATEDATE_D as c3, u.USE_STORAGECURRENT_N as c4, u.USE_STORAGEQUOTA_N as c5, u.USE_TOTPKEY_C as c6");
+        StringBuilder sb = new StringBuilder("select u.USE_ID_C as c0, u.USE_USERNAME_C as c1, u.USE_EMAIL_C as c2, u.USE_CREATEDATE_D as c3, u.USE_STORAGECURRENT_N as c4, u.USE_STORAGEQUOTA_N as c5, u.USE_TOTPKEY_C as c6, u.USE_DISABLEDATE_D as c7");
         sb.append(" from T_USER u ");
         
         // Add search criterias
@@ -283,7 +285,10 @@ public class UserDao {
             userDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
             userDto.setStorageCurrent(((Number) o[i++]).longValue());
             userDto.setStorageQuota(((Number) o[i++]).longValue());
-            userDto.setTotpKey((String) o[i]);
+            userDto.setTotpKey((String) o[i++]);
+            if (o[i] != null) {
+                userDto.setDisableTimestamp(((Timestamp) o[i]).getTime());
+            }
             userDtoList.add(userDto);
         }
         return userDtoList;
@@ -297,6 +302,18 @@ public class UserDao {
     public long getGlobalStorageCurrent() {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query query = em.createNativeQuery("select sum(u.USE_STORAGECURRENT_N) from T_USER u where u.USE_DELETEDATE_D is null");
+        return ((Number) query.getSingleResult()).longValue();
+    }
+
+    /**
+     * Returns the number of active users.
+     *
+     * @return Number of active users
+     */
+    public long getActiveUserCount() {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query query = em.createNativeQuery("select count(u.USE_ID_C) from T_USER u where u.USE_DELETEDATE_D is null and (u.USE_DISABLEDATE_D is null or u.USE_DISABLEDATE_D > :date)");
+        query.setParameter("date", DateTime.now().minusMonths(1).toDate());
         return ((Number) query.getSingleResult()).longValue();
     }
 }

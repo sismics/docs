@@ -245,7 +245,8 @@
         "storage_quota": "Storage quota",
         "storage_quota_placeholder": "Storage quota (in MB)",
         "password": "Password",
-        "password_confirm": "Password (confirm)"
+        "password_confirm": "Password (confirm)",
+        "disabled": "Disabled user"
       }
     },
     "security": {

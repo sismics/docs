@@ -57,6 +57,7 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertNotNull(user.getJsonNumber("storage_current"));
         Assert.assertNotNull(user.getJsonNumber("create_date"));
         Assert.assertFalse(user.getBoolean("totp_enabled"));
+        Assert.assertFalse(user.getBoolean("disabled"));
 
         // Create a user KO (login length validation)
         Response response = target().path("/user").request()
@@ -262,7 +263,7 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals("newadminemail@docs.com", json.getString("email"));
 
         // User admin update admin_user1 information
-        json = target().path("/user").request()
+        json = target().path("/user/admin_user1").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()
                         .param("email", " alice2@docs.com ")), JsonObject.class);
@@ -275,6 +276,36 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
         Assert.assertEquals("ForbiddenError", json.getString("type"));
+
+        // User admin disable admin_user1
+        json = target().path("/user/admin_user1").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("disabled", "true")), JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
+
+        // User admin_user1 tries to authenticate
+        response = target().path("/user/login").request()
+                .post(Entity.form(new Form()
+                        .param("username", "admin_user1")
+                        .param("password", "12345678")
+                        .param("remember", "false")));
+        Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
+
+        // User admin enable admin_user1
+        json = target().path("/user/admin_user1").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("disabled", "false")), JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
+
+        // User admin_user1 tries to authenticate
+        response = target().path("/user/login").request()
+                .post(Entity.form(new Form()
+                        .param("username", "admin_user1")
+                        .param("password", "12345678")
+                        .param("remember", "false")));
+        Assert.assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
         // User admin deletes user admin_user1
         json = target().path("/user/admin_user1").request()

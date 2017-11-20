@@ -27,6 +27,11 @@ public class UserDto {
     private Long createTimestamp;
 
     /**
+     * Disable date of this user.
+     */
+    private Long disableTimestamp;
+
+    /**
      * Storage quota.
      */
     private Long storageQuota;
@@ -72,7 +77,16 @@ public class UserDto {
     public void setCreateTimestamp(Long createTimestamp) {
         this.createTimestamp = createTimestamp;
     }
-    
+
+    public Long getDisableTimestamp() {
+        return disableTimestamp;
+    }
+
+    public UserDto setDisableTimestamp(Long disableTimestamp) {
+        this.disableTimestamp = disableTimestamp;
+        return this;
+    }
+
     public Long getStorageQuota() {
         return storageQuota;
     }

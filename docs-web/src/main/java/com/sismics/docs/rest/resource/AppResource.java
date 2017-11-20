@@ -63,6 +63,7 @@ public class AppResource extends BaseResource {
      * @apiSuccess {Boolean} guest_login True if guest login is enabled
      * @apiSuccess {String} total_memory Allocated JVM memory (in bytes)
      * @apiSuccess {String} free_memory Free JVM memory (in bytes)
+     * @apiSuccess {String} active_user_count Number of active users
      * @apiSuccess {String} global_storage_current Global storage currently used (in bytes)
      * @apiSuccess {String} global_storage_quota Maximum global storage (in bytes)
      * @apiPermission none
@@ -89,6 +90,7 @@ public class AppResource extends BaseResource {
                 .add("guest_login", guestLogin)
                 .add("total_memory", Runtime.getRuntime().totalMemory())
                 .add("free_memory", Runtime.getRuntime().freeMemory())
+                .add("active_user_count", userDao.getActiveUserCount())
                 .add("global_storage_current", userDao.getGlobalStorageCurrent());
         if (globalQuota > 0) {
             response.add("global_storage_quota", globalQuota);

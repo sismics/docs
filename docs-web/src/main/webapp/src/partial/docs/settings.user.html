@@ -16,7 +16,8 @@
         <tr ng-repeat="user in users | orderBy: 'username'" ng-click="editUser(user)"
             ng-class="{ active: $stateParams.username == user.username }">
           <td>
-            {{ user.username }}
+            <span ng-if="!user.disabled">{{ user.username }}</span>
+            <s ng-if="user.disabled">{{ user.username }}</s>
             <span class="glyphicon glyphicon-lock" ng-show="user.totp_enabled" uib-tooltip="{{ 'settings.user.totp_enabled' | translate }}"></span>
           </td>
           <td>{{ user.create_date | date: dateFormat }}</td>

@@ -186,6 +186,7 @@ public class UserResource extends BaseResource {
      * @apiParam {String{8..50}} password Password
      * @apiParam {String{1..100}} email E-mail
      * @apiParam {Number} storage_quota Storage quota (in bytes)
+     * @apiParam {Boolean} disabled Disabled status
      * @apiSuccess {String} status Status OK
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) ValidationError Validation error
@@ -204,7 +205,8 @@ public class UserResource extends BaseResource {
         @PathParam("username") String username,
         @FormParam("password") String password,
         @FormParam("email") String email,
-        @FormParam("storage_quota") String storageQuotaStr) {
+        @FormParam("storage_quota") String storageQuotaStr,
+        @FormParam("disabled") Boolean disabled) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -218,7 +220,7 @@ public class UserResource extends BaseResource {
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
         if (user == null) {
-            throw new ClientException("UserNotFound", "The user doesn't exist");
+            throw new ClientException("UserNotFound", "The user does not exist");
         }
 
         // Update the user
@@ -228,6 +230,22 @@ public class UserResource extends BaseResource {
         if (StringUtils.isNotBlank(storageQuotaStr)) {
             Long storageQuota = ValidationUtil.validateLong(storageQuotaStr, "storage_quota");
             user.setStorageQuota(storageQuota);
+        }
+        if (disabled != null) {
+            // Cannot disable the admin user or the guest user
+            RoleBaseFunctionDao userBaseFuction = new RoleBaseFunctionDao();
+            Set<String> baseFunctionSet = userBaseFuction.findByRoleId(Sets.newHashSet(user.getRoleId()));
+            if (Constants.GUEST_USER_ID.equals(username) || baseFunctionSet.contains(BaseFunction.ADMIN.name())) {
+                disabled = false;
+            }
+
+            if (disabled && user.getDisableDate() == null) {
+                // Recording the disabled date
+                user.setDisableDate(new Date());
+            } else if (!disabled && user.getDisableDate() != null) {
+                // Emptying the disabled date
+                user.setDisableDate(null);
+            }
         }
         user = userDao.update(user, principal.getId());
         
@@ -631,6 +649,7 @@ public class UserResource extends BaseResource {
      * @apiSuccess {Number} storage_quota Storage quota (in bytes)
      * @apiSuccess {Number} storage_current Quota used (in bytes)
      * @apiSuccess {String[]} groups Groups
+     * @apiSuccess {Boolean} disabled True if the user is disabled
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) UserNotFound The user does not exist
      * @apiPermission user
@@ -668,7 +687,8 @@ public class UserResource extends BaseResource {
                 .add("groups", groups)
                 .add("email", user.getEmail())
                 .add("storage_quota", user.getStorageQuota())
-                .add("storage_current", user.getStorageCurrent());
+                .add("storage_current", user.getStorageCurrent())
+                .add("disabled", user.getDisableDate() != null);
         return Response.ok().entity(response.build()).build();
     }
     
@@ -688,6 +708,7 @@ public class UserResource extends BaseResource {
      * @apiSuccess {Number} users.storage_quota Storage quota (in bytes)
      * @apiSuccess {Number} users.storage_current Quota used (in bytes)
      * @apiSuccess {Number} users.create_date Create date (timestamp)
+     * @apiSuccess {Number} users.disabled True if the user is disabled
      * @apiError (client) ForbiddenError Access denied
      * @apiPermission user
      * @apiVersion 1.5.0
@@ -730,7 +751,8 @@ public class UserResource extends BaseResource {
                     .add("email", userDto.getEmail())
                     .add("storage_quota", userDto.getStorageQuota())
                     .add("storage_current", userDto.getStorageCurrent())
-                    .add("create_date", userDto.getCreateTimestamp()));
+                    .add("create_date", userDto.getCreateTimestamp())
+                    .add("disabled", userDto.getDisableTimestamp() != null));
         }
         
         JsonObjectBuilder response = Json.createObjectBuilder()
