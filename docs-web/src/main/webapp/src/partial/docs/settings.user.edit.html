@@ -102,7 +102,7 @@
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editUserForm.$valid">
-          <span class="glyphicon glyphicon-pencil"></span> {{ isEdit() ? 'edit' : 'add' | translate }}
+          <span class="glyphicon glyphicon-pencil"></span> {{ isEdit() ? 'save' : 'add' | translate }}
         </button>
         <button type="button" class="btn btn-danger" ng-click="remove()" ng-show="isEdit() && user.username != 'admin' && user.username != 'guest'">
           <span class="glyphicon glyphicon-trash"></span> {{ 'delete' | translate }}
