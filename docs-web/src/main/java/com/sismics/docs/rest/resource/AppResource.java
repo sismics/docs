@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.ConfigDao;
+import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
@@ -63,6 +64,7 @@ public class AppResource extends BaseResource {
      * @apiSuccess {Boolean} guest_login True if guest login is enabled
      * @apiSuccess {String} total_memory Allocated JVM memory (in bytes)
      * @apiSuccess {String} free_memory Free JVM memory (in bytes)
+     * @apiSuccess {String} document_count Number of documents
      * @apiSuccess {String} active_user_count Number of active users
      * @apiSuccess {String} global_storage_current Global storage currently used (in bytes)
      * @apiSuccess {String} global_storage_quota Maximum global storage (in bytes)
@@ -78,6 +80,7 @@ public class AppResource extends BaseResource {
         String minVersion = configBundle.getString("api.min_version");
         Boolean guestLogin = ConfigUtil.getConfigBooleanValue(ConfigType.GUEST_LOGIN);
         UserDao userDao = new UserDao();
+        DocumentDao documentDao = new DocumentDao();
         String globalQuotaStr = System.getenv(Constants.GLOBAL_QUOTA_ENV);
         long globalQuota = 0;
         if (!Strings.isNullOrEmpty(globalQuotaStr)) {
@@ -90,6 +93,7 @@ public class AppResource extends BaseResource {
                 .add("guest_login", guestLogin)
                 .add("total_memory", Runtime.getRuntime().totalMemory())
                 .add("free_memory", Runtime.getRuntime().freeMemory())
+                .add("document_count", documentDao.getDocumentCount())
                 .add("active_user_count", userDao.getActiveUserCount())
                 .add("global_storage_current", userDao.getGlobalStorageCurrent());
         if (globalQuota > 0) {
