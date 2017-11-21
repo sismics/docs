@@ -45,7 +45,7 @@ angular.module('docs').controller('Login', function(Restangular, $scope, $rootSc
   $scope.openPasswordLost = function () {
     $uibModal.open({
       templateUrl: 'partial/docs/passwordlost.html',
-      controller: 'LoginModalPasswordLost'
+      controller: 'ModalPasswordLost'
     }).result.then(function (username) {
       if (username === null) {
         return;
