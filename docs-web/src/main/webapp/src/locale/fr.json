@@ -9,7 +9,23 @@
     "submit": "Connexion",
     "login_as_guest": "Connexion en invité",
     "login_failed_title": "Echec de connexion",
-    "login_failed_message": "Nom d'utilisateur ou mot de passe invalide"
+    "login_failed_message": "Nom d'utilisateur ou mot de passe invalide",
+    "password_lost_btn": "Mot de passe perdu ?",
+    "password_lost_sent_title": "Email de réinitialisation de mot de passe envoyé",
+    "password_lost_sent_message": "Un email a été envoyé à <strong>{{ username }}</strong> pour réinitialiser votre mot de passe",
+    "password_lost_error_title": "Erreur lors de la réinitialisation du mot de passe",
+    "password_lost_error_message": "Impossible d'envoyer un email de changement de mot de passe, veuillez contacter votre administrateur pour une réinitialisation manuelle"
+  },
+  "passwordlost": {
+    "title": "Mot de passe perdu",
+    "message": "Veuillez entrer votre nom d'utilisateur pour recevoir un lien de réinitialisation de mot de passe. Si vous ne vous souvenez pas de votre nom d'utilisateur, veuillez contacter votre administrateur",
+    "submit": "Réinitialiser mon mot de passe"
+  },
+  "passwordreset": {
+    "message": "Veuillez entrer un nouveau mot de passe",
+    "submit": "Changer mon mot de passe",
+    "error_title": "Erreur lors du changement de mot de passe",
+    "error_message": "Votre demande de changement de mot de passe a expiré, veuillez recommencer depuis la page de connexion"
   },
   "index": {
     "toggle_navigation": "Afficher/cacher la navigation",
@@ -19,7 +35,8 @@
     "error_info": "{{ count }} nouvelle{{ count > 1 ? 's' : '' }} erreur{{ count > 1 ? 's' : '' }}",
     "logged_as": "Connecté en tant que {{ username }}",
     "nav_settings": "Paramètres",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "global_quota_warning": "<strong>Attention !</strong> Quota global presque atteint à {{ current | number: 0 }}Mo ({{ percent | number: 1 }}%) utilisé sur {{ total | number: 0 }}Mo"
   },
   "document": {
     "search_simple": "Recherche simple",
@@ -29,7 +46,7 @@
     "search_before_date": "Avant cette date",
     "search_after_date": "Après cette date",
     "search_tags": "Tags",
-    "search_clear": "Réinitialiser",
+    "search_clear": "Vider",
     "any_language": "Toutes les langues",
     "add_document": "Ajouter un document",
     "tags": "Tags",
@@ -129,7 +146,8 @@
       "add_new_document": "Ajouter à un nouveau document",
       "latest_activity": "Activité récente",
       "footer_sismics": "Conçu avec <span class=\"glyphicon glyphicon-heart\"></span> par <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
-      "api_documentation": "Documentation API"
+      "api_documentation": "Documentation API",
+      "feedback": "Donnez-nous votre avis"
     },
     "pdf": {
       "export_title": "Exporter en PDF",
@@ -216,6 +234,7 @@
       "add_user": "Ajouter un utilisateur",
       "username": "Nom d'utilisateur",
       "create_date": "Date de création",
+      "totp_enabled": "Authentification en deux étapes activée sur ce compte",
       "edit": {
         "delete_user_title": "Supprimer un utilisateur",
         "delete_user_message": "Etes-vous sûr de vouloir supprimer cet utilisateur ? Tous les documents, fichiers et tags associés seront supprimés",
@@ -227,7 +246,8 @@
         "storage_quota": "Quota de stockage",
         "storage_quota_placeholder": "Quota de stockage (en Mo)",
         "password": "Mot de passe",
-        "password_confirm": "Mot de passe (confirmation)"
+        "password_confirm": "Mot de passe (confirmation)",
+        "disabled": "Utilisateur désactivé"
       }
     },
     "security": {
@@ -284,7 +304,14 @@
       "custom_css_placeholder": "CSS personnalisée ajoutée après la feuille de style principale",
       "logo": "Logo (Taille carrée)",
       "background_image": "Image de fond",
-      "uploading_image": "Envoi de l'image..."
+      "uploading_image": "Envoi de l'image...",
+      "title_smtp": "<small>Configuration</small> email",
+      "smtp_hostname": "Hôte SMTP",
+      "smtp_port": "Port SMTP",
+      "smtp_from": "Email d'envoi",
+      "smtp_username": "Nom d'utilisateur SMTP",
+      "smtp_password": "Mot de passe SMTP",
+      "smtp_updated": "Configuration SMTP mise à jour avec succès"
     },
     "log": {
       "title": "<small>Logs</small> serveur",
@@ -312,6 +339,12 @@
       "order": "Ordre",
       "new_entry": "Nouvelle entrée"
     }
+  },
+  "feedback": {
+    "title": "Donnez-nous votre avis",
+    "message": "Vous avez des suggestions ou des questions à propos de Sismics Docs ? Nous vous écoutons !",
+    "sent_title": "Avis envoyé",
+    "sent_message": "Merci pour votre avis ! Cela nous aidera à améliorer Sismics Docs."
   },
   "app_share": {
     "main": "Demandez un lien de partage d'un document pour y accéder",
