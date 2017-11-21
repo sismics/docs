@@ -312,8 +312,11 @@ public class UserDao {
      */
     public long getActiveUserCount() {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query query = em.createNativeQuery("select count(u.USE_ID_C) from T_USER u where u.USE_DELETEDATE_D is null and (u.USE_DISABLEDATE_D is null or u.USE_DISABLEDATE_D > :date)");
-        query.setParameter("date", DateTime.now().minusMonths(1).toDate());
+        Query query = em.createNativeQuery("select count(u.USE_ID_C) from T_USER u where u.USE_DELETEDATE_D is null and (u.USE_DISABLEDATE_D is null or u.USE_DISABLEDATE_D >= :fromDate and u.USE_DISABLEDATE_D < :toDate)");
+        DateTime fromDate = DateTime.now().minusMonths(1).dayOfMonth().withMinimumValue().withTimeAtStartOfDay();
+        DateTime toDate = fromDate.plusMonths(1);
+        query.setParameter("fromDate", fromDate.toDate());
+        query.setParameter("toDate", toDate.toDate());
         return ((Number) query.getSingleResult()).longValue();
     }
 }
