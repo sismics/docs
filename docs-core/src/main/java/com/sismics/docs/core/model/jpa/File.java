@@ -171,7 +171,7 @@ public class File implements Loggable {
     @Override
     public String toMessage() {
         // Attached document ID and name concatenated
-        return documentId + name;
+        return (documentId == null ? Strings.repeat(" ", 36) : documentId) + name;
     }
 
     /**

@@ -20,8 +20,8 @@
             <span ng-switch-when="Document">
               <a ng-href="#/document/view/{{ log.target }}">{{ log.message }}</a>
             </span>
-            <span ng-switch-when="File">
-              <a ng-if="log.message" ng-href="#/document/view/{{ log.message | limitTo: 36 }}/content/file/{{ log.target }}">
+            <span ng-switch-when="File" ng-init="hasDocument = log.message.substring(0, 36).trim().length > 0">
+              <a ng-if="log.message" ng-href="#/document/{{ hasDocument ? 'view/' + log.message.substring(0, 36) + '/content/' : '' }}file/{{ log.target }}">
                 <span ng-if="log.message.length > 36">{{ log.message | limitTo: 1000 : 36 }}</span>
                 <span ng-if="log.message.length == 36">{{ 'open' | translate }}</span>
               </a>

@@ -159,7 +159,7 @@
             next-text="{{ 'pagination.next' | translate }}"
             first-text="{{ 'pagination.first' | translate }}"
             last-text="{{ 'pagination.last' | translate }}"
-            total-items="totalDocuments" items-per-page="limit" max-size="5" ng-model="$parent.currentPage"></ul>
+            total-items="totalDocuments" items-per-page="$parent.limit" max-size="5" ng-model="$parent.currentPage"></ul>
         <label class="sr-only" for="pagesizeSelect">{{ 'document.page_size' | translate }}</label>
         <select ng-model="limit" id="pagesizeSelect" class="form-control">
           <option value="10">{{ 'document.page_size_10' | translate }}</option>
