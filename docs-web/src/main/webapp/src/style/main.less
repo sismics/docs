@@ -310,6 +310,35 @@ input[readonly].share-link {
   padding-bottom: 0;
 }
 
+// Feedback
+.feedback {
+  display: block;
+  position: fixed;
+  right: 0;
+  top: 200px;
+  transform: rotate(-90deg) translateY(-100%);
+  background: #ccc;
+  padding: 8px;
+  color: #fff;
+  font-weight: bold;
+  transform-origin: 100% 0;
+
+  &:hover {
+    background: #aaa;
+    text-decoration: none;
+    color: #fff;
+  }
+
+  &:active {
+    background: #444;
+  }
+
+  &:active, &:focus {
+    text-decoration: none;
+    color: #fff;
+  }
+}
+
 // Vertical alignment
 .vertical-center {
   min-height: 100vh;

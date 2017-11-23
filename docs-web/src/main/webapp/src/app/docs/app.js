@@ -13,7 +13,7 @@ angular.module('docs',
 /**
  * Configuring modules.
  */
-.config(function($locationProvider, $urlRouterProvider, $stateProvider, $httpProvider,
+.config(function($locationProvider, $urlRouterProvider, $stateProvider, $httpProvider, $qProvider,
                  RestangularProvider, $translateProvider, timeAgoSettings, tmhDynamicLocaleProvider) {
   $locationProvider.hashPrefix('');
 
@@ -25,6 +25,15 @@ angular.module('docs',
         'page': {
           templateUrl: 'partial/docs/main.html',
           controller: 'Main'
+        }
+      }
+    })
+    .state('passwordreset', {
+      url: '/passwordreset/:key',
+      views: {
+        'page': {
+          templateUrl: 'partial/docs/passwordreset.html',
+          controller: 'PasswordReset'
         }
       }
     })
@@ -408,6 +417,9 @@ angular.module('docs',
     
     return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
   }];
+
+  // Silence unhandled rejections
+  $qProvider.errorOnUnhandledRejections(false);
 })
 
 /**

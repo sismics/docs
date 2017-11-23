@@ -3,6 +3,7 @@ package com.sismics.docs.rest.resource;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
+import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
@@ -135,11 +136,21 @@ public class FileResource extends BaseResource {
             throw new ServerException("ErrorGuessMime", "Error guessing mime type", e);
         }
 
-        // Validate quota
+        // Validate user quota
         if (user.getStorageCurrent() + fileSize > user.getStorageQuota()) {
             throw new ClientException("QuotaReached", "Quota limit reached");
         }
-        
+
+        // Validate global quota
+        String globalStorageQuotaStr = System.getenv(Constants.GLOBAL_QUOTA_ENV);
+        if (!Strings.isNullOrEmpty(globalStorageQuotaStr)) {
+            long globalStorageQuota = Long.valueOf(globalStorageQuotaStr);
+            long globalStorageCurrent = userDao.getGlobalStorageCurrent();
+            if (globalStorageCurrent + fileSize > globalStorageQuota) {
+                throw new ClientException("QuotaReached", "Global quota limit reached");
+            }
+        }
+
         try {
             // Get files of this document
             FileDao fileDao = new FileDao();

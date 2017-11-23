@@ -15,7 +15,7 @@ angular.module('share').controller('FileView', function($uibModal, $state, $stat
   modal.closed = false;
   modal.result.then(function() {
     modal.closed = true;
-  },function() {
+  }, function() {
     modal.closed = true;
     $timeout(function () {
       // After all router transitions are passed,

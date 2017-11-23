@@ -48,7 +48,9 @@
     <script src="app/docs/app.js" type="text/javascript"></script>
     <script src="app/docs/controller/Main.js" type="text/javascript"></script>
     <script src="app/docs/controller/Login.js" type="text/javascript"></script>
-    <script src="app/docs/controller/LoginModalPasswordLost.js" type="text/javascript"></script>
+    <script src="app/docs/controller/ModalPasswordLost.js" type="text/javascript"></script>
+    <script src="app/docs/controller/ModalFeedback.js" type="text/javascript"></script>
+    <script src="app/docs/controller/PasswordReset.js" type="text/javascript"></script>
     <script src="app/docs/controller/Navigation.js" type="text/javascript"></script>
     <script src="app/docs/controller/Footer.js" type="text/javascript"></script>
     <script src="app/docs/controller/document/Document.js" type="text/javascript"></script>
@@ -156,6 +158,10 @@
 
     <div class="row" ng-controller="Footer">
       <div class="col-md-12 footer text-center text-muted">
+        <div class="alert alert-danger" ng-show="app.global_storage_quota && app.global_storage_quota * 0.8 < app.global_storage_current"
+             translate="index.global_quota_warning"
+             translate-values="{ current: app.global_storage_current / 1000000, percent: app.global_storage_current / app.global_storage_quota * 100, total: app.global_storage_quota / 1000000 }">
+        </div>
         <ul class="list-inline">
           <li uib-dropdown class="dropdown">
             <a href uib-dropdown-toggle>

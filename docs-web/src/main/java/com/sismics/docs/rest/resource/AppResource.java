@@ -1,32 +1,14 @@
 package com.sismics.docs.rest.resource;
 
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-
+import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.ConfigType;
-import com.sismics.docs.core.dao.jpa.*;
+import com.sismics.docs.core.constant.Constants;
+import com.sismics.docs.core.dao.jpa.ConfigDao;
+import com.sismics.docs.core.dao.jpa.DocumentDao;
+import com.sismics.docs.core.dao.jpa.FileDao;
+import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
-import com.sismics.rest.util.ValidationUtil;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Appender;
-import org.apache.log4j.Level;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.ConfigUtil;
@@ -36,10 +18,28 @@ import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
+import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.log4j.LogCriteria;
 import com.sismics.util.log4j.LogEntry;
 import com.sismics.util.log4j.MemoryAppender;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Appender;
+import org.apache.log4j.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.util.*;
 
 /**
  * General app REST resource.
@@ -64,6 +64,10 @@ public class AppResource extends BaseResource {
      * @apiSuccess {Boolean} guest_login True if guest login is enabled
      * @apiSuccess {String} total_memory Allocated JVM memory (in bytes)
      * @apiSuccess {String} free_memory Free JVM memory (in bytes)
+     * @apiSuccess {String} document_count Number of documents
+     * @apiSuccess {String} active_user_count Number of active users
+     * @apiSuccess {String} global_storage_current Global storage currently used (in bytes)
+     * @apiSuccess {String} global_storage_quota Maximum global storage (in bytes)
      * @apiPermission none
      * @apiVersion 1.5.0
      *
@@ -75,14 +79,27 @@ public class AppResource extends BaseResource {
         String currentVersion = configBundle.getString("api.current_version");
         String minVersion = configBundle.getString("api.min_version");
         Boolean guestLogin = ConfigUtil.getConfigBooleanValue(ConfigType.GUEST_LOGIN);
+        UserDao userDao = new UserDao();
+        DocumentDao documentDao = new DocumentDao();
+        String globalQuotaStr = System.getenv(Constants.GLOBAL_QUOTA_ENV);
+        long globalQuota = 0;
+        if (!Strings.isNullOrEmpty(globalQuotaStr)) {
+            globalQuota = Long.valueOf(globalQuotaStr);
+        }
 
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("current_version", currentVersion.replace("-SNAPSHOT", ""))
                 .add("min_version", minVersion)
                 .add("guest_login", guestLogin)
                 .add("total_memory", Runtime.getRuntime().totalMemory())
-                .add("free_memory", Runtime.getRuntime().freeMemory());
-        
+                .add("free_memory", Runtime.getRuntime().freeMemory())
+                .add("document_count", documentDao.getDocumentCount())
+                .add("active_user_count", userDao.getActiveUserCount())
+                .add("global_storage_current", userDao.getGlobalStorageCurrent());
+        if (globalQuota > 0) {
+            response.add("global_storage_quota", globalQuota);
+        }
+
         return Response.ok().entity(response.build()).build();
     }
 
@@ -113,6 +130,75 @@ public class AppResource extends BaseResource {
 
         return Response.ok().build();
     }
+
+    /**
+     * Get the SMTP server configuration.
+     *
+     * @api {get} /app/config_smtp Get the SMTP server configuration
+     * @apiName GetAppConfigSmtp
+     * @apiGroup App
+     * @apiSuccess {String} hostname SMTP hostname
+     * @apiSuccess {String} port
+     * @apiSuccess {String} username
+     * @apiSuccess {String} password
+     * @apiSuccess {String} from
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @return Response
+     */
+    @GET
+    @Path("config_smtp")
+    public Response getConfigSmtp() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        ConfigDao configDao = new ConfigDao();
+        Config hostnameConfig = configDao.getById(ConfigType.SMTP_HOSTNAME);
+        Config portConfig = configDao.getById(ConfigType.SMTP_PORT);
+        Config usernameConfig = configDao.getById(ConfigType.SMTP_USERNAME);
+        Config passwordConfig = configDao.getById(ConfigType.SMTP_PASSWORD);
+        Config fromConfig = configDao.getById(ConfigType.SMTP_FROM);
+        JsonObjectBuilder response = Json.createObjectBuilder();
+        if (System.getenv(Constants.SMTP_HOSTNAME_ENV) == null) {
+            if (hostnameConfig == null) {
+                response.addNull("hostname");
+            } else {
+                response.add("hostname", hostnameConfig.getValue());
+            }
+        }
+        if (System.getenv(Constants.SMTP_PORT_ENV) == null) {
+            if (portConfig == null) {
+                response.addNull("port");
+            } else {
+                response.add("port", Integer.valueOf(portConfig.getValue()));
+            }
+        }
+        if (System.getenv(Constants.SMTP_USERNAME_ENV) == null) {
+            if (usernameConfig == null) {
+                response.addNull("username");
+            } else {
+                response.add("username", usernameConfig.getValue());
+            }
+        }
+        if (System.getenv(Constants.SMTP_PASSWORD_ENV) == null) {
+            if (passwordConfig == null) {
+                response.addNull("password");
+            } else {
+                response.add("password", passwordConfig.getValue());
+            }
+        }
+        if (fromConfig == null) {
+            response.addNull("from");
+        } else {
+            response.add("from", fromConfig.getValue());
+        }
+
+        return Response.ok().entity(response.build()).build();
+    }
     
     /**
      * Configure the SMTP server.
@@ -122,44 +208,52 @@ public class AppResource extends BaseResource {
      * @apiGroup App
      * @apiParam {String} hostname SMTP hostname
      * @apiParam {Integer} port SMTP port
-     * @apiParam {String} from From address
      * @apiParam {String} username SMTP username
      * @apiParam {String} password SMTP password
+     * @apiParam {String} from From address
      * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
      * @apiPermission admin
      * @apiVersion 1.5.0
      *
      * @param hostname SMTP hostname
      * @param portStr SMTP port
-     * @param from From address
      * @param username SMTP username
      * @param password SMTP password
+     * @param from From address
      * @return Response
      */
     @POST
     @Path("config_smtp")
     public Response configSmtp(@FormParam("hostname") String hostname,
                                @FormParam("port") String portStr,
-                               @FormParam("from") String from,
                                @FormParam("username") String username,
-                               @FormParam("password") String password) {
+                               @FormParam("password") String password,
+                               @FormParam("from") String from) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);
-        ValidationUtil.validateRequired(hostname, "hostname");
-        ValidationUtil.validateInteger(portStr, "port");
-        ValidationUtil.validateRequired(from, "from");
+        if (!Strings.isNullOrEmpty(portStr)) {
+            ValidationUtil.validateInteger(portStr, "port");
+        }
 
+        // Just update the changed configuration
         ConfigDao configDao = new ConfigDao();
-        configDao.update(ConfigType.SMTP_HOSTNAME, hostname);
-        configDao.update(ConfigType.SMTP_PORT, portStr);
-        configDao.update(ConfigType.SMTP_FROM, from);
-        if (username != null) {
+        if (!Strings.isNullOrEmpty(hostname)) {
+            configDao.update(ConfigType.SMTP_HOSTNAME, hostname);
+        }
+        if (!Strings.isNullOrEmpty(portStr)) {
+            configDao.update(ConfigType.SMTP_PORT, portStr);
+        }
+        if (!Strings.isNullOrEmpty(username)) {
             configDao.update(ConfigType.SMTP_USERNAME, username);
         }
-        if (password != null) {
+        if (!Strings.isNullOrEmpty(password)) {
             configDao.update(ConfigType.SMTP_PASSWORD, password);
+        }
+        if (!Strings.isNullOrEmpty(from)) {
+            configDao.update(ConfigType.SMTP_FROM, from);
         }
 
         return Response.ok().build();

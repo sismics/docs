@@ -12,14 +12,20 @@
     "login_failed_message": "Username or password invalid",
     "password_lost_btn": "Password lost?",
     "password_lost_sent_title": "Password reset email sent",
-    "password_lost_sent_message": "An email has been sent to <strong>{{ email }}</strong> to reset your password",
+    "password_lost_sent_message": "An email has been sent to <strong>{{ username }}</strong> to reset your password",
     "password_lost_error_title": "Password reset error",
     "password_lost_error_message": "Unable to send a password reset email, please contact your administrator for a manual reset"
   },
   "passwordlost": {
     "title": "Password lost",
-    "message": "Please enter your email address to receive a password reset link",
+    "message": "Please enter your username to receive a password reset link. If you don't remember your username, please contact your administrator",
     "submit": "Reset my password"
+  },
+  "passwordreset": {
+    "message": "Please enter a new password",
+    "submit": "Change my password",
+    "error_title": "Error changing your password",
+    "error_message": "Your password recovery request is expired, please ask a new one on the login page"
   },
   "index": {
     "toggle_navigation": "Toggle navigation",
@@ -29,7 +35,8 @@
     "error_info": "{{ count }} new error{{ count > 1 ? 's' : '' }}",
     "logged_as": "Logged in as {{ username }}",
     "nav_settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "global_quota_warning": "<strong>Warning!</strong> Global quota almost reached at {{ current | number: 0 }}MB ({{ percent | number: 1 }}%) used on {{ total | number: 0 }}MB"
   },
   "document": {
     "search_simple": "Simple search",
@@ -139,7 +146,8 @@
       "add_new_document": "Add to new document",
       "latest_activity": "Latest activity",
       "footer_sismics": "Crafted with <span class=\"glyphicon glyphicon-heart\"></span> by <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
-      "api_documentation": "API Documentation"
+      "api_documentation": "API Documentation",
+      "feedback": "Give us a feedback"
     },
     "pdf": {
       "export_title": "Export to PDF",
@@ -238,7 +246,8 @@
         "storage_quota": "Storage quota",
         "storage_quota_placeholder": "Storage quota (in MB)",
         "password": "Password",
-        "password_confirm": "Password (confirm)"
+        "password_confirm": "Password (confirm)",
+        "disabled": "Disabled user"
       }
     },
     "security": {
@@ -295,7 +304,14 @@
       "custom_css_placeholder": "Custom CSS to add after the main stylesheet",
       "logo": "Logo (squared size)",
       "background_image": "Background image",
-      "uploading_image": "Uploading the image..."
+      "uploading_image": "Uploading the image...",
+      "title_smtp": "Email <small>configuration</small>",
+      "smtp_hostname": "SMTP hostname",
+      "smtp_port": "SMTP port",
+      "smtp_from": "Sender e-mail",
+      "smtp_username": "SMTP username",
+      "smtp_password": "SMTP password",
+      "smtp_updated": "SMTP configuration updated successfully"
     },
     "log": {
       "title": "Server <small>logs</small>",
@@ -323,6 +339,12 @@
       "order": "Order",
       "new_entry": "New entry"
     }
+  },
+  "feedback": {
+    "title": "Give us a feedback",
+    "message": "Any suggestion or question about Sismics Docs? We listen to you!",
+    "sent_title": "Feedback sent",
+    "sent_message": "Thank you for your feedback! It will help us make Sismics Docs even better."
   },
   "app_share": {
     "main": "Ask a shared document link to access it",

@@ -74,3 +74,52 @@
     </div>
   </div>
 </form>
+
+<h1 translate="settings.config.title_smtp"></h1>
+<form class="form-horizontal" name="smtpForm" novalidate>
+  <div class="form-group" ng-show="smtp.hasOwnProperty('hostname')" ng-class="{ 'has-error': !smtpForm.hostname.$valid && smtpForm.$dirty }">
+    <label class="col-sm-2 control-label" for="smtpHostname">{{ 'settings.config.smtp_hostname' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="hostname" type="text" ng-disabled="!smtp.hasOwnProperty('hostname')" class="form-control" id="smtpHostname" ng-model="smtp.hostname" />
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="smtp.hasOwnProperty('port')" ng-class="{ 'has-error': !smtpForm.port.$valid && smtpForm.$dirty }">
+    <label class="col-sm-2 control-label" for="smtpPort">{{ 'settings.config.smtp_port' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="port" type="number" ng-disabled="!smtp.hasOwnProperty('port')" class="form-control" id="smtpPort" ng-model="smtp.port" />
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="smtp.hasOwnProperty('username')">
+    <label class="col-sm-2 control-label" for="smtpUsername">{{ 'settings.config.smtp_username' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="username" type="text" ng-disabled="!smtp.hasOwnProperty('username')" class="form-control" id="smtpUsername" ng-model="smtp.username" />
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="smtp.hasOwnProperty('password')">
+    <label class="col-sm-2 control-label" for="smtpPassword">{{ 'settings.config.smtp_password' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="password" type="password" ng-disabled="!smtp.hasOwnProperty('password')" class="form-control" id="smtpPassword" ng-model="smtp.password" />
+    </div>
+  </div>
+
+  <div class="form-group" ng-class="{ 'has-error': !smtpForm.from.$valid && smtpForm.$dirty }">
+    <label class="col-sm-2 control-label" for="smtpFrom">{{ 'settings.config.smtp_from' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="from" type="email" class="form-control" id="smtpFrom" ng-model="smtp.from" />
+    </div>
+    <div class="col-sm-3">
+      <span class="help-block" ng-show="smtpForm.from.$error.email && smtpForm.$dirty">{{ 'validation.email' | translate }}</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary" ng-click="editSmtpConfig()" ng-disabled="!smtpForm.$valid">
+        <span class="glyphicon glyphicon-pencil"></span> {{ 'save' | translate }}
+      </button>
+    </div>
+  </div>
+</form>

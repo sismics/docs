@@ -8,6 +8,14 @@ Docs is an open source, lightweight document management system.
 
 Docs is written in Java, and may be run on any operating system with Java support.
 
+Demo
+----
+
+A demo is available at [demo.sismicsdocs.com](https://demo.sismicsdocs.com)
+- Guest login is enabled with read access on all documents
+- "admin" login with "admin" password
+- "demo" login with "password" password 
+
 Features
 --------
 

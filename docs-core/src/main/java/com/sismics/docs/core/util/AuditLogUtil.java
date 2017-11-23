@@ -22,6 +22,10 @@ public class AuditLogUtil {
      * @param userId User ID
      */
     public static void create(Loggable loggable, AuditLogType type, String userId) {
+        if (userId == null) {
+            userId = "admin";
+        }
+
         // Get the entity ID
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         String entityId = (String) em.getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(loggable);

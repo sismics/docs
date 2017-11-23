@@ -57,7 +57,7 @@ public abstract class SecurityFilter implements Filter {
      */
     private void injectUser(HttpServletRequest request, User user) {
         // Check if the user is still valid
-        if (user != null && user.getDeleteDate() == null) {
+        if (user != null && user.getDeleteDate() == null && user.getDisableDate() == null) {
             injectAuthenticatedUser(request, user);
         } else {
             injectAnonymousUser(request);

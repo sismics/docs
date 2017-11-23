@@ -1,24 +1,22 @@
 package com.sismics.docs.core.model.context;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
-import com.lowagie.text.FontFactory;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.dao.jpa.ConfigDao;
-import com.sismics.docs.core.event.TemporaryFileCleanupAsyncEvent;
 import com.sismics.docs.core.listener.async.*;
 import com.sismics.docs.core.listener.sync.DeadEventListener;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.service.IndexingService;
 import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.util.EnvironmentUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Global application context.
@@ -40,6 +38,11 @@ public class AppContext {
      * Generic asynchronous event bus.
      */
     private EventBus asyncEventBus;
+
+    /**
+     * Asynchronous bus for email sending.
+     */
+    private EventBus mailEventBus;
 
     /**
      * Indexing service.
@@ -83,6 +86,9 @@ public class AppContext {
         asyncEventBus.register(new DocumentDeletedAsyncListener());
         asyncEventBus.register(new RebuildIndexAsyncListener());
         asyncEventBus.register(new TemporaryFileCleanupAsyncListener());
+
+        mailEventBus = newAsyncEventBus();
+        mailEventBus.register(new PasswordLostAsyncListener());
     }
 
     /**
@@ -138,29 +144,18 @@ public class AppContext {
         }
     }
 
-    /**
-     * Getter of eventBus.
-     *
-     * @return eventBus
-     */
     public EventBus getEventBus() {
         return eventBus;
     }
 
-    /**
-     * Getter of asyncEventBus.
-     *
-     * @return asyncEventBus
-     */
     public EventBus getAsyncEventBus() {
         return asyncEventBus;
     }
 
-    /**
-     * Getter of indexingService.
-     *
-     * @return indexingService
-     */
+    public EventBus getMailEventBus() {
+        return mailEventBus;
+    }
+
     public IndexingService getIndexingService() {
         return indexingService;
     }

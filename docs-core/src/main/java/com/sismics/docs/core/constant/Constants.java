@@ -44,4 +44,37 @@ public class Constants {
      * Supported document languages.
      */
     public static final List<String> SUPPORTED_LANGUAGES = Lists.newArrayList("eng", "fra", "ita", "deu", "spa", "por", "pol", "rus", "ukr", "ara", "hin", "chi_sim", "chi_tra", "jpn", "tha", "kor");
+
+    /**
+     * Base URL environment variable.
+     */
+    public static final String BASE_URL_ENV = "DOCS_BASE_URL";
+
+    /**
+     * Default language environment variable.
+     */
+    public static final String DEFAULT_LANGUAGE_ENV = "DOCS_DEFAULT_LANGUAGE";
+
+    /**
+     * SMTP configuration environment variables.
+     */
+    public static final String SMTP_HOSTNAME_ENV = "DOCS_SMTP_HOSTNAME";
+    public static final String SMTP_PORT_ENV = "DOCS_SMTP_PORT";
+    public static final String SMTP_USERNAME_ENV = "DOCS_SMTP_USERNAME";
+    public static final String SMTP_PASSWORD_ENV = "DOCS_SMTP_PASSWORD";
+
+    /**
+     * Global quota environment variable.
+     */
+    public static final String GLOBAL_QUOTA_ENV = "DOCS_GLOBAL_QUOTA";
+
+    /**
+     * Expiration time of the password recovery in hours.
+     */
+    public static final int PASSWORD_RECOVERY_EXPIRATION_HOUR = 2;
+
+    /**
+     * Email template for password recovery.
+     */
+    public static final String EMAIL_TEMPLATE_PASSWORD_RECOVERY = "password_recovery";
 }
