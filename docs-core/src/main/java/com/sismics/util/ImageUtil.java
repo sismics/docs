@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
@@ -40,6 +41,17 @@ public class ImageUtil {
             iwp.setCompressionQuality(1.f);
             imageOutputStream = ImageIO.createImageOutputStream(outputStream);
             writer.setOutput(imageOutputStream);
+
+            if (image.getColorModel().hasAlpha()) {
+                // Strip alpha channel
+                BufferedImage noAlphaImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+                Graphics graphics = noAlphaImage.getGraphics();
+                graphics.setColor(Color.WHITE);
+                graphics.fillRect(0, 0, image.getWidth(), image.getHeight());
+                graphics.drawImage(image, 0, 0, null);
+                image = noAlphaImage;
+            }
+
             IIOImage iioImage = new IIOImage(image, null, null);
             writer.write(null, iioImage, iwp);
         } finally {
