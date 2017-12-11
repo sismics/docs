@@ -320,6 +320,7 @@ public class PdfUtil {
                 ByteStreams.copy(is, os);
             }
             FontFactory.register(file.toAbsolutePath().toString(), "LiberationMono-Regular");
+            FontFactory.registerDirectories();
         } catch (IOException e) {
             log.error("Error loading font", e);
         }

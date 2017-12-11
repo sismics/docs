@@ -69,6 +69,11 @@ public class Constants {
     public static final String GLOBAL_QUOTA_ENV = "DOCS_GLOBAL_QUOTA";
 
     /**
+     * Initial admin password environment variable.
+     */
+    public static final String ADMIN_PASSWORD_INIT_ENV = "DOCS_ADMIN_PASSWORD_INIT";
+
+    /**
      * Expiration time of the password recovery in hours.
      */
     public static final int PASSWORD_RECOVERY_EXPIRATION_HOUR = 2;

@@ -3,10 +3,13 @@ package com.sismics.docs.core.model.context;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.sismics.docs.core.constant.ConfigType;
+import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.ConfigDao;
+import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.listener.async.*;
 import com.sismics.docs.core.listener.sync.DeadEventListener;
 import com.sismics.docs.core.model.jpa.Config;
+import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.service.IndexingService;
 import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.util.EnvironmentUtil;
@@ -66,7 +69,19 @@ public class AppContext {
         indexingService = new IndexingService(luceneStorageConfig != null ? luceneStorageConfig.getValue() : null);
         indexingService.startAsync();
 
+        // Register fonts
         PdfUtil.registerFonts();
+
+        // Change the admin password if needed
+        String envAdminPassword = System.getenv(Constants.ADMIN_PASSWORD_INIT_ENV);
+        if (envAdminPassword != null) {
+            UserDao userDao = new UserDao();
+            User adminUser = userDao.getById("admin");
+            if (Constants.DEFAULT_ADMIN_PASSWORD.equals(adminUser.getPassword())) {
+                adminUser.setPassword(envAdminPassword);
+                userDao.updatePassword(adminUser, null);
+            }
+        }
     }
     
     /**
