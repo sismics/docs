@@ -11,7 +11,7 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
   $scope.asc = false;
   $scope.offset = 0;
   $scope.currentPage = 1;
-  $scope.limit = _.isUndefined(localStorage.documentsPageSize) ? 10 : localStorage.documentsPageSize;
+  $scope.limit = _.isUndefined(localStorage.documentsPageSize) ? '10' : localStorage.documentsPageSize;
   $scope.search = $state.params.search ? $state.params.search : '';
   $scope.searchOpened = false;
   $scope.setSearch = function (search) { $scope.search = search };
@@ -57,7 +57,7 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
     if (prev === next) {
       return;
     }
-    $scope.offset = ($scope.currentPage - 1) * $scope.limit;
+    $scope.offset = ($scope.currentPage - 1) * parseInt($scope.limit);
     $scope.pageDocuments();
   });
   
