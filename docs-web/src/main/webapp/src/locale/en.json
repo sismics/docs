@@ -180,7 +180,7 @@
       "message_2": "A document can be tagged by multiple tags, and a tag can be applied to multiple documents.",
       "message_3": "Using the <span class=\"glyphicon glyphicon-pencil\"></span> button, you can edit permissions on a tag.",
       "message_4": "If a tag can be read by another user or group, associated documents can also be read by those people.",
-      "message_5": "For example, tag your company documents with a tag <span class=\"label label-info\">MyCompany</span> and add the permission <strong>Read</strong> to a group <span class=\"btn btn-default\">employees</span>"
+      "message_5": "For example, tag your company documents with a tag <span class=\"label label-info\">MyCompany</span> and add the permission <strong>Can read</strong> to a group <span class=\"btn btn-default\">employees</span>"
     },
     "edit": {
       "delete_tag_title": "Delete tag",

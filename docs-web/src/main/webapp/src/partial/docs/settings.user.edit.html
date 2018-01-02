@@ -76,7 +76,7 @@
 
     <div class="form-group" ng-if="user.username != 'guest'"
       ng-class="{ 'has-error': !editUserForm.passwordconfirm.$valid && editUserForm.$dirty, success: editUserForm.passwordconfirm.$valid }">
-      <label class="col-sm-2 -label" for="inputPasswordConfirm">{{ 'settings.user.edit.password_confirm' | translate }}</label>
+      <label class="col-sm-2 control-label" for="inputPasswordConfirm">{{ 'settings.user.edit.password_confirm' | translate }}</label>
       <div class="col-sm-7">
         <input name="passwordconfirm" type="password" id="inputPasswordConfirm" ng-required="!isEdit()" class="form-control"
                ui-validate="'$value == user.password'" ui-validate-watch="'user.password'"

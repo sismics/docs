@@ -9,7 +9,23 @@
     "submit": "登录",
     "login_as_guest": "以游客身份登录",
     "login_failed_title": "登录失败",
-    "login_failed_message": "用户名或密码不正确"
+    "login_failed_message": "用户名或密码不正确",
+    "password_lost_btn": "密码丢失？",
+    "password_lost_sent_title": "密码重置邮件已发送",
+    "password_lost_sent_message": "重置密码的邮件已经发送至<strong>{{ username }}</strong>",
+    "password_lost_error_title": "密码重置出错",
+    "password_lost_error_message": "无法发送密码重置邮件，请联系您的管理员进行手动重置"
+  },
+  "passwordlost": {
+    "title": "丢失密码",
+    "message": "请输入您的用户名用于获取密码重置链接。如您忘记了您的用户名，请联系您的管理员",
+    "submit": "重置我的密码"
+  },
+  "passwordreset": {
+    "message": "请输入新的密码",
+    "submit": "更改我的密码",
+    "error_title": "密码更改出错",
+    "error_message": "您的密码恢复请求已过期，请在登录页面上提交新的请求"
   },
   "index": {
     "toggle_navigation": "切换导航",
@@ -19,16 +35,26 @@
     "error_info": "{{ count }} 新错误",
     "logged_as": "以 {{ username }}登录",
     "nav_settings": "设置",
-    "logout": "退出"
+    "logout": "退出",
+    "global_quota_warning": "<strong>提醒!</strong> 全球配额存储空间已经使用 {{ current | number: 0 }}MB 占总存储配额 {{ total | number: 0 }}MB 的 ({{ percent | number: 1 }}%)"
   },
   "document": {
+    "search_simple": "简单搜索",
+    "search_fulltext": "全文搜索",
+    "search_creator": "创建者",
+    "search_language": "语言",
+    "search_before_date": "在此日期之前",
+    "search_after_date": "在此日期之后",
+    "search_tags": "标签",
+    "search_clear": "清除",
+    "any_language": "所有语言",
     "add_document": "添加一个文档",
     "tags": "标签",
     "no_tags": "无标签",
     "no_documents": "数据库中无该文档",
     "search": "搜索",
     "search_empty": "无匹配 <strong>\"{{ search }}\"</strong>",
-    "shared": "分享",
+    "shared": "已共享",
     "title": "标题",
     "description": "介绍",
     "contributors": "贡献者",
@@ -49,13 +75,13 @@
     "page_size_30": "30 每页",
     "upgrade_quota": "如需要升级您的限额, 请联系管理员",
     "quota": "{{ current | number: 0 }}MB ({{ current | number: 1 }}%) 已使用 {{ total | number: 0 }}MB",
-    "count": "{{ count }} 文档 找到",
+    "count": "找到{{ count }}个文件",
     "view": {
       "delete_comment_title": "删除评论",
       "delete_comment_message": "您是否确认删除此评论?",
       "delete_document_title": "删除文档",
       "delete_document_message": "您是否确认删除此文档?",
-      "shared_document_title": "共享文档",
+      "shared_document_title": "已共享文档",
       "shared_document_message": "您可以直接通过发送该链接来分享该文档. 注意：任何有该链接的人员均可查看该文档.<br/><input class=\"form-control share-link\" type=\"text\" readonly=\"readonly\" value=\"{{ link }}\" onclick=\"this.select(); document.execCommand('copy');\" />",
       "not_found": "文档未找到",
       "forbidden": "无权限",
@@ -94,13 +120,14 @@
     "edit": {
       "document_edited_with_errors": "文档编辑成功但部分文件没能上传",
       "document_added_with_errors": "文档成功添加但部分文件没能上传",
+      "document_added": "文档成功上传 (与{{ count }}个文件)",
       "quota_reached": "达到限额",
       "primary_metadata": "主要元数据",
       "title_placeholder": "资源的性质或类型",
-      "description_placeholder": "资源的账户",
+      "description_placeholder": "资源账户",
       "new_files": "新文件",
-      "orphan_files": "+ {{ count }} 文件",
-      "additional_metadata": "附加元数据",
+      "orphan_files": "+ {{ count }}个文件",
+      "additional_metadata": "附件",
       "subject_placeholder": "资源话题",
       "identifier_placeholder": "在给定的上下文中对资源的明确引用",
       "publisher_placeholder": "负责提供资源的实体",
@@ -118,8 +145,9 @@
       "add_files": "添加文件",
       "add_new_document": "添加至新文档",
       "latest_activity": "最新活动",
-      "footer_sismics": "精心制作 <span class=\"glyphicon glyphicon-heart\"></span> 由 <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
-      "api_documentation": "API 存档"
+      "footer_sismics": "由<a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>精心制作",
+      "api_documentation": "API 存档",
+      "feedback": "欢迎提供反馈意见"
     },
     "pdf": {
       "export_title": "以PDF形式导出",
@@ -184,7 +212,7 @@
   "usergroup": {
     "search_groups": "搜索群组",
     "search_users": "搜索用户",
-    "you": "就是你了!",
+    "you": "您",
     "default": {
       "title": "用户 & 群组",
       "message": "此处您可以浏览用户和群组信息."
@@ -206,6 +234,7 @@
       "add_user": "添加用户",
       "username": "用户名",
       "create_date": "创建日期",
+      "totp_enabled": "为该帐号启用双身份认证",
       "edit": {
         "delete_user_title": "删除用户",
         "delete_user_message": "您是否确认删除该用户? 所有相关文档，文件和标签将被删除",
@@ -217,7 +246,8 @@
         "storage_quota": "存储限额",
         "storage_quota_placeholder": "存储限额 (in MB)",
         "password": "密码",
-        "password_confirm": "密码 (确认)"
+        "password_confirm": "密码 (确认)",
+        "disabled": "禁用用户"
       }
     },
     "security": {
@@ -247,7 +277,7 @@
         "delete_group_title": "删除组",
         "delete_group_message": "您是否确认删除该组?",
         "edit_group_title": "编辑 <small>\"{{ name }}\"</small>",
-        "add_group_title": "添加 <small>组</small>",
+        "add_group_title": "<small>添加一个</small>组",
         "name": "名称",
         "parent_group": "母群组",
         "search_group": "搜索组",
@@ -274,7 +304,14 @@
       "custom_css_placeholder": "在主样式表之后添加客户自定义样式表",
       "logo": "图标 (正方形)",
       "background_image": "背景图片",
-      "uploading_image": "上传图片中..."
+      "uploading_image": "上传图片中...",
+      "title_smtp": "邮件 <small>组态</small>",
+      "smtp_hostname": "SMTP主机名",
+      "smtp_port": "SMTP 端口",
+      "smtp_from": "发送邮件",
+      "smtp_username": "SMTP 用户名",
+      "smtp_password": "SMTP密码",
+      "smtp_updated": "SMTP组态更新成功"
     },
     "log": {
       "title": "服务器 <small>日志</small>",
@@ -303,6 +340,19 @@
       "new_entry": "新输入"
     }
   },
+  "feedback": {
+    "title": "欢迎提供反馈意见",
+    "message": "您是否对Sismics Docs有任何建议或疑问？我们愿意倾听您的反馈意见！",
+    "sent_title": "反馈意见已发送",
+    "sent_message": "非常感谢您的反馈意见！这将帮我们进一步改进Sismics Docs从而更好的为您提供服务。"
+  },
+  "app_share": {
+    "main": "请求获取文档权限的链接",
+    "403": {
+      "title": "无权限",
+      "message": "您已无权限查看该文档"
+    }
+  },
   "directive": {
     "acledit": {
       "acl_target": "用于",
@@ -323,10 +373,15 @@
       "User": "用户"
     },
     "selectrelation": {
-      "typeahead": "请输入文档名称"
+      "typeahead": "请输入一个文档名称"
     },
     "selecttag": {
-      "typeahead": "请输入标签"
+      "typeahead": "请输入一个标签"
+    },
+    "datepicker": {
+      "current": "今天",
+      "clear": "清除",
+      "close": "完成"
     }
   },
   "filter": {
