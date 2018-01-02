@@ -151,7 +151,7 @@
     },
     "pdf": {
       "export_title": "以PDF形式導出",
-      "export_metadata": "到處元數據",
+      "export_metadata": "導出元數據",
       "export_comments": "導出評論",
       "fit_to_page": "使圖像適合頁面",
       "margin": "餘量",
