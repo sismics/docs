@@ -125,7 +125,7 @@ public class TestUserResource extends BaseJerseyTest {
         response = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(form));
-        Assert.assertNotSame(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
         Assert.assertEquals("AlreadyExistingUsername", json.getString("type"));
 

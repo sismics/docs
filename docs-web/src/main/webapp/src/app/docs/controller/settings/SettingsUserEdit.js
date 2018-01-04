@@ -42,6 +42,13 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
     promise.then(function() {
       $scope.loadUsers();
       $state.go('settings.user');
+    }, function (e) {
+      if (e.data.type === 'AlreadyExistingUsername') {
+        var title = $translate.instant('settings.user.edit.edit_user_failed_title');
+        var msg = $translate.instant('settings.user.edit.edit_user_failed_message');
+        var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
+        $dialog.messageBox(title, msg, btns);
+      }
     });
   };
 

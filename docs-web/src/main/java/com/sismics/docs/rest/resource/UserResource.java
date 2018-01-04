@@ -114,7 +114,7 @@ public class UserResource extends BaseResource {
             userDao.create(user, principal.getId());
         } catch (Exception e) {
             if ("AlreadyExistingUsername".equals(e.getMessage())) {
-                throw new ServerException("AlreadyExistingUsername", "Login already used", e);
+                throw new ClientException("AlreadyExistingUsername", "Login already used", e);
             } else {
                 throw new ServerException("UnknownError", "Unknown server error", e);
             }

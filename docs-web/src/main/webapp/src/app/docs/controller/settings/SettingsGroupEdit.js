@@ -45,6 +45,13 @@ angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog,
         // Go to edit this group to add members
         $state.go('settings.group.edit', { name: group.name });
       }
+    }, function (e) {
+        if (e.data.type === 'GroupAlreadyExists') {
+            var title = $translate.instant('settings.group.edit.edit_group_failed_title');
+            var msg = $translate.instant('settings.group.edit.edit_group_failed_message');
+            var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
+            $dialog.messageBox(title, msg, btns);
+        }
     });
   };
 

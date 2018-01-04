@@ -238,6 +238,8 @@
       "edit": {
         "delete_user_title": "Delete user",
         "delete_user_message": "Do you really want to delete this user? All associated documents, files and tags will be deleted",
+        "edit_user_failed_title": "User already exists",
+        "edit_user_failed_message": "This username is already taken by another user",
         "edit_user_title": "<small>Edit</small> \"{{ username }}\"",
         "add_user_title": "<small>Add a</small> user",
         "username": "Username",
@@ -276,6 +278,8 @@
       "edit": {
         "delete_group_title": "Delete group",
         "delete_group_message": "Do you really want to delete this group?",
+        "edit_group_failed_title": "Group already exists",
+        "edit_group_failed_message": "This group name is already taken by another group",
         "edit_group_title": "Edit <small>\"{{ name }}\"</small>",
         "add_group_title": "<small>Add a</small> group",
         "name": "Name",
