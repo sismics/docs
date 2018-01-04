@@ -1,12 +1,18 @@
-Sismics Docs [![Build Status](https://secure.travis-ci.org/sismics/docs.png)](http://travis-ci.org/sismics/docs)
-============
+<h3 align="center">
+  <img src="https://www.sismicsdocs.com/img/github-title.png" alt="Sismics Docs" width=500 />
+</h3>
 
-What is Docs?
----------------
+[![Twitter: @sismicsdocs](https://img.shields.io/badge/contact-@sismicsdocs-blue.svg?style=flat)](https://twitter.com/sismicsdocs)
+[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+[![Build Status](https://secure.travis-ci.org/sismics/docs.png)](http://travis-ci.org/sismics/docs)
 
-Docs is an open source, lightweight document management system.
+Docs is an open source, lightweight document management system for individuals and businesses.
 
-Docs is written in Java, and may be run on any operating system with Java support.
+<hr />
+<h2 align="center">
+  ✨ We just launched a Cloud version of Sismics Docs! Head to <a href="https://www.sismicsdocs.com/">sismicsdocs.com</a> for more informations ✨
+</h2>
+<hr />
 
 Demo
 ----
