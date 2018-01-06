@@ -61,7 +61,8 @@ angular.module('share',
         prefix: 'locale/',
         suffix: '.json'
       })
-      .registerAvailableLanguageKeys(['en', 'fr', 'zh_CN', 'zh_TW'], {
+      .registerAvailableLanguageKeys(['en', 'fr', 'ru', 'zh_CN', 'zh_TW'], {
+        'ru_*': 'ru',
         'en_*': 'en',
         'fr_*': 'fr',
         '*': 'en'

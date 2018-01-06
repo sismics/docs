@@ -1,0 +1,436 @@
+{
+  "login": {
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "validation_code_required": "Требуется код проверки",
+    "validation_code_title": "Вы активировали двухфакторную аутентификацию своей учетной записи. Введите код проверки, сгенерированный аппликацией на настроенном телефоне.",
+    "validation_code": "Код проверки",
+    "remember_me": "Запомнить меня",
+    "submit": "Войти в систему",
+    "login_as_guest": "Войти как гость",
+    "login_failed_title": "Ошибка входа",
+    "login_failed_message": "Неверное имя пользователя или пароль",
+    "password_lost_btn": "Пароль потерян?",
+    "password_lost_sent_title": "Сброс пароля",
+    "password_lost_sent_message": "Электронная почта была отправлена ​​на адрес <strong>{{ username }}</strong>, чтобы сбросить пароль.",
+    "password_lost_error_title": "Ошибка сброса пароля",
+    "password_lost_error_message": "Не удалось отправить письмо сброса пароля, обратитесь к администратору за ручным сбросом"
+  },
+  "passwordlost": {
+    "title": "Пароль потерян",
+    "message": "Пожалуйста, введите свое имя пользователя, чтобы получить ссылку на сброс пароля. Если вы не помните свое имя пользователя, обратитесь к администратору",
+    "submit": "Сбросить пароль"
+  },
+  "passwordreset": {
+    "message": "Введите новый пароль",
+    "submit": "Изменить пароль",
+    "error_title": "Ошибка при изменении пароля",
+    "error_message": "Ваш запрос на восстановление пароля истёк, пожалуйста, запросите новый на странице входа"
+  },
+  "index": {
+    "toggle_navigation": "Переключить навигацию",
+    "nav_documents": "Документы",
+    "nav_tags": "Теги",
+    "nav_users_groups": "Пользователи и группы",
+    "error_info": "{{ count }} новая ошибка",
+    "logged_as": "Вы вошли как {{ username }}",
+    "nav_settings": "Настройки",
+    "logout": "Выйти",
+    "global_quota_warning": "<strong>Предупреждение!</strong> Глобальная квота почти достигнута в {{ current | number: 0 }}МB ({{ percent | number: 1 }}%), использованы из {{ total | number: 0 }}МB"
+  },
+  "document": {
+    "search_simple": "Простой поиск",
+    "search_fulltext": "Полнотекстовый поиск",
+    "search_creator": "Создатель",
+    "search_language": "Язык",
+    "search_before_date": "До этой даты",
+    "search_after_date": "После этой даты",
+    "search_tags": "Теги",
+    "search_clear": "Очистить",
+    "any_language": "Любой язык",
+    "add_document": "Добавить документ",
+    "tags": "Теги",
+    "no_tags": "Нет тегов",
+    "no_documents": "В базе данных нет документа",
+    "search": "Поиск",
+    "search_empty": "Нет совпадений для <strong>\"{{search}}\"</strong>",
+    "shared": "Общий",
+    "title": "Название",
+    "description": "Описание",
+    "contributors": "Авторы",
+    "language": "Язык",
+    "creation_date": "Дата создания",
+    "subject": "Тема",
+    "identifier": "Идентификатор",
+    "publisher": "Издатель",
+    "format": "Формат",
+    "source": "Источник",
+    "type": "Тип",
+    "coverage": "Покрытие",
+    "rights": "Права",
+    "relations": "Связи",
+    "page_size": "Размер страницы",
+    "page_size_10": "10 на странице",
+    "page_size_20": "20 на странице",
+    "page_size_30": "30 на странице",
+    "upgrade_quota": "Чтобы обновить свою квоту, спросите своего администратора",
+    "quota": "{{ current | number: 0 }}МB ({{ percent | number: 1 }}%), использовано из {{ total | number: 0 }}МB",
+    "count": "Найдено {{ count }} документа",
+    "view": {
+      "delete_comment_title": "Удалить комментарий",
+      "delete_comment_message": "Вы действительно хотите удалить этот комментарий?",
+      "delete_document_title": "Удалить документ",
+      "delete_document_message": "Вы действительно хотите удалить этот документ?",
+      "shared_document_title": "Общий документ",
+      "shared_document_message": "Вы можете поделиться этим документом, указав эту ссылку. Обратите внимание: все, у кого есть эта ссылка, могут видеть документ.<br/><input class=\"form-control share-link\" type=\"text\" readonly=\"readonly\" value=\"{{ link }}\" onclick=\"this.select(); document.execCommand('copy');\" />",
+      "not_found": "Документ не найден",
+      "forbidden": "Доступ запрещен",
+      "download_files": "Скачать файлы",
+      "export_pdf": "Экспорт в PDF",
+      "by_creator": "от",
+      "comments": "Комментарии",
+      "no_comments": "Пока комментариев нет.",
+      "add_comment": "Добавить комментарий",
+      "error_loading_comments": "Ошибка при загрузке комментариев",
+      "content": {
+        "content": "Содержание",
+        "delete_file_title": "Удалить файл",
+        "delete_file_message": "Вы действительно хотите удалить этот файл?",
+        "upload_pending": "В ожидании...",
+        "upload_progress": "Загрузка...",
+        "upload_error": "Ошибка загрузки",
+        "upload_error_quota": "Достигнута квота",
+        "drop_zone": "Перетащите файлы сюда, чтобы загрузить",
+        "add_files": "Добавить файлы"
+      },
+      "permissions": {
+        "permissions": "Права доступа",
+        "message": "Разрешения могут быть применены непосредственно к этому документу или могут быть получены из <a href=\"#/tag\">тегов</a>.",
+        "title": "Разрешения на этот документ",
+        "inherited_tags": "Разрешения, унаследованные тегами",
+        "acl_source": "Из",
+        "acl_target": "Для",
+        "acl_permission": "Разрешение"
+      },
+      "activity": {
+        "activity": "Мероприятия",
+        "message": "Все действия в этом документе регистрируются здесь."
+      }
+    },
+    "edit": {
+      "document_edited_with_errors": "Документ успешно отредактирован, но некоторые файлы не могут быть загружены",
+      "document_added_with_errors": "Документ успешно добавлен, но некоторые файлы не могут быть загружены",
+      "document_added": "Документ успешно добавлен (с {{ count }} файлом)",
+      "quota_reached": "Достигнута квота",
+      "primary_metadata": "Первичные метаданные",
+      "title_placeholder": "Имя, присвоенное ресурсу",
+      "description_placeholder": "Учет ресурсов",
+      "new_files": "Новые файлы",
+      "orphan_files": "+ {{ count }} файл",
+      "additional_metadata": "Дополнительные метаданные",
+      "subject_placeholder": "Тема ресурса",
+      "identifier_placeholder": "Недвусмысленная ссылка на ресурс в данном контексте",
+      "publisher_placeholder": "Сторона, ответственная за предоставление ресурса",
+      "format_placeholder": "Формат файла, физический носитель или размеры ресурса",
+      "source_placeholder": "Связанный ресурс, из которого выведен описанный ресурс",
+      "uploading_files": "Загрузка файлов..."
+    },
+    "default": {
+      "upload_pending": "В ожидании...",
+      "upload_progress": "Загрузка...",
+      "upload_error": "Ошибка загрузки",
+      "upload_error_quota": "Достигнута квота",
+      "quick_upload": "Быстрая загрузка",
+      "drop_zone": "Перетащите файлы сюда, чтобы загрузить",
+      "add_files": "Добавить файлы",
+      "add_new_document": "Добавить в новый документ",
+      "latest_activity": "Последняя активность",
+      "footer_sismics": "Создано с помощью <span class=\"glyphicon glyphicon-heart\"></span> <a href=\"https://www.sismics.com\" target=\"_blank\">Сцистики</a>",
+      "api_documentation": "Документация API",
+      "feedback": "Оставьте своё мнение"
+    },
+    "pdf": {
+      "export_title": "Экспорт в PDF",
+      "export_metadata": "Экспорт метаданных",
+      "export_comments": "Экспорт комментариев",
+      "fit_to_page": "Растянуть изображение на страницу",
+      "margin": "Поле",
+      "millimeter": "мм"
+    },
+    "share": {
+      "title": "Поделиться документом",
+      "message": "Дайте название для общего доступа, если хотите поделиться одним документом несколько раз.",
+      "submit": "Поделиться"
+    }
+  },
+  "file": {
+    "view": {
+      "previous": "Предыдущий",
+      "next": "Следующий",
+      "not_found": "Файл не найден"
+    }
+  },
+  "tag": {
+    "new_tag": "Новый тег",
+    "search": "Поиск",
+    "edit_tag": "Изменить тег",
+    "default": {
+      "title": "Теги",
+      "message_1": "<strong>Теги</strong> это метки, связанные с документами.",
+      "message_2": "Документ может быть помечен несколькими тегами, а тег может применяться к нескольким документам.",
+      "message_3": "Используя кнопку <span class=\"glyphicon-pencil\"></span>, вы можете редактировать разрешения для тега.",
+      "message_4": "Если тег может быть прочитан другим пользователем или группой, связанные с ним документы также могут быть прочитаны этими людьми.",
+      "message_5": "Например, пометьте ваши документы компании тегом <span class=\"label label-info\">MyCompany</span> и добавьте разрешение <strong>Читать</strong> в группу <span class=\"btn btn-default\">сотрудники</span>"
+    },
+    "edit": {
+      "delete_tag_title": "Удалить тег",
+      "delete_tag_message": "Вы действительно хотите удалить этот тег?",
+      "name": "Имя",
+      "color": "Цвет",
+      "parent": "Источник",
+      "info": "Разрешения на этот тег также будут применены к документам, помеченным тегом <span class=\"label label-info\" ng-style=\"{'background': color}\">{{ name }}</span>"
+    }
+  },
+  "group": {
+    "profile": {
+      "members": "Участники",
+      "no_members": "Нет участников",
+      "related_links": "Ссылки по теме",
+      "edit_group": "Изменить группу {{ name }}"
+    }
+  },
+  "user": {
+    "profile": {
+      "groups": "Группы",
+      "quota_used": "Используемая квота",
+      "percent_used": "{{ percent | number: 0 }}% Используется",
+      "related_links": "Ссылки по теме",
+      "document_created": "Документы, созданные {{ username }}",
+      "edit_user": "Изменить  пользователя {{ username }}"
+    }
+  },
+  "usergroup": {
+    "search_groups": "Поиск в группах",
+    "search_users": "Поиск в пользователях",
+    "you": "Это ты!",
+    "default": {
+      "title": "Пользователи и группы",
+      "message": "Здесь вы можете просмотреть информацию о пользователях и группах."
+    }
+  },
+  "settings": {
+    "menu_personal_settings": "Персональные настройки",
+    "menu_user_account": "Учетная запись пользователя",
+    "menu_two_factor_auth": "Двухфакторная аутентификация",
+    "menu_opened_sessions": "Открытые сессии",
+    "menu_general_settings": "Общие настройки",
+    "menu_users": "Пользователи",
+    "menu_groups": "Группы",
+    "menu_vocabularies": "Словари",
+    "menu_configuration": "Конфигурация",
+    "menu_server_logs": "Журналы сервера",
+    "user": {
+      "title": "<small>Управление</small> пользователями",
+      "add_user": "Добавить пользователя",
+      "username": "Имя пользователя",
+      "create_date": "Создать дату",
+      "totp_enabled": "Для этого аккаунта включена двухфакторная аутентификация",
+      "edit": {
+        "delete_user_title": "Удалить пользователя",
+        "delete_user_message": "Вы действительно хотите удалить этого пользователя? Все связанные документы, файлы и теги будут удалены.",
+        "edit_user_failed_title": "Пользователь уже существует",
+        "edit_user_failed_message": "Это имя пользователя уже используется другим пользователем",
+        "edit_user_title": "<small>Изменить</small> \"{{ username }}\"",
+        "add_user_title": "Добавить <small>пользователя</small>",
+        "username": "Имя пользователя",
+        "email": "Электронная почта",
+        "groups": "Группы",
+        "storage_quota": "Квота хранения",
+        "storage_quota_placeholder": "Квота хранения (в MB)",
+        "password": "Пароль",
+        "password_confirm": "Подтвердить пароль",
+        "disabled": "Отключенный пользователь"
+      }
+    },
+    "security": {
+      "enable_totp": "Включить двухфакторную аутентификацию",
+      "enable_totp_message": "Убедитесь, что на вашем телефоне есть приложение, совместимое с TOTP, чтобы добавить новую учетную запись",
+      "title": "Двухфакторная <small>аутентификация</small>",
+      "message_1": "Двухфакторная аутентификация позволяет вам добавить уровень безопасности в свою учетную запись <strong>{{ appName }}</strong>.<br/>Прежде чем активировать эту функцию, убедитесь, что на вашем телефоне есть приложение, совместимое с TOTP:",
+      "message_google_authenticator": "Для Android, iOS и Blackberry: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>",
+      "message_duo_mobile": "Для Android и iOS: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
+      "message_authenticator": "Для Windows Phone: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">Authenticator</a>",
+      "message_2": "Эти приложения автоматически генерируют код проверки, который изменяется через определенный промежуток времени.<br/>Вам будет необходимо ввести этот код проверки каждый раз при входе в систему <strong>{{ appName }}</strong>.",
+      "secret_key": "Ваш секретный ключ: <strong>{{ secret }}</strong>",
+      "secret_key_warning": "Настройте свое приложение TOTP на своем телефоне с помощью этого секретного ключа сейчас, вы не сможете получить к нему доступ позже.",
+      "totp_enabled_message": "В вашем аккаунте включена двухфакторная аутентификация.<br/>При каждом входе в систему <strong>{{ appName }}</strong> вам будет выслан код подтверждения из вашего настроенного приложения на телефоне.<br/>Если вы потеряете свой телефон, вы не сможете войти в свою учетную запись, но активные сеансы позволят вам восстановить секретный ключ.",
+      "disable_totp": {
+        "disable_totp": "Отключить двухфакторную аутентификацию",
+        "message": "Ваша учетная запись больше не будет защищена двухфакторной аутентификацией.",
+        "confirm_password": "Подтвердите ваш пароль",
+        "submit": "Отключить двухфакторную аутентификацию"
+      }
+    },
+    "group": {
+      "title": "Группы <small>управление</small>",
+      "add_group": "Добавить группу",
+      "name": "Имя",
+      "edit": {
+        "delete_group_title": "Удалить группу",
+        "delete_group_message": "Вы действительно хотите удалить эту группу?",
+        "edit_group_failed_title": "Группа уже существует",
+        "edit_group_failed_message": "Это название группы уже используется для другой группы",
+        "edit_group_title": "Изменить <small>\"{{ name }}\"</small>",
+        "add_group_title": "<small>Добавить</small> группу",
+        "name": "Имя",
+        "parent_group": "Группа источник",
+        "search_group": "Поиск группы",
+        "members": "Участники",
+        "new_member": "Новый участник",
+        "search_user": "Поиск пользователя"
+      }
+    },
+    "account": {
+      "title": "Пользователь <small>аккаунт</small>",
+      "password": "Пароль",
+      "password_confirm": "Подтвердить пароль",
+      "updated": "Аккаунт успешно обновлен"
+    },
+    "config": {
+      "title_guest_access": "Гость <small>доступ</small>",
+      "message_guest_access": "Гостевой доступ - это режим, в котором каждый может получить доступ к {{ appName }} без пароля.<br/>Как обычный пользователь, гость может получить доступ только к своим документам и доступным через разрешения.<br/>",
+      "enable_guest_access": "Включить гостевой доступ",
+      "disable_guest_access": "Отключить гостевой доступ",
+      "title_theme": "<small>Настройка</small> темы",
+      "application_name": "Имя приложения",
+      "main_color": "Основной цвет",
+      "custom_css": "Пользовательские CSS",
+      "custom_css_placeholder": "Пользовательский CSS для добавления после основной таблицы стилей",
+      "logo": "Логотип (квадратный размер)",
+      "background_image": "Изображение на заднем плане",
+      "uploading_image": "Загрузка изображения...",
+      "title_smtp": "<small>Конфигурация</small> электронной почты",
+      "smtp_hostname": "Имя хоста SMTP",
+      "smtp_port": "Порт SMTP",
+      "smtp_from": "Электронная почта отправителя",
+      "smtp_username": "Имя пользователя SMTP",
+      "smtp_password": "Пароль SMTP",
+      "smtp_updated": "Конфигурация SMTP успешно обновлена"
+    },
+    "log": {
+      "title": "Cерверные <small>журналы</small>",
+      "date": "Дата",
+      "tag": "Тег",
+      "message": "Сообщение"
+    },
+    "session": {
+      "title": "Открытые <small>сеансы</small>",
+      "created_date": "Дата создания",
+      "last_connection_date": "Дата последней связи",
+      "user_agent": "Из",
+      "current": "Текущий",
+      "current_session": "Это текущая сессия",
+      "clear_message": "Все остальные устройства, подключенные к этой учетной записи, будут отключены",
+      "clear": "Очистить все остальные сеансы"
+    },
+    "vocabulary": {
+      "title": "Словарь <small>записи</small>",
+      "choose_vocabulary": "Выберите словарь для редактирования",
+      "type": "Тип",
+      "coverage": "Покрытие",
+      "rights": "Права",
+      "value": "Стоимость",
+      "order": "Порядок",
+      "new_entry": "Новая запись"
+    }
+  },
+  "feedback": {
+    "title": "Оставьте нам ваше мнение",
+    "message": "Любое предложение или вопрос о Sismics Docs? Мы слушаем вас!",
+    "sent_title": "Обратная связь отправлена",
+    "sent_message": "Спасибо за ваш отзыв! Это поможет нам улучшить работу Sismics Docs."
+  },
+  "app_share": {
+    "main": "Запросить ссылку на общий документ для доступа",
+    "403": {
+      "title": "Не разрешено",
+      "message": "Документ, который вы пытаетесь просмотреть, больше не используется"
+    }
+  },
+  "directive": {
+    "acledit": {
+      "acl_target": "Для",
+      "acl_permission": "Разрешение",
+      "add_permission": "Добавить разрешение",
+      "search_user_group": "Поиск пользователя или группы"
+    },
+    "auditlog": {
+      "log_created": "созданный",
+      "log_updated": "обновленный",
+      "log_deleted": "удаленный",
+      "Acl": "ACL",
+      "Comment": "Комментарий",
+      "Document": "Документ",
+      "File": "Файл",
+      "Group": "Группа",
+      "Tag": "Тег",
+      "User": "Пользователь"
+    },
+    "selectrelation": {
+      "typeahead": "Введите название документа"
+    },
+    "selecttag": {
+      "typeahead": "Введите тег"
+    },
+    "datepicker": {
+      "current": "Cегодня",
+      "clear": "Очистить",
+      "close": "Готово"
+    }
+  },
+  "filter": {
+    "filesize": {
+      "mb": "MB",
+      "kb": "kB"
+    }
+  },
+  "acl": {
+    "READ": "Может читать",
+    "READWRITE": "Может писать",
+    "WRITE": "Может писать",
+    "USER": "Пользователь",
+    "GROUP": "Группа",
+    "SHARE": "Общий"
+  },
+  "validation": {
+    "required": "Необходимые",
+    "too_short": "Слишком коротко",
+    "too_long": "Слишком долго",
+    "email": "Электронная почта должна быть действительна",
+    "password_confirm": "Пароль и подтверждение пароля  должны совпадать",
+    "number": "Требуемый номер",
+    "no_space": "Пробелы не допускаются"
+  },
+  "pagination": {
+    "previous": "Предыдущий",
+    "next": "Следующий",
+    "first": "Первый",
+    "last": "Последний"
+  },
+  "ok": "ОК",
+  "cancel": "Отмена",
+  "share": "Поделиться",
+  "unshare": "Удалить из открытого списка",
+  "close": "Закрыть",
+  "add": "Добавить",
+  "open": "Открыто",
+  "see": "Видеть",
+  "save": "Сохранить",
+  "export": "Экспорт",
+  "edit": "Редактировать",
+  "delete": "Удалить",
+  "loading": "Загрузка...",
+  "send": "Послать",
+  "enabled": "Включено",
+  "disabled": "Отключено"
+}
