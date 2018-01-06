@@ -357,7 +357,7 @@ angular.module('yaru22.angular-timeago').config(["timeAgoSettings", function(tim
 'use strict';
 
 angular.module('yaru22.angular-timeago').config(["timeAgoSettings", function(timeAgoSettings) {
-  timeAgoSettings.strings['ru_RU'] = {
+  timeAgoSettings.strings['ru'] = {
     prefixAgo: null,
     prefixFromNow: null,
     suffixAgo: 'назад',
@@ -380,7 +380,7 @@ angular.module('yaru22.angular-timeago').config(["timeAgoSettings", function(tim
 'use strict';
 
 angular.module('yaru22.angular-timeago').config(["timeAgoSettings", function(timeAgoSettings) {
-  timeAgoSettings.strings['ru_RU'] = {
+  timeAgoSettings.strings['ru'] = {
     prefixAgo: null,
     prefixFromNow: null,
     suffixAgo: 'назад',
