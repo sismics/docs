@@ -7,7 +7,7 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
   /**
    * Returns true if in edit mode (false in add mode).
    */
-  $scope.isEdit = function() {
+  $scope.isEdit = function () {
     return $stateParams.username;
   };
   
@@ -15,7 +15,7 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
    * In edit mode, load the current user.
    */
   if ($scope.isEdit()) {
-    Restangular.one('user', $stateParams.username).get().then(function(data) {
+    Restangular.one('user', $stateParams.username).get().then(function (data) {
       data.storage_quota /= 1000000;
       $scope.user = data;
     });
@@ -24,7 +24,7 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
   /**
    * Update the current user.
    */
-  $scope.edit = function() {
+  $scope.edit = function () {
     var promise = null;
     var user = angular.copy($scope.user);
     user.storage_quota *= 1000000;
@@ -39,7 +39,7 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
         .put(user);
     }
     
-    promise.then(function() {
+    promise.then(function () {
       $scope.loadUsers();
       $state.go('settings.user');
     }, function (e) {
@@ -55,7 +55,7 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
   /**
    * Delete the current user.
    */
-  $scope.remove = function() {
+  $scope.remove = function () {
     var title = $translate.instant('settings.user.edit.delete_user_title');
     var msg = $translate.instant('settings.user.edit.delete_user_message');
     var btns = [
@@ -63,9 +63,9 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
       { result:'ok', label: $translate.instant('ok'), cssClass: 'btn-primary' }
     ];
 
-    $dialog.messageBox(title, msg, btns, function(result) {
-      if (result == 'ok') {
-        Restangular.one('user', $stateParams.username).remove().then(function() {
+    $dialog.messageBox(title, msg, btns, function (result) {
+      if (result === 'ok') {
+        Restangular.one('user', $stateParams.username).remove().then(function () {
           $scope.loadUsers();
           $state.go('settings.user');
         }, function() {
@@ -75,4 +75,14 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
     });
   };
 
+  $scope.passwordReset = function () {
+      Restangular.one('user').post('password_lost', {
+          username: $stateParams.username
+      }).then(function () {
+          var title = $translate.instant('settings.user.edit.password_lost_sent_title');
+          var msg = $translate.instant('settings.user.edit.password_lost_sent_message', { username: $stateParams.username });
+          var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
+          $dialog.messageBox(title, msg, btns);
+      });
+  };
 });

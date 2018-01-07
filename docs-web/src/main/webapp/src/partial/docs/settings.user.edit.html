@@ -109,5 +109,13 @@
         </button>
       </div>
     </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="button" class="btn btn-warning" ng-click="passwordReset()" ng-show="user.username != 'guest'">
+          <span class="glyphicon glyphicon-repeat"></span> {{ 'settings.user.edit.password_reset_btn' | translate }}
+        </button>
+      </div>
+    </div>
   </form>
 </div>
