@@ -252,7 +252,7 @@
         "disabled": "Disabled user",
         "password_reset_btn": "Send a password reset email to this user",
         "password_lost_sent_title": "Password reset email sent",
-        "password_lost_sent_message": "A password reset email has been sent to <strong>{{ username }}</strong> for a password reset"
+        "password_lost_sent_message": "A password reset email has been sent to <strong>{{ username }}</strong>"
       }
     },
     "security": {
