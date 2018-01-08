@@ -34,6 +34,7 @@ Features
 - 256-bit AES encryption of stored files
 - Tag system with nesting
 - User/group permission system
+- 2-factor authentication
 - Hierarchical groups
 - Audit log
 - Comments
