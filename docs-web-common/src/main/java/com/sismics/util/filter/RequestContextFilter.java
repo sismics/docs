@@ -32,7 +32,7 @@ public class RequestContextFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(RequestContextFilter.class);
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         // Initialize the app directory
         if (!filterConfig.getServletContext().getServerInfo().startsWith("Grizzly")) {
             EnvironmentUtil.setWebappContext(true);
