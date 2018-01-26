@@ -1,7 +1,6 @@
 package com.sismics.docs.core.dao.jpa.criteria;
 
 
-
 /**
  * Audit log criteria.
  *
