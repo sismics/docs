@@ -18,6 +18,10 @@ angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dial
     Restangular.one('routemodel', $stateParams.id).get().then(function (data) {
       $scope.workflow = data;
     });
+  } else {
+    $scope.workflow = {
+      steps: []
+    }
   }
 
   /**

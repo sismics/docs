@@ -8,7 +8,7 @@
     <div class="form-group" ng-class="{ 'has-error': !editWorkflowForm.name.$valid && editWorkflowForm.$dirty, success: editWorkflowForm.name.$valid }">
       <label class="col-sm-2 control-label" for="inputName">{{ 'settings.workflow.edit.name' | translate }}</label>
       <div class="col-sm-7">
-        <input name="name" type="text" id="inputName" required ng-disabled="isEdit()" class="form-control"
+        <input name="name" type="text" id="inputName" required class="form-control"
                ng-minlength="3" ng-maxlength="50" ng-attr-placeholder="{{ 'settings.workflow.edit.name' | translate }}" ng-model="workflow.name"/>
       </div>
 
@@ -16,6 +16,61 @@
         <span class="help-block" ng-show="editWorkflowForm.name.$error.required && editWorkflowForm.$dirty">{{ 'validation.required' | translate }}</span>
         <span class="help-block" ng-show="editWorkflowForm.name.$error.minlength && editWorkflowForm.$dirty">{{ 'validation.too_short' | translate }}</span>
         <span class="help-block" ng-show="editWorkflowForm.name.$error.maxlength && editWorkflowForm.$dirty">{{ 'validation.too_long' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="panel panel-default" ng-repeat="step in workflow.steps">
+      <div class="panel-body">
+        <div class="row" style="display: flex; align-items: center;">
+          <div class="col-xs-1 text-center" style="font-size: 200%;">
+            <div class="glyphicon glyphicon-move pointer" uib-tooltip="Drag and drop to rorder the step"></div>
+          </div>
+          <div class="col-xs-1 text-center" style="font-size: 200%">
+            <div>{{ $index + 1 }}</div>
+            <!--<div class="glyphicon glyphicon-ok-circle"></div>-->
+            <!--<div class="glyphicon glyphicon-transfer"></div>-->
+          </div>
+          <div class="col-xs-10">
+            <div class="row">
+              <div class="col-xs-6" style="margin-bottom: 10px">
+                <strong>
+                  Step type
+                  <span class="glyphicon glyphicon-info-sign"
+                        uib-tooltip-html="'<strong>Approve:</strong> Review and continue the workflow<br/><strong>Validate:</strong> Accept or reject the review'"></span>
+                </strong>
+              </div>
+              <div class="col-xs-6">
+                <strong>Assigned to</strong>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-6">
+                <select class="form-control" required>
+                  <option value="APPROVE">Approve</option>
+                  <option value="VALIDATE">Validate</option>
+                </select>
+              </div>
+              <div class="col-xs-6">
+                <input required ng-maxlength="50" class="form-control" type="text" id="inputTarget"
+                       ng-attr-placeholder="{{ 'directive.acledit.search_user_group' | translate }}" name="target" ng-model="acl.target" autocomplete="off"
+                       uib-typeahead="target as target.name for target in getTargetAclTypeahead($viewValue)"
+                       typeahead-template-url="partial/docs/directive.typeahead.acl.html"
+                       typeahead-wait-ms="200" />
+              </div>
+            </div>
+            <div class="row" style="margin-top: 10px">
+              <div class="col-xs-12">
+                <textarea type="text" class="form-control" required placeholder="Step name or description" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10 btn-link pointer" ng-click="workflow.steps.push({})">
+        <span class="glyphicon glyphicon-plus-sign"></span> Add a workflow step
       </div>
     </div>
 

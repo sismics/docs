@@ -49,6 +49,12 @@ public class RouteStep {
     private RouteStepTransition transition;
 
     /**
+     * Comment.
+     */
+    @Column(name = "RTP_COMMENT_C", length = 500)
+    private String comment;
+
+    /**
      * Target ID (user or group).
      */
     @Column(name = "RTP_IDTARGET_C", nullable = false, length = 36)
@@ -86,6 +92,7 @@ public class RouteStep {
                 .add("name", name)
                 .add("type", type)
                 .add("transition", transition)
+                .add("comment", comment)
                 .add("targetId", targetId)
                 .add("order", order)
                 .add("createDate", createDate)
