@@ -224,6 +224,7 @@
     "menu_two_factor_auth": "Two-factor authentication",
     "menu_opened_sessions": "Opened sessions",
     "menu_general_settings": "General settings",
+    "menu_workflow": "Workflow",
     "menu_users": "Users",
     "menu_groups": "Groups",
     "menu_vocabularies": "Vocabularies",
@@ -253,6 +254,19 @@
         "password_reset_btn": "Send a password reset email to this user",
         "password_lost_sent_title": "Password reset email sent",
         "password_lost_sent_message": "A password reset email has been sent to <strong>{{ username }}</strong>"
+      }
+    },
+    "workflow": {
+      "title": "Workflow <small>configuration</small>",
+      "add_workflow": "Add a workflow",
+      "name": "Name",
+      "create_date": "Create date",
+      "edit": {
+        "delete_workflow_title": "Delete workflow",
+        "delete_workflow_message": "Do you really want to delete this workflow? Currently running workflows will not be deleted",
+        "edit_workflow_title": "<small>Edit</small> \"{{ name }}\"",
+        "add_workflow_title": "<small>Add a</small> workflow",
+        "name": "Name"
       }
     },
     "security": {

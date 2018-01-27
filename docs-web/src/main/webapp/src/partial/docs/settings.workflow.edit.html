@@ -1,0 +1,33 @@
+<img src="img/loader.gif" ng-show="!workflow && isEdit()" />
+
+<div ng-show="workflow || !isEdit()">
+  <h2 ng-show="isEdit()" translate="settings.workflow.edit.edit_workflow_title" translate-values="{ name: workflow.name }"></h2>
+  <h2 ng-show="!isEdit()" translate="settings.workflow.edit.add_workflow_title"></h2>
+
+  <form class="form-horizontal" name="editWorkflowForm" novalidate>
+    <div class="form-group" ng-class="{ 'has-error': !editWorkflowForm.name.$valid && editWorkflowForm.$dirty, success: editWorkflowForm.name.$valid }">
+      <label class="col-sm-2 control-label" for="inputName">{{ 'settings.workflow.edit.name' | translate }}</label>
+      <div class="col-sm-7">
+        <input name="name" type="text" id="inputName" required ng-disabled="isEdit()" class="form-control"
+               ng-minlength="3" ng-maxlength="50" ng-attr-placeholder="{{ 'settings.workflow.edit.name' | translate }}" ng-model="workflow.name"/>
+      </div>
+
+      <div class="col-sm-3">
+        <span class="help-block" ng-show="editWorkflowForm.name.$error.required && editWorkflowForm.$dirty">{{ 'validation.required' | translate }}</span>
+        <span class="help-block" ng-show="editWorkflowForm.name.$error.minlength && editWorkflowForm.$dirty">{{ 'validation.too_short' | translate }}</span>
+        <span class="help-block" ng-show="editWorkflowForm.name.$error.maxlength && editWorkflowForm.$dirty">{{ 'validation.too_long' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editWorkflowForm.$valid">
+          <span class="glyphicon glyphicon-pencil"></span> {{ isEdit() ? 'save' : 'add' | translate }}
+        </button>
+        <button type="button" class="btn btn-danger" ng-click="remove()" ng-show="isEdit()">
+          <span class="glyphicon glyphicon-trash"></span> {{ 'delete' | translate }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

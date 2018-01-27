@@ -155,6 +155,33 @@ angular.module('docs',
         }
       }
     })
+    .state('settings.workflow', {
+      url: '/workflow',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.workflow.html',
+          controller: 'SettingsWorkflow'
+        }
+      }
+    })
+    .state('settings.workflow.edit', {
+      url: '/edit/:id',
+      views: {
+        'workflow': {
+          templateUrl: 'partial/docs/settings.workflow.edit.html',
+          controller: 'SettingsWorkflowEdit'
+        }
+      }
+    })
+    .state('settings.workflow.add', {
+      url: '/add',
+      views: {
+        'workflow': {
+          templateUrl: 'partial/docs/settings.workflow.edit.html',
+          controller: 'SettingsWorkflowEdit'
+        }
+      }
+    })
     .state('settings.group', {
       url: '/group',
       views: {
