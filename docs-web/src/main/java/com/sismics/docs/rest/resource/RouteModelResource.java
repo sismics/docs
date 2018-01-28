@@ -1,19 +1,25 @@
 package com.sismics.docs.rest.resource;
 
+import com.sismics.docs.core.constant.AclTargetType;
+import com.sismics.docs.core.constant.RouteStepType;
+import com.sismics.docs.core.dao.jpa.GroupDao;
 import com.sismics.docs.core.dao.jpa.RouteModelDao;
+import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.criteria.RouteModelCriteria;
 import com.sismics.docs.core.dao.jpa.dto.RouteModelDto;
+import com.sismics.docs.core.model.jpa.Group;
 import com.sismics.docs.core.model.jpa.RouteModel;
+import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
+import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
+import javax.json.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.io.StringReader;
 import java.util.List;
 
 /**
@@ -91,7 +97,8 @@ public class RouteModelResource extends BaseResource {
 
         // Validate input
         name = ValidationUtil.validateLength(name, "name", 1, 50, false);
-        // TODO Validate steps data
+        steps = ValidationUtil.validateLength(steps, "steps", 1, 5000, false);
+        validateRouteModelSteps(steps);
 
         // Create the route model
         RouteModelDao routeModelDao = new RouteModelDao();
@@ -103,6 +110,66 @@ public class RouteModelResource extends BaseResource {
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("id", id);
         return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Validate route model steps.
+     *
+     * @param steps Route model steps data
+     */
+    private void validateRouteModelSteps(String steps) {
+        UserDao userDao = new UserDao();
+        GroupDao groupDao = new GroupDao();
+
+        try (JsonReader reader = Json.createReader(new StringReader(steps))) {
+            JsonArray stepsJson = reader.readArray();
+            if (stepsJson.size() == 0) {
+                throw new ClientException("ValidationError", "At least one step is required");
+            }
+            for (int i = 0; i < stepsJson.size(); i++) {
+                JsonObject step = stepsJson.getJsonObject(i);
+                if (step.size() != 3) {
+                    throw new ClientException("ValidationError", "Steps data not valid");
+                }
+                String type = step.getString("type");
+                ValidationUtil.validateLength(step.getString("name"), "step.name", 1, 200, false);
+                try {
+                    RouteStepType.valueOf(type);
+                } catch (IllegalArgumentException e) {
+                    throw new ClientException("ValidationError", type + "is not a valid route step type");
+                }
+                JsonObject target = step.getJsonObject("target");
+                if (target.size() != 2) {
+                    throw new ClientException("ValidationError", "Steps data not valid");
+                }
+                AclTargetType targetType;
+                String targetTypeStr = target.getString("type");
+                String targetName = target.getString("name");
+                ValidationUtil.validateRequired(targetName, "step.target.name");
+                ValidationUtil.validateRequired(targetTypeStr, "step.target.type");
+                try {
+                    targetType = AclTargetType.valueOf(targetTypeStr);
+                } catch (IllegalArgumentException e) {
+                    throw new ClientException("ValidationError", targetTypeStr + " is not a valid ACL target type");
+                }
+                switch (targetType) {
+                    case USER:
+                        User user = userDao.getActiveByUsername(targetName);
+                        if (user == null) {
+                            throw new ClientException("ValidationError", targetName + " is not a valid user");
+                        }
+                        break;
+                    case GROUP:
+                        Group group = groupDao.getActiveByName(targetName);
+                        if (group == null) {
+                            throw new ClientException("ValidationError", targetName + " is not a valid group");
+                        }
+                        break;
+                }
+            }
+        } catch (JsonException e) {
+            throw new ClientException("ValidationError", "Steps data not valid");
+        }
     }
 
     /**
