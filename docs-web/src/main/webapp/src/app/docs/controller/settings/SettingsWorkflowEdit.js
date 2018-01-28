@@ -3,7 +3,53 @@
 /**
  * Settings workflow edition page controller.
  */
-angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dialog, $state, $stateParams, Restangular, $translate) {
+angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dialog, $state, $stateParams, Restangular, $translate, $q) {
+  /**
+   * UI sortable options.
+   */
+  $scope.sortableOptions = {
+    forceHelperSize: true,
+    forcePlaceholderSize: true,
+    tolerance: 'pointer',
+    handle: '.handle'
+  };
+
+  /**
+   * Auto-complete on ACL target.
+   */
+  $scope.getTargetAclTypeahead = function($viewValue) {
+    var deferred = $q.defer();
+    Restangular.one('acl/target/search')
+      .get({
+        search: $viewValue
+      }).then(function(data) {
+      var output = [];
+
+      // Add the type to use later
+      output.push.apply(output,  _.map(data.users, function(user) {
+        user.type = 'USER';
+        return user;
+      }));
+      output.push.apply(output, _.map(data.groups, function(group) {
+        group.type = 'GROUP';
+        return group;
+      }));
+
+      // Send the data to the typeahead directive
+      deferred.resolve(output, true);
+    });
+    return deferred.promise;
+  };
+
+  /**
+   * Add a workflow step.
+   */
+  $scope.addStep = function () {
+    $scope.workflow.steps.push({
+      type: 'VALIDATE'
+    });
+  };
+
   /**
    * Returns true if in edit mode (false in add mode).
    */
@@ -17,6 +63,7 @@ angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dial
   if ($scope.isEdit()) {
     Restangular.one('routemodel', $stateParams.id).get().then(function (data) {
       $scope.workflow = data;
+      $scope.workflow.steps = JSON.parse(data.steps);
     });
   } else {
     $scope.workflow = {
@@ -30,6 +77,7 @@ angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dial
   $scope.edit = function () {
     var promise = null;
     var workflow = angular.copy($scope.workflow);
+    workflow.steps = JSON.stringify(workflow.steps);
 
     if ($scope.isEdit()) {
       promise = Restangular

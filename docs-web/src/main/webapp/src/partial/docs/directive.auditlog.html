@@ -42,6 +42,9 @@
             <span ng-switch-when="Group">
               <a href="#/group/{{ log.message }}">{{ log.message }}</a>
             </span>
+            <span ng-switch-when="RouteModel">
+              <a href="#/settings/workflow/eidt/{{ log.target }}">{{ log.message }}</a>
+            </span>
           </span>
     </td>
   </tr>

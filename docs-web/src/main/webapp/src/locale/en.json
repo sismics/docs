@@ -266,7 +266,15 @@
         "delete_workflow_message": "Do you really want to delete this workflow? Currently running workflows will not be deleted",
         "edit_workflow_title": "<small>Edit</small> \"{{ name }}\"",
         "add_workflow_title": "<small>Add a</small> workflow",
-        "name": "Name"
+        "name": "Name",
+        "name_placeholder": "Step name or description",
+        "drag_help": "Drag and drop to rorder the step",
+        "type": "Step type",
+        "type_approve": "Approve",
+        "type_validate": "Validate",
+        "target": "Assigned to",
+        "target_help": "<strong>Approve:</strong> Review and continue the workflow<br/><strong>Validate:</strong> Accept or reject the review",
+        "add_step": "Add a workflow step"
       }
     },
     "security": {
@@ -391,7 +399,8 @@
       "File": "File",
       "Group": "Group",
       "Tag": "Tag",
-      "User": "User"
+      "User": "User",
+      "RouteModel": "Workflow"
     },
     "selectrelation": {
       "typeahead": "Type a document title"
