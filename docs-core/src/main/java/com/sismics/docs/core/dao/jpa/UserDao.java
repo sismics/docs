@@ -92,17 +92,17 @@ public class UserDao {
         // Get the user
         Query q = em.createQuery("select u from User u where u.id = :id and u.deleteDate is null");
         q.setParameter("id", user.getId());
-        User userFromDb = (User) q.getSingleResult();
+        User userDb = (User) q.getSingleResult();
 
         // Update the user (except password)
-        userFromDb.setEmail(user.getEmail());
-        userFromDb.setStorageQuota(user.getStorageQuota());
-        userFromDb.setStorageCurrent(user.getStorageCurrent());
-        userFromDb.setTotpKey(user.getTotpKey());
-        userFromDb.setDisableDate(user.getDisableDate());
+        userDb.setEmail(user.getEmail());
+        userDb.setStorageQuota(user.getStorageQuota());
+        userDb.setStorageCurrent(user.getStorageCurrent());
+        userDb.setTotpKey(user.getTotpKey());
+        userDb.setDisableDate(user.getDisableDate());
 
         // Create audit log
-        AuditLogUtil.create(userFromDb, AuditLogType.UPDATE, userId);
+        AuditLogUtil.create(userDb, AuditLogType.UPDATE, userId);
         
         return user;
     }
@@ -118,10 +118,10 @@ public class UserDao {
         // Get the user
         Query q = em.createQuery("select u from User u where u.id = :id and u.deleteDate is null");
         q.setParameter("id", user.getId());
-        User userFromDb = (User) q.getSingleResult();
+        User userDb = (User) q.getSingleResult();
 
         // Update the user
-        userFromDb.setStorageQuota(user.getStorageQuota());
+        userDb.setStorageQuota(user.getStorageQuota());
     }
     
     /**
@@ -137,13 +137,13 @@ public class UserDao {
         // Get the user
         Query q = em.createQuery("select u from User u where u.id = :id and u.deleteDate is null");
         q.setParameter("id", user.getId());
-        User userFromDb = (User) q.getSingleResult();
+        User userDb = (User) q.getSingleResult();
 
         // Update the user
-        userFromDb.setPassword(hashPassword(user.getPassword()));
+        userDb.setPassword(hashPassword(user.getPassword()));
         
         // Create audit log
-        AuditLogUtil.create(userFromDb, AuditLogType.UPDATE, userId);
+        AuditLogUtil.create(userDb, AuditLogType.UPDATE, userId);
         
         return user;
     }
@@ -160,10 +160,10 @@ public class UserDao {
         // Get the user
         Query q = em.createQuery("select u from User u where u.id = :id and u.deleteDate is null");
         q.setParameter("id", user.getId());
-        User userFromDb = (User) q.getSingleResult();
+        User userDb = (User) q.getSingleResult();
 
         // Update the user
-        userFromDb.setPassword(user.getPassword());
+        userDb.setPassword(user.getPassword());
 
         return user;
     }
@@ -212,39 +212,39 @@ public class UserDao {
         // Get the user
         Query q = em.createQuery("select u from User u where u.username = :username and u.deleteDate is null");
         q.setParameter("username", username);
-        User userFromDb = (User) q.getSingleResult();
+        User userDb = (User) q.getSingleResult();
         
         // Delete the user
         Date dateNow = new Date();
-        userFromDb.setDeleteDate(dateNow);
+        userDb.setDeleteDate(dateNow);
 
         // Delete linked data
         q = em.createQuery("delete from AuthenticationToken at where at.userId = :userId");
-        q.setParameter("userId", userFromDb.getId());
+        q.setParameter("userId", userDb.getId());
         q.executeUpdate();
         
         q = em.createQuery("update Document d set d.deleteDate = :dateNow where d.userId = :userId and d.deleteDate is null");
-        q.setParameter("userId", userFromDb.getId());
+        q.setParameter("userId", userDb.getId());
         q.setParameter("dateNow", dateNow);
         q.executeUpdate();
         
         q = em.createQuery("update File f set f.deleteDate = :dateNow where f.userId = :userId and f.deleteDate is null");
-        q.setParameter("userId", userFromDb.getId());
+        q.setParameter("userId", userDb.getId());
         q.setParameter("dateNow", dateNow);
         q.executeUpdate();
         
         q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.targetId = :userId and a.deleteDate is null");
-        q.setParameter("userId", userFromDb.getId());
+        q.setParameter("userId", userDb.getId());
         q.setParameter("dateNow", dateNow);
         q.executeUpdate();
         
         q = em.createQuery("update Comment c set c.deleteDate = :dateNow where c.userId = :userId and c.deleteDate is null");
-        q.setParameter("userId", userFromDb.getId());
+        q.setParameter("userId", userDb.getId());
         q.setParameter("dateNow", dateNow);
         q.executeUpdate();
         
         // Create audit log
-        AuditLogUtil.create(userFromDb, AuditLogType.DELETE, userId);
+        AuditLogUtil.create(userDb, AuditLogType.DELETE, userId);
     }
 
     /**

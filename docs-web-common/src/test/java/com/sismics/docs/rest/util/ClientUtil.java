@@ -1,13 +1,13 @@
 package com.sismics.docs.rest.util;
 
+import com.sismics.util.filter.TokenBasedSecurityFilter;
+
 import javax.json.JsonObject;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
-
-import com.sismics.util.filter.TokenBasedSecurityFilter;
 
 /**
  * REST client utilities.
@@ -75,7 +75,7 @@ public class ClientUtil {
         // Login admin to create the group
         String adminToken = login("admin", "admin", false);
         
-        // Create the gorup
+        // Create the group
         resource.path("/group").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()

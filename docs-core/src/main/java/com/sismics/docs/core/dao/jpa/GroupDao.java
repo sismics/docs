@@ -1,18 +1,5 @@
 package com.sismics.docs.core.dao.jpa;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
 import com.google.common.base.Joiner;
 import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
@@ -24,6 +11,11 @@ import com.sismics.docs.core.util.jpa.QueryParam;
 import com.sismics.docs.core.util.jpa.QueryUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.util.*;
 
 /**
  * Group DAO.
@@ -266,16 +258,16 @@ public class GroupDao {
         // Get the group
         Query q = em.createQuery("select g from Group g where g.id = :id and g.deleteDate is null");
         q.setParameter("id", group.getId());
-        Group groupFromDb = (Group) q.getSingleResult();
+        Group groupDb = (Group) q.getSingleResult();
         
         // Update the group
-        groupFromDb.setName(group.getName());
-        groupFromDb.setParentId(group.getParentId());
+        groupDb.setName(group.getName());
+        groupDb.setParentId(group.getParentId());
         
         // Create audit log
-        AuditLogUtil.create(groupFromDb, AuditLogType.UPDATE, userId);
+        AuditLogUtil.create(groupDb, AuditLogType.UPDATE, userId);
         
-        return groupFromDb;
+        return groupDb;
     }
 }
 

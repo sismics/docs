@@ -294,26 +294,26 @@ public class DocumentDao {
         // Get the document
         Query q = em.createQuery("select d from Document d where d.id = :id and d.deleteDate is null");
         q.setParameter("id", document.getId());
-        Document documentFromDb = (Document) q.getSingleResult();
+        Document documentDb = (Document) q.getSingleResult();
         
         // Update the document
-        documentFromDb.setTitle(document.getTitle());
-        documentFromDb.setDescription(document.getDescription());
-        documentFromDb.setSubject(document.getSubject());
-        documentFromDb.setIdentifier(document.getIdentifier());
-        documentFromDb.setPublisher(document.getPublisher());
-        documentFromDb.setFormat(document.getFormat());
-        documentFromDb.setSource(document.getSource());
-        documentFromDb.setType(document.getType());
-        documentFromDb.setCoverage(document.getCoverage());
-        documentFromDb.setRights(document.getRights());
-        documentFromDb.setCreateDate(document.getCreateDate());
-        documentFromDb.setLanguage(document.getLanguage());
+        documentDb.setTitle(document.getTitle());
+        documentDb.setDescription(document.getDescription());
+        documentDb.setSubject(document.getSubject());
+        documentDb.setIdentifier(document.getIdentifier());
+        documentDb.setPublisher(document.getPublisher());
+        documentDb.setFormat(document.getFormat());
+        documentDb.setSource(document.getSource());
+        documentDb.setType(document.getType());
+        documentDb.setCoverage(document.getCoverage());
+        documentDb.setRights(document.getRights());
+        documentDb.setCreateDate(document.getCreateDate());
+        documentDb.setLanguage(document.getLanguage());
         
         // Create audit log
-        AuditLogUtil.create(documentFromDb, AuditLogType.UPDATE, userId);
+        AuditLogUtil.create(documentDb, AuditLogType.UPDATE, userId);
         
-        return documentFromDb;
+        return documentDb;
     }
 
     /**

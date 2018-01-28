@@ -148,17 +148,17 @@ public class TagDao {
         // Get the tag
         Query q = em.createQuery("select t from Tag t where t.id = :id and t.deleteDate is null");
         q.setParameter("id", tag.getId());
-        Tag tagFromDb = (Tag) q.getSingleResult();
+        Tag tagDb = (Tag) q.getSingleResult();
         
         // Update the tag
-        tagFromDb.setName(tag.getName());
-        tagFromDb.setColor(tag.getColor());
-        tagFromDb.setParentId(tag.getParentId());
+        tagDb.setName(tag.getName());
+        tagDb.setColor(tag.getColor());
+        tagDb.setParentId(tag.getParentId());
         
         // Create audit log
-        AuditLogUtil.create(tagFromDb, AuditLogType.UPDATE, userId);
+        AuditLogUtil.create(tagDb, AuditLogType.UPDATE, userId);
         
-        return tagFromDb;
+        return tagDb;
     }
 
     /**

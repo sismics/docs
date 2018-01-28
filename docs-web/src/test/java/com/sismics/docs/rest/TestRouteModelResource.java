@@ -6,6 +6,8 @@ import org.junit.Test;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
 
 
 /**
@@ -29,7 +31,68 @@ public class TestRouteModelResource extends BaseJerseyTest {
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
-        JsonArray groups = json.getJsonArray("routemodels");
-        Assert.assertEquals(0, groups.size());
+        JsonArray routeModels = json.getJsonArray("routemodels");
+        Assert.assertEquals(0, routeModels.size());
+
+        // Create a route model
+        json = target().path("/routemodel").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("name", "Workflow validation 1")
+                        .param("steps", "[]")), JsonObject.class);
+        String routeModelId = json.getString("id");
+
+        // Get all route models
+        json = target().path("/routemodel")
+                .queryParam("sort_column", "1")
+                .queryParam("asc", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        routeModels = json.getJsonArray("routemodels");
+        Assert.assertEquals(1, routeModels.size());
+        Assert.assertEquals(routeModelId, routeModels.getJsonObject(0).getString("id"));
+        Assert.assertEquals("Workflow validation 1", routeModels.getJsonObject(0).getString("name"));
+
+        // Get the route model
+        json = target().path("/routemodel/" + routeModelId)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(routeModelId, json.getString("id"));
+        Assert.assertEquals("Workflow validation 1", json.getString("name"));
+        Assert.assertEquals("[]", json.getString("steps"));
+
+        // Update the route model
+        json = target().path("/routemodel/" + routeModelId).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("name", "Workflow validation 2")
+                        .param("steps", "[{}]")), JsonObject.class);
+
+        // Get the route model
+        json = target().path("/routemodel/" + routeModelId)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(routeModelId, json.getString("id"));
+        Assert.assertEquals("Workflow validation 2", json.getString("name"));
+        Assert.assertEquals("[{}]", json.getString("steps"));
+
+        // Delete the route model
+        target().path("/routemodel/" + routeModelId)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete(JsonObject.class);
+
+        // Get all route models
+        json = target().path("/routemodel")
+                .queryParam("sort_column", "1")
+                .queryParam("asc", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        routeModels = json.getJsonArray("routemodels");
+        Assert.assertEquals(0, routeModels.size());
     }
 }

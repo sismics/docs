@@ -12,7 +12,7 @@ angular.module('docs').controller('SettingsWorkflow', function($scope, $state, R
       sort_column: 1,
       asc: true
     }).then(function(data) {
-      $scope.workflows = data.workflows;
+      $scope.workflows = data.routemodels;
     });
   };
   

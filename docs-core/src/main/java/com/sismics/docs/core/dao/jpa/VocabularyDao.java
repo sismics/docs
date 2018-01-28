@@ -1,14 +1,13 @@
 package com.sismics.docs.core.dao.jpa;
 
-import java.util.List;
-import java.util.UUID;
+import com.sismics.docs.core.model.jpa.Vocabulary;
+import com.sismics.util.context.ThreadLocalContext;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-
-import com.sismics.docs.core.model.jpa.Vocabulary;
-import com.sismics.util.context.ThreadLocalContext;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Vocabulary DAO.
@@ -76,14 +75,14 @@ public class VocabularyDao {
         // Get the vocabulary entry
         Query q = em.createQuery("select v from Vocabulary v where v.id = :id");
         q.setParameter("id", vocabulary.getId());
-        Vocabulary vocabularyFromDb = (Vocabulary) q.getSingleResult();
+        Vocabulary vocabularyDb = (Vocabulary) q.getSingleResult();
         
         // Update the vocabulary entry
-        vocabularyFromDb.setName(vocabulary.getName());
-        vocabularyFromDb.setValue(vocabulary.getValue());
-        vocabularyFromDb.setOrder(vocabulary.getOrder());
+        vocabularyDb.setName(vocabulary.getName());
+        vocabularyDb.setValue(vocabulary.getValue());
+        vocabularyDb.setOrder(vocabulary.getOrder());
         
-        return vocabularyFromDb;
+        return vocabularyDb;
     }
     
     /**

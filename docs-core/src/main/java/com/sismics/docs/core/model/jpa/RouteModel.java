@@ -15,7 +15,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "T_ROUTE_MODEL")
-public class RouteModel {
+public class RouteModel implements Loggable {
     /**
      * Route model ID.
      */
@@ -32,8 +32,8 @@ public class RouteModel {
     /**
      * Data.
      */
-    @Column(name = "RTM_DATA_C", nullable = false, length = 5000)
-    private String data;
+    @Column(name = "RTM_STEPS_C", nullable = false, length = 5000)
+    private String steps;
 
     /**
      * Creation date.
@@ -65,12 +65,12 @@ public class RouteModel {
         return this;
     }
 
-    public String getData() {
-        return data;
+    public String getSteps() {
+        return steps;
     }
 
-    public RouteModel setData(String data) {
-        this.data = data;
+    public RouteModel setSteps(String steps) {
+        this.steps = steps;
         return this;
     }
 
@@ -98,5 +98,10 @@ public class RouteModel {
                 .add("id", id)
                 .add("name", name)
                 .toString();
+    }
+
+    @Override
+    public String toMessage() {
+        return name;
     }
 }

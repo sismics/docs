@@ -1,17 +1,16 @@
 package com.sismics.docs.core.dao.jpa;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
 import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.AuditLogUtil;
 import com.sismics.util.context.ThreadLocalContext;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * File DAO.
@@ -137,13 +136,13 @@ public class FileDao {
         // Get the file
         Query q = em.createQuery("select f from File f where f.id = :id and f.deleteDate is null");
         q.setParameter("id", file.getId());
-        File fileFromDb = (File) q.getSingleResult();
+        File fileDb = (File) q.getSingleResult();
 
         // Update the file
-        fileFromDb.setDocumentId(file.getDocumentId());
-        fileFromDb.setContent(file.getContent());
-        fileFromDb.setOrder(file.getOrder());
-        fileFromDb.setMimeType(file.getMimeType());
+        fileDb.setDocumentId(file.getDocumentId());
+        fileDb.setContent(file.getContent());
+        fileDb.setOrder(file.getOrder());
+        fileDb.setMimeType(file.getMimeType());
         
         return file;
     }
