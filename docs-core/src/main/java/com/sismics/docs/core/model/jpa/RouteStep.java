@@ -84,6 +84,105 @@ public class RouteStep {
     @Column(name = "RTP_DELETEDATE_D")
     private Date deleteDate;
 
+    public String getId() {
+        return id;
+    }
+
+    public RouteStep setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    public RouteStep setRouteId(String routeId) {
+        this.routeId = routeId;
+        return this;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public RouteStep setName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public RouteStepType getType() {
+        return type;
+    }
+
+    public RouteStep setType(RouteStepType type) {
+        this.type = type;
+        return this;
+    }
+
+    public RouteStepTransition getTransition() {
+        return transition;
+    }
+
+    public RouteStep setTransition(RouteStepTransition transition) {
+        this.transition = transition;
+        return this;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public RouteStep setComment(String comment) {
+        this.comment = comment;
+        return this;
+    }
+
+    public String getTargetId() {
+        return targetId;
+    }
+
+    public RouteStep setTargetId(String targetId) {
+        this.targetId = targetId;
+        return this;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public RouteStep setOrder(Integer order) {
+        this.order = order;
+        return this;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public RouteStep setCreateDate(Date createDate) {
+        this.createDate = createDate;
+        return this;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public RouteStep setEndDate(Date endDate) {
+        this.endDate = endDate;
+        return this;
+    }
+
+    public Date getDeleteDate() {
+        return deleteDate;
+    }
+
+    public RouteStep setDeleteDate(Date deleteDate) {
+        this.deleteDate = deleteDate;
+        return this;
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)

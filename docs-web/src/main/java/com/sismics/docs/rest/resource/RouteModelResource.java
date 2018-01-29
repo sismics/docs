@@ -201,7 +201,8 @@ public class RouteModelResource extends BaseResource {
 
         // Validate input
         name = ValidationUtil.validateLength(name, "name", 1, 50, false);
-        // TODO Validate steps data
+        steps = ValidationUtil.validateLength(steps, "steps", 1, 5000, false);
+        validateRouteModelSteps(steps);
 
         // Get the route model
         RouteModelDao routeModelDao = new RouteModelDao();

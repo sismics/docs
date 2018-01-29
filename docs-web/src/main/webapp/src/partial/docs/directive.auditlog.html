@@ -45,6 +45,9 @@
             <span ng-switch-when="RouteModel">
               <a href="#/settings/workflow/edit/{{ log.target }}">{{ log.message }}</a>
             </span>
+            <span ng-switch-when="Route">
+              <a ng-href="#/document/view/{{ log.message }}">{{ 'open' | translate }}</a>
+            </span>
           </span>
     </td>
   </tr>
