@@ -116,7 +116,7 @@ public class TagResource extends BaseResource {
 
         TagDao tagDao = new TagDao();
         List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setId(id), null);
-        if (tagDtoList.size() == 0) {
+        if (tagDtoList.isEmpty()) {
             throw new NotFoundException();
         }
 

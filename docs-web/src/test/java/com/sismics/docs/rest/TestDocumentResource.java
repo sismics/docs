@@ -131,7 +131,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document3Token)
                 .get(JsonObject.class);
         documents = json.getJsonArray("documents");
-        Assert.assertTrue(documents.size() == 0);
+        Assert.assertTrue(documents.isEmpty());
         
         // Create a document with document3
         long create3Date = new Date().getTime();

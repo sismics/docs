@@ -2,7 +2,6 @@ package com.sismics.docs.rest.resource;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.*;
@@ -13,11 +12,9 @@ import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
-import com.sismics.docs.core.model.jpa.Acl;
-import com.sismics.docs.core.model.jpa.Document;
-import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.model.jpa.*;
 import com.sismics.docs.core.util.PdfUtil;
+import com.sismics.docs.core.util.RoutingUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -42,7 +39,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.*;
@@ -102,6 +98,10 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String} relations.id ID
      * @apiSuccess {String} relations.title Title
      * @apiSuccess {String} relations.source True if this document is the source of the relation
+     * @apiSuccess {Object} route_step The current active route step
+     * @apiSuccess {String} route_step.name Route step name
+     * @apiSuccess {String="APPROVE", "VALIDATE"} route_step.type Route step type
+     * @apiSuccess {Boolean} route_step.transitionable True if the route step is actionable by the current user
      * @apiError (client) NotFound Document not found
      * @apiPermission none
      * @apiVersion 1.5.0
@@ -209,6 +209,15 @@ public class DocumentResource extends BaseResource {
                     .add("source", relationDto.isSource()));
         }
         document.add("relations", relationList);
+
+        // Add current route step
+        RouteStep routeStep = RoutingUtil.getCurrentStep(documentId);
+        if (routeStep != null && !principal.isAnonymous()) {
+            document.add("route_step", Json.createObjectBuilder()
+                    .add("name", routeStep.getName())
+                    .add("type", routeStep.getType().name())
+                    .add("transitionable", getTargetIdList(null).contains(routeStep.getTargetId())));
+        }
         
         return Response.ok().entity(document.build()).build();
     }
@@ -423,7 +432,7 @@ public class DocumentResource extends BaseResource {
                     if (documentCriteria.getTagIdList() == null) {
                         documentCriteria.setTagIdList(new ArrayList<String>());
                     }
-                    if (tagDtoList.size() == 0) {
+                    if (tagDtoList.isEmpty()) {
                         // No tag found, the request must returns nothing
                         documentCriteria.getTagIdList().add(UUID.randomUUID().toString());
                     }

@@ -4,7 +4,9 @@ import com.sismics.docs.core.model.jpa.RouteStep;
 import com.sismics.util.context.ThreadLocalContext;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -29,5 +31,13 @@ public class RouteStepDao {
         em.persist(routeStep);
 
         return routeStep.getId();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<RouteStep> getRouteSteps(String routeId) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("from RouteStep r where r.routeId = :routeId and r.deleteDate is null order by r.order asc");
+        q.setParameter("routeId", routeId);
+        return q.getResultList();
     }
 }

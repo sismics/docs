@@ -3,8 +3,14 @@ package com.sismics.docs.rest.resource;
 import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.constant.RouteStepType;
-import com.sismics.docs.core.dao.jpa.*;
-import com.sismics.docs.core.model.jpa.*;
+import com.sismics.docs.core.dao.jpa.AclDao;
+import com.sismics.docs.core.dao.jpa.RouteDao;
+import com.sismics.docs.core.dao.jpa.RouteModelDao;
+import com.sismics.docs.core.dao.jpa.RouteStepDao;
+import com.sismics.docs.core.model.jpa.Route;
+import com.sismics.docs.core.model.jpa.RouteModel;
+import com.sismics.docs.core.model.jpa.RouteStep;
+import com.sismics.docs.core.util.SecurityUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 
@@ -69,8 +75,6 @@ public class RouteResource extends BaseResource {
         routeDao.create(route, principal.getId());
 
         // Create the steps
-        UserDao userDao = new UserDao();
-        GroupDao groupDao = new GroupDao();
         RouteStepDao routeStepDao = new RouteStepDao();
         try (JsonReader reader = Json.createReader(new StringReader(routeModel.getSteps()))) {
             JsonArray stepsJson = reader.readArray();
@@ -85,22 +89,8 @@ public class RouteResource extends BaseResource {
                         .setRouteId(route.getId())
                         .setName(step.getString("name"))
                         .setOrder(order++)
-                        .setType(RouteStepType.valueOf(step.getString("type")));
-
-                switch (targetType) {
-                    case USER:
-                        User user = userDao.getActiveByUsername(targetName);
-                        if (user != null) {
-                            routeStep.setTargetId(user.getId());
-                        }
-                        break;
-                    case GROUP:
-                        Group group = groupDao.getActiveByName(targetName);
-                        if (group != null) {
-                            routeStep.setTargetId(group.getId());
-                        }
-                        break;
-                }
+                        .setType(RouteStepType.valueOf(step.getString("type")))
+                        .setTargetId(SecurityUtil.getTargetIdFromName(targetName, targetType));
 
                 if (routeStep.getTargetId() == null) {
                     throw new ClientException("InvalidRouteModel", "A step has an invalid target");

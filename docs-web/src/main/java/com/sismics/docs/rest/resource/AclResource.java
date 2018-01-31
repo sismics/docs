@@ -8,7 +8,10 @@ import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
 import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
 import com.sismics.docs.core.dao.jpa.dto.GroupDto;
 import com.sismics.docs.core.dao.jpa.dto.UserDto;
-import com.sismics.docs.core.model.jpa.*;
+import com.sismics.docs.core.model.jpa.Acl;
+import com.sismics.docs.core.model.jpa.Document;
+import com.sismics.docs.core.model.jpa.Tag;
+import com.sismics.docs.core.util.SecurityUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
@@ -70,29 +73,8 @@ public class AclResource extends BaseResource {
         AclTargetType type = AclTargetType.valueOf(ValidationUtil.validateLength(typeStr, "type", 1, 10, false));
         targetName = ValidationUtil.validateLength(targetName, "target", 1, 50, false);
         
-        // Search user or group
-        String targetId = null;
-        switch (type) {
-        case USER:
-            UserDao userDao = new UserDao();
-            User user = userDao.getActiveByUsername(targetName);
-            if (user != null) {
-                targetId = user.getId();
-            }
-            break;
-        case GROUP:
-            GroupDao groupDao = new GroupDao();
-            Group group = groupDao.getActiveByName(targetName);
-            if (group != null) {
-                targetId = group.getId();
-            }
-            break;
-        case SHARE:
-            // Share must use the Share REST resource
-            break;
-        }
-        
         // Does a target has been found?
+        String targetId = SecurityUtil.getTargetIdFromName(targetName, type);
         if (targetId == null) {
             throw new ClientException("InvalidTarget", MessageFormat.format("This target does not exist: {0}", targetName));
         }

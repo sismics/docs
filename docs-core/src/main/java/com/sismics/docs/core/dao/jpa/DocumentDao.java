@@ -217,7 +217,7 @@ public class DocumentDao {
         if (!Strings.isNullOrEmpty(criteria.getSearch()) || !Strings.isNullOrEmpty(criteria.getFullSearch())) {
             LuceneDao luceneDao = new LuceneDao();
             Set<String> documentIdList = luceneDao.search(criteria.getSearch(), criteria.getFullSearch());
-            if (documentIdList.size() == 0) {
+            if (documentIdList.isEmpty()) {
                 // If the search doesn't find any document, the request should return nothing
                 documentIdList.add(UUID.randomUUID().toString());
             }

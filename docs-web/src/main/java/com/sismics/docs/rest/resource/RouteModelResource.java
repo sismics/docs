@@ -123,7 +123,7 @@ public class RouteModelResource extends BaseResource {
 
         try (JsonReader reader = Json.createReader(new StringReader(steps))) {
             JsonArray stepsJson = reader.readArray();
-            if (stepsJson.size() == 0) {
+            if (stepsJson.isEmpty()) {
                 throw new ClientException("ValidationError", "At least one step is required");
             }
             for (int i = 0; i < stepsJson.size(); i++) {

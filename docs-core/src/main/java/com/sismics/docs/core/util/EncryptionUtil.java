@@ -24,7 +24,6 @@ import java.security.Security;
  * @author bgamard
  */
 public class EncryptionUtil {
-
     /**
      * Salt.
      */

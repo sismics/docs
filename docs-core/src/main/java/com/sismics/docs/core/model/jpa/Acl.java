@@ -1,16 +1,10 @@
 package com.sismics.docs.core.model.jpa;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.google.common.base.MoreObjects;
 import com.sismics.docs.core.constant.PermType;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * ACL entity.
@@ -33,6 +27,8 @@ public class Acl implements Loggable {
     @Column(name = "ACL_PERM_C", length = 30, nullable = false)
     @Enumerated(EnumType.STRING)
     private PermType perm;
+
+    // TODO Add ACL type enum: USER, ROUTING
 
     /**
      * ACL source ID.

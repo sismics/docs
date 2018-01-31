@@ -116,7 +116,7 @@ public class ShareResource extends BaseResource {
         // Check that the user can share the linked document
         AclDao aclDao = new AclDao();
         List<Acl> aclList = aclDao.getByTargetId(id);
-        if (aclList.size() == 0) {
+        if (aclList.isEmpty()) {
             throw new ClientException("ShareNotFound", MessageFormat.format("Share not found: {0}", id));
         }
         
