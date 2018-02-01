@@ -1,6 +1,7 @@
 package com.sismics.docs.rest.resource;
 
 import com.google.common.collect.Sets;
+import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
@@ -205,6 +206,7 @@ public class TagResource extends BaseResource {
         AclDao aclDao = new AclDao();
         Acl acl = new Acl();
         acl.setPerm(PermType.READ);
+        acl.setType(AclType.USER);
         acl.setSourceId(id);
         acl.setTargetId(principal.getId());
         aclDao.create(acl, principal.getId());
@@ -212,6 +214,7 @@ public class TagResource extends BaseResource {
         // Create write ACL
         acl = new Acl();
         acl.setPerm(PermType.WRITE);
+        acl.setType(AclType.USER);
         acl.setSourceId(id);
         acl.setTargetId(principal.getId());
         aclDao.create(acl, principal.getId());

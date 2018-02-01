@@ -2,6 +2,7 @@ package com.sismics.docs.rest.resource;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.*;
@@ -173,7 +174,7 @@ public class DocumentResource extends BaseResource {
             JsonArrayBuilder aclList = Json.createArrayBuilder();
             for (TagDto tagDto : tagDtoList) {
                 AclDao aclDao = new AclDao();
-                List<AclDto> aclDtoList = aclDao.getBySourceId(tagDto.getId());
+                List<AclDto> aclDtoList = aclDao.getBySourceId(tagDto.getId(), AclType.USER);
                 for (AclDto aclDto : aclDtoList) {
                     aclList.add(Json.createObjectBuilder()
                             .add("perm", aclDto.getPerm().name())
@@ -618,6 +619,7 @@ public class DocumentResource extends BaseResource {
         AclDao aclDao = new AclDao();
         Acl acl = new Acl();
         acl.setPerm(PermType.READ);
+        acl.setType(AclType.USER);
         acl.setSourceId(documentId);
         acl.setTargetId(principal.getId());
         aclDao.create(acl, principal.getId());
@@ -625,6 +627,7 @@ public class DocumentResource extends BaseResource {
         // Create write ACL
         acl = new Acl();
         acl.setPerm(PermType.WRITE);
+        acl.setType(AclType.USER);
         acl.setSourceId(documentId);
         acl.setTargetId(principal.getId());
         aclDao.create(acl, principal.getId());

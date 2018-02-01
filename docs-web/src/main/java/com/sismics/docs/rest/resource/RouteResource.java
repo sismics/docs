@@ -10,6 +10,7 @@ import com.sismics.docs.core.dao.jpa.RouteStepDao;
 import com.sismics.docs.core.model.jpa.Route;
 import com.sismics.docs.core.model.jpa.RouteModel;
 import com.sismics.docs.core.model.jpa.RouteStep;
+import com.sismics.docs.core.util.RoutingUtil;
 import com.sismics.docs.core.util.SecurityUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
@@ -97,6 +98,12 @@ public class RouteResource extends BaseResource {
                 }
 
                 routeStepDao.create(routeStep);
+
+                if (i == 0) {
+                    // Initialize ACL on the first step
+                    RoutingUtil.updateAcl(documentId, routeStep, null, principal.getId());
+                    // TODO Send an email to the targetId users
+                }
             }
         }
 

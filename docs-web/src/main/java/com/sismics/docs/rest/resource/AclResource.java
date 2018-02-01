@@ -2,6 +2,7 @@ package com.sismics.docs.rest.resource;
 
 import com.google.common.collect.Lists;
 import com.sismics.docs.core.constant.AclTargetType;
+import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.*;
 import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
@@ -90,6 +91,7 @@ public class AclResource extends BaseResource {
         acl.setSourceId(sourceId);
         acl.setPerm(perm);
         acl.setTargetId(targetId);
+        acl.setType(AclType.USER);
         
         // Avoid duplicates
         if (!aclDao.checkPermission(acl.getSourceId(), acl.getPerm(), Lists.newArrayList(acl.getTargetId()))) {
@@ -164,7 +166,7 @@ public class AclResource extends BaseResource {
         }
 
         // Delete the ACL
-        aclDao.delete(sourceId, perm, targetId, principal.getId());
+        aclDao.delete(sourceId, perm, targetId, principal.getId(), AclType.USER);
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()

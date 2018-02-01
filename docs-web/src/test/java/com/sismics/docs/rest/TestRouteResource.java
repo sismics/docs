@@ -57,16 +57,6 @@ public class TestRouteResource extends BaseJerseyTest {
                         .param("documentId", document1Id)
                         .param("routeModelId", routeModels.getJsonObject(0).getString("id"))), JsonObject.class);
 
-        // Add an ACL READ for admin with route1
-        // TODO Remove me when ACLs are automatically added on route step targets
-        target().path("/acl").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
-                .put(Entity.form(new Form()
-                        .param("source", document1Id)
-                        .param("perm", "READ")
-                        .param("target", "admin")
-                        .param("type", "USER")), JsonObject.class);
-
         // Get document 1 as route1
         json = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
