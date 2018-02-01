@@ -13,9 +13,11 @@ import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
-import com.sismics.docs.core.model.jpa.*;
+import com.sismics.docs.core.model.jpa.Acl;
+import com.sismics.docs.core.model.jpa.Document;
+import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.PdfUtil;
-import com.sismics.docs.core.util.RoutingUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -212,12 +214,12 @@ public class DocumentResource extends BaseResource {
         document.add("relations", relationList);
 
         // Add current route step
-        RouteStep routeStep = RoutingUtil.getCurrentStep(documentId);
-        if (routeStep != null && !principal.isAnonymous()) {
+        RouteStepDto routeStepDto = new RouteStepDao().getCurrentStep(documentId);
+        if (routeStepDto != null && !principal.isAnonymous()) {
             document.add("route_step", Json.createObjectBuilder()
-                    .add("name", routeStep.getName())
-                    .add("type", routeStep.getType().name())
-                    .add("transitionable", getTargetIdList(null).contains(routeStep.getTargetId())));
+                    .add("name", routeStepDto.getName())
+                    .add("type", routeStepDto.getType().name())
+                    .add("transitionable", getTargetIdList(null).contains(routeStepDto.getTargetId())));
         }
         
         return Response.ok().entity(document.build()).build();

@@ -121,7 +121,7 @@ public class UserDao {
         User userDb = (User) q.getSingleResult();
 
         // Update the user
-        userDb.setStorageQuota(user.getStorageQuota());
+        userDb.setStorageCurrent(user.getStorageCurrent());
     }
     
     /**

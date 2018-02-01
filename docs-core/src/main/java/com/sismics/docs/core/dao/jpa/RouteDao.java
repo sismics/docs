@@ -6,9 +6,7 @@ import com.sismics.docs.core.util.AuditLogUtil;
 import com.sismics.util.context.ThreadLocalContext;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -37,13 +35,5 @@ public class RouteDao {
         AuditLogUtil.create(route, AuditLogType.CREATE, userId);
 
         return route.getId();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Route> getActiveRoutes(String documentId) {
-        EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("from Route r where r.documentId = :documentId and r.deleteDate is null order by r.createDate desc");
-        q.setParameter("documentId", documentId);
-        return q.getResultList();
     }
 }

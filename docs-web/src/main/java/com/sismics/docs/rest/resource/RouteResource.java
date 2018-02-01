@@ -2,11 +2,13 @@ package com.sismics.docs.rest.resource;
 
 import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.PermType;
+import com.sismics.docs.core.constant.RouteStepTransition;
 import com.sismics.docs.core.constant.RouteStepType;
 import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.RouteDao;
 import com.sismics.docs.core.dao.jpa.RouteModelDao;
 import com.sismics.docs.core.dao.jpa.RouteStepDao;
+import com.sismics.docs.core.dao.jpa.dto.RouteStepDto;
 import com.sismics.docs.core.model.jpa.Route;
 import com.sismics.docs.core.model.jpa.RouteModel;
 import com.sismics.docs.core.model.jpa.RouteStep;
@@ -14,6 +16,7 @@ import com.sismics.docs.core.util.RoutingUtil;
 import com.sismics.docs.core.util.SecurityUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.rest.util.ValidationUtil;
 
 import javax.json.*;
 import javax.ws.rs.FormParam;
@@ -79,9 +82,8 @@ public class RouteResource extends BaseResource {
         RouteStepDao routeStepDao = new RouteStepDao();
         try (JsonReader reader = Json.createReader(new StringReader(routeModel.getSteps()))) {
             JsonArray stepsJson = reader.readArray();
-            int order = 0;
-            for (int i = 0; i < stepsJson.size(); i++) {
-                JsonObject step = stepsJson.getJsonObject(i);
+            for (int order = 0; order < stepsJson.size(); order++) {
+                JsonObject step = stepsJson.getJsonObject(order);
                 JsonObject target = step.getJsonObject("target");
                 AclTargetType targetType = AclTargetType.valueOf(target.getString("type"));
                 String targetName = target.getString("name");
@@ -89,7 +91,7 @@ public class RouteResource extends BaseResource {
                 RouteStep routeStep = new RouteStep()
                         .setRouteId(route.getId())
                         .setName(step.getString("name"))
-                        .setOrder(order++)
+                        .setOrder(order)
                         .setType(RouteStepType.valueOf(step.getString("type")))
                         .setTargetId(SecurityUtil.getTargetIdFromName(targetName, targetType));
 
@@ -98,16 +100,80 @@ public class RouteResource extends BaseResource {
                 }
 
                 routeStepDao.create(routeStep);
-
-                if (i == 0) {
-                    // Initialize ACL on the first step
-                    RoutingUtil.updateAcl(documentId, routeStep, null, principal.getId());
-                    // TODO Send an email to the targetId users
-                }
             }
         }
 
+        // Intialize ACLs on the first step
+        RouteStepDto routeStep = routeStepDao.getCurrentStep(documentId);
+        RoutingUtil.updateAcl(documentId, routeStep, null, principal.getId());
+
         // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Validate the current step of a route.
+     *
+     * @api {post} /route/validate Validate the current step of a route
+     * @apiName PostRouteValidate
+     * @apiRouteModel Route
+     * @apiParam {String} documentId Document ID
+     * @apiParam {String} transition Route step transition
+     * @apiParam {String} comment Route step comment
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) NotFound Document or route not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
+     * @return Response
+     */
+    @POST
+    @Path("validate")
+    public Response validate(@FormParam("documentId") String documentId,
+                             @FormParam("transition") String transitionStr,
+                             @FormParam("comment") String comment) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get the document
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(null))) {
+            throw new NotFoundException();
+        }
+
+        // Get the current step
+        RouteStepDao routeStepDao = new RouteStepDao();
+        RouteStepDto routeStep = routeStepDao.getCurrentStep(documentId);
+        if (routeStep == null) {
+            throw new NotFoundException();
+        }
+
+        // Check permission to validate this step
+        if (!getTargetIdList(null).contains(routeStep.getTargetId())) {
+            throw new ForbiddenClientException();
+        }
+
+        // Validate data
+        ValidationUtil.validateRequired(transitionStr, "transition");
+        comment = ValidationUtil.validateLength(comment, "comment", 1, 500, true);
+        RouteStepTransition transition = RouteStepTransition.valueOf(transitionStr);
+        if (routeStep.getType() == RouteStepType.VALIDATE && transition != RouteStepTransition.VALIDATED
+                || routeStep.getType() == RouteStepType.APPROVE && transition != RouteStepTransition.APPROVED && transition != RouteStepTransition.REJECTED) {
+            throw new ClientException("ValidationError", "Invalid transition for this route step type");
+        }
+
+        // Validate the step and update ACLs
+        routeStepDao.endRouteStep(routeStep.getId(), transition, comment, principal.getId());
+        RouteStepDto newRouteStep = routeStepDao.getCurrentStep(documentId);
+        RoutingUtil.updateAcl(documentId, newRouteStep, routeStep, principal.getId());
+        // TODO Send an email to the new route step
+
+        // Always return OK
+        // TODO Return if the document is still readable and return the new current step if any
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
         return Response.ok().entity(response.build()).build();

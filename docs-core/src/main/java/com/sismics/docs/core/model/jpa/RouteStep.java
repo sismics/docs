@@ -61,6 +61,12 @@ public class RouteStep {
     private String targetId;
 
     /**
+     * Validator user ID.
+     */
+    @Column(name = "RTP_IDVALIDATORUSER_C", length = 36)
+    private String validatorUserId;
+
+    /**
      * Order.
      */
     @Column(name = "RTP_ORDER_N", nullable = false)
@@ -153,6 +159,15 @@ public class RouteStep {
 
     public RouteStep setOrder(Integer order) {
         this.order = order;
+        return this;
+    }
+
+    public String getValidatorUserId() {
+        return validatorUserId;
+    }
+
+    public RouteStep setValidatorUserId(String validatorUserId) {
+        this.validatorUserId = validatorUserId;
         return this;
     }
 

@@ -8,6 +8,7 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
+import javax.ws.rs.core.Response;
 import java.util.Date;
 
 
@@ -64,6 +65,7 @@ public class TestRouteResource extends BaseJerseyTest {
         JsonObject routeStep = json.getJsonObject("route_step");
         Assert.assertNotNull(routeStep);
         Assert.assertFalse(routeStep.getBoolean("transitionable"));
+        Assert.assertEquals("Check the document's metadata", routeStep.getString("name"));
 
         // Get document 1 as admin
         json = target().path("/document/" + document1Id).request()
@@ -72,5 +74,56 @@ public class TestRouteResource extends BaseJerseyTest {
         routeStep = json.getJsonObject("route_step");
         Assert.assertNotNull(routeStep);
         Assert.assertTrue(routeStep.getBoolean("transitionable"));
+        Assert.assertEquals("Check the document's metadata", routeStep.getString("name"));
+
+        // Validate the current step with admin
+        target().path("/route/validate").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("documentId", document1Id)
+                        .param("transition", "VALIDATED")), JsonObject.class);
+
+        // Get document 1 as admin
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        routeStep = json.getJsonObject("route_step");
+        Assert.assertNotNull(routeStep);
+        Assert.assertEquals("Add relevant files to the document", routeStep.getString("name"));
+
+        // Validate the current step with admin
+        target().path("/route/validate").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("documentId", document1Id)
+                        .param("transition", "VALIDATED")
+                        .param("comment", "OK")), JsonObject.class);
+
+        // Get document 1 as admin
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        routeStep = json.getJsonObject("route_step");
+        Assert.assertNotNull(routeStep);
+        Assert.assertEquals("Approve the document", routeStep.getString("name"));
+
+        // Validate the current step with admin
+        target().path("/route/validate").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("documentId", document1Id)
+                        .param("transition", "APPROVED")), JsonObject.class);
+
+        // Get document 1 as admin
+        Response response = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get();
+        Assert.assertEquals(Response.Status.NOT_FOUND, Response.Status.fromStatusCode(response.getStatus()));
+
+        // Get document 1 as admin
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
+                .get(JsonObject.class);
+        Assert.assertFalse(json.containsKey("route_step"));
     }
 }

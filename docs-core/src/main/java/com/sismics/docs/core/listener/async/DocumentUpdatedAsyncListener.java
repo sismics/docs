@@ -1,10 +1,5 @@
 package com.sismics.docs.core.listener.async;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.dao.jpa.ContributorDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
@@ -12,6 +7,10 @@ import com.sismics.docs.core.dao.lucene.LuceneDao;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.model.jpa.Contributor;
 import com.sismics.docs.core.util.TransactionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * Listener on document updated.
@@ -31,7 +30,7 @@ public class DocumentUpdatedAsyncListener {
      * @throws Exception
      */
     @Subscribe
-    public void on(final DocumentUpdatedAsyncEvent event) throws Exception {
+    public void on(final DocumentUpdatedAsyncEvent event) {
         if (log.isInfoEnabled()) {
             log.info("Document updated event: " + event.toString());
         }

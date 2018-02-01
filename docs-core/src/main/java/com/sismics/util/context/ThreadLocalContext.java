@@ -71,6 +71,11 @@ public class ThreadLocalContext {
      * @return entityManager
      */
     public EntityManager getEntityManager() {
+        if (entityManager != null && entityManager.isOpen()) {
+            // This disables the L1 cache
+            entityManager.flush();
+            entityManager.clear();
+        }
         return entityManager;
     }
 

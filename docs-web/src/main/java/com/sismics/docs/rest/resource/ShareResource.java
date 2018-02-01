@@ -2,7 +2,6 @@ package com.sismics.docs.rest.resource;
 
 
 import com.sismics.docs.core.constant.AclTargetType;
-import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.ShareDao;
@@ -77,7 +76,6 @@ public class ShareResource extends BaseResource {
         Acl acl = new Acl();
         acl.setSourceId(documentId);
         acl.setPerm(PermType.READ);
-        acl.setType(AclType.USER);
         acl.setTargetId(share.getId());
         aclDao.create(acl, principal.getId());
 
@@ -121,7 +119,7 @@ public class ShareResource extends BaseResource {
         if (aclList.isEmpty()) {
             throw new ClientException("ShareNotFound", MessageFormat.format("Share not found: {0}", id));
         }
-        
+
         Acl acl = aclList.get(0);
         if (!aclDao.checkPermission(acl.getSourceId(), PermType.WRITE, getTargetIdList(null))) {
             throw new ClientException("DocumentNotFound", MessageFormat.format("Document not found: {0}", acl.getSourceId()));
