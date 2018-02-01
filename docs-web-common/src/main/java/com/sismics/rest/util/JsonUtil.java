@@ -34,4 +34,17 @@ public class JsonUtil {
         }
         return Json.createObjectBuilder().add("_", value).build().get("_");
     }
+
+    /**
+     * Returns a JsonValue from an Long.
+     *
+     * @param value Value
+     * @return JsonValue
+     */
+    public static JsonValue nullable(Long value) {
+        if (value == null) {
+            return JsonValue.NULL;
+        }
+        return Json.createObjectBuilder().add("_", value).build().get("_");
+    }
 }

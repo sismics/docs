@@ -1,6 +1,5 @@
 package com.sismics.docs.core.dao.jpa.dto;
 
-import com.sismics.docs.core.constant.RouteStepTransition;
 import com.sismics.docs.core.constant.RouteStepType;
 
 /**
@@ -27,7 +26,7 @@ public class RouteStepDto {
     /**
      * Transition.
      */
-    private RouteStepTransition transition;
+    private String transition;
 
     /**
      * Comment.
@@ -40,9 +39,24 @@ public class RouteStepDto {
     private String targetId;
 
     /**
+     * Target name.
+     */
+    private String targetName;
+
+    /**
+     * Target type.
+     */
+    private String targetType;
+
+    /**
      * End date.
      */
     private Long endDateTimestamp;
+
+    /**
+     * Validator's username.
+     */
+    private String validatorUserName;
 
     public String getId() {
         return id;
@@ -71,11 +85,11 @@ public class RouteStepDto {
         return this;
     }
 
-    public RouteStepTransition getTransition() {
+    public String getTransition() {
         return transition;
     }
 
-    public RouteStepDto setTransition(RouteStepTransition transition) {
+    public RouteStepDto setTransition(String transition) {
         this.transition = transition;
         return this;
     }
@@ -98,12 +112,39 @@ public class RouteStepDto {
         return this;
     }
 
+    public String getTargetName() {
+        return targetName;
+    }
+
+    public RouteStepDto setTargetName(String targetName) {
+        this.targetName = targetName;
+        return this;
+    }
+
+    public String getTargetType() {
+        return targetType;
+    }
+
+    public RouteStepDto setTargetType(String targetType) {
+        this.targetType = targetType;
+        return this;
+    }
+
     public Long getEndDateTimestamp() {
         return endDateTimestamp;
     }
 
     public RouteStepDto setEndDateTimestamp(Long endDateTimestamp) {
         this.endDateTimestamp = endDateTimestamp;
+        return this;
+    }
+
+    public String getValidatorUserName() {
+        return validatorUserName;
+    }
+
+    public RouteStepDto setValidatorUserName(String validatorUserName) {
+        this.validatorUserName = validatorUserName;
         return this;
     }
 }

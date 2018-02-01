@@ -4,27 +4,28 @@ import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.constant.RouteStepTransition;
 import com.sismics.docs.core.constant.RouteStepType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.docs.core.dao.jpa.RouteDao;
-import com.sismics.docs.core.dao.jpa.RouteModelDao;
-import com.sismics.docs.core.dao.jpa.RouteStepDao;
+import com.sismics.docs.core.dao.jpa.*;
+import com.sismics.docs.core.dao.jpa.criteria.RouteCriteria;
+import com.sismics.docs.core.dao.jpa.criteria.RouteStepCriteria;
+import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.dao.jpa.dto.RouteDto;
 import com.sismics.docs.core.dao.jpa.dto.RouteStepDto;
 import com.sismics.docs.core.model.jpa.Route;
 import com.sismics.docs.core.model.jpa.RouteModel;
 import com.sismics.docs.core.model.jpa.RouteStep;
 import com.sismics.docs.core.util.RoutingUtil;
 import com.sismics.docs.core.util.SecurityUtil;
+import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 
 import javax.json.*;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.io.StringReader;
+import java.util.List;
 
 /**
  * Route REST resources.
@@ -177,5 +178,82 @@ public class RouteResource extends BaseResource {
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
         return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Returns the routes on a document.
+     *
+     * @api {get} /route Get the routes on a document
+     * @apiName GetRoutes
+     * @apiGroup Route
+     * @apiParam {String} id Document ID
+     * @apiSuccess {Object[]} routes List of routes
+     * @apiSuccess {String} routes.name Name
+     * @apiSuccess {Number} routes.create_date Create date (timestamp)
+     * @apiSuccess {Object[]} routes.steps Route steps
+     * @apiSuccess {String} routes.steps.name Route step name
+     * @apiSuccess {String="APPROVE", "VALIDATE"} routes.steps.type Route step type
+     * @apiSuccess {String} routes.steps.comment Route step comment
+     * @apiSuccess {Number} routes.steps.end_date Route step end date (timestamp)
+     * @apiSuccess {String="APPROVED","REJECTED","VALIDATED"} routes.steps.transition Route step transition
+     * @apiSuccess {Object} routes.steps.validator_username Validator username
+     * @apiSuccess {Object} routes.steps.target Route step target
+     * @apiSuccess {String} routes.steps.target.id Route step target ID
+     * @apiSuccess {String} routes.steps.target.name Route step target name
+     * @apiSuccess {String="USER","GROUP"} routes.steps.target.type Route step target type
+     * @apiError (client) NotFound Document not found
+     * @apiPermission none
+     * @apiVersion 1.5.0
+     *
+     * @param documentId Document ID
+     * @return Response
+     */
+    @GET
+    public Response get(@QueryParam("documentId") String documentId) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        DocumentDao documentDao = new DocumentDao();
+        DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(null));
+        if (documentDto == null) {
+            throw new NotFoundException();
+        }
+
+        JsonArrayBuilder routes = Json.createArrayBuilder();
+
+        RouteDao routeDao = new RouteDao();
+        RouteStepDao routeStepDao = new RouteStepDao();
+        List<RouteDto> routeDtoList = routeDao.findByCriteria(new RouteCriteria()
+                .setDocumentId(documentId), new SortCriteria(2, false));
+        for (RouteDto routeDto : routeDtoList) {
+            List<RouteStepDto> routeStepDtoList = routeStepDao.findByCriteria(new RouteStepCriteria()
+                    .setRouteId(routeDto.getId()), new SortCriteria(6, true));
+            JsonArrayBuilder steps = Json.createArrayBuilder();
+
+            for (RouteStepDto routeStepDto : routeStepDtoList) {
+                steps.add(Json.createObjectBuilder()
+                        .add("name", routeStepDto.getName())
+                        .add("type", routeStepDto.getType().name())
+                        .add("comment", JsonUtil.nullable(routeStepDto.getComment()))
+                        .add("end_date", JsonUtil.nullable(routeStepDto.getEndDateTimestamp()))
+                        .add("validator_username", JsonUtil.nullable(routeStepDto.getValidatorUserName()))
+                        .add("target", Json.createObjectBuilder()
+                                .add("id", routeStepDto.getTargetId())
+                                .add("name", JsonUtil.nullable(routeStepDto.getTargetName()))
+                                .add("type", routeStepDto.getTargetType()))
+                        .add("transition", JsonUtil.nullable(routeStepDto.getTransition())));
+            }
+
+            routes.add(Json.createObjectBuilder()
+                    .add("name", routeDto.getName())
+                    .add("create_date", routeDto.getCreateTimestamp())
+                    .add("steps", steps));
+        }
+
+        JsonObjectBuilder json = Json.createObjectBuilder()
+                .add("routes", routes);
+
+        return Response.ok().entity(json.build()).build();
     }
 }

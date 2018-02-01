@@ -58,6 +58,31 @@ public class TestRouteResource extends BaseJerseyTest {
                         .param("documentId", document1Id)
                         .param("routeModelId", routeModels.getJsonObject(0).getString("id"))), JsonObject.class);
 
+        // Get the route on document 1
+        json = target().path("/route")
+                .queryParam("documentId", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
+                .get(JsonObject.class);
+        JsonArray routes = json.getJsonArray("routes");
+        Assert.assertEquals(1, routes.size());
+        JsonObject route = routes.getJsonObject(0);
+        Assert.assertEquals("Document review", route.getString("name"));
+        Assert.assertNotNull(route.getJsonNumber("create_date"));
+        JsonArray steps = route.getJsonArray("steps");
+        Assert.assertEquals(3, steps.size());
+        JsonObject step = steps.getJsonObject(0);
+        Assert.assertEquals("Check the document's metadata", step.getString("name"));
+        Assert.assertEquals("VALIDATE", step.getString("type"));
+        Assert.assertTrue(step.isNull("comment"));
+        Assert.assertTrue(step.isNull("end_date"));
+        Assert.assertTrue(step.isNull("validator_username"));
+        Assert.assertTrue(step.isNull("transition"));
+        JsonObject target = step.getJsonObject("target");
+        Assert.assertEquals("administrators", target.getString("id"));
+        Assert.assertEquals("administrators", target.getString("name"));
+        Assert.assertEquals("GROUP", target.getString("type"));
+
         // Get document 1 as route1
         json = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
@@ -83,6 +108,25 @@ public class TestRouteResource extends BaseJerseyTest {
                         .param("documentId", document1Id)
                         .param("transition", "VALIDATED")), JsonObject.class);
 
+        // Get the route on document 1
+        json = target().path("/route")
+                .queryParam("documentId", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
+                .get(JsonObject.class);
+        routes = json.getJsonArray("routes");
+        Assert.assertEquals(1, routes.size());
+        route = routes.getJsonObject(0);
+        Assert.assertNotNull(route.getJsonNumber("create_date"));
+        steps = route.getJsonArray("steps");
+        Assert.assertEquals(3, steps.size());
+        step = steps.getJsonObject(0);
+        Assert.assertEquals("VALIDATE", step.getString("type"));
+        Assert.assertTrue(step.isNull("comment"));
+        Assert.assertFalse(step.isNull("end_date"));
+        Assert.assertEquals("admin", step.getString("validator_username"));
+        Assert.assertEquals("VALIDATED", step.getString("transition"));
+
         // Get document 1 as admin
         json = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
@@ -99,6 +143,25 @@ public class TestRouteResource extends BaseJerseyTest {
                         .param("transition", "VALIDATED")
                         .param("comment", "OK")), JsonObject.class);
 
+        // Get the route on document 1
+        json = target().path("/route")
+                .queryParam("documentId", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
+                .get(JsonObject.class);
+        routes = json.getJsonArray("routes");
+        Assert.assertEquals(1, routes.size());
+        route = routes.getJsonObject(0);
+        Assert.assertNotNull(route.getJsonNumber("create_date"));
+        steps = route.getJsonArray("steps");
+        Assert.assertEquals(3, steps.size());
+        step = steps.getJsonObject(1);
+        Assert.assertEquals("VALIDATE", step.getString("type"));
+        Assert.assertEquals("OK", step.getString("comment"));
+        Assert.assertFalse(step.isNull("end_date"));
+        Assert.assertEquals("admin", step.getString("validator_username"));
+        Assert.assertEquals("VALIDATED", step.getString("transition"));
+
         // Get document 1 as admin
         json = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
@@ -114,13 +177,32 @@ public class TestRouteResource extends BaseJerseyTest {
                         .param("documentId", document1Id)
                         .param("transition", "APPROVED")), JsonObject.class);
 
+        // Get the route on document 1
+        json = target().path("/route")
+                .queryParam("documentId", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
+                .get(JsonObject.class);
+        routes = json.getJsonArray("routes");
+        Assert.assertEquals(1, routes.size());
+        route = routes.getJsonObject(0);
+        Assert.assertNotNull(route.getJsonNumber("create_date"));
+        steps = route.getJsonArray("steps");
+        Assert.assertEquals(3, steps.size());
+        step = steps.getJsonObject(2);
+        Assert.assertEquals("APPROVE", step.getString("type"));
+        Assert.assertTrue(step.isNull("comment"));
+        Assert.assertFalse(step.isNull("end_date"));
+        Assert.assertEquals("admin", step.getString("validator_username"));
+        Assert.assertEquals("APPROVED", step.getString("transition"));
+
         // Get document 1 as admin
         Response response = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get();
         Assert.assertEquals(Response.Status.NOT_FOUND, Response.Status.fromStatusCode(response.getStatus()));
 
-        // Get document 1 as admin
+        // Get document 1 as route1
         json = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
                 .get(JsonObject.class);

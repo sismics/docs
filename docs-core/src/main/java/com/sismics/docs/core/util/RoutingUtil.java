@@ -12,7 +12,6 @@ import com.sismics.docs.core.model.jpa.Acl;
  * @author bgamard
  */
 public class RoutingUtil {
-
     /**
      * Update routing ACLs according to the current route step.
      *

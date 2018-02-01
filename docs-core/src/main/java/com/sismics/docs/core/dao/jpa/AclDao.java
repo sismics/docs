@@ -67,13 +67,13 @@ public class AclDao {
     @SuppressWarnings("unchecked")
     public List<AclDto> getBySourceId(String sourceId, AclType type) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select a.ACL_ID_C, a.ACL_PERM_C, a.ACL_TARGETID_C, ");
-        sb.append(" u.USE_USERNAME_C, s.SHA_ID_C, s.SHA_NAME_C, g.GRP_NAME_C ");
-        sb.append(" from T_ACL a ");
-        sb.append(" left join T_USER u on u.USE_ID_C = a.ACL_TARGETID_C ");
-        sb.append(" left join T_SHARE s on s.SHA_ID_C = a.ACL_TARGETID_C ");
-        sb.append(" left join T_GROUP g on g.GRP_ID_C = a.ACL_TARGETID_C ");
-        sb.append(" where a.ACL_DELETEDATE_D is null and a.ACL_SOURCEID_C = :sourceId and a.ACL_TYPE_C = :type ");
+        StringBuilder sb = new StringBuilder("select a.ACL_ID_C, a.ACL_PERM_C, a.ACL_TARGETID_C, ")
+            .append(" u.USE_USERNAME_C, s.SHA_ID_C, s.SHA_NAME_C, g.GRP_NAME_C ")
+            .append(" from T_ACL a ")
+            .append(" left join T_USER u on u.USE_ID_C = a.ACL_TARGETID_C ")
+            .append(" left join T_SHARE s on s.SHA_ID_C = a.ACL_TARGETID_C ")
+            .append(" left join T_GROUP g on g.GRP_ID_C = a.ACL_TARGETID_C ")
+            .append(" where a.ACL_DELETEDATE_D is null and a.ACL_SOURCEID_C = :sourceId and a.ACL_TYPE_C = :type ");
 
         // Perform the query
         Query q = em.createNativeQuery(sb.toString());

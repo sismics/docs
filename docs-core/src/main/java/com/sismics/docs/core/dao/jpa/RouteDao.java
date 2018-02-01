@@ -1,13 +1,19 @@
 package com.sismics.docs.core.dao.jpa;
 
+import com.google.common.base.Joiner;
 import com.sismics.docs.core.constant.AuditLogType;
+import com.sismics.docs.core.dao.jpa.criteria.RouteCriteria;
+import com.sismics.docs.core.dao.jpa.dto.RouteDto;
 import com.sismics.docs.core.model.jpa.Route;
 import com.sismics.docs.core.util.AuditLogUtil;
+import com.sismics.docs.core.util.jpa.QueryParam;
+import com.sismics.docs.core.util.jpa.QueryUtil;
+import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
 
 import javax.persistence.EntityManager;
-import java.util.Date;
-import java.util.UUID;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * Route DAO.
@@ -35,5 +41,49 @@ public class RouteDao {
         AuditLogUtil.create(route, AuditLogType.CREATE, userId);
 
         return route.getId();
+    }
+
+    /**
+     * Returns the list of all routes.
+     *
+     * @param criteria Search criteria
+     * @param sortCriteria Sort criteria
+     * @return List of routes
+     */
+    public List<RouteDto> findByCriteria(RouteCriteria criteria, SortCriteria sortCriteria) {
+        Map<String, Object> parameterMap = new HashMap<String, Object>();
+        List<String> criteriaList = new ArrayList<>();
+
+        StringBuilder sb = new StringBuilder("select r.RTE_ID_C c0, r.RTE_NAME_C c1, r.RTE_CREATEDATE_D c2");
+        sb.append(" from T_ROUTE r ");
+
+        // Add search criterias
+        if (criteria.getDocumentId() != null) {
+            criteriaList.add("r.RTE_IDDOCUMENT_C = :documentId");
+            parameterMap.put("documentId", criteria.getDocumentId());
+        }
+        criteriaList.add("r.RTE_DELETEDATE_D is null");
+
+        if (!criteriaList.isEmpty()) {
+            sb.append(" where ");
+            sb.append(Joiner.on(" and ").join(criteriaList));
+        }
+
+        // Perform the search
+        QueryParam queryParam = QueryUtil.getSortedQueryParam(new QueryParam(sb.toString(), parameterMap), sortCriteria);
+        @SuppressWarnings("unchecked")
+        List<Object[]> l = QueryUtil.getNativeQuery(queryParam).getResultList();
+
+        // Assemble results
+        List<RouteDto> dtoList = new ArrayList<>();
+        for (Object[] o : l) {
+            int i = 0;
+            RouteDto dto = new RouteDto();
+            dto.setId((String) o[i++]);
+            dto.setName((String) o[i++]);
+            dto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
+            dtoList.add(dto);
+        }
+        return dtoList;
     }
 }

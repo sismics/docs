@@ -1,17 +1,21 @@
 package com.sismics.docs.core.dao.jpa;
 
+import com.google.common.base.Joiner;
+import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.RouteStepTransition;
 import com.sismics.docs.core.constant.RouteStepType;
+import com.sismics.docs.core.dao.jpa.criteria.RouteStepCriteria;
 import com.sismics.docs.core.dao.jpa.dto.RouteStepDto;
 import com.sismics.docs.core.model.jpa.RouteStep;
+import com.sismics.docs.core.util.jpa.QueryParam;
+import com.sismics.docs.core.util.jpa.QueryUtil;
+import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Route step DAO.
@@ -43,35 +47,86 @@ public class RouteStepDao {
      * @param documentId Document ID
      * @return Current route step
      */
-    @SuppressWarnings("unchecked")
     public RouteStepDto getCurrentStep(String documentId) {
-        EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select rs.RTP_ID_C, rs.RTP_NAME_C, rs.RTP_TYPE_C, rs.RTP_TRANSITION_C, rs.RTP_COMMENT_C, rs.RTP_IDTARGET_C, rs.RTP_ENDDATE_D");
-        sb.append(" from T_ROUTE_STEP rs ");
-        sb.append(" join T_ROUTE r on r.RTE_ID_C = rs.RTP_IDROUTE_C ");
-        sb.append(" where r.RTE_IDDOCUMENT_C = :documentId and rs.RTP_ENDDATE_D is null ");
-        sb.append(" order by rs.RTP_ORDER_N asc ");
-
-        Query q = em.createNativeQuery(sb.toString());
-        q.setParameter("documentId", documentId);
-
-        List<Object[]> l = q.getResultList();
-        if (l.isEmpty()) {
+        List<RouteStepDto> routeStepDtoList = findByCriteria(new RouteStepCriteria()
+                .setDocumentId(documentId)
+                .setEndDateIsNull(true), new SortCriteria(6, true));
+        if (routeStepDtoList.isEmpty()) {
             return null;
         }
-        Object[] o = l.get(0);
-        int i = 0;
-        RouteStepDto routeStepDto = new RouteStepDto();
-        routeStepDto.setId((String) o[i++]);
-        routeStepDto.setName((String) o[i++]);
-        routeStepDto.setType(RouteStepType.valueOf((String) o[i++]));
-        String transition = (String) o[i++];
-        routeStepDto.setTransition(transition == null ? null : RouteStepTransition.valueOf(transition));
-        routeStepDto.setComment((String) o[i++]);
-        routeStepDto.setTargetId((String) o[i++]);
-        Timestamp endDateTimestamp = (Timestamp) o[i];
-        routeStepDto.setEndDateTimestamp(endDateTimestamp == null ? null : endDateTimestamp.getTime());
-        return routeStepDto;
+        return routeStepDtoList.get(0);
+    }
+
+    /**
+     * Returns the list of all route steps.
+     *
+     * @param criteria Search criteria
+     * @param sortCriteria Sort criteria
+     * @return List of route steps
+     */
+    public List<RouteStepDto> findByCriteria(RouteStepCriteria criteria, SortCriteria sortCriteria) {
+        Map<String, Object> parameterMap = new HashMap<>();
+        List<String> criteriaList = new ArrayList<>();
+
+        StringBuilder sb = new StringBuilder("select rs.RTP_ID_C, rs.RTP_NAME_C c0, rs.RTP_TYPE_C c1, rs.RTP_TRANSITION_C c2, rs.RTP_COMMENT_C c3, rs.RTP_IDTARGET_C c4, u.USE_USERNAME_C as targetUsername, g.GRP_NAME_C, rs.RTP_ENDDATE_D c5, uv.USE_USERNAME_C as validatorUsername, rs.RTP_ORDER_N c6")
+            .append(" from T_ROUTE_STEP rs ")
+            .append(" join T_ROUTE r on r.RTE_ID_C = rs.RTP_IDROUTE_C ")
+            .append(" left join T_USER uv on uv.USE_ID_C = rs.RTP_IDVALIDATORUSER_C ")
+            .append(" left join T_USER u on u.USE_ID_C = rs.RTP_IDTARGET_C ")
+            .append(" left join T_SHARE s on s.SHA_ID_C = rs.RTP_IDTARGET_C ")
+            .append(" left join T_GROUP g on g.GRP_ID_C = rs.RTP_IDTARGET_C ");
+
+        // Add search criterias
+        if (criteria.getDocumentId() != null) {
+            criteriaList.add("r.RTE_IDDOCUMENT_C = :documentId");
+            parameterMap.put("documentId", criteria.getDocumentId());
+        }
+        if (criteria.getRouteId() != null) {
+            criteriaList.add("rs.RTP_IDROUTE_C = :routeId");
+            parameterMap.put("routeId", criteria.getRouteId());
+        }
+        if (criteria.getEndDateIsNull() != null) {
+            criteriaList.add("RTP_ENDDATE_D is " + (criteria.getEndDateIsNull() ? "" : "not") + " null");
+        }
+        criteriaList.add("r.RTE_DELETEDATE_D is null");
+
+        if (!criteriaList.isEmpty()) {
+            sb.append(" where ");
+            sb.append(Joiner.on(" and ").join(criteriaList));
+        }
+
+        // Perform the search
+        QueryParam queryParam = QueryUtil.getSortedQueryParam(new QueryParam(sb.toString(), parameterMap), sortCriteria);
+        @SuppressWarnings("unchecked")
+        List<Object[]> l = QueryUtil.getNativeQuery(queryParam).getResultList();
+
+        // Assemble results
+        List<RouteStepDto> dtoList = new ArrayList<>();
+        for (Object[] o : l) {
+            int i = 0;
+            RouteStepDto dto = new RouteStepDto();
+            dto.setId((String) o[i++]);
+            dto.setName((String) o[i++]);
+            dto.setType(RouteStepType.valueOf((String) o[i++]));
+            dto.setTransition((String) o[i++]);
+            dto.setComment((String) o[i++]);
+            dto.setTargetId((String) o[i++]);
+            String userName = (String) o[i++];
+            String groupName = (String) o[i++];
+            if (userName != null) {
+                dto.setTargetName(userName);
+                dto.setTargetType(AclTargetType.USER.name());
+            }
+            if (groupName != null) {
+                dto.setTargetName(groupName);
+                dto.setTargetType(AclTargetType.GROUP.name());
+            }
+            Timestamp endDateTimestamp = (Timestamp) o[i++];
+            dto.setEndDateTimestamp(endDateTimestamp == null ? null : endDateTimestamp.getTime());
+            dto.setValidatorUserName((String) o[i]);
+            dtoList.add(dto);
+        }
+        return dtoList;
     }
 
     /**
