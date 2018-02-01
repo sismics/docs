@@ -1,6 +1,7 @@
 package com.sismics.docs.core.dao.jpa;
 
 import com.sismics.docs.core.constant.AclTargetType;
+import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.dto.AclDto;
@@ -17,13 +18,13 @@ import java.util.UUID;
 
 /**
  * ACL DAO.
- * 
+ *
  * @author bgamard
  */
 public class AclDao {
     /**
      * Creates a new ACL.
-     * 
+     *
      * @param acl ACL
      * @param userId User ID
      * @return New ID
@@ -31,20 +32,20 @@ public class AclDao {
     public String create(Acl acl, String userId) {
         // Create the UUID
         acl.setId(UUID.randomUUID().toString());
-        
+
         // Create the ACL
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         em.persist(acl);
-        
+
         // Create audit log
         AuditLogUtil.create(acl, AuditLogType.CREATE, userId);
-        
+
         return acl.getId();
     }
-    
+
     /**
      * Search ACLs by target ID.
-     * 
+     *
      * @param targetId Target ID
      * @return ACL list
      */
@@ -56,15 +57,15 @@ public class AclDao {
 
         return q.getResultList();
     }
-    
+
     /**
      * Search ACLs by source ID.
-     * 
+     *
      * @param sourceId Source ID
      * @return ACL DTO list
-     */ 
+     */
     @SuppressWarnings("unchecked")
-    public List<AclDto> getBySourceId(String sourceId) {
+    public List<AclDto> getBySourceId(String sourceId, AclType type) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         StringBuilder sb = new StringBuilder("select a.ACL_ID_C, a.ACL_PERM_C, a.ACL_TARGETID_C, ");
         sb.append(" u.USE_USERNAME_C, s.SHA_ID_C, s.SHA_NAME_C, g.GRP_NAME_C ");
@@ -72,13 +73,14 @@ public class AclDao {
         sb.append(" left join T_USER u on u.USE_ID_C = a.ACL_TARGETID_C ");
         sb.append(" left join T_SHARE s on s.SHA_ID_C = a.ACL_TARGETID_C ");
         sb.append(" left join T_GROUP g on g.GRP_ID_C = a.ACL_TARGETID_C ");
-        sb.append(" where a.ACL_DELETEDATE_D is null and a.ACL_SOURCEID_C = :sourceId ");
-        
+        sb.append(" where a.ACL_DELETEDATE_D is null and a.ACL_SOURCEID_C = :sourceId and a.ACL_TYPE_C = :type ");
+
         // Perform the query
         Query q = em.createNativeQuery(sb.toString());
         q.setParameter("sourceId", sourceId);
+        q.setParameter("type", type.name());
         List<Object[]> l = q.getResultList();
-        
+
         // Assemble results
         List<AclDto> aclDtoList = new ArrayList<>();
         for (Object[] o : l) {
@@ -107,10 +109,10 @@ public class AclDao {
         }
         return aclDtoList;
     }
-    
+
     /**
      * Check if a source is accessible to a target.
-     * 
+     *
      * @param sourceId ACL source entity ID
      * @param perm Necessary permission
      * @param targetIdList List of targets
@@ -135,31 +137,34 @@ public class AclDao {
 
     /**
      * Delete an ACL.
-     * 
+     *
      * @param sourceId Source ID
      * @param perm Permission
      * @param targetId Target ID
      * @param userId User ID
+     * @param type Type
      */
     @SuppressWarnings("unchecked")
-    public void delete(String sourceId, PermType perm, String targetId, String userId) {
+    public void delete(String sourceId, PermType perm, String targetId, String userId, AclType type) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        
+
         // Create audit log
-        Query q = em.createQuery("from Acl a where a.sourceId = :sourceId and a.perm = :perm and a.targetId = :targetId");
+        Query q = em.createQuery("from Acl a where a.sourceId = :sourceId and a.perm = :perm and a.targetId = :targetId and a.type = :type");
         q.setParameter("sourceId", sourceId);
         q.setParameter("perm", perm);
         q.setParameter("targetId", targetId);
+        q.setParameter("type", type);
         List<Acl> aclList = q.getResultList();
         for (Acl acl : aclList) {
             AuditLogUtil.create(acl, AuditLogType.DELETE, userId);
         }
-        
+
         // Soft delete the ACLs
-        q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.sourceId = :sourceId and a.perm = :perm and a.targetId = :targetId");
+        q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.sourceId = :sourceId and a.perm = :perm and a.targetId = :targetId and a.type = :type");
         q.setParameter("sourceId", sourceId);
         q.setParameter("perm", perm);
         q.setParameter("targetId", targetId);
+        q.setParameter("type", type);
         q.setParameter("dateNow", new Date());
         q.executeUpdate();
     }
