@@ -1,6 +1,10 @@
 package com.sismics.docs.core.dao.jpa.dto;
 
 import com.sismics.docs.core.constant.RouteStepType;
+import com.sismics.util.JsonUtil;
+
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 
 /**
  * Route step DTO.
@@ -146,5 +150,24 @@ public class RouteStepDto {
     public RouteStepDto setValidatorUserName(String validatorUserName) {
         this.validatorUserName = validatorUserName;
         return this;
+    }
+
+    /**
+     * Transform in JSON.
+     *
+     * @return JSON object builder
+     */
+    public JsonObjectBuilder toJson() {
+        return Json.createObjectBuilder()
+                .add("name", getName())
+                .add("type", getType().name())
+                .add("comment", JsonUtil.nullable(getComment()))
+                .add("end_date", JsonUtil.nullable(getEndDateTimestamp()))
+                .add("validator_username", JsonUtil.nullable(getValidatorUserName()))
+                .add("target", Json.createObjectBuilder()
+                        .add("id", getTargetId())
+                        .add("name", JsonUtil.nullable(getTargetName()))
+                        .add("type", getTargetType()))
+                .add("transition", JsonUtil.nullable(getTransition()));
     }
 }

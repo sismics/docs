@@ -18,7 +18,6 @@ import com.sismics.docs.core.util.SecurityUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
-import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 
 import javax.json.*;
@@ -44,6 +43,7 @@ public class RouteResource extends BaseResource {
      * @apiParam {String} documentId Document ID
      * @apiSuccess {String} status Status OK
      * @apiError (client) InvalidRouteModel Invalid route model
+     * @apiError (client) RunningRoute A running route already exists on this document
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) NotFound Route model or document not found
      * @apiPermission user
@@ -72,6 +72,12 @@ public class RouteResource extends BaseResource {
             throw new NotFoundException();
         }
 
+        // Avoid creating 2 running routes on the same document
+        RouteStepDao routeStepDao = new RouteStepDao();
+        if (routeStepDao.getCurrentStep(documentId) != null) {
+            throw new ClientException("RunningRoute", "A running route already exists on this document");
+        }
+
         // Create the route
         Route route = new Route()
                 .setDocumentId(documentId)
@@ -80,7 +86,6 @@ public class RouteResource extends BaseResource {
         routeDao.create(route, principal.getId());
 
         // Create the steps
-        RouteStepDao routeStepDao = new RouteStepDao();
         try (JsonReader reader = Json.createReader(new StringReader(routeModel.getSteps()))) {
             JsonArray stepsJson = reader.readArray();
             for (int order = 0; order < stepsJson.size(); order++) {
@@ -108,9 +113,8 @@ public class RouteResource extends BaseResource {
         RouteStepDto routeStep = routeStepDao.getCurrentStep(documentId);
         RoutingUtil.updateAcl(documentId, routeStep, null, principal.getId());
 
-        // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("status", "ok");
+                .add("route_step", routeStep.toJson());
         return Response.ok().entity(response.build()).build();
     }
 
@@ -173,10 +177,13 @@ public class RouteResource extends BaseResource {
         RoutingUtil.updateAcl(documentId, newRouteStep, routeStep, principal.getId());
         // TODO Send an email to the new route step
 
-        // Always return OK
-        // TODO Return if the document is still readable and return the new current step if any
         JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("status", "ok");
+                .add("readable", aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(null)));
+        if (newRouteStep != null) {
+            JsonObjectBuilder step = newRouteStep.toJson();
+            step.add("transitionable", getTargetIdList(null).contains(newRouteStep.getTargetId()));
+            response.add("route_step", step);
+        }
         return Response.ok().entity(response.build()).build();
     }
 
@@ -232,17 +239,7 @@ public class RouteResource extends BaseResource {
             JsonArrayBuilder steps = Json.createArrayBuilder();
 
             for (RouteStepDto routeStepDto : routeStepDtoList) {
-                steps.add(Json.createObjectBuilder()
-                        .add("name", routeStepDto.getName())
-                        .add("type", routeStepDto.getType().name())
-                        .add("comment", JsonUtil.nullable(routeStepDto.getComment()))
-                        .add("end_date", JsonUtil.nullable(routeStepDto.getEndDateTimestamp()))
-                        .add("validator_username", JsonUtil.nullable(routeStepDto.getValidatorUserName()))
-                        .add("target", Json.createObjectBuilder()
-                                .add("id", routeStepDto.getTargetId())
-                                .add("name", JsonUtil.nullable(routeStepDto.getTargetName()))
-                                .add("type", routeStepDto.getTargetType()))
-                        .add("transition", JsonUtil.nullable(routeStepDto.getTransition())));
+                steps.add(routeStepDto.toJson());
             }
 
             routes.add(Json.createObjectBuilder()
@@ -253,7 +250,8 @@ public class RouteResource extends BaseResource {
 
         JsonObjectBuilder json = Json.createObjectBuilder()
                 .add("routes", routes);
-
         return Response.ok().entity(json.build()).build();
     }
+
+    // TODO Workflow cancellation
 }

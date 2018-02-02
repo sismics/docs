@@ -72,6 +72,11 @@
             <span class="glyphicon glyphicon-file"></span> {{ 'document.view.content' | translate }}
           </a>
         </li>
+        <li ng-class="{ active: $state.current.name == 'document.view.workflow' }">
+          <a href="#/document/view/{{ document.id }}/workflow">
+            <span class="glyphicon glyphicon-random"></span> {{ 'document.view.workflow' | translate }}
+          </a>
+        </li>
         <li ng-class="{ active: $state.current.name == 'document.view.permissions' }">
           <a href="#/document/view/{{ document.id }}/permissions">
             <span class="glyphicon glyphicon-user"></span> {{ 'document.view.permissions' | translate }}
@@ -86,7 +91,43 @@
       <div ui-view="tab"></div>
     </div>
     <div class="col-md-3">
-      <p class="page-header page-header-comments">
+      <div ng-show="document.route_step">
+        <p class="page-header page-header-side">
+          <span class="glyphicon glyphicon-random"></span>
+          {{ 'document.view.workflow_current' | translate }}
+        </p>
+
+        <div class="text-center card">
+          <p>{{ document.route_step.name }}</p>
+          <p>
+            <span class="glyphicon glyphicon-transfer" ng-if="document.route_step.type == 'APPROVE'"></span>
+            <span class="glyphicon glyphicon-ok-circle" ng-if="document.route_step.type == 'VALIDATE'"></span>
+            {{ 'workflow_type.' + document.route_step.type | translate }}
+            <span class="label label-default"><acl data="document.route_step.target"></acl></span>
+          </p>
+          <p ng-show="document.route_step.transitionable">
+            <textarea ng-model="workflowComment" maxlength="500" class="form-control mb-10"
+                      ng-attr-placeholder="{{ 'document.view.workflow_comment' | translate }}"></textarea>
+            <span class="btn btn-primary"
+                  ng-show="document.route_step.type == 'VALIDATE'"
+                  ng-click="validateWorkflow('VALIDATED')">
+              {{ 'workflow_transition.VALIDATED' | translate }}
+            </span>
+            <span class="btn btn-success"
+                  ng-show="document.route_step.type == 'APPROVE'"
+                  ng-click="validateWorkflow('APPROVED')">
+              {{ 'workflow_transition.APPROVED' | translate }}
+            </span>
+            <span class="btn btn-danger"
+                  ng-show="document.route_step.type == 'APPROVE'"
+                  ng-click="validateWorkflow('REJECTED')">
+              {{ 'workflow_transition.REJECTED' | translate }}
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <p class="page-header page-header-side">
         <span class="glyphicon glyphicon-comment"></span>
         {{ 'document.view.comments' | translate }}
       </p>

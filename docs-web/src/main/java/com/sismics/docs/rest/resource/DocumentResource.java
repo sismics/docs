@@ -25,8 +25,8 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.AclUtil;
-import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.JsonUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeType;
 import org.joda.time.DateTime;
@@ -216,10 +216,9 @@ public class DocumentResource extends BaseResource {
         // Add current route step
         RouteStepDto routeStepDto = new RouteStepDao().getCurrentStep(documentId);
         if (routeStepDto != null && !principal.isAnonymous()) {
-            document.add("route_step", Json.createObjectBuilder()
-                    .add("name", routeStepDto.getName())
-                    .add("type", routeStepDto.getType().name())
-                    .add("transitionable", getTargetIdList(null).contains(routeStepDto.getTargetId())));
+            JsonObjectBuilder step = routeStepDto.toJson();
+            step.add("transitionable", getTargetIdList(null).contains(routeStepDto.getTargetId()));
+            document.add("route_step", step);
         }
         
         return Response.ok().entity(document.build()).build();

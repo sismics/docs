@@ -52,11 +52,13 @@ public class TestRouteResource extends BaseJerseyTest {
         String document1Id = json.getString("id");
 
         // Start the default route on document 1
-        target().path("/route/start").request()
+        json = target().path("/route/start").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
                 .post(Entity.form(new Form()
                         .param("documentId", document1Id)
                         .param("routeModelId", routeModels.getJsonObject(0).getString("id"))), JsonObject.class);
+        JsonObject step = json.getJsonObject("route_step");
+        Assert.assertEquals("Check the document's metadata", step.getString("name"));
 
         // Get the route on document 1
         json = target().path("/route")
@@ -71,7 +73,7 @@ public class TestRouteResource extends BaseJerseyTest {
         Assert.assertNotNull(route.getJsonNumber("create_date"));
         JsonArray steps = route.getJsonArray("steps");
         Assert.assertEquals(3, steps.size());
-        JsonObject step = steps.getJsonObject(0);
+        step = steps.getJsonObject(0);
         Assert.assertEquals("Check the document's metadata", step.getString("name"));
         Assert.assertEquals("VALIDATE", step.getString("type"));
         Assert.assertTrue(step.isNull("comment"));
@@ -102,11 +104,14 @@ public class TestRouteResource extends BaseJerseyTest {
         Assert.assertEquals("Check the document's metadata", routeStep.getString("name"));
 
         // Validate the current step with admin
-        target().path("/route/validate").request()
+        json = target().path("/route/validate").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()
                         .param("documentId", document1Id)
                         .param("transition", "VALIDATED")), JsonObject.class);
+        step = json.getJsonObject("route_step");
+        Assert.assertEquals("Add relevant files to the document", step.getString("name"));
+        Assert.assertTrue(json.getBoolean("readable"));
 
         // Get the route on document 1
         json = target().path("/route")
@@ -136,12 +141,15 @@ public class TestRouteResource extends BaseJerseyTest {
         Assert.assertEquals("Add relevant files to the document", routeStep.getString("name"));
 
         // Validate the current step with admin
-        target().path("/route/validate").request()
+        json = target().path("/route/validate").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()
                         .param("documentId", document1Id)
                         .param("transition", "VALIDATED")
                         .param("comment", "OK")), JsonObject.class);
+        step = json.getJsonObject("route_step");
+        Assert.assertEquals("Approve the document", step.getString("name"));
+        Assert.assertTrue(json.getBoolean("readable"));
 
         // Get the route on document 1
         json = target().path("/route")
@@ -171,11 +179,13 @@ public class TestRouteResource extends BaseJerseyTest {
         Assert.assertEquals("Approve the document", routeStep.getString("name"));
 
         // Validate the current step with admin
-        target().path("/route/validate").request()
+        json = target().path("/route/validate").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()
                         .param("documentId", document1Id)
                         .param("transition", "APPROVED")), JsonObject.class);
+        Assert.assertFalse(json.containsKey("route_step"));
+        Assert.assertFalse(json.getBoolean("readable"));
 
         // Get the route on document 1
         json = target().path("/route")

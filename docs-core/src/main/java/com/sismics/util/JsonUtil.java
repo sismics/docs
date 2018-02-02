@@ -1,4 +1,4 @@
-package com.sismics.rest.util;
+package com.sismics.util;
 
 import javax.json.Json;
 import javax.json.JsonValue;

@@ -92,6 +92,8 @@
       "no_comments": "No comments on this document yet",
       "add_comment": "Add a comment",
       "error_loading_comments": "Error loading comments",
+      "workflow_current": "Current workflow step",
+      "workflow_comment": "Add a workflow comment",
       "content": {
         "content": "Content",
         "delete_file_title": "Delete file",
@@ -102,6 +104,14 @@
         "upload_error_quota": "Quota reached",
         "drop_zone": "Drag & drop files here to upload",
         "add_files": "Add files"
+      },
+      "workflow": {
+        "workflow": "Workflow",
+        "message": "Verify or validate your documents with people of your organization using workflows.",
+        "workflow_start_label": "Which workflow to start?",
+        "add_more_workflow": "Add more workflows",
+        "start_workflow_submit": "Start workflow",
+        "full_name": "<strong>{{ name }}</strong> started on {{ create_date | date }}"
       },
       "permissions": {
         "permissions": "Permissions",
@@ -427,6 +437,15 @@
     "USER": "User",
     "GROUP": "Group",
     "SHARE": "Shared"
+  },
+  "workflow_type": {
+    "VALIDATE": "Validation",
+    "APPROVE": "Approbation"
+  },
+  "workflow_transition": {
+    "APPROVED": "Approved",
+    "REJECTED": "Rejected",
+    "VALIDATED": "Validated"
   },
   "validation": {
     "required": "Required",

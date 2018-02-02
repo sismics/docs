@@ -10,7 +10,7 @@ import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ForbiddenClientException;
-import com.sismics.rest.util.JsonUtil;
+import com.sismics.util.JsonUtil;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;

@@ -10,8 +10,8 @@ import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Share;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
-import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.JsonUtil;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;

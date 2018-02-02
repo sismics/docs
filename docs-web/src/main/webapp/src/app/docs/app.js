@@ -285,6 +285,15 @@ angular.module('docs',
         }
       }
     })
+    .state('document.view.workflow', {
+      url: '/workflow',
+      views: {
+        'tab': {
+          templateUrl: 'partial/docs/document.view.workflow.html',
+          controller: 'DocumentViewWorkflow'
+        }
+      }
+    })
     .state('document.view.content.file', {
       url: '/file/:fileId',
       views: {

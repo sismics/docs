@@ -4,6 +4,7 @@ import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.dto.AclDto;
+import com.sismics.util.JsonUtil;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
