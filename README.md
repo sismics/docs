@@ -14,6 +14,8 @@ Docs is an open source, lightweight document management system for individuals a
 </h2>
 <hr />
 
+![New!](https://www.sismicsdocs.com/img/laptop-demo.png)
+
 Demo
 ----
 
