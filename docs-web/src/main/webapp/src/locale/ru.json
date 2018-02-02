@@ -92,6 +92,10 @@
       "no_comments": "Пока комментариев нет.",
       "add_comment": "Добавить комментарий",
       "error_loading_comments": "Ошибка при загрузке комментариев",
+      "workflow_current": "Текущий рабочий процесс",
+      "workflow_comment": "Добавить комментарий рабочего процесса",
+      "workflow_validated_title": "Шаблон рабочего процесса проверен",
+      "workflow_validated_message": "Шаг рабочего процесса был успешно проверен.",
       "content": {
         "content": "Содержание",
         "delete_file_title": "Удалить файл",
@@ -102,6 +106,17 @@
         "upload_error_quota": "Достигнута квота",
         "drop_zone": "Перетащите файлы сюда, чтобы загрузить",
         "add_files": "Добавить файлы"
+      },
+      "workflow": {
+        "workflow": "Workflow",
+        "message": "Проверяйте или проверяйте свои документы с людьми вашей организации с помощью рабочих процессов.",
+        "workflow_start_label": "Какой рабочий процесс нужно запустить?",
+        "add_more_workflow": "Добавить больше рабочих процессов",
+        "start_workflow_submit": "Начать рабочий процесс",
+        "full_name": "<strong>{{name}}</strong> запущен на {{create_date | date }}",
+        "cancel_workflow": "Отмена текущего рабочего процесса",
+        "cancel_workflow_title": "Отменить рабочий процесс",
+        "cancel_workflow_message": "Вы действительно хотите отменить текущий рабочий процесс?"
       },
       "permissions": {
         "permissions": "Права доступа",
@@ -224,6 +239,7 @@
     "menu_two_factor_auth": "Двухфакторная аутентификация",
     "menu_opened_sessions": "Открытые сессии",
     "menu_general_settings": "Общие настройки",
+    "menu_workflow": "Workflow",
     "menu_users": "Пользователи",
     "menu_groups": "Группы",
     "menu_vocabularies": "Словари",
@@ -249,7 +265,31 @@
         "storage_quota_placeholder": "Квота хранения (в MB)",
         "password": "Пароль",
         "password_confirm": "Подтвердить пароль",
-        "disabled": "Отключенный пользователь"
+        "disabled": "Отключенный пользователь",
+        "password_reset_btn": "Отправить сообщение для сброса пароля для этого пользователя",
+        "password_lost_sent_title": "Сброс пароля",
+        "password_lost_sent_message": "Сообщение сброса пароля было отправлено на адрес <strong>{{username}}</strong> для сброса пароля"
+      }
+    },
+    "workflow": {
+      "title": "Конфигурация рабочего процесса",
+      "add_workflow": "Добавить рабочий процесс",
+      "name": "имя",
+      "create_date": "Создать дату",
+      "edit": {
+        "delete_workflow_title": "Удалить рабочий процесс",
+        "delete_workflow_message": "Вы действительно хотите удалить этот рабочий процесс? Текущие запущенные рабочие процессы не будут удалены.",
+        "edit_workflow_title": "<small> Изменить </small> \"{{name}}\"",
+        "add_workflow_title": "<small> Добавьте рабочий процесс </small>",
+        "name": "имя",
+        "name_placeholder": "Имя шага или описание",
+        "drag_help": "Перетащите, чтобы изменить порядок шагов",
+        "type": "Тип шага",
+        "type_approve": "Одобрить",
+        "type_validate": "утверждать",
+        "target": "Назначено",
+        "target_help": "<strong> Утвердить:</strong> Обзор и продолжение рабочего процесса <br/><strong>Подтвердить:</strong> Принять или отклонить обзор",
+        "add_step": "Добавить шаг рабочего процесса"
       }
     },
     "security": {
@@ -374,7 +414,8 @@
       "File": "Файл",
       "Group": "Группа",
       "Tag": "Тег",
-      "User": "Пользователь"
+      "User": "Пользователь",
+      "RouteModel": "Workflow"
     },
     "selectrelation": {
       "typeahead": "Введите название документа"
@@ -401,6 +442,15 @@
     "USER": "Пользователь",
     "GROUP": "Группа",
     "SHARE": "Общий"
+  },
+  "workflow_type": {
+    "VALIDATE": "Проверка",
+    "APPROVE": "апробация"
+  },
+  "workflow_transition": {
+    "APPROVED": "утвержденный",
+    "REJECTED": "Отклонено",
+    "VALIDATED": "Утвержденный"
   },
   "validation": {
     "required": "Необходимые",

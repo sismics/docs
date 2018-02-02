@@ -92,6 +92,10 @@
       "no_comments": "此文檔暫無評論",
       "add_comment": "添加評論",
       "error_loading_comments": "評論加載失敗",
+      "workflow_current": "當前工作流程步驟",
+      "workflow_comment": "添加工作流程評論",
+      "workflow_validated_title": "工作流程步驟已驗證",
+      "workflow_validated_message": "工作流步驟已成功驗證。",
       "content": {
         "content": "內容",
         "delete_file_title": "刪除文檔",
@@ -102,6 +106,17 @@
         "upload_error_quota": "已達到您的限額",
         "drop_zone": "將文件拖放至此處上傳",
         "add_files": "添加文件"
+      },
+      "workflow": {
+        "workflow": "工作流程",
+        "message": "使用工作流程與您的組織的人員驗證或驗證您的文檔。",
+        "workflow_start_label": "哪個工作流程啟動？",
+        "add_more_workflow": "添加更多工作流程",
+        "start_workflow_submit": "開始工作流程",
+        "full_name": "<strong>{{ name }}</strong>開始於{{ create_date | date }}",
+        "cancel_workflow": "取消當前的工作流程",
+        "cancel_workflow_title": "取消工作流程",
+        "cancel_workflow_message": "你真的想取消當前的工作流程嗎？"
       },
       "permissions": {
         "permissions": "權限",
@@ -224,6 +239,7 @@
     "menu_two_factor_auth": "雙重身份驗證",
     "menu_opened_sessions": "已打開會話",
     "menu_general_settings": "一般設置",
+    "menu_workflow": "工作流程",
     "menu_users": "用戶",
     "menu_groups": "群組",
     "menu_vocabularies": "詞條",
@@ -238,6 +254,8 @@
       "edit": {
         "delete_user_title": "刪除用戶",
         "delete_user_message": "您是否確認刪除該用戶? 所有相關文檔，文件和標籤將被刪除",
+        "edit_user_failed_title": "用戶已經存在",
+        "edit_user_failed_message": "該用戶名已經被占用",
         "edit_user_title": "<small>編輯</small> \"{{ username }}\"",
         "add_user_title": "<small>添加一個</small> 用戶",
         "username": "用戶名",
@@ -247,7 +265,31 @@
         "storage_quota_placeholder": "存儲限額 (單位MB)",
         "password": "密碼",
         "password_confirm": "密碼 (確認)",
-        "disabled": "禁用用戶"
+        "disabled": "禁用用戶",
+        "password_reset_btn": "給該用戶發送密碼重置電子郵件",
+        "password_lost_sent_title": "密碼重置郵件已發送",
+        "password_lost_sent_message": "密碼重置電子郵件已發送至 <strong>{{ username }}</strong>"
+      }
+    },
+    "workflow": {
+      "title": "工作流程<small>配置</small>",
+      "add_workflow": "添加工作流程",
+      "name": "名稱",
+      "create_date": "創建日期",
+      "edit": {
+        "delete_workflow_title": "刪除工作流程",
+        "delete_workflow_message": "你真的想刪除這個工作流程嗎？當前正在運行的工作流程不會被刪除",
+        "edit_workflow_title": "<small>編輯</small>\"{{name}}\"",
+        "add_workflow_title": "<small>添加一個</small>工作流程",
+        "name": "名稱",
+        "name_placeholder": "步驟名稱或說明",
+        "drag_help": "拖放以重新排序步驟",
+        "type": "步驟類型",
+        "type_approve": "批准",
+        "type_validate": "驗證",
+        "target": "分配給",
+        "target_help": "<strong>批准：</strong>審核並繼續工作流程<br/><strong>驗證：</strong>接受或拒絕審核",
+        "add_step": "添加工作流程步驟"
       }
     },
     "security": {
@@ -276,6 +318,8 @@
       "edit": {
         "delete_group_title": "刪除組",
         "delete_group_message": "您是否確認刪除該組?",
+        "edit_group_failed_title": "組已經存在",
+        "edit_group_failed_message": "這個組名已經被占用",
         "edit_group_title": "編輯 <small>\"{{ name }}\"</small>",
         "add_group_title": "添加 <small>組</small>",
         "name": "名稱",
@@ -370,7 +414,8 @@
       "File": "文件",
       "Group": "組",
       "Tag": "標籤",
-      "User": "用戶"
+      "User": "用戶",
+      "RouteModel": "工作流程"
     },
     "selectrelation": {
       "typeahead": "請輸入文檔名稱"
@@ -397,6 +442,15 @@
     "USER": "用戶",
     "GROUP": "組",
     "SHARE": "已共享"
+  },
+  "workflow_type": {
+    "VALIDATE": "驗證",
+    "APPROVE": "讚許"
+  },
+  "workflow_transition": {
+    "APPROVED": "批准",
+    "REJECTED": "拒絕",
+    "VALIDATED": "驗證"
   },
   "validation": {
     "required": "必填",

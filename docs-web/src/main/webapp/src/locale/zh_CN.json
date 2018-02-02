@@ -92,6 +92,10 @@
       "no_comments": "此文档暂无评论",
       "add_comment": "添加评论",
       "error_loading_comments": "评论加载失败",
+      "workflow_current": "当前工作流程步骤",
+      "workflow_comment": "添加工作流程评论",
+      "workflow_validated_title": "工作流程步骤已验证",
+      "workflow_validated_message": "工作流程步骤已成功验证。",
       "content": {
         "content": "内容",
         "delete_file_title": "删除文档",
@@ -102,6 +106,17 @@
         "upload_error_quota": "已达到您的限额",
         "drop_zone": "将文件拖放至此处上传",
         "add_files": "添加文件"
+      },
+      "workflow": {
+        "workflow": "工作流程",
+        "message": "使用工作流程与您的组织的人员验证或验证您的文档。",
+        "workflow_start_label": "哪个工作流程启动？",
+        "add_more_workflow": "添加更多工作流程",
+        "start_workflow_submit": "开始工作流程",
+        "full_name": "<strong>{{ name }}</strong>开始于{{ create_date | date }}",
+        "cancel_workflow": "取消当前的工作流程",
+        "cancel_workflow_title": "取消工作流程",
+        "cancel_workflow_message": "你真的想取消当前的工作流程吗？"
       },
       "permissions": {
         "permissions": "权限",
@@ -180,7 +195,7 @@
       "message_2": "一个文档可以由多个标签标记, 同时一个标签可以运用于多个文档.",
       "message_3": "使用该 <span class=\"glyphicon glyphicon-pencil\"></span> 按钮, 您可以编辑标签的权限.",
       "message_4": "如果一个标签可以被另一个用户或组读取, 相关的文件也可以被这些人阅读.",
-      "message_5": "例如, 用一个标签标记您公司的文档 <span class=\"label label-info\">我的公司</span> 并同时添加权限 <strong>可读</strong> 给一个群组的 <span class=\"btn btn-default\">员工</span>"
+      "message_5": "例如, 用一个标签标记您公司的文档 <span class=\"label label-info\">我的公司</span> 并同时添加权限 <strong>可读</strong> 给一个群组的 <span class=\"btn btn-default\">成员</span>"
     },
     "edit": {
       "delete_tag_title": "删除标签",
@@ -224,6 +239,7 @@
     "menu_two_factor_auth": "双重身份验证",
     "menu_opened_sessions": "已打开会话",
     "menu_general_settings": "一般设置",
+    "menu_workflow": "工作流程",
     "menu_users": "用户",
     "menu_groups": "群组",
     "menu_vocabularies": "词条",
@@ -238,6 +254,8 @@
       "edit": {
         "delete_user_title": "删除用户",
         "delete_user_message": "您是否确认删除该用户? 所有相关文档，文件和标签将被删除",
+        "edit_user_failed_title": "用户已存在",
+        "edit_user_failed_message": "该用户名已被占用",
         "edit_user_title": "<small>编辑</small> \"{{ username }}\"",
         "add_user_title": "<small>添加一个</small> 用户",
         "username": "用户名",
@@ -247,7 +265,31 @@
         "storage_quota_placeholder": "存储限额 (in MB)",
         "password": "密码",
         "password_confirm": "密码 (确认)",
-        "disabled": "禁用用户"
+        "disabled": "禁用用户",
+        "password_reset_btn": "给该用户发送密码重置电子邮件",
+        "password_lost_sent_title": "密码重置邮件已发送",
+        "password_lost_sent_message": "密码重置电子邮件已发送至 <strong>{{ username }}</strong>"
+      }
+    },
+    "workflow": {
+      "title": "工作流程<small>配置</small>",
+      "add_workflow": "添加工作流程",
+      "name": "名称",
+      "create_date": "创建日期",
+      "edit": {
+        "delete_workflow_title": "删除工作流程",
+        "delete_workflow_message": "你真的想删除这个工作流程吗？当前正在运行的工作流程不会被删除",
+        "edit_workflow_title": "<small>编辑</small>\"{{ name }}\"",
+        "add_workflow_title": "<small>添加一个</small>工作流程",
+        "name": "名称",
+        "name_placeholder": "步骤名称或说明",
+        "drag_help": "拖放以重新排序步骤",
+        "type": "步骤类型",
+        "type_approve": "批准",
+        "type_validate": "验证",
+        "target": "分配给",
+        "target_help": "<strong>批准：</strong>审核并继续工作流程<strong>验证：</strong>接受或拒绝审核",
+        "add_step": "添加工作流程步骤"
       }
     },
     "security": {
@@ -276,6 +318,8 @@
       "edit": {
         "delete_group_title": "删除组",
         "delete_group_message": "您是否确认删除该组?",
+        "edit_group_failed_title": "组已存在",
+        "edit_group_failed_message": "该组名已经被占用",
         "edit_group_title": "编辑 <small>\"{{ name }}\"</small>",
         "add_group_title": "<small>添加一个</small>组",
         "name": "名称",
@@ -370,7 +414,8 @@
       "File": "文件",
       "Group": "组",
       "Tag": "标签",
-      "User": "用户"
+      "User": "用户",
+      "RouteModel": "工作流程"
     },
     "selectrelation": {
       "typeahead": "请输入一个文档名称"
@@ -397,6 +442,15 @@
     "USER": "用户",
     "GROUP": "组",
     "SHARE": "已共享"
+  },
+  "workflow_type": {
+    "VALIDATE": "验证",
+    "APPROVE": "赞许"
+  },
+  "workflow_transition": {
+    "APPROVED": "批准",
+    "REJECTED": "拒绝",
+    "VALIDATED": "验证"
   },
   "validation": {
     "required": "必填",

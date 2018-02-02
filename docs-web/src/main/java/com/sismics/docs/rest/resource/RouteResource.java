@@ -114,8 +114,10 @@ public class RouteResource extends BaseResource {
         RoutingUtil.updateAcl(documentId, routeStepDto, null, principal.getId());
         RoutingUtil.sendRouteStepEmail(documentId, routeStepDto);
 
+        JsonObjectBuilder step = routeStepDto.toJson();
+        step.add("transitionable", getTargetIdList(null).contains(routeStepDto.getTargetId()));
         JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("route_step", routeStepDto.toJson());
+                .add("route_step", step);
         return Response.ok().entity(response.build()).build();
     }
 

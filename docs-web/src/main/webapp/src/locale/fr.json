@@ -92,6 +92,10 @@
       "no_comments": "Aucun commentaire sur ce document",
       "add_comment": "Ajouter un commentaire",
       "error_loading_comments": "Erreur au chargement des commentaires",
+      "workflow_current": "Étape de workflow en cours",
+      "workflow_comment": "Ajouter un commentaire de workflow",
+      "workflow_validated_title": "Étape de workflow validée",
+      "workflow_validated_message": "L'étape de workflow a été validée avec succès.",
       "content": {
         "content": "Contenu",
         "delete_file_title": "Supprimer un fichier",
@@ -102,6 +106,17 @@
         "upload_error_quota": "Quota atteint",
         "drop_zone": "Glisser & déposer des fichiers ici pour les envoyer",
         "add_files": "Ajouter des fichiers"
+      },
+      "workflow": {
+        "workflow": "Workflow",
+        "message": "Vérifiez ou validez vos documents avec les personnes de votre organisation en utilisant les workflows.",
+        "workflow_start_label": "Quel workflow démarrer ?",
+        "add_more_workflow": "Ajouter plus de workflows",
+        "start_workflow_submit": "Démarrer le workflow",
+        "full_name": "<strong>{{ name }}</strong> a démarré le {{ create_date | date }}",
+        "cancel_workflow": "Annuler le workflow en cours",
+        "cancel_workflow_title": "Annuler le workflow",
+        "cancel_workflow_message": "Voulez-vous vraiment annuler le workflow en cours ?"
       },
       "permissions": {
         "permissions": "Permissions",
@@ -224,6 +239,7 @@
     "menu_two_factor_auth": "Authentification en deux étapes",
     "menu_opened_sessions": "Sessions ouvertes",
     "menu_general_settings": "Paramètres généraux",
+    "menu_workflow": "Workflow",
     "menu_users": "Utilisateurs",
     "menu_groups": "Groupes",
     "menu_vocabularies": "Vocabulaires",
@@ -238,6 +254,8 @@
       "edit": {
         "delete_user_title": "Supprimer un utilisateur",
         "delete_user_message": "Etes-vous sûr de vouloir supprimer cet utilisateur ? Tous les documents, fichiers et tags associés seront supprimés",
+        "edit_user_failed_title": "Cet utilisateur existe déjà",
+        "edit_user_failed_message": "Ce nom d'utilisateur est déjà pris par un autre utilisateur",
         "edit_user_title": "<small>Modifier</small> \"{{ username }}\"",
         "add_user_title": "<small>Ajouter un</small> utilisateur",
         "username": "Nom d'utilisateur",
@@ -247,7 +265,31 @@
         "storage_quota_placeholder": "Quota de stockage (en Mo)",
         "password": "Mot de passe",
         "password_confirm": "Mot de passe (confirmation)",
-        "disabled": "Utilisateur désactivé"
+        "disabled": "Utilisateur désactivé",
+        "password_reset_btn": "Envoyer un email de réinitialisation de mot de passe à cet utilisateur",
+        "password_lost_sent_title": "Email de réinitialisation de mot de passe envoyé",
+        "password_lost_sent_message": "Un email de réinitalisation de mot de passe a été envoyé à <strong>{{ username }}</strong>"
+      }
+    },
+    "workflow": {
+      "title": "<small>Configuration des</small> workflows",
+      "add_workflow": "Ajouter un workflow",
+      "name": "Nom",
+      "create_date": "Date de création",
+      "edit": {
+        "delete_workflow_title": "Supprimer le workflow",
+        "delete_workflow_message": "Voulez-vous vraiment supprimer ce workflow ? Les workflows en cours d'exécution ne seront pas supprimés",
+        "edit_workflow_title": "<small>Modifier</small> \"{{ name }}\"",
+        "add_workflow_title": "<small>Ajouter un</small> workflow",
+        "name": "Nom",
+        "name_placeholder": "Nom de l'étape ou description",
+        "drag_help": "Glisser et déplacer pour réordonner les étapes",
+        "type": "Type d'étape",
+        "type_approve": "Approbation",
+        "type_validate": "Validation",
+        "target": "Assigné à",
+        "target_help": "<strong>Approbation :</strong> Examiner et poursuivre le workflow<br/><strong>Validation :</strong> Accepter ou rejeter l'étape de workflow",
+        "add_step": "Ajouter une étape de workflow"
       }
     },
     "security": {
@@ -276,6 +318,8 @@
       "edit": {
         "delete_group_title": "Supprimer un groupe",
         "delete_group_message": "Etes-vous sûr de vouloir supprimer ce groupe ?",
+        "edit_group_failed_title": "Ce groupe existe déjà",
+        "edit_group_failed_message": "Ce nom de groupe est déjà pris par un autre groupe",
         "edit_group_title": "<small>Modifier</small> \"{{ name }}\"",
         "add_group_title": "<small>Ajouter un</small> groupe",
         "name": "Nom",
@@ -370,7 +414,8 @@
       "File": "Fichier",
       "Group": "Groupe",
       "Tag": "Tag",
-      "User": "Utilisateur"
+      "User": "Utilisateur",
+      "RouteModel": "Workflow"
     },
     "selectrelation": {
       "typeahead": "Entrez un titre de document"
@@ -397,6 +442,15 @@
     "USER": "Utilisateur",
     "GROUP": "Groupe",
     "SHARE": "Partage"
+  },
+  "workflow_type": {
+    "VALIDATE": "Validation",
+    "APPROVE": "Approbation"
+  },
+  "workflow_transition": {
+    "APPROVED": "Approuvé",
+    "REJECTED": "Refusé",
+    "VALIDATED": "Validé"
   },
   "validation": {
     "required": "Requis",
