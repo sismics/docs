@@ -2,23 +2,23 @@ package com.sismics.docs.core.event;
 
 import com.google.common.base.MoreObjects;
 import com.sismics.docs.core.dao.jpa.dto.UserDto;
-import com.sismics.docs.core.model.jpa.PasswordRecovery;
+import com.sismics.docs.core.model.jpa.Document;
 
 /**
- * Event fired on user's password lost event.
+ * Event fired on route step validation event.
  *
- * @author jtremeaux 
+ * @author bgamard
  */
-public class PasswordLostEvent {
+public class RouteStepValidateEvent {
     /**
      * User.
      */
     private UserDto user;
 
     /**
-     * Password recovery request.
+     * Document linked to the route.
      */
-    private PasswordRecovery passwordRecovery;
+    private Document document;
 
     public UserDto getUser() {
         return user;
@@ -28,19 +28,20 @@ public class PasswordLostEvent {
         this.user = user;
     }
 
-    public PasswordRecovery getPasswordRecovery() {
-        return passwordRecovery;
+    public Document getDocument() {
+        return document;
     }
 
-    public void setPasswordRecovery(PasswordRecovery passwordRecovery) {
-        this.passwordRecovery = passwordRecovery;
+    public RouteStepValidateEvent setDocument(Document document) {
+        this.document = document;
+        return this;
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("user", user)
-                .add("passwordRecovery", "**hidden**")
+                .add("document", document)
                 .toString();
     }
 }

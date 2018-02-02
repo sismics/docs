@@ -149,6 +149,11 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
       comment: $scope.workflowComment
     }).then(function (data) {
       $scope.workflowComment = '';
+      var title = $translate.instant('document.view.workflow_validated_title');
+      var msg = $translate.instant('document.view.workflow_validated_message');
+      var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
+      $dialog.messageBox(title, msg, btns);
+
       if (data.readable) {
         $scope.document.route_step = data.route_step;
       } else {

@@ -1,5 +1,7 @@
 package com.sismics.docs.core.dao.jpa.dto;
 
+import com.google.common.base.MoreObjects;
+
 /**
  * User DTO.
  *
@@ -109,5 +111,14 @@ public class UserDto {
 
     public void setTotpKey(String totpKey) {
         this.totpKey = totpKey;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("id", id)
+                .add("username", username)
+                .add("email", email)
+                .toString();
     }
 }

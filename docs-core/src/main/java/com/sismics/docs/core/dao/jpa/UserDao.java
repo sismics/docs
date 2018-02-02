@@ -276,7 +276,14 @@ public class UserDao {
             criteriaList.add("lower(u.USE_USERNAME_C) like lower(:search)");
             parameterMap.put("search", "%" + criteria.getSearch() + "%");
         }
-        
+        if (criteria.getUserId() != null) {
+            criteriaList.add("u.USE_ID_C = :userId");
+            parameterMap.put("userId", criteria.getUserId());
+        }
+        if (criteria.getUserName() != null) {
+            criteriaList.add("u.USE_USERNAME_C = :userName");
+            parameterMap.put("userName", criteria.getUserName());
+        }
         if (criteria.getGroupId() != null) {
             sb.append(" join T_USER_GROUP ug on ug.UGP_IDUSER_C = u.USE_ID_C and ug.UGP_IDGROUP_C = :groupId and ug.UGP_DELETEDATE_D is null ");
             parameterMap.put("groupId", criteria.getGroupId());

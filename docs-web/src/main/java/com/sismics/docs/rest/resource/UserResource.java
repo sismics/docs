@@ -953,10 +953,11 @@ public class UserResource extends BaseResource {
 
         // Check for user existence
         UserDao userDao = new UserDao();
-        User user = userDao.getActiveByUsername(username);
-        if (user == null) {
+        List<UserDto> userDtoList = userDao.findByCriteria(new UserCriteria().setUserName(username), null);
+        if (userDtoList.isEmpty()) {
             throw new ClientException("UserNotFound", "User not found: " + username);
         }
+        UserDto user = userDtoList.get(0);
 
         // Create the password recovery key
         PasswordRecoveryDao passwordRecoveryDao = new PasswordRecoveryDao();

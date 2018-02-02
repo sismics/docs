@@ -82,4 +82,9 @@ public class Constants {
      * Email template for password recovery.
      */
     public static final String EMAIL_TEMPLATE_PASSWORD_RECOVERY = "password_recovery";
+
+    /**
+     * Email template for route step validate.
+     */
+    public static final String EMAIL_TEMPLATE_ROUTE_STEP_VALIDATE = "route_step_validate";
 }

@@ -117,4 +117,11 @@ angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dial
       }
     });
   };
+
+  /**
+   * Remove a route step.
+   */
+  $scope.removeStep = function (step) {
+    $scope.workflow.steps.splice($scope.workflow.steps.indexOf(step), 1);
+  };
 });

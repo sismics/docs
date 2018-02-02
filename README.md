@@ -26,6 +26,7 @@ Features
 --------
 
 - Responsive user interface
+- Workflow system ![New!](https://www.sismics.com/public/img/new.png)
 - Optical character recognition
 - Support image, PDF, ODT and DOCX files
 - Flexible search engine

@@ -62,6 +62,11 @@ public class RouteStepDto {
      */
     private String validatorUserName;
 
+    /**
+     * Route ID.
+     */
+    private String routeId;
+
     public String getId() {
         return id;
     }
@@ -149,6 +154,15 @@ public class RouteStepDto {
 
     public RouteStepDto setValidatorUserName(String validatorUserName) {
         this.validatorUserName = validatorUserName;
+        return this;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    public RouteStepDto setRouteId(String routeId) {
+        this.routeId = routeId;
         return this;
     }
 

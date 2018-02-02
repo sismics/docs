@@ -110,11 +110,12 @@ public class RouteResource extends BaseResource {
         }
 
         // Intialize ACLs on the first step
-        RouteStepDto routeStep = routeStepDao.getCurrentStep(documentId);
-        RoutingUtil.updateAcl(documentId, routeStep, null, principal.getId());
+        RouteStepDto routeStepDto = routeStepDao.getCurrentStep(documentId);
+        RoutingUtil.updateAcl(documentId, routeStepDto, null, principal.getId());
+        RoutingUtil.sendRouteStepEmail(documentId, routeStepDto);
 
         JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("route_step", routeStep.toJson());
+                .add("route_step", routeStepDto.toJson());
         return Response.ok().entity(response.build()).build();
     }
 
@@ -152,13 +153,13 @@ public class RouteResource extends BaseResource {
 
         // Get the current step
         RouteStepDao routeStepDao = new RouteStepDao();
-        RouteStepDto routeStep = routeStepDao.getCurrentStep(documentId);
-        if (routeStep == null) {
+        RouteStepDto routeStepDto = routeStepDao.getCurrentStep(documentId);
+        if (routeStepDto == null) {
             throw new NotFoundException();
         }
 
         // Check permission to validate this step
-        if (!getTargetIdList(null).contains(routeStep.getTargetId())) {
+        if (!getTargetIdList(null).contains(routeStepDto.getTargetId())) {
             throw new ForbiddenClientException();
         }
 
@@ -166,16 +167,16 @@ public class RouteResource extends BaseResource {
         ValidationUtil.validateRequired(transitionStr, "transition");
         comment = ValidationUtil.validateLength(comment, "comment", 1, 500, true);
         RouteStepTransition transition = RouteStepTransition.valueOf(transitionStr);
-        if (routeStep.getType() == RouteStepType.VALIDATE && transition != RouteStepTransition.VALIDATED
-                || routeStep.getType() == RouteStepType.APPROVE && transition != RouteStepTransition.APPROVED && transition != RouteStepTransition.REJECTED) {
+        if (routeStepDto.getType() == RouteStepType.VALIDATE && transition != RouteStepTransition.VALIDATED
+                || routeStepDto.getType() == RouteStepType.APPROVE && transition != RouteStepTransition.APPROVED && transition != RouteStepTransition.REJECTED) {
             throw new ClientException("ValidationError", "Invalid transition for this route step type");
         }
 
         // Validate the step and update ACLs
-        routeStepDao.endRouteStep(routeStep.getId(), transition, comment, principal.getId());
+        routeStepDao.endRouteStep(routeStepDto.getId(), transition, comment, principal.getId());
         RouteStepDto newRouteStep = routeStepDao.getCurrentStep(documentId);
-        RoutingUtil.updateAcl(documentId, newRouteStep, routeStep, principal.getId());
-        // TODO Send an email to the new route step
+        RoutingUtil.updateAcl(documentId, newRouteStep, routeStepDto, principal.getId());
+        RoutingUtil.sendRouteStepEmail(documentId, routeStepDto);
 
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("readable", aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(null)));
@@ -253,5 +254,50 @@ public class RouteResource extends BaseResource {
         return Response.ok().entity(json.build()).build();
     }
 
-    // TODO Workflow cancellation
+    /**
+     * Cancel a route.
+     *
+     * @api {delete} /route Cancel a route
+     * @apiName DeleteRoute
+     * @apiRouteModel Route
+     * @apiParam {String} documentId Document ID
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) NotFound Document or route not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
+     * @return Response
+     */
+    @DELETE
+    public Response delete(@QueryParam("documentId") String documentId) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get the document
+        AclDao aclDao = new AclDao();
+        if (!aclDao.checkPermission(documentId, PermType.WRITE, getTargetIdList(null))) {
+            throw new NotFoundException();
+        }
+
+        // Get the current step
+        RouteStepDao routeStepDao = new RouteStepDao();
+        RouteStepDto routeStepDto = routeStepDao.getCurrentStep(documentId);
+        if (routeStepDto == null) {
+            throw new NotFoundException();
+        }
+
+        // Remove the temporary ACLs
+        RoutingUtil.updateAcl(documentId, null, routeStepDto, principal.getId());
+
+        // Delete the route and the steps
+        RouteDao routeDao = new RouteDao();
+        routeDao.deleteRoute(routeStepDto.getRouteId());
+
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
 }

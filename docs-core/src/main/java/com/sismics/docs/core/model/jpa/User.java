@@ -203,6 +203,7 @@ public class User implements Loggable {
         return MoreObjects.toStringHelper(this)
                 .add("id", id)
                 .add("username", username)
+                .add("email", email)
                 .toString();
     }
 

@@ -149,7 +149,7 @@ public class AclDao {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
 
         // Create audit log
-        Query q = em.createQuery("from Acl a where a.sourceId = :sourceId and a.perm = :perm and a.targetId = :targetId and a.type = :type");
+        Query q = em.createQuery("from Acl a where a.sourceId = :sourceId and a.perm = :perm and a.targetId = :targetId and a.type = :type and a.deleteDate is null");
         q.setParameter("sourceId", sourceId);
         q.setParameter("perm", perm);
         q.setParameter("targetId", targetId);
@@ -160,7 +160,7 @@ public class AclDao {
         }
 
         // Soft delete the ACLs
-        q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.sourceId = :sourceId and a.perm = :perm and a.targetId = :targetId and a.type = :type");
+        q = em.createQuery("update Acl a set a.deleteDate = :dateNow where a.sourceId = :sourceId and a.perm = :perm and a.targetId = :targetId and a.type = :type and a.deleteDate is null");
         q.setParameter("sourceId", sourceId);
         q.setParameter("perm", perm);
         q.setParameter("targetId", targetId);

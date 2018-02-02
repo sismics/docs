@@ -22,14 +22,23 @@ public class TestRouteResource extends BaseJerseyTest {
      * Test the route resource.
      */
     @Test
-    public void testRouteResource() {
+    public void testRouteResource() throws Exception {
         // Login route1
         clientUtil.createUser("route1");
         String route1Token = clientUtil.login("route1");
 
         // Login admin
         String adminToken = clientUtil.login("admin", "admin", false);
-        
+
+        // Change SMTP configuration to target Wiser
+        target().path("/app/config_smtp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("hostname", "localhost")
+                        .param("port", "2500")
+                        .param("from", "contact@sismicsdocs.com")
+                ), JsonObject.class);
+
         // Get all route models
         JsonObject json = target().path("/routemodel")
                 .queryParam("sort_column", "2")
@@ -59,6 +68,7 @@ public class TestRouteResource extends BaseJerseyTest {
                         .param("routeModelId", routeModels.getJsonObject(0).getString("id"))), JsonObject.class);
         JsonObject step = json.getJsonObject("route_step");
         Assert.assertEquals("Check the document's metadata", step.getString("name"));
+        Assert.assertTrue(popEmail().contains("workflow step"));
 
         // Get the route on document 1
         json = target().path("/route")
@@ -112,6 +122,7 @@ public class TestRouteResource extends BaseJerseyTest {
         step = json.getJsonObject("route_step");
         Assert.assertEquals("Add relevant files to the document", step.getString("name"));
         Assert.assertTrue(json.getBoolean("readable"));
+        Assert.assertTrue(popEmail().contains("workflow step"));
 
         // Get the route on document 1
         json = target().path("/route")
@@ -150,6 +161,7 @@ public class TestRouteResource extends BaseJerseyTest {
         step = json.getJsonObject("route_step");
         Assert.assertEquals("Approve the document", step.getString("name"));
         Assert.assertTrue(json.getBoolean("readable"));
+        Assert.assertTrue(popEmail().contains("workflow step"));
 
         // Get the route on document 1
         json = target().path("/route")
@@ -186,6 +198,7 @@ public class TestRouteResource extends BaseJerseyTest {
                         .param("transition", "APPROVED")), JsonObject.class);
         Assert.assertFalse(json.containsKey("route_step"));
         Assert.assertFalse(json.getBoolean("readable"));
+        Assert.assertTrue(popEmail().contains("workflow step"));
 
         // Get the route on document 1
         json = target().path("/route")
@@ -217,5 +230,44 @@ public class TestRouteResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
                 .get(JsonObject.class);
         Assert.assertFalse(json.containsKey("route_step"));
+
+        // Start the default route on document 1
+        target().path("/route/start").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
+                .post(Entity.form(new Form()
+                        .param("documentId", document1Id)
+                        .param("routeModelId", routeModels.getJsonObject(0).getString("id"))), JsonObject.class);
+        Assert.assertTrue(popEmail().contains("workflow step"));
+
+        // Get document 1 as route1
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
+                .get(JsonObject.class);
+        Assert.assertTrue(json.containsKey("route_step"));
+
+        // Get document 1 as admin
+        response = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get();
+        Assert.assertEquals(Response.Status.OK, Response.Status.fromStatusCode(response.getStatus()));
+
+        // Cancel the route on document 1
+        target().path("/route")
+                .queryParam("documentId", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
+                .delete(JsonObject.class);
+
+        // Get document 1 as route1
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
+                .get(JsonObject.class);
+        Assert.assertFalse(json.containsKey("route_step"));
+
+        // Get document 1 as admin
+        response = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get();
+        Assert.assertEquals(Response.Status.NOT_FOUND, Response.Status.fromStatusCode(response.getStatus()));
     }
 }

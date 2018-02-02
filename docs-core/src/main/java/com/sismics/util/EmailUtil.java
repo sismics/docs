@@ -4,8 +4,8 @@ import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.ConfigDao;
+import com.sismics.docs.core.dao.jpa.dto.UserDto;
 import com.sismics.docs.core.model.jpa.Config;
-import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.ConfigUtil;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
@@ -64,7 +64,7 @@ public class EmailUtil {
      * @param subject Email subject
      * @param paramMap Email parameters
      */
-    public static void sendEmail(String templateName, User recipientUser, String subject, Map<String, Object> paramMap) {
+    public static void sendEmail(String templateName, UserDto recipientUser, String subject, Map<String, Object> paramMap) {
         if (log.isInfoEnabled()) {
             log.info("Sending email from template=" + templateName + " to user " + recipientUser);
         }
@@ -154,7 +154,7 @@ public class EmailUtil {
      * @param recipientUser Recipient user
      * @param paramMap Email parameters
      */
-    public static void sendEmail(String templateName, User recipientUser, Map<String, Object> paramMap) {
+    public static void sendEmail(String templateName, UserDto recipientUser, Map<String, Object> paramMap) {
         java.util.Locale userLocale = LocaleUtil.getLocale(System.getenv(Constants.DEFAULT_LANGUAGE_ENV));
         String subject = MessageUtil.getMessage(userLocale, "email.template." + templateName + ".subject");
         sendEmail(templateName, recipientUser, subject, paramMap);

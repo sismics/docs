@@ -2,9 +2,9 @@ package com.sismics.docs.core.listener.async;
 
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.constant.Constants;
+import com.sismics.docs.core.dao.jpa.dto.UserDto;
 import com.sismics.docs.core.event.PasswordLostEvent;
 import com.sismics.docs.core.model.jpa.PasswordRecovery;
-import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.TransactionUtil;
 import com.sismics.util.EmailUtil;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class PasswordLostAsyncListener {
         TransactionUtil.handle(new Runnable() {
             @Override
             public void run() {
-                final User user = passwordLostEvent.getUser();
+                final UserDto user = passwordLostEvent.getUser();
                 final PasswordRecovery passwordRecovery = passwordLostEvent.getPasswordRecovery();
                 
                 // Send the password recovery email

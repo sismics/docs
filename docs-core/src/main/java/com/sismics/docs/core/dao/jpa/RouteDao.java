@@ -86,4 +86,23 @@ public class RouteDao {
         }
         return dtoList;
     }
+
+    /**
+     * Deletes a route and the associated steps.
+     *
+     * @param routeId Route ID
+     */
+    public void deleteRoute(String routeId) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+
+        em.createNativeQuery("update T_ROUTE_STEP rs set rs.RTP_DELETEDATE_D = :dateNow where rs.RTP_IDROUTE_C = :routeId and rs.RTP_DELETEDATE_D is null")
+                .setParameter("routeId", routeId)
+                .setParameter("dateNow", new Date())
+                .executeUpdate();
+
+        em.createNativeQuery("update T_ROUTE r set r.RTE_DELETEDATE_D = :dateNow where r.RTE_ID_C = :routeId and r.RTE_DELETEDATE_D is null")
+                .setParameter("routeId", routeId)
+                .setParameter("dateNow", new Date())
+                .executeUpdate();
+    }
 }

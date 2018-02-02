@@ -1,10 +1,21 @@
 package com.sismics.docs.core.util;
 
+import com.google.common.collect.Lists;
+import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
+import com.sismics.docs.core.dao.jpa.DocumentDao;
+import com.sismics.docs.core.dao.jpa.UserDao;
+import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
 import com.sismics.docs.core.dao.jpa.dto.RouteStepDto;
+import com.sismics.docs.core.dao.jpa.dto.UserDto;
+import com.sismics.docs.core.event.RouteStepValidateEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Acl;
+import com.sismics.docs.core.model.jpa.Document;
+
+import java.util.List;
 
 /**
  * Routing utilities.
@@ -36,6 +47,30 @@ public class RoutingUtil {
             acl.setSourceId(sourceId);
             acl.setTargetId(currentStep.getTargetId());
             aclDao.create(acl, userId);
+        }
+    }
+
+    public static void sendRouteStepEmail(String documentId, RouteStepDto routeStepDto) {
+        DocumentDao documentDao = new DocumentDao();
+        Document document = documentDao.getById(documentId);
+
+        List<UserDto> userDtoList = Lists.newArrayList();
+                UserDao userDao = new UserDao();
+        switch (AclTargetType.valueOf(routeStepDto.getTargetType())) {
+            case USER:
+                userDtoList.addAll(userDao.findByCriteria(new UserCriteria().setUserId(routeStepDto.getTargetId()), null));
+                break;
+            case GROUP:
+                userDtoList.addAll(userDao.findByCriteria(new UserCriteria().setGroupId(routeStepDto.getTargetId()), null));
+                break;
+        }
+
+        // Fire route step validate events
+        for (UserDto userDto : userDtoList) {
+            RouteStepValidateEvent routeStepValidateEvent = new RouteStepValidateEvent();
+            routeStepValidateEvent.setUser(userDto);
+            routeStepValidateEvent.setDocument(document);
+            AppContext.getInstance().getMailEventBus().post(routeStepValidateEvent);
         }
     }
 }
