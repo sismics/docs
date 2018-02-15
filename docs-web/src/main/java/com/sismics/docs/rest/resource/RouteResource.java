@@ -38,7 +38,7 @@ public class RouteResource extends BaseResource {
      *
      * @api {post} /route/start Start a route on a document
      * @apiName PostRouteStart
-     * @apiRouteModel Route
+     * @apiGroup Route
      * @apiParam {String} routeModelId Route model ID
      * @apiParam {String} documentId Document ID
      * @apiSuccess {String} status Status OK
@@ -126,7 +126,7 @@ public class RouteResource extends BaseResource {
      *
      * @api {post} /route/validate Validate the current step of a route
      * @apiName PostRouteValidate
-     * @apiRouteModel Route
+     * @apiGroup Route
      * @apiParam {String} documentId Document ID
      * @apiParam {String} transition Route step transition
      * @apiParam {String} comment Route step comment
@@ -196,7 +196,7 @@ public class RouteResource extends BaseResource {
      * @api {get} /route Get the routes on a document
      * @apiName GetRoutes
      * @apiGroup Route
-     * @apiParam {String} id Document ID
+     * @apiParam {String} documentId Document ID
      * @apiSuccess {Object[]} routes List of routes
      * @apiSuccess {String} routes.name Name
      * @apiSuccess {Number} routes.create_date Create date (timestamp)
@@ -261,7 +261,7 @@ public class RouteResource extends BaseResource {
      *
      * @api {delete} /route Cancel a route
      * @apiName DeleteRoute
-     * @apiRouteModel Route
+     * @apiGroup Route
      * @apiParam {String} documentId Document ID
      * @apiSuccess {String} status Status OK
      * @apiError (client) ForbiddenError Access denied

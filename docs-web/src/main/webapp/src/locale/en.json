@@ -415,7 +415,8 @@
       "Group": "Group",
       "Tag": "Tag",
       "User": "User",
-      "RouteModel": "Workflow"
+      "RouteModel": "Workflow model",
+      "Route": "Workflow"
     },
     "selectrelation": {
       "typeahead": "Type a document title"

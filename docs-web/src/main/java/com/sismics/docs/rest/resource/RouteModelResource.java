@@ -34,7 +34,7 @@ public class RouteModelResource extends BaseResource {
      *
      * @api {get} /routemodel Get route models
      * @apiName GetRouteModel
-     * @apiRouteModel RouteModel
+     * @apiGroup RouteModel
      * @apiParam {Number} sort_column Column index to sort on
      * @apiParam {Boolean} asc If true, sort in ascending order
      * @apiSuccess {Object[]} routemodels List of route models
@@ -77,7 +77,7 @@ public class RouteModelResource extends BaseResource {
      *
      * @api {put} /routemodel Add a route model
      * @apiName PutRouteModel
-     * @apiRouteModel RouteModel
+     * @apiGroup RouteModel
      * @apiParam {String} name Route model name
      * @apiParam {String} steps Steps data in JSON
      * @apiSuccess {String} id Route model ID
@@ -177,7 +177,7 @@ public class RouteModelResource extends BaseResource {
      *
      * @api {post} /routemodel/:id Update a route model
      * @apiName PostRouteModel
-     * @apiRouteModel RouteModel
+     * @apiGroup RouteModel
      * @apiParam {String} name Route model name
      * @apiParam {String} steps Steps data in JSON
      * @apiSuccess {String} status Status OK
@@ -226,7 +226,7 @@ public class RouteModelResource extends BaseResource {
      *
      * @api {delete} /routemodel/:id Delete a route model
      * @apiName DeleteRouteModel
-     * @apiRouteModel RouteModel
+     * @apiGroup RouteModel
      * @apiParam {String} id Route model ID
      * @apiSuccess {String} status Status OK
      * @apiError (client) ForbiddenError Access denied
@@ -265,7 +265,7 @@ public class RouteModelResource extends BaseResource {
      *
      * @api {get} /routemodel/:id Get a route model
      * @apiName GetRouteModel
-     * @apiRouteModel RouteModel
+     * @apiGroup RouteModel
      * @apiParam {String} id Route model ID
      * @apiSuccess {String} id Route model ID
      * @apiSuccess {String} name Route model name
