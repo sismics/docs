@@ -77,7 +77,6 @@ public class FileResource extends BaseResource {
      * @apiError (client) NotFound Document not found
      * @apiError (server) StreamError Error reading the input file
      * @apiError (server) ErrorGuessMime Error guessing mime type
-     * @apiError (client) InvalidFileType File type not recognized
      * @apiError (client) QuotaReached Quota limit reached
      * @apiError (server) FileError Error adding a file
      * @apiPermission user

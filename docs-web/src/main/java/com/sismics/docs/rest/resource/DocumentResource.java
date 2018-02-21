@@ -13,10 +13,10 @@ import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
-import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.util.DocumentUtil;
 import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
@@ -26,9 +26,12 @@ import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.AclUtil;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.EmailUtil;
 import com.sismics.util.JsonUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeType;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -38,11 +41,18 @@ import org.joda.time.format.DateTimeParser;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.internet.MimeMessage;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -595,7 +605,6 @@ public class DocumentResource extends BaseResource {
         }
         
         // Create the document
-        DocumentDao documentDao = new DocumentDao();
         Document document = new Document();
         document.setUserId(principal.getId());
         document.setTitle(title);
@@ -614,31 +623,16 @@ public class DocumentResource extends BaseResource {
         } else {
             document.setCreateDate(createDate);
         }
-        String documentId = documentDao.create(document, principal.getId());
-        
-        // Create read ACL
-        AclDao aclDao = new AclDao();
-        Acl acl = new Acl();
-        acl.setPerm(PermType.READ);
-        acl.setType(AclType.USER);
-        acl.setSourceId(documentId);
-        acl.setTargetId(principal.getId());
-        aclDao.create(acl, principal.getId());
-        
-        // Create write ACL
-        acl = new Acl();
-        acl.setPerm(PermType.WRITE);
-        acl.setType(AclType.USER);
-        acl.setSourceId(documentId);
-        acl.setTargetId(principal.getId());
-        aclDao.create(acl, principal.getId());
-        
+
+        // Save the document, create the base ACLs
+        document = DocumentUtil.createDocument(document, principal.getId());
+
         // Update tags
-        updateTagList(documentId, tagList);
-        
+        updateTagList(document.getId(), tagList);
+
         // Update relations
-        updateRelationList(documentId, relationList);
-        
+        updateRelationList(document.getId(), relationList);
+
         // Raise a document created event
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
         documentCreatedAsyncEvent.setUserId(principal.getId());
@@ -646,7 +640,7 @@ public class DocumentResource extends BaseResource {
         ThreadLocalContext.get().addAsyncEvent(documentCreatedAsyncEvent);
 
         JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("id", documentId);
+                .add("id", document.getId());
         return Response.ok().entity(response.build()).build();
     }
     
@@ -772,52 +766,92 @@ public class DocumentResource extends BaseResource {
     }
 
     /**
-     * Update tags list on a document.
-     * 
-     * @param documentId Document ID
-     * @param tagList Tag ID list
+     * Import a new document from an EML file.
+     *
+     * @api {put} /document/eml Import a new document from an EML file
+     * @apiName PutDocumentEml
+     * @apiGroup Document
+     * @apiParam {String} file File data
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (server) StreamError Error reading the input file
+     * @apiError (server) ErrorGuessMime Error guessing mime type
+     * @apiError (client) QuotaReached Quota limit reached
+     * @apiError (server) FileError Error adding a file
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
+     * @param fileBodyPart File to import
+     * @return Response
      */
-    private void updateTagList(String documentId, List<String> tagList) {
-        if (tagList != null) {
-            TagDao tagDao = new TagDao();
-            Set<String> tagSet = new HashSet<>();
-            Set<String> tagIdSet = new HashSet<>();
-            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)), null);
-            for (TagDto tagDto : tagDtoList) {
-                tagIdSet.add(tagDto.getId());
-            }
-            for (String tagId : tagList) {
-                if (!tagIdSet.contains(tagId)) {
-                    throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", tagId));
-                }
-                tagSet.add(tagId);
-            }
-            tagDao.updateTagList(documentId, tagSet);
+    @PUT
+    @Path("eml")
+    @Consumes("multipart/form-data")
+    public Response importEml(@FormDataParam("file") FormDataBodyPart fileBodyPart) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
         }
-    }
-    
-    /**
-     * Update relations list on a document.
-     * 
-     * @param documentId Document ID
-     * @param relationList Relation ID list
-     */
-    private void updateRelationList(String documentId, List<String> relationList) {
-        if (relationList != null) {
-            DocumentDao documentDao = new DocumentDao();
-            RelationDao relationDao = new RelationDao();
-            Set<String> documentIdSet = new HashSet<>();
-            for (String targetDocId : relationList) {
-                // ACL are not checked, because the editing user is not forced to view the target document
-                Document document = documentDao.getById(targetDocId);
-                if (document != null && !documentId.equals(targetDocId)) {
-                    documentIdSet.add(targetDocId);
-                }
-            }
-            relationDao.updateRelationList(documentId, documentIdSet);
+
+        // Validate input data
+        ValidationUtil.validateRequired(fileBodyPart, "file");
+
+        // Save the file to a temporary file
+        java.nio.file.Path unencryptedFile;
+        try {
+            unencryptedFile = ThreadLocalContext.get().createTemporaryFile();
+            Files.copy(fileBodyPart.getValueAs(InputStream.class), unencryptedFile, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new ServerException("StreamError", "Error reading the input file", e);
         }
+
+        // Read the EML file
+        Properties props = new Properties();
+        Session mailSession = Session.getDefaultInstance(props, null);
+        EmailUtil.MailContent mailContent = new EmailUtil.MailContent();
+        try (InputStream inputStream = Files.newInputStream(unencryptedFile)) {
+            Message message = new MimeMessage(mailSession, inputStream);
+            mailContent.setSubject(message.getSubject());
+            mailContent.setDate(message.getSentDate());
+            EmailUtil.parseMailContent(message, mailContent);
+        } catch (IOException | MessagingException e) {
+            throw new ServerException("StreamError", "Error reading the temporary file", e);
+        }
+
+        // Create the document
+        Document document = new Document();
+        document.setUserId(principal.getId());
+        if (mailContent.getSubject() == null) {
+            document.setTitle("Imported email from EML file");
+        } else {
+            document.setTitle(mailContent.getSubject());
+        }
+        document.setDescription(mailContent.getMessage());
+        document.setSubject(mailContent.getSubject());
+        document.setFormat("EML");
+        document.setSource("Email");
+        document.setLanguage("eng");
+        if (mailContent.getDate() == null) {
+            document.setCreateDate(new Date());
+        } else {
+            document.setCreateDate(mailContent.getDate());
+        }
+
+        // Save the document, create the base ACLs
+        document = DocumentUtil.createDocument(document, principal.getId());
+
+        // Raise a document created event
+        DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
+        documentCreatedAsyncEvent.setUserId(principal.getId());
+        documentCreatedAsyncEvent.setDocument(document);
+        ThreadLocalContext.get().addAsyncEvent(documentCreatedAsyncEvent);
+
+        // TODO Add files to the document
+
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("id", document.getId());
+        return Response.ok().entity(response.build()).build();
     }
-    
+
     /**
      * Deletes a document.
      *
@@ -872,5 +906,52 @@ public class DocumentResource extends BaseResource {
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
         return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Update tags list on a document.
+     *
+     * @param documentId Document ID
+     * @param tagList Tag ID list
+     */
+    private void updateTagList(String documentId, List<String> tagList) {
+        if (tagList != null) {
+            TagDao tagDao = new TagDao();
+            Set<String> tagSet = new HashSet<>();
+            Set<String> tagIdSet = new HashSet<>();
+            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)), null);
+            for (TagDto tagDto : tagDtoList) {
+                tagIdSet.add(tagDto.getId());
+            }
+            for (String tagId : tagList) {
+                if (!tagIdSet.contains(tagId)) {
+                    throw new ClientException("TagNotFound", MessageFormat.format("Tag not found: {0}", tagId));
+                }
+                tagSet.add(tagId);
+            }
+            tagDao.updateTagList(documentId, tagSet);
+        }
+    }
+
+    /**
+     * Update relations list on a document.
+     *
+     * @param documentId Document ID
+     * @param relationList Relation ID list
+     */
+    private void updateRelationList(String documentId, List<String> relationList) {
+        if (relationList != null) {
+            DocumentDao documentDao = new DocumentDao();
+            RelationDao relationDao = new RelationDao();
+            Set<String> documentIdSet = new HashSet<>();
+            for (String targetDocId : relationList) {
+                // ACL are not checked, because the editing user is not forced to view the target document
+                Document document = documentDao.getById(targetDocId);
+                if (document != null && !documentId.equals(targetDocId)) {
+                    documentIdSet.add(targetDocId);
+                }
+            }
+            relationDao.updateRelationList(documentId, documentIdSet);
+        }
     }
 }

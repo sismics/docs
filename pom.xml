@@ -44,6 +44,7 @@
     <com.levigo.jbig2.levigo-jbig2-imageio.version>1.6.5</com.levigo.jbig2.levigo-jbig2-imageio.version>
     <com.github.jai-imageio.jai-imageio-core.version>1.3.1</com.github.jai-imageio.jai-imageio-core.version>
     <org.subethamail.subethasmtp-wiser.version>1.2</org.subethamail.subethasmtp-wiser.version>
+    <org.jsoup.jsoup.version>1.11.2</org.jsoup.jsoup.version>
 
     <org.eclipse.jetty.jetty-server.version>9.2.13.v20150730</org.eclipse.jetty.jetty-server.version>
     <org.eclipse.jetty.jetty-webapp.version>9.2.13.v20150730</org.eclipse.jetty.jetty-webapp.version>
@@ -213,7 +214,13 @@
         <artifactId>guava</artifactId>
         <version>${com.google.guava.guava.version}</version>
       </dependency>
-      
+
+      <dependency>
+        <groupId>org.jsoup</groupId>
+        <artifactId>jsoup</artifactId>
+        <version>${org.jsoup.jsoup.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>

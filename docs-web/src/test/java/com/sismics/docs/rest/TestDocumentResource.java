@@ -602,4 +602,29 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
     }
+
+    /**
+     * Test EML import.
+     *
+     * @throws Exception e
+     */
+    @Test
+    public void testEmlImport() throws Exception {
+        // Login document_eml
+        clientUtil.createUser("document_eml");
+        String documentEmlToken = clientUtil.login("document_eml");
+
+        // Import a document as EML
+        try (InputStream is = Resources.getResource("file/test_mail.eml").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "test_mail.eml");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                target()
+                        .register(MultiPartFeature.class)
+                        .path("/document/eml").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentEmlToken)
+                        .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+            }
+        }
+    }
 }
