@@ -17,6 +17,7 @@ import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.DocumentUtil;
+import com.sismics.docs.core.util.FileUtil;
 import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
@@ -405,7 +406,7 @@ public class DocumentResource extends BaseResource {
     /**
      * Parse a query according to the specified syntax, eg.:
      * tag:assurance tag:other before:2012 after:2011-09 shared:yes lang:fra thing
-     * 
+     *
      * @param search Search query
      * @return DocumentCriteria
      */
@@ -414,10 +415,10 @@ public class DocumentResource extends BaseResource {
         if (Strings.isNullOrEmpty(search)) {
             return documentCriteria;
         }
-        
+
         TagDao tagDao = new TagDao();
         UserDao userDao = new UserDao();
-        DateTimeParser[] parsers = { 
+        DateTimeParser[] parsers = {
                 DateTimeFormat.forPattern("yyyy").getParser(),
                 DateTimeFormat.forPattern("yyyy-MM").getParser(),
                 DateTimeFormat.forPattern("yyyy-MM-dd").getParser() };
@@ -425,7 +426,7 @@ public class DocumentResource extends BaseResource {
         DateTimeFormatter monthFormatter = new DateTimeFormatter(null, parsers[1]);
         DateTimeFormatter dayFormatter = new DateTimeFormatter(null, parsers[2]);
         DateTimeFormatter formatter = new DateTimeFormatterBuilder().append( null, parsers ).toFormatter();
-        
+
         String[] criteriaList = search.split("  *");
         List<String> query = new ArrayList<>();
         List<String> fullQuery = new ArrayList<>();
@@ -519,7 +520,7 @@ public class DocumentResource extends BaseResource {
                     break;
             }
         }
-        
+
         documentCriteria.setSearch(Joiner.on(" ").join(query));
         documentCriteria.setFullSearch(Joiner.on(" ").join(fullQuery));
         return documentCriteria;
@@ -845,7 +846,16 @@ public class DocumentResource extends BaseResource {
         documentCreatedAsyncEvent.setDocument(document);
         ThreadLocalContext.get().addAsyncEvent(documentCreatedAsyncEvent);
 
-        // TODO Add files to the document
+        // Add files to the document
+        try {
+            for (EmailUtil.FileContent fileContent : mailContent.getFileContentList()) {
+                FileUtil.createFile(fileContent.getName(), fileContent.getFile(), fileContent.getSize(), "eng", principal.getId(), document.getId());
+            }
+        } catch (IOException e) {
+            throw new ClientException(e.getMessage(), e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ServerException("FileError", "Error adding a file", e);
+        }
 
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("id", document.getId());

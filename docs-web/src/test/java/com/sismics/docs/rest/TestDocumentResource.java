@@ -615,10 +615,11 @@ public class TestDocumentResource extends BaseJerseyTest {
         String documentEmlToken = clientUtil.login("document_eml");
 
         // Import a document as EML
+        JsonObject json;
         try (InputStream is = Resources.getResource("file/test_mail.eml").openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "test_mail.eml");
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                target()
+                json = target()
                         .register(MultiPartFeature.class)
                         .path("/document/eml").request()
                         .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentEmlToken)
@@ -626,5 +627,35 @@ public class TestDocumentResource extends BaseJerseyTest {
                                 MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
             }
         }
+
+        String documentId = json.getString("id");
+        Assert.assertNotNull(documentId);
+
+        // Get the document
+        json = target().path("/document/" + documentId).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentEmlToken)
+                .get(JsonObject.class);
+        Assert.assertEquals("subject here", json.getString("title"));
+        Assert.assertTrue(json.getString("description").contains("content here"));
+        Assert.assertEquals("subject here", json.getString("subject"));
+        Assert.assertEquals("EML", json.getString("format"));
+        Assert.assertEquals("Email", json.getString("source"));
+        Assert.assertEquals("eng", json.getString("language"));
+        Assert.assertEquals(1519222261000L, json.getJsonNumber("create_date").longValue());
+
+        // Get all files from a document
+        json = target().path("/file/list")
+                .queryParam("id", documentId)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentEmlToken)
+                .get(JsonObject.class);
+        JsonArray files = json.getJsonArray("files");
+        Assert.assertEquals(2, files.size());
+        Assert.assertEquals("14_UNHCR_nd.pdf", files.getJsonObject(0).getString("name"));
+        Assert.assertEquals(251216L, files.getJsonObject(0).getJsonNumber("size").longValue());
+        Assert.assertEquals("application/pdf", files.getJsonObject(0).getString("mimetype"));
+        Assert.assertEquals("refugee status determination.pdf", files.getJsonObject(1).getString("name"));
+        Assert.assertEquals(279276L, files.getJsonObject(1).getJsonNumber("size").longValue());
+        Assert.assertEquals("application/pdf", files.getJsonObject(1).getString("mimetype"));
     }
 }

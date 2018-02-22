@@ -3,7 +3,6 @@ package com.sismics.docs.rest.resource;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
-import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.AclDao;
 import com.sismics.docs.core.dao.jpa.DocumentDao;
@@ -27,7 +26,6 @@ import com.sismics.util.HttpUtil;
 import com.sismics.util.JsonUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeType;
-import com.sismics.util.mime.MimeTypeUtil;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -98,10 +96,6 @@ public class FileResource extends BaseResource {
         // Validate input data
         ValidationUtil.validateRequired(fileBodyPart, "file");
 
-        // Get the current user
-        UserDao userDao = new UserDao();
-        User user = userDao.getById(principal.getId());
-        
         // Get the document
         DocumentDto documentDto = null;
         if (Strings.isNullOrEmpty(documentId)) {
@@ -114,7 +108,7 @@ public class FileResource extends BaseResource {
             }
         }
         
-        // Keep unencrypted data temporary on disk, because we will need it two times
+        // Keep unencrypted data temporary on disk
         java.nio.file.Path unencryptedFile;
         long fileSize;
         try {
@@ -125,78 +119,11 @@ public class FileResource extends BaseResource {
             throw new ServerException("StreamError", "Error reading the input file", e);
         }
 
-        // Validate mime type
-        String name = fileBodyPart.getContentDisposition() != null ?
-                fileBodyPart.getContentDisposition().getFileName() : null;
-        String mimeType;
         try {
-            mimeType = MimeTypeUtil.guessMimeType(unencryptedFile, name);
-        } catch (IOException e) {
-            throw new ServerException("ErrorGuessMime", "Error guessing mime type", e);
-        }
-
-        // Validate user quota
-        if (user.getStorageCurrent() + fileSize > user.getStorageQuota()) {
-            throw new ClientException("QuotaReached", "Quota limit reached");
-        }
-
-        // Validate global quota
-        String globalStorageQuotaStr = System.getenv(Constants.GLOBAL_QUOTA_ENV);
-        if (!Strings.isNullOrEmpty(globalStorageQuotaStr)) {
-            long globalStorageQuota = Long.valueOf(globalStorageQuotaStr);
-            long globalStorageCurrent = userDao.getGlobalStorageCurrent();
-            if (globalStorageCurrent + fileSize > globalStorageQuota) {
-                throw new ClientException("QuotaReached", "Global quota limit reached");
-            }
-        }
-
-        try {
-            // Get files of this document
-            FileDao fileDao = new FileDao();
-            int order = 0;
-            if (documentId != null) {
-                for (File file : fileDao.getByDocumentId(principal.getId(), documentId)) {
-                    file.setOrder(order++);
-                }
-            }
-            
-            // Create the file
-            File file = new File();
-            file.setOrder(order);
-            file.setDocumentId(documentId);
-            file.setName(name);
-            file.setMimeType(mimeType);
-            file.setUserId(principal.getId());
-            String fileId = fileDao.create(file, principal.getId());
-            
-            // Guess the mime type a second time, for open document format (first detected as simple ZIP file)
-            file.setMimeType(MimeTypeUtil.guessOpenDocumentFormat(file, unencryptedFile));
-
-            // Convert to PDF if necessary (for thumbnail and text extraction)
-            java.nio.file.Path unencryptedPdfFile = PdfUtil.convertToPdf(file, unencryptedFile);
-
-            // Save the file
-            FileUtil.save(unencryptedFile, unencryptedPdfFile, file, user.getPrivateKey());
-            
-            // Update the user quota
-            user.setStorageCurrent(user.getStorageCurrent() + fileSize);
-            userDao.updateQuota(user);
-            
-            // Raise a new file created event and document updated event if we have a document
-            if (documentId != null) {
-                FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
-                fileCreatedAsyncEvent.setUserId(principal.getId());
-                fileCreatedAsyncEvent.setLanguage(documentDto.getLanguage());
-                fileCreatedAsyncEvent.setFile(file);
-                fileCreatedAsyncEvent.setUnencryptedFile(unencryptedFile);
-                fileCreatedAsyncEvent.setUnencryptedPdfFile(unencryptedPdfFile);
-                ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
-                
-                DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
-                documentUpdatedAsyncEvent.setUserId(principal.getId());
-                documentUpdatedAsyncEvent.setDocumentId(documentId);
-                ThreadLocalContext.get().addAsyncEvent(documentUpdatedAsyncEvent);
-            }
+            String name = fileBodyPart.getContentDisposition() != null ?
+                    fileBodyPart.getContentDisposition().getFileName() : null;
+            String fileId = FileUtil.createFile(name, unencryptedFile, fileSize, documentDto == null ?
+                    null : documentDto.getLanguage(), principal.getId(), documentId);
 
             // Always return OK
             JsonObjectBuilder response = Json.createObjectBuilder()
@@ -204,6 +131,8 @@ public class FileResource extends BaseResource {
                     .add("id", fileId)
                     .add("size", fileSize);
             return Response.ok().entity(response.build()).build();
+        } catch (IOException e) {
+            throw new ClientException(e.getMessage(), e.getMessage(), e);
         } catch (Exception e) {
             throw new ServerException("FileError", "Error adding a file", e);
         }

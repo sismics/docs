@@ -1,10 +1,19 @@
 package com.sismics.docs.core.util;
 
+import com.google.common.base.Strings;
+import com.sismics.docs.core.constant.Constants;
+import com.sismics.docs.core.dao.jpa.FileDao;
+import com.sismics.docs.core.dao.jpa.UserDao;
+import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
+import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.model.jpa.User;
 import com.sismics.tess4j.Tesseract;
 import com.sismics.util.ImageDeskew;
 import com.sismics.util.ImageUtil;
 import com.sismics.util.Scalr;
+import com.sismics.util.context.ThreadLocalContext;
+import com.sismics.util.mime.MimeTypeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -166,5 +175,93 @@ public class FileUtil {
         if (Files.exists(thumbnailFile)) {
             Files.delete(thumbnailFile);
         }
+    }
+
+    /**
+     * Create a new file.
+     *
+     * @param name File name, can be null
+     * @param unencryptedFile Path to the unencrypted file
+     * @param fileSize File size
+     * @param language File language, can be null if associated to no document
+     * @param userId User ID creating the file
+     * @param documentId Associated document ID or null if no document
+     * @return File ID
+     * @throws Exception e
+     */
+    public static String createFile(String name, Path unencryptedFile, long fileSize, String language, String userId, String documentId) throws Exception {
+        // Validate mime type
+        String mimeType;
+        try {
+            mimeType = MimeTypeUtil.guessMimeType(unencryptedFile, name);
+        } catch (IOException e) {
+            throw new IOException("ErrorGuessMime", e);
+        }
+
+        // Validate user quota
+        UserDao userDao = new UserDao();
+        User user = userDao.getById(userId);
+        if (user.getStorageCurrent() + fileSize > user.getStorageQuota()) {
+            throw new IOException("QuotaReached");
+        }
+
+        // Validate global quota
+        String globalStorageQuotaStr = System.getenv(Constants.GLOBAL_QUOTA_ENV);
+        if (!Strings.isNullOrEmpty(globalStorageQuotaStr)) {
+            long globalStorageQuota = Long.valueOf(globalStorageQuotaStr);
+            long globalStorageCurrent = userDao.getGlobalStorageCurrent();
+            if (globalStorageCurrent + fileSize > globalStorageQuota) {
+                throw new IOException("QuotaReached");
+            }
+        }
+
+        // Get files of this document
+        FileDao fileDao = new FileDao();
+        int order = 0;
+        if (documentId != null) {
+            for (File file : fileDao.getByDocumentId(userId, documentId)) {
+                file.setOrder(order++);
+            }
+        }
+
+        // Create the file
+        File file = new File();
+        file.setOrder(order);
+        file.setDocumentId(documentId);
+        file.setName(name);
+        file.setMimeType(mimeType);
+        file.setUserId(userId);
+        String fileId = fileDao.create(file, userId);
+
+        // Guess the mime type a second time, for open document format (first detected as simple ZIP file)
+        file.setMimeType(MimeTypeUtil.guessOpenDocumentFormat(file, unencryptedFile));
+
+        // Convert to PDF if necessary (for thumbnail and text extraction)
+        java.nio.file.Path unencryptedPdfFile = PdfUtil.convertToPdf(file, unencryptedFile);
+
+        // Save the file
+        FileUtil.save(unencryptedFile, unencryptedPdfFile, file, user.getPrivateKey());
+
+        // Update the user quota
+        user.setStorageCurrent(user.getStorageCurrent() + fileSize);
+        userDao.updateQuota(user);
+
+        // Raise a new file created event and document updated event if we have a document
+        if (documentId != null) {
+            FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
+            fileCreatedAsyncEvent.setUserId(userId);
+            fileCreatedAsyncEvent.setLanguage(language);
+            fileCreatedAsyncEvent.setFile(file);
+            fileCreatedAsyncEvent.setUnencryptedFile(unencryptedFile);
+            fileCreatedAsyncEvent.setUnencryptedPdfFile(unencryptedPdfFile);
+            ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
+
+            DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
+            documentUpdatedAsyncEvent.setUserId(userId);
+            documentUpdatedAsyncEvent.setDocumentId(documentId);
+            ThreadLocalContext.get().addAsyncEvent(documentUpdatedAsyncEvent);
+        }
+
+        return fileId;
     }
 }

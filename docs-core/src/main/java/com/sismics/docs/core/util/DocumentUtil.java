@@ -13,6 +13,13 @@ import com.sismics.docs.core.model.jpa.Document;
  * @author bgamard
  */
 public class DocumentUtil {
+    /**
+     * Create a document and add the base ACLs.
+     *
+     * @param document Document
+     * @param userId User creating the document
+     * @return Created document
+     */
     public static Document createDocument(Document document, String userId) {
         DocumentDao documentDao = new DocumentDao();
         String documentId = documentDao.create(document, userId);

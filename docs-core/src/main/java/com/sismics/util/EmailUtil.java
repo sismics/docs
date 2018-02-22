@@ -79,7 +79,7 @@ public class EmailUtil {
      * @param subject Email subject
      * @param paramMap Email parameters
      */
-    public static void sendEmail(String templateName, UserDto recipientUser, String subject, Map<String, Object> paramMap) {
+    private static void sendEmail(String templateName, UserDto recipientUser, String subject, Map<String, Object> paramMap) {
         if (log.isInfoEnabled()) {
             log.info("Sending email from template=" + templateName + " to user " + recipientUser);
         }
@@ -175,6 +175,15 @@ public class EmailUtil {
         sendEmail(templateName, recipientUser, subject, paramMap);
     }
 
+    /**
+     * Parse an email content to be imported.
+     *
+     * @param part Email part
+     * @param mailContent Mail content modified by side-effect
+     *
+     * @throws MessagingException e
+     * @throws IOException e
+     */
     public static void parseMailContent(Part part, MailContent mailContent) throws MessagingException, IOException {
         Object content = part.getContent();
         if (content instanceof Multipart) {
@@ -261,5 +270,17 @@ public class EmailUtil {
         private String name;
         private Path file;
         private long size;
+
+        public String getName() {
+            return name;
+        }
+
+        public Path getFile() {
+            return file;
+        }
+
+        public long getSize() {
+            return size;
+        }
     }
 }
