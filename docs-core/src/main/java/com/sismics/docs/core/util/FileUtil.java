@@ -14,6 +14,7 @@ import com.sismics.util.ImageUtil;
 import com.sismics.util.Scalr;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeTypeUtil;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -228,7 +229,7 @@ public class FileUtil {
         File file = new File();
         file.setOrder(order);
         file.setDocumentId(documentId);
-        file.setName(name);
+        file.setName(StringUtils.abbreviate(name, 200));
         file.setMimeType(mimeType);
         file.setUserId(userId);
         String fileId = fileDao.create(file, userId);

@@ -31,6 +31,7 @@ import com.sismics.util.EmailUtil;
 import com.sismics.util.JsonUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeType;
+import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.joda.time.DateTime;
@@ -824,10 +825,10 @@ public class DocumentResource extends BaseResource {
         if (mailContent.getSubject() == null) {
             document.setTitle("Imported email from EML file");
         } else {
-            document.setTitle(mailContent.getSubject());
+            document.setTitle(StringUtils.abbreviate(mailContent.getSubject(), 100));
         }
-        document.setDescription(mailContent.getMessage());
-        document.setSubject(mailContent.getSubject());
+        document.setDescription(StringUtils.abbreviate(mailContent.getMessage(), 4000));
+        document.setSubject(StringUtils.abbreviate(mailContent.getSubject(), 500));
         document.setFormat("EML");
         document.setSource("Email");
         document.setLanguage("eng");
