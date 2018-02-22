@@ -36,6 +36,7 @@ public class TestAppResource extends BaseJerseyTest {
         Long totalMemory = json.getJsonNumber("total_memory").longValue();
         Assert.assertTrue(totalMemory > 0 && totalMemory > freeMemory);
         Assert.assertFalse(json.getBoolean("guest_login"));
+        Assert.assertEquals("eng", json.getString("default_language"));
         Assert.assertTrue(json.containsKey("global_storage_current"));
         Assert.assertTrue(json.getJsonNumber("active_user_count").longValue() > 0);
 
@@ -56,6 +57,28 @@ public class TestAppResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+
+        // Change the default language
+        response = target().path("/app/config").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form().param("default_language", "fra")));
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+
+        // Check the application info
+        json = target().path("/app").request()
+                .get(JsonObject.class);
+        Assert.assertEquals("fra", json.getString("default_language"));
+
+        // Change the default language
+        response = target().path("/app/config").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form().param("default_language", "eng")));
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+
+        // Check the application info
+        json = target().path("/app").request()
+                .get(JsonObject.class);
+        Assert.assertEquals("eng", json.getString("default_language"));
     }
 
     /**

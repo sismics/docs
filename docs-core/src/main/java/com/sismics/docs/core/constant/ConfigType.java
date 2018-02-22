@@ -21,6 +21,11 @@ public enum ConfigType {
     GUEST_LOGIN,
 
     /**
+     * Default language.
+     */
+    DEFAULT_LANGUAGE,
+
+    /**
      * SMTP server configuration.
      */
     SMTP_HOSTNAME,

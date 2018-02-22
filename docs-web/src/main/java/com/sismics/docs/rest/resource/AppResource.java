@@ -16,6 +16,7 @@ import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.rest.constant.BaseFunction;
+import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.ValidationUtil;
@@ -39,6 +40,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.text.MessageFormat;
 import java.util.*;
 
 /**
@@ -79,6 +81,7 @@ public class AppResource extends BaseResource {
         String currentVersion = configBundle.getString("api.current_version");
         String minVersion = configBundle.getString("api.min_version");
         Boolean guestLogin = ConfigUtil.getConfigBooleanValue(ConfigType.GUEST_LOGIN);
+        String defaultLanguage = ConfigUtil.getConfigStringValue(ConfigType.DEFAULT_LANGUAGE);
         UserDao userDao = new UserDao();
         DocumentDao documentDao = new DocumentDao();
         String globalQuotaStr = System.getenv(Constants.GLOBAL_QUOTA_ENV);
@@ -91,6 +94,7 @@ public class AppResource extends BaseResource {
                 .add("current_version", currentVersion.replace("-SNAPSHOT", ""))
                 .add("min_version", minVersion)
                 .add("guest_login", guestLogin)
+                .add("default_language", defaultLanguage)
                 .add("total_memory", Runtime.getRuntime().totalMemory())
                 .add("free_memory", Runtime.getRuntime().freeMemory())
                 .add("document_count", documentDao.getDocumentCount())
@@ -127,6 +131,38 @@ public class AppResource extends BaseResource {
 
         ConfigDao configDao = new ConfigDao();
         configDao.update(ConfigType.GUEST_LOGIN, enabled.toString());
+
+        return Response.ok().build();
+    }
+
+    /**
+     * General application configuration.
+     *
+     * @api {post} /app/config General application configuration
+     * @apiName PostAppConfig
+     * @apiGroup App
+     * @apiParam {String} default_language Default language
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @param defaultLanguage Default language
+     * @return Response
+     */
+    @POST
+    @Path("config")
+    public Response config(@FormParam("default_language") String defaultLanguage) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        ValidationUtil.validateRequired(defaultLanguage, "default_language");
+        if (!Constants.SUPPORTED_LANGUAGES.contains(defaultLanguage)) {
+            throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", defaultLanguage));
+        }
+
+        ConfigDao configDao = new ConfigDao();
+        configDao.update(ConfigType.DEFAULT_LANGUAGE, defaultLanguage);
 
         return Response.ok().build();
     }
