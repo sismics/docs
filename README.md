@@ -28,14 +28,15 @@ Features
 --------
 
 - Responsive user interface
-- Workflow system ![New!](https://www.sismics.com/public/img/new.png)
 - Optical character recognition
 - Support image, PDF, ODT and DOCX files
 - Flexible search engine
 - Full text search in all supported files
 - All [Dublin Core](http://dublincore.org/) metadata
+- Workflow system ![New!](https://www.sismics.com/public/img/new.png)
 - 256-bit AES encryption of stored files
 - Tag system with nesting
+- Import document from email (EML format) ![New!](https://www.sismics.com/public/img/new.png)
 - User/group permission system
 - 2-factor authentication
 - Hierarchical groups

@@ -49,6 +49,7 @@
     "search_clear": "Vider",
     "any_language": "Toutes les langues",
     "add_document": "Ajouter un document",
+    "import_eml": "Importer depuis un email (format EML)",
     "tags": "Tags",
     "no_tags": "Aucun tag",
     "no_documents": "Aucun document dans la base de données",
@@ -389,6 +390,11 @@
     "message": "Vous avez des suggestions ou des questions à propos de Sismics Docs ? Nous vous écoutons !",
     "sent_title": "Avis envoyé",
     "sent_message": "Merci pour votre avis ! Cela nous aidera à améliorer Sismics Docs."
+  },
+  "import": {
+    "title": "Import en cours",
+    "error_quota": "Limite de quota atteinte, contactez votre administrateur pour augmenter votre quota",
+    "error_general": "Une erreur est survenue lors de la tentative d'importation de votre fichier, assurez-vous qu'il s'agit bien d'un fichier EML valide"
   },
   "app_share": {
     "main": "Demandez un lien de partage d'un document pour y accéder",

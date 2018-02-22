@@ -185,7 +185,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
             $scope.alerts.unshift({
               type: 'danger',
               msg: $translate.instant('document.edit.document_' + ($scope.isEdit() ? 'edited' : 'added') + '_with_errors')
-                + (data.responseJSON.type === 'QuotaReached' ? (' - ' + $translate.instant('document.edit.quota_reached')) : '')
+                + (data.responseJSON && data.responseJSON.type === 'QuotaReached' ? (' - ' + $translate.instant('document.edit.quota_reached')) : '')
             });
 
             // Reset view and title

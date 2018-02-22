@@ -49,6 +49,7 @@
     "search_clear": "清除",
     "any_language": "任何語言",
     "add_document": "添加一個文檔",
+    "import_eml": "從電子郵件導入（EML格式）",
     "tags": "標籤",
     "no_tags": "無標籤",
     "no_documents": "數據庫中無該文檔",
@@ -390,6 +391,11 @@
     "sent_title": "反饋已發送",
     "sent_message": "感謝您的反饋意見！這將幫助我們進一步優化Sismics Docs文檔管理系統以便更好的為您提供服務。"
   },
+  "import": {
+    "title": "輸入",
+    "error_quota": "已達到配額限制，請聯繫您的管理員以增加配額",
+    "error_general": "嘗試導入文件時發生錯誤，請確保它是有效的EML文件"
+  },
   "app_share": {
     "main": "請求一個共享的文檔鏈接來訪問該文檔",
     "403": {
@@ -415,7 +421,8 @@
       "Group": "組",
       "Tag": "標籤",
       "User": "用戶",
-      "RouteModel": "工作流程"
+      "RouteModel": "工作流程",
+      "Route": "工作流程"
     },
     "selectrelation": {
       "typeahead": "請輸入文檔名稱"

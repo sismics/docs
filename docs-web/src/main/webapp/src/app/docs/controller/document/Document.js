@@ -3,7 +3,7 @@
 /**
  * Document controller.
  */
-angular.module('docs').controller('Document', function ($scope, $rootScope, $timeout, $state, Restangular, $q, $filter) {
+angular.module('docs').controller('Document', function ($scope, $rootScope, $timeout, $state, Restangular, $q, $filter, $uibModal) {
   /**
    * Scope variables.
    */
@@ -208,5 +208,25 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
     $scope.advsearch = {};
     $scope.search = '';
     $scope.searchOpened = false;
+  };
+
+  $scope.importEml = function (file) {
+    // Open the import modal
+    $uibModal.open({
+      templateUrl: 'partial/docs/import.html',
+      controller: 'ModalImport',
+      resolve: {
+        file: function () {
+          return file;
+        }
+      }
+    }).result.then(function (data) {
+      if (data === null) {
+        return;
+      }
+
+      $scope.viewDocument(data.id);
+      $scope.loadDocuments();
+    });
   };
 });

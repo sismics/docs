@@ -49,6 +49,7 @@
     "search_clear": "Clear",
     "any_language": "Any language",
     "add_document": "Add a document",
+    "import_eml": "Import from an email (EML format)",
     "tags": "Tags",
     "no_tags": "No tags",
     "no_documents": "No document in the database",
@@ -389,6 +390,11 @@
     "message": "Any suggestion or question about Sismics Docs? We listen to you!",
     "sent_title": "Feedback sent",
     "sent_message": "Thank you for your feedback! It will help us make Sismics Docs even better."
+  },
+  "import": {
+    "title": "Importing",
+    "error_quota": "Quota limit reached, contact your administrator to increase your quota",
+    "error_general": "An error occurred while trying to import your file, please make sure it is a valid EML file"
   },
   "app_share": {
     "main": "Ask a shared document link to access it",
