@@ -6,7 +6,7 @@
 angular.module('docs').controller('Footer', function($scope, $rootScope, Restangular, $translate, timeAgoSettings, tmhDynamicLocale, $locale) {
   // Load app data
   Restangular.one('app').get().then(function(data) {
-    $scope.app = data;
+    $rootScope.app = data;
   });
 
   // Save the current language to local storage

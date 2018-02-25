@@ -1,9 +1,9 @@
-<h1>
+<h2>
   <span translate="settings.config.title_guest_access"></span>
   <span class="label" ng-class="{ 'label-success': app.guest_login, 'label-danger': !app.guest_login }">
     {{ app.guest_login ? 'enabled' : 'disabled' | translate }}
   </span>
-</h1>
+</h2>
 <p translate="settings.config.message_guest_access" translate-values="{ appName: appName }">
 </p>
 <div ng-if="app">
@@ -11,7 +11,27 @@
   <button ng-if="app.guest_login" class="btn btn-danger" ng-click="changeGuestLogin(false)">{{ 'settings.config.disable_guest_access' | translate }}</button>
 </div>
 
-<h1 translate="settings.config.title_theme"></h1>
+<h2 translate="settings.config.title_general"></h2>
+<form class="form-horizontal" name="generalForm" novalidate>
+  <div class="form-group" ng-class="{ 'has-error': !generalForm.defaultLanguage.$valid && generalForm.$dirty }">
+    <label class="col-sm-2 control-label" for="defaultLanguage">{{ 'settings.config.default_language' | translate }}</label>
+    <div class="col-sm-7">
+      <select name="defaultLanguage" class="form-control" id="defaultLanguage" ng-model="general.default_language">
+        <option ng-repeat="language in acceptedLanguages" value="{{ language.key }}">{{ language.label }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary" ng-click="editGeneralConfig()" ng-disabled="!generalForm.$valid">
+        <span class="glyphicon glyphicon-pencil"></span> {{ 'save' | translate }}
+      </button>
+    </div>
+  </div>
+</form>
+
+<h2 translate="settings.config.title_theme"></h2>
 <form class="form-horizontal" name="editColorForm" novalidate>
   <div class="form-group">
     <label class="col-sm-2 control-label" for="inputName">{{ 'settings.config.application_name' | translate }}</label>
@@ -75,7 +95,7 @@
   </div>
 </form>
 
-<h1 translate="settings.config.title_smtp"></h1>
+<h2 translate="settings.config.title_smtp"></h2>
 <form class="form-horizontal" name="smtpForm" novalidate>
   <div class="form-group" ng-show="smtp.hasOwnProperty('hostname')" ng-class="{ 'has-error': !smtpForm.hostname.$valid && smtpForm.$dirty }">
     <label class="col-sm-2 control-label" for="smtpHostname">{{ 'settings.config.smtp_hostname' | translate }}</label>

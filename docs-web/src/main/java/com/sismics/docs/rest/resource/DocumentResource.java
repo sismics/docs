@@ -3,6 +3,7 @@ package com.sismics.docs.rest.resource;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.AclType;
+import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.*;
@@ -16,6 +17,7 @@ import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.DocumentUtil;
 import com.sismics.docs.core.util.FileUtil;
 import com.sismics.docs.core.util.PdfUtil;
@@ -831,7 +833,7 @@ public class DocumentResource extends BaseResource {
         document.setSubject(StringUtils.abbreviate(mailContent.getSubject(), 500));
         document.setFormat("EML");
         document.setSource("Email");
-        document.setLanguage("eng");
+        document.setLanguage(ConfigUtil.getConfigStringValue(ConfigType.DEFAULT_LANGUAGE));
         if (mailContent.getDate() == null) {
             document.setCreateDate(new Date());
         } else {

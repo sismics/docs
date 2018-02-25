@@ -247,7 +247,7 @@
     "menu_configuration": "Configuration",
     "menu_server_logs": "Server logs",
     "user": {
-      "title": "Users <small>management</small>",
+      "title": "Users management",
       "add_user": "Add a user",
       "username": "Username",
       "create_date": "Create date",
@@ -257,8 +257,8 @@
         "delete_user_message": "Do you really want to delete this user? All associated documents, files and tags will be deleted",
         "edit_user_failed_title": "User already exists",
         "edit_user_failed_message": "This username is already taken by another user",
-        "edit_user_title": "<small>Edit</small> \"{{ username }}\"",
-        "add_user_title": "<small>Add a</small> user",
+        "edit_user_title": "Edit \"{{ username }}\"",
+        "add_user_title": "Add a user",
         "username": "Username",
         "email": "E-mail",
         "groups": "Groups",
@@ -273,15 +273,15 @@
       }
     },
     "workflow": {
-      "title": "Workflow <small>configuration</small>",
+      "title": "Workflow configuration",
       "add_workflow": "Add a workflow",
       "name": "Name",
       "create_date": "Create date",
       "edit": {
         "delete_workflow_title": "Delete workflow",
         "delete_workflow_message": "Do you really want to delete this workflow? Currently running workflows will not be deleted",
-        "edit_workflow_title": "<small>Edit</small> \"{{ name }}\"",
-        "add_workflow_title": "<small>Add a</small> workflow",
+        "edit_workflow_title": "Edit \"{{ name }}\"",
+        "add_workflow_title": "Add a workflow",
         "name": "Name",
         "name_placeholder": "Step name or description",
         "drag_help": "Drag and drop to rorder the step",
@@ -296,7 +296,7 @@
     "security": {
       "enable_totp": "Enable two-factor authentication",
       "enable_totp_message": "Make sure you have a TOTP-compatible application on your phone ready to add a new account",
-      "title": "Two-factor <small>authentication</small>",
+      "title": "Two-factor authentication",
       "message_1": "Two-factor authentication allows you to add a layer of security on your <strong>{{ appName }}</strong> account.<br/>Before activating this feature, make sure you have a TOTP-compatible app on your phone:",
       "message_google_authenticator": "For Android, iOS, and Blackberry: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>",
       "message_duo_mobile": "For Android and iOS: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
@@ -313,7 +313,7 @@
       }
     },
     "group": {
-      "title": "Groups <small>management</small>",
+      "title": "Groups management",
       "add_group": "Add a group",
       "name": "Name",
       "edit": {
@@ -321,8 +321,8 @@
         "delete_group_message": "Do you really want to delete this group?",
         "edit_group_failed_title": "Group already exists",
         "edit_group_failed_message": "This group name is already taken by another group",
-        "edit_group_title": "Edit <small>\"{{ name }}\"</small>",
-        "add_group_title": "<small>Add a</small> group",
+        "edit_group_title": "Edit \"{{ name }}\"",
+        "add_group_title": "Add a group",
         "name": "Name",
         "parent_group": "Parent group",
         "search_group": "Search a group",
@@ -332,17 +332,19 @@
       }
     },
     "account": {
-      "title": "User <small>account</small>",
+      "title": "User account",
       "password": "Password",
       "password_confirm": "Password (confirm)",
       "updated": "Account successfully updated"
     },
     "config": {
-      "title_guest_access": "Guest <small>access</small>",
+      "title_guest_access": "Guest access",
       "message_guest_access": "Guest access is a mode where anyone can access {{ appName }} without password.<br/>Like a normal user, the guest user can only access its documents and those accessible through permissions.<br/>",
       "enable_guest_access": "Enable guest access",
       "disable_guest_access": "Disable guest access",
-      "title_theme": "Theme <small>customization</small>",
+      "title_theme": "Theme customization",
+      "title_general": "General configuration",
+      "default_language": "Default language for new documents",
       "application_name": "Application name",
       "main_color": "Main color",
       "custom_css": "Custom CSS",
@@ -350,7 +352,7 @@
       "logo": "Logo (squared size)",
       "background_image": "Background image",
       "uploading_image": "Uploading the image...",
-      "title_smtp": "Email <small>configuration</small>",
+      "title_smtp": "Email configuration",
       "smtp_hostname": "SMTP hostname",
       "smtp_port": "SMTP port",
       "smtp_from": "Sender e-mail",
@@ -359,13 +361,13 @@
       "smtp_updated": "SMTP configuration updated successfully"
     },
     "log": {
-      "title": "Server <small>logs</small>",
+      "title": "Server logs",
       "date": "Date",
       "tag": "Tag",
       "message": "Message"
     },
     "session": {
-      "title": "Opened <small>sessions</small>",
+      "title": "Opened sessions",
       "created_date": "Created date",
       "last_connection_date": "Last connection date",
       "user_agent": "From",
@@ -375,7 +377,7 @@
       "clear": "Clear all other sessions"
     },
     "vocabulary": {
-      "title": "Vocabulary <small>entries</small>",
+      "title": "Vocabulary entries",
       "choose_vocabulary": "Choose a vocabulary to edit",
       "type": "Type",
       "coverage": "Coverage",

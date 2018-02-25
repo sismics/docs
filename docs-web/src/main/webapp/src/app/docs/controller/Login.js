@@ -8,7 +8,7 @@ angular.module('docs').controller('Login', function(Restangular, $scope, $rootSc
 
   // Get the app configuration
   Restangular.one('app').get().then(function(data) {
-    $scope.app = data;
+    $rootScope.app = data;
   });
 
   // Login as guest

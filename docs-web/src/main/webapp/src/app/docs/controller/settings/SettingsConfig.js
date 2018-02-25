@@ -6,7 +6,10 @@
 angular.module('docs').controller('SettingsConfig', function($scope, $rootScope, Restangular) {
   // Get the app configuration
   Restangular.one('app').get().then(function (data) {
-    $scope.app = data;
+    $rootScope.app = data;
+    $scope.general = {
+      default_language: data.default_language
+    }
   });
 
   // Enable/disable guest login
@@ -73,5 +76,10 @@ angular.module('docs').controller('SettingsConfig', function($scope, $rootScope,
   // Edit SMTP config
   $scope.editSmtpConfig = function () {
     Restangular.one('app').post('config_smtp', $scope.smtp);
+  };
+
+  // Edit general config
+  $scope.editGeneralConfig = function () {
+    Restangular.one('app').post('config', $scope.general);
   };
 });
