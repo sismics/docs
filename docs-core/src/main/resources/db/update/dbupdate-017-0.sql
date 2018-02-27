@@ -1,6 +1,6 @@
 insert into T_CONFIG(CFG_ID_C, CFG_VALUE_C) values('INBOX_ENABLED', 'false');
 insert into T_CONFIG(CFG_ID_C, CFG_VALUE_C) values('INBOX_HOSTNAME', '');
-insert into T_CONFIG(CFG_ID_C, CFG_VALUE_C) values('INBOX_PORT', '');
+insert into T_CONFIG(CFG_ID_C, CFG_VALUE_C) values('INBOX_PORT', '993');
 insert into T_CONFIG(CFG_ID_C, CFG_VALUE_C) values('INBOX_USERNAME', '');
 insert into T_CONFIG(CFG_ID_C, CFG_VALUE_C) values('INBOX_PASSWORD', '');
 insert into T_CONFIG(CFG_ID_C, CFG_VALUE_C) values('INBOX_TAG', '');

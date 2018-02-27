@@ -244,11 +244,11 @@ public class TestAppResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
         Assert.assertFalse(json.getBoolean("enabled"));
-        Assert.assertTrue(json.isNull("hostname"));
-        Assert.assertTrue(json.isNull("port"));
-        Assert.assertTrue(json.isNull("username"));
-        Assert.assertTrue(json.isNull("password"));
-        Assert.assertTrue(json.isNull("tag"));
+        Assert.assertEquals("", json.getString("hostname"));
+        Assert.assertEquals(993, json.getJsonNumber("port").intValue());
+        Assert.assertEquals("", json.getString("username"));
+        Assert.assertEquals("", json.getString("password"));
+        Assert.assertEquals("", json.getString("tag"));
         JsonObject lastSync = json.getJsonObject("last_sync");
         Assert.assertTrue(lastSync.isNull("date"));
         Assert.assertTrue(lastSync.isNull("error"));

@@ -71,6 +71,6 @@
   </div>
 </form>
 
-<div class="alert"
+<div class="alert col-sm-9"
      ng-class="{ 'alert-success': testResult.count >= 0, 'alert-danger': testResult.count == -1 }"
      ng-show="testResult">{{ testResult.count >= 0 ? 'settings.inbox.test_success' : 'settings.inbox.test_fail' | translate: { count: testResult.count } }}</div>
