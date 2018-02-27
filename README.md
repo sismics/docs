@@ -37,6 +37,7 @@ Features
 - 256-bit AES encryption of stored files
 - Tag system with nesting
 - Import document from email (EML format) ![New!](https://www.sismics.com/public/img/new.png)
+- Automatic inbox scanning and importing ![New!](https://www.sismics.com/public/img/new.png)
 - User/group permission system
 - 2-factor authentication
 - Hierarchical groups
