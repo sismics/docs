@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-md-3">
+  <div class="col-md-3 settings-menu">
     <div class="panel panel-default">
       <div class="panel-heading"><strong>{{ 'settings.menu_personal_settings' | translate }}</strong></div>
       <ul class="list-group">
@@ -15,6 +15,7 @@
         <a class="list-group-item" ui-sref-active="{ active: 'settings.workflow.**' }" href="#/settings/workflow">{{ 'settings.menu_workflow' | translate }}</a>
         <a class="list-group-item" ui-sref-active="{ active: 'settings.user.**' }" href="#/settings/user">{{ 'settings.menu_users' | translate }}</a>
         <a class="list-group-item" ui-sref-active="{ active: 'settings.group.**' }" href="#/settings/group">{{ 'settings.menu_groups' | translate }}</a>
+        <a class="list-group-item" ui-sref-active="{ active: 'settings.inbox.**' }" href="#/settings/inbox">{{ 'settings.menu_inbox' | translate }}</a>
         <a class="list-group-item" ui-sref-active="{ active: 'settings.vocabulary.**' }" href="#/settings/vocabulary">{{ 'settings.menu_vocabularies' | translate }}</a>
         <a class="list-group-item" ui-sref-active="{ active: 'settings.config.**' }" href="#/settings/config">{{ 'settings.menu_configuration' | translate }}</a>
         <a class="list-group-item" ui-sref-active="{ active: 'settings.log.**' }" href="#/settings/log">{{ 'settings.menu_server_logs' | translate }}</a>
@@ -22,7 +23,7 @@
     </div>
   </div>
 
-  <div class="col-md-9">
+  <div class="col-md-9 settings-content">
     <div ui-view="settings"></div>
   </div>
 </div>

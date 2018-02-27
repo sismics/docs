@@ -72,6 +72,7 @@
     <script src="app/docs/controller/settings/SettingsDefault.js" type="text/javascript"></script>
     <script src="app/docs/controller/settings/SettingsAccount.js" type="text/javascript"></script>
     <script src="app/docs/controller/settings/SettingsConfig.js" type="text/javascript"></script>
+    <script src="app/docs/controller/settings/SettingsInbox.js" type="text/javascript"></script>
     <script src="app/docs/controller/settings/SettingsSecurity.js" type="text/javascript"></script>
     <script src="app/docs/controller/settings/SettingsSecurityModalDisableTotp.js" type="text/javascript"></script>
     <script src="app/docs/controller/settings/SettingsSession.js" type="text/javascript"></script>
@@ -98,7 +99,7 @@
     <!-- endref -->
   </head>
   <body translate-cloak ng-cloak>
-    <nav class="navbar navbar-inverse" role="navigation" ng-controller="Navigation">
+    <nav class="navbar navbar-default" role="navigation" ng-controller="Navigation">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle"
                 ng-init="isCollapsed = true"
@@ -113,7 +114,12 @@
           <img src="../api/theme/image/logo" />
         </div>
 
-        <a class="navbar-brand" href="#"> {{ appName }}</a>
+        <a class="navbar-brand" href="#">
+          <span ng-if="appName == 'Sismics Docs'">
+            <span style="color: #e43935;">Sismics</span> <span style="color: #2aabd2;">Docs</span>
+          </span>
+          <span ng-if="appName != 'Sismics Docs'">{{ appName }}</span>
+        </a>
       </div>
 
       <div class="collapse navbar-collapse" uib-collapse="isCollapsed">

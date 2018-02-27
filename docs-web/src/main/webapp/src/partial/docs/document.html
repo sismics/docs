@@ -1,7 +1,17 @@
-<div class="row row-full">
+<script type="text/ng-template" id="tag-tree-item">
+  <span class="btn" ng-style="{ 'background-color': tag.color }"></span>
+  <span class="btn btn-link" ng-click="setSearch('tag:' + tag.name)">
+    {{ tag.name }}
+  </span>
+  <ul class="list-unstyled">
+    <li ng-repeat="tag in getChildrenTags(tag.id)" ng-include="'tag-tree-item'"></li>
+  </ul>
+</script>
+
+<div class="row">
   <div class="col-md-4">
-    <div class="well well-full">
-      <div class="text-center mb-10">
+    <div class="well well-3d">
+      <div class="text-center mb-19">
         <div class="btn-group" uib-dropdown>
           <a href="#/document/add" class="btn btn-primary">
             <span class="glyphicon glyphicon-plus"></span> {{ 'document.add_document' | translate }}
@@ -126,8 +136,8 @@
       <table class="row table table-hover table-documents">
         <thead>
         <tr>
-          <th class="col-xs-6" ng-click="sortDocuments(1)"><span class="glyphicon glyphicon-chevron-{{ sortColumn == 1 ? (asc ? 'down' : 'up') : '' }}"></span> {{ 'document.title' | translate }}</th>
-          <th class="col-xs-3" ng-click="sortDocuments(3)"><span class="glyphicon glyphicon-chevron-{{ sortColumn == 3 ? (asc ? 'down' : 'up') : '' }}"></span> {{ 'document.creation_date' | translate }}</th>
+          <th class="col-xs-6" ng-click="sortDocuments(1)">{{ 'document.title' | translate }} <span class="glyphicon glyphicon-chevron-{{ sortColumn == 1 ? (asc ? 'down' : 'up') : '' }}"></span></th>
+          <th class="col-xs-3" ng-click="sortDocuments(3)">{{ 'document.creation_date' | translate }} <span class="glyphicon glyphicon-chevron-{{ sortColumn == 3 ? (asc ? 'down' : 'up') : '' }}"></span></th>
         </tr>
         </thead>
         <tbody>
@@ -194,13 +204,3 @@
     <div ui-view="document"></div>
   </div>
 </div>
-
-<script type="text/ng-template" id="tag-tree-item">
-  <span class="btn" ng-style="{ 'background-color': tag.color }"></span>
-  <span class="btn btn-link" ng-click="setSearch('tag:' + tag.name)">
-    {{ tag.name }}
-  </span>
-  <ul class="list-unstyled">
-    <li ng-repeat="tag in getChildrenTags(tag.id)" ng-include="'tag-tree-item'"></li>
-  </ul>
-</script>

@@ -34,36 +34,28 @@
 
 // Documents list
 .table-documents {
-	thead th {
-      cursor: pointer;
-      white-space: nowrap;
-	}
-	
-	tbody tr {
-      cursor: pointer;
+  margin-top: 18px !important;
 
-      td {
-        .label {
-          margin-left: 5px;
-        }
-      }
-	}
-}
-
-@media (min-width: 992px) {
-  .row-full {
-    overflow: hidden;
-    margin-top: -20px !important;
-    min-height: 80vh;
+  thead th {
+    cursor: pointer;
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-weight: 500;
+    background-color: #f6f9fc;
+    border: none !important;
+    font-size: 90%;
   }
+	
+  tbody tr {
+    cursor: pointer;
 
-  .well-full {
-    margin-left: -15px;
-    padding-bottom: 1000px;
-    margin-bottom: -980px;
-    height: 100%;
-    background-color: #f5f5f5;
-    box-shadow: inset -2px 0 0 #e5e5e5;
+    td {
+      .label {
+        margin-left: 5px;
+      }
+
+      border: none;
+    }
   }
 }
 
@@ -320,6 +312,55 @@ input[readonly].share-link {
   }
 }
 
+// Settings
+.settings-menu {
+  .panel-default {
+    border: 1px solid #eee;
+    box-shadow: 0 7px 14px 0 rgba(50,50,93,.1), 0 3px 6px 0 rgba(0,0,0,.07);
+    border-radius: 4px;
+
+    & > .panel-heading {
+      border-bottom: none;
+      background: #f9f9f9;
+
+      strong {
+        font-weight: 500;
+      }
+    }
+
+    .list-group-item {
+      border: none;
+    }
+
+    .list-group-item.active {
+      background: none;
+      color: #337ab7;
+      font-weight: 500;
+    }
+  }
+}
+
+.settings-content {
+  .well {
+    box-shadow: 0 7px 14px 0 rgba(50,50,93,.1), 0 3px 6px 0 rgba(0,0,0,.07);
+    background: none;
+    padding: 0;
+    border-radius: 4px;
+
+    .table {
+      margin-bottom: 0;
+    }
+
+    th {
+      text-transform: uppercase;
+      font-weight: 500;
+      background-color: #f6f9fc;
+      border-bottom: 1px solid #ddd;
+      font-size: 90%;
+    }
+  }
+}
+
 // Feedback
 .feedback {
   display: block;
@@ -451,10 +492,51 @@ input[readonly].share-link {
   margin-bottom: 10px;
 }
 
-// Buttons
+.mb-19 {
+  margin-bottom: 19px;
+}
+
+// BS customizations
 .btn {
-  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
-  font-weight: 400;
+  transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  font-weight: 500;
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px rgba(50,50,93,.1), 0 2px 5px 0 rgba(50,50,93,.08), 0 1px 1.5px 0 rgba(0,0,0,.07), 0 1px 2px 0 rgba(0,0,0,.08), 0 0 0 0 transparent;
+}
+
+.form-control {
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px rgba(49,49,93,.03), 0 2px 5px 0 rgba(49,49,93,.1), 0 1px 2px 0 rgba(0,0,0,.08);
+}
+
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 0 0 1px rgba(136,152,170,.1), 0 15px 35px 0 rgba(49,49,93,.1), 0 5px 15px 0 rgba(0,0,0,.13);
+}
+
+.navbar-default {
+  border: none;
+
+  .navbar-brand {
+    color: white;
+  }
+}
+
+.nav > li {
+  font-weight: 500;
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+  color: #2ab2dc;
+  background: none;
+}
+
+.well-3d {
+  border: 1px solid #eee;
+  box-shadow: 0 7px 14px 0 rgba(50,50,93,.1), 0 3px 6px 0 rgba(0,0,0,.07);
+  background: none;
   border-radius: 4px;
 }
 

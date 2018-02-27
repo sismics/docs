@@ -21,7 +21,6 @@ import javax.mail.*;
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Inbox scanning service.
@@ -57,6 +56,9 @@ public class InboxService extends AbstractScheduledService {
         syncInbox();
     }
 
+    /**
+     * Synchronize the inbox.
+     */
     public void syncInbox() {
         TransactionUtil.handle(new Runnable() {
             @Override
@@ -98,36 +100,34 @@ public class InboxService extends AbstractScheduledService {
         });
     }
 
+    /**
+     * Test the inbox configuration.
+     *
+     * @return Number of messages currently in the remote inbox
+     */
     public int testInbox() {
-        final AtomicInteger count = new AtomicInteger(-1);
-        TransactionUtil.handle(new Runnable() {
-            @Override
-            public void run() {
-                Boolean enabled = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_ENABLED);
-                if (!enabled) {
-                    return;
-                }
+        Boolean enabled = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_ENABLED);
+        if (!enabled) {
+            return -1;
+        }
 
-                Folder inbox = null;
-                try {
-                    inbox = openInbox();
-                    count.set(inbox.getMessageCount());
-                } catch (Exception e) {
-                    log.error("Error testing inbox", e);
-                } finally {
-                    try {
-                        if (inbox != null) {
-                            inbox.close(false);
-                            inbox.getStore().close();
-                        }
-                    } catch (Exception e) {
-                        // NOP
-                    }
+        Folder inbox = null;
+        try {
+            inbox = openInbox();
+            return inbox.getMessageCount();
+        } catch (Exception e) {
+            log.error("Error testing inbox", e);
+            return -1;
+        } finally {
+            try {
+                if (inbox != null) {
+                    inbox.close(false);
+                    inbox.getStore().close();
                 }
+            } catch (Exception e) {
+                // NOP
             }
-        });
-
-        return count.get();
+        }
     }
 
     @Override
@@ -139,6 +139,7 @@ public class InboxService extends AbstractScheduledService {
      * Open the remote inbox.
      *
      * @return Opened inbox folder
+     * @throws Exception e
      */
     private Folder openInbox() throws Exception {
         Properties properties = new Properties();
@@ -167,7 +168,7 @@ public class InboxService extends AbstractScheduledService {
      * Import an email.
      *
      * @param message Message
-     * @throws Exception
+     * @throws Exception e
      */
     private void importMessage(Message message) throws Exception {
         // Parse the mail

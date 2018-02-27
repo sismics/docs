@@ -245,6 +245,7 @@
     "menu_groups": "Groups",
     "menu_vocabularies": "Vocabularies",
     "menu_configuration": "Configuration",
+    "menu_inbox": "Inbox scanning",
     "menu_server_logs": "Server logs",
     "user": {
       "title": "Users management",
