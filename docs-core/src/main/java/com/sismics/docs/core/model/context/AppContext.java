@@ -10,6 +10,7 @@ import com.sismics.docs.core.listener.async.*;
 import com.sismics.docs.core.listener.sync.DeadEventListener;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.service.InboxService;
 import com.sismics.docs.core.service.IndexingService;
 import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.util.EnvironmentUtil;
@@ -53,6 +54,11 @@ public class AppContext {
     private IndexingService indexingService;
 
     /**
+     * Inbox scanning service.
+     */
+    private InboxService inboxService;
+
+    /**
      * Asynchronous executors.
      */
     private List<ExecutorService> asyncExecutorList;
@@ -68,6 +74,10 @@ public class AppContext {
         Config luceneStorageConfig = configDao.getById(ConfigType.LUCENE_DIRECTORY_STORAGE);
         indexingService = new IndexingService(luceneStorageConfig != null ? luceneStorageConfig.getValue() : null);
         indexingService.startAsync();
+
+        // Start inbox service
+        inboxService = new InboxService();
+        inboxService.startAsync();
 
         // Register fonts
         PdfUtil.registerFonts();
@@ -174,5 +184,9 @@ public class AppContext {
 
     public IndexingService getIndexingService() {
         return indexingService;
+    }
+
+    public InboxService getInboxService() {
+        return inboxService;
     }
 }

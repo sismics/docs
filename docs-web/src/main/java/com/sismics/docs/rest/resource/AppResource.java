@@ -8,6 +8,7 @@ import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
@@ -174,10 +175,10 @@ public class AppResource extends BaseResource {
      * @apiName GetAppConfigSmtp
      * @apiGroup App
      * @apiSuccess {String} hostname SMTP hostname
-     * @apiSuccess {String} port
-     * @apiSuccess {String} username
-     * @apiSuccess {String} password
-     * @apiSuccess {String} from
+     * @apiSuccess {String} port SMTP port
+     * @apiSuccess {String} username SMTP username
+     * @apiSuccess {String} password SMTP password
+     * @apiSuccess {String} from From address
      * @apiError (client) ForbiddenError Access denied
      * @apiPermission admin
      * @apiVersion 1.5.0
@@ -293,6 +294,161 @@ public class AppResource extends BaseResource {
         }
 
         return Response.ok().build();
+    }
+
+    /**
+     * Get the inbox configuration.
+     *
+     * @api {get} /app/config_inbox Get the inbox scanning configuration
+     * @apiName GetAppConfigInbox
+     * @apiGroup App
+     * @apiSuccess {Boolean} enabled True if the inbox scanning is enabled
+     * @apiSuccess {String} hostname IMAP hostname
+     * @apiSuccess {String} port IMAP port
+     * @apiSuccess {String} username IMAP username
+     * @apiSuccess {String} password IMAP password
+     * @apiSuccess {String} tag Tag for created documents
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @return Response
+     */
+    @GET
+    @Path("config_inbox")
+    public Response getConfigInbox() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        ConfigDao configDao = new ConfigDao();
+        Boolean enabled = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_ENABLED);
+        Config hostnameConfig = configDao.getById(ConfigType.INBOX_HOSTNAME);
+        Config portConfig = configDao.getById(ConfigType.INBOX_PORT);
+        Config usernameConfig = configDao.getById(ConfigType.INBOX_USERNAME);
+        Config passwordConfig = configDao.getById(ConfigType.INBOX_PASSWORD);
+        Config tagConfig = configDao.getById(ConfigType.INBOX_TAG);
+        JsonObjectBuilder response = Json.createObjectBuilder();
+
+        response.add("enabled", enabled);
+        if (hostnameConfig == null) {
+            response.addNull("hostname");
+        } else {
+            response.add("hostname", hostnameConfig.getValue());
+        }
+        if (portConfig == null) {
+            response.addNull("port");
+        } else {
+            response.add("port", Integer.valueOf(portConfig.getValue()));
+        }
+        if (usernameConfig == null) {
+            response.addNull("username");
+        } else {
+            response.add("username", usernameConfig.getValue());
+        }
+        if (passwordConfig == null) {
+            response.addNull("password");
+        } else {
+            response.add("password", passwordConfig.getValue());
+        }
+        if (tagConfig == null) {
+            response.addNull("tag");
+        } else {
+            response.add("tag", tagConfig.getValue());
+        }
+
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Configure the inbox.
+     *
+     * @api {post} /app/config_inbox Configure the inbox scanning
+     * @apiName PostAppConfigInbox
+     * @apiGroup App
+     * @apiParam {Boolean} enabled True if the inbox scanning is enabled
+     * @apiParam {String} hostname IMAP hostname
+     * @apiParam {Integer} port IMAP port
+     * @apiParam {String} username IMAP username
+     * @apiParam {String} password IMAP password
+     * @apiParam {String} tag Tag for created documents
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @param enabled True if the inbox scanning is enabled
+     * @param hostname IMAP hostname
+     * @param portStr IMAP port
+     * @param username IMAP username
+     * @param password IMAP password
+     * @param tag Tag for created documents
+     * @return Response
+     */
+    @POST
+    @Path("config_inbox")
+    public Response configInbox(@FormParam("enabled") Boolean enabled,
+                                @FormParam("hostname") String hostname,
+                                @FormParam("port") String portStr,
+                                @FormParam("username") String username,
+                                @FormParam("password") String password,
+                                @FormParam("tag") String tag) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        ValidationUtil.validateRequired(enabled, "enabled");
+        if (!Strings.isNullOrEmpty(portStr)) {
+            ValidationUtil.validateInteger(portStr, "port");
+        }
+
+        // Just update the changed configuration
+        ConfigDao configDao = new ConfigDao();
+        configDao.update(ConfigType.INBOX_ENABLED, enabled.toString());
+        if (!Strings.isNullOrEmpty(hostname)) {
+            configDao.update(ConfigType.INBOX_HOSTNAME, hostname);
+        }
+        if (!Strings.isNullOrEmpty(portStr)) {
+            configDao.update(ConfigType.INBOX_PORT, portStr);
+        }
+        if (!Strings.isNullOrEmpty(username)) {
+            configDao.update(ConfigType.INBOX_USERNAME, username);
+        }
+        if (!Strings.isNullOrEmpty(password)) {
+            configDao.update(ConfigType.INBOX_PASSWORD, password);
+        }
+        if (!Strings.isNullOrEmpty(tag)) {
+            configDao.update(ConfigType.INBOX_TAG, tag);
+        }
+
+        return Response.ok().build();
+    }
+
+    /**
+     * Test the inbox.
+     *
+     * @api {post} /app/test_inbox Test the inbox scanning
+     * @apiName PostAppTestInbox
+     * @apiGroup App
+     * @apiSuccess {Number} Number of unread emails in the inbox
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @return Response
+     */
+    @POST
+    @Path("test_inbox")
+    public Response testInbox() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        return Response.ok().entity(Json.createObjectBuilder()
+                .add("count", AppContext.getInstance().getInboxService().testInbox())
+                .build()).build();
     }
 
     /**

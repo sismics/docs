@@ -111,6 +111,11 @@
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-queryparser</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>javax.mail</artifactId>
+    </dependency>
     
     <!-- Only there to read old index and rebuild them -->
     <dependency>

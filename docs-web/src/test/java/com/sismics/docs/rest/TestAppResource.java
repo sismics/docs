@@ -1,5 +1,9 @@
 package com.sismics.docs.rest;
 
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 import org.junit.Assert;
 import org.junit.Test;
@@ -217,5 +221,93 @@ public class TestAppResource extends BaseJerseyTest {
         Assert.assertEquals("sismics", json.getString("username"));
         Assert.assertTrue(json.isNull("password"));
         Assert.assertEquals("contact@sismics.com", json.getString("from"));
+    }
+
+    /**
+     * Test inbox scanning.
+     */
+    @Test
+    public void testInbox() {
+        // Login admin
+        String adminToken = clientUtil.login("admin", "admin", false);
+
+        // Create a tag
+        JsonObject json = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("name", "Inbox")
+                        .param("color", "#ff0000")), JsonObject.class);
+        String tagInboxId = json.getString("id");
+
+        // Get inbox configuration
+        json = target().path("/app/config_inbox").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertFalse(json.getBoolean("enabled"));
+        Assert.assertTrue(json.isNull("hostname"));
+        Assert.assertTrue(json.isNull("port"));
+        Assert.assertTrue(json.isNull("username"));
+        Assert.assertTrue(json.isNull("password"));
+        Assert.assertTrue(json.isNull("tag"));
+
+        // Change inbox configuration
+        target().path("/app/config_inbox").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("enabled", "true")
+                        .param("hostname", "localhost")
+                        .param("port", "143")
+                        .param("username", "test@sismics.com")
+                        .param("password", "12345678")
+                        .param("tag", tagInboxId)
+                ), JsonObject.class);
+
+        // Get inbox configuration
+        json = target().path("/app/config_inbox").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertTrue(json.getBoolean("enabled"));
+        Assert.assertEquals("localhost", json.getString("hostname"));
+        Assert.assertEquals(143, json.getInt("port"));
+        Assert.assertEquals("test@sismics.com", json.getString("username"));
+        Assert.assertEquals("12345678", json.getString("password"));
+        Assert.assertEquals(tagInboxId, json.getString("tag"));
+
+        GreenMail greenMail = new GreenMail(new ServerSetup[] { ServerSetup.SMTP, ServerSetup.IMAP });
+        greenMail.setUser("test@sismics.com", "12345678");
+        greenMail.start();
+
+        // Test the inbox
+        json = target().path("/app/test_inbox").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()), JsonObject.class);
+        Assert.assertEquals(0, json.getJsonNumber("count").intValue());
+
+        // Send an email
+        GreenMailUtil.sendTextEmail("test@sismics.com", "test@sismicsdocs.com", "Test email 1", "Test content 1", ServerSetup.SMTP);
+
+        // Trigger an inbox sync
+        AppContext.getInstance().getInboxService().syncInbox();
+
+        // Search for added documents
+        json = target().path("/document/list")
+                .queryParam("search", "tag:Inbox")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
+
+        // Trigger an inbox sync
+        AppContext.getInstance().getInboxService().syncInbox();
+
+        // Search for added documents
+        json = target().path("/document/list")
+                .queryParam("search", "tag:Inbox")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
+
+        greenMail.stop();
     }
 }

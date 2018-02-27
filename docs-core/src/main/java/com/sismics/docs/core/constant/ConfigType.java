@@ -32,5 +32,15 @@ public enum ConfigType {
     SMTP_PORT,
     SMTP_FROM,
     SMTP_USERNAME,
-    SMTP_PASSWORD
+    SMTP_PASSWORD,
+
+    /**
+     * Inbox scanning configuration.
+     */
+    INBOX_ENABLED,
+    INBOX_HOSTNAME,
+    INBOX_PORT,
+    INBOX_USERNAME,
+    INBOX_PASSWORD,
+    INBOX_TAG
 }
