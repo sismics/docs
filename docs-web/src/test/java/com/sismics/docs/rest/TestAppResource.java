@@ -256,7 +256,7 @@ public class TestAppResource extends BaseJerseyTest {
                 .post(Entity.form(new Form()
                         .param("enabled", "true")
                         .param("hostname", "localhost")
-                        .param("port", "143")
+                        .param("port", "9755")
                         .param("username", "test@sismics.com")
                         .param("password", "12345678")
                         .param("tag", tagInboxId)
@@ -268,12 +268,14 @@ public class TestAppResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         Assert.assertTrue(json.getBoolean("enabled"));
         Assert.assertEquals("localhost", json.getString("hostname"));
-        Assert.assertEquals(143, json.getInt("port"));
+        Assert.assertEquals(9755, json.getInt("port"));
         Assert.assertEquals("test@sismics.com", json.getString("username"));
         Assert.assertEquals("12345678", json.getString("password"));
         Assert.assertEquals(tagInboxId, json.getString("tag"));
 
-        GreenMail greenMail = new GreenMail(new ServerSetup[] { ServerSetup.SMTP, ServerSetup.IMAP });
+        ServerSetup serverSetupSmtp = new ServerSetup(9754, null, ServerSetup.PROTOCOL_SMTP);
+        ServerSetup serverSetupImap = new ServerSetup(9755, null, ServerSetup.PROTOCOL_IMAP);
+        GreenMail greenMail = new GreenMail(new ServerSetup[] { serverSetupSmtp, serverSetupImap });
         greenMail.setUser("test@sismics.com", "12345678");
         greenMail.start();
 
@@ -284,7 +286,7 @@ public class TestAppResource extends BaseJerseyTest {
         Assert.assertEquals(0, json.getJsonNumber("count").intValue());
 
         // Send an email
-        GreenMailUtil.sendTextEmail("test@sismics.com", "test@sismicsdocs.com", "Test email 1", "Test content 1", ServerSetup.SMTP);
+        GreenMailUtil.sendTextEmail("test@sismics.com", "test@sismicsdocs.com", "Test email 1", "Test content 1", serverSetupSmtp);
 
         // Trigger an inbox sync
         AppContext.getInstance().getInboxService().syncInbox();
