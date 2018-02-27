@@ -249,6 +249,10 @@ public class TestAppResource extends BaseJerseyTest {
         Assert.assertTrue(json.isNull("username"));
         Assert.assertTrue(json.isNull("password"));
         Assert.assertTrue(json.isNull("tag"));
+        JsonObject lastSync = json.getJsonObject("last_sync");
+        Assert.assertTrue(lastSync.isNull("date"));
+        Assert.assertTrue(lastSync.isNull("error"));
+        Assert.assertEquals(0, lastSync.getJsonNumber("count").intValue());
 
         // Change inbox configuration
         target().path("/app/config_inbox").request()
@@ -299,6 +303,15 @@ public class TestAppResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         Assert.assertEquals(1, json.getJsonArray("documents").size());
 
+        // Get inbox configuration
+        json = target().path("/app/config_inbox").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        lastSync = json.getJsonObject("last_sync");
+        Assert.assertFalse(lastSync.isNull("date"));
+        Assert.assertTrue(lastSync.isNull("error"));
+        Assert.assertEquals(1, lastSync.getJsonNumber("count").intValue());
+
         // Trigger an inbox sync
         AppContext.getInstance().getInboxService().syncInbox();
 
@@ -309,6 +322,15 @@ public class TestAppResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
         Assert.assertEquals(1, json.getJsonArray("documents").size());
+
+        // Get inbox configuration
+        json = target().path("/app/config_inbox").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        lastSync = json.getJsonObject("last_sync");
+        Assert.assertFalse(lastSync.isNull("date"));
+        Assert.assertTrue(lastSync.isNull("error"));
+        Assert.assertEquals(0, lastSync.getJsonNumber("count").intValue());
 
         greenMail.stop();
     }

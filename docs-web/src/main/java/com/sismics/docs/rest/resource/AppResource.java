@@ -12,6 +12,7 @@ import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.service.InboxService;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
@@ -21,6 +22,7 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.JsonUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.log4j.LogCriteria;
 import com.sismics.util.log4j.LogEntry;
@@ -357,6 +359,18 @@ public class AppResource extends BaseResource {
         } else {
             response.add("tag", tagConfig.getValue());
         }
+
+        // Informations about the last synchronization
+        InboxService inboxService = AppContext.getInstance().getInboxService();
+        JsonObjectBuilder lastSync = Json.createObjectBuilder();
+        if (inboxService.getLastSyncDate() == null) {
+            lastSync.addNull("date");
+        } else {
+            lastSync.add("date", inboxService.getLastSyncDate().getTime());
+        }
+        lastSync.add("error", JsonUtil.nullable(inboxService.getLastSyncError()));
+        lastSync.add("count", inboxService.getLastSyncMessageCount());
+        response.add("last_sync", lastSync);
 
         return Response.ok().entity(response.build()).build();
     }

@@ -34,6 +34,13 @@ public class InboxService extends AbstractScheduledService {
      */
     private static final Logger log = LoggerFactory.getLogger(InboxService.class);
 
+    /**
+     * Last synchronization data.
+     */
+    private Date lastSyncDate;
+    private int lastSyncMessageCount = 0;
+    private String lastSyncError;
+
     public InboxService() {
     }
 
@@ -60,18 +67,23 @@ public class InboxService extends AbstractScheduledService {
                 }
 
                 Folder inbox = null;
+                lastSyncError = null;
+                lastSyncDate = new Date();
+                lastSyncMessageCount = 0;
                 try {
                     inbox = openInbox();
-
                     int count = inbox.getMessageCount();
                     Message[] messages = inbox.getMessages(1, count);
+
                     for (Message message : messages) {
                         if (!message.getFlags().contains(Flags.Flag.SEEN)) {
                             importMessage(message);
+                            lastSyncMessageCount++;
                         }
                     }
                 } catch (Exception e) {
                     log.error("Error synching the inbox", e);
+                    lastSyncError = e.getMessage();
                 } finally {
                     try {
                         if (inbox != null) {
@@ -206,5 +218,17 @@ public class InboxService extends AbstractScheduledService {
         for (EmailUtil.FileContent fileContent : mailContent.getFileContentList()) {
             FileUtil.createFile(fileContent.getName(), fileContent.getFile(), fileContent.getSize(), "eng", "admin", document.getId());
         }
+    }
+
+    public Date getLastSyncDate() {
+        return lastSyncDate;
+    }
+
+    public int getLastSyncMessageCount() {
+        return lastSyncMessageCount;
+    }
+
+    public String getLastSyncError() {
+        return lastSyncError;
     }
 }
