@@ -245,6 +245,7 @@
     "menu_groups": "群组",
     "menu_vocabularies": "词条",
     "menu_configuration": "配置",
+    "menu_inbox": "收件箱扫描",
     "menu_server_logs": "服务器日志",
     "user": {
       "title": "用户 <small>管理</small>",
@@ -343,6 +344,8 @@
       "enable_guest_access": "激活游客权限",
       "disable_guest_access": "不激活游客权限",
       "title_theme": "主题 <small>定制</small>",
+      "title_general": "一般配置",
+      "default_language": "新文档的默认语言",
       "application_name": "申请名",
       "main_color": "主颜色",
       "custom_css": "用户样式表",
@@ -357,6 +360,20 @@
       "smtp_username": "SMTP 用户名",
       "smtp_password": "SMTP密码",
       "smtp_updated": "SMTP组态更新成功"
+    },
+    "inbox": {
+      "title": "收件箱扫描",
+      "message": "通过启用此功能，系统会定期扫描指定收件箱中的新电子邮件并自动导入它们。",
+      "enabled": "启用收件箱扫描",
+      "hostname": "IMAP主机名",
+      "port": "IMAP端口（143或993）",
+      "username": "IMAP用户名",
+      "password": "IMAP密码",
+      "tag": "标签添加到导入的文档",
+      "test": "测试参数",
+      "last_sync": "上次同步：{{ data.date | date }}，{{ data.count }}消息导入",
+      "test_success": "与收件箱的连接成功（{{count}}消息）",
+      "test_fail": "连接到收件箱时发生错误，请检查参数"
     },
     "log": {
       "title": "服务器 <small>日志</small>",

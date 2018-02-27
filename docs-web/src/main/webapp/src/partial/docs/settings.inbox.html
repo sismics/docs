@@ -1,145 +1,76 @@
 <h2>
-  <span translate="settings.config.title_guest_access"></span>
-  <span class="label" ng-class="{ 'label-success': app.guest_login, 'label-danger': !app.guest_login }">
-    {{ app.guest_login ? 'enabled' : 'disabled' | translate }}
+  <span translate="settings.inbox.title"></span>
+  <span class="label" ng-show="inbox"
+        ng-class="{ 'label-success': inbox.enabled, 'label-danger': !inbox.enabled }">
+    {{ inbox.enabled ? 'enabled' : 'disabled' | translate }}
   </span>
 </h2>
-<p translate="settings.config.message_guest_access" translate-values="{ appName: appName }">
-</p>
-<div ng-if="app">
-  <button ng-if="!app.guest_login" class="btn btn-primary" ng-click="changeGuestLogin(true)">{{ 'settings.config.enable_guest_access' | translate }}</button>
-  <button ng-if="app.guest_login" class="btn btn-danger" ng-click="changeGuestLogin(false)">{{ 'settings.config.disable_guest_access' | translate }}</button>
-</div>
+<p translate="settings.inbox.message"></p>
+<p ng-show="inbox.last_sync" translate="settings.inbox.last_sync" translate-values="{ data: inbox.last_sync }"></p>
+<p ng-show="inbox.last_sync.error" class="text-danger">{{ inbox.last_sync.error }}</p>
 
-<h2 translate="settings.config.title_general"></h2>
-<form class="form-horizontal" name="generalForm" novalidate>
-  <div class="form-group" ng-class="{ 'has-error': !generalForm.defaultLanguage.$valid && generalForm.$dirty }">
-    <label class="col-sm-2 control-label" for="defaultLanguage">{{ 'settings.config.default_language' | translate }}</label>
+<form class="form-horizontal" name="inboxForm" novalidate>
+  <div class="form-group" ng-class="{ 'has-error': !smtpForm.hostname.$valid && smtpForm.$dirty }">
+    <label class="col-sm-2 control-label" for="inboxEnabled">{{ 'settings.inbox.enabled' | translate }}</label>
     <div class="col-sm-7">
-      <select name="defaultLanguage" class="form-control" id="defaultLanguage" ng-model="general.default_language">
-        <option ng-repeat="language in acceptedLanguages" value="{{ language.key }}">{{ language.label }}</option>
+      <input name="hostname" type="checkbox" id="inboxEnabled" ng-model="inbox.enabled" />
+    </div>
+  </div>
+
+  <div class="form-group" ng-class="{ 'has-error': !inboxForm.hostname.$valid && inboxForm.$dirty }">
+    <label class="col-sm-2 control-label" for="inboxHostname">{{ 'settings.inbox.hostname' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="hostname" type="text" class="form-control" id="inboxHostname" ng-model="inbox.hostname" />
+    </div>
+  </div>
+
+  <div class="form-group" ng-class="{ 'has-error': !inboxForm.port.$valid && inboxForm.$dirty }">
+    <label class="col-sm-2 control-label" for="inboxPort">{{ 'settings.inbox.port' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="port" type="number" class="form-control" id="inboxPort" ng-model="inbox.port" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-2 control-label" for="inboxUsername">{{ 'settings.inbox.username' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="username" type="text" class="form-control" id="inboxUsername" ng-model="inbox.username" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-2 control-label" for="inboxPassword">{{ 'settings.inbox.password' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="password" type="password" class="form-control" id="inboxPassword" ng-model="inbox.password" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-2 control-label" for="inboxPassword">{{ 'settings.inbox.tag' | translate }}</label>
+    <div class="col-sm-7">
+      <select class="form-control" ng-model="inbox.tag" id="inboxTag">
+        <option value=""></option>
+        <option ng-repeat="tag0 in tags"
+                ng-if="tag0.id != tag.id"
+                ng-selected="inbox.tag == tag0.id"
+                value="{{ tag0.id }}">{{ tag0.name }}</option>
       </select>
     </div>
   </div>
 
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-primary" ng-click="editGeneralConfig()" ng-disabled="!generalForm.$valid">
+      <button type="submit" class="btn btn-primary" ng-click="editInboxConfig()" ng-disabled="!inboxForm.$valid">
         <span class="glyphicon glyphicon-pencil"></span> {{ 'save' | translate }}
       </button>
-    </div>
-  </div>
-</form>
-
-<h2 translate="settings.config.title_theme"></h2>
-<form class="form-horizontal" name="editColorForm" novalidate>
-  <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputName">{{ 'settings.config.application_name' | translate }}</label>
-    <div class="col-sm-8">
-      <input type="text" class="form-control"
-        id="inputName" ng-model="theme.name" ng-blur="update()" />
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputColor">{{ 'settings.config.main_color' | translate }}</label>
-    <div class="col-sm-1">
-      <span colorpicker class="btn btn-default" id="inputColor" on-hide="update()"
-        data-color="" ng-model="theme.color" ng-style="{ 'background': theme.color }">&nbsp;&nbsp;&nbsp;</span>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputCss">{{ 'settings.config.custom_css' | translate }}</label>
-    <div class="col-sm-8">
-      <textarea class="form-control" rows="6" ng-attr-placeholder="{{ 'settings.config.custom_css_placeholder' | translate }}"
-        id="inputCss" ng-model="theme.css" ng-blur="update()"></textarea>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputLogo">{{ 'settings.config.logo' | translate }}</label>
-    <div class="col-sm-2">
-      <input type="file" ngf-select ngf-accept="'image/gif,image/png,image/jpg,image/jpeg'"
-        class="form-control" id="inputLogo" ng-model="logo" ng-disabled="sendingImage" />
-    </div>
-    <div class="col-sm-2">
-      <button class="btn btn-default" ng-click="sendImage('logo', logo)" ng-disabled="sendingImage || !logo">
-        <span class="glyphicon glyphicon-save"></span>
-        {{ 'send' | translate }}
-      </button>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputBackground">{{ 'settings.config.background_image' | translate }}</label>
-    <div class="col-sm-2">
-      <input type="file" ngf-select ngf-accept="'image/gif,image/png,image/jpg,image/jpeg'"
-            class="form-control" id="inputBackground" ng-model="background" ng-disabled="sendingImage" />
-    </div>
-    <div class="col-sm-2">
-      <button class="btn btn-default" ng-click="sendImage('background', background)" ng-disabled="sendingImage || !background">
-        <span class="glyphicon glyphicon-save"></span>
-        {{ 'send' | translate }}
-      </button>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label class="col-sm-2 control-label"></label>
-    <div class="col-sm-10">
-      <p class="form-control-static text-info" ng-if="sendingImage">
-        {{ 'settings.config.uploading_image' | translate }}
-      </p>
-    </div>
-  </div>
-</form>
-
-<h2 translate="settings.config.title_smtp"></h2>
-<form class="form-horizontal" name="smtpForm" novalidate>
-  <div class="form-group" ng-show="smtp.hasOwnProperty('hostname')" ng-class="{ 'has-error': !smtpForm.hostname.$valid && smtpForm.$dirty }">
-    <label class="col-sm-2 control-label" for="smtpHostname">{{ 'settings.config.smtp_hostname' | translate }}</label>
-    <div class="col-sm-7">
-      <input name="hostname" type="text" ng-disabled="!smtp.hasOwnProperty('hostname')" class="form-control" id="smtpHostname" ng-model="smtp.hostname" />
-    </div>
-  </div>
-
-  <div class="form-group" ng-show="smtp.hasOwnProperty('port')" ng-class="{ 'has-error': !smtpForm.port.$valid && smtpForm.$dirty }">
-    <label class="col-sm-2 control-label" for="smtpPort">{{ 'settings.config.smtp_port' | translate }}</label>
-    <div class="col-sm-7">
-      <input name="port" type="number" ng-disabled="!smtp.hasOwnProperty('port')" class="form-control" id="smtpPort" ng-model="smtp.port" />
-    </div>
-  </div>
-
-  <div class="form-group" ng-show="smtp.hasOwnProperty('username')">
-    <label class="col-sm-2 control-label" for="smtpUsername">{{ 'settings.config.smtp_username' | translate }}</label>
-    <div class="col-sm-7">
-      <input name="username" type="text" ng-disabled="!smtp.hasOwnProperty('username')" class="form-control" id="smtpUsername" ng-model="smtp.username" />
-    </div>
-  </div>
-
-  <div class="form-group" ng-show="smtp.hasOwnProperty('password')">
-    <label class="col-sm-2 control-label" for="smtpPassword">{{ 'settings.config.smtp_password' | translate }}</label>
-    <div class="col-sm-7">
-      <input name="password" type="password" ng-disabled="!smtp.hasOwnProperty('password')" class="form-control" id="smtpPassword" ng-model="smtp.password" />
-    </div>
-  </div>
-
-  <div class="form-group" ng-class="{ 'has-error': !smtpForm.from.$valid && smtpForm.$dirty }">
-    <label class="col-sm-2 control-label" for="smtpFrom">{{ 'settings.config.smtp_from' | translate }}</label>
-    <div class="col-sm-7">
-      <input name="from" type="email" class="form-control" id="smtpFrom" ng-model="smtp.from" />
-    </div>
-    <div class="col-sm-3">
-      <span class="help-block" ng-show="smtpForm.from.$error.email && smtpForm.$dirty">{{ 'validation.email' | translate }}</span>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-primary" ng-click="editSmtpConfig()" ng-disabled="!smtpForm.$valid">
-        <span class="glyphicon glyphicon-pencil"></span> {{ 'save' | translate }}
+      <button type="submit" class="btn btn-warning" ng-click="testInboxConfig()">
+        <span class="glyphicon glyphicon-pencil"></span> {{ 'settings.inbox.test' | translate }}
+        <img ng-if="testLoading" src="img/loader.gif" />
       </button>
     </div>
   </div>
 </form>
+
+<div class="alert"
+     ng-class="{ 'alert-success': testResult.count >= 0, 'alert-danger': testResult.count == -1 }"
+     ng-show="testResult">{{ testResult.count >= 0 ? 'settings.inbox.test_success' : 'settings.inbox.test_fail' | translate: { count: testResult.count } }}</div>

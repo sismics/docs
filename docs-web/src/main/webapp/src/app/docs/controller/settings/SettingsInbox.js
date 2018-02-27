@@ -4,82 +4,29 @@
  * Settings inbox page controller.
  */
 angular.module('docs').controller('SettingsInbox', function($scope, $rootScope, Restangular) {
-  // Get the app configuration
-  Restangular.one('app').get().then(function (data) {
-    $rootScope.app = data;
-    $scope.general = {
-      default_language: data.default_language
-    }
+  // Get the inbox configuration
+  Restangular.one('app/config_inbox').get().then(function (data) {
+    $scope.inbox = data;
   });
 
-  // Enable/disable guest login
-  $scope.changeGuestLogin = function (enabled) {
-    Restangular.one('app').post('guest_login', {
-      enabled: enabled
-    }).then(function () {
-      $scope.app.guest_login = enabled;
-    });
-  };
-
-  // Fetch the current theme configuration
-  Restangular.one('theme').get().then(function (data) {
-    $scope.theme = data;
-    $rootScope.appName = $scope.theme.name;
+  // Get the tags
+  Restangular.one('tag/list').get().then(function(data) {
+    $scope.tags = data.tags;
   });
 
-  // Update the theme
-  $scope.update = function () {
-    $scope.theme.name = $scope.theme.name.length === 0 ? 'Sismics Docs' : $scope.theme.name;
-    Restangular.one('theme').post('', $scope.theme).then(function () {
-      var stylesheet = $('#theme-stylesheet')[0];
-      stylesheet.href = stylesheet.href.replace(/\?.*|$/, '?' + new Date().getTime());
-      $rootScope.appName = $scope.theme.name;
-    });
+  // Save the inbox configuration
+  $scope.editInboxConfig = function () {
+    return Restangular.one('app').post('config_inbox', $scope.inbox);
   };
-  
-  // Send an image
-  $scope.sendingImage = false;
-  $scope.sendImage = function (type, image) {
-    // Build the payload
-    var formData = new FormData();
-    formData.append('image', image);
 
-    // Send the file
-    var done = function() {
-      $scope.$apply(function() {
-        $scope.sendingImage = false;
-        $scope[type] = null;
+  $scope.testInboxConfig = function () {
+    $scope.testLoading = true;
+    $scope.testResult = undefined;
+    $scope.editInboxConfig().then(function () {
+      Restangular.one('app').post('test_inbox').then(function (data) {
+        $scope.testResult = data;
+        $scope.testLoading = false;
       });
-    };
-    $scope.sendingImage = true;
-    $.ajax({
-      type: 'PUT',
-      url: '../api/theme/image/' + type,
-      data: formData,
-      cache: false,
-      contentType: false,
-      processData: false,
-      success: function() {
-        done();
-      },
-      error: function() {
-        done();
-      }
     });
-  };
-
-  // Load SMTP config
-  Restangular.one('app/config_smtp').get().then(function (data) {
-    $scope.smtp = data;
-  });
-
-  // Edit SMTP config
-  $scope.editSmtpConfig = function () {
-    Restangular.one('app').post('config_smtp', $scope.smtp);
-  };
-
-  // Edit general config
-  $scope.editGeneralConfig = function () {
-    Restangular.one('app').post('config', $scope.general);
   };
 });

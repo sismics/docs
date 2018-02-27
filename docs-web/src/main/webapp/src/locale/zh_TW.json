@@ -245,6 +245,7 @@
     "menu_groups": "群組",
     "menu_vocabularies": "詞條",
     "menu_configuration": "配置",
+    "menu_inbox": "收件箱掃描",
     "menu_server_logs": "服務器日誌",
     "user": {
       "title": "用戶 <small>管理</small>",
@@ -343,6 +344,8 @@
       "enable_guest_access": "激活遊客權限",
       "disable_guest_access": "不激活遊客權限",
       "title_theme": "主題 <small>定制</small>",
+      "title_general": "一般配置",
+      "default_language": "新文檔的默認語言",
       "application_name": "申請名",
       "main_color": "主顏色",
       "custom_css": "用戶樣式表",
@@ -357,6 +360,20 @@
       "smtp_username": "SMTP用戶名",
       "smtp_password": "SMTP密碼",
       "smtp_updated": "SMTP配置已成功更新"
+    },
+    "inbox": {
+      "title": "收件箱掃描",
+      "message": "通過啟用此功能，系統會定期掃描指定收件箱中的新電子郵件並自動導入它們。",
+      "enabled": "啟用收件箱掃描",
+      "hostname": "IMAP主機名",
+      "port": "IMAP端口（143或993）",
+      "username": "IMAP用戶名",
+      "password": "IMAP密碼",
+      "tag": "標籤添加到導入的文檔",
+      "test": "測試參數",
+      "last_sync": "上次同步：{{ data.date | date }}，{{data.count}}消息導入",
+      "test_success": "與收件箱的連接成功（{{ count }} 消息）",
+      "test_fail": "連接到收件箱時發生錯誤，請檢查參數"
     },
     "log": {
       "title": "服務器 <small>日誌</small>",

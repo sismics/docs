@@ -245,9 +245,10 @@
     "menu_groups": "Groupes",
     "menu_vocabularies": "Vocabulaires",
     "menu_configuration": "Configuration",
+    "menu_inbox": "Scanning de boîte de réception",
     "menu_server_logs": "Logs serveur",
     "user": {
-      "title": "<small>Gestion des</small> utilisateurs",
+      "title": "Gestion des utilisateurs",
       "add_user": "Ajouter un utilisateur",
       "username": "Nom d'utilisateur",
       "create_date": "Date de création",
@@ -257,8 +258,8 @@
         "delete_user_message": "Etes-vous sûr de vouloir supprimer cet utilisateur ? Tous les documents, fichiers et tags associés seront supprimés",
         "edit_user_failed_title": "Cet utilisateur existe déjà",
         "edit_user_failed_message": "Ce nom d'utilisateur est déjà pris par un autre utilisateur",
-        "edit_user_title": "<small>Modifier</small> \"{{ username }}\"",
-        "add_user_title": "<small>Ajouter un</small> utilisateur",
+        "edit_user_title": "Modifier \"{{ username }}\"",
+        "add_user_title": "Ajouter un utilisateur",
         "username": "Nom d'utilisateur",
         "email": "E-mail",
         "groups": "Groupes",
@@ -273,15 +274,15 @@
       }
     },
     "workflow": {
-      "title": "<small>Configuration des</small> workflows",
+      "title": "Configuration des workflows",
       "add_workflow": "Ajouter un workflow",
       "name": "Nom",
       "create_date": "Date de création",
       "edit": {
         "delete_workflow_title": "Supprimer le workflow",
         "delete_workflow_message": "Voulez-vous vraiment supprimer ce workflow ? Les workflows en cours d'exécution ne seront pas supprimés",
-        "edit_workflow_title": "<small>Modifier</small> \"{{ name }}\"",
-        "add_workflow_title": "<small>Ajouter un</small> workflow",
+        "edit_workflow_title": "Modifier \"{{ name }}\"",
+        "add_workflow_title": "Ajouter un workflow",
         "name": "Nom",
         "name_placeholder": "Nom de l'étape ou description",
         "drag_help": "Glisser et déplacer pour réordonner les étapes",
@@ -296,7 +297,7 @@
     "security": {
       "enable_totp": "Activer l'authentification en deux étapes",
       "enable_totp_message": "Assurez-vous d'avoir une application compatible TOTP sur votre téléphone prête à être configurée",
-      "title": "<small>Authentification</small> en deux étapes",
+      "title": "Authentification en deux étapes",
       "message_1": "L'authentification en deux étapes vous permet d'ajouter une couche de sécurité supplémentaire sur votre compte <strong>{{ appName }}</strong>.<br/>Avant d'activer cette fonctionnalité, assurez-vous d'avoir une application compatible TOTP sur votre téléphone :",
       "message_google_authenticator": "Pour Android, iOS, et Blackberry: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>",
       "message_duo_mobile": "Pour Android et iOS: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
@@ -313,7 +314,7 @@
       }
     },
     "group": {
-      "title": "<small>Gestion des</small> groupes",
+      "title": "Gestion des groupes",
       "add_group": "Ajouter un groupe",
       "name": "Nom",
       "edit": {
@@ -321,8 +322,8 @@
         "delete_group_message": "Etes-vous sûr de vouloir supprimer ce groupe ?",
         "edit_group_failed_title": "Ce groupe existe déjà",
         "edit_group_failed_message": "Ce nom de groupe est déjà pris par un autre groupe",
-        "edit_group_title": "<small>Modifier</small> \"{{ name }}\"",
-        "add_group_title": "<small>Ajouter un</small> groupe",
+        "edit_group_title": "Modifier \"{{ name }}\"",
+        "add_group_title": "Ajouter un groupe",
         "name": "Nom",
         "parent_group": "Groupe parent",
         "search_group": "Rechercher un groupe",
@@ -332,17 +333,19 @@
       }
     },
     "account": {
-      "title": "<small>Compte</small> utilisateur",
+      "title": "Compte utilisateur",
       "password": "Mot de passe",
       "password_confirm": "Mot de passe (confirmation)",
       "updated": "Compte mis à jour avec succès"
     },
     "config": {
-      "title_guest_access": "<small>Accès</small> invité",
+      "title_guest_access": "Accès invité",
       "message_guest_access": "L'accès invité est un mode dans lequel quiconque peut accéder à {{ appName }} sans mot de passe.<br/>Comme un utilisateur normal, l'invité ne pourra accéder qu'aux documents auquel il a accès via les permissions.<br/>",
       "enable_guest_access": "Activer l'accès invité",
       "disable_guest_access": "Désactiver l'accès invité",
-      "title_theme": "<small>Personnalisation</small> de l'interface",
+      "title_theme": "Personnalisation de l'interface",
+      "title_general": "Configuration générale",
+      "default_language": "Langage par défaut pour les nouveaux documents",
       "application_name": "Nom de l'application",
       "main_color": "Couleur principale",
       "custom_css": "CSS personnalisée",
@@ -350,7 +353,7 @@
       "logo": "Logo (Taille carrée)",
       "background_image": "Image de fond",
       "uploading_image": "Envoi de l'image...",
-      "title_smtp": "<small>Configuration</small> email",
+      "title_smtp": "Configuration email",
       "smtp_hostname": "Hôte SMTP",
       "smtp_port": "Port SMTP",
       "smtp_from": "Email d'envoi",
@@ -358,14 +361,28 @@
       "smtp_password": "Mot de passe SMTP",
       "smtp_updated": "Configuration SMTP mise à jour avec succès"
     },
+    "inbox": {
+      "title": "Scanning de boîte de réception",
+      "message": "En activant cette fonctionnalité, le système scanne périodiquement la boîte de réception spécifiée pour rechercher de nouveaux messages et les importer automatiquement.",
+      "enabled": "Activer le scan de boîte de réception",
+      "hostname": "Nom d'hôte IMAP",
+      "port": "Port IMAP (143 ou 993)",
+      "username": "Nom d'utilisateur IMAP",
+      "password": "Mot de passe IMAP",
+      "tag": "Tag ajouté aux documents importés",
+      "test": "Tester les paramètres",
+      "last_sync": "Dernière synchronisation : {{ data.date | date }}, {{ data.count }} message{{ data.count> 1 ? 's' : '' }} importé{{ data.count> 1 ? 's' : '' }}",
+      "test_success": "La connexion à la boîte de réception est réussie ({{ count }} message{{ count> 1 ? 's' : '' }})",
+      "test_fail": "Une erreur est survenue lors de la connexion à la boîte de réception, veuillez vérifier les paramètres"
+    },
     "log": {
-      "title": "<small>Logs</small> serveur",
+      "title": "Logs serveur",
       "date": "Date",
       "tag": "Tag",
       "message": "Message"
     },
     "session": {
-      "title": "Sessions <small>ouvertes</small>",
+      "title": "Sessions ouvertes",
       "created_date": "Date de création",
       "last_connection_date": "Date de dernière connexion",
       "user_agent": "Depuis",
@@ -375,7 +392,7 @@
       "clear": "Fermeture des autres sessions"
     },
     "vocabulary": {
-      "title": "<small>Entrées</small> de vocabulaire",
+      "title": "Entrées de vocabulaire",
       "choose_vocabulary": "Choisissez un vocabulaire à modifier",
       "type": "Type",
       "coverage": "Couverture",
