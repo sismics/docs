@@ -363,7 +363,7 @@
     },
     "inbox": {
       "title": "Inbox scanning",
-      "message": "By enabling this feature, the system while periodically scan the specified inbox for new emails and automatically import them.",
+      "message": "By enabling this feature, the system will scan the specified inbox every 15 minutes for <strong>unread</strong> emails and automatically import them.<br/>After importing an email, it will be marked as read.<br/>Configuration settings for <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
       "enabled": "Enable inbox scanning",
       "hostname": "IMAP hostname",
       "port": "IMAP port (143 or 993)",
@@ -371,8 +371,8 @@
       "password": "IMAP password",
       "tag": "Tag added to imported documents",
       "test": "Test the parameters",
-      "last_sync": "Last synchronization: {{ data.date | date }}, {{ data.count }} message{{ data.count > 1 ? 's' : '' }} imported",
-      "test_success": "The connection to the inbox is successful ({{ count }} message{{ count > 1 ? 's' : '' }})",
+      "last_sync": "Last synchronization: {{ data.date | date: 'medium' }}, {{ data.count }} message{{ data.count > 1 ? 's' : '' }} imported",
+      "test_success": "The connection to the inbox is successful ({{ count }} <strong>unread</strong> message{{ count > 1 ? 's' : '' }})",
       "test_fail": "An error occurred while connecting to the inbox, please check the parameters"
     },
     "log": {

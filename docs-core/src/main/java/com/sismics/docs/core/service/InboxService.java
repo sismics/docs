@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.mail.*;
+import javax.mail.search.FlagTerm;
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -114,7 +115,7 @@ public class InboxService extends AbstractScheduledService {
         Folder inbox = null;
         try {
             inbox = openInbox();
-            return inbox.getMessageCount();
+            return inbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false)).length;
         } catch (Exception e) {
             log.error("Error testing inbox", e);
             return -1;
