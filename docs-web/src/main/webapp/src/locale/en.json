@@ -239,6 +239,7 @@
     "menu_user_account": "User account",
     "menu_two_factor_auth": "Two-factor authentication",
     "menu_opened_sessions": "Opened sessions",
+    "menu_file_importer": "Bulk file importer",
     "menu_general_settings": "General settings",
     "menu_workflow": "Workflow",
     "menu_users": "Users",
@@ -400,6 +401,18 @@
       "value": "Value",
       "order": "Order",
       "new_entry": "New entry"
+    },
+    "fileimporter": {
+      "title": "Bulk file importer",
+      "advanced_users": "For advanced users!",
+      "need_intro": "If you need to:",
+      "need_1": "Import a directory of files at once",
+      "need_2": "Scan a directory for new files and import them",
+      "line_1": "Go to <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> and download the file importer tool for your system.",
+      "line_2": "Follow the <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">instructions here</a> to use this tool.",
+      "line_3": "Your files will be imported in <a href=\"#/document\">Quick upload</a>, then you can group them into documents.",
+      "download": "Download",
+      "instructions": "Instructions"
     }
   },
   "feedback": {

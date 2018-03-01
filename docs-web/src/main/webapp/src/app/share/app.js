@@ -66,7 +66,8 @@ angular.module('share',
         'en_*': 'en',
         'fr_*': 'fr',
         '*': 'en'
-      });
+      })
+      .fallbackLanguage('en');
 
   if (!_.isUndefined(localStorage.overrideLang)) {
     // Set the current language if an override is saved in local storage

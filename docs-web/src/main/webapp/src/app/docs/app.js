@@ -110,6 +110,14 @@ angular.module('docs',
         }
       }
     })
+    .state('settings.fileimporter', {
+      url: '/fileimporter',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.fileimporter.html'
+        }
+      }
+    })
     .state('settings.log', {
       url: '/log',
       views: {
@@ -408,7 +416,8 @@ angular.module('docs',
       'en_*': 'en',
       'fr_*': 'fr',
       '*': 'en'
-    });
+    })
+    .fallbackLanguage('en');
 
   if (!_.isUndefined(localStorage.overrideLang)) {
     // Set the current language if an override is saved in local storage
