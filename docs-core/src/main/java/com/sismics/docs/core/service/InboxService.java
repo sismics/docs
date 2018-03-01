@@ -69,20 +69,18 @@ public class InboxService extends AbstractScheduledService {
                     return;
                 }
 
+                log.info("Synchronizing IMAP inbox...");
                 Folder inbox = null;
                 lastSyncError = null;
                 lastSyncDate = new Date();
                 lastSyncMessageCount = 0;
                 try {
                     inbox = openInbox();
-                    int count = inbox.getMessageCount();
-                    Message[] messages = inbox.getMessages(1, count);
-
+                    Message[] messages = inbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
+                    log.info(messages.length + " messages found, importing...");
                     for (Message message : messages) {
-                        if (!message.getFlags().contains(Flags.Flag.SEEN)) {
-                            importMessage(message);
-                            lastSyncMessageCount++;
-                        }
+                        importMessage(message);
+                        lastSyncMessageCount++;
                     }
                 } catch (Exception e) {
                     log.error("Error synching the inbox", e);
@@ -172,6 +170,8 @@ public class InboxService extends AbstractScheduledService {
      * @throws Exception e
      */
     private void importMessage(Message message) throws Exception {
+        log.info("Importing message: " + message.getSubject());
+
         // Parse the mail
         EmailUtil.MailContent mailContent = new EmailUtil.MailContent();
         mailContent.setSubject(message.getSubject());
