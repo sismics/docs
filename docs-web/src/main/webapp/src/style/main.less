@@ -413,21 +413,29 @@ input[readonly].share-link {
 }
 
 // Login
-.login-box-container {
+.login-img-container {
   background: url('../../api/theme/image/background') no-repeat center;
   background-size: cover;
+  height: 100%;
+  box-shadow: 0 0 0 1px rgba(136,152,170,.1), 0 15px 35px 0 rgba(49,49,93,.1), 0 5px 15px 0 rgba(0,0,0,.13);
 }
 
 .login-box {
-  background: rgba(255, 255, 255, 0.5);
-  padding: 20px;
-
-  .help-block, .checkbox {
-    color: white;
-  }
-
   .btn-password-lost {
     padding-bottom: 0;
+  }
+
+  form .row .col-md-6 {
+    padding: 0;
+  }
+
+  .btn-primary {
+    background-color: #2aabd2;
+    border-color: transparent;
+  }
+
+  .img-responsive {
+    margin-bottom: 30px;
   }
 }
 
