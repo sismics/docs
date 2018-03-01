@@ -8,11 +8,12 @@ const fs = require('fs');
 const request = require('request').defaults({
   jar: true
 });
-// request.debug = true;
 
 // Load preferences
 const prefs = new preferences('com.sismics.docs.importer',{
-  importer: {}
+  importer: {
+    daemon: false
+  }
 }, {
   encrypt: false,
   format: 'yaml'
@@ -91,7 +92,7 @@ const askCredentials = () => {
         remember: true
       }
     }, function (error, response) {
-      if (!response || response.statusCode !== 200) {
+      if (error || !response || response.statusCode !== 200) {
         spinner.fail('Username or password incorrect');
         askCredentials();
         return;
@@ -123,16 +124,107 @@ const askPath = () => {
       text: 'Checking import path',
       spinner: 'flips'
     }).start();
-    fs.lstat(answers.path, (err, stats) => {
-      if (err || !stats.isDirectory()) {
+    fs.lstat(answers.path, (error, stats) => {
+      if (error || !stats.isDirectory()) {
         spinner.fail('Please enter a valid directory path');
+        askPath();
         return;
       }
 
-      recursive(answers.path, function (err, files) {
-        spinner.succeed(files.length + ' files in this directory');
-        // TODO Then?
+      fs.access(answers.path, fs.W_OK | fs.R_OK, (error) => {
+        if (error) {
+          spinner.fail('This directory is not writable');
+          askPath();
+          return;
+        }
+
+        recursive(answers.path, function (error, files) {
+          spinner.succeed(files.length + ' files in this directory');
+          askDaemon();
+        });
       });
     });
+  });
+};
+
+// Ask for daemon mode
+const askDaemon = () => {
+  console.log('');
+
+  inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'daemon',
+      message: 'Do you want to run the importer in daemon mode (it will poll the input directory for new files, import and delete them)?',
+      default: prefs.importer.daemon === true
+    }
+  ]).then(answers => {
+    // Save daemon
+    prefs.importer.daemon = answers.daemon;
+
+    start();
+  });
+};
+
+// Start the import
+const start = () => {
+  if (prefs.importer.daemon) {
+    console.log('\nPolling the input folder for new files...');
+
+    let resolve = () => {
+      importFiles(true, () => {
+        setTimeout(resolve, 30000);
+      });
+    };
+    resolve();
+  } else {
+    importFiles(false, () => {});
+  }
+};
+
+// Import the files
+const importFiles = (remove, filesImported) => {
+  recursive(prefs.importer.path, function (error, files) {
+    if (files.length === 0) {
+      filesImported();
+      return;
+    }
+
+    let index = 0;
+    let resolve = () => {
+      const file = files[index++];
+      if (file) {
+        importFile(file, remove, resolve);
+      } else {
+        filesImported();
+      }
+    };
+    resolve();
+  });
+};
+
+// Import a file
+const importFile = (file, remove, resolve) => {
+  const spinner = ora({
+    text: 'Importing: ' + file,
+    spinner: 'flips'
+  }).start();
+
+  request.put({
+    url: prefs.importer.baseUrl + '/api/file',
+    formData: {
+      file: fs.createReadStream(file)
+    }
+  }, function (error, response) {
+    if (error || !response || response.statusCode !== 200) {
+      spinner.fail('Upload failed for ' + file + ': ' + error);
+      resolve();
+      return;
+    }
+    spinner.succeed('Upload successful for ' + file);
+    if (remove) {
+      fs.unlinkSync(file);
+    }
+    resolve();
   });
 };
