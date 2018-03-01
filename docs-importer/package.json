@@ -2,7 +2,7 @@
   "name": "docs-importer",
   "version": "1.0.0",
   "description": "Import files to Sismics Docs",
-  "main": "main.js",
+  "bin": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
