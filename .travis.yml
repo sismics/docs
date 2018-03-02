@@ -2,7 +2,7 @@ sudo: required
 dist: trusty
 language: java
 before_install:
-  - sudo add-apt-repository ppa:mc3man/trusty-media
+  - sudo add-apt-repository -y ppa:mc3man/trusty-media
   - sudo apt-get -qq update
   - sudo apt-get -y -q install ffmpeg mediainfo tesseract-ocr tesseract-ocr-fra tesseract-ocr-ita tesseract-ocr-kor tesseract-ocr-rus tesseract-ocr-ukr tesseract-ocr-spa tesseract-ocr-ara tesseract-ocr-hin tesseract-ocr-deu tesseract-ocr-pol tesseract-ocr-jpn tesseract-ocr-por tesseract-ocr-tha tesseract-ocr-jpn tesseract-ocr-chi-sim tesseract-ocr-chi-tra
   - sudo apt-get -y -q install haveged && sudo service haveged start
