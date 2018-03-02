@@ -24,5 +24,9 @@ public class MimeType {
 
     public static final String TEXT_CSV = "text/csv";
 
+    public static final String VIDEO_WEBM = "video/webm";
+
+    public static final String VIDEO_MP4 = "video/mp4";
+
     public static final String DEFAULT = "application/octet-stream";
 }

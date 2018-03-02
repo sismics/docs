@@ -392,6 +392,33 @@ input[readonly].share-link {
   }
 }
 
+// Video player
+.video-overlay {
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  font-size: 500%;
+  color: #242424;
+
+  .glyphicon {
+    text-shadow: 0 0 20px #fff;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &:hover {
+    color: #444;
+  }
+
+  video {
+    cursor: default;
+    width: 100%;
+  }
+}
+
 // Vertical alignment
 .vertical-center {
   min-height: 100vh;

@@ -1,5 +1,9 @@
 package com.sismics.util.mime;
 
+import com.google.common.base.Charsets;
+import com.sismics.docs.core.model.jpa.File;
+import org.apache.commons.compress.utils.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -7,13 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
-import org.apache.commons.compress.utils.IOUtils;
-
-import com.google.common.base.Charsets;
-import com.sismics.docs.core.model.jpa.File;
 
 /**
  * Utility to check MIME types.
@@ -60,6 +57,11 @@ public class MimeTypeUtil {
             return MimeType.IMAGE_PNG;
         } else if (headerBytes[0] == ((byte) 0x25) && headerBytes[1] == ((byte) 0x50) && headerBytes[2] == ((byte) 0x44) && headerBytes[3] == ((byte) 0x46)) {
             return MimeType.APPLICATION_PDF;
+        } else if (headerBytes[0] == ((byte) 0x00) && headerBytes[1] == ((byte) 0x00) && headerBytes[2] == ((byte) 0x00) && (headerBytes[3] == ((byte) 0x14) || headerBytes[3] == ((byte) 0x18))
+                && headerBytes[4] == ((byte) 0x66) && headerBytes[5] == ((byte) 0x74) && headerBytes[6] == ((byte) 0x79) && headerBytes[7] == ((byte) 0x70)) {
+            return MimeType.VIDEO_MP4;
+        } else if (headerBytes[0] == ((byte) 0x1a) && headerBytes[1] == ((byte) 0x45) && headerBytes[2] == ((byte) 0xdf) && headerBytes[3] == ((byte) 0xa3)) {
+            return MimeType.VIDEO_WEBM;
         }
 
         // Detect by file extension
@@ -100,6 +102,10 @@ public class MimeTypeUtil {
                 return "txt";
             case MimeType.TEXT_CSV:
                 return "csv";
+            case MimeType.VIDEO_MP4:
+                return "mp4";
+            case MimeType.VIDEO_WEBM:
+                return "webm";
             default:
                 return "bin";
         }

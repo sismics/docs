@@ -12,6 +12,7 @@ import com.sismics.tess4j.Tesseract;
 import com.sismics.util.ImageDeskew;
 import com.sismics.util.ImageUtil;
 import com.sismics.util.Scalr;
+import com.sismics.util.VideoUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeTypeUtil;
 import org.apache.commons.lang.StringUtils;
@@ -54,6 +55,8 @@ public class FileUtil {
         
         if (ImageUtil.isImage(file.getMimeType())) {
             content = ocrFile(unencryptedFile, language);
+        } else if (VideoUtil.isVideo(file.getMimeType())) {
+            content = VideoUtil.getMetadata(unencryptedFile);
         } else if (unencryptedPdfFile != null) {
             content = PdfUtil.extractPdf(unencryptedPdfFile);
         }
@@ -114,8 +117,12 @@ public class FileUtil {
             Files.copy(new CipherInputStream(inputStream, cipher), path);
         }
 
-        // Generate file variations
-        saveVariations(file, unencryptedFile, unencryptedPdfFile, cipher);
+        // Generate file variations (errors non-blocking)
+        try {
+            saveVariations(file, unencryptedFile, unencryptedPdfFile, cipher);
+        } catch (Exception e) {
+            log.error("Unable to generate thumbnails", e);
+        }
     }
 
     /**
@@ -132,6 +139,8 @@ public class FileUtil {
             try (InputStream inputStream = Files.newInputStream(unencryptedFile)) {
                 image = ImageIO.read(inputStream);
             }
+        } else if (VideoUtil.isVideo(file.getMimeType())) {
+            image = VideoUtil.getThumbnail(unencryptedFile);
         } else if (unencryptedPdfFile != null) {
             // Generate preview from the first page of the PDF
             image = PdfUtil.renderFirstPage(unencryptedPdfFile);

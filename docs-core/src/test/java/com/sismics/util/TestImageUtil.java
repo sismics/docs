@@ -11,7 +11,7 @@ import org.junit.Test;
 public class TestImageUtil {
 
     @Test
-    public void computeGravatarTest() throws Exception {
+    public void computeGravatarTest() {
         Assert.assertEquals("0bc83cb571cd1c50ba6f3e8a78ef1346", ImageUtil.computeGravatar("MyEmailAddress@example.com "));
     }
 }

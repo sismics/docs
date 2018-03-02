@@ -20,12 +20,17 @@
   </div>
 </div>
 
-
-<div class="text-center" ng-if="$stateParams.fileId">
+<div class="text-center" style="position: relative;" ng-if="$stateParams.fileId">
   <img ng-src="../api/file/{{ $stateParams.fileId }}/data?size=web"
        ng-init="error = false"
        img-error="error = true"
        ng-show="!error" />
+  <a href class="video-overlay" ng-if="file.mimetype.substring(0, 6) == 'video/'"
+     ng-init="videoPlayer = false" ng-click="videoPlayer = true">
+    <span class="glyphicon glyphicon-play-circle" ng-if="!videoPlayer"></span>
+    <video ng-if="videoPlayer" autoplay="autoplay" loop="loop"
+           controls="controls" ng-src="../api/file/{{ $stateParams.fileId }}/data"></video>
+  </a>
   <p class="well-lg" ng-show="error">
     <span class="glyphicon glyphicon-warning-sign"></span>
     {{ 'file.view.not_found' | translate }}

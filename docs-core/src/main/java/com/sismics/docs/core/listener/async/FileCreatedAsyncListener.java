@@ -30,15 +30,13 @@ public class FileCreatedAsyncListener {
      * @throws Exception e
      */
     @Subscribe
-    public void on(final FileCreatedAsyncEvent fileCreatedAsyncEvent) throws Exception {
+    public void on(final FileCreatedAsyncEvent fileCreatedAsyncEvent) {
         if (log.isInfoEnabled()) {
             log.info("File created event: " + fileCreatedAsyncEvent.toString());
         }
 
-        // Guess the mime type a second time, for open document format (first detected as simple ZIP file)
-        final File file = fileCreatedAsyncEvent.getFile();
-        
         // Extract text content from the file
+        final File file = fileCreatedAsyncEvent.getFile();
         long startTime = System.currentTimeMillis();
         final String content = FileUtil.extractContent(fileCreatedAsyncEvent.getLanguage(), file,
                 fileCreatedAsyncEvent.getUnencryptedFile(), fileCreatedAsyncEvent.getUnencryptedPdfFile());

@@ -30,6 +30,7 @@ Features
 - Responsive user interface
 - Optical character recognition
 - Support image, PDF, ODT and DOCX files
+- Video file support ![New!](https://www.sismics.com/public/img/new.png)
 - Flexible search engine
 - Full text search in all supported files
 - All [Dublin Core](http://dublincore.org/) metadata
@@ -47,7 +48,7 @@ Features
 - Document sharing by URL
 - RESTful Web API
 - Fully featured Android client
-- [Mass files importer](https://github.com/sismics/docs/tree/master/docs-importer) (single or scan mode) ![New!](https://www.sismics.com/public/img/new.png)
+- [Bulk files importer](https://github.com/sismics/docs/tree/master/docs-importer) (single or scan mode) ![New!](https://www.sismics.com/public/img/new.png)
 - Tested to 100k documents
 
 Download

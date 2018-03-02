@@ -22,13 +22,12 @@ import java.util.Iterator;
  * @author jtremeaux
  */
 public class ImageUtil {
-    
     /**
      * Write a high quality JPEG.
      * 
-     * @param image
+     * @param image Image
      * @param outputStream Output stream
-     * @throws IOException
+     * @throws IOException e
      */
     public static void writeJpeg(BufferedImage image, OutputStream outputStream) throws IOException {
         Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName("jpeg");
@@ -94,6 +93,14 @@ public class ImageUtil {
                 .toString();
     }
 
+    /**
+     * Return true if a pixel is black.
+     *
+     * @param image Image
+     * @param x X
+     * @param y Y
+     * @return True if black
+     */
     public static boolean isBlack(BufferedImage image, int x, int y) {
         if (image.getType() == BufferedImage.TYPE_BYTE_BINARY) {
             WritableRaster raster = image.getRaster();
@@ -105,7 +112,16 @@ public class ImageUtil {
         return isBlack(image, x, y, luminanceValue);
     }
 
-    public static boolean isBlack(BufferedImage image, int x, int y, int luminanceCutOff) {
+    /**
+     * Return true if a pixel is black.
+     *
+     * @param image Image
+     * @param x X
+     * @param y Y
+     * @param luminanceCutOff Luminance cutoff
+     * @return True if black
+     */
+    private static boolean isBlack(BufferedImage image, int x, int y, int luminanceCutOff) {
         int pixelRGBValue;
         int r;
         int g;
@@ -124,7 +140,7 @@ public class ImageUtil {
             b = (pixelRGBValue) & 0xff;
             luminance = (r * 0.299) + (g * 0.587) + (b * 0.114);
         } catch (Exception e) {
-            // ignore.
+            // NOP
         }
 
         return luminance < luminanceCutOff;
