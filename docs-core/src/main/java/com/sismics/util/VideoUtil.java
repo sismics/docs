@@ -38,7 +38,7 @@ public class VideoUtil {
     public static BufferedImage getThumbnail(Path file) throws Exception {
         List<String> result = Lists.newLinkedList(Arrays.asList("ffmpeg", "-i"));
         result.add(file.toAbsolutePath().toString());
-        result.addAll(Arrays.asList("-vf", "\"thumbnail\"", "-frames:v", "1", "-f", "mjpeg", "-"));
+        result.addAll(Arrays.asList("-vf", "thumbnail", "-frames:v", "1", "-f", "mjpeg", "-"));
         ProcessBuilder pb = new ProcessBuilder(result);
         Process process = pb.start();
 
