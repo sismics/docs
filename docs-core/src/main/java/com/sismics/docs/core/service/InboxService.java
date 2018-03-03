@@ -155,6 +155,15 @@ public class InboxService extends AbstractScheduledService {
                 isSsl ? "javax.net.ssl.SSLSocketFactory" : "javax.net.DefaultSocketFactory");
         properties.setProperty("mail.imap.socketFactory.fallback", "true");
         properties.setProperty("mail.imap.socketFactory.port", port);
+        if (isSsl) {
+            properties.put("mail.imaps.connectiontimeout", 30000);
+            properties.put("mail.imaps.timeout", 30000);
+            properties.put("mail.imaps.writetimeout", 30000);
+        } else {
+            properties.put("mail.imap.connectiontimeout", 30000);
+            properties.put("mail.imap.timeout", 30000);
+            properties.put("mail.imap.writetimeout", 30000);
+        }
 
         Session session = Session.getDefaultInstance(properties);
 

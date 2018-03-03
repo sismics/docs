@@ -364,7 +364,7 @@
     },
     "inbox": {
       "title": "Inbox scanning",
-      "message": "By enabling this feature, the system will scan the specified inbox every 15 minutes for <strong>unread</strong> emails and automatically import them.<br/>After importing an email, it will be marked as read.<br/>Configuration settings for <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
+      "message": "By enabling this feature, the system will scan the specified inbox every minute for <strong>unread</strong> emails and automatically import them.<br/>After importing an email, it will be marked as read.<br/>Configuration settings for <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
       "enabled": "Enable inbox scanning",
       "hostname": "IMAP hostname",
       "port": "IMAP port (143 or 993)",
