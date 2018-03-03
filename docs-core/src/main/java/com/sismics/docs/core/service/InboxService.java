@@ -54,7 +54,11 @@ public class InboxService extends AbstractScheduledService {
     
     @Override
     protected void runOneIteration() {
-        syncInbox();
+        try {
+            syncInbox();
+        } catch (Exception e) {
+            log.error("Exception during inbox synching", e);
+        }
     }
 
     /**
@@ -77,7 +81,7 @@ public class InboxService extends AbstractScheduledService {
                 try {
                     inbox = openInbox();
                     Message[] messages = inbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
-                    log.info(messages.length + " messages found, importing...");
+                    log.info(messages.length + " messages found");
                     for (Message message : messages) {
                         importMessage(message);
                         lastSyncMessageCount++;
@@ -131,7 +135,7 @@ public class InboxService extends AbstractScheduledService {
 
     @Override
     protected Scheduler scheduler() {
-        return Scheduler.newFixedDelaySchedule(0, 15, TimeUnit.MINUTES);
+        return Scheduler.newFixedDelaySchedule(0, 1, TimeUnit.MINUTES);
     }
 
     /**

@@ -74,10 +74,12 @@ public class AppContext {
         Config luceneStorageConfig = configDao.getById(ConfigType.LUCENE_DIRECTORY_STORAGE);
         indexingService = new IndexingService(luceneStorageConfig != null ? luceneStorageConfig.getValue() : null);
         indexingService.startAsync();
+        indexingService.awaitRunning();
 
         // Start inbox service
         inboxService = new InboxService();
         inboxService.startAsync();
+        indexingService.awaitRunning();
 
         // Register fonts
         PdfUtil.registerFonts();
