@@ -46,10 +46,12 @@ public class InboxService extends AbstractScheduledService {
 
     @Override
     protected void startUp() {
+        log.info("Inbox service starting up");
     }
 
     @Override
     protected void shutDown() {
+        log.info("Inbox service shutting down");
     }
     
     @Override
