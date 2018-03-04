@@ -38,7 +38,7 @@
 
         <div class="col-xs-10 input-group">
           <input type="search" class="form-control" ng-attr-placeholder="{{ 'document.search' | translate }}" ng-model="search" />
-          <span class="input-group-addon pointer" ng-click="openSearch()">
+          <span class="input-group-addon btn" ng-click="openSearch()">
             <div uib-dropdown
                  auto-close="disabled" is-open="searchOpened" dropdown-append-to="searchDropdownAnchor">
               <span class="btn-open-search">
@@ -187,6 +187,8 @@
           <option value="30">{{ 'document.page_size_30' | translate }}</option>
         </select>
       </div>
+
+      <a class="text-center"><span class="glyphicon glyphicon-plus"></span> Add this search query on the home</a>
 
       <div class="pull-left" title="{{ 'document.upgrade_quota' | translate }}"
            translate="document.quota"

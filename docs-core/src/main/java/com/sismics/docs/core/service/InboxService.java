@@ -56,7 +56,7 @@ public class InboxService extends AbstractScheduledService {
     protected void runOneIteration() {
         try {
             syncInbox();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("Exception during inbox synching", e);
         }
     }
