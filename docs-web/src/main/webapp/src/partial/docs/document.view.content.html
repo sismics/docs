@@ -19,11 +19,10 @@
   <dt>{{ 'document.contributors' | translate }}</dt>
   <dd>
     <span ng-repeat="contributor in document.contributors">
-      <span class="btn btn-link btn-xs">
-        <a href="#/user/{{ contributor.username }}">
-          {{ contributor.username }}
-        </a>
-      </span>
+      <a class="btn btn-xs" href="#/user/{{ contributor.username }}">
+        <span class="glyphicon glyphicon-user"></span>
+        {{ contributor.username }}
+      </a>
     </span>
   </dd>
   <dt ng-if="document.relations.length > 0">{{ 'document.relations' | translate }}</dt>

@@ -1,13 +1,13 @@
 <table class="table">
   <tr ng-repeat="log in logs">
-    <td width="20%">{{ log.create_date | date: $root.dateTimeFormat }}</td>
-    <td width="20%">
-      <a ng-href="#/user/{{ log.username }}">
+    <td width="20%" class="text-muted small va-middle">{{ log.create_date | timeAgo: $root.dateTimeFormat }}</td>
+    <td width="20%" class="va-middle">
+      <a ng-href="#/user/{{ log.username }}" class="btn btn-xs">
         <span class="glyphicon glyphicon-user"></span>
         {{ log.username }}
       </a>
     </td>
-    <td>
+    <td class="va-middle">
       <span ng-class="{ 'text-danger': log.type == 'DELETE', 'text-info': log.type == 'UPDATE', 'text-success': log.type == 'CREATE' }">
         {{ 'directive.auditlog.' + log.class | translate }}
         <span ng-switch="log.type">
@@ -32,7 +32,7 @@
         <span ng-switch-when="Comment">
           <a ng-href="#/document/view/{{ log.message }}">{{ 'see' | translate }}</a>
         </span>
-        <span ng-switch-when="Acl">
+        <span ng-switch-when="Acl" class="label label-default">
           {{ 'acl.' + log.message | translate }}
         </span>
         <span ng-switch-when="Tag">
