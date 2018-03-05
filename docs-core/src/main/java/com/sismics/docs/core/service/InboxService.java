@@ -88,6 +88,8 @@ public class InboxService extends AbstractScheduledService {
                         importMessage(message);
                         lastSyncMessageCount++;
                     }
+                } catch (FolderClosedException e) {
+                    // Ignore this, we will just continue importing on the next cycle
                 } catch (Exception e) {
                     log.error("Error synching the inbox", e);
                     lastSyncError = e.getMessage();
