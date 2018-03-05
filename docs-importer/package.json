@@ -1,6 +1,6 @@
 {
   "name": "docs-importer",
-  "version": "1.0.0",
+  "version": "1.5.1",
   "description": "Import files to Sismics Docs",
   "bin": "main.js",
   "scripts": {
@@ -18,6 +18,7 @@
   "homepage": "https://github.com/sismics/docs#readme",
   "dependencies": {
     "inquirer": "^5.1.0",
+    "minimist": "^1.2.0",
     "ora": "^2.0.0",
     "preferences": "^1.0.2",
     "recursive-readdir": "^2.2.2",

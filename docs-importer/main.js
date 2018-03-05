@@ -5,6 +5,7 @@ const ora = require('ora');
 const inquirer = require('inquirer');
 const preferences = require('preferences');
 const fs = require('fs');
+const argv = require('minimist')(process.argv);
 const request = require('request').defaults({
   jar: true
 });
@@ -55,7 +56,6 @@ const askBaseUrl = () => {
     });
   });
 };
-askBaseUrl();
 
 // Ask for credentials
 const askCredentials = () => {
@@ -162,24 +162,42 @@ const askDaemon = () => {
     // Save daemon
     prefs.importer.daemon = answers.daemon;
 
+    // Save all preferences in case the program is sig-killed
+    prefs.save();
+
     start();
   });
 };
 
-// Start the import
+// Start the importer
 const start = () => {
-  if (prefs.importer.daemon) {
-    console.log('\nPolling the input folder for new files...');
+  request.post({
+    url: prefs.importer.baseUrl + '/api/user/login',
+    form: {
+      username: prefs.importer.username,
+      password: prefs.importer.password,
+      remember: true
+    }
+  }, function (error, response) {
+    if (error || !response || response.statusCode !== 200) {
+      console.error('\nUsername or password incorrect');
+      return;
+    }
 
-    let resolve = () => {
-      importFiles(true, () => {
-        setTimeout(resolve, 30000);
-      });
-    };
-    resolve();
-  } else {
-    importFiles(false, () => {});
-  }
+    // Start the actual import
+    if (prefs.importer.daemon) {
+      console.log('\nPolling the input folder for new files...');
+
+      let resolve = () => {
+        importFiles(true, () => {
+          setTimeout(resolve, 30000);
+        });
+      };
+      resolve();
+    } else {
+      importFiles(false, () => {});
+    }
+  });
 };
 
 // Import the files
@@ -228,3 +246,15 @@ const importFile = (file, remove, resolve) => {
     resolve();
   });
 };
+
+// Entrypoint: daemon mode or wizard
+if (argv.hasOwnProperty('d')) {
+  console.log('Starting in quiet mode with the following configuration:\n' +
+    'Base URL: ' + prefs.importer.baseUrl + '\n' +
+    'Username: '  + prefs.importer.username + '\n' +
+    'Password: ***********\n' +
+    'Daemon mode: ' + prefs.importer.daemon);
+  start();
+} else {
+  askBaseUrl();
+}

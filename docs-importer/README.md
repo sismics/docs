@@ -17,6 +17,11 @@ docs-importer-win.exe (for Windows)
 
 A wizard will ask you for the import configuration and write it in `~/.config/preferences/com.sismics.docs.importer.pref`
 
+For the next start, pass the `-d` argument to skip the wizard:
+```console
+./docs-importer-linux -d
+```
+
 Daemon mode
 -----------
 The daemon mode scan the input directory every 30 seconds for new files. Once a file is found and imported, it is **deleted**.
