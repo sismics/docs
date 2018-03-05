@@ -1,8 +1,6 @@
-<img src="img/loader.gif" ng-show="!logs" />
-
-<div>
-  <h3 class="page-header">
-    <span class="glyphicon glyphicon-cloud-upload"></span> {{ 'document.default.quick_upload' | translate }}
+<div class="well well-3d" style="background-color: #f6f9fc">
+  <h3 class="well-3d-header text-muted">
+    {{ 'document.default.quick_upload' | translate }}
   </h3>
   <div class="row upload-zone"
        ngf-drop="fileDropped($files)"
@@ -36,7 +34,7 @@
       </div>
     </div>
 
-    <p class="text-center well-lg" ng-if="files.length == 0">
+    <p class="text-center well-lg text-muted" ng-if="files.length == 0">
       <span class="glyphicon glyphicon-move"></span>
       {{ 'document.default.drop_zone' | translate }}
     </p>
@@ -50,7 +48,7 @@
     </button>
 
     <button ng-show="checkedFiles().length == 0"
-            class="btn btn-primary"
+            class="btn btn-default"
             ngf-select
             ngf-change="fileDropped($files, $event)"
             input-file-multiple="multiple"
@@ -58,16 +56,33 @@
       {{ 'document.default.add_files' | translate }}
     </button>
   </p>
-
-  <div ui-view="file"></div>
-
-  <div ng-show="logs.length > 0">
-    <h3 class="page-header">
-      <span class="glyphicon glyphicon-tasks"></span> {{ 'document.default.latest_activity' | translate }}
-    </h3>
-    <audit-log logs="logs" />
-  </div>
 </div>
+
+<!--<div class="row widgets">
+  <div class="col-md-6">
+    <div class="well well-3d mr-10">
+      <h3 class="well-3d-header">Widget 1</h3>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="well well-3d ml-10">
+      <h3 class="well-3d-header">Widget 2</h3>
+    </div>
+  </div>
+</div>-->
+
+<div class="mb-19 text-center" ng-show="!logs">
+  <img src="img/loader.gif" />
+</div>
+
+<div class="well well-3d"  ng-show="logs.length > 0">
+  <h3 class="well-3d-header text-muted">
+    {{ 'document.default.latest_activity' | translate }}
+  </h3>
+  <audit-log logs="logs" />
+</div>
+
+<div ui-view="file"></div>
 
 <a href class="feedback" ng-click="openFeedback()">
   {{ 'document.default.feedback' | translate }}
