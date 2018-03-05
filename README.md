@@ -8,6 +8,8 @@
 
 Docs is an open source, lightweight document management system for individuals and businesses.
 
+**Discuss it on [Product Hunt](https://www.producthunt.com/posts/sismics-docs) 🦄**
+
 <hr />
 <h2 align="center">
   ✨ We just launched a Cloud version of Sismics Docs! Head to <a href="https://www.sismicsdocs.com/">sismicsdocs.com</a> for more informations ✨
@@ -51,13 +53,6 @@ Features
 - [Bulk files importer](https://github.com/sismics/docs/tree/master/docs-importer) (single or scan mode) ![New!](https://www.sismics.com/public/img/new.png)
 - Tested to 100k documents
 
-Download
---------
-
-The latest release is downloadable here: <https://github.com/sismics/docs/releases> in WAR format.
-You will need a Java webapp server to run it, like [Jetty](http://eclipse.org/jetty/) or [Tomcat](http://tomcat.apache.org/).
-The default admin password is "admin". Don't forget to change it before going to production.
-
 Install with Docker
 -------------------
 
@@ -65,6 +60,20 @@ From a Docker host, run this command to download and install Sismics Docs. The s
 The default admin password is "admin". Don't forget to change it before going to production.
 
     docker run --rm --name sismics_docs_latest -d -p 8100:8080 -v sismics_docs_latest:/data sismics/docs:latest
+
+Manual installation
+-------------------
+
+#### Requirements
+- Java 7 with the [Java Cryptography Extension](http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html)
+- Tesseract 3.02 for OCR
+- ffmpeg for video thumbnails
+- mediainfo for video metadata extraction
+- A webapp server like [Jetty](http://eclipse.org/jetty/) or [Tomcat](http://tomcat.apache.org/)
+
+#### Download
+The latest release is downloadable here: <https://github.com/sismics/docs/releases> in WAR format. 
+**The default admin password is "admin". Don't forget to change it before going to production.**
 
 How to build Docs from the sources
 ----------------------------------
@@ -99,6 +108,24 @@ From the `docs-web` directory:
     mvn -Pprod -DskipTests clean install
 
 You will get your deployable WAR in the `docs-web/target` directory.
+
+Contributing
+------------
+
+All contributions are more than welcomed. Contributions may close an issue, fix a bug (reported or not reported), improve the existing code, add new feature, and so on.
+
+The `master` branch is the default and base branch for the project. It is used for development and all Pull Requests should go there.
+
+
+Community
+---------
+
+Get updates on Sismics Docs' development and chat with the project maintainers:
+
+- Follow [@sismicsdocs on Twitter](https://twitter.com/sismicsdocs)
+- Read and subscribe to [The Official Sismics Docs Blog](https://blog.sismicsdocs.com/)
+- Check the [Official Website](https://www.sismicsdocs.com)
+- Join us [on Facebook](https://www.facebook.com/sismicsdocs)
 
 License
 -------
