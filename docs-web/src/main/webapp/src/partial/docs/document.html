@@ -188,14 +188,14 @@
         </select>
       </div>
 
-      <a class="text-center"><span class="glyphicon glyphicon-plus"></span> Add this search query on the home</a>
+      <!--<a class="text-center"><span class="glyphicon glyphicon-plus"></span> Add this search query on the home</a>-->
 
-      <div class="pull-left" title="{{ 'document.upgrade_quota' | translate }}"
+      <div class="pull-left small text-muted" title="{{ 'document.upgrade_quota' | translate }}"
            translate="document.quota"
            translate-values="{ current: userInfo.storage_current / 1000000, percent: userInfo.storage_current / userInfo.storage_quota * 100, total: userInfo.storage_quota / 1000000 }">
       </div>
 
-      <div class="text-right" >
+      <div class="text-right small text-muted">
         <span ng-if="totalDocuments" translate="document.count" translate-values="{ count: totalDocuments }"></span>
         <span ng-if="!totalDocuments">&nbsp;</span>
       </div>

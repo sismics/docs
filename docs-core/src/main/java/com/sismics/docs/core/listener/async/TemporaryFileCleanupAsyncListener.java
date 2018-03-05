@@ -23,7 +23,7 @@ public class TemporaryFileCleanupAsyncListener {
 	 * Cleanup temporary files.
 	 *
 	 * @param event Temporary file cleanup event
-	 * @throws Exception
+	 * @throws Exception e
 	 */
 	@Subscribe
 	public void on(final TemporaryFileCleanupAsyncEvent event) throws Exception {

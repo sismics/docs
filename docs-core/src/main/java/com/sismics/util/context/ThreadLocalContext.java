@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -112,14 +113,19 @@ public class ThreadLocalContext {
      * Fire all pending async events.
      */
     public void fireAllAsyncEvents() {
-        for (Object asyncEvent : asyncEventList) {
+        Iterator<Object> iterator = asyncEventList.iterator();
+        while (iterator.hasNext()) {
+            Object asyncEvent = iterator.next();
+            iterator.remove();
             AppContext.getInstance().getAsyncEventBus().post(asyncEvent);
         }
 
         if (!temporaryFileList.isEmpty()) {
             // Some files were created during this request, add a cleanup event to the queue
             // It works because we are using a one thread executor
-            AppContext.getInstance().getAsyncEventBus().post(new TemporaryFileCleanupAsyncEvent(temporaryFileList));
+            AppContext.getInstance().getAsyncEventBus().post(
+                    new TemporaryFileCleanupAsyncEvent(Lists.newArrayList(temporaryFileList)));
+            temporaryFileList.clear();
         }
     }
 }

@@ -297,7 +297,7 @@ public class TestAppResource extends BaseJerseyTest {
 
         // Search for added documents
         json = target().path("/document/list")
-                .queryParam("search", "tag:Inbox")
+                .queryParam("search", "tag:Inbox full:content")
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
@@ -317,7 +317,7 @@ public class TestAppResource extends BaseJerseyTest {
 
         // Search for added documents
         json = target().path("/document/list")
-                .queryParam("search", "tag:Inbox")
+                .queryParam("search", "tag:Inbox full:content")
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
