@@ -200,6 +200,12 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
           return s + 'tag:' + t.name + ' ';
         }, '');
     }
+    if ($scope.advsearch.shared) {
+      search += 'shared:yes ';
+    }
+    if ($scope.advsearch.workflow) {
+      search += 'workflow:me ';
+    }
     $scope.search = search;
     $scope.searchOpened = false;
   };

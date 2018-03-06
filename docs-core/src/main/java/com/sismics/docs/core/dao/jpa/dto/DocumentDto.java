@@ -85,7 +85,12 @@ public class DocumentDto {
      * Document creator.
      */
     private String creator;
-    
+
+    /**
+     * A route is active.
+     */
+    private boolean activeRoute;
+
     public String getId() {
         return id;
     }
@@ -212,5 +217,14 @@ public class DocumentDto {
 
     public void setCreator(String creator) {
         this.creator = creator;
+    }
+
+    public boolean isActiveRoute() {
+        return activeRoute;
+    }
+
+    public DocumentDto setActiveRoute(boolean activeRoute) {
+        this.activeRoute = activeRoute;
+        return this;
     }
 }

@@ -54,6 +54,11 @@ public class DocumentCriteria {
      * Creator ID.
      */
     private String creatorId;
+
+    /**
+     * A route is active.
+     */
+    private Boolean activeRoute;
     
     public List<String> getTargetIdList() {
         return targetIdList;
@@ -125,5 +130,14 @@ public class DocumentCriteria {
 
     public void setCreatorId(String creatorId) {
         this.creatorId = creatorId;
+    }
+
+    public Boolean getActiveRoute() {
+        return activeRoute;
+    }
+
+    public DocumentCriteria setActiveRoute(Boolean activeRoute) {
+        this.activeRoute = activeRoute;
+        return this;
     }
 }

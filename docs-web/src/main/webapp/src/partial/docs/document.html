@@ -118,6 +118,18 @@
                     </div>
                   </div>
 
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" ng-model="advsearch.shared"> {{ 'document.search_shared' | translate }}
+                    </label>
+                  </div>
+
+                  <div class="checkbox">
+                    <label>
+                      <input type="checkbox" ng-model="advsearch.workflow"> {{ 'document.search_workflow' | translate }}
+                    </label>
+                  </div>
+
                   <div class="form-group text-center">
                     <button type="submit" ng-click="startSearch()" class="btn btn-primary">
                       <span class="glyphicon glyphicon-search"></span> {{ 'document.search' | translate }}
@@ -158,6 +170,7 @@
           <td colspan="2">
             {{ document.title }} ({{ document.file_count }})
             <span class="glyphicon glyphicon-share" ng-if="document.shared" uib-tooltip="{{ 'document.shared' | translate }}"></span>
+            <span class="glyphicon glyphicon-random" ng-if="document.active_route" uib-tooltip="{{ 'document.active_route' | translate }}"></span>
             <a href="#/document/view/{{ document.id }}" target="_blank" ng-click="$event.stopPropagation()"><span class="glyphicon glyphicon-link"></span></a>
 
             <div class="pull-right text-muted small">{{ document.create_date | timeAgo: dateFormat }}</div>

@@ -202,9 +202,14 @@ public class DocumentDao {
         
         StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, ");
         sb.append(" (select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null) c5, ");
-        sb.append(" (select count(f.FIL_ID_C) from T_FILE f where f.FIL_DELETEDATE_D is null and f.FIL_IDDOC_C = d.DOC_ID_C) c6 ");
+        sb.append(" (select count(f.FIL_ID_C) from T_FILE f where f.FIL_DELETEDATE_D is null and f.FIL_IDDOC_C = d.DOC_ID_C) c6, ");
+        sb.append(" rs2.RTP_ID_C c7 ");
         sb.append(" from T_DOCUMENT d ");
-        
+        sb.append(" left join (select rs.*, rs3.idDocument\n" +
+                "from T_ROUTE_STEP rs \n" +
+                "join (select r.RTE_IDDOCUMENT_C idDocument, rs.RTP_IDROUTE_C idRoute, min(rs.RTP_ORDER_N) minOrder from T_ROUTE_STEP rs join T_ROUTE r on r.RTE_ID_C = rs.RTP_IDROUTE_C and r.RTE_DELETEDATE_D is null where rs.RTP_DELETEDATE_D is null and rs.RTP_ENDDATE_D is null group by rs.RTP_IDROUTE_C, r.RTE_IDDOCUMENT_C) rs3 on rs.RTP_IDROUTE_C = rs3.idRoute and rs.RTP_ORDER_N = rs3.minOrder \n" +
+                "where rs.RTP_IDTARGET_C in (:targetIdList)) rs2 on rs2.idDocument = d.DOC_ID_C ");
+
         // Add search criterias
         if (criteria.getTargetIdList() != null) {
             // Read permission is enough for searching
@@ -251,7 +256,10 @@ public class DocumentDao {
             criteriaList.add("d.DOC_IDUSER_C = :creatorId");
             parameterMap.put("creatorId", criteria.getCreatorId());
         }
-        
+        if (criteria.getActiveRoute() != null && criteria.getActiveRoute()) {
+            criteriaList.add("rs2.RTP_ID_C is not null");
+        }
+
         criteriaList.add("d.DOC_DELETEDATE_D is null");
         
         if (!criteriaList.isEmpty()) {
@@ -274,7 +282,8 @@ public class DocumentDao {
             documentDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
             documentDto.setLanguage((String) o[i++]);
             documentDto.setShared(((Number) o[i++]).intValue() > 0);
-            documentDto.setFileCount(((Number) o[i]).intValue());
+            documentDto.setFileCount(((Number) o[i++]).intValue());
+            documentDto.setActiveRoute(o[i] != null);
             documentDtoList.add(documentDto);
         }
 

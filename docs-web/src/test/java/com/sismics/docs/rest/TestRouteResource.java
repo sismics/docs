@@ -70,6 +70,28 @@ public class TestRouteResource extends BaseJerseyTest {
         Assert.assertEquals("Check the document's metadata", step.getString("name"));
         Assert.assertTrue(popEmail().contains("workflow step"));
 
+        // List all documents with route1
+        json = target().path("/document/list")
+                .queryParam("sort_column", 3)
+                .queryParam("asc", true)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
+                .get(JsonObject.class);
+        JsonArray documents = json.getJsonArray("documents");
+        Assert.assertEquals(1, documents.size());
+        Assert.assertFalse(documents.getJsonObject(0).getBoolean("active_route"));
+
+        // List all documents with admin
+        json = target().path("/document/list")
+                .queryParam("sort_column", 3)
+                .queryParam("asc", true)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        documents = json.getJsonArray("documents");
+        Assert.assertEquals(1, documents.size());
+        Assert.assertTrue(documents.getJsonObject(0).getBoolean("active_route"));
+
         // Get the route on document 1
         json = target().path("/route")
                 .queryParam("documentId", document1Id)
@@ -231,6 +253,23 @@ public class TestRouteResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         Assert.assertFalse(json.containsKey("route_step"));
 
+        // List all documents with route1
+        json = target().path("/document/list")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
+                .get(JsonObject.class);
+        documents = json.getJsonArray("documents");
+        Assert.assertEquals(1, documents.size());
+        Assert.assertFalse(documents.getJsonObject(0).getBoolean("active_route"));
+
+        // List all documents with admin
+        json = target().path("/document/list")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        documents = json.getJsonArray("documents");
+        Assert.assertEquals(0, documents.size());
+
         // Start the default route on document 1
         target().path("/route/start").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
@@ -251,6 +290,33 @@ public class TestRouteResource extends BaseJerseyTest {
                 .get();
         Assert.assertEquals(Response.Status.OK, Response.Status.fromStatusCode(response.getStatus()));
 
+        // List all documents with route1
+        json = target().path("/document/list")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
+                .get(JsonObject.class);
+        documents = json.getJsonArray("documents");
+        Assert.assertEquals(1, documents.size());
+        Assert.assertFalse(documents.getJsonObject(0).getBoolean("active_route"));
+
+        // List all documents with admin
+        json = target().path("/document/list")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        documents = json.getJsonArray("documents");
+        Assert.assertEquals(1, documents.size());
+        Assert.assertTrue(documents.getJsonObject(0).getBoolean("active_route"));
+
+        // Search documents with admin
+        json = target().path("/document/list")
+                .queryParam("search", "workflow:me")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        documents = json.getJsonArray("documents");
+        Assert.assertEquals(1, documents.size());
+
         // Cancel the route on document 1
         target().path("/route")
                 .queryParam("documentId", document1Id)
@@ -269,5 +335,22 @@ public class TestRouteResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get();
         Assert.assertEquals(Response.Status.NOT_FOUND, Response.Status.fromStatusCode(response.getStatus()));
+
+        // List all documents with route1
+        json = target().path("/document/list")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
+                .get(JsonObject.class);
+        documents = json.getJsonArray("documents");
+        Assert.assertEquals(1, documents.size());
+        Assert.assertFalse(documents.getJsonObject(0).getBoolean("active_route"));
+
+        // List all documents with admin
+        json = target().path("/document/list")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        documents = json.getJsonArray("documents");
+        Assert.assertEquals(0, documents.size());
     }
 }

@@ -122,7 +122,8 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(tag1Id, tags.getJsonObject(0).getString("id"));
         Assert.assertEquals("SuperTag", tags.getJsonObject(0).getString("name"));
         Assert.assertEquals("#ffff00", tags.getJsonObject(0).getString("color"));
-        
+        Assert.assertFalse(documents.getJsonObject(0).getBoolean("active_route"));
+
         // List all documents from document3
         json = target().path("/document/list")
                 .queryParam("sort_column", 3)

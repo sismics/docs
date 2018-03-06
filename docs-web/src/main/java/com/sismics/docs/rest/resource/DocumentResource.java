@@ -333,6 +333,7 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {Number} documents.create_date Create date (timestamp)
      * @apiSuccess {String} documents.language Language
      * @apiSuccess {Boolean} documents.shared True if the document is shared
+     * @apiSuccess {Boolean} documents.active_route True if a route is active on this document
      * @apiSuccess {Number} documents.file_count Number of files in this document
      * @apiSuccess {Object[]} documents.tags List of tags
      * @apiSuccess {String} documents.tags.id ID
@@ -397,6 +398,7 @@ public class DocumentResource extends BaseResource {
                     .add("create_date", documentDto.getCreateTimestamp())
                     .add("language", documentDto.getLanguage())
                     .add("shared", documentDto.getShared())
+                    .add("active_route", documentDto.isActiveRoute())
                     .add("file_count", documentDto.getFileCount())
                     .add("tags", tags));
         }
@@ -512,6 +514,12 @@ public class DocumentResource extends BaseResource {
                     } else {
                         // This user exists, search its documents
                         documentCriteria.setCreatorId(user.getId());
+                    }
+                    break;
+                case "workflow":
+                    // New shared state criteria
+                    if (params[1].equals("me")) {
+                        documentCriteria.setActiveRoute(true);
                     }
                     break;
                 case "full":
