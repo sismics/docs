@@ -11,7 +11,7 @@
         <span class="label label-default" style="margin-right: 6px;" ng-repeat="a in acl | orderBy: 'perm'">
           {{ 'acl.' + a.perm | translate }}
           <span ng-show="(creator != a.name && a.type == 'USER' || a.type != 'USER') && writable"
-                class="glyphicon glyphicon-remove pointer"
+                class="fas fa-times pointer"
                 ng-click="deleteAcl(a)"></span>
         </span>
       </td>
@@ -51,7 +51,7 @@
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
           <button type="submit" class="btn btn-primary"  ng-disabled="!acl.target.type" ng-click="addAcl()">
-            <span class="glyphicon glyphicon-plus"></span>
+            <span class="fas fa-plus"></span>
             {{ 'add' | translate }}
           </button>
         </div>

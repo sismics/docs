@@ -2,7 +2,7 @@
   <div class="col-md-4">
     <div class="well well-3d">
       <p class="input-group">
-        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+        <span class="input-group-addon"><span class="fas fa-search"></span></span>
         <input type="search" class="form-control" ng-attr-placeholder="{{ 'usergroup.search_groups' | translate }}" ng-model="searchGroup">
       </p>
 
@@ -20,7 +20,7 @@
 
     <div class="well well-3d">
       <p class="input-group">
-        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+        <span class="input-group-addon"><span class="fas fa-search"></span></span>
         <input type="search" class="form-control" ng-attr-placeholder="{{ 'usergroup.search_users' | translate }}" ng-model="searchUser">
       </p>
 
@@ -29,7 +29,7 @@
         <tr class="pointer" ng-repeat="user in users | filter: searchUser"
             ng-click="openUser(user)" ng-class="{ active: $stateParams.username == user.username }">
           <td class="col-xs-4">
-            <span class="glyphicon glyphicon-user"></span>
+            <span class="fas fa-user"></span>
             {{ user.username }}
             <span class="text-muted" ng-if="userInfo.username == user.username">{{ 'usergroup.you' | translate }}</span>
           </td>

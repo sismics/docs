@@ -91,6 +91,7 @@ public class TestRouteResource extends BaseJerseyTest {
         documents = json.getJsonArray("documents");
         Assert.assertEquals(1, documents.size());
         Assert.assertTrue(documents.getJsonObject(0).getBoolean("active_route"));
+        Assert.assertEquals("Check the document's metadata", documents.getJsonObject(0).getString("current_step_name"));
 
         // Get the route on document 1
         json = target().path("/route")

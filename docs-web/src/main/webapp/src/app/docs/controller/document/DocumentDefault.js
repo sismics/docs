@@ -74,7 +74,7 @@ angular.module('docs').controller('DocumentDefault', function ($scope, $rootScop
         });
   };
 
-  //Navigate to the selected file
+  // Navigate to the selected file
   $scope.openFile = function (file) {
     $state.go('document.default.file', { fileId: file.id })
   };
@@ -125,4 +125,14 @@ angular.module('docs').controller('DocumentDefault', function ($scope, $rootScop
       });
     });
   };
+
+  // Load active routes
+  Restangular.one('document/list').get({
+    asc: false,
+    sort_column: 3,
+    limit: 10,
+    search: 'workflow:me'
+  }).then(function (data) {
+    $scope.documentsWorkflow = data.documents;
+  });
 });

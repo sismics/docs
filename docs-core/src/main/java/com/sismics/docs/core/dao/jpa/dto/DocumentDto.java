@@ -91,6 +91,11 @@ public class DocumentDto {
      */
     private boolean activeRoute;
 
+    /**
+     * Current route step name.
+     */
+    private String currentStepName;
+
     public String getId() {
         return id;
     }
@@ -223,8 +228,16 @@ public class DocumentDto {
         return activeRoute;
     }
 
-    public DocumentDto setActiveRoute(boolean activeRoute) {
+    public void setActiveRoute(boolean activeRoute) {
         this.activeRoute = activeRoute;
+    }
+
+    public String getCurrentStepName() {
+        return currentStepName;
+    }
+
+    public DocumentDto setCurrentStepName(String currentStepName) {
+        this.currentStepName = currentStepName;
         return this;
     }
 }

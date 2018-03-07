@@ -1,10 +1,10 @@
-<img src="img/loader.gif" ng-show="!document && isEdit()" />
+<span class="fas fa-circle-notch fa-spin" ng-show="!document && isEdit()"></span>
 
 <div ng-show="document || !isEdit()">
   <form name="documentForm" class="form-horizontal">
     <div class="pull-right btn-group" ng-init="form = documentForm">
       <button type="submit" class="btn btn-primary" ng-disabled="!documentForm.$valid || fileIsUploading" ng-click="edit()">
-        <span class="glyphicon glyphicon-floppy-disk"></span>
+        <span class="fas fa-save"></span>
         {{ 'save' | translate }}
       </button>
     </div>
@@ -76,7 +76,7 @@
     <fieldset ng-init="additionalMetadataCollapsed = true">
       <legend class="pointer" ng-click="additionalMetadataCollapsed = !additionalMetadataCollapsed">
         {{ 'document.edit.additional_metadata' | translate }}
-        <span class="pull-right glyphicon glyphicon-plus"></span>
+        <span class="pull-right fas fa-plus"></span>
       </legend>
       <div ng-show="!additionalMetadataCollapsed">
         <div class="form-group" ng-class="{ 'has-error': !documentForm.subject.$valid }">
@@ -154,7 +154,7 @@
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary" ng-disabled="!documentForm.$valid || fileIsUploading" ng-click="edit()">
-          <span class="glyphicon glyphicon-floppy-disk"></span>
+          <span class="fas fa-save"></span>
           {{ 'save' | translate }}
         </button>
         <button type="submit" class="btn btn-default" ng-click="cancel()" ng-disabled="fileIsUploading">{{ 'cancel' | translate }}</button>

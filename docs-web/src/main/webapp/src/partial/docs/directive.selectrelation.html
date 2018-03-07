@@ -2,7 +2,7 @@
   <ul class="list-inline">
     <li ng-repeat="relation in relations | filter: { source: true }">
       <span class="label label-info">{{ relation.title }}
-        <span class="glyphicon glyphicon-remove" ng-click="deleteRelation(relation)" ng-show="!ngDisabled"></span>
+        <span class="fas fa-times" ng-click="deleteRelation(relation)" ng-show="!ngDisabled"></span>
       </span>
     </li>
   </ul>

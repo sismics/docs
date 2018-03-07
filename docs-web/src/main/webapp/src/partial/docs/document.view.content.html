@@ -20,7 +20,7 @@
   <dd>
     <span ng-repeat="contributor in document.contributors">
       <a class="btn btn-xs" href="#/user/{{ contributor.username }}">
-        <span class="glyphicon glyphicon-user"></span>
+        <span class="fas fa-user"></span>
         {{ contributor.username }}
       </a>
     </span>
@@ -51,10 +51,10 @@
         <div class="caption caption-hover-inverse btn btn-link file-name" ng-click="openFile(file)" ng-if="file.name">{{ file.name }}</div>
         <div class="caption caption-hover" ng-show="document.writable">
           <div class="pull-left">
-            <div class="btn btn-default handle"><span class="glyphicon glyphicon-resize-horizontal"></span></div>
+            <div class="btn btn-default handle"><span class="fas fa-arrows-alt-h"></span></div>
           </div>
           <div class="pull-right">
-            <button class="btn btn-danger" ng-click="deleteFile(file)"><span class="glyphicon glyphicon-trash"></span></button>
+            <button class="btn btn-danger" ng-click="deleteFile(file)"><span class="fas fa-trash"></span></button>
           </div>
           <div class="clearfix"></div>
         </div>
@@ -72,7 +72,7 @@
   </div>
 
   <p class="text-center well-lg" ng-if="files.length == 0">
-    <span class="glyphicon glyphicon-move"></span>
+    <span class="fas fa-arrows-alt"></span>
     {{ 'document.view.content.drop_zone' | translate }}
   </p>
 </div>

@@ -9,6 +9,7 @@
     <link rel="shortcut icon" href="../api/theme/image/logo" />
     <!-- ref:css style/style.min.css -->
     <link rel="stylesheet" href="style/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="style/fontawesome.css" type="text/css" />
     <link rel="stylesheet" href="style/colorpicker.css" type="text/css" />
     <link rel="stylesheet/less" href="style/main.less" type="text/css" />
     <!-- endref -->
@@ -125,38 +126,38 @@
       <div class="collapse navbar-collapse" uib-collapse="isCollapsed">
         <ul class="nav navbar-nav" ng-show="!userInfo.anonymous">
           <li ui-sref-active="{ active: 'document.**' }">
-            <a href="#/document"><span class="glyphicon glyphicon-book"></span> {{ 'index.nav_documents' | translate }}</a>
+            <a href="#/document"><span class="fas fa-book"></span> {{ 'index.nav_documents' | translate }}</a>
           </li>
           <li ui-sref-active="{ active: 'tag.**' }">
-            <a href="#/tag"><span class="glyphicon glyphicon-tags"></span> {{ 'index.nav_tags' | translate }}</a>
+            <a href="#/tag"><span class="fas fa-tags"></span> {{ 'index.nav_tags' | translate }}</a>
           </li>
           <li ui-sref-active="{ active: 'user.**', active2: 'group.**' }">
-            <a href="#/user"><span class="glyphicon glyphicon-user"></span> {{ 'index.nav_users_groups' | translate }}</a>
+            <a href="#/user"><span class="fas fa-user"></span> {{ 'index.nav_users_groups' | translate }}</a>
           </li>
         </ul>
 
         <ul class="nav navbar-nav navbar-right" ng-show="!userInfo.anonymous">
           <li ng-show="errorNumber > 0">
               <a href="#/settings/log" ng-click="openLogs()" class="nav-text-error">
-                <span class="glyphicon glyphicon-warning-sign"></span>
+                <span class="fas fa-exclamation-triangle"></span>
                 <span translate="index.error_info" translate-values="{ count: errorNumber }"></span>
               </a>
           </li>
           <li>
             <a href="{{ userInfo.username == 'guest' ? '#/user/guest' : '#/settings/account' }}"
                translate-attr="{ title: 'index.logged_as' }" translate-values="{ username: userInfo.username }">
-              <span class="glyphicon glyphicon-user"></span>
+              <span class="fas fa-user"></span>
               {{ userInfo.username }}
             </a>
           </li>
           <li ui-sref-active="{ active: 'settings.**' }" ng-show="userInfo.username != 'guest'">
             <a href="#/settings/account">
-              <span class="glyphicon glyphicon-cog"></span> {{ 'index.nav_settings' | translate }}
+              <span class="fas fa-cog"></span> {{ 'index.nav_settings' | translate }}
             </a>
           </li>
           <li>
             <a href="#" ng-click="logout($event)">
-              <span class="glyphicon glyphicon-off"></span> {{ 'index.logout' | translate }}
+              <span class="fas fa-power-off"></span> {{ 'index.logout' | translate }}
             </a>
           </li>
         </ul>

@@ -61,11 +61,11 @@
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
       <button type="submit" class="btn btn-primary" ng-click="editInboxConfig()" ng-disabled="!inboxForm.$valid">
-        <span class="glyphicon glyphicon-pencil"></span> {{ 'save' | translate }}
+        <span class="fas fa-pencil-alt"></span> {{ 'save' | translate }}
       </button>
       <button type="submit" class="btn btn-warning" ng-click="testInboxConfig()">
-        <span class="glyphicon glyphicon-pencil"></span> {{ 'settings.inbox.test' | translate }}
-        <img ng-if="testLoading" src="img/loader.gif" />
+        <span class="fas fa-pencil-alt"></span> {{ 'settings.inbox.test' | translate }}
+        <span ng-if="testLoading" class="fas fa-circle-notch fa-spin"></>
       </button>
     </div>
   </div>

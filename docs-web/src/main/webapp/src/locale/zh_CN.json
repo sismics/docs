@@ -194,7 +194,7 @@
       "title": "标签",
       "message_1": "<strong>标签</strong> 是和文档相关的标示.",
       "message_2": "一个文档可以由多个标签标记, 同时一个标签可以运用于多个文档.",
-      "message_3": "使用该 <span class=\"glyphicon glyphicon-pencil\"></span> 按钮, 您可以编辑标签的权限.",
+      "message_3": "使用该 <span class=\"fas fa-pencil-alt\"></span> 按钮, 您可以编辑标签的权限.",
       "message_4": "如果一个标签可以被另一个用户或组读取, 相关的文件也可以被这些人阅读.",
       "message_5": "例如, 用一个标签标记您公司的文档 <span class=\"label label-info\">我的公司</span> 并同时添加权限 <strong>可读</strong> 给一个群组的 <span class=\"btn btn-default\">成员</span>"
     },

@@ -14,7 +14,7 @@
       <td>{{ session.last_connection_date | date: dateTimeFormat }}</td>
       <td title="{{ session.user_agent }}">{{ session.ip }}</td>
       <td>
-        <span ng-show="session.current" class="glyphicon glyphicon-ok"
+        <span ng-show="session.current" class="fas fa-check"
           title="{{ 'settings.session.current_session' | translate }}"></span>
       </td>
     </tr>

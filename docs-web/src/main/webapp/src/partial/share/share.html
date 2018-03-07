@@ -4,20 +4,20 @@
       <div class="pull-right">
         <div class="dropdown" uib-dropdown>
           <button class="btn btn-default" uib-dropdown-toggle>
-            <span class="glyphicon glyphicon-export"></span>
+            <span class="fas fa-cloud-download-alt"></span>
             {{ 'export' | translate }}
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
             <li>
               <a ng-href="../api/file/zip?id={{ document.id }}&share={{ $stateParams.shareId }}">
-                <span class="glyphicon glyphicon glyphicon-compressed"></span>
+                <span class="fas fa-download"></span>
                 {{ 'document.view.download_files' | translate }}
               </a>
             </li>
             <li>
               <a href ng-click="exportPdf()">
-                <span class="glyphicon glyphicon glyphicon-save-file"></span>
+                <span class="fas fa-file-pdf"></span>
                 {{ 'document.view.export_pdf' | translate }}
               </a>
             </li>
@@ -81,12 +81,12 @@
 
   <div class="col-md-2">
     <p class="page-header">
-      <span class="glyphicon glyphicon-comment"></span>
+      <span class="fas fa-comments"></span>
       {{ 'document.view.comments' | translate }}
     </p>
 
     <div ng-show="!comments || comments.length == 0" class="text-center text-muted">
-      <h1 class="glyphicon glyphicon-comment"></h1>
+      <h1 class="fas fa-comments"></h1>
       <p ng-show="!comments && !commentsError">{{ 'loading' | translate }}</p>
       <p ng-show="comments.length == 0">{{ 'document.view.no_comments' | translate }}</p>
       <p ng-show="!comments && commentsError">{{ 'document.view.error_loading_comments' | translate }}</p>

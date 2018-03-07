@@ -1,4 +1,4 @@
-<img src="img/loader.gif" ng-show="!group && isEdit()" />
+<span class="fas fa-circle-notch fa-spin" ng-show="!group && isEdit()"></span>
 
 <div ng-show="group || !isEdit()">
   <h2 ng-show="isEdit()" translate="settings.group.edit.edit_group_title" translate-values="{ name: group.name }"></h2>
@@ -33,10 +33,10 @@
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editGroupForm.$valid">
-          <span class="glyphicon glyphicon-pencil"></span> {{ isEdit() ? 'save' : 'add' | translate }}
+          <span class="fas fa-pencil-alt"></span> {{ isEdit() ? 'save' : 'add' | translate }}
         </button>
         <button type="button" class="btn btn-danger" ng-click="remove()" ng-show="isEdit()">
-          <span class="glyphicon glyphicon-trash"></span> {{ 'delete' | translate }}
+          <span class="fas fa-trash"></span> {{ 'delete' | translate }}
         </button>
       </div>
     </div>
@@ -62,7 +62,7 @@
             <span class="btn btn-default"
                ng-click="removeMember(member)">
               {{ member }}
-              <span class="glyphicon glyphicon-remove"></span>
+              <span class="fas fa-times"></span>
             </span>&nbsp;
           </span>
         </div>

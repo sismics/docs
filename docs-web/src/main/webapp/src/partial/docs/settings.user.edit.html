@@ -1,4 +1,4 @@
-<img src="img/loader.gif" ng-show="!user && isEdit()" />
+<span class="fas fa-circle-notch fa-spin" ng-show="!user && isEdit()"></span>
 
 <div ng-show="user || !isEdit()">
   <h2 ng-show="isEdit()" translate="settings.user.edit.edit_user_title" translate-values="{ username: user.username }"></h2>
@@ -102,10 +102,10 @@
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editUserForm.$valid">
-          <span class="glyphicon glyphicon-pencil"></span> {{ isEdit() ? 'save' : 'add' | translate }}
+          <span class="fas fa-pencil-alt"></span> {{ isEdit() ? 'save' : 'add' | translate }}
         </button>
         <button type="button" class="btn btn-danger" ng-click="remove()" ng-show="isEdit() && user.username != 'admin' && user.username != 'guest'">
-          <span class="glyphicon glyphicon-trash"></span> {{ 'delete' | translate }}
+          <span class="fas fa-trash"></span> {{ 'delete' | translate }}
         </button>
       </div>
     </div>
@@ -113,7 +113,7 @@
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="button" class="btn btn-warning" ng-click="passwordReset()" ng-show="isEdit() && user.username != 'guest'">
-          <span class="glyphicon glyphicon-repeat"></span> {{ 'settings.user.edit.password_reset_btn' | translate }}
+          <span class="fas fa-redo-alt"></span> {{ 'settings.user.edit.password_reset_btn' | translate }}
         </button>
       </div>
     </div>

@@ -14,7 +14,7 @@
       <div class="text-center mb-19">
         <div class="btn-group" uib-dropdown>
           <a href="#/document/add" class="btn btn-primary">
-            <span class="glyphicon glyphicon-plus"></span> {{ 'document.add_document' | translate }}
+            <span class="fas fa-plus"></span> {{ 'document.add_document' | translate }}
           </a>
           <button type="button" class="btn btn-primary" uib-dropdown-toggle>
             <span class="caret"></span>
@@ -42,7 +42,7 @@
             <div uib-dropdown
                  auto-close="disabled" is-open="searchOpened" dropdown-append-to="searchDropdownAnchor">
               <span class="btn-open-search">
-                <span class="glyphicon glyphicon-search"></span>
+                <span class="fas fa-search"></span>
                 <span class="caret"></span>
               </span>
               <div uib-dropdown-menu class="search-dropdown-menu col-xs-12" ng-click="$event.stopPropagation()">
@@ -132,7 +132,7 @@
 
                   <div class="form-group text-center">
                     <button type="submit" ng-click="startSearch()" class="btn btn-primary">
-                      <span class="glyphicon glyphicon-search"></span> {{ 'document.search' | translate }}
+                      <span class="fas fa-search"></span> {{ 'document.search' | translate }}
                     </button>
                     <button class="btn" ng-click="clearSearch()">
                       {{ 'document.search_clear' | translate }}
@@ -148,14 +148,14 @@
       <table class="row table table-hover table-documents">
         <thead>
         <tr>
-          <th class="col-xs-6" ng-click="sortDocuments(1)">{{ 'document.title' | translate }} <span class="glyphicon glyphicon-chevron-{{ sortColumn == 1 ? (asc ? 'down' : 'up') : '' }}"></span></th>
-          <th class="col-xs-3" ng-click="sortDocuments(3)">{{ 'document.creation_date' | translate }} <span class="glyphicon glyphicon-chevron-{{ sortColumn == 3 ? (asc ? 'down' : 'up') : '' }}"></span></th>
+          <th class="col-xs-6" ng-click="sortDocuments(1)">{{ 'document.title' | translate }} <span class="fas fa-chevron-{{ sortColumn == 1 ? (asc ? 'down' : 'up') : '' }}"></span></th>
+          <th class="col-xs-3" ng-click="sortDocuments(3)">{{ 'document.creation_date' | translate }} <span class="fas fa-chevron-{{ sortColumn == 3 ? (asc ? 'down' : 'up') : '' }}"></span></th>
         </tr>
         </thead>
         <tbody>
         <tr ng-if="!documents">
           <td colspan="2" class="text-center">
-            <img src="img/loader.gif" />
+            <span class="fas fa-circle-notch fa-spin"></span>
           </td>
         </tr>
 
@@ -169,9 +169,9 @@
         <tr ng-click="viewDocument(document.id)" ng-repeat="document in documents" ng-class="{ active: $stateParams.id == document.id }">
           <td colspan="2">
             {{ document.title }} ({{ document.file_count }})
-            <span class="glyphicon glyphicon-share" ng-if="document.shared" uib-tooltip="{{ 'document.shared' | translate }}"></span>
-            <span class="glyphicon glyphicon-random" ng-if="document.active_route" uib-tooltip="{{ 'document.active_route' | translate }}"></span>
-            <a href="#/document/view/{{ document.id }}" target="_blank" ng-click="$event.stopPropagation()"><span class="glyphicon glyphicon-link"></span></a>
+            <span class="fas fa-share" ng-if="document.shared" uib-tooltip="{{ 'document.shared' | translate }}"></span>
+            <span class="fas fa-random" ng-if="document.active_route" uib-tooltip="{{ document.current_step_name }}"></span>
+            <a href="#/document/view/{{ document.id }}" target="_blank" ng-click="$event.stopPropagation()"><span class="fas fa-link"></span></a>
 
             <div class="pull-right text-muted small">{{ document.create_date | timeAgo: dateFormat }}</div>
 
@@ -201,7 +201,7 @@
         </select>
       </div>
 
-      <!--<a class="text-center"><span class="glyphicon glyphicon-plus"></span> Add this search query on the home</a>-->
+      <!--<a class="text-center"><span class="fas fa-plus"></span> Add this search query on the home</a>-->
 
       <div class="pull-left small text-muted" title="{{ 'document.upgrade_quota' | translate }}"
            translate="document.quota"

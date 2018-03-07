@@ -1,6 +1,6 @@
 <p class="well-sm pull-right" ng-show="document.route_step && document.writable">
   <span class="btn btn-danger" ng-click="cancelWorkflow()">
-    <span class="glyphicon glyphicon-trash"></span>
+    <span class="fas fa-trash"></span>
     {{ 'document.view.workflow.cancel_workflow' | translate }}
   </span>
 </p>
@@ -52,8 +52,8 @@
           'bg-danger': step.transition == 'REJECTED'
       }">
     <td>
-      <span class="glyphicon glyphicon-transfer" ng-if="step.type == 'APPROVE'"></span>
-      <span class="glyphicon glyphicon-ok-circle" ng-if="step.type == 'VALIDATE'"></span>
+      <span class="fas fa-exchange-alt" ng-if="step.type == 'APPROVE'"></span>
+      <span class="fas fa-check-circle" ng-if="step.type == 'VALIDATE'"></span>
       {{ 'workflow_type.' + step.type | translate }}
     </td>
     <td>{{ step.name }}</td>

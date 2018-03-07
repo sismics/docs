@@ -58,7 +58,7 @@
     "search": "Search",
     "search_empty": "No matches for <strong>\"{{ search }}\"</strong>",
     "shared": "Shared",
-    "active_route": "Workflow assigned to me",
+    "current_step_name": "Current step",
     "title": "Title",
     "description": "Description",
     "contributors": "Contributors",
@@ -164,9 +164,10 @@
       "add_files": "Add files",
       "add_new_document": "Add to new document",
       "latest_activity": "Latest activity",
-      "footer_sismics": "Crafted with <span class=\"glyphicon glyphicon-heart\"></span> by <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
+      "footer_sismics": "Crafted with <span class=\"fas fa-heart\"></span> by <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
       "api_documentation": "API Documentation",
-      "feedback": "Give us a feedback"
+      "feedback": "Give us a feedback",
+      "workflow_document_list": "Documents assigned to you"
     },
     "pdf": {
       "export_title": "Export to PDF",
@@ -197,7 +198,7 @@
       "title": "Tags",
       "message_1": "<strong>Tags</strong> are labels associated to documents.",
       "message_2": "A document can be tagged by multiple tags, and a tag can be applied to multiple documents.",
-      "message_3": "Using the <span class=\"glyphicon glyphicon-pencil\"></span> button, you can edit permissions on a tag.",
+      "message_3": "Using the <span class=\"fas fa-pencil-alt\"></span> button, you can edit permissions on a tag.",
       "message_4": "If a tag can be read by another user or group, associated documents can also be read by those people.",
       "message_5": "For example, tag your company documents with a tag <span class=\"label label-info\">MyCompany</span> and add the permission <strong>Can read</strong> to a group <span class=\"btn btn-default\">employees</span>"
     },

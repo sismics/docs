@@ -1,12 +1,14 @@
-<img src="img/loader.gif" ng-show="!document && !error" />
+<div class="text-center" ng-show="!document && !error">
+  <span class="fas fa-circle-notch fa-spin"></span>
+</div>
 
 <div ng-show="error" class="well-lg">
   <p class="text-center" ng-show="error.status == 404">
-    <span class="glyphicon glyphicon-warning-sign"></span>
+    <span class="fas fa-exclamation-triangle"></span>
     {{ 'document.view.not_found' | translate }}
   </p>
   <p class="text-center" ng-show="error.status == 403">
-    <span class="glyphicon glyphicon-warning-sign"></span>
+    <span class="fas fa-exclamation-triangle"></span>
     {{ 'document.view.forbidden' | translate }}
   </p>
 </div>
@@ -15,26 +17,26 @@
 	<div class="pull-right">
 	  <div class="dropdown" uib-dropdown ng-class="{ 'btn-group': document.writable }">
       <button class="btn btn-default" uib-dropdown-toggle>
-        <span class="glyphicon glyphicon-export"></span>
+        <span class="fas fa-cloud-download-alt"></span>
         {{ 'export' | translate }}
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu">
         <li>
           <a ng-href="../api/file/zip?id={{ document.id }}">
-            <span class="glyphicon glyphicon glyphicon-compressed"></span>
+            <span class="fas fa-download"></span>
             {{ 'document.view.download_files' | translate }}
           </a>
         </li>
         <li>
           <a href ng-click="exportPdf()">
-            <span class="glyphicon glyphicon glyphicon-save-file"></span>
+            <span class="fas fa-file-pdf"></span>
             {{ 'document.view.export_pdf' | translate }}
           </a>
         </li>
       </ul>
-	    <button class="btn btn-danger" ng-show="document.writable" ng-click="deleteDocument(document)"><span class="glyphicon glyphicon-trash"></span> {{ 'delete' | translate }}</button>
-	    <a href="#/document/edit/{{ document.id }}" ng-show="document.writable" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> {{ 'edit' | translate }}</a>
+	    <button class="btn btn-danger" ng-show="document.writable" ng-click="deleteDocument(document)"><span class="fas fa-trash"></span> {{ 'delete' | translate }}</button>
+	    <a href="#/document/edit/{{ document.id }}" ng-show="document.writable" class="btn btn-primary"><span class="fas fa-pencil-alt"></span> {{ 'edit' | translate }}</a>
 	  </div>
 	</div>
 	
@@ -47,12 +49,12 @@
 
 	  <p ng-show="document.writable">
 	    <button class="btn btn-sm btn-info" ng-click="share()">
-        <span class="glyphicon glyphicon-share"></span> {{ 'share' | translate }}
+        <span class="fas fa-share"></span> {{ 'share' | translate }}
       </button>
 
       <span ng-repeat="share in document.acls | filter: { 'type': 'SHARE' }">
         <button class="btn btn-default btn-sm" ng-click="showShare(share)">
-          <span class="glyphicon glyphicon-ok"></span> {{ share.name ? share.name : 'shared' }}
+          <span class="fas fa-check"></span> {{ share.name ? share.name : 'shared' }}
         </button>
       </span>
 	  </p>
@@ -69,22 +71,22 @@
       <ul class="nav nav-tabs">
         <li ng-class="{ active: $state.current.name == 'document.view.content' }">
           <a href="#/document/view/{{ document.id }}/content">
-            <span class="glyphicon glyphicon-file"></span> {{ 'document.view.content' | translate }}
+            <span class="fas fa-file"></span> {{ 'document.view.content' | translate }}
           </a>
         </li>
         <li ng-class="{ active: $state.current.name == 'document.view.workflow' }">
           <a href="#/document/view/{{ document.id }}/workflow">
-            <span class="glyphicon glyphicon-random"></span> {{ 'document.view.workflow' | translate }}
+            <span class="fas fa-random"></span> {{ 'document.view.workflow' | translate }}
           </a>
         </li>
         <li ng-class="{ active: $state.current.name == 'document.view.permissions' }">
           <a href="#/document/view/{{ document.id }}/permissions">
-            <span class="glyphicon glyphicon-user"></span> {{ 'document.view.permissions' | translate }}
+            <span class="fas fa-user"></span> {{ 'document.view.permissions' | translate }}
           </a>
         </li>
         <li ng-class="{ active: $state.current.name == 'document.view.activity' }">
           <a href="#/document/view/{{ document.id }}/activity">
-            <span class="glyphicon glyphicon-tasks"></span> {{ 'document.view.activity' | translate }}
+            <span class="fas fa-tasks"></span> {{ 'document.view.activity' | translate }}
           </a>
         </li>
       </ul>
@@ -93,15 +95,15 @@
     <div class="col-md-3">
       <div ng-show="document.route_step">
         <p class="page-header page-header-side">
-          <span class="glyphicon glyphicon-random"></span>
+          <span class="fas fa-random"></span>
           {{ 'document.view.workflow_current' | translate }}
         </p>
 
         <div class="text-center card">
           <p>{{ document.route_step.name }}</p>
           <p>
-            <span class="glyphicon glyphicon-transfer" ng-if="document.route_step.type == 'APPROVE'"></span>
-            <span class="glyphicon glyphicon-ok-circle" ng-if="document.route_step.type == 'VALIDATE'"></span>
+            <span class="fas fa-exchange-alt" ng-if="document.route_step.type == 'APPROVE'"></span>
+            <span class="fas fa-check-circle" ng-if="document.route_step.type == 'VALIDATE'"></span>
             {{ 'workflow_type.' + document.route_step.type | translate }}
             <span class="label label-default"><acl data="document.route_step.target"></acl></span>
           </p>
@@ -128,12 +130,12 @@
       </div>
 
       <p class="page-header page-header-side">
-        <span class="glyphicon glyphicon-comment"></span>
+        <span class="fas fa-comments"></span>
         {{ 'document.view.comments' | translate }}
       </p>
 
       <div ng-show="!comments || comments.length == 0" class="text-center text-muted">
-        <h1 class="glyphicon glyphicon-comment"></h1>
+        <h1 class="fas fa-comments"></h1>
         <p ng-show="!comments && !commentsError">{{ 'loading' | translate }}</p>
         <p ng-show="comments.length == 0">{{ 'document.view.no_comments' | translate }}</p>
         <p ng-show="!comments && commentsError">{{ 'document.view.error_loading_comments' | translate }}</p>
@@ -151,7 +153,7 @@
           <span class="text-muted pull-right btn-link pointer"
                 ng-show="document.writable || userInfo.username == comment.creator"
                 ng-click="deleteComment(comment)">
-            <span class="glyphicon glyphicon-remove"></span>
+            <span class="fas fa-times"></span>
           </span>
           </p>
         </div>

@@ -203,7 +203,7 @@ public class DocumentDao {
         StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, ");
         sb.append(" (select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null) c5, ");
         sb.append(" (select count(f.FIL_ID_C) from T_FILE f where f.FIL_DELETEDATE_D is null and f.FIL_IDDOC_C = d.DOC_ID_C) c6, ");
-        sb.append(" rs2.RTP_ID_C c7 ");
+        sb.append(" rs2.RTP_ID_C c7, rs2.RTP_NAME_C ");
         sb.append(" from T_DOCUMENT d ");
         sb.append(" left join (select rs.*, rs3.idDocument\n" +
                 "from T_ROUTE_STEP rs \n" +
@@ -283,7 +283,8 @@ public class DocumentDao {
             documentDto.setLanguage((String) o[i++]);
             documentDto.setShared(((Number) o[i++]).intValue() > 0);
             documentDto.setFileCount(((Number) o[i++]).intValue());
-            documentDto.setActiveRoute(o[i] != null);
+            documentDto.setActiveRoute(o[i++] != null);
+            documentDto.setCurrentStepName((String) o[i]);
             documentDtoList.add(documentDto);
         }
 

@@ -18,7 +18,7 @@
             <input type="checkbox" ng-model="file.checked" />
           </div>
           <div class="pull-right">
-            <button class="btn btn-danger" ng-click="deleteFile($event, file)"><span class="glyphicon glyphicon-trash"></span></button>
+            <button class="btn btn-danger" ng-click="deleteFile($event, file)"><span class="fas fa-trash"></span></button>
           </div>
           <div class="clearfix"></div>
         </div>
@@ -35,7 +35,7 @@
     </div>
 
     <p class="text-center well-lg text-muted" ng-if="files.length == 0">
-      <span class="glyphicon glyphicon-move"></span>
+      <span class="fas fa-arrows-alt"></span>
       {{ 'document.default.drop_zone' | translate }}
     </p>
   </div>
@@ -44,7 +44,7 @@
     <button ng-show="checkedFiles().length > 0"
             class="btn btn-primary"
             ng-click="addDocument()">
-      <span class="glyphicon glyphicon-plus"></span> {{ 'document.default.add_new_document' | translate }}
+      <span class="fas fa-plus"></span> {{ 'document.default.add_new_document' | translate }}
     </button>
 
     <button ng-show="checkedFiles().length == 0"
@@ -58,21 +58,45 @@
   </p>
 </div>
 
-<!--<div class="row widgets">
-  <div class="col-md-6">
-    <div class="well well-3d mr-10">
-      <h3 class="well-3d-header">Widget 1</h3>
+<div class="row widgets">
+  <div class="col-md-12" ng-show="documentsWorkflow && documentsWorkflow.length > 0">
+    <div class="well well-3d" style="background-color: #fff4f4;">
+      <h3 class="well-3d-header text-muted">
+        <span class="fas fa-exclamation-triangle text-danger"></span>
+        {{ 'document.default.workflow_document_list' | translate }}
+      </h3>
+
+      <table class="row table table-hover table-documents">
+        <thead>
+        <tr>
+          <th class="col-xs-6">{{ 'document.title' | translate }}</th>
+          <th class="col-xs-3">{{ 'document.current_step_name' | translate }}</th>
+          <th class="col-xs-3">{{ 'document.creation_date' | translate }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-click="viewDocument(document.id)" ng-repeat="document in documentsWorkflow">
+          <td>
+            {{ document.title }} ({{ document.file_count }})
+            <div class="tags small">
+              <span class="label label-info" ng-repeat="tag in document.tags" ng-style="{ 'background': tag.color }">
+                {{ tag.name }}
+              </span>
+            </div>
+          </td>
+          <td>{{ document.current_step_name }}</td>
+          <td>
+            <div class="text-muted small">{{ document.create_date | timeAgo: dateFormat }}</div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
     </div>
   </div>
-  <div class="col-md-6">
-    <div class="well well-3d ml-10">
-      <h3 class="well-3d-header">Widget 2</h3>
-    </div>
-  </div>
-</div>-->
+</div>
 
 <div class="mb-19 text-center" ng-show="!logs">
-  <img src="img/loader.gif" />
+  <span class="fas fa-circle-notch fa-spin"></span>
 </div>
 
 <div class="well well-3d"  ng-show="logs.length > 0">

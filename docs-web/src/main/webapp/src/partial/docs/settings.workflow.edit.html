@@ -1,4 +1,4 @@
-<img src="img/loader.gif" ng-show="!workflow && isEdit()" />
+<span class="fas fa-circle-notch fa-spin" ng-show="!workflow && isEdit()"></span>
 
 <div ng-show="workflow || !isEdit()">
   <h2 ng-show="isEdit()" translate="settings.workflow.edit.edit_workflow_title" translate-values="{ name: workflow.name }"></h2>
@@ -24,7 +24,7 @@
         <div class="panel-body">
           <div class="row route-step-row">
             <div class="col-xs-1 text-center">
-              <div class="glyphicon glyphicon-move pointer handle" ng-attr-title="{{ 'settings.workflow.edit.drag_help' | translate }}"></div>
+              <div class="fas fa-arrows-alt pointer handle" ng-attr-title="{{ 'settings.workflow.edit.drag_help' | translate }}"></div>
             </div>
             <div class="col-xs-1 text-center">
               <div>{{ $index + 1 }}</div>
@@ -34,7 +34,7 @@
                 <div class="col-xs-6 mb-10">
                   <strong>
                     {{ 'settings.workflow.edit.type' | translate }}
-                    <span class="glyphicon glyphicon-info-sign"
+                    <span class="fas fa-info-circle"
                           uib-tooltip-html="'{{ 'settings.workflow.edit.target_help' | translate }}'"></span>
                   </strong>
                 </div>
@@ -46,8 +46,8 @@
                 <div class="col-xs-5">
                   <div class="input-group">
                     <span class="input-group-addon">
-                      <span class="glyphicon glyphicon-transfer" ng-if="step.type == 'APPROVE'"></span>
-                      <span class="glyphicon glyphicon-ok-circle" ng-if="step.type == 'VALIDATE'"></span>
+                      <span class="fas fa-exchange-alt" ng-if="step.type == 'APPROVE'"></span>
+                      <span class="fas fa-check-circle" ng-if="step.type == 'VALIDATE'"></span>
                     </span>
                     <select class="form-control" name="type-{{ $index }}" ng-model="step.type" required>
                       <option value="APPROVE">{{ 'settings.workflow.edit.type_approve' | translate }}</option>
@@ -64,7 +64,7 @@
                          typeahead-wait-ms="200" />
                 </div>
                 <div class="col-xs-1">
-                  <span class="btn btn-link glyphicon glyphicon-trash" ng-click="removeStep(step)"></span>
+                  <span class="btn btn-link fas fa-trash" ng-click="removeStep(step)"></span>
                 </div>
               </div>
               <div class="row mt-10">
@@ -86,17 +86,17 @@
 
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10 btn-link pointer" ng-click="addStep()">
-        <span class="glyphicon glyphicon-plus-sign"></span> {{ 'settings.workflow.edit.add_step' | translate }}
+        <span class="fas fa-plus-sign"></span> {{ 'settings.workflow.edit.add_step' | translate }}
       </div>
     </div>
 
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editWorkflowForm.$valid">
-          <span class="glyphicon glyphicon-pencil"></span> {{ isEdit() ? 'save' : 'add' | translate }}
+          <span class="fas fa-pencil-alt"></span> {{ isEdit() ? 'save' : 'add' | translate }}
         </button>
         <button type="button" class="btn btn-danger" ng-click="remove()" ng-show="isEdit()">
-          <span class="glyphicon glyphicon-trash"></span> {{ 'delete' | translate }}
+          <span class="fas fa-trash"></span> {{ 'delete' | translate }}
         </button>
       </div>
     </div>

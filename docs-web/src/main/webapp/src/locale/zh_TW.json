@@ -161,7 +161,7 @@
       "add_files": "添加文件",
       "add_new_document": "添加至新文檔",
       "latest_activity": "最新活動",
-      "footer_sismics": "<span class=\"glyphicon glyphicon-heart\"></span> 由 <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a> 精心製作",
+      "footer_sismics": "<span class=\"fas fa-heart\"></span> 由 <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a> 精心製作",
       "api_documentation": "API 存檔",
       "feedback": "歡迎提供反饋意見"
     },
@@ -194,7 +194,7 @@
       "title": "標籤",
       "message_1": "<strong>標籤</strong> 是和文檔相關的標示.",
       "message_2": "一個文檔可以由多個標籤標記, 同時一個標籤可以運用於多個文檔.",
-      "message_3": "使用該 <span class=\"glyphicon glyphicon-pencil\"></span> 按鈕, 您可以編輯標籤的權限.",
+      "message_3": "使用該 <span class=\"fas fa-pencil-alt\"></span> 按鈕, 您可以編輯標籤的權限.",
       "message_4": "如果一個標籤可以被另一個用戶或組讀取, 相關的文件也可以被這些人閱讀.",
       "message_5": "例如, 用一個標籤標記您公司的文檔 <span class=\"label label-info\">我的公司</span> 並同時添加權限 <strong>可讀</strong> 給一個群組的 <span class=\"btn btn-default\">員工</span>"
     },

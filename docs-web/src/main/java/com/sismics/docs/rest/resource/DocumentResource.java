@@ -334,6 +334,7 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String} documents.language Language
      * @apiSuccess {Boolean} documents.shared True if the document is shared
      * @apiSuccess {Boolean} documents.active_route True if a route is active on this document
+     * @apiSuccess {Boolean} documents.current_step_name Name of the current route step
      * @apiSuccess {Number} documents.file_count Number of files in this document
      * @apiSuccess {Object[]} documents.tags List of tags
      * @apiSuccess {String} documents.tags.id ID
@@ -399,6 +400,7 @@ public class DocumentResource extends BaseResource {
                     .add("language", documentDto.getLanguage())
                     .add("shared", documentDto.getShared())
                     .add("active_route", documentDto.isActiveRoute())
+                    .add("current_step_name", JsonUtil.nullable(documentDto.getCurrentStepName()))
                     .add("file_count", documentDto.getFileCount())
                     .add("tags", tags));
         }

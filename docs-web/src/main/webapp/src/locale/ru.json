@@ -161,7 +161,7 @@
       "add_files": "Добавить файлы",
       "add_new_document": "Добавить в новый документ",
       "latest_activity": "Последняя активность",
-      "footer_sismics": "Создано с помощью <span class=\"glyphicon glyphicon-heart\"></span> <a href=\"https://www.sismics.com\" target=\"_blank\">Сцистики</a>",
+      "footer_sismics": "Создано с помощью <span class=\"fas fa-heart\"></span> <a href=\"https://www.sismics.com\" target=\"_blank\">Сцистики</a>",
       "api_documentation": "Документация API",
       "feedback": "Оставьте своё мнение"
     },
@@ -194,7 +194,7 @@
       "title": "Теги",
       "message_1": "<strong>Теги</strong> это метки, связанные с документами.",
       "message_2": "Документ может быть помечен несколькими тегами, а тег может применяться к нескольким документам.",
-      "message_3": "Используя кнопку <span class=\"glyphicon-pencil\"></span>, вы можете редактировать разрешения для тега.",
+      "message_3": "Используя кнопку <span class=\"fas fa-pencil-alt\"></span>, вы можете редактировать разрешения для тега.",
       "message_4": "Если тег может быть прочитан другим пользователем или группой, связанные с ним документы также могут быть прочитаны этими людьми.",
       "message_5": "Например, пометьте ваши документы компании тегом <span class=\"label label-info\">MyCompany</span> и добавьте разрешение <strong>Читать</strong> в группу <span class=\"btn btn-default\">сотрудники</span>"
     },

@@ -161,7 +161,7 @@
       "add_files": "Ajouter des fichiers",
       "add_new_document": "Ajouter à un nouveau document",
       "latest_activity": "Activité récente",
-      "footer_sismics": "Conçu avec <span class=\"glyphicon glyphicon-heart\"></span> par <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
+      "footer_sismics": "Conçu avec <span class=\"fas fa-heart\"></span> par <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
       "api_documentation": "Documentation API",
       "feedback": "Donnez-nous votre avis"
     },
@@ -194,7 +194,7 @@
       "title": "Tags",
       "message_1": "Les <strong>Tags</strong> sont des libellés associés aux documents.",
       "message_2": "Un document peut être taggé par plusieurs tags, et un tag peut être appliqué à plusieurs documents.",
-      "message_3": "En utilisant le bouton <span class=\"glyphicon glyphicon-pencil\"></span>, vous pouvez modifier les permissions sur un tag.",
+      "message_3": "En utilisant le bouton <span class=\"fas fa-pencil-alt\"></span>, vous pouvez modifier les permissions sur un tag.",
       "message_4": "Si un tag peut être lu par un autre utilisateur ou groupe, les documents associés peuvent également être lus par ces personnes.",
       "message_5": "Par exemple, taggez les documents de votre entreprise avec un tag <span class=\"label label-info\">MonEntreprise</span> et ajoutez la permission <strong>Lecture</strong> à un groupe <span class=\"btn btn-default\">employés</span>"
     },
