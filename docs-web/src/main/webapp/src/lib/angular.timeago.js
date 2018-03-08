@@ -104,7 +104,7 @@ angular.module('yaru22.angular-timeago').config(["timeAgoSettings", function(tim
 'use strict';
 
 angular.module('yaru22.angular-timeago').config(["timeAgoSettings", function(timeAgoSettings) {
-  timeAgoSettings.strings['de_DE'] = {
+  timeAgoSettings.strings['de'] = {
     prefixAgo: 'vor',
     prefixFromNow: 'in',
     suffixAgo: null,
