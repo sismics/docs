@@ -36,7 +36,7 @@
     "logged_as": "Eingelogt als {{ username }}",
     "nav_settings": "Einstellungen",
     "logout": "Logout",
-    "global_quota_warning": "<strong>Warning!</strong> Der stets zur Verfügung stehende Speicherplatz ist fast erreicht bei {{ current | number: 0 }}MB ({{ percent | number: 1 }}%) verwendet {{ total | number: 0 }}MB"
+    "global_quota_warning": "<strong>Warnung!</strong> Der frei zur Verfügung stehende maximale Speicherplatz ist fast erreicht bei {{ current | number: 0 }}MB ({{ percent | number: 1 }}%) verwendet {{ total | number: 0 }}MB"
   },
   "document": {
     "search_simple": "Einfache Suche",
@@ -46,15 +46,19 @@
     "search_before_date": "Vor diesem Datum",
     "search_after_date": "Nach diesem Datum",
     "search_tags": "Tags",
+    "search_shared": "Nur freigegebene Dokumente",
+    "search_workflow": "Mir zugeordneter Workflow ",
     "search_clear": "Leeren",
     "any_language": "Jede Sprache",
     "add_document": "Dokument hinzufügen",
+    "import_eml": "mport aus einer E-Mail (EML-Format)",
     "tags": "Tags",
     "no_tags": "Keine Tags",
-    "no_documents": "Kein dokument in der Datenbank",
+    "no_documents": "Kein Dokument in der Datenbank",
     "search": "Suche",
     "search_empty": "Kein Treffer für <strong>\"{{ search }}\"</strong>",
     "shared": "Geteilt",
+    "current_step_name": "Aktueller Bearbeitungsschritt",
     "title": "Titel",
     "description": "Beschreibung",
     "contributors": "Mitwirkende",
@@ -73,7 +77,7 @@
     "page_size_10": "10 pro Seite",
     "page_size_20": "20 pro Seite",
     "page_size_30": "30 pro Seite",
-    "upgrade_quota": "Fragen Sie Ihren Administrator, um Ihr Speicherplatz zu erweitern. ",
+    "upgrade_quota": "Fragen Sie Ihren Administrator, um Ihr Speicherplatz zu erweitern.",
     "quota": "{{ current | number: 0 }}MB ({{ percent | number: 1 }}%) verwendet {{ total | number: 0 }}MB",
     "count": "{{ count }} Dokument{{ count > 1 ? 's' : '' }} gefunden",
     "view": {
@@ -162,7 +166,8 @@
       "latest_activity": "Letzte Aktivitäten",
       "footer_sismics": "Programmiert mit<span class=\"glyphicon glyphicon-heart\"></span> by <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
       "api_documentation": "API Dokumentation",
-      "feedback": "Geben Sie uns Feedback"
+      "feedback": "Geben Sie uns Feedback",
+      "workflow_document_list": "Mir zugeordnette Dokumente"
     },
     "pdf": {
       "export_title": "Export als PDF",
@@ -238,12 +243,14 @@
     "menu_user_account": "Benutzerkonto",
     "menu_two_factor_auth": "Zwei-Faktor-Authentifizierung",
     "menu_opened_sessions": "Geöffnete Sitzung",
+    "menu_file_importer": "Massen Datei Importer",
     "menu_general_settings": "Generelle Einstellungen",
     "menu_workflow": "Workflow",
     "menu_users": "Benutzer",
     "menu_groups": "Gruppen",
     "menu_vocabularies": "Vokabulare",
     "menu_configuration": "Einstellungen",
+    "menu_inbox": "Inbox scannen",
     "menu_server_logs": "Server Logs",
     "user": {
       "title": "Users <small>management</small>",
@@ -341,12 +348,14 @@
       "message_guest_access": "Der Gastzugang ist ein Modus, in dem jeder Zugriff hat. {{ appName }} ohne Passwort.<br/>Wie ein normaler Benutzer kann der Gastbenutzer nur auf seine Dokumente zugreifen und auf die über Berechtigungen zugreifen.<br/>",
       "enable_guest_access": "Gastzugang aktivieren",
       "disable_guest_access": "Gastzugang deaktivieren",
-      "title_theme": "Aussehen <small>customization</small>",
+      "title_theme": "Aussehen anpassen",
+      "title_general": "Allgemeine Konfiguration ",
+      "default_language": " Standardsprache für neue Dokumente ",
       "application_name": "Anwendungsname",
       "main_color": "Haupt Farbe",
       "custom_css": "Benutzerdefiniertes CSS",
       "custom_css_placeholder": "Benutzerdefiniertes CSS, das nach dem Haupt-Stylesheet hinzugefügt werden soll ",
-      "logo": "Logo (squared size)",
+      "logo": "Logo (quadratische Größe) ",
       "background_image": "Hintergrundbild",
       "uploading_image": "Bild hochladen...",
       "title_smtp": "Email <small>configuration</small>",
@@ -356,6 +365,20 @@
       "smtp_username": "SMTP Benutzername",
       "smtp_password": "SMTP Passwort",
       "smtp_updated": "SMTP Konfiguration erfolgreich aktualisiert"
+ },
+    "inbox": {
+      "title": "Posteingang durchsuchen",
+      "message": "Wenn Sie diese Funktion aktivieren, durchsucht das System den angegebenen Posteingang jede Minute nach  <strong>unread</strong> E-Mails und importieren sie automatisch.<br/>Nach dem Import einer E-Mail wird diese als gelesen markiert.<br/>Configuration settings for <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
+      "enabled": "Posteingang duchrsuchen aktivieren",
+      "hostname": "IMAP Server",
+      "port": "IMAP Port (143 or 993)",
+      "username": "IMAP Benutzername",
+      "password": "IMAP Passwort",
+      "tag": "Tag zu importierten Dokumenten hinzugefügt",
+      "test": "Konfiguration testen",
+      "last_sync": "Letzte Synchronisation: {{ data.date | date: 'medium' }}, {{ data.count }} E-Mail{{ data.count > 1 ? 's' : '' }} importiert",
+      "test_success": "Die Verbindung zum Posteingang war erfolgreich ({{ count }} <strong>unread</strong> message{{ count > 1 ? 's' : '' }})",
+      "test_fail": "Beim Verbinden mit dem Posteingang ist ein Fehler aufgetreten, bitte überprüfen Sie die Einstellungen"
     },
     "log": {
       "title": "Server <small>logs</small>",
@@ -377,11 +400,23 @@
       "title": "Vokabular  <small>entries</small>",
       "choose_vocabulary": "Wählen Sie ein Vokabular aus, das Sie bearbeiten möchten.",
       "type": "Typ",
-      "Geltungsbereich": "Geltungsbereich",
+      "coverage": "Geltungsbereich",
       "rights": "Rechte",
       "value": "Wert",
       "order": "Reihenfolge",
       "new_entry": "Neuer Eintrag"
+    },
+    "fileimporter": {
+      "title": "Massen Datei Importeur",
+      "advanced_users": "Für fortgeschrittene Benutzer! ",
+      "need_intro": "Wenn Sie:",
+      "need_1": "Ganze Verzeichnisse von Dateien auf einmal importieren möchten",
+      "need_2": "Ein Verzeichnis nach neuen Dateien durchsuchen lassen und gefunden Dateien importieren lassen möchten",
+      "line_1": "Gehen Sie zu <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> und laden Sie das Datei-Importer-Tool für Ihr System herunter.",
+      "line_2": "Folgen Sie dem Link <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">instructions here</a> um das Import-Toll zu nutzen.",
+      "line_3": "Ihre Dateien werden importiert in <a href=\"#/document\">Quick upload</a>, danach können Sie die Dateien weiterbearbeiten und Dokumenten zuordnen oder Dokumente erstellen.",
+      "download": "Herunterladen",
+      "instructions": "Anweisungen"
     }
   },
   "feedback": {
@@ -390,6 +425,11 @@
     "sent_title": "Feedback gesendet",
     "sent_message": "Vielen Dank für Ihr Feedback! Es wird uns helfen, Sismics Docs noch besser zu machen."
   },
+  "import": {
+    "title": "Wird importiert",
+    "error_quota": "Speicher Limit erreicht, kontaktieren Sie Ihren Administrator, um den Ihnen zur verfügung gestellten Speicherplatz zu erhöhen. ",
+    "error_general": "Beim Versuch, Ihre Datei zu importieren, ist ein Fehler aufgetreten. Bitte stellen Sie sicher, dass es sich um eine gültige EML-Datei handelt."  
+},
   "app_share": {
     "main": "Fragen Sie nach einen Link zu einem gemeinsam genutzten Dokument, um darauf zuzugreifen.",
     "403": {
