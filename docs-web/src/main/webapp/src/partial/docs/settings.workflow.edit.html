@@ -64,7 +64,9 @@
                          typeahead-wait-ms="200" />
                 </div>
                 <div class="col-xs-1">
-                  <span class="btn btn-link fas fa-trash" ng-click="removeStep(step)"></span>
+                  <span class="btn btn-link" ng-click="removeStep(step)">
+                    <span class="fas fa-trash"></span>
+                  </span>
                 </div>
               </div>
               <div class="row mt-10">
@@ -86,7 +88,7 @@
 
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10 btn-link pointer" ng-click="addStep()">
-        <span class="fas fa-plus-sign"></span> {{ 'settings.workflow.edit.add_step' | translate }}
+        <span class="fas fa-plus-circle"></span> {{ 'settings.workflow.edit.add_step' | translate }}
       </div>
     </div>
 
