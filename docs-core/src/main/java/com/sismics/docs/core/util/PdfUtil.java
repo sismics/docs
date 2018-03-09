@@ -200,7 +200,7 @@ public class PdfUtil {
                         .addText("Created by " + documentDto.getCreator()
                             + " on " + dateFormat.format(new Date(documentDto.getCreateTimestamp())), true)
                         .newLine()
-                        .addText(documentDto.getDescription())
+                        .addText(Strings.nullToEmpty(documentDto.getDescription()).replaceAll("[\r\n]", ""))
                         .newLine();
                     if (!Strings.isNullOrEmpty(documentDto.getSubject())) {
                         pdfPage.addText("Subject: " + documentDto.getSubject());
