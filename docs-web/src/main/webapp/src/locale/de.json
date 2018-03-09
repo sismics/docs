@@ -79,7 +79,7 @@
     "page_size_30": "30 pro Seite",
     "upgrade_quota": "Fragen Sie Ihren Administrator, um Ihr Speicherplatz zu erweitern.",
     "quota": "{{ current | number: 0 }}MB ({{ percent | number: 1 }}%) verwendet von {{ total | number: 0 }}MB",
-    "count": "{{ count }} Dokument{{ count > 1 ? 's' : '' }} gefunden",
+    "count": "{{ count }} Dokument{{ count > 1 ? 'e' : '' }} gefunden",
     "view": {
       "delete_comment_title": "Kommentar löschen",
       "delete_comment_message": "Möchten Sie diesen Kommentar wirklich löschen?",
