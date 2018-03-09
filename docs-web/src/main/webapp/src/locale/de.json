@@ -70,7 +70,7 @@
     "format": "Format",
     "source": "Quelle",
     "type": "Typ",
-    "Geltungsbereich": "Geltungsbereich",
+    "coverage": "Geltungsbereich",
     "rights": "Rechte",
     "relations": "Beziehung",
     "page_size": "Seiten Größe",
@@ -78,7 +78,7 @@
     "page_size_20": "20 pro Seite",
     "page_size_30": "30 pro Seite",
     "upgrade_quota": "Fragen Sie Ihren Administrator, um Ihr Speicherplatz zu erweitern.",
-    "quota": "{{ current | number: 0 }}MB ({{ percent | number: 1 }}%) verwendet {{ total | number: 0 }}MB",
+    "quota": "{{ current | number: 0 }}MB ({{ percent | number: 1 }}%) verwendet von {{ total | number: 0 }}MB",
     "count": "{{ count }} Dokument{{ count > 1 ? 's' : '' }} gefunden",
     "view": {
       "delete_comment_title": "Kommentar löschen",
@@ -164,7 +164,7 @@
       "add_files": "Dateien hinzufügen",
       "add_new_document": "Neues Dokument hinzufügen",
       "latest_activity": "Letzte Aktivitäten",
-      "footer_sismics": "Programmiert mit<span class=\"glyphicon glyphicon-heart\"></span> by <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
+      "footer_sismics": "Programmiert mit <span class=\"fas fa-heart\"></span> by <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
       "api_documentation": "API Dokumentation",
       "feedback": "Geben Sie uns Feedback",
       "workflow_document_list": "Mir zugeordnette Dokumente"
@@ -253,7 +253,7 @@
     "menu_inbox": "Inbox scannen",
     "menu_server_logs": "Server Logs",
     "user": {
-      "title": "Users <small>management</small>",
+      "title": "Benutzerverwaltung",
       "add_user": "Benutzer hinzufügen",
       "username": "Benutzername",
       "create_date": "Erstellungsdatum",
@@ -271,7 +271,7 @@
         "storage_quota": "Speicherkontingent",
         "storage_quota_placeholder": "Speicherkontingent (in MB)",
         "password": "Passwort",
-        "password_confirm": "Passwort (confirm)",
+        "password_confirm": "Passwort (bestätigen)",
         "disabled": "Deaktivierter Benutzer",
         "password_reset_btn": "Senden Sie eine E-Mail zum Zurücksetzen des Kennworts an diesen Benutzer",
         "password_lost_sent_title": "Passwort zurücksetzen Email gesendet ",
@@ -279,35 +279,35 @@
       }
     },
     "workflow": {
-      "title": "Workflow <small>configuration</small>",
+      "title": "Workflow Konfigurator",
       "add_workflow": "Workflow hinzufügen",
       "name": "Name",
       "create_date": "Erstellungsdatum",
       "edit": {
         "delete_workflow_title": "Workflow löschen",
         "delete_workflow_message": "Möchten Sie diesen Workflow wirklich löschen? Derzeit ausgeführte Workflows werden nicht gelöscht",
-        "edit_workflow_title": "<small>Edit</small> \"{{ name }}\"",
+        "edit_workflow_title": "Edit \"{{ name }}\"",
         "add_workflow_title": "<small>Add a</small> Workflow",
         "name": "Name",
         "name_placeholder": "Name des Bearbeitungschritts oder der Beschreibung ",
         "drag_help": "Drag & drop, um die Schritte neu zu ordnen ",
-        "type": "Bearbeitungsschritts",
+        "type": "Bearbeitungsschritt",
         "type_approve": "Genehmigen",
         "type_validate": "Bestätigen",
         "target": "Zugewiesen an",
-        "target_help": "<strong>Approve:</strong> Überprüfen und Fortsetzen des Workflows <br/><strong>Validate:</strong> Übernehmen oder lehnen Sie die Überprüfung ab",
+        "target_help": "<strong>Zulassen:</strong> Überprüfen und fortsetzen des Workflows <br/><strong>Genemigen:</strong> Übernehmen oder lehnen Sie die Überprüfung ab",
         "add_step": "Workflow Schritt hinzufügen"
       }
     },
     "security": {
       "enable_totp": "Zwei-Faktor-Authentifizierung aktivieren",
       "enable_totp_message": "Stellen Sie sicher, dass Sie eine TOTP-kompatible Anwendung auf Ihrem Handy haben, die bereit ist, ein neues Konto hinzuzufügen.",
-      "title": "Two-factor <small>authentication</small>",
-      "message_1": "Die Zwei-Faktor-Authentifizierung ermöglicht Ihnen eine weitere Abischerung Ihres {{ appName }} Benutzerkonto. Bevor Sie diese Funktion aktivieren, stellen Sie sicher, dass Sie eine TOTP-kompatible Anwendung auf Ihrem Telefon haben: ",
+      "title": "Zwei-Faktor-Authentifizierung",
+      "message_1": "Die Zwei-Faktor-Authentifizierung ermöglicht Ihnen eine weitere Abischerung Ihres {{ appName }} Benutzerkontos. Bevor Sie diese Funktion aktivieren, stellen Sie sicher, dass Sie eine TOTP-kompatible Anwendung auf Ihrem Telefon haben: ",
       "message_google_authenticator": "Für Android, iOS, und Blackberry: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>",
       "message_duo_mobile": "Für Android und iOS: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
       "message_authenticator": "Für Windows Phone: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">Authenticator</a>",
-      "message_2": "Diese Anwendungen generieren automatisch einen Validierungscode, der sich nach einer gewissen Zeitspanne ändert. Sie müssen diesen Validierungscode jedes Mal eingeben, wenn Sie sich bei {{ appName }}} anmelden. </strong>.",
+      "message_2": "Diese Anwendungen generieren automatisch einen Validierungscod der sich nach einer gewissen Zeitspanne ändert. Sie müssen diesen Validierungscode jedes Mal eingeben, wenn Sie sich bei {{ appName }} anmelden. </strong>.",
       "secret_key": "Ihr geheimer Schlüssel ist: <strong>{{ secret }}</strong>",
       "secret_key_warning": "Konfigurieren Sie Ihre TOTP-App jetzt mit diesem geheimen Schlüssel auf Ihrem Telefon, Sie können später nicht darauf zugreifen.",
       "totp_enabled_message": "Die Zwei-Faktor-Authentifizierung ist in Ihrem Konto aktiviert.<br/>Bei jeder Anmeldung auf <strong>{{ appName }}</strong>, werden Sie in Ihrer konfigurierten Telefon-App nach einem Bestätigungscode gefragt.<br/>Wenn Sie Ihr Telefon verlieren, können Sie sich nicht in Ihrem Konto anmelden, aber aktive Sitzungen ermöglichen es Ihnen, einen geheimen Schlüssel neu zu generieren.",
@@ -319,7 +319,7 @@
       }
     },
     "group": {
-      "title": "Gruppen <small>management</small>",
+      "title": "Gruppenverwaltung",
       "add_group": "Gruppe hinzufügen",
       "name": "Name",
       "edit": {
@@ -332,20 +332,20 @@
         "name": "Name",
         "parent_group": "Übergruppe",
         "search_group": "Gruppe suchen",
-        "members": "Mitgleider",
-        "new_member": "Neue Mitgleider",
+        "members": "Mitglieder",
+        "new_member": "Neue Mitglieder",
         "search_user": "Benutzer suchen"
       }
     },
     "account": {
-      "title": "User <small>account</small>",
+      "title": "Benutzerkonto",
       "password": "Passwort",
-      "password_confirm": "Passwort (confirm)",
+      "password_confirm": "Passwort (bestätigen)",
       "updated": "Benutzerkonto erfolgreich aktualisiert"
     },
     "config": {
-      "title_guest_access": "Gast <small>access</small>",
-      "message_guest_access": "Der Gastzugang ist ein Modus, in dem jeder Zugriff hat. {{ appName }} ohne Passwort.<br/>Wie ein normaler Benutzer kann der Gastbenutzer nur auf seine Dokumente zugreifen und auf die über Berechtigungen zugreifen.<br/>",
+      "title_guest_access": "Gastzugang",
+      "message_guest_access": "Der Gastzugang ist ein Modus in dem jeder Zugriff hat und {{ appName }} ohne Passwort nutzen kann.<br/>Wie ein normaler Benutzer kann der Gastbenutzer nur auf seine Dokumente zugreifen und Berechtigungen zugreifen.<br/>",
       "enable_guest_access": "Gastzugang aktivieren",
       "disable_guest_access": "Gastzugang deaktivieren",
       "title_theme": "Aussehen anpassen",
@@ -358,36 +358,36 @@
       "logo": "Logo (quadratische Größe) ",
       "background_image": "Hintergrundbild",
       "uploading_image": "Bild hochladen...",
-      "title_smtp": "Email <small>configuration</small>",
+      "title_smtp": "SMTP Email Einstellungen <small>für Passwort wiederherstellung</small",
       "smtp_hostname": "SMTP Server",
       "smtp_port": "SMTP Port",
       "smtp_from": "Absender E-Mail",
       "smtp_username": "SMTP Benutzername",
       "smtp_password": "SMTP Passwort",
       "smtp_updated": "SMTP Konfiguration erfolgreich aktualisiert"
- },
+    },
     "inbox": {
       "title": "Posteingang durchsuchen",
-      "message": "Wenn Sie diese Funktion aktivieren, durchsucht das System den angegebenen Posteingang jede Minute nach  <strong>unread</strong> E-Mails und importieren sie automatisch.<br/>Nach dem Import einer E-Mail wird diese als gelesen markiert.<br/>Configuration settings for <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
+      "message": "Wenn Sie diese Funktion aktivieren, durchsucht das System den angegebenen Posteingang jede Minute nach  <strong>ungelesenen</strong> E-Mails und importieren diese automatisch.<br/>Nach dem Import einer E-Mail wird diese als gelesen markiert.<br/>Folgen Sie den Links zu Konfigurationseinstellungen für  <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
       "enabled": "Posteingang duchrsuchen aktivieren",
       "hostname": "IMAP Server",
-      "port": "IMAP Port (143 or 993)",
+      "port": "IMAP Port (143 oder 993)",
       "username": "IMAP Benutzername",
       "password": "IMAP Passwort",
-      "tag": "Tag zu importierten Dokumenten hinzugefügt",
+      "tag": "Folgenen Tag zu importierten Dokumenten hinzufügen",
       "test": "Konfiguration testen",
-      "last_sync": "Letzte Synchronisation: {{ data.date | date: 'medium' }}, {{ data.count }} E-Mail{{ data.count > 1 ? 's' : '' }} importiert",
+      "last_sync": "Letzte Synchronisation: {{ data.date | date: 'medium' }}, {{ data.count }} E-Mail(s){{ data.count > 1 ? 's' : '' }} importiert",
       "test_success": "Die Verbindung zum Posteingang war erfolgreich ({{ count }} <strong>unread</strong> message{{ count > 1 ? 's' : '' }})",
       "test_fail": "Beim Verbinden mit dem Posteingang ist ein Fehler aufgetreten, bitte überprüfen Sie die Einstellungen"
     },
     "log": {
-      "title": "Server <small>logs</small>",
+      "title": "Server Logs",
       "date": "Datum",
       "tag": "Tag",
       "message": "Nachricht"
     },
     "session": {
-      "title": "Geöffnet <small>sessions</small>",
+      "title": "Geöffnete Sitzungen",
       "created_date": "Erstellungsdatum",
       "last_connection_date": "Letztes Verbindungsdatum",
       "user_agent": "Von",
@@ -397,10 +397,10 @@
       "clear": "Alle anderen Sitzungen löschen"
     },
     "vocabulary": {
-      "title": "Vokabular  <small>entries</small>",
+      "title": "Vokabulareinträge",
       "choose_vocabulary": "Wählen Sie ein Vokabular aus, das Sie bearbeiten möchten.",
       "type": "Typ",
-      "coverage": "Geltungsbereich",
+      "Geltungsbereich": "Geltungsbereich",
       "rights": "Rechte",
       "value": "Wert",
       "order": "Reihenfolge",
@@ -414,7 +414,7 @@
       "need_2": "Ein Verzeichnis nach neuen Dateien durchsuchen lassen und gefunden Dateien importieren lassen möchten",
       "line_1": "Gehen Sie zu <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> und laden Sie das Datei-Importer-Tool für Ihr System herunter.",
       "line_2": "Folgen Sie dem Link <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">instructions here</a> um das Import-Toll zu nutzen.",
-      "line_3": "Ihre Dateien werden importiert in <a href=\"#/document\">Quick upload</a>, danach können Sie die Dateien weiterbearbeiten und Dokumenten zuordnen oder Dokumente erstellen.",
+      "line_3": "Ihre Dateien werden in importiert <a href=\"#/document\">Quick upload</a>, danach können Sie die Dateien weiterbearbeiten und Dokumenten zuordnen oder Dokumente erstellen.",
       "download": "Herunterladen",
       "instructions": "Anweisungen"
     }
@@ -429,7 +429,7 @@
     "title": "Wird importiert",
     "error_quota": "Speicher Limit erreicht, kontaktieren Sie Ihren Administrator, um den Ihnen zur verfügung gestellten Speicherplatz zu erhöhen. ",
     "error_general": "Beim Versuch, Ihre Datei zu importieren, ist ein Fehler aufgetreten. Bitte stellen Sie sicher, dass es sich um eine gültige EML-Datei handelt."  
-},
+  },
   "app_share": {
     "main": "Fragen Sie nach einen Link zu einem gemeinsam genutzten Dokument, um darauf zuzugreifen.",
     "403": {
