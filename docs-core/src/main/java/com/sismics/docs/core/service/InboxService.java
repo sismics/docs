@@ -169,7 +169,7 @@ public class InboxService extends AbstractScheduledService {
             properties.put("mail.imap.writetimeout", 30000);
         }
 
-        Session session = Session.getDefaultInstance(properties);
+        Session session = Session.getInstance(properties);
 
         Store store = session.getStore("imap");
         store.connect(ConfigUtil.getConfigStringValue(ConfigType.INBOX_USERNAME),
