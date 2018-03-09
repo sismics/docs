@@ -161,6 +161,7 @@ public class TestFileResource extends BaseJerseyTest {
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         is = (InputStream) response.getEntity();
         fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(MimeType.APPLICATION_ZIP, MimeTypeUtil.guessMimeType(fileBytes, null));

@@ -584,7 +584,7 @@ public class FileResource extends BaseResource {
                         // Files are encrypted by the creator of them
                         User user = userDao.getById(file.getUserId());
                         try (InputStream decryptedStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey())) {
-                            ZipEntry zipEntry = new ZipEntry(file.getFullName(Integer.toString(index)));
+                            ZipEntry zipEntry = new ZipEntry(index + "-" + file.getFullName(Integer.toString(index)));
                             zipOutputStream.putNextEntry(zipEntry);
                             ByteStreams.copy(decryptedStream, zipOutputStream);
                             zipOutputStream.closeEntry();
