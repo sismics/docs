@@ -68,13 +68,4 @@ public class TagCriteria {
         this.name = name;
         return this;
     }
-
-    public String getNameLike() {
-        return nameLike;
-    }
-
-    public TagCriteria setNameLike(String nameLike) {
-        this.nameLike = nameLike;
-        return this;
-    }
 }

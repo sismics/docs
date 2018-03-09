@@ -17,10 +17,7 @@ import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
-import com.sismics.docs.core.util.ConfigUtil;
-import com.sismics.docs.core.util.DocumentUtil;
-import com.sismics.docs.core.util.FileUtil;
-import com.sismics.docs.core.util.PdfUtil;
+import com.sismics.docs.core.util.*;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -424,6 +421,7 @@ public class DocumentResource extends BaseResource {
         }
 
         TagDao tagDao = new TagDao();
+        List<TagDto> allTagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)), null);
         UserDao userDao = new UserDao();
         DateTimeParser[] parsers = {
                 DateTimeFormat.forPattern("yyyy").getParser(),
@@ -448,7 +446,7 @@ public class DocumentResource extends BaseResource {
             switch (params[0]) {
                 case "tag":
                     // New tag criteria
-                    List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setNameLike(params[1]), null);
+                    List<TagDto> tagDtoList = TagUtil.findByName(params[1], allTagDtoList);
                     if (documentCriteria.getTagIdList() == null) {
                         documentCriteria.setTagIdList(new ArrayList<String>());
                     }
@@ -458,6 +456,10 @@ public class DocumentResource extends BaseResource {
                     }
                     for (TagDto tagDto : tagDtoList) {
                         documentCriteria.getTagIdList().add(tagDto.getId());
+                        List<TagDto> childrenTagDtoList = TagUtil.findChildren(tagDto, allTagDtoList);
+                        for (TagDto childrenTagDto : childrenTagDtoList) {
+                            documentCriteria.getTagIdList().add(childrenTagDto.getId());
+                        }
                     }
                     break;
                 case "after":

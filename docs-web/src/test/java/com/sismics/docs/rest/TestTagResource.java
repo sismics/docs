@@ -1,16 +1,15 @@
 package com.sismics.docs.rest;
 
+import com.sismics.util.filter.TokenBasedSecurityFilter;
+import org.junit.Assert;
+import org.junit.Test;
+
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.sismics.util.filter.TokenBasedSecurityFilter;
 
 /**
  * Test the tag resource.
@@ -66,12 +65,13 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         
         // Create a document
-        target().path("/document").request()
+        json = target().path("/document").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
                 .put(Entity.form(new Form()
                         .param("title", "My super document 1")
                         .param("tags", tag3Id)
                         .param("language", "eng")), JsonObject.class);
+        String document1Id = json.getString("id");
         
         // Create a document
         json = target().path("/document").request()
@@ -81,7 +81,28 @@ public class TestTagResource extends BaseJerseyTest {
                         .param("tags", tag4Id)
                         .param("language", "eng")), JsonObject.class);
         String document2Id = json.getString("id");
-        
+
+        // Search document by parent tag
+        json = target().path("/document/list")
+                .queryParam("search", "tag:Tag3")
+                .queryParam("asc", "true")
+                .queryParam("sort_column", "1")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .get(JsonObject.class);
+        Assert.assertEquals(2, json.getJsonArray("documents").size());
+        Assert.assertEquals(document1Id, json.getJsonArray("documents").getJsonObject(0).getString("id"));
+        Assert.assertEquals(document2Id, json.getJsonArray("documents").getJsonObject(1).getString("id"));
+
+        // Search document by children tag
+        json = target().path("/document/list")
+                .queryParam("search", "tag:Tag4")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .get(JsonObject.class);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
+        Assert.assertEquals(document2Id, json.getJsonArray("documents").getJsonObject(0).getString("id"));
+
         // Check tags on a document
         json = target().path("/document/" + document2Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)

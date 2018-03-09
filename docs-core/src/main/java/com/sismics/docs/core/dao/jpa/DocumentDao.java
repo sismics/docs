@@ -2,6 +2,7 @@ package com.sismics.docs.core.dao.jpa;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
@@ -239,11 +240,14 @@ public class DocumentDao {
         }
         if (criteria.getTagIdList() != null && !criteria.getTagIdList().isEmpty()) {
             int index = 0;
+            List<String> tagCriteriaList = Lists.newArrayList();
             for (String tagId : criteria.getTagIdList()) {
-                sb.append(String.format(" join T_DOCUMENT_TAG dt%d on dt%d.DOT_IDDOCUMENT_C = d.DOC_ID_C and dt%d.DOT_IDTAG_C = :tagId%d and dt%d.DOT_DELETEDATE_D is null ", index, index, index, index, index));
+                sb.append(String.format("left join T_DOCUMENT_TAG dt%d on dt%d.DOT_IDDOCUMENT_C = d.DOC_ID_C and dt%d.DOT_IDTAG_C = :tagId%d and dt%d.DOT_DELETEDATE_D is null ", index, index, index, index, index));
                 parameterMap.put("tagId" + index, tagId);
+                tagCriteriaList.add(String.format("dt%d.DOT_ID_C is not null", index));
                 index++;
             }
+            criteriaList.add(Joiner.on(" OR ").join(tagCriteriaList));
         }
         if (criteria.getShared() != null && criteria.getShared()) {
             criteriaList.add("(select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null) > 0");

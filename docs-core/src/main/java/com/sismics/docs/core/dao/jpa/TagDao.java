@@ -195,10 +195,6 @@ public class TagDao {
             criteriaList.add("t.TAG_NAME_C = :name");
             parameterMap.put("name", criteria.getName());
         }
-        if (criteria.getNameLike() != null) {
-            criteriaList.add("t.TAG_NAME_C like :nameLike");
-            parameterMap.put("nameLike", criteria.getNameLike() + "%");
-        }
 
         criteriaList.add("t.TAG_DELETEDATE_D is null");
 
