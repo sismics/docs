@@ -4,37 +4,37 @@
   <h2 ng-show="isEdit()" translate="settings.user.edit.edit_user_title" translate-values="{ username: user.username }"></h2>
   <h2 ng-show="!isEdit()" translate="settings.user.edit.add_user_title"></h2>
 
-  <form class="form-horizontal" name="editUserForm" novalidate>
-    <div class="form-group" ng-class="{ 'has-error': !editUserForm.username.$valid && editUserForm.$dirty, success: editUserForm.username.$valid }">
-      <label class="col-sm-2 control-label" for="inputUsername">{{ 'settings.user.edit.username' | translate }}</label>
+  <form class="form-horizontal" name="editUserForm" novalidate autocomplete="off">
+    <div class="form-group" ng-class="{ 'has-error': !editUserForm.userUsername.$valid && editUserForm.$dirty, success: editUserForm.userUsername.$valid }">
+      <label class="col-sm-2 control-label" for="inputUserUsername">{{ 'settings.user.edit.username' | translate }}</label>
       <div class="col-sm-7">
-        <input name="username" type="text" id="inputUsername" required ng-disabled="isEdit()" class="form-control"
+        <input name="userUsername" type="text" id="inputUserUsername" required ng-disabled="isEdit()" class="form-control"
                ng-minlength="3" ng-maxlength="50" ng-attr-placeholder="{{ 'settings.user.edit.username' | translate }}" ng-model="user.username"/>
       </div>
 
       <div class="col-sm-3">
-        <span class="help-block" ng-show="editUserForm.username.$error.required && editUserForm.$dirty">{{ 'validation.required' | translate }}</span>
-        <span class="help-block" ng-show="editUserForm.username.$error.minlength && editUserForm.$dirty">{{ 'validation.too_short' | translate }}</span>
-        <span class="help-block" ng-show="editUserForm.username.$error.maxlength && editUserForm.$dirty">{{ 'validation.too_long' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userUsername.$error.required && editUserForm.$dirty">{{ 'validation.required' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userUsername.$error.minlength && editUserForm.$dirty">{{ 'validation.too_short' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userUsername.$error.maxlength && editUserForm.$dirty">{{ 'validation.too_long' | translate }}</span>
       </div>
     </div>
 
-    <div class="form-group" ng-class="{ 'has-error': !editUserForm.email.$valid && editUserForm.$dirty, success: editUserForm.email.$valid }">
+    <div class="form-group" ng-class="{ 'has-error': !editUserForm.userEmail.$valid && editUserForm.$dirty, success: editUserForm.userEmail.$valid }">
       <label class="col-sm-2 control-label" for="inputEmail">{{ 'settings.user.edit.email' | translate }}</label>
       <div class="col-sm-7">
-        <input name="email" type="email" id="inputEmail" required class="form-control"
+        <input name="userEmail" type="email" id="inputEmail" required class="form-control"
                ng-minlength="1" ng-maxlength="100" ng-attr-placeholder="{{ 'settings.user.edit.email' | translate }}" ng-model="user.email"/>
       </div>
 
       <div class="col-sm-3">
-        <span class="help-block" ng-show="editUserForm.email.$error.required && editUserForm.$dirty">{{ 'validation.required' | translate }}</span>
-        <span class="help-block" ng-show="editUserForm.email.$error.email && editUserForm.$dirty">{{ 'validation.email' | translate }}</span>
-        <span class="help-block" ng-show="editUserForm.email.$error.minlength && editUserForm.$dirty">{{ 'validation.too_short' | translate }}</span>
-        <span class="help-block" ng-show="editUserForm.email.$error.maxlength && editUserForm.$dirty">{{ 'validation.too_long' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userEmail.$error.required && editUserForm.$dirty">{{ 'validation.required' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userEmail.$error.email && editUserForm.$dirty">{{ 'validation.email' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userEmail.$error.minlength && editUserForm.$dirty">{{ 'validation.too_short' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userEmail.$error.maxlength && editUserForm.$dirty">{{ 'validation.too_long' | translate }}</span>
       </div>
     </div>
 
-    <div class="form-group" ng-if="user.groups.length > 0">
+    <div class="form-group" ng-show="user.groups.length > 0">
       <label class="col-sm-2 control-label">{{ 'settings.user.edit.groups' | translate }}</label>
       <div class="col-sm-7">
         <span ng-repeat="group in user.groups">
@@ -60,17 +60,17 @@
     </div>
 
     <div class="form-group" ng-if="user.username != 'guest'"
-      ng-class="{ 'has-error': !editUserForm.password.$valid && editUserForm.$dirty, success: editUserForm.password.$valid }">
-      <label class="col-sm-2 control-label" for="inputPassword">{{ 'settings.user.edit.password' | translate }}</label>
+      ng-class="{ 'has-error': !editUserForm.userPassword.$valid && editUserForm.$dirty, success: editUserForm.userPassword.$valid }">
+      <label class="col-sm-2 control-label" for="inputUserPassword">{{ 'settings.user.edit.password' | translate }}</label>
       <div class="col-sm-7">
-        <input name="password" type="password" id="inputPassword" ng-required="!isEdit()" class="form-control"
+        <input name="userPassword" type="password" id="inputUserPassword" ng-required="!isEdit()" class="form-control"
                ng-minlength="8" ng-maxlength="50" ng-attr-placeholder="{{ 'settings.user.edit.password' | translate }}" ng-model="user.password"/>
       </div>
 
       <div class="col-sm-3">
-        <span class="help-block" ng-show="editUserForm.password.$error.required && editUserForm.$dirty">{{ 'validation.required' | translate }}</span>
-        <span class="help-block" ng-show="editUserForm.password.$error.minlength && editUserForm.$dirty">{{ 'validation.too_short' | translate }}</span>
-        <span class="help-block" ng-show="editUserForm.password.$error.maxlength && editUserForm.$dirty">{{ 'validation.too_long' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userPassword.$error.required && editUserForm.$dirty">{{ 'validation.required' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userPassword.$error.minlength && editUserForm.$dirty">{{ 'validation.too_short' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userPassword.$error.maxlength && editUserForm.$dirty">{{ 'validation.too_long' | translate }}</span>
       </div>
     </div>
 

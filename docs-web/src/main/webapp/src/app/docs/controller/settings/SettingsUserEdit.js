@@ -19,6 +19,8 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
       data.storage_quota /= 1000000;
       $scope.user = data;
     });
+  } else {
+    $scope.user = {}; // Very important otherwise ng-if in template will make a new scope variable
   }
 
   /**

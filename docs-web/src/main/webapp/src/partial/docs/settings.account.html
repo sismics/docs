@@ -1,22 +1,22 @@
 <h1 translate="settings.account.title"></h1>
-<form class="form-horizontal" name="editUserForm" novalidate>
-  <div class="form-group" ng-class="{ 'has-error': !editUserForm.password.$valid && editUserForm.$dirty, success: editUserForm.password.$valid }">
-    <label class="col-sm-2 control-label" for="inputPassword">{{ 'settings.account.password' | translate }}</label>
+<form class="form-horizontal" name="editUserForm" novalidate autocomplete="off">
+  <div class="form-group" ng-class="{ 'has-error': !editUserForm.accountPassword.$valid && editUserForm.$dirty, success: editUserForm.accountPassword.$valid }">
+    <label class="col-sm-2 control-label" for="inputAccountPassword">{{ 'settings.account.password' | translate }}</label>
     <div class="col-sm-7">
-      <input name="password" type="password" id="inputPassword" required class="form-control"
+      <input name="accountPassword" type="password" id="inputAccountPassword" required class="form-control"
         ng-minlength="8" ng-maxlength="50" ng-attr-placeholder="{{ 'settings.account.password' | translate }}" ng-model="user.password" />
     </div>
     <div class="col-sm-3">
-      <span class="help-block" ng-show="editUserForm.password.$error.required && editUserForm.$dirty">{{ 'validation.required' | translate }}</span>
-      <span class="help-block" ng-show="editUserForm.password.$error.minlength && editUserForm.$dirty">{{ 'validation.too_short' | translate }}</span>
-      <span class="help-block" ng-show="editUserForm.password.$error.maxlength && editUserForm.$dirty">{{ 'validation.too_long' | translate }}</span>
+      <span class="help-block" ng-show="editUserForm.accountPassword.$error.required && editUserForm.$dirty">{{ 'validation.required' | translate }}</span>
+      <span class="help-block" ng-show="editUserForm.accountPassword.$error.minlength && editUserForm.$dirty">{{ 'validation.too_short' | translate }}</span>
+      <span class="help-block" ng-show="editUserForm.accountPassword.$error.maxlength && editUserForm.$dirty">{{ 'validation.too_long' | translate }}</span>
     </div>
   </div>
 
   <div class="form-group" ng-class="{ 'has-error': !editUserForm.passwordconfirm.$valid && editUserForm.$dirty, success: editUserForm.passwordconfirm.$valid }">
-    <label class="col-sm-2 control-label" for="inputPasswordConfirm">{{ 'settings.account.password_confirm' | translate }}</label>
+    <label class="col-sm-2 control-label" for="inputAccountPasswordConfirm">{{ 'settings.account.password_confirm' | translate }}</label>
     <div class="col-sm-7">
-      <input name="passwordconfirm" type="password" id="inputPasswordConfirm" required class="form-control"
+      <input name="passwordconfirm" type="password" id="inputAccountPasswordConfirm" required class="form-control"
         ui-validate="'$value == user.password'" ui-validate-watch="'user.password'"
         ng-attr-placeholder="{{ 'settings.account.password_confirm' | translate }}" ng-model="user.passwordconfirm" />
     </div>
