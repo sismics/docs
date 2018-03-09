@@ -251,14 +251,6 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertTrue(relations.getJsonObject(0).getBoolean("source"));
         Assert.assertEquals("My super title document 1", relations.getJsonObject(0).getString("title"));
         
-        // Export a document in PDF format
-        Response response = target().path("/document/" + document1Id).request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
-                .get();
-        InputStream is = (InputStream) response.getEntity();
-        byte[] pdfBytes = ByteStreams.toByteArray(is);
-        Assert.assertTrue(pdfBytes.length > 0);
-        
         // Create a tag
         json = target().path("/tag").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
@@ -271,7 +263,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
                 .post(Entity.form(new Form()
                         .param("title", "My new super document 1")
-                        .param("description", "My new super description for document 1")
+                        .param("description", "My new super description for document\r\n\u00A0 1")
                         .param("subject", "My new subject for document 1")
                         .param("identifier", "My new identifier for document 1")
                         .param("publisher", "My new publisher for document 1")
@@ -291,7 +283,15 @@ public class TestDocumentResource extends BaseJerseyTest {
                         .param("title", "My super title document 2")
                         .param("language", "eng")), JsonObject.class);
         Assert.assertEquals(document2Id, json.getString("id"));
-        
+
+        // Export a document in PDF format
+        Response response = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .get();
+        InputStream is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
+
         // Search documents by query
         json = target().path("/document/list")
                 .queryParam("search", "new")

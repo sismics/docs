@@ -1,12 +1,12 @@
 package com.sismics.docs.core.util.pdf;
 
-import java.io.Closeable;
-import java.io.IOException;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
+
+import java.io.Closeable;
+import java.io.IOException;
 
 /**
  * Wrapper around PDFBox for high level abstraction of PDF writing.
@@ -102,7 +102,10 @@ public class PdfPage implements Closeable {
         if (text == null) {
             return;
         }
-        
+
+        // Remove \r\n non breakable space
+        text = text.replaceAll("[\r\n]", "").replace("\u00A0", " ");
+
         pdContent.setFont(font, fontSize);
         int start = 0;
         int end = 0;
