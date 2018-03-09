@@ -63,6 +63,7 @@
       ng-class="{ 'has-error': !editUserForm.userPassword.$valid && editUserForm.$dirty, success: editUserForm.userPassword.$valid }">
       <label class="col-sm-2 control-label" for="inputUserPassword">{{ 'settings.user.edit.password' | translate }}</label>
       <div class="col-sm-7">
+        <input type="password" style="display: none;"/><!-- Hack to disable autofill -->
         <input name="userPassword" type="password" id="inputUserPassword" ng-required="!isEdit()" class="form-control"
                ng-minlength="8" ng-maxlength="50" ng-attr-placeholder="{{ 'settings.user.edit.password' | translate }}" ng-model="user.password"/>
       </div>

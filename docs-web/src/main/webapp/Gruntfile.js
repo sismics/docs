@@ -134,6 +134,9 @@ module.exports = function(grunt) {
         replacements: [{
           from: '../api',
           to: grunt.option('apiurl') || '../api'
+        }, {
+          from: '@build.date@',
+          to: new Date().getTime()
         }]
       }
     },
