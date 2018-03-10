@@ -409,7 +409,7 @@ angular.module('docs',
     .useSanitizeValueStrategy(null)
     .useStaticFilesLoader({
       prefix: 'locale/',
-      suffix: '.json'
+      suffix: '.json?@build.date@'
     })
     .registerAvailableLanguageKeys(['en', 'fr', 'de', 'ru', 'zh_CN', 'zh_TW'], {
       'ru_*': 'ru',
