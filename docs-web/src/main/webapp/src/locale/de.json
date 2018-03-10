@@ -232,7 +232,7 @@
   "usergroup": {
     "search_groups": "In Gruppen suchen",
     "search_users": "In Benutzer suchen",
-    "you": "Du bist es!",
+    "you": "Eigenes Benutzerkonto!",
     "default": {
       "title": "Benutzer und Gruppen",
       "message": "Hier können Sie Informationen über Benutzer und Gruppen einsehen."
@@ -263,8 +263,8 @@
         "delete_user_message": "Möchten Sie diesen Benutzer wirklich löschen? Alle zugehörigen Dokumente, Dateien und Tags werden gelöscht",
         "edit_user_failed_title": "Dieser Benutzer existiert bereits",
         "edit_user_failed_message": "Dieser Benutzername wurde bereits von einem anderen Benutzer gewählt",
-        "edit_user_title": "<small>Bearbeiten</small> \"{{ username }}\"",
-        "add_user_title": "<small>Add a</small> Benutzer",
+        "edit_user_title": "Bearbeiten \"{{ username }}\"",
+        "add_user_title": "Neuen Benutzer hinzufügen",
         "username": "Benutzername",
         "email": "E-mail",
         "groups": "Gruppen",
@@ -287,7 +287,7 @@
         "delete_workflow_title": "Workflow löschen",
         "delete_workflow_message": "Möchten Sie diesen Workflow wirklich löschen? Derzeit ausgeführte Workflows werden nicht gelöscht",
         "edit_workflow_title": "Bearbeiten \"{{ name }}\"",
-        "add_workflow_title": "<small>Add a</small> Workflow",
+        "add_workflow_title": "Neuen Workflow hinzufügen",
         "name": "Name",
         "name_placeholder": "Name des Bearbeitungschritts oder der Beschreibung ",
         "drag_help": "Drag & drop, um die Schritte neu zu ordnen ",
@@ -327,8 +327,8 @@
         "delete_group_message": "Wollen Sie diese Gruppe wirklich löschen?",
         "edit_group_failed_title": "Gruppe existiert bereits",
         "edit_group_failed_message": "Dieser Gruppenname wird bereits von einer anderen Gruppe übernommen",
-        "edit_group_title": "Bearbeiten <small>\"{{ name }}\"</small>",
-        "add_group_title": "<small>Add a</small> Gruppe",
+        "edit_group_title": "Bearbeiten \"{{ name }}\"",
+        "add_group_title": "Neue Gruppe hinzufügen",
         "name": "Name",
         "parent_group": "Übergruppe",
         "search_group": "Gruppe suchen",
@@ -414,7 +414,7 @@
       "need_2": "Ein Verzeichnis nach neuen Dateien durchsuchen lassen und gefunden Dateien importieren lassen möchten",
       "line_1": "Gehen Sie zu <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> und laden Sie das Datei-Importer-Tool für Ihr System herunter.",
       "line_2": "Folgen Sie dem Link <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">instructions here</a> um das Import-Toll zu nutzen.",
-      "line_3": "Ihre Dateien werden in importiert <a href=\"#/document\">Quick upload</a>, danach können Sie die Dateien weiterbearbeiten und Dokumenten zuordnen oder Dokumente erstellen.",
+      "line_3": "Ihre Dateien werden in <a href=\"#/document\">Quick upload</a> importiert, danach können Sie die Dateien weiterbearbeiten und Dokumenten zuordnen oder Dokumente erstellen.",
       "download": "Herunterladen",
       "instructions": "Anweisungen"
     }
@@ -497,8 +497,8 @@
     "required": "Erfordert ",
     "too_short": "Zu kurz",
     "too_long": "Zu lang",
-    "email": "Muss eine gültige E-Mailadresse seinm",
-    "password_confirm": "Passwort und Passwort-Bestätigung müssen übereinstimmen",
+    "email": "Muss eine gültige E-Mailadresse sein",
+    "password_confirm": "Passwort und Passwortbestätigung müssen übereinstimmen",
     "number": "Nummer erfoderlich",
     "no_space": "Leerstellen sind nicht erlaubt"
   },
@@ -525,3 +525,4 @@
   "enabled": "Eingeschaltet",
   "disabled": "ausgeschaltet"
 }
+
