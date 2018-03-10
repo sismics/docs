@@ -39,6 +39,8 @@
     "global_quota_warning": "<strong>Warning!</strong> Global quota almost reached at {{ current | number: 0 }}MB ({{ percent | number: 1 }}%) used on {{ total | number: 0 }}MB"
   },
   "document": {
+    "navigation_up": "Go up one level",
+    "toggle_navigation": "Toggle folder navigation",
     "search_simple": "Simple search",
     "search_fulltext": "Fulltext search",
     "search_creator": "Creator",

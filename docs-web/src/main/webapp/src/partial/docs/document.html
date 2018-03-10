@@ -1,16 +1,7 @@
-<script type="text/ng-template" id="tag-tree-item">
-  <span class="btn" ng-style="{ 'background-color': tag.color }"></span>
-  <span class="btn btn-link" ng-click="setSearch('tag:' + tag.name)">
-    {{ tag.name }}
-  </span>
-  <ul class="list-unstyled">
-    <li ng-repeat="tag in getChildrenTags(tag.id)" ng-include="'tag-tree-item'"></li>
-  </ul>
-</script>
-
 <div class="row">
   <div class="col-md-4">
     <div class="well well-3d">
+      <!-- Main new document button -->
       <div class="text-center mb-19">
         <div class="btn-group" uib-dropdown>
           <a href="#/document/add" class="btn btn-primary">
@@ -25,18 +16,9 @@
         </div>
       </div>
 
+      <!-- Search (simple and advanced) -->
       <div class="row search-dropdown-anchor">
-        <div class="col-xs-2 tag-tree-dropdown" uib-dropdown>
-          <button class="btn btn-block btn-default" uib-dropdown-toggle ng-disabled="disabled">
-            {{ 'document.tags' | translate }} <span class="caret"></span>
-          </button>
-          <ul uib-dropdown-menu class="tag-tree">
-            <li ng-if="getChildrenTags().length == 0">{{ 'document.no_tags' | translate }}</li>
-            <li ng-repeat="tag in getChildrenTags()" ng-include="'tag-tree-item'"></li>
-          </ul>
-        </div>
-
-        <div class="col-xs-10 input-group">
+        <div class="col-xs-12 input-group">
           <input type="search" class="form-control" ng-attr-placeholder="{{ 'document.search' | translate }}" ng-model="search" />
           <span class="input-group-addon btn" ng-click="openSearch()">
             <div uib-dropdown
@@ -145,6 +127,39 @@
         </div>
       </div>
 
+      <!-- Navigation breadcrumb -->
+      <ol class="breadcrumb breadcrumb-navigation pull-left mt-10">
+        <li><a href ng-click="navigateToTag()"><span class="fas fa-home"></span></a></li>
+        <li ng-repeat="tag in getCurrentNavigation()" ng-class="{ active: tag.id == navigatedTag.id }">
+          <a class="label" ng-style="{ 'background-color': tag.color }" ng-if="tag.id != navigatedTag.id" href ng-click="navigateToTag(tag)">{{ tag.name }}</a>
+          <span class="label" ng-style="{ 'background-color': tag.color }" ng-if="tag.id == navigatedTag.id">{{ tag.name }}</span>
+        </li>
+      </ol>
+
+      <div class="btn-group mt-10 pull-right">
+        <!-- Go up in the navigation -->
+        <button class="btn btn-default" ng-click="navigateUp()"
+                uib-tooltip="{{ 'document.navigation_up' | translate }}"
+                tooltip-append-to-body="true"
+                ng-if="navigatedTag">
+          <span class="fas fa-chevron-up"></span>
+        </button>
+        <button class="btn btn-default" ng-click="navigationToggle()"
+                ng-class="{ active: navigationEnabled }"
+                uib-tooltip="{{ 'document.toggle_navigation' | translate }}"
+                tooltip-append-to-body="true">
+          <span class="far" ng-class="{ 'fa-folder-open': navigationEnabled, 'fa-folder': !navigationEnabled }"></span>
+        </button>
+      </div>
+
+      <!-- Current folder -->
+      <table class="row table table-hover table-navigation" ng-show="navigationEnabled">
+        <tr ng-repeat="tag in tags | filter: navigatedFilter: navigatedComparator" ng-click="navigateToTag(tag)">
+          <td colspan="2"><span class="fas fa-tags" ng-style="{ color: tag.color }"></span> {{ tag.name }}</td>
+        </tr>
+      </table>
+
+      <!-- Document list -->
       <table class="row table table-hover table-documents">
         <thead>
         <tr>

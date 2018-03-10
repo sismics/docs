@@ -499,14 +499,14 @@ public class DocumentResource extends BaseResource {
                     break;
                 case "shared":
                     // New shared state criteria
-                    if (params[1].equals("yes")) {
-                        documentCriteria.setShared(true);
-                    }
+                    documentCriteria.setShared(params[1].equals("yes"));
                     break;
                 case "lang":
                     // New language criteria
                     if (Constants.SUPPORTED_LANGUAGES.contains(params[1])) {
                         documentCriteria.setLanguage(params[1]);
+                    } else {
+                        documentCriteria.setLanguage(UUID.randomUUID().toString());
                     }
                     break;
                 case "by":
@@ -522,9 +522,7 @@ public class DocumentResource extends BaseResource {
                     break;
                 case "workflow":
                     // New shared state criteria
-                    if (params[1].equals("me")) {
-                        documentCriteria.setActiveRoute(true);
-                    }
+                    documentCriteria.setActiveRoute(params[1].equals("me"));
                     break;
                 case "full":
                     // New full content search criteria

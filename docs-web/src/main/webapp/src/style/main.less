@@ -34,6 +34,36 @@
   }
 }
 
+// Navigation
+.table-navigation {
+  tr {
+    cursor: pointer;
+
+    td {
+      border: none !important;
+    }
+  }
+}
+
+.breadcrumb-navigation {
+  background: none;
+  margin-bottom: 10px;
+  display: flex;
+
+  &> li + li:before {
+    content: '/';
+  }
+
+  li {
+    display: flex;
+  }
+
+  .label {
+    display: flex;
+    align-items: center;
+  }
+}
+
 // Documents list
 .table-documents {
   margin-top: 18px !important;

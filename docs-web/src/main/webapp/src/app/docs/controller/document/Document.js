@@ -14,7 +14,6 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
   $scope.limit = _.isUndefined(localStorage.documentsPageSize) ? '10' : localStorage.documentsPageSize;
   $scope.search = $state.params.search ? $state.params.search : '';
   $scope.searchOpened = false;
-  $scope.setSearch = function (search) { $scope.search = search };
   $scope.searchDropdownAnchor = angular.element(document.querySelector('.search-dropdown-anchor'));
   $scope.paginationShown = true;
   $scope.advsearch = {};
@@ -81,6 +80,8 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
       });
     }
 
+    $scope.extractNavigatedTag();
+
     // Call API later
     timeoutPromise = $timeout(function () {
       $scope.loadDocuments();
@@ -116,22 +117,6 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
    */
   $scope.viewDocument = function (id) {
     $state.go('document.view', { id: id });
-  };
-
-  // Load tags
-  $scope.tags = [];
-  Restangular.one('tag/list').get().then(function (data) {
-    $scope.tags = data.tags;
-  });
-
-  /**
-   * Find children tags.
-   * @param parent
-   */
-  $scope.getChildrenTags = function(parent) {
-    return _.filter($scope.tags, function(tag) {
-      return tag.parent === parent;
-    });
   };
 
   /**
@@ -210,12 +195,18 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
     $scope.searchOpened = false;
   };
 
+  /**
+   * Clear the search.
+   */
   $scope.clearSearch = function () {
     $scope.advsearch = {};
     $scope.search = '';
     $scope.searchOpened = false;
   };
 
+  /**
+   * Import an EML file.
+   */
   $scope.importEml = function (file) {
     // Open the import modal
     $uibModal.open({
@@ -234,5 +225,98 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
       $scope.viewDocument(data.id);
       $scope.loadDocuments();
     });
+  };
+
+  // Tag navigation
+  $scope.tags = [];
+  $scope.navigatedFilter = { parent: '' };
+  $scope.navigatedTag = undefined;
+  $scope.navigationEnabled = _.isUndefined(localStorage.navigationEnabled) ?
+    true : localStorage.navigationEnabled === 'true';
+
+  Restangular.one('tag/list').get().then(function (data) {
+    $scope.tags = data.tags;
+    $scope.extractNavigatedTag();
+  });
+
+  /**
+   * Comparator for the navigation tag filter.
+   */
+  $scope.navigatedComparator = function (actual, expected) {
+    if (expected === '') {
+      return _.isUndefined(actual);
+    }
+    return angular.equals(actual, expected);
+  };
+
+  /**
+   * Navigate to a specific tag.
+   */
+  $scope.navigateToTag = function (tag) {
+    if (tag) {
+      $scope.search = 'tag:' + tag.name;
+    } else {
+      $scope.search = '';
+    }
+  };
+
+  /**
+   * Navigate one tag up.
+   */
+  $scope.navigateUp = function () {
+    if (!$scope.navigatedTag) {
+      return;
+    }
+    $scope.navigateToTag(_.findWhere($scope.tags, { id: $scope.navigatedTag.parent }));
+  };
+
+  /**
+   * Get the current navigation breadcrumb.
+   */
+  $scope.getCurrentNavigation = function () {
+    if (!$scope.navigatedTag) {
+      return [];
+    }
+
+    var nav = [];
+    nav.push($scope.navigatedTag);
+    var current = $scope.navigatedTag;
+    while (current.parent) {
+      current = _.findWhere($scope.tags, { id: current.parent });
+      if (!current) {
+        break;
+      }
+      nav.push(current);
+    }
+    return nav.reverse();
+  };
+
+  /**
+   * Extract the current navigated tag from the search query.
+   * Called each time the search query changes.
+   */
+  $scope.extractNavigatedTag = function () {
+    // Find the current tag in the search query
+    var tagFound = /tag:([^ ]*)/.exec($scope.search);
+    if (tagFound) {
+      tagFound = tagFound[1];
+      // We search only for exact match
+      $scope.navigatedTag = _.findWhere($scope.tags, { name: tagFound });
+    } else {
+      $scope.navigatedTag = undefined;
+    }
+    if ($scope.navigatedTag) {
+      $scope.navigatedFilter = {parent: $scope.navigatedTag.id};
+    } else {
+      $scope.navigatedFilter = {parent: ''};
+    }
+  };
+
+  /**
+   * Toggle the navigation context.
+   */
+  $scope.navigationToggle = function () {
+    $scope.navigationEnabled = !$scope.navigationEnabled;
+    localStorage.navigationEnabled = $scope.navigationEnabled;
   };
 });

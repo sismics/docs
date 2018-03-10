@@ -247,7 +247,7 @@ public class DocumentDao {
                 tagCriteriaList.add(String.format("dt%d.DOT_ID_C is not null", index));
                 index++;
             }
-            criteriaList.add(Joiner.on(" OR ").join(tagCriteriaList));
+            criteriaList.add("(" + Joiner.on(" OR ").join(tagCriteriaList) + ")");
         }
         if (criteria.getShared() != null && criteria.getShared()) {
             criteriaList.add("(select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null) > 0");
