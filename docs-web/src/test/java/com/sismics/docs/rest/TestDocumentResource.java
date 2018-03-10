@@ -85,21 +85,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document2Id);
         
         // Add a file
-        String file1Id;
-        try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
-                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file1Id = json.getString("id");
-                Assert.assertNotNull(file1Id);
-            }
-        }
-        
+        String file1Id = clientUtil.addFileToDocument("file/Einstein-Roosevelt-letter.png",
+                "Einstein-Roosevelt-letter.png", document1Token, document1Id);
+
         // Share this document
         target().path("/share").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
@@ -147,21 +135,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document3Id);
         
         // Add a file
-        String file3Id;
-        try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document3Token)
-                        .put(Entity.entity(multiPart.field("id", document3Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file3Id = json.getString("id");
-                Assert.assertNotNull(file3Id);
-            }
-        }
-        
+        clientUtil.addFileToDocument("file/Einstein-Roosevelt-letter.png",
+                "Einstein-Roosevelt-letter.png", document3Token, document3Id);
+
         // List all documents from document3
         json = target().path("/document/list")
                 .queryParam("sort_column", 3)
@@ -392,21 +368,8 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a PDF file
-        String file1Id;
-        try (InputStream is = Resources.getResource("file/document.odt").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "document.odt");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentOdtToken)
-                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file1Id = json.getString("id");
-                Assert.assertNotNull(file1Id);
-            }
-        }
-        
+        String file1Id = clientUtil.addFileToDocument("file/document.odt", "document.odt", documentOdtToken, document1Id);
+
         // Search documents by query in full content
         json = target().path("/document/list")
                 .queryParam("search", "full:ipsum")
@@ -451,21 +414,8 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a PDF file
-        String file1Id;
-        try (InputStream is = Resources.getResource("file/document.docx").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "document.docx");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentDocxToken)
-                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file1Id = json.getString("id");
-                Assert.assertNotNull(file1Id);
-            }
-        }
-        
+        String file1Id = clientUtil.addFileToDocument("file/document.docx", "document.docx", documentDocxToken, document1Id);
+
         // Search documents by query in full content
         json = target().path("/document/list")
                 .queryParam("search", "full:dolor")
@@ -510,21 +460,8 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a PDF file
-        String file1Id;
-        try (InputStream is = Resources.getResource("file/wikipedia.pdf").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "wikipedia.pdf");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPdfToken)
-                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file1Id = json.getString("id");
-                Assert.assertNotNull(file1Id);
-            }
-        }
-        
+        String file1Id = clientUtil.addFileToDocument("file/wikipedia.pdf", "wikipedia.pdf", documentPdfToken, document1Id);
+
         // Search documents by query in full content
         json = target().path("/document/list")
                 .queryParam("search", "full:vrandecic")
@@ -569,20 +506,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
 
         // Add a plain text file
-        String file1Id;
-        try (InputStream is = Resources.getResource("file/document.txt").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "document.txt");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
-                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file1Id = json.getString("id");
-                Assert.assertNotNull(file1Id);
-            }
-        }
+        String file1Id = clientUtil.addFileToDocument("file/document.txt", "document.txt", documentPlainToken, document1Id);
 
         // Search documents by query in full content
         json = target().path("/document/list")
@@ -628,20 +552,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
 
         // Add a video file
-        String file1Id;
-        try (InputStream is = Resources.getResource("file/video.webm").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "video.webm");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
-                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file1Id = json.getString("id");
-                Assert.assertNotNull(file1Id);
-            }
-        }
+        String file1Id = clientUtil.addFileToDocument("file/video.webm", "video.webm", documentPlainToken, document1Id);
 
         // Search documents by query in full content
         json = target().path("/document/list")

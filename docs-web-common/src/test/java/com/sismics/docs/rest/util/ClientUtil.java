@@ -1,13 +1,20 @@
 package com.sismics.docs.rest.util;
 
+import com.google.common.io.Resources;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
 import javax.json.JsonObject;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * REST client utilities.
@@ -139,5 +146,20 @@ public class ClientUtil {
             }
         }
         return authToken;
+    }
+
+    public String addFileToDocument(String file, String filename, String token, String documentId) throws IOException {
+        try (InputStream is = Resources.getResource(file).openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, filename);
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                JsonObject json = resource
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, token)
+                        .put(Entity.entity(multiPart.field("id", documentId).bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+                return json.getString("id");
+            }
+        }
     }
 }
