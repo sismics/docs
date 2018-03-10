@@ -236,6 +236,9 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
 
   Restangular.one('tag/list').get().then(function (data) {
     $scope.tags = data.tags;
+    _.each($scope.tags, function (tag) {
+      tag.children = _.where($scope.tags, { parent: tag.id });
+    });
     $scope.extractNavigatedTag();
   });
 
@@ -318,5 +321,14 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
   $scope.navigationToggle = function () {
     $scope.navigationEnabled = !$scope.navigationEnabled;
     localStorage.navigationEnabled = $scope.navigationEnabled;
+  };
+
+  $scope.getTagChildrenShort = function (tag) {
+    var children = tag.children;
+    if (children.length > 2) {
+      children = children.slice(0, 2);
+    }
+
+    return _.pluck(children, 'name').join(', ') + (tag.children.length > 2 ? '...' : '');
   };
 });

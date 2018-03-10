@@ -155,7 +155,13 @@
       <!-- Current folder -->
       <table class="row table table-hover table-navigation" ng-show="navigationEnabled">
         <tr ng-repeat="tag in tags | filter: navigatedFilter: navigatedComparator" ng-click="navigateToTag(tag)">
-          <td colspan="2"><span class="fas fa-tags" ng-style="{ color: tag.color }"></span> {{ tag.name }}</td>
+          <td class="tree-structure">
+            <div class="tree-line"></div>
+          </td>
+          <td>
+            <span class="fas fa-tags" ng-style="{ color: tag.color }"></span> {{ tag.name }}
+            <span class="text-muted small">{{ getTagChildrenShort(tag) }}</span>
+          </td>
         </tr>
       </table>
 

@@ -36,11 +36,33 @@
 
 // Navigation
 .table-navigation {
+  margin-left: 22px !important;
+
   tr {
     cursor: pointer;
 
     td {
       border: none !important;
+    }
+
+    td.tree-structure {
+      padding: 0;
+      width: 1em;
+      border-left: 1px solid #aaa !important;
+
+      .tree-line {
+        border-bottom: 1px solid #aaa !important;
+        border-left: 1px solid #aaa;
+        margin-left: -1px;
+        width: 100%;
+        height: 18px;
+      }
+    }
+
+    &:last-child {
+      td.tree-structure {
+        border-left: 1px solid transparent !important;
+      }
     }
   }
 }

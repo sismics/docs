@@ -28,11 +28,6 @@ public class TagCriteria {
      */
     private String name;
 
-    /**
-     * Approximate tag name.
-     */
-    private String nameLike;
-
     public String getId() {
         return id;
     }
