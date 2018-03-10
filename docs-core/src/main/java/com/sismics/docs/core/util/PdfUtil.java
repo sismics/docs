@@ -19,7 +19,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.DocsPDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
@@ -193,9 +193,9 @@ public class PdfUtil {
             if (metadata) {
                 PDPage page = new PDPage();
                 doc.addPage(page);
-                try (PdfPage pdfPage = new PdfPage(doc, page, margin * mmPerInch, PDType1Font.HELVETICA, 12)) {
+                try (PdfPage pdfPage = new PdfPage(doc, page, margin * mmPerInch, DocsPDType1Font.HELVETICA, 12)) {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    pdfPage.addText(documentDto.getTitle(), true, PDType1Font.HELVETICA_BOLD, 16)
+                    pdfPage.addText(documentDto.getTitle(), true, DocsPDType1Font.HELVETICA_BOLD, 16)
                         .newLine()
                         .addText("Created by " + documentDto.getCreator()
                             + " on " + dateFormat.format(new Date(documentDto.getCreateTimestamp())), true)
@@ -228,7 +228,7 @@ public class PdfUtil {
                     }
                     pdfPage.addText("Language: " + documentDto.getLanguage())
                         .newLine()
-                        .addText("Files in this document : " + fileList.size(), false, PDType1Font.HELVETICA_BOLD, 12);
+                        .addText("Files in this document : " + fileList.size(), false, DocsPDType1Font.HELVETICA_BOLD, 12);
                 }
             }
             

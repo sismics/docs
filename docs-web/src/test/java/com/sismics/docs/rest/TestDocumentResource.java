@@ -263,7 +263,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
                 .post(Entity.form(new Form()
                         .param("title", "My new super document 1")
-                        .param("description", "My new super description for document\r\n\u00A0 1")
+                        .param("description", "My new super description for document\r\n\u00A0\u0009 1")
                         .param("subject", "My new subject for document 1")
                         .param("identifier", "My new identifier for document 1")
                         .param("publisher", "My new publisher for document 1")

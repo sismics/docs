@@ -28,7 +28,7 @@ public class PdfPage implements Closeable {
      * @param margin Margin
      * @param defaultFont Default font
      * @param defaultFontSize Default fond size
-     * @throws IOException
+     * @throws IOException e
      */
     public PdfPage(PDDocument pdDoc, PDPage pdPage, float margin, PDFont defaultFont, int defaultFontSize) throws IOException {
         this.pdPage = pdPage;
@@ -45,7 +45,7 @@ public class PdfPage implements Closeable {
      * Write a text with default font.
      * 
      * @param text Text
-     * @throws IOException
+     * @throws IOException e
      */
     public PdfPage addText(String text) throws IOException {
         drawText(pdPage.getMediaBox().getWidth() - 2 * margin, defaultFont, defaultFontSize, text, false);
@@ -57,7 +57,7 @@ public class PdfPage implements Closeable {
      * 
      * @param text Text
      * @param centered If true, the text will be centered in the page
-     * @throws IOException
+     * @throws IOException e
      */
     public PdfPage addText(String text, boolean centered) throws IOException {
         drawText(pdPage.getMediaBox().getWidth() - 2 * margin, defaultFont, defaultFontSize, text, centered);
@@ -71,7 +71,7 @@ public class PdfPage implements Closeable {
      * @param centered If true, the text will be centered in the page
      * @param font Font
      * @param fontSize Font size
-     * @throws IOException
+     * @throws IOException e
      */
     public PdfPage addText(String text, boolean centered, PDFont font, int fontSize) throws IOException {
         drawText(pdPage.getMediaBox().getWidth() - 2 * margin, font, fontSize, text, centered);
@@ -81,7 +81,7 @@ public class PdfPage implements Closeable {
     /**
      * Create a new line.
      * 
-     * @throws IOException
+     * @throws IOException e
      */
     public PdfPage newLine() throws IOException {
         pdContent.newLineAtOffset(0, - defaultFont.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * defaultFontSize);
@@ -96,15 +96,12 @@ public class PdfPage implements Closeable {
      * @param fontSize Font size
      * @param text Text
      * @param centered If true, the text will be centered in the paragraph
-     * @throws IOException
+     * @throws IOException e
      */
     private void drawText(float paragraphWidth, PDFont font, int fontSize, String text, boolean centered) throws IOException {
         if (text == null) {
             return;
         }
-
-        // Remove \r\n non breakable space
-        text = text.replaceAll("[\r\n]", "").replace("\u00A0", " ");
 
         pdContent.setFont(font, fontSize);
         int start = 0;
