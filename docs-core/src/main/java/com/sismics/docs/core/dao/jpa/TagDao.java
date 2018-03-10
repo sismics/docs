@@ -130,6 +130,10 @@ public class TagDao {
         q.setParameter("tagId", tagId);
         q.setParameter("dateNow", dateNow);
         q.executeUpdate();
+
+        q = em.createQuery("update Tag t set t.parentId = null where t.parentId = :tagId and t.deleteDate is null");
+        q.setParameter("tagId", tagId);
+        q.executeUpdate();
         
         // Create audit log
         AuditLogUtil.create(tagDb, AuditLogType.DELETE, userId);
