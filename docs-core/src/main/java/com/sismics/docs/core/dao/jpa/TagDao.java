@@ -195,10 +195,6 @@ public class TagDao {
             criteriaList.add("dt.DOT_IDDOCUMENT_C = :documentId");
             parameterMap.put("documentId", criteria.getDocumentId());
         }
-        if (criteria.getName() != null) {
-            criteriaList.add("t.TAG_NAME_C = :name");
-            parameterMap.put("name", criteria.getName());
-        }
 
         criteriaList.add("t.TAG_DELETEDATE_D is null");
 

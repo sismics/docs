@@ -1,9 +1,6 @@
 package com.sismics.docs.rest.resource;
 
-import com.sismics.docs.core.constant.AclTargetType;
-import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.constant.RouteStepTransition;
-import com.sismics.docs.core.constant.RouteStepType;
+import com.sismics.docs.core.constant.*;
 import com.sismics.docs.core.dao.jpa.*;
 import com.sismics.docs.core.dao.jpa.criteria.RouteCriteria;
 import com.sismics.docs.core.dao.jpa.criteria.RouteStepCriteria;
@@ -13,6 +10,7 @@ import com.sismics.docs.core.dao.jpa.dto.RouteStepDto;
 import com.sismics.docs.core.model.jpa.Route;
 import com.sismics.docs.core.model.jpa.RouteModel;
 import com.sismics.docs.core.model.jpa.RouteStep;
+import com.sismics.docs.core.util.ActionUtil;
 import com.sismics.docs.core.util.RoutingUtil;
 import com.sismics.docs.core.util.SecurityUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -93,12 +91,17 @@ public class RouteResource extends BaseResource {
                 JsonObject target = step.getJsonObject("target");
                 AclTargetType targetType = AclTargetType.valueOf(target.getString("type"));
                 String targetName = target.getString("name");
+                String transitions = null;
+                if (step.containsKey("transitions")) {
+                    transitions = step.getJsonArray("transitions").toString();
+                }
 
                 RouteStep routeStep = new RouteStep()
                         .setRouteId(route.getId())
                         .setName(step.getString("name"))
                         .setOrder(order)
                         .setType(RouteStepType.valueOf(step.getString("type")))
+                        .setTransitions(transitions)
                         .setTargetId(SecurityUtil.getTargetIdFromName(targetName, targetType));
 
                 if (routeStep.getTargetId() == null) {
@@ -149,7 +152,9 @@ public class RouteResource extends BaseResource {
 
         // Get the document
         AclDao aclDao = new AclDao();
-        if (!aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(null))) {
+        DocumentDao documentDao = new DocumentDao();
+        DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(null));
+        if (documentDto == null) {
             throw new NotFoundException();
         }
 
@@ -168,17 +173,38 @@ public class RouteResource extends BaseResource {
         // Validate data
         ValidationUtil.validateRequired(transitionStr, "transition");
         comment = ValidationUtil.validateLength(comment, "comment", 1, 500, true);
-        RouteStepTransition transition = RouteStepTransition.valueOf(transitionStr);
-        if (routeStepDto.getType() == RouteStepType.VALIDATE && transition != RouteStepTransition.VALIDATED
-                || routeStepDto.getType() == RouteStepType.APPROVE && transition != RouteStepTransition.APPROVED && transition != RouteStepTransition.REJECTED) {
+        RouteStepTransition routeStepTransition = RouteStepTransition.valueOf(transitionStr);
+        if (routeStepDto.getType() == RouteStepType.VALIDATE && routeStepTransition != RouteStepTransition.VALIDATED
+                || routeStepDto.getType() == RouteStepType.APPROVE
+                && routeStepTransition != RouteStepTransition.APPROVED && routeStepTransition != RouteStepTransition.REJECTED) {
             throw new ClientException("ValidationError", "Invalid transition for this route step type");
         }
 
         // Validate the step and update ACLs
-        routeStepDao.endRouteStep(routeStepDto.getId(), transition, comment, principal.getId());
+        routeStepDao.endRouteStep(routeStepDto.getId(), routeStepTransition, comment, principal.getId());
         RouteStepDto newRouteStep = routeStepDao.getCurrentStep(documentId);
         RoutingUtil.updateAcl(documentId, newRouteStep, routeStepDto, principal.getId());
         RoutingUtil.sendRouteStepEmail(documentId, routeStepDto);
+
+        // Execute actions
+        if (routeStepDto.getTransitions() != null) {
+            try (JsonReader reader = Json.createReader(new StringReader(routeStepDto.getTransitions()))) {
+                JsonArray transitions = reader.readArray();
+                // Filter out our transition
+                for (int i = 0; i < transitions.size(); i++) {
+                    JsonObject transition = transitions.getJsonObject(i);
+                    if (transition.getString("name").equals(routeStepTransition.name())) {
+                        // Transition found, execute those actions
+                        JsonArray actions = transition.getJsonArray("actions");
+                        for (int j = 0; j < actions.size(); j++) {
+                            JsonObject action = actions.getJsonObject(j);
+                            ActionType actionType = ActionType.valueOf(action.getString("type"));
+                            ActionUtil.executeAction(actionType, action, documentDto);
+                        }
+                    }
+                }
+            }
+        }
 
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("readable", aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(null)));

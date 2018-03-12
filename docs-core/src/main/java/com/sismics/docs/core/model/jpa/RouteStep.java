@@ -55,6 +55,12 @@ public class RouteStep {
     private String comment;
 
     /**
+     * Transitions JSON data.
+     */
+    @Column(name = "RTP_TRANSITIONS_C", length = 2000)
+    private String transitions;
+
+    /**
      * Target ID (user or group).
      */
     @Column(name = "RTP_IDTARGET_C", nullable = false, length = 36)
@@ -195,6 +201,15 @@ public class RouteStep {
 
     public RouteStep setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
+        return this;
+    }
+
+    public String getTransitions() {
+        return transitions;
+    }
+
+    public RouteStep setTransitions(String transitions) {
+        this.transitions = transitions;
         return this;
     }
 

@@ -45,9 +45,11 @@ angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dial
    * Add a workflow step.
    */
   $scope.addStep = function () {
-    $scope.workflow.steps.push({
+    var step = {
       type: 'VALIDATE'
-    });
+    };
+    $scope.updateTransitions(step);
+    $scope.workflow.steps.push(step);
   };
 
   /**
@@ -64,6 +66,12 @@ angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dial
     Restangular.one('routemodel', $stateParams.id).get().then(function (data) {
       $scope.workflow = data;
       $scope.workflow.steps = JSON.parse(data.steps);
+      _.each($scope.workflow.steps, function (step) {
+        if (!step.transitions) {
+          // Patch for old route models
+          $scope.updateTransitions(step);
+        }
+      });
     });
   } else {
     $scope.workflow = {
@@ -124,4 +132,35 @@ angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dial
   $scope.removeStep = function (step) {
     $scope.workflow.steps.splice($scope.workflow.steps.indexOf(step), 1);
   };
+
+  $scope.updateTransitions = function (step) {
+    if (step.type === 'VALIDATE') {
+      step.transitions = [{
+        name: 'VALIDATED',
+        actions: []
+      }];
+    } else if (step.type === 'APPROVE') {
+      step.transitions = [{
+        name: 'APPROVED',
+        actions: []
+      }, {
+        name: 'REJECTED',
+        actions: []
+      }];
+    }
+  };
+
+  $scope.addAction = function (transition) {
+    transition.actions.push({
+      type: 'ADD_TAG'
+    });
+  };
+
+  $scope.removeAction = function (actions, action) {
+    actions.splice(actions.indexOf(action), 1);
+  };
+
+  Restangular.one('tag/list').get().then(function(data) {
+    $scope.tags = data.tags;
+  });
 });

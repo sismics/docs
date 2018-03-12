@@ -54,13 +54,4 @@ public class TagCriteria {
         this.documentId = documentId;
         return this;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public TagCriteria setName(String name) {
-        this.name = name;
-        return this;
-    }
 }

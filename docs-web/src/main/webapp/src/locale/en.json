@@ -301,7 +301,9 @@
         "type_validate": "Validate",
         "target": "Assigned to",
         "target_help": "<strong>Approve:</strong> Accept or reject the review<br/><strong>Validate:</strong> Review and continue the workflow",
-        "add_step": "Add a workflow step"
+        "add_step": "Add a workflow step",
+        "actions": "What happens after?",
+        "remove_action": "Remove action"
       }
     },
     "security": {
@@ -506,6 +508,9 @@
     "password_confirm": "Password and password confirmation must match",
     "number": "Number required",
     "no_space": "Spaces are not allowed"
+  },
+  "action_type": {
+    "ADD_TAG": "Add this tag"
   },
   "pagination": {
     "previous": "Previous",
