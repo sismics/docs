@@ -154,7 +154,7 @@ public class RouteModelResource extends BaseResource {
                 // Target
                 JsonObject target = step.getJsonObject("target");
                 if (target.size() != 2) {
-                    throw new ClientException("ValidationError", "Steps data not valid");
+                    throw new ClientException("ValidationError", "Step target is not valid");
                 }
                 AclTargetType targetType;
                 String targetTypeStr = target.getString("type");
@@ -182,22 +182,26 @@ public class RouteModelResource extends BaseResource {
                 }
 
                 // Transitions
+                List<RouteStepTransition> transitionsNames = Lists.newArrayList();
                 JsonArray transitions = step.getJsonArray("transitions");
+                if (type == RouteStepType.VALIDATE) {
+                    if (transitions.size() != 1) {
+                        throw new ClientException("ValidationError", "VALIDATE steps should have one transition");
+                    }
+                    transitionsNames.add(RouteStepTransition.VALIDATED);
+                } else if (type == RouteStepType.APPROVE) {
+                    if (transitions.size() != 2) {
+                        throw new ClientException("ValidationError", "APPROVE steps should have two transition");
+                    }
+                    transitionsNames.add(RouteStepTransition.APPROVED);
+                    transitionsNames.add(RouteStepTransition.REJECTED);
+                }
+
                 for (int j = 0; j < transitions.size(); j++) {
                     // Transition
                     JsonObject transition = transitions.getJsonObject(j);
-                    List<RouteStepTransition> transitionsNames = Lists.newArrayList();
-                    if (type == RouteStepType.VALIDATE) {
-                        if (transition.size() != 1) {
-                            throw new ClientException("ValidationError", "VALIDATE steps should have one transition");
-                        }
-                        transitionsNames.add(RouteStepTransition.VALIDATED);
-                    } else if (type == RouteStepType.APPROVE) {
-                        if (transition.size() != 2) {
-                            throw new ClientException("ValidationError", "APPROVE steps should have two transition");
-                        }
-                        transitionsNames.add(RouteStepTransition.APPROVED);
-                        transitionsNames.add(RouteStepTransition.REJECTED);
+                    if (transition.size() != 2) {
+                        throw new ClientException("ValidationError", "Transition data is not valid");
                     }
 
                     // Transition name
