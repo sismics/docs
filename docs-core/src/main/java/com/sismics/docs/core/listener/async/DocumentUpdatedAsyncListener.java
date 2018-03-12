@@ -27,7 +27,6 @@ public class DocumentUpdatedAsyncListener {
      * Document updated.
      * 
      * @param event Document updated event
-     * @throws Exception
      */
     @Subscribe
     public void on(final DocumentUpdatedAsyncEvent event) {

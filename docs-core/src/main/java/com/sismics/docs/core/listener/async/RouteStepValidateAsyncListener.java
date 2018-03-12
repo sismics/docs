@@ -39,7 +39,7 @@ public class RouteStepValidateAsyncListener {
             public void run() {
                 final UserDto user = routeStepValidateEvent.getUser();
 
-                // Send the password recovery email
+                // Send route step validated email
                 Map<String, Object> paramRootMap = new HashMap<>();
                 paramRootMap.put("user_name", user.getUsername());
                 paramRootMap.put("document_id", routeStepValidateEvent.getDocument().getId());

@@ -13,6 +13,7 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
   $scope.currentPage = 1;
   $scope.limit = _.isUndefined(localStorage.documentsPageSize) ? '10' : localStorage.documentsPageSize;
   $scope.search = $state.params.search ? $state.params.search : '';
+  $scope.setSearch = function (search) { $scope.search = search };
   $scope.searchOpened = false;
   $scope.searchDropdownAnchor = angular.element(document.querySelector('.search-dropdown-anchor'));
   $scope.paginationShown = true;

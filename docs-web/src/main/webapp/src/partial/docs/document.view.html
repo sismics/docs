@@ -63,7 +63,7 @@
 
 	  <ul class="list-inline">
 	    <li ng-repeat="tag in document.tags">
-        <span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span>
+        <span class="label label-info pointer" ng-click="setSearch('tag:' + tag.name)" ng-style="{ 'background': tag.color }">{{ tag.name }}</span>
       </li>
 	  </ul>
 	</div>

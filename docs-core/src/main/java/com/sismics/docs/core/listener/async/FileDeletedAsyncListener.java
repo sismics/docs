@@ -1,13 +1,12 @@
 package com.sismics.docs.core.listener.async;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.dao.lucene.LuceneDao;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Listener on file deleted.
@@ -24,7 +23,7 @@ public class FileDeletedAsyncListener {
      * File deleted.
      * 
      * @param fileDeletedAsyncEvent File deleted event
-     * @throws Exception
+     * @throws Exception e
      */
     @Subscribe
     public void on(final FileDeletedAsyncEvent fileDeletedAsyncEvent) throws Exception {
