@@ -507,6 +507,9 @@
     "number": "Number required",
     "no_space": "Spaces are not allowed"
   },
+  "action_type": {
+    "ADD_TAG": "Add this tag"
+  },
   "pagination": {
     "previous": "Previous",
     "next": "Next",

@@ -45,9 +45,11 @@ angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dial
    * Add a workflow step.
    */
   $scope.addStep = function () {
-    $scope.workflow.steps.push({
+    var step = {
       type: 'VALIDATE'
-    });
+    };
+    $scope.updateTransitions(step);
+    $scope.workflow.steps.push(step);
   };
 
   /**
@@ -124,4 +126,35 @@ angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dial
   $scope.removeStep = function (step) {
     $scope.workflow.steps.splice($scope.workflow.steps.indexOf(step), 1);
   };
+
+  $scope.updateTransitions = function (step) {
+    if (step.type === 'VALIDATE') {
+      step.transitions = [{
+        name: 'VALIDATED',
+        actions: []
+      }];
+    } else if (step.type === 'APPROVE') {
+      step.transitions = [{
+        name: 'APPROVED',
+        actions: []
+      }, {
+        name: 'REJECTED',
+        actions: []
+      }];
+    }
+  };
+
+  $scope.addAction = function (transition) {
+    transition.actions.push({
+      type: 'ADD_TAG'
+    });
+  };
+
+  $scope.removeAction = function (actions, action) {
+    actions.splice(actions.indexOf(action), 1);
+  };
+
+  Restangular.one('tag/list').get().then(function(data) {
+    $scope.tags = data.tags;
+  });
 });

@@ -1,12 +1,18 @@
 package com.sismics.docs.rest.resource;
 
+import com.google.common.collect.Lists;
 import com.sismics.docs.core.constant.AclTargetType;
+import com.sismics.docs.core.constant.ActionType;
+import com.sismics.docs.core.constant.RouteStepTransition;
 import com.sismics.docs.core.constant.RouteStepType;
 import com.sismics.docs.core.dao.jpa.GroupDao;
 import com.sismics.docs.core.dao.jpa.RouteModelDao;
+import com.sismics.docs.core.dao.jpa.TagDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.criteria.RouteModelCriteria;
+import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
 import com.sismics.docs.core.dao.jpa.dto.RouteModelDto;
+import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.model.jpa.Group;
 import com.sismics.docs.core.model.jpa.RouteModel;
 import com.sismics.docs.core.model.jpa.User;
@@ -120,6 +126,7 @@ public class RouteModelResource extends BaseResource {
     private void validateRouteModelSteps(String steps) {
         UserDao userDao = new UserDao();
         GroupDao groupDao = new GroupDao();
+        TagDao tagDao = new TagDao();
 
         try (JsonReader reader = Json.createReader(new StringReader(steps))) {
             JsonArray stepsJson = reader.readArray();
@@ -128,16 +135,23 @@ public class RouteModelResource extends BaseResource {
             }
             for (int i = 0; i < stepsJson.size(); i++) {
                 JsonObject step = stepsJson.getJsonObject(i);
-                if (step.size() != 3) {
+                if (step.size() != 4) {
                     throw new ClientException("ValidationError", "Steps data not valid");
                 }
-                String type = step.getString("type");
+
+                // Name
                 ValidationUtil.validateLength(step.getString("name"), "step.name", 1, 200, false);
+
+                // Type
+                String typeStr = step.getString("type");
+                RouteStepType type;
                 try {
-                    RouteStepType.valueOf(type);
+                    type = RouteStepType.valueOf(typeStr);
                 } catch (IllegalArgumentException e) {
-                    throw new ClientException("ValidationError", type + "is not a valid route step type");
+                    throw new ClientException("ValidationError", typeStr + "is not a valid route step type");
                 }
+
+                // Target
                 JsonObject target = step.getJsonObject("target");
                 if (target.size() != 2) {
                     throw new ClientException("ValidationError", "Steps data not valid");
@@ -165,6 +179,65 @@ public class RouteModelResource extends BaseResource {
                             throw new ClientException("ValidationError", targetName + " is not a valid group");
                         }
                         break;
+                }
+
+                // Transitions
+                JsonArray transitions = step.getJsonArray("transitions");
+                for (int j = 0; j < transitions.size(); j++) {
+                    // Transition
+                    JsonObject transition = transitions.getJsonObject(j);
+                    List<RouteStepTransition> transitionsNames = Lists.newArrayList();
+                    if (type == RouteStepType.VALIDATE) {
+                        if (transition.size() != 1) {
+                            throw new ClientException("ValidationError", "VALIDATE steps should have one transition");
+                        }
+                        transitionsNames.add(RouteStepTransition.VALIDATED);
+                    } else if (type == RouteStepType.APPROVE) {
+                        if (transition.size() != 2) {
+                            throw new ClientException("ValidationError", "APPROVE steps should have two transition");
+                        }
+                        transitionsNames.add(RouteStepTransition.APPROVED);
+                        transitionsNames.add(RouteStepTransition.REJECTED);
+                    }
+
+                    // Transition name
+                    String routeStepTransitionStr = transition.getString("name");
+                    ValidationUtil.validateRequired(routeStepTransitionStr, "step.transitions.name");
+                    RouteStepTransition routeStepTransition;
+                    try {
+                        routeStepTransition = RouteStepTransition.valueOf(routeStepTransitionStr);
+                    } catch (IllegalArgumentException e) {
+                        throw new ClientException("ValidationError", routeStepTransitionStr + " is not a valid route step transition type");
+                    }
+                    if (!transitionsNames.contains(routeStepTransition)) {
+                        throw new ClientException("ValidationError", routeStepTransitionStr + " is not allowed for this step type");
+                    }
+
+                    // Actions
+                    JsonArray actions = transition.getJsonArray("actions");
+                    for (int k = 0; k < actions.size(); k++) {
+                        JsonObject action = actions.getJsonObject(k);
+
+                        // Action type
+                        String actionTypeStr = action.getString("type");
+                        ActionType actionType;
+                        ValidationUtil.validateRequired(routeStepTransitionStr, "step.transitions.actions.type");
+                        try {
+                            actionType = ActionType.valueOf(actionTypeStr);
+                        } catch (IllegalArgumentException e) {
+                            throw new ClientException("ValidationError", actionTypeStr + " is not a valid action type");
+                        }
+
+                        // Action custom fields
+                        if (actionType == ActionType.ADD_TAG) {
+                            String tagId = action.getString("tag");
+                            ValidationUtil.validateRequired(routeStepTransitionStr, "step.transitions.actions.tag");
+                            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setId(tagId), null);
+                            if (tagDtoList.size() != 1) {
+                                throw new ClientException("ValidationError", tagId + " is not a valid tag");
+                            }
+                        }
+                    }
                 }
             }
         } catch (JsonException e) {
