@@ -6,8 +6,8 @@
     "validation_code_title": "Sie haben die Zwei-Faktor-Authentifizierung für Ihr Konto aktiviert. Bitte geben Sie einen Validierungscode ein, der von der konfigurierten Telefon-App generiert wurde.",
     "validation_code": "Validierungscode",
     "remember_me": "Angemeldet bleiben",
-    "submit": "Anmeldung",
-    "login_as_guest": "Melden Sie sich als Gast an",
+    "submit": "Anmelden",
+    "login_as_guest": "Als Gast anmelden",
     "login_failed_title": "Login fehlgeschlagen",
     "login_failed_message": "Benutzername oder Passwort ungültig",
     "password_lost_btn": "Passwort vergessen?",
@@ -462,7 +462,7 @@
       "typeahead": "Tippen Sie einen Dokumentnamen"
     },
     "selecttag": {
-      "typeahead": "Tippen Sie eien Tag"
+      "typeahead": "Tippen Sie einen Tag"
     },
     "datepicker": {
       "current": "Heute",
@@ -509,9 +509,9 @@
     "last": "Letzte"
   },
   "ok": "OK",
-  "cancel": "Annulieren",
+  "cancel": "Abbrechen",
   "share": "Teilen",
-  "unshare": "Getrennt",
+  "unshare": "Nicht mehr Teilen",
   "close": "Schliessen",
   "add": "Hinzufügen",
   "open": "Öffnen",
@@ -522,7 +522,7 @@
   "delete": "Löschen",
   "loading": "Laden...",
   "send": "Sendenen",
-  "enabled": "Eingeschaltet",
-  "disabled": "ausgeschaltet"
+  "enabled": "Aktiviert",
+  "disabled": "Deaktiviert"
 }
 
