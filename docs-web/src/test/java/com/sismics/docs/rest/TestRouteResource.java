@@ -9,7 +9,6 @@ import javax.json.JsonObject;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
-import java.util.Date;
 
 
 /**
@@ -50,14 +49,11 @@ public class TestRouteResource extends BaseJerseyTest {
         Assert.assertEquals(1, routeModels.size());
 
         // Create a document
-        long create1Date = new Date().getTime();
         json = target().path("/document").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, route1Token)
                 .put(Entity.form(new Form()
                         .param("title", "My super title document 1")
-                        .param("description", "My super description for document 1")
-                        .param("language", "eng")
-                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
+                        .param("language", "eng")), JsonObject.class);
         String document1Id = json.getString("id");
 
         // Start the default route on document 1
@@ -353,5 +349,101 @@ public class TestRouteResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         documents = json.getJsonArray("documents");
         Assert.assertEquals(0, documents.size());
+    }
+
+    /**
+     * Test actions on workflow step.
+     */
+    @Test
+    public void testAction() {
+        // Login admin
+        String adminToken = clientUtil.login("admin", "admin", false);
+
+        // Create a tag
+        JsonObject json = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("name", "Approved")
+                        .param("color", "#ff0000")), JsonObject.class);
+        String tagApprovedId = json.getString("id");
+
+        // Create a new route model with actions
+        json = target().path("/routemodel").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("name", "Workflow action 1")
+                        .param("steps", "[{\"type\":\"APPROVE\",\"transitions\":[{\"name\":\"APPROVED\",\"actions\":[{\"type\":\"ADD_TAG\",\"tag\":\"" + tagApprovedId + "\"}]},{\"name\":\"REJECTED\",\"actions\":[]}],\"target\":{\"name\":\"administrators\",\"type\":\"GROUP\"},\"name\":\"Check the document's metadata\"}]")), JsonObject.class);
+        String routeModelId = json.getString("id");
+
+        // Create a document
+        json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("title", "My super title document 1")
+                        .param("description", "My super description for document 1")
+                        .param("language", "eng")), JsonObject.class);
+        String document1Id = json.getString("id");
+
+        // Start the route on document 1
+        json = target().path("/route/start").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("documentId", document1Id)
+                        .param("routeModelId", routeModelId)), JsonObject.class);
+        JsonObject step = json.getJsonObject("route_step");
+        Assert.assertEquals("Check the document's metadata", step.getString("name"));
+
+        // Check tags on document 1
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        JsonArray tags = json.getJsonArray("tags");
+        Assert.assertEquals(0, tags.size());
+
+        // Validate the current step with admin
+        target().path("/route/validate").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("documentId", document1Id)
+                        .param("transition", "APPROVED")), JsonObject.class);
+
+        // Check tags on document 1
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        tags = json.getJsonArray("tags");
+        Assert.assertEquals(1, tags.size());
+        Assert.assertEquals(tagApprovedId, tags.getJsonObject(0).getString("id"));
+
+        // Create a document
+        json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("title", "My super title document 2")
+                        .param("language", "eng")), JsonObject.class);
+        String document2Id = json.getString("id");
+
+        // Start the route on document 2
+        json = target().path("/route/start").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("documentId", document2Id)
+                        .param("routeModelId", routeModelId)), JsonObject.class);
+        step = json.getJsonObject("route_step");
+        Assert.assertEquals("Check the document's metadata", step.getString("name"));
+
+        // Validate the current step with admin
+        target().path("/route/validate").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("documentId", document2Id)
+                        .param("transition", "REJECTED")), JsonObject.class);
+
+        // Check tags on document 2
+        json = target().path("/document/" + document2Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        tags = json.getJsonArray("tags");
+        Assert.assertEquals(0, tags.size());
     }
 }

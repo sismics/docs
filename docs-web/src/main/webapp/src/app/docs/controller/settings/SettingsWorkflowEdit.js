@@ -66,6 +66,12 @@ angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dial
     Restangular.one('routemodel', $stateParams.id).get().then(function (data) {
       $scope.workflow = data;
       $scope.workflow.steps = JSON.parse(data.steps);
+      _.each($scope.workflow.steps, function (step) {
+        if (!step.transitions) {
+          // Patch for old route models
+          $scope.updateTransitions(step);
+        }
+      });
     });
   } else {
     $scope.workflow = {

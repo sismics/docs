@@ -63,6 +63,11 @@ public class RouteStepDto {
     private String validatorUserName;
 
     /**
+     * Transitions data.
+     */
+    private String transitions;
+
+    /**
      * Route ID.
      */
     private String routeId;
@@ -163,6 +168,15 @@ public class RouteStepDto {
 
     public RouteStepDto setRouteId(String routeId) {
         this.routeId = routeId;
+        return this;
+    }
+
+    public String getTransitions() {
+        return transitions;
+    }
+
+    public RouteStepDto setTransitions(String transitions) {
+        this.transitions = transitions;
         return this;
     }
 
