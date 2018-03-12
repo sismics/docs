@@ -36,6 +36,16 @@ public class DocumentCriteria {
     private Date createDateMax;
     
     /**
+     * Minimum update date.
+     */
+    private Date updateDateMin;
+
+    /**
+     * Maximum update date.
+     */
+    private Date updateDateMax;
+
+    /**
      * Tag IDs.
      */
     private List<String> tagIdList;
@@ -134,6 +144,22 @@ public class DocumentCriteria {
 
     public Boolean getActiveRoute() {
         return activeRoute;
+    }
+
+    public Date getUpdateDateMin() {
+        return updateDateMin;
+    }
+
+    public void setUpdateDateMin(Date updateDateMin) {
+        this.updateDateMin = updateDateMin;
+    }
+
+    public Date getUpdateDateMax() {
+        return updateDateMax;
+    }
+
+    public void setUpdateDateMax(Date updateDateMax) {
+        this.updateDateMax = updateDateMax;
     }
 
     public DocumentCriteria setActiveRoute(Boolean activeRoute) {

@@ -181,6 +181,12 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
     if (!_.isUndefined($scope.advsearch.before_date)) {
       search += 'before:' + $filter('date')($scope.advsearch.before_date, 'yyyy-MM-dd') + ' ';
     }
+    if (!_.isUndefined($scope.advsearch.after_update_date)) {
+      search += 'uafter:' + $filter('date')($scope.advsearch.after_update_date, 'yyyy-MM-dd') + ' ';
+    }
+    if (!_.isUndefined($scope.advsearch.before_update_date)) {
+      search += 'ubefore:' + $filter('date')($scope.advsearch.before_update_date, 'yyyy-MM-dd') + ' ';
+    }
     if (!_.isEmpty($scope.advsearch.tags)) {
       search += _.reduce($scope.advsearch.tags, function(s, t) {
           return s + 'tag:' + t.name + ' ';

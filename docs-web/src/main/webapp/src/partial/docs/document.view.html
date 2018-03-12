@@ -45,7 +45,7 @@
 	<div class="page-header">
 	  <h1>
       {{ document.title }}
-      <small>{{ document.create_date | date: dateFormat }}
+      <small uib-tooltip="{{ 'document.last_updated' | translate: { date: document.update_date } }}">{{ document.create_date | date: dateFormat }}
       {{ 'document.view.by_creator' | translate }} <a href="#/user/{{ document.creator }}">{{ document.creator }}</a></small>
     </h1>
 

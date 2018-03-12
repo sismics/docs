@@ -94,6 +94,36 @@
                   </div>
 
                   <div class="form-group">
+                    <label class="control-label sr-only" for="inputSearchAfterUpdateDate">{{ 'document.search_after_update_date' | translate }}</label>
+                    <div class="col-sm-12">
+                      <input type="text" id="inputSearchAfterUpdateDate"
+                             ng-attr-placeholder="{{ 'document.search_after_update_date' | translate }}"
+                             current-text="{{ 'directive.datepicker.current' | translate }}"
+                             clear-text="{{ 'directive.datepicker.clear' | translate }}"
+                             close-text="{{ 'directive.datepicker.close' | translate }}"
+                             datepicker-append-to-body="true"
+                             ng-readonly="true" uib-datepicker-popup="{{ dateFormat }}" class="form-control"
+                             ng-model="advsearch.after_update_date" datepicker-options="{ startingDay:1, showWeeks: false }"
+                             ng-click="datepickerAfterUpdateOpened = !datepickerAfterUpdateOpened" is-open="datepickerAfterUpdateOpened" />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="control-label sr-only" for="inputSearchBeforeUpdateDate">{{ 'document.search_before_update_date' | translate }}</label>
+                    <div class="col-sm-12">
+                      <input type="text" id="inputSearchBeforeUpdateDate"
+                             ng-attr-placeholder="{{ 'document.search_before_update_date' | translate }}"
+                             current-text="{{ 'directive.datepicker.current' | translate }}"
+                             clear-text="{{ 'directive.datepicker.clear' | translate }}"
+                             close-text="{{ 'directive.datepicker.close' | translate }}"
+                             datepicker-append-to-body="true"
+                             ng-readonly="true" uib-datepicker-popup="{{ dateFormat }}" class="form-control"
+                             ng-model="advsearch.before_update_date" datepicker-options="{ startingDay:1, showWeeks: false }"
+                             ng-click="datepickerBeforeUpdateOpened = !datepickerBeforeUpdateOpened" is-open="datepickerBeforeUpdateOpened" />
+                    </div>
+                  </div>
+
+                  <div class="form-group">
                     <label class="control-label sr-only" for="inputSearchTags">{{ 'document.search_tags' | translate }}</label>
                     <div class="col-sm-12">
                       <select-tag tags="advsearch.tags" ref="inputSearchTags"></select-tag>
@@ -194,7 +224,9 @@
             <span class="fas fa-random" ng-if="document.active_route" uib-tooltip="{{ document.current_step_name }}"></span>
             <a href="#/document/view/{{ document.id }}" target="_blank" ng-click="$event.stopPropagation()"><span class="fas fa-link"></span></a>
 
-            <div class="pull-right text-muted small">{{ document.create_date | timeAgo: dateFormat }}</div>
+            <div class="pull-right text-muted small" uib-tooltip="{{ 'document.last_updated' | translate: { date: document.update_date } }}">
+              {{ document.create_date | timeAgo: dateFormat }}
+            </div>
 
             <div class="tags small">
               <span class="label label-info" ng-repeat="tag in document.tags" ng-style="{ 'background': tag.color }">

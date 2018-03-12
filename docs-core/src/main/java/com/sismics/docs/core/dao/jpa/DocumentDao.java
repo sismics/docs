@@ -38,6 +38,7 @@ public class DocumentDao {
     public String create(Document document, String userId) {
         // Create the UUID
         document.setId(UUID.randomUUID().toString());
+        document.setUpdateDate(new Date());
         
         // Create the document
         EntityManager em = ThreadLocalContext.get().getEntityManager();
@@ -90,7 +91,7 @@ public class DocumentDao {
         }
 
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C, d.DOC_TITLE_C, d.DOC_DESCRIPTION_C, d.DOC_SUBJECT_C, d.DOC_IDENTIFIER_C, d.DOC_PUBLISHER_C, d.DOC_FORMAT_C, d.DOC_SOURCE_C, d.DOC_TYPE_C, d.DOC_COVERAGE_C, d.DOC_RIGHTS_C, d.DOC_CREATEDATE_D, d.DOC_LANGUAGE_C, ");
+        StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C, d.DOC_TITLE_C, d.DOC_DESCRIPTION_C, d.DOC_SUBJECT_C, d.DOC_IDENTIFIER_C, d.DOC_PUBLISHER_C, d.DOC_FORMAT_C, d.DOC_SOURCE_C, d.DOC_TYPE_C, d.DOC_COVERAGE_C, d.DOC_RIGHTS_C, d.DOC_CREATEDATE_D, d.DOC_UPDATEDATE_D, d.DOC_LANGUAGE_C, ");
         sb.append(" (select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null), ");
         sb.append(" (select count(f.FIL_ID_C) from T_FILE f where f.FIL_DELETEDATE_D is null and f.FIL_IDDOC_C = d.DOC_ID_C), ");
         sb.append(" u.USE_USERNAME_C ");
@@ -122,6 +123,7 @@ public class DocumentDao {
         documentDto.setCoverage((String) o[i++]);
         documentDto.setRights((String) o[i++]);
         documentDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
+        documentDto.setUpdateTimestamp(((Timestamp) o[i++]).getTime());
         documentDto.setLanguage((String) o[i++]);
         documentDto.setShared(((Number) o[i++]).intValue() > 0);
         documentDto.setFileCount(((Number) o[i++]).intValue());
@@ -204,7 +206,7 @@ public class DocumentDao {
         StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, ");
         sb.append(" (select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null) c5, ");
         sb.append(" (select count(f.FIL_ID_C) from T_FILE f where f.FIL_DELETEDATE_D is null and f.FIL_IDDOC_C = d.DOC_ID_C) c6, ");
-        sb.append(" rs2.RTP_ID_C c7, rs2.RTP_NAME_C ");
+        sb.append(" rs2.RTP_ID_C c7, rs2.RTP_NAME_C, d.DOC_UPDATEDATE_D c8 ");
         sb.append(" from T_DOCUMENT d ");
         sb.append(" left join (select rs.*, rs3.idDocument\n" +
                 "from T_ROUTE_STEP rs \n" +
@@ -237,6 +239,14 @@ public class DocumentDao {
         if (criteria.getCreateDateMax() != null) {
             criteriaList.add("d.DOC_CREATEDATE_D <= :createDateMax");
             parameterMap.put("createDateMax", criteria.getCreateDateMax());
+        }
+        if (criteria.getUpdateDateMin() != null) {
+            criteriaList.add("d.DOC_UPDATEDATE_D >= :updateDateMin");
+            parameterMap.put("updateDateMin", criteria.getUpdateDateMin());
+        }
+        if (criteria.getUpdateDateMax() != null) {
+            criteriaList.add("d.DOC_UPDATEDATE_D <= :updateDateMax");
+            parameterMap.put("updateDateMax", criteria.getUpdateDateMax());
         }
         if (criteria.getTagIdList() != null && !criteria.getTagIdList().isEmpty()) {
             int index = 0;
@@ -288,7 +298,8 @@ public class DocumentDao {
             documentDto.setShared(((Number) o[i++]).intValue() > 0);
             documentDto.setFileCount(((Number) o[i++]).intValue());
             documentDto.setActiveRoute(o[i++] != null);
-            documentDto.setCurrentStepName((String) o[i]);
+            documentDto.setCurrentStepName((String) o[i++]);
+            documentDto.setUpdateTimestamp(((Timestamp) o[i]).getTime());
             documentDtoList.add(documentDto);
         }
 
@@ -323,6 +334,7 @@ public class DocumentDao {
         documentDb.setRights(document.getRights());
         documentDb.setCreateDate(document.getCreateDate());
         documentDb.setLanguage(document.getLanguage());
+        documentDb.setUpdateDate(new Date());
         
         // Create audit log
         AuditLogUtil.create(documentDb, AuditLogType.UPDATE, userId);

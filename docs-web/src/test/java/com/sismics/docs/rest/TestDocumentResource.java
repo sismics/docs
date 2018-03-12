@@ -103,6 +103,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         JsonArray documents = json.getJsonArray("documents");
         JsonArray tags = documents.getJsonObject(0).getJsonArray("tags");
         Assert.assertTrue(documents.size() == 2);
+        Assert.assertNotNull(documents.getJsonObject(0).get("update_date"));
         Assert.assertEquals(document1Id, documents.getJsonObject(0).getString("id"));
         Assert.assertEquals("eng", documents.getJsonObject(0).getString("language"));
         Assert.assertEquals(1, documents.getJsonObject(0).getInt("file_count"));
@@ -168,6 +169,10 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(2, searchDocuments("at:" + DateTimeFormat.forPattern("yyyy-MM").print(new Date().getTime()), document1Token));
         Assert.assertEquals(2, searchDocuments("at:" + DateTimeFormat.forPattern("yyyy-MM-dd").print(new Date().getTime()), document1Token));
         Assert.assertEquals(2, searchDocuments("after:2010 before:2040-08", document1Token));
+        Assert.assertEquals(2, searchDocuments("uat:" + DateTimeFormat.forPattern("yyyy").print(new Date().getTime()), document1Token));
+        Assert.assertEquals(2, searchDocuments("uat:" + DateTimeFormat.forPattern("yyyy-MM").print(new Date().getTime()), document1Token));
+        Assert.assertEquals(2, searchDocuments("uat:" + DateTimeFormat.forPattern("yyyy-MM-dd").print(new Date().getTime()), document1Token));
+        Assert.assertEquals(2, searchDocuments("uafter:2010 ubefore:2040-08", document1Token));
         Assert.assertEquals(1, searchDocuments("tag:super", document1Token));
         Assert.assertEquals(1, searchDocuments("shared:yes", document1Token));
         Assert.assertEquals(2, searchDocuments("lang:eng", document1Token));
@@ -204,6 +209,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals("Public Domain", json.getString("rights"));
         Assert.assertEquals("eng", json.getString("language"));
         Assert.assertEquals(create1Date, json.getJsonNumber("create_date").longValue());
+        Assert.assertNotNull(json.get("update_date"));
         tags = json.getJsonArray("tags");
         Assert.assertEquals(1, tags.size());
         Assert.assertEquals(tag1Id, tags.getJsonObject(0).getString("id"));

@@ -72,6 +72,11 @@ public class DocumentDto {
     private Long createTimestamp;
     
     /**
+     * Update date.
+     */
+    private Long updateTimestamp;
+
+    /**
      * Shared status.
      */
     private Boolean shared;
@@ -234,6 +239,14 @@ public class DocumentDto {
 
     public String getCurrentStepName() {
         return currentStepName;
+    }
+
+    public Long getUpdateTimestamp() {
+        return updateTimestamp;
+    }
+
+    public void setUpdateTimestamp(Long updateTimestamp) {
+        this.updateTimestamp = updateTimestamp;
     }
 
     public DocumentDto setCurrentStepName(String currentStepName) {

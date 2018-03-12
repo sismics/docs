@@ -76,6 +76,7 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String} title Title
      * @apiSuccess {String} description Description
      * @apiSuccess {Number} create_date Create date (timestamp)
+     * @apiSuccess {Number} update_date Update date (timestamp)
      * @apiSuccess {String} language Language
      * @apiSuccess {Boolean} shared True if the document is shared
      * @apiSuccess {Number} file_count Number of files in this document
@@ -142,6 +143,7 @@ public class DocumentResource extends BaseResource {
                 .add("title", documentDto.getTitle())
                 .add("description", JsonUtil.nullable(documentDto.getDescription()))
                 .add("create_date", documentDto.getCreateTimestamp())
+                .add("update_date", documentDto.getUpdateTimestamp())
                 .add("language", documentDto.getLanguage())
                 .add("shared", documentDto.getShared())
                 .add("file_count", documentDto.getFileCount());
@@ -328,6 +330,7 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String} documents.title Title
      * @apiSuccess {String} documents.description Description
      * @apiSuccess {Number} documents.create_date Create date (timestamp)
+     * @apiSuccess {Number} documents.update_date Update date (timestamp)
      * @apiSuccess {String} documents.language Language
      * @apiSuccess {Boolean} documents.shared True if the document is shared
      * @apiSuccess {Boolean} documents.active_route True if a route is active on this document
@@ -394,6 +397,7 @@ public class DocumentResource extends BaseResource {
                     .add("title", documentDto.getTitle())
                     .add("description", JsonUtil.nullable(documentDto.getDescription()))
                     .add("create_date", documentDto.getCreateTimestamp())
+                    .add("update_date", documentDto.getUpdateTimestamp())
                     .add("language", documentDto.getLanguage())
                     .add("shared", documentDto.getShared())
                     .add("active_route", documentDto.isActiveRoute())
@@ -464,32 +468,57 @@ public class DocumentResource extends BaseResource {
                     break;
                 case "after":
                 case "before":
+                case "uafter":
+                case "ubefore":
                     // New date span criteria
                     try {
+                        boolean isUpdated = params[0].startsWith("u");
                         DateTime date = formatter.parseDateTime(params[1]);
-                        if (params[0].equals("before")) documentCriteria.setCreateDateMax(date.toDate());
-                        else documentCriteria.setCreateDateMin(date.toDate());
+                        if (params[0].endsWith("before")) {
+                            if (isUpdated) documentCriteria.setUpdateDateMax(date.toDate());
+                            else documentCriteria.setCreateDateMax(date.toDate());
+                        } else {
+                            if (isUpdated) documentCriteria.setUpdateDateMin(date.toDate());
+                            else  documentCriteria.setCreateDateMin(date.toDate());
+                        }
                     } catch (IllegalArgumentException e) {
                         // Invalid date, returns no documents
-                        if (params[0].equals("before")) documentCriteria.setCreateDateMax(new Date(0));
-                        else documentCriteria.setCreateDateMin(new Date(Long.MAX_VALUE / 2));
+                        documentCriteria.setCreateDateMin(new Date(0));
+                        documentCriteria.setCreateDateMax(new Date(0));
                     }
                     break;
+                case "uat":
                 case "at":
                     // New specific date criteria
                     try {
+                        boolean isUpdated = params[0].startsWith("u");
                         if (params[1].length() == 10) {
                             DateTime date = dayFormatter.parseDateTime(params[1]);
-                            documentCriteria.setCreateDateMin(date.toDate());
-                            documentCriteria.setCreateDateMax(date.plusDays(1).minusSeconds(1).toDate());
+                            if (isUpdated) {
+                                documentCriteria.setUpdateDateMin(date.toDate());
+                                documentCriteria.setUpdateDateMax(date.plusDays(1).minusSeconds(1).toDate());
+                            } else {
+                                documentCriteria.setCreateDateMin(date.toDate());
+                                documentCriteria.setCreateDateMax(date.plusDays(1).minusSeconds(1).toDate());
+                            }
                         } else if (params[1].length() == 7) {
                             DateTime date = monthFormatter.parseDateTime(params[1]);
-                            documentCriteria.setCreateDateMin(date.toDate());
-                            documentCriteria.setCreateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
+                            if (isUpdated) {
+                                documentCriteria.setUpdateDateMin(date.toDate());
+                                documentCriteria.setUpdateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
+                            } else {
+                                documentCriteria.setCreateDateMin(date.toDate());
+                                documentCriteria.setCreateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
+                            }
                         } else if (params[1].length() == 4) {
                             DateTime date = yearFormatter.parseDateTime(params[1]);
-                            documentCriteria.setCreateDateMin(date.toDate());
-                            documentCriteria.setCreateDateMax(date.plusYears(1).minusSeconds(1).toDate());
+                            if (isUpdated) {
+                                documentCriteria.setUpdateDateMin(date.toDate());
+                                documentCriteria.setUpdateDateMax(date.plusYears(1).minusSeconds(1).toDate());
+                            } else {
+                                documentCriteria.setCreateDateMin(date.toDate());
+                                documentCriteria.setCreateDateMax(date.plusYears(1).minusSeconds(1).toDate());
+                            }
                         }
                     } catch (IllegalArgumentException e) {
                         // Invalid date, returns no documents
