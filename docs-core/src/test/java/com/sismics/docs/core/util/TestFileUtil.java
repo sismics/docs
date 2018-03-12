@@ -17,7 +17,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Date;
 
 /**
- * Test of the file entity utilities.
+ * Test of the file utilities.
  * 
  * @author bgamard
  */
@@ -41,7 +41,26 @@ public class TestFileUtil {
         String content = FileUtil.extractContent(null, file, path, pdfPath);
         Assert.assertTrue(content.contains("Lorem ipsum dolor sit amen."));
     }
-    
+
+    @Test
+    public void extractContentPdf() throws Exception {
+        Path path = Paths.get(ClassLoader.getSystemResource("file/udhr.pdf").toURI());
+        File file = new File();
+        file.setMimeType(MimeType.APPLICATION_PDF);
+        String content = FileUtil.extractContent(null, file, path, path);
+        Assert.assertTrue(content.contains("All human beings are born free and equal in dignity and rights."));
+    }
+
+    @Test
+    public void extractContentScannedPdf() throws Exception {
+        Path path = Paths.get(ClassLoader.getSystemResource("file/scanned.pdf").toURI());
+        File file = new File();
+        file.setMimeType(MimeType.APPLICATION_PDF);
+        String content = FileUtil.extractContent("eng", file, path, path);
+        System.out.println(content);
+        Assert.assertTrue(content.contains("All human beings are born free and equal in dignity and rights."));
+    }
+
     @Test
     public void convertToPdfTest() throws Exception {
         try (InputStream inputStream0 = Resources.getResource("file/apollo_landscape.jpg").openStream();
@@ -52,7 +71,7 @@ public class TestFileUtil {
             // Document
             DocumentDto documentDto = new DocumentDto();
             documentDto.setTitle("My super document 1");
-            documentDto.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis id turpis iaculis, commodo est ac, efficitur quam. Nam accumsan magna in orci vulputate ultricies. Sed vulputate neque magna, at laoreet leo ultricies vel. Proin eu hendrerit felis. Quisque sit amet arcu efficitur, pulvinar orci sed, imperdiet elit. Nunc posuere ex sed fermentum congue. Aliquam ultrices convallis finibus. Praesent iaculis justo vitae dictum auctor. Praesent suscipit imperdiet erat ac maximus. Aenean pharetra quam sed fermentum commodo. Donec sagittis ipsum nibh, id congue dolor venenatis quis. In tincidunt nisl non ex sollicitudin, a imperdiet neque scelerisque. Nullam lacinia ac orci sed faucibus. Donec tincidunt venenatis justo, nec fermentum justo rutrum a.");
+            documentDto.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit.\r\n Duis id turpis iaculis, commodo est ac, efficitur quam.\t Nam accumsan magna in orci vulputate ultricies. Sed vulputate neque magna, at laoreet leo ultricies vel. Proin eu hendrerit felis. Quisque sit amet arcu efficitur, pulvinar orci sed, imperdiet elit. Nunc posuere ex sed fermentum congue. Aliquam ultrices convallis finibus. Praesent iaculis justo vitae dictum auctor. Praesent suscipit imperdiet erat ac maximus. Aenean pharetra quam sed fermentum commodo. Donec sagittis ipsum nibh, id congue dolor venenatis quis. In tincidunt nisl non ex sollicitudin, a imperdiet neque scelerisque. Nullam lacinia ac orci sed faucibus. Donec tincidunt venenatis justo, nec fermentum justo rutrum a.");
             documentDto.setSubject("A set of random picture");
             documentDto.setIdentifier("ID-2016-08-00001");
             documentDto.setPublisher("My Publisher, Inc.");

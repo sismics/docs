@@ -59,24 +59,31 @@ public class PdfUtil {
      * Extract text from a PDF.
      * 
      * @param unencryptedPdfFile Unencrypted PDF file
+     * @param language Language
      * @return Content extracted
      */
-    public static String extractPdf(Path unencryptedPdfFile) {
+    public static String extractPdf(Path unencryptedPdfFile, String language) {
         String content = null;
-        PDDocument pdfDocument = null;
-        try (InputStream inputStream = Files.newInputStream(unencryptedPdfFile)) {
-            PDFTextStripper stripper = new PDFTextStripper();
-            pdfDocument = PDDocument.load(inputStream);
-            content = stripper.getText(pdfDocument);
+        try (InputStream inputStream = Files.newInputStream(unencryptedPdfFile);
+             PDDocument pdfDocument = PDDocument.load(inputStream)) {
+            content = new PDFTextStripper().getText(pdfDocument);
         } catch (Exception e) {
             log.error("Error while extracting text from the PDF", e);
-        } finally {
-            if (pdfDocument != null) {
-                try {
-                    pdfDocument.close();
-                } catch (IOException e) {
-                    // NOP
+        }
+
+        // No text content, try to OCR it
+        if (language != null && content != null && content.trim().isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            try (InputStream inputStream = Files.newInputStream(unencryptedPdfFile);
+                 PDDocument pdfDocument = PDDocument.load(inputStream)) {
+                PDFRenderer renderer = new PDFRenderer(pdfDocument);
+                for (int pageIndex = 0; pageIndex < pdfDocument.getNumberOfPages(); pageIndex++) {
+                    sb.append(" ");
+                    sb.append(FileUtil.ocrFile(renderer.renderImage(pageIndex), language));
                 }
+                return sb.toString();
+            } catch (Exception e) {
+                log.error("Error while OCR-izing the PDF", e);
             }
         }
         

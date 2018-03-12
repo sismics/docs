@@ -58,31 +58,22 @@ public class FileUtil {
         } else if (VideoUtil.isVideo(file.getMimeType())) {
             content = VideoUtil.getMetadata(unencryptedFile);
         } else if (unencryptedPdfFile != null) {
-            content = PdfUtil.extractPdf(unencryptedPdfFile);
+            content = PdfUtil.extractPdf(unencryptedPdfFile, language);
         }
         
         return content;
     }
-    
+
     /**
-     * Optical character recognition on a file.
-     * 
-     * @param unecryptedFile Unencrypted file
+     * Optical character recognition on an image.
+     *
+     * @param image Buffered image
      * @param language Language to OCR
      * @return Content extracted
      */
-    private static String ocrFile(Path unecryptedFile, String language) {
-        Tesseract instance = Tesseract.getInstance();
-        String content = null;
-        BufferedImage image;
-        try (InputStream inputStream = Files.newInputStream(unecryptedFile)) {
-            image = ImageIO.read(inputStream);
-        } catch (IOException e) {
-            log.error("Error reading the image", e);
-            return null;
-        }
-        
+    public static String ocrFile(BufferedImage image, String language) {
         // Upscale, grayscale and deskew the image
+        String content = null;
         BufferedImage resizedImage = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 3500, Scalr.OP_ANTIALIAS, Scalr.OP_GRAYSCALE);
         image.flush();
         ImageDeskew imageDeskew = new ImageDeskew(resizedImage);
@@ -92,14 +83,34 @@ public class FileUtil {
 
         // OCR the file
         try {
+            Tesseract instance = Tesseract.getInstance();
             log.info("Starting OCR with TESSDATA_PREFIX=" + System.getenv("TESSDATA_PREFIX") + ";LC_NUMERIC=" + System.getenv("LC_NUMERIC"));
             instance.setLanguage(language);
             content = instance.doOCR(image);
         } catch (Throwable e) {
             log.error("Error while OCR-izing the image", e);
         }
-        
+
         return content;
+    }
+
+    /**
+     * Optical character recognition on a file.
+     *
+     * @param unecryptedFile Unencrypted file
+     * @param language Language to OCR
+     * @return Content extracted
+     */
+    private static String ocrFile(Path unecryptedFile, String language) {
+        BufferedImage image;
+        try (InputStream inputStream = Files.newInputStream(unecryptedFile)) {
+            image = ImageIO.read(inputStream);
+        } catch (IOException e) {
+            log.error("Error reading the image", e);
+            return null;
+        }
+
+        return ocrFile(image, language);
     }
     
     /**

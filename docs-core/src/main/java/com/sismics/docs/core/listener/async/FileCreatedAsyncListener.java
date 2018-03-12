@@ -27,7 +27,6 @@ public class FileCreatedAsyncListener {
      * File created.
      * 
      * @param fileCreatedAsyncEvent File created event
-     * @throws Exception e
      */
     @Subscribe
     public void on(final FileCreatedAsyncEvent fileCreatedAsyncEvent) {
