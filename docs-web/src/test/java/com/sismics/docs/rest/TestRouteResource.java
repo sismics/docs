@@ -371,7 +371,7 @@ public class TestRouteResource extends BaseJerseyTest {
         json = target().path("/tag").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
-                        .param("name", "Approved")
+                        .param("name", "Pending")
                         .param("color", "#ff0000")), JsonObject.class);
         String tagPendingId = json.getString("id");
 
@@ -487,5 +487,21 @@ public class TestRouteResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         tags = json.getJsonArray("tags");
         Assert.assertEquals(0, tags.size());
+
+        // Delete the documents
+        target().path("/document/" + document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete(JsonObject.class);
+        target().path("/document/" + document2Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete(JsonObject.class);
+
+        // Delete the route model
+        target().path("/routemodel/" + routeModelId)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete(JsonObject.class);
     }
 }
