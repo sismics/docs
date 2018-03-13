@@ -45,6 +45,11 @@
   <div ui-sortable="fileSortableOptions" ng-model="files">
     <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 text-center" ng-repeat="file in files">
       <div class="thumbnail handle" ng-if="file.id">
+        <div class="file-processing-indicator" ng-show="file.processing"
+             uib-tooltip="{{ 'document.view.content.file_processing_indicator' | translate }}">
+          <span class="fas fa-spin fa-circle-notch"></span>
+        </div>
+
         <a ng-click="openFile(file)">
           <img ng-src="../api/file/{{ file.id }}/data?size=thumb" uib-tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
         </a>

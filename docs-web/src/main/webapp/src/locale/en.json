@@ -114,7 +114,8 @@
         "upload_error": "Upload error",
         "upload_error_quota": "Quota reached",
         "drop_zone": "Drag & drop files here to upload",
-        "add_files": "Add files"
+        "add_files": "Add files",
+        "file_processing_indicator": "This file is being processed. Searching will not be available before it is complete."
       },
       "workflow": {
         "workflow": "Workflow",

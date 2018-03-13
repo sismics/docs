@@ -29,6 +29,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * File entity utilities.
@@ -40,6 +43,11 @@ public class FileUtil {
      * Logger.
      */
     private static final Logger log = LoggerFactory.getLogger(FileUtil.class);
+
+    /**
+     * File ID of files currently being processed.
+     */
+    private static Set<String> processingFileSet = Collections.synchronizedSet(new HashSet<String>());
     
     /**
      * Extract content from a file.
@@ -269,6 +277,7 @@ public class FileUtil {
 
         // Raise a new file created event and document updated event if we have a document
         if (documentId != null) {
+            startProcessingFile(fileId);
             FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
             fileCreatedAsyncEvent.setUserId(userId);
             fileCreatedAsyncEvent.setLanguage(language);
@@ -284,5 +293,33 @@ public class FileUtil {
         }
 
         return fileId;
+    }
+
+    /**
+     * Start processing a file.
+     *
+     * @param fileId File ID
+     */
+    public static void startProcessingFile(String fileId) {
+        processingFileSet.add(fileId);
+    }
+
+    /**
+     * End processing a file.
+     *
+     * @param fileId File ID
+     */
+    public static void endProcessingFile(String fileId) {
+        processingFileSet.remove(fileId);
+    }
+
+    /**
+     * Return true if a file is currently processing.
+     *
+     * @param fileId File ID
+     * @return True if the file is processing
+     */
+    public static boolean isProcessingFile(String fileId) {
+        return processingFileSet.contains(fileId);
     }
 }

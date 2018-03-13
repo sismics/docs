@@ -1,10 +1,9 @@
 package com.sismics.docs.core.event;
 
-import java.io.InputStream;
-import java.nio.file.Path;
-
 import com.google.common.base.MoreObjects;
 import com.sismics.docs.core.model.jpa.File;
+
+import java.nio.file.Path;
 
 /**
  * New file created event.

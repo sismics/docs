@@ -196,6 +196,7 @@ public class FileResource extends BaseResource {
         try {
             java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
             java.nio.file.Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey());
+            FileUtil.startProcessingFile(id);
             FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
             fileCreatedAsyncEvent.setUserId(principal.getId());
             fileCreatedAsyncEvent.setLanguage(documentDto.getLanguage());
@@ -283,6 +284,7 @@ public class FileResource extends BaseResource {
      * @apiSuccess {String} files.id ID
      * @apiSuccess {String} files.mimetype MIME type
      * @apiSuccess {String} files.name File name
+     * @apiSuccess {String} files.processing True if the file is currently processing
      * @apiSuccess {String} files.document_id Document ID
      * @apiSuccess {String} files.create_date Create date (timestamp)
      * @apiSuccess {String} files.size File size (in bytes)
@@ -321,6 +323,7 @@ public class FileResource extends BaseResource {
             try {
                 files.add(Json.createObjectBuilder()
                         .add("id", fileDb.getId())
+                        .add("processing", FileUtil.isProcessingFile(fileDb.getId()))
                         .add("name", JsonUtil.nullable(fileDb.getName()))
                         .add("mimetype", fileDb.getMimeType())
                         .add("document_id", JsonUtil.nullable(fileDb.getDocumentId()))

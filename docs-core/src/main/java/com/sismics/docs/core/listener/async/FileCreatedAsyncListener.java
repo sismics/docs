@@ -59,5 +59,7 @@ public class FileCreatedAsyncListener {
         // Update Lucene index
         LuceneDao luceneDao = new LuceneDao();
         luceneDao.createFile(fileCreatedAsyncEvent.getFile());
+
+        FileUtil.endProcessingFile(file.getId());
     }
 }
