@@ -510,7 +510,8 @@
     "no_space": "Spaces are not allowed"
   },
   "action_type": {
-    "ADD_TAG": "Add this tag"
+    "ADD_TAG": "Add a tag",
+    "REMOVE_TAG": "Remove a tag"
   },
   "pagination": {
     "previous": "Previous",

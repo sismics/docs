@@ -10,12 +10,11 @@ import com.sismics.docs.core.dao.jpa.RouteModelDao;
 import com.sismics.docs.core.dao.jpa.TagDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.criteria.RouteModelCriteria;
-import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
 import com.sismics.docs.core.dao.jpa.dto.RouteModelDto;
-import com.sismics.docs.core.dao.jpa.dto.TagDto;
 import com.sismics.docs.core.model.jpa.Group;
 import com.sismics.docs.core.model.jpa.RouteModel;
 import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.util.ActionUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
@@ -232,14 +231,11 @@ public class RouteModelResource extends BaseResource {
                             throw new ClientException("ValidationError", actionTypeStr + " is not a valid action type");
                         }
 
-                        // Action custom fields
-                        if (actionType == ActionType.ADD_TAG) {
-                            String tagId = action.getString("tag");
-                            ValidationUtil.validateRequired(routeStepTransitionStr, "step.transitions.actions.tag");
-                            List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setId(tagId), null);
-                            if (tagDtoList.size() != 1) {
-                                throw new ClientException("ValidationError", tagId + " is not a valid tag");
-                            }
+                        // Validate action
+                        try {
+                            ActionUtil.validateAction(actionType, action);
+                        } catch (Exception e) {
+                            throw new ClientException("ValidationError", e.getMessage());
                         }
                     }
                 }

@@ -11,29 +11,26 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Action to add a tag.
+ * Action to remove a tag.
  *
  * @author bgamard
  */
-public class AddTagAction extends TagAction {
+public class RemoveTagAction extends TagAction {
     @Override
     public void execute(DocumentDto documentDto, JsonObject action) {
         if (action.getString("tag") == null) {
             return;
         }
 
-        TagDao tagDao = new TagDao();
-        List<TagDto> tagAddDtoList = tagDao.findByCriteria(new TagCriteria().setId(action.getString("tag")), null);
-        if (tagAddDtoList.isEmpty()) {
-            // The tag has been deleted since the route model creation
-            return;
-        }
 
+        String tagId = action.getString("tag");
+        TagDao tagDao = new TagDao();
         List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setDocumentId(documentDto.getId()), null);
-        Set<String> tagIdSet = Sets.newHashSet(tagAddDtoList.get(0).getId());
+        Set<String> tagIdSet = Sets.newHashSet();
         for (TagDto tagDto : tagDtoList) {
             tagIdSet.add(tagDto.getId());
         }
+        tagIdSet.remove(tagId);
 
         tagDao.updateTagList(documentDto.getId(), tagIdSet);
     }

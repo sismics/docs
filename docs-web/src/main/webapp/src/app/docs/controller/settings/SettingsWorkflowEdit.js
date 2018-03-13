@@ -84,8 +84,16 @@ angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dial
    */
   $scope.edit = function () {
     var promise = null;
+
+    // Cleanup the workflow data
     var workflow = angular.copy($scope.workflow);
+    _.each(workflow.steps, function (step) {
+      _.each(step.transitions, function (transition) {
+        delete transition.actionType;
+      });
+    });
     workflow.steps = JSON.stringify(workflow.steps);
+
 
     if ($scope.isEdit()) {
       promise = Restangular
@@ -133,33 +141,50 @@ angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dial
     $scope.workflow.steps.splice($scope.workflow.steps.indexOf(step), 1);
   };
 
+  /**
+   * Update transitions on a step.
+   */
   $scope.updateTransitions = function (step) {
     if (step.type === 'VALIDATE') {
       step.transitions = [{
         name: 'VALIDATED',
-        actions: []
+        actions: [],
+        actionType: 'ADD_TAG'
       }];
     } else if (step.type === 'APPROVE') {
       step.transitions = [{
         name: 'APPROVED',
-        actions: []
+        actions: [],
+        actionType: 'ADD_TAG'
       }, {
         name: 'REJECTED',
-        actions: []
+        actions: [],
+        actionType: 'ADD_TAG'
       }];
     }
   };
 
+  /**
+   * Add an action.
+   */
   $scope.addAction = function (transition) {
+    if (_.isUndefined(transition.actionType)) {
+      return;
+    }
+
     transition.actions.push({
-      type: 'ADD_TAG'
+      type: transition.actionType
     });
   };
 
+  /**
+   * Remove an action.
+   */
   $scope.removeAction = function (actions, action) {
     actions.splice(actions.indexOf(action), 1);
   };
 
+  // Fetch tags
   Restangular.one('tag/list').get().then(function(data) {
     $scope.tags = data.tags;
   });

@@ -9,5 +9,10 @@ public enum ActionType {
     /**
      * Add a tag.
      */
-    ADD_TAG
+    ADD_TAG,
+
+    /**
+     * Remove a tag.
+     */
+    REMOVE_TAG
 }

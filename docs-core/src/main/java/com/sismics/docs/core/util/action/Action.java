@@ -17,4 +17,12 @@ public interface Action {
      * @param action Action data
      */
     void execute(DocumentDto documentDto, JsonObject action);
+
+    /**
+     * Validate the action.
+     *
+     * @param action Action data
+     * @throws Exception Validation error
+     */
+    void validate(JsonObject action) throws Exception;
 }

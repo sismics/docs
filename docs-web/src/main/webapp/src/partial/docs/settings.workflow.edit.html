@@ -100,6 +100,11 @@
                           <option ng-repeat="tag in tags" value="{{ tag.id }}">{{ tag.name }}</option>
                         </select>
                       </div>
+                      <div ng-switch-when="REMOVE_TAG">
+                        <select title="{{ 'action_type.REMOVE_TAG' | translate }}" ng-model="action.tag" required class="form-control">
+                          <option ng-repeat="tag in tags" value="{{ tag.id }}">{{ tag.name }}</option>
+                        </select>
+                      </div>
                     </div>
                     <p class="text-center">
                       <a href ng-click="removeAction(transition.actions, action)">
@@ -108,8 +113,9 @@
                     </p>
                   </div>
                   <div class="input-group">
-                    <select title="Action type" class="form-control">
-                      <option name="ADD_TAG">{{ 'action_type.ADD_TAG' | translate }}</option>
+                    <select title="Action type" class="form-control" ng-model="transition.actionType">
+                      <option value="ADD_TAG">{{ 'action_type.ADD_TAG' | translate }}</option>
+                      <option value="REMOVE_TAG">{{ 'action_type.REMOVE_TAG' | translate }}</option>
                     </select>
                     <span class="input-group-addon btn" ng-click="addAction(transition)">
                       <span class="fas fa-plus-circle"></span>

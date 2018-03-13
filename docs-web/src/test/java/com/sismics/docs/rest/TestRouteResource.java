@@ -352,14 +352,14 @@ public class TestRouteResource extends BaseJerseyTest {
     }
 
     /**
-     * Test actions on workflow step.
+     * Test tag actions on workflow step.
      */
     @Test
-    public void testAction() {
+    public void testTagActions() {
         // Login admin
         String adminToken = clientUtil.login("admin", "admin", false);
 
-        // Create a tag
+        // Create an Approved tag
         JsonObject json = target().path("/tag").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
@@ -367,12 +367,20 @@ public class TestRouteResource extends BaseJerseyTest {
                         .param("color", "#ff0000")), JsonObject.class);
         String tagApprovedId = json.getString("id");
 
+        // Create a Pending tag
+        json = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("name", "Approved")
+                        .param("color", "#ff0000")), JsonObject.class);
+        String tagPendingId = json.getString("id");
+
         // Create a new route model with actions
         json = target().path("/routemodel").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
                         .param("name", "Workflow action 1")
-                        .param("steps", "[{\"type\":\"APPROVE\",\"transitions\":[{\"name\":\"APPROVED\",\"actions\":[{\"type\":\"ADD_TAG\",\"tag\":\"" + tagApprovedId + "\"}]},{\"name\":\"REJECTED\",\"actions\":[]}],\"target\":{\"name\":\"administrators\",\"type\":\"GROUP\"},\"name\":\"Check the document's metadata\"}]")), JsonObject.class);
+                        .param("steps", "[{\"type\":\"APPROVE\",\"transitions\":[{\"name\":\"APPROVED\",\"actions\":[{\"type\":\"ADD_TAG\",\"tag\":\"" + tagApprovedId + "\"}]},{\"name\":\"REJECTED\",\"actions\":[]}],\"target\":{\"name\":\"administrators\",\"type\":\"GROUP\"},\"name\":\"Check the document's metadata\"},{\"type\":\"VALIDATE\",\"transitions\":[{\"name\":\"VALIDATED\",\"actions\":[{\"type\":\"REMOVE_TAG\",\"tag\":\"" + tagPendingId + "\"}]}],\"target\":{\"name\":\"administrators\",\"type\":\"GROUP\"},\"name\":\"Check the document's metadata\"}]")), JsonObject.class);
         String routeModelId = json.getString("id");
 
         // Create a document
@@ -381,6 +389,7 @@ public class TestRouteResource extends BaseJerseyTest {
                 .put(Entity.form(new Form()
                         .param("title", "My super title document 1")
                         .param("description", "My super description for document 1")
+                        .param("tags", tagPendingId)
                         .param("language", "eng")), JsonObject.class);
         String document1Id = json.getString("id");
 
@@ -398,7 +407,8 @@ public class TestRouteResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
         JsonArray tags = json.getJsonArray("tags");
-        Assert.assertEquals(0, tags.size());
+        Assert.assertEquals(1, tags.size());
+        Assert.assertEquals(tagPendingId, tags.getJsonObject(0).getString("id"));
 
         // Validate the current step with admin
         target().path("/route/validate").request()
@@ -406,6 +416,22 @@ public class TestRouteResource extends BaseJerseyTest {
                 .post(Entity.form(new Form()
                         .param("documentId", document1Id)
                         .param("transition", "APPROVED")), JsonObject.class);
+
+        // Check tags on document 1
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        tags = json.getJsonArray("tags");
+        Assert.assertEquals(2, tags.size());
+        Assert.assertEquals(tagApprovedId, tags.getJsonObject(0).getString("id"));
+        Assert.assertEquals(tagPendingId, tags.getJsonObject(1).getString("id"));
+
+        // Validate the current step with admin
+        target().path("/route/validate").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("documentId", document1Id)
+                        .param("transition", "VALIDATED")), JsonObject.class);
 
         // Check tags on document 1
         json = target().path("/document/" + document1Id).request()
@@ -420,6 +446,7 @@ public class TestRouteResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
                         .param("title", "My super title document 2")
+                        .param("tags", tagPendingId)
                         .param("language", "eng")), JsonObject.class);
         String document2Id = json.getString("id");
 
@@ -438,6 +465,21 @@ public class TestRouteResource extends BaseJerseyTest {
                 .post(Entity.form(new Form()
                         .param("documentId", document2Id)
                         .param("transition", "REJECTED")), JsonObject.class);
+
+        // Check tags on document 2
+        json = target().path("/document/" + document2Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        tags = json.getJsonArray("tags");
+        Assert.assertEquals(1, tags.size());
+        Assert.assertEquals(tagPendingId, tags.getJsonObject(0).getString("id"));
+
+        // Validate the current step with admin
+        target().path("/route/validate").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("documentId", document2Id)
+                        .param("transition", "VALIDATED")), JsonObject.class);
 
         // Check tags on document 2
         json = target().path("/document/" + document2Id).request()
