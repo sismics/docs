@@ -122,29 +122,6 @@ public class FileUtil {
     }
     
     /**
-     * Save a file on the storage filesystem.
-     * 
-     * @param unencryptedFile Unencrypted file
-     * @param unencryptedPdfFile Unencrypted PDF file
-     * @param file File to save
-     * @param privateKey Private key used for encryption
-     */
-    public static void save(Path unencryptedFile, Path unencryptedPdfFile, File file, String privateKey) throws Exception {
-        Cipher cipher = EncryptionUtil.getEncryptionCipher(privateKey);
-        Path path = DirectoryUtil.getStorageDirectory().resolve(file.getId());
-        try (InputStream inputStream = Files.newInputStream(unencryptedFile)) {
-            Files.copy(new CipherInputStream(inputStream, cipher), path);
-        }
-
-        // Generate file variations (errors non-blocking)
-        try {
-            saveVariations(file, unencryptedFile, unencryptedPdfFile, cipher);
-        } catch (Exception e) {
-            log.error("Unable to generate thumbnails", e);
-        }
-    }
-
-    /**
      * Generate file variations.
      * 
      * @param file File from database
@@ -152,7 +129,7 @@ public class FileUtil {
      * @param unencryptedPdfFile Unencrypted PDF file
      * @param cipher Cipher to use for encryption
      */
-    private static void saveVariations(File file, Path unencryptedFile, Path unencryptedPdfFile, Cipher cipher) throws Exception {
+    public static void saveVariations(File file, Path unencryptedFile, Path unencryptedPdfFile, Cipher cipher) throws Exception {
         BufferedImage image = null;
         if (ImageUtil.isImage(file.getMimeType())) {
             try (InputStream inputStream = Files.newInputStream(unencryptedFile)) {
@@ -262,14 +239,12 @@ public class FileUtil {
         file.setUserId(userId);
         String fileId = fileDao.create(file, userId);
 
-        // Guess the mime type a second time, for open document format (first detected as simple ZIP file)
-        file.setMimeType(MimeTypeUtil.guessOpenDocumentFormat(file, unencryptedFile));
-
-        // Convert to PDF if necessary (for thumbnail and text extraction)
-        java.nio.file.Path unencryptedPdfFile = PdfUtil.convertToPdf(file, unencryptedFile);
-
         // Save the file
-        FileUtil.save(unencryptedFile, unencryptedPdfFile, file, user.getPrivateKey());
+        Cipher cipher = EncryptionUtil.getEncryptionCipher(user.getPrivateKey());
+        Path path = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+        try (InputStream inputStream = Files.newInputStream(unencryptedFile)) {
+            Files.copy(new CipherInputStream(inputStream, cipher), path);
+        }
 
         // Update the user quota
         user.setStorageCurrent(user.getStorageCurrent() + fileSize);
@@ -283,7 +258,6 @@ public class FileUtil {
             fileCreatedAsyncEvent.setLanguage(language);
             fileCreatedAsyncEvent.setFile(file);
             fileCreatedAsyncEvent.setUnencryptedFile(unencryptedFile);
-            fileCreatedAsyncEvent.setUnencryptedPdfFile(unencryptedPdfFile);
             ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
 
             DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();

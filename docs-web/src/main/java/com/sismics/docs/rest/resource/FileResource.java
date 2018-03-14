@@ -17,7 +17,6 @@ import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.core.util.EncryptionUtil;
 import com.sismics.docs.core.util.FileUtil;
-import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
@@ -202,7 +201,6 @@ public class FileResource extends BaseResource {
             fileCreatedAsyncEvent.setLanguage(documentDto.getLanguage());
             fileCreatedAsyncEvent.setFile(file);
             fileCreatedAsyncEvent.setUnencryptedFile(unencryptedFile);
-            fileCreatedAsyncEvent.setUnencryptedPdfFile(PdfUtil.convertToPdf(file, unencryptedFile));
             ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
             
             DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();

@@ -26,13 +26,6 @@ public class FileCreatedAsyncEvent extends UserEvent {
      */
     private Path unencryptedFile;
     
-    /**
-     * Unencrypted file containing PDF representation
-     * of the original file. May be null if the PDF conversion is not
-     * necessary or not possible.
-     */
-    private Path unencryptedPdfFile;
-    
     public File getFile() {
         return file;
     }
@@ -55,15 +48,6 @@ public class FileCreatedAsyncEvent extends UserEvent {
 
     public FileCreatedAsyncEvent setUnencryptedFile(Path unencryptedFile) {
         this.unencryptedFile = unencryptedFile;
-        return this;
-    }
-
-    public Path getUnencryptedPdfFile() {
-        return unencryptedPdfFile;
-    }
-
-    public FileCreatedAsyncEvent setUnencryptedPdfFile(Path unencryptedPdfFile) {
-        this.unencryptedPdfFile = unencryptedPdfFile;
         return this;
     }
 
