@@ -23,14 +23,20 @@
   }
 }
 
-// Tags list
-.table-tags {
-  td {
-    vertical-align: middle !important;
-  }
+// Tag tree
+ul.tag-tree {
+  list-style-type: none;
+  padding: 0;
 
-  .label {
-    font-size: 100%;
+  li {
+    margin-left: 20px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    white-space: nowrap;
+
+    .active {
+      font-weight: 500;
+    }
   }
 }
 
@@ -327,20 +333,6 @@ input[readonly].share-link {
 
 .tab-pane {
   margin-top: 20px;
-}
-
-// Tag tree
-.tag-tree-dropdown {
-  padding-left: 0;
-
-  .tag-tree {
-    li {
-      margin-left: 20px;
-      margin-top: 8px;
-      margin-bottom: 8px;
-      white-space: nowrap;
-    }
-  }
 }
 
 // Advanced search
@@ -668,6 +660,7 @@ input[readonly].share-link {
   box-shadow: 0 7px 14px 0 rgba(50,50,93,.1), 0 3px 6px 0 rgba(0,0,0,.07);
   background: none;
   border-radius: 4px;
+  overflow: hidden;
 
   .well-3d-header {
     font-size: 20px;
@@ -678,6 +671,18 @@ input[readonly].share-link {
 
   table {
     margin-bottom: 0;
+  }
+}
+
+.well-3d-background {
+  position: absolute;
+  top: 60px;
+  right: 60px;
+  z-index: -1;
+  opacity: 0.03;
+
+  .fas {
+    font-size: 15vw;
   }
 }
 

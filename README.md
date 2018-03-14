@@ -5,7 +5,6 @@
 [![Twitter: @sismicsdocs](https://img.shields.io/badge/contact-@sismicsdocs-blue.svg?style=flat)](https://twitter.com/sismicsdocs)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 [![Build Status](https://secure.travis-ci.org/sismics/docs.png)](http://travis-ci.org/sismics/docs)
-[![Read the Docs](https://img.shields.io/readthedocs/pip.svg)](https://demo.sismicsdocs.com/apidoc/)
 
 Docs is an open source, lightweight document management system for individuals and businesses.
 

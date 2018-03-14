@@ -1,3 +1,15 @@
+<script type="text/ng-template" id="tag-tree-item">
+  <span ng-class="{ active: $stateParams.id == tag.id }">
+    <span class="fas fa-tag" ng-style="{ 'color': tag.color }"></span>
+    <a href="#/tag/{{ tag.id }}">
+      {{ tag.name }}
+    </a>
+  </span>
+  <ul class="list-unstyled">
+    <li ng-repeat="tag in getChildrenTags(tag.id)" ng-include="'tag-tree-item'"></li>
+  </ul>
+</script>
+
 <div class="row">
   <div class="col-md-4">
     <div class="well well-3d">
@@ -11,27 +23,13 @@
         <span class="help-block" ng-show="tagForm.name.$error.space && tagForm.$dirty">{{ 'validation.no_space' | translate }}</span>
       </form>
 
-      <p class="input-group">
-        <span class="input-group-addon"><span class="fas fa-search"></span></span>
-        <input type="search" class="form-control" ng-attr-placeholder="{{ 'tag.search' | translate }}" ng-model="search.name">
-      </p>
+      <ul class="tag-tree">
+        <li ng-repeat="tag in getChildrenTags()" ng-include="'tag-tree-item'"></li>
+      </ul>
 
-      <table class="row table table-hover table-tags">
-        <tbody>
-          <tr ng-repeat="tag in tags | filter:search" class="pointer"
-              ng-class="{ active: $stateParams.id == tag.id }" ng-click="viewTag(tag.id)">
-            <td>
-              <span class="fas fa-tag"></span>&nbsp;
-              <span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span>
-            </td>
-            <td class="col-xs-1">
-              <a href="#/tag/{{ tag.id }}" class="btn btn-primary pull-right" title="{{ 'tag.edit_tag' | translate }}">
-                <span class="fas fa-pencil-alt"></span>
-              </a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="well-3d-background">
+        <span class="fas fa-tags"></span>
+      </div>
     </div>
   </div>
 

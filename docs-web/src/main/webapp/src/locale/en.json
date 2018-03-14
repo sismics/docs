@@ -199,7 +199,6 @@
   "tag": {
     "new_tag": "New tag",
     "search": "Search",
-    "edit_tag": "Edit tag",
     "default": {
       "title": "Tags",
       "message_1": "<strong>Tags</strong> are labels associated to documents.",
