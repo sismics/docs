@@ -96,10 +96,12 @@ public class FileCreatedAsyncListener {
                 fileDao.update(file);
             }
         });
-        
-        // Update Lucene index
-        LuceneDao luceneDao = new LuceneDao();
-        luceneDao.createFile(event.getFile());
+
+        if (file.getDocumentId() != null) {
+            // Update Lucene index
+            LuceneDao luceneDao = new LuceneDao();
+            luceneDao.createFile(event.getFile());
+        }
 
         FileUtil.endProcessingFile(file.getId());
     }

@@ -262,20 +262,32 @@ public class TestFileResource extends BaseJerseyTest {
                 Assert.assertNotNull(file1Id);
             }
         }
-        
+
         // Get all orphan files
         JsonObject json = target().path("/file/list").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file3Token)
                 .get(JsonObject.class);
         JsonArray files = json.getJsonArray("files");
         Assert.assertEquals(1, files.size());
-        
-        // Get the file data
-        Response response = target().path("/file/" + file1Id + "/data").request()
+
+        // Get the thumbnail data
+        Response response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "thumb")
+                .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file3Token)
                 .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+        Assert.assertTrue(fileBytes.length > 0);
+
+        // Get the file data
+        response = target().path("/file/" + file1Id + "/data").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file3Token)
+                .get();
+        is = (InputStream) response.getEntity();
+        fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
         Assert.assertEquals(163510, fileBytes.length);
         

@@ -60,7 +60,10 @@ public class FileUtil {
      */
     public static String extractContent(String language, File file, Path unencryptedFile, Path unencryptedPdfFile) {
         String content = null;
-        
+        if (language == null) {
+            return null;
+        }
+
         if (ImageUtil.isImage(file.getMimeType())) {
             content = ocrFile(unencryptedFile, language);
         } else if (VideoUtil.isVideo(file.getMimeType())) {
@@ -251,15 +254,15 @@ public class FileUtil {
         userDao.updateQuota(user);
 
         // Raise a new file created event and document updated event if we have a document
-        if (documentId != null) {
-            startProcessingFile(fileId);
-            FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
-            fileCreatedAsyncEvent.setUserId(userId);
-            fileCreatedAsyncEvent.setLanguage(language);
-            fileCreatedAsyncEvent.setFile(file);
-            fileCreatedAsyncEvent.setUnencryptedFile(unencryptedFile);
-            ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
+        startProcessingFile(fileId);
+        FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
+        fileCreatedAsyncEvent.setUserId(userId);
+        fileCreatedAsyncEvent.setLanguage(language);
+        fileCreatedAsyncEvent.setFile(file);
+        fileCreatedAsyncEvent.setUnencryptedFile(unencryptedFile);
+        ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
 
+        if (documentId != null) {
             DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
             documentUpdatedAsyncEvent.setUserId(userId);
             documentUpdatedAsyncEvent.setDocumentId(documentId);
