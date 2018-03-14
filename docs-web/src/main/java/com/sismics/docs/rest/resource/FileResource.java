@@ -525,12 +525,19 @@ public class FileResource extends BaseResource {
             return Response.status(Status.SERVICE_UNAVAILABLE).build();
         }
 
-        return Response.ok(stream)
+        Response.ResponseBuilder builder = Response.ok(stream)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + file.getFullName("data"))
-                .header(HttpHeaders.CONTENT_TYPE, mimeType)
-                .header(HttpHeaders.CACHE_CONTROL, "private")
-                .header(HttpHeaders.EXPIRES, HttpUtil.buildExpiresHeader(3_600_000L * 24L * 365L))
-                .build();
+                .header(HttpHeaders.CONTENT_TYPE, mimeType);
+        if (decrypt) {
+            // Cache real files
+            builder.header(HttpHeaders.CACHE_CONTROL, "private")
+                    .header(HttpHeaders.EXPIRES, HttpUtil.buildExpiresHeader(3_600_000L * 24L * 365L));
+        } else {
+            // Do not cache the temporary thumbnail
+            builder.header(HttpHeaders.CACHE_CONTROL, "no-store, must-revalidate")
+                    .header(HttpHeaders.EXPIRES, "0");
+        }
+        return builder.build();
     }
     
     /**
