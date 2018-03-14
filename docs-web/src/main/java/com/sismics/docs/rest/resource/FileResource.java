@@ -481,7 +481,7 @@ public class FileResource extends BaseResource {
             decrypt = true; // Thumbnails are encrypted
             if (!Files.exists(storedFile)) {
                 try {
-                    storedFile = Paths.get(getClass().getResource("/image/file.png").toURI());
+                    storedFile = Paths.get(getClass().getResource("/image/file-" + size + ".png").toURI());
                 } catch (URISyntaxException e) {
                     // Ignore
                 }
