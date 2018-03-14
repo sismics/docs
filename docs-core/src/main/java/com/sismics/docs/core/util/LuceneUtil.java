@@ -1,7 +1,6 @@
 package com.sismics.docs.core.util;
 
-import java.io.IOException;
-
+import com.sismics.docs.core.model.context.AppContext;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -10,7 +9,7 @@ import org.apache.lucene.store.Directory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sismics.docs.core.model.context.AppContext;
+import java.io.IOException;
 
 /**
  * Lucene utils.
@@ -26,8 +25,7 @@ public class LuceneUtil {
     /**
      * Encapsulate a process into a Lucene context.
      * 
-     * @param runnable
-     * @throws IOException 
+     * @param runnable Runnable
      */
     public static void handle(LuceneRunnable runnable) {
         // Standard analyzer
@@ -53,14 +51,18 @@ public class LuceneUtil {
         } catch (Exception e) {
             log.error("Error in running index writing transaction", e);
             try {
-                indexWriter.rollback();
+                if (indexWriter != null) {
+                    indexWriter.rollback();
+                }
             } catch (IOException e1) {
                 log.error("Cannot rollback index writing transaction", e1);
             }
         }
         
         try {
-            indexWriter.close();
+            if (indexWriter != null) {
+                indexWriter.close();
+            }
         } catch (IOException e) {
             log.error("Cannot commit and close IndexWriter", e);
         }
@@ -75,9 +77,9 @@ public class LuceneUtil {
         /**
          * Code to run in a Lucene context.
          * 
-         * @param indexWriter
-         * @throws Exception 
+         * @param indexWriter Index writer
+         * @throws Exception e
          */
-        public abstract void run(IndexWriter indexWriter) throws Exception;
+        void run(IndexWriter indexWriter) throws Exception;
     }
 }

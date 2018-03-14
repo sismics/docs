@@ -30,19 +30,14 @@
 
 package com.sismics.util.totp;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import org.apache.commons.codec.binary.Base32;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.commons.codec.binary.Base32;
-import org.apache.commons.codec.binary.Base64;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
 /**
  * This class implements the functionality described in RFC 6238 (TOTP: Time
@@ -116,7 +111,7 @@ public final class GoogleAuthenticator {
     /**
      * Modulus used to truncate the scratch code.
      */
-    public static final int SCRATCH_CODE_MODULUS = (int) Math.pow(10, SCRATCH_CODE_LENGTH);
+    private static final int SCRATCH_CODE_MODULUS = (int) Math.pow(10, SCRATCH_CODE_LENGTH);
 
     /**
      * Magic number representing an invalid scratch code.
@@ -171,14 +166,6 @@ public final class GoogleAuthenticator {
         config = new GoogleAuthenticatorConfig();
     }
 
-    public GoogleAuthenticator(GoogleAuthenticatorConfig config) {
-        if (config == null) {
-            throw new IllegalArgumentException("Configuration cannot be null.");
-        }
-
-        this.config = config;
-    }
-
     /**
      * @return the random number generator algorithm.
      * @since 0.5.0
@@ -227,7 +214,7 @@ public final class GoogleAuthenticator {
      * @return the validation code for the provided key at the specified instant
      *         of time.
      */
-    int calculateCode(byte[] key, long tm) {
+    private int calculateCode(byte[] key, long tm) {
         // Allocating an array of bytes to represent the specified instant
         // of time.
         byte[] data = new byte[8];
@@ -439,7 +426,7 @@ public final class GoogleAuthenticator {
         return authorize(secret, verificationCode, new Date().getTime());
     }
 
-    public boolean authorize(String secret, int verificationCode, long time) throws GoogleAuthenticatorException {
+    private boolean authorize(String secret, int verificationCode, long time) throws GoogleAuthenticatorException {
         // Checking user input and failing if the secret key was not provided.
         if (secret == null) {
             throw new IllegalArgumentException("Secret cannot be null.");
