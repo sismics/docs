@@ -28,7 +28,7 @@ public class TestFileUtil {
         File file = new File();
         file.setMimeType(MimeType.OPEN_DOCUMENT_TEXT);
         Path pdfPath = PdfUtil.convertToPdf(file, path);
-        String content = FileUtil.extractContent(null, file, path, pdfPath);
+        String content = FileUtil.extractContent("eng", file, path, pdfPath);
         Assert.assertTrue(content.contains("Lorem ipsum dolor sit amen."));
     }
     
@@ -38,7 +38,7 @@ public class TestFileUtil {
         File file = new File();
         file.setMimeType(MimeType.OFFICE_DOCUMENT);
         Path pdfPath = PdfUtil.convertToPdf(file, path);
-        String content = FileUtil.extractContent(null, file, path, pdfPath);
+        String content = FileUtil.extractContent("eng", file, path, pdfPath);
         Assert.assertTrue(content.contains("Lorem ipsum dolor sit amen."));
     }
 
@@ -47,7 +47,7 @@ public class TestFileUtil {
         Path path = Paths.get(ClassLoader.getSystemResource("file/udhr.pdf").toURI());
         File file = new File();
         file.setMimeType(MimeType.APPLICATION_PDF);
-        String content = FileUtil.extractContent(null, file, path, path);
+        String content = FileUtil.extractContent("eng", file, path, path);
         Assert.assertTrue(content.contains("All human beings are born free and equal in dignity and rights."));
     }
 
