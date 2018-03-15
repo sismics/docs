@@ -3,7 +3,7 @@
 /**
  * Tag controller.
  */
-angular.module('docs').controller('Tag', function($scope, Restangular, $state) {
+angular.module('docs').controller('Tag', function($scope, Restangular) {
   $scope.tag = { name: '', color: '#3a87ad' };
 
   // Retrieve tags

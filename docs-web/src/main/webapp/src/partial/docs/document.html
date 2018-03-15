@@ -174,11 +174,21 @@
                 ng-if="navigatedTag">
           <span class="fas fa-chevron-up"></span>
         </button>
+        <!-- Toggle navigation -->
         <button class="btn btn-default" ng-click="navigationToggle()"
                 ng-class="{ active: navigationEnabled }"
                 uib-tooltip="{{ 'document.toggle_navigation' | translate }}"
                 tooltip-append-to-body="true">
           <span class="far" ng-class="{ 'fa-folder-open': navigationEnabled, 'fa-folder': !navigationEnabled }"></span>
+        </button>
+        <!-- Add a tag here -->
+        <button class="btn btn-primary btn-add-tag"
+                uib-tooltip="{{ 'tag.new_tag' | translate }}"
+                ng-click="addTagHere()">
+          <span>
+            <i class="fas fa-tag"></i>
+            <i class="fas fa-plus"></i>
+          </span>
         </button>
       </div>
 

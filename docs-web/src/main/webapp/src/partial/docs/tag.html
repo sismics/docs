@@ -20,7 +20,7 @@
             ng-maxlength="36" required ng-model="tag.name" ui-validate="{ space: '!$value || $value.indexOf(\' \') == -1' }">
           <span class="input-group-addon btn btn-primary" ng-disabled="!tagForm.$valid" ng-click="addTag()">{{ 'add' | translate }}</span>
         </p>
-        <span class="help-block" ng-show="tagForm.name.$error.space && tagForm.$dirty">{{ 'validation.no_space' | translate }}</span>
+        <span class="text-danger" ng-show="tagForm.name.$error.space && tagForm.$dirty">{{ 'validation.no_space' | translate }}</span>
       </form>
 
       <ul class="tag-tree">
