@@ -62,6 +62,10 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
       language: language
     };
 
+    if ($scope.navigatedTag) {
+      $scope.document.tags.push($scope.navigatedTag);
+    }
+
     $scope.newFiles = [];
 
     if ($scope.form) {
