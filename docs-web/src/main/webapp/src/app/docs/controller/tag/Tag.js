@@ -27,11 +27,10 @@ angular.module('docs').controller('Tag', function($scope, Restangular) {
 
   /**
    * Find children tags.
-   * @param parent
    */
   $scope.getChildrenTags = function(parent) {
     return _.filter($scope.tags, function(tag) {
-      return tag.parent === parent;
+      return tag.parent === parent || !tag.parent && !parent;
     });
   };
 });
