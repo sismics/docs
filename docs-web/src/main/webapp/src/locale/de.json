@@ -12,8 +12,8 @@
     "login_failed_message": "Benutzername oder Passwort ungültig",
     "password_lost_btn": "Passwort vergessen?",
     "password_lost_sent_title": "Passwort zurücksetzen Email gesendet",
-    "password_lost_sent_message": "Eine E-Mail wurde gesendet an <strong>{{ username }}</strong> um Ihr Passwort zurückzusetzen",
-    "password_lost_error_title": "Fehler beim Zurücksetzen des Passwortes",
+    "password_lost_sent_message": "Eine E-Mail wurde an <strong>{{ username }}</strong> gesendet, um dessen Passwort zurückzusetzen.",
+    "password_lost_error_title": "Fehler beim Zurücksetzen des Passworts",
     "password_lost_error_message": "Wenn Sie keine E-Mail zum Zurücksetzen des Passworts senden können, wenden Sie sich bitte an Ihren Administrator, um einen manuellen Reset durchzuführen."
   },
   "passwordlost": {
@@ -22,10 +22,10 @@
     "submit": "Passwort zurücksetzen"
   },
   "passwordreset": {
-    "message": "Bitte geben Sie ein neues Passwort ein",
+    "message": "Bitte geben Sie ein neues Passwort ein.",
     "submit": "Mein Passwort ändern",
-    "error_title": "Fehler beim ändern des Passwortes",
-    "error_message": "Ihre Anfrage zur Passwort-Wiederherstellung ist abgelaufen, bitte wiederholen Sie die die Anfrage"
+    "error_title": "Fehler beim ändern des Passworts.",
+    "error_message": "Ihre Anfrage zur Passwort-Wiederherstellung ist abgelaufen, bitte wiederholen Sie die die Anfrage."
   },
   "index": {
     "toggle_navigation": "Navigation ein-/ausblenden",
@@ -33,7 +33,7 @@
     "nav_tags": "Tags",
     "nav_users_groups": "Benutzer & Gruppen",
     "error_info": "{{ count }} neuer Fehler{{ count > 1 ? 's' : '' }}",
-    "logged_as": "Eingelogt als {{ username }}",
+    "logged_as": "Eingeloggt als {{ username }}",
     "nav_settings": "Einstellungen",
     "logout": "Logout",
     "global_quota_warning": "<strong>Warnung!</strong> Der frei zur Verfügung stehende maximale Speicherplatz ist fast erreicht bei {{ current | number: 0 }}MB ({{ percent | number: 1 }}%) verwendet {{ total | number: 0 }}MB"
@@ -51,7 +51,7 @@
     "search_clear": "Leeren",
     "any_language": "Jede Sprache",
     "add_document": "Dokument hinzufügen",
-    "import_eml": "mport aus einer E-Mail (EML-Format)",
+    "import_eml": "Import aus einer E-Mail (EML-Format)",
     "tags": "Tags",
     "no_tags": "Keine Tags",
     "no_documents": "Kein Dokument in der Datenbank",
@@ -95,7 +95,7 @@
       "comments": "Kommentar",
       "no_comments": "Noch keine Kommentare zu diesem Dokument vorhanden",
       "add_comment": "Fügen sie einen Komentar hinzu",
-      "error_loading_comments": "Fehler beim laden eines Kommentars",
+      "error_loading_comments": "Fehler beim Laden eines Kommentars",
       "workflow_current": "Aktueller Workflow-Status",
       "workflow_comment": "Fügen Sie einen Workflow Kommentar hinzu",
       "workflow_validated_title": "Workflow-Schritt validiert",
@@ -107,8 +107,8 @@
         "upload_pending": "Ausstehend...",
         "upload_progress": "Hochladen...",
         "upload_error": "Fehler beim hochladen",
-        "upload_error_quota": "Maximlaer Speicherplatz erreicht",
-        "drop_zone": "Drag & drop Dateien hier um diese hochzuladen",
+        "upload_error_quota": "Maximaler Speicherplatz erreicht",
+        "drop_zone": "Drag & Drop Dateien hier her ziehen, um diese hochzuladen",
         "add_files": "Dateien hinzufügen"
       },
       "workflow": {
@@ -140,7 +140,7 @@
       "document_edited_with_errors": "Dokument erfolgreich bearbeitet, aber einige Dateien konnten nicht hochgeladen werden",
       "document_added_with_errors": "Dokument erfolgreich erstellt, aber einige Dateien konnten nicht hochgeladen werden",
       "document_added": "Dokument erfolgreich erstellt (with {{ count }} Datei{{ count > 1 ? 's' : '' }})",
-      "quota_reached": "Maximaler Spoeicherplatz erreicht",
+      "quota_reached": "Maximaler Speicherplatz erreicht",
       "primary_metadata": "Primäre Metadaten",
       "title_placeholder": "Titel des Dokuments",
       "description_placeholder": "Zusammenfassung, Inhaltsverzeichnis oder Freitext",
@@ -160,14 +160,14 @@
       "upload_error": "Fehler beim hochladen",
       "upload_error_quota": "Maximaler Speicherplatz erreicht",
       "quick_upload": "Schnelles hochladen",
-      "drop_zone": "Drag & drop Datie hier um diese hochzuladen",
+      "drop_zone": "Drag & Drop Dateien hier her ziehen, um diese hochzuladen",
       "add_files": "Dateien hinzufügen",
       "add_new_document": "Neues Dokument hinzufügen",
       "latest_activity": "Letzte Aktivitäten",
       "footer_sismics": "Programmiert mit <span class=\"fas fa-heart\"></span> by <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
       "api_documentation": "API Dokumentation",
       "feedback": "Geben Sie uns Feedback",
-      "workflow_document_list": "Mir zugeordnette Dokumente"
+      "workflow_document_list": "Mir zugeordnete Dokumente"
     },
     "pdf": {
       "export_title": "Export als PDF",
@@ -197,7 +197,7 @@
     "default": {
       "title": "Tags",
       "message_1": "<strong>Tags</strong> sind Kategorien, die den Dokumenten zugeordnet sind. ",
-      "message_2": "Ein Dokument kann mit mehreren Tags versehen werden, und ein Tag kann auf mehrere Dokumente angewendet werden.",
+      "message_2": "Ein Dokument kann mit mehreren Tags versehen werden und ein Tag kann auf mehrere Dokumente angewendet werden.",
       "message_3": " Verwendung der <span class=\"glyphicon glyphicon-pencil\"></span> Schaltfläche können Sie die Berechtigungen für ein Tag bearbeiten.",
       "message_4": "Wenn ein Tag von einem anderen Benutzer oder einer anderen Gruppe gelesen werden kann, können die zugehörigen Dokumente auch von diesen Personen gelesen werden.",
       "message_5": "Kennzeichnen Sie z.B. Ihre Firmendokumente mit einem Tag <span class=\"label label-info\">MyCompany</span> und fügen Sie die Berechtigung <strong>Can read</strong> zu einer Gruppe hinzu <span class=\"btn btn-default\">employees</span>"
@@ -275,7 +275,7 @@
         "disabled": "Deaktivierter Benutzer",
         "password_reset_btn": "Senden Sie eine E-Mail zum Zurücksetzen des Kennworts an diesen Benutzer",
         "password_lost_sent_title": "Passwort zurücksetzen Email gesendet ",
-        "password_lost_sent_message": "Passwort zurücksetzen Email gesendet an <strong>{{ username }}</strong>"
+        "password_lost_sent_message": "Passwort zurücksetzen Email an <strong>{{ username }}</strong> gesendet."
       }
     },
     "workflow": {
@@ -290,7 +290,7 @@
         "add_workflow_title": "Neuen Workflow hinzufügen",
         "name": "Name",
         "name_placeholder": "Name des Bearbeitungschritts oder der Beschreibung ",
-        "drag_help": "Drag & drop, um die Schritte neu zu ordnen ",
+        "drag_help": "Drag & Drop, um die Schritte neu zu ordnen ",
         "type": "Bearbeitungsschritt",
         "type_approve": "Genehmigen",
         "type_validate": "Bestätigen",
@@ -309,7 +309,7 @@
       "message_authenticator": "Für Windows Phone: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">Authenticator</a>",
       "message_2": "Diese Anwendungen generieren automatisch einen Validierungscod der sich nach einer gewissen Zeitspanne ändert. Sie müssen diesen Validierungscode jedes Mal eingeben, wenn Sie sich bei {{ appName }} anmelden. </strong>.",
       "secret_key": "Ihr geheimer Schlüssel ist: <strong>{{ secret }}</strong>",
-      "secret_key_warning": "Konfigurieren Sie Ihre TOTP-App jetzt mit diesem geheimen Schlüssel auf Ihrem Telefon, Sie können später nicht darauf zugreifen.",
+      "secret_key_warning": "Konfigurieren Sie Ihre TOTP-App jetzt mit diesem geheimen Schlüssel auf Ihrem Telefon. Sie können später nicht mehr darauf zugreifen.",
       "totp_enabled_message": "Die Zwei-Faktor-Authentifizierung ist in Ihrem Konto aktiviert.<br/>Bei jeder Anmeldung auf <strong>{{ appName }}</strong>, werden Sie in Ihrer konfigurierten Telefon-App nach einem Bestätigungscode gefragt.<br/>Wenn Sie Ihr Telefon verlieren, können Sie sich nicht in Ihrem Konto anmelden, aber aktive Sitzungen ermöglichen es Ihnen, einen geheimen Schlüssel neu zu generieren.",
       "disable_totp": {
         "disable_totp": "Deaktivieren der Zwei-Faktor-Authentifizierung",
@@ -352,7 +352,7 @@
       "title_general": "Allgemeine Konfiguration ",
       "default_language": " Standardsprache für neue Dokumente ",
       "application_name": "Anwendungsname",
-      "main_color": "Haupt Farbe",
+      "main_color": "Hauptfarbe",
       "custom_css": "Benutzerdefiniertes CSS",
       "custom_css_placeholder": "Benutzerdefiniertes CSS, das nach dem Haupt-Stylesheet hinzugefügt werden soll ",
       "logo": "Logo (quadratische Größe) ",
@@ -459,10 +459,10 @@
       "Route": "Workflow"
     },
     "selectrelation": {
-      "typeahead": "Tippen Sie einen Dokumentnamen"
+      "typeahead": "Tippen Sie auf einen Dokumentnamen"
     },
     "selecttag": {
-      "typeahead": "Tippen Sie einen Tag"
+      "typeahead": "Tippen Sie auf einen Tag"
     },
     "datepicker": {
       "current": "Heute",
@@ -478,7 +478,7 @@
   },
   "acl": {
     "READ": "Kann lesen",
-    "READWRITE": "Kann lesen und schrieben",
+    "READWRITE": "Kann lesen und schreiben",
     "WRITE": "Kann schreiben",
     "USER": "Benutzer",
     "GROUP": "Gruppe",
@@ -500,7 +500,7 @@
     "email": "Muss eine gültige E-Mailadresse sein",
     "password_confirm": "Passwort und Passwortbestätigung müssen übereinstimmen",
     "number": "Nummer erfoderlich",
-    "no_space": "Leerstellen sind nicht erlaubt"
+    "no_space": "Leerzeichen sind nicht erlaubt"
   },
   "pagination": {
     "previous": "Vorherige",
