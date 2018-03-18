@@ -65,8 +65,8 @@ Manual installation
 -------------------
 
 #### Requirements
-- Java 7 with the [Java Cryptography Extension](http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html)
-- Tesseract 3.02 for OCR
+- Java 8 with the [Java Cryptography Extension](http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html)
+- Tesseract 3 or 4 for OCR
 - ffmpeg for video thumbnails
 - mediainfo for video metadata extraction
 - A webapp server like [Jetty](http://eclipse.org/jetty/) or [Tomcat](http://tomcat.apache.org/)
@@ -78,7 +78,7 @@ The latest release is downloadable here: <https://github.com/sismics/docs/releas
 How to build Docs from the sources
 ----------------------------------
 
-Prerequisites: JDK 7 with JCE, Maven 3, Tesseract 3.02
+Prerequisites: JDK 8 with JCE, Maven 3, Tesseract 3 or 4
 
 Docs is organized in several Maven modules:
 
