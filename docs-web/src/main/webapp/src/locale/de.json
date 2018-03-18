@@ -459,10 +459,10 @@
       "Route": "Workflow"
     },
     "selectrelation": {
-      "typeahead": "Tippen Sie auf einen Dokumentnamen"
+      "typeahead": "Tippen Sie einen Dokumentnamen ein"
     },
     "selecttag": {
-      "typeahead": "Tippen Sie auf einen Tag"
+      "typeahead": "Tippen Sie einen Tagnamen ein"
     },
     "datepicker": {
       "current": "Heute",
