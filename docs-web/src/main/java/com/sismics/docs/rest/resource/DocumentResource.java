@@ -432,7 +432,7 @@ public class DocumentResource extends BaseResource {
         DateTimeFormatter dayFormatter = new DateTimeFormatter(null, parsers[2]);
         DateTimeFormatter formatter = new DateTimeFormatterBuilder().append( null, parsers ).toFormatter();
 
-        String[] criteriaList = search.split(" *");
+        String[] criteriaList = search.split("  *");
         List<String> query = new ArrayList<>();
         List<String> fullQuery = new ArrayList<>();
         for (String criteria : criteriaList) {
