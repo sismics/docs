@@ -31,16 +31,13 @@ public class DocumentCreatedAsyncListener {
             log.info("Document created event: " + event.toString());
         }
 
-        TransactionUtil.handle(new Runnable() {
-            @Override
-            public void run() {
-                // Add the first contributor (the creator of the document)
-                ContributorDao contributorDao = new ContributorDao();
-                Contributor contributor = new Contributor();
-                contributor.setDocumentId(event.getDocument().getId());
-                contributor.setUserId(event.getUserId());
-                contributorDao.create(contributor);
-            }
+        TransactionUtil.handle(() -> {
+            // Add the first contributor (the creator of the document)
+            ContributorDao contributorDao = new ContributorDao();
+            Contributor contributor = new Contributor();
+            contributor.setDocumentId(event.getDocument().getId());
+            contributor.setUserId(event.getUserId());
+            contributorDao.create(contributor);
         });
         
         // Update Lucene index

@@ -51,7 +51,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
@@ -296,14 +295,11 @@ public class DocumentResource extends BaseResource {
         }
         
         // Convert to PDF
-        StreamingOutput stream = new StreamingOutput() {
-            @Override
-            public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                try {
-                    PdfUtil.convertToPdf(documentDto, fileList, fitImageToPage, metadata, margin, outputStream);
-                } catch (Exception e) {
-                    throw new IOException(e);
-                }
+        StreamingOutput stream = outputStream -> {
+            try {
+                PdfUtil.convertToPdf(documentDto, fileList, fitImageToPage, metadata, margin, outputStream);
+            } catch (Exception e) {
+                throw new IOException(e);
             }
         };
 
@@ -436,7 +432,7 @@ public class DocumentResource extends BaseResource {
         DateTimeFormatter dayFormatter = new DateTimeFormatter(null, parsers[2]);
         DateTimeFormatter formatter = new DateTimeFormatterBuilder().append( null, parsers ).toFormatter();
 
-        String[] criteriaList = search.split("  *");
+        String[] criteriaList = search.split(" *");
         List<String> query = new ArrayList<>();
         List<String> fullQuery = new ArrayList<>();
         for (String criteria : criteriaList) {
@@ -452,7 +448,7 @@ public class DocumentResource extends BaseResource {
                     // New tag criteria
                     List<TagDto> tagDtoList = TagUtil.findByName(params[1], allTagDtoList);
                     if (documentCriteria.getTagIdList() == null) {
-                        documentCriteria.setTagIdList(new ArrayList<String>());
+                        documentCriteria.setTagIdList(new ArrayList<>());
                     }
                     if (tagDtoList.isEmpty()) {
                         // No tag found, the request must returns nothing
@@ -492,32 +488,39 @@ public class DocumentResource extends BaseResource {
                     // New specific date criteria
                     try {
                         boolean isUpdated = params[0].startsWith("u");
-                        if (params[1].length() == 10) {
-                            DateTime date = dayFormatter.parseDateTime(params[1]);
-                            if (isUpdated) {
-                                documentCriteria.setUpdateDateMin(date.toDate());
-                                documentCriteria.setUpdateDateMax(date.plusDays(1).minusSeconds(1).toDate());
-                            } else {
-                                documentCriteria.setCreateDateMin(date.toDate());
-                                documentCriteria.setCreateDateMax(date.plusDays(1).minusSeconds(1).toDate());
+                        switch (params[1].length()) {
+                            case 10: {
+                                DateTime date = dayFormatter.parseDateTime(params[1]);
+                                if (isUpdated) {
+                                    documentCriteria.setUpdateDateMin(date.toDate());
+                                    documentCriteria.setUpdateDateMax(date.plusDays(1).minusSeconds(1).toDate());
+                                } else {
+                                    documentCriteria.setCreateDateMin(date.toDate());
+                                    documentCriteria.setCreateDateMax(date.plusDays(1).minusSeconds(1).toDate());
+                                }
+                                break;
                             }
-                        } else if (params[1].length() == 7) {
-                            DateTime date = monthFormatter.parseDateTime(params[1]);
-                            if (isUpdated) {
-                                documentCriteria.setUpdateDateMin(date.toDate());
-                                documentCriteria.setUpdateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
-                            } else {
-                                documentCriteria.setCreateDateMin(date.toDate());
-                                documentCriteria.setCreateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
+                            case 7: {
+                                DateTime date = monthFormatter.parseDateTime(params[1]);
+                                if (isUpdated) {
+                                    documentCriteria.setUpdateDateMin(date.toDate());
+                                    documentCriteria.setUpdateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
+                                } else {
+                                    documentCriteria.setCreateDateMin(date.toDate());
+                                    documentCriteria.setCreateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
+                                }
+                                break;
                             }
-                        } else if (params[1].length() == 4) {
-                            DateTime date = yearFormatter.parseDateTime(params[1]);
-                            if (isUpdated) {
-                                documentCriteria.setUpdateDateMin(date.toDate());
-                                documentCriteria.setUpdateDateMax(date.plusYears(1).minusSeconds(1).toDate());
-                            } else {
-                                documentCriteria.setCreateDateMin(date.toDate());
-                                documentCriteria.setCreateDateMax(date.plusYears(1).minusSeconds(1).toDate());
+                            case 4: {
+                                DateTime date = yearFormatter.parseDateTime(params[1]);
+                                if (isUpdated) {
+                                    documentCriteria.setUpdateDateMin(date.toDate());
+                                    documentCriteria.setUpdateDateMax(date.plusYears(1).minusSeconds(1).toDate());
+                                } else {
+                                    documentCriteria.setCreateDateMin(date.toDate());
+                                    documentCriteria.setCreateDateMax(date.plusYears(1).minusSeconds(1).toDate());
+                                }
+                                break;
                             }
                         }
                     } catch (IllegalArgumentException e) {

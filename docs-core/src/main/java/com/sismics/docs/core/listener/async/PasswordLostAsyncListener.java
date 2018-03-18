@@ -35,19 +35,16 @@ public class PasswordLostAsyncListener {
             log.info("Password lost event: " + passwordLostEvent.toString());
         }
         
-        TransactionUtil.handle(new Runnable() {
-            @Override
-            public void run() {
-                final UserDto user = passwordLostEvent.getUser();
-                final PasswordRecovery passwordRecovery = passwordLostEvent.getPasswordRecovery();
-                
-                // Send the password recovery email
-                Map<String, Object> paramRootMap = new HashMap<>();
-                paramRootMap.put("user_name", user.getUsername());
-                paramRootMap.put("password_recovery_key", passwordRecovery.getId());
-        
-                EmailUtil.sendEmail(Constants.EMAIL_TEMPLATE_PASSWORD_RECOVERY, user, paramRootMap);
-            }
+        TransactionUtil.handle(() -> {
+            final UserDto user = passwordLostEvent.getUser();
+            final PasswordRecovery passwordRecovery = passwordLostEvent.getPasswordRecovery();
+
+            // Send the password recovery email
+            Map<String, Object> paramRootMap = new HashMap<>();
+            paramRootMap.put("user_name", user.getUsername());
+            paramRootMap.put("password_recovery_key", passwordRecovery.getId());
+
+            EmailUtil.sendEmail(Constants.EMAIL_TEMPLATE_PASSWORD_RECOVERY, user, paramRootMap);
         });
     }
 }

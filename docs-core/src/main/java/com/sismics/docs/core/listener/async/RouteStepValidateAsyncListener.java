@@ -34,19 +34,16 @@ public class RouteStepValidateAsyncListener {
             log.info("Route step validate event: " + routeStepValidateEvent.toString());
         }
         
-        TransactionUtil.handle(new Runnable() {
-            @Override
-            public void run() {
-                final UserDto user = routeStepValidateEvent.getUser();
+        TransactionUtil.handle(() -> {
+            final UserDto user = routeStepValidateEvent.getUser();
 
-                // Send route step validated email
-                Map<String, Object> paramRootMap = new HashMap<>();
-                paramRootMap.put("user_name", user.getUsername());
-                paramRootMap.put("document_id", routeStepValidateEvent.getDocument().getId());
-                paramRootMap.put("document_title", routeStepValidateEvent.getDocument().getTitle());
+            // Send route step validated email
+            Map<String, Object> paramRootMap = new HashMap<>();
+            paramRootMap.put("user_name", user.getUsername());
+            paramRootMap.put("document_id", routeStepValidateEvent.getDocument().getId());
+            paramRootMap.put("document_title", routeStepValidateEvent.getDocument().getTitle());
 
-                EmailUtil.sendEmail(Constants.EMAIL_TEMPLATE_ROUTE_STEP_VALIDATE, user, paramRootMap);
-            }
+            EmailUtil.sendEmail(Constants.EMAIL_TEMPLATE_ROUTE_STEP_VALIDATE, user, paramRootMap);
         });
     }
 }

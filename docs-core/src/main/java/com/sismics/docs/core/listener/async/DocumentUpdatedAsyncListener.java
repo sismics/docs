@@ -34,32 +34,29 @@ public class DocumentUpdatedAsyncListener {
             log.info("Document updated event: " + event.toString());
         }
 
-        TransactionUtil.handle(new Runnable() {
-            @Override
-            public void run() {
-                // Update Lucene index
-                DocumentDao documentDao = new DocumentDao();
-                LuceneDao luceneDao = new LuceneDao();
-                luceneDao.updateDocument(documentDao.getById(event.getDocumentId()));
-                
-                // Update contributors list
-                ContributorDao contributorDao = new ContributorDao();
-                List<Contributor> contributorList = contributorDao.findByDocumentId(event.getDocumentId());
-                
-                // Check if the user firing this event is not already a contributor
-                for (Contributor contributor : contributorList) {
-                    if (contributor.getUserId().equals(event.getUserId())) {
-                        // The current user is already a contributor on this document, don't do anything
-                        return;
-                    }
+        TransactionUtil.handle(() -> {
+            // Update Lucene index
+            DocumentDao documentDao = new DocumentDao();
+            LuceneDao luceneDao = new LuceneDao();
+            luceneDao.updateDocument(documentDao.getById(event.getDocumentId()));
+
+            // Update contributors list
+            ContributorDao contributorDao = new ContributorDao();
+            List<Contributor> contributorList = contributorDao.findByDocumentId(event.getDocumentId());
+
+            // Check if the user firing this event is not already a contributor
+            for (Contributor contributor : contributorList) {
+                if (contributor.getUserId().equals(event.getUserId())) {
+                    // The current user is already a contributor on this document, don't do anything
+                    return;
                 }
-                
-                // Add a new contributor
-                Contributor contributor = new Contributor();
-                contributor.setDocumentId(event.getDocumentId());
-                contributor.setUserId(event.getUserId());
-                contributorDao.create(contributor);
             }
+
+            // Add a new contributor
+            Contributor contributor = new Contributor();
+            contributor.setDocumentId(event.getDocumentId());
+            contributor.setUserId(event.getUserId());
+            contributorDao.create(contributor);
         });
     }
 }
