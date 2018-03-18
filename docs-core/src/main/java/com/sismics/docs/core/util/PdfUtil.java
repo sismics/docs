@@ -1,39 +1,23 @@
 package com.sismics.docs.core.util;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closer;
 import com.google.common.io.Resources;
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.FontFactory;
+import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.util.format.FormatHandler;
+import com.sismics.docs.core.util.format.FormatHandlerUtil;
 import com.sismics.docs.core.util.pdf.PdfPage;
-import com.sismics.util.ImageUtil;
-import com.sismics.util.context.ThreadLocalContext;
-import com.sismics.util.mime.MimeType;
 import org.apache.pdfbox.io.MemoryUsageSetting;
-import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.DocsPDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
-import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-import org.apache.pdfbox.rendering.PDFRenderer;
-import org.apache.pdfbox.text.PDFTextStripper;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.odftoolkit.odfdom.converter.pdf.PdfConverter;
-import org.odftoolkit.odfdom.converter.pdf.PdfOptions;
-import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -54,128 +38,7 @@ public class PdfUtil {
      * Logger.
      */
     private static final Logger log = LoggerFactory.getLogger(PdfUtil.class);
-    
-    /**
-     * Extract text from a PDF.
-     * 
-     * @param unencryptedPdfFile Unencrypted PDF file
-     * @param language Language
-     * @return Content extracted
-     */
-    public static String extractPdf(Path unencryptedPdfFile, String language) {
-        String content = null;
-        try (InputStream inputStream = Files.newInputStream(unencryptedPdfFile);
-             PDDocument pdfDocument = PDDocument.load(inputStream)) {
-            content = new PDFTextStripper().getText(pdfDocument);
-        } catch (Exception e) {
-            log.error("Error while extracting text from the PDF", e);
-        }
 
-        // No text content, try to OCR it
-        if (language != null && content != null && content.trim().isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            try (InputStream inputStream = Files.newInputStream(unencryptedPdfFile);
-                 PDDocument pdfDocument = PDDocument.load(inputStream)) {
-                PDFRenderer renderer = new PDFRenderer(pdfDocument);
-                for (int pageIndex = 0; pageIndex < pdfDocument.getNumberOfPages(); pageIndex++) {
-                    sb.append(" ");
-                    sb.append(FileUtil.ocrFile(renderer.renderImage(pageIndex), language));
-                }
-                return sb.toString();
-            } catch (Exception e) {
-                log.error("Error while OCR-izing the PDF", e);
-            }
-        }
-        
-        return content;
-    }
-    
-    /**
-     * Convert a file to PDF if necessary.
-     * 
-     * @param file File
-     * @param unencryptedFile Unencrypted file
-     * @return PDF temporary file
-     */
-    public static Path convertToPdf(File file, Path unencryptedFile) throws Exception {
-        if (file.getMimeType().equals(MimeType.APPLICATION_PDF)) {
-            // It's already PDF, just return the file
-            return unencryptedFile;
-        }
-        
-        if (file.getMimeType().equals(MimeType.OFFICE_DOCUMENT)) {
-            return convertOfficeDocument(unencryptedFile);
-        }
-        
-        if (file.getMimeType().equals(MimeType.OPEN_DOCUMENT_TEXT)) {
-            return convertOpenDocumentText(unencryptedFile);
-        }
-
-        if (file.getMimeType().equals(MimeType.TEXT_PLAIN) || file.getMimeType().equals(MimeType.TEXT_CSV)) {
-            return convertTextPlain(unencryptedFile);
-        }
-
-        // PDF conversion not necessary/possible
-        return null;
-    }
-
-    /**
-     * Convert a text plain document to PDF.
-     *
-     * @param unencryptedFile Unencrypted file
-     * @return PDF file
-     */
-    private static Path convertTextPlain(Path unencryptedFile) throws Exception {
-        Document output = new Document(PageSize.A4, 40, 40, 40, 40);
-        Path tempFile = ThreadLocalContext.get().createTemporaryFile();
-        OutputStream pdfOutputStream = Files.newOutputStream(tempFile);
-        PdfWriter.getInstance(output, pdfOutputStream);
-
-        output.open();
-        String content = new String(Files.readAllBytes(unencryptedFile), Charsets.UTF_8);
-        Font font = FontFactory.getFont("LiberationMono-Regular");
-        Paragraph paragraph = new Paragraph(content, font);
-        paragraph.setAlignment(Element.ALIGN_LEFT);
-        output.add(paragraph);
-        output.close();
-
-        return tempFile;
-    }
-
-    /**
-     * Convert an open document text file to PDF.
-     * 
-     * @param unencryptedFile Unencrypted file
-     * @return PDF file
-     */
-    private static Path convertOpenDocumentText(Path unencryptedFile) throws Exception {
-        Path tempFile = ThreadLocalContext.get().createTemporaryFile();
-        try (InputStream inputStream = Files.newInputStream(unencryptedFile);
-             OutputStream outputStream = Files.newOutputStream(tempFile)) {
-            OdfTextDocument document = OdfTextDocument.loadDocument(inputStream);
-            PdfOptions options = PdfOptions.create();
-            PdfConverter.getInstance().convert(document, outputStream, options);
-        }
-        return tempFile;
-    }
-    
-    /**
-     * Convert an Office document to PDF.
-     * 
-     * @param unencryptedFile Unencrypted file
-     * @return PDF file
-     */
-    private static Path convertOfficeDocument(Path unencryptedFile) throws Exception {
-        Path tempFile = ThreadLocalContext.get().createTemporaryFile();
-        try (InputStream inputStream = Files.newInputStream(unencryptedFile);
-             OutputStream outputStream = Files.newOutputStream(tempFile)) {
-            XWPFDocument document = new XWPFDocument(inputStream);
-            org.apache.poi.xwpf.converter.pdf.PdfOptions options = org.apache.poi.xwpf.converter.pdf.PdfOptions.create();
-            org.apache.poi.xwpf.converter.pdf.PdfConverter.getInstance().convert(document, outputStream, options);
-        }
-        return tempFile;
-    }
-    
     /**
      * Convert a document and its files to a merged PDF file.
      * 
@@ -192,15 +55,14 @@ public class PdfUtil {
         Closer closer = Closer.create();
         MemoryUsageSetting memUsageSettings = MemoryUsageSetting.setupMixed(1000000); // 1MB max memory usage
         memUsageSettings.setTempDir(new java.io.File(System.getProperty("java.io.tmpdir"))); // To OS temp
-        float mmPerInch = 1 / (10 * 2.54f) * 72f;
-        
+
         // Create a blank PDF
         try (PDDocument doc = new PDDocument(memUsageSettings)) {
             // Add metadata
             if (metadata) {
                 PDPage page = new PDPage();
                 doc.addPage(page);
-                try (PdfPage pdfPage = new PdfPage(doc, page, margin * mmPerInch, DocsPDType1Font.HELVETICA, 12)) {
+                try (PdfPage pdfPage = new PdfPage(doc, page, margin * Constants.MM_PER_INCH, DocsPDType1Font.HELVETICA, 12)) {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     pdfPage.addText(documentDto.getTitle(), true, DocsPDType1Font.HELVETICA_BOLD, 16)
                         .newLine()
@@ -245,74 +107,14 @@ public class PdfUtil {
 
                 // Decrypt the file to a temporary file
                 Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, file.getPrivateKey());
-
-                if (ImageUtil.isImage(file.getMimeType())) {
-                    PDPage page = new PDPage(PDRectangle.A4); // Images into A4 pages
-                    try (PDPageContentStream contentStream = new PDPageContentStream(doc, page);
-                         InputStream storedFileInputStream = Files.newInputStream(unencryptedFile)) {
-                        // Read the image using the correct handler. PDFBox can't do it because it relies wrongly on file extension
-                        PDImageXObject pdImage = null;
-                        if (file.getMimeType().equals(MimeType.IMAGE_JPEG)) {
-                            pdImage = JPEGFactory.createFromStream(doc, storedFileInputStream);
-                        } else if (file.getMimeType().equals(MimeType.IMAGE_GIF) || file.getMimeType().equals(MimeType.IMAGE_PNG)) {
-                            BufferedImage bim = ImageIO.read(storedFileInputStream);
-                            pdImage = LosslessFactory.createFromImage(doc, bim);
-                        }
-
-                        // Do we want to fill the page with the image?
-                        if (fitImageToPage) {
-                            // Fill the page with the image
-                            float widthAvailable = page.getMediaBox().getWidth() - 2 * margin * mmPerInch;
-                            float heightAvailable = page.getMediaBox().getHeight() - 2 * margin * mmPerInch;
-
-                            // Compare page format and image format
-                            if (widthAvailable / heightAvailable < (float) pdImage.getWidth() / (float) pdImage.getHeight()) {
-                                float imageHeight = widthAvailable / pdImage.getWidth() * pdImage.getHeight();
-                                contentStream.drawImage(pdImage, margin * mmPerInch, heightAvailable + margin * mmPerInch - imageHeight,
-                                        widthAvailable, imageHeight);
-                            } else {
-                                float imageWidth = heightAvailable / pdImage.getHeight() * pdImage.getWidth();
-                                contentStream.drawImage(pdImage, margin * mmPerInch, margin * mmPerInch,
-                                        imageWidth, heightAvailable);
-                            }
-                        } else {
-                            // Draw the image as is
-                            contentStream.drawImage(pdImage, margin * mmPerInch,
-                                    page.getMediaBox().getHeight() - pdImage.getHeight() - margin * mmPerInch);
-                        }
-                    }
-                    doc.addPage(page);
-                } else {
-                    // Try to convert the file to PDF
-                    Path unencryptedPdfFile = convertToPdf(file, unencryptedFile);
-                    if (unencryptedPdfFile != null) {
-                        // This file is convertible to PDF, just add it to the end
-                        PDDocument mergeDoc = PDDocument.load(unencryptedPdfFile.toFile(), memUsageSettings);
-                        closer.register(mergeDoc);
-                        PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
-                        pdfMergerUtility.appendDocument(doc, mergeDoc);
-                    }
-
-                    // All other non-PDF-convertible files are ignored
+                FormatHandler formatHandler = FormatHandlerUtil.find(file.getMimeType());
+                if (formatHandler != null) {
+                    formatHandler.appendToPdf(unencryptedFile, doc, fitImageToPage, margin, memUsageSettings, closer);
                 }
             }
             
             doc.save(outputStream); // Write to the output stream
             closer.close(); // Close all remaining opened PDF
-        }
-    }
-
-    /**
-     * Render the first page of a PDF.
-     * 
-     * @param unencryptedFile PDF document
-     * @return Render of the first page
-     */
-    public static BufferedImage renderFirstPage(Path unencryptedFile) throws IOException {
-        try (InputStream inputStream = Files.newInputStream(unencryptedFile);
-             PDDocument pdfDocument = PDDocument.load(inputStream)) {
-            PDFRenderer renderer = new PDFRenderer(pdfDocument);
-            return renderer.renderImage(0);
         }
     }
 

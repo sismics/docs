@@ -4,7 +4,9 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.util.format.*;
 import com.sismics.util.mime.MimeType;
+import com.sismics.util.mime.MimeTypeUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,39 +27,40 @@ public class TestFileUtil {
     @Test
     public void extractContentOpenDocumentTextTest() throws Exception {
         Path path = Paths.get(ClassLoader.getSystemResource("file/document.odt").toURI());
-        File file = new File();
-        file.setMimeType(MimeType.OPEN_DOCUMENT_TEXT);
-        Path pdfPath = PdfUtil.convertToPdf(file, path);
-        String content = FileUtil.extractContent("eng", file, path, pdfPath);
+        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, "document.odt"));
+        Assert.assertNotNull(formatHandler);
+        Assert.assertTrue(formatHandler instanceof OdtFormatHandler);
+        String content = formatHandler.extractContent("eng", path);
         Assert.assertTrue(content.contains("Lorem ipsum dolor sit amen."));
     }
     
     @Test
     public void extractContentOfficeDocumentTest() throws Exception {
         Path path = Paths.get(ClassLoader.getSystemResource("file/document.docx").toURI());
-        File file = new File();
-        file.setMimeType(MimeType.OFFICE_DOCUMENT);
-        Path pdfPath = PdfUtil.convertToPdf(file, path);
-        String content = FileUtil.extractContent("eng", file, path, pdfPath);
+        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, "document.docx"));
+        Assert.assertNotNull(formatHandler);
+        Assert.assertTrue(formatHandler instanceof DocxFormatHandler);
+        String content = formatHandler.extractContent("eng", path);
         Assert.assertTrue(content.contains("Lorem ipsum dolor sit amen."));
     }
 
     @Test
     public void extractContentPdf() throws Exception {
         Path path = Paths.get(ClassLoader.getSystemResource("file/udhr.pdf").toURI());
-        File file = new File();
-        file.setMimeType(MimeType.APPLICATION_PDF);
-        String content = FileUtil.extractContent("eng", file, path, path);
+        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, "udhr.pdf"));
+        Assert.assertNotNull(formatHandler);
+        Assert.assertTrue(formatHandler instanceof PdfFormatHandler);
+        String content = formatHandler.extractContent("eng", path);
         Assert.assertTrue(content.contains("All human beings are born free and equal in dignity and rights."));
     }
 
     @Test
     public void extractContentScannedPdf() throws Exception {
         Path path = Paths.get(ClassLoader.getSystemResource("file/scanned.pdf").toURI());
-        File file = new File();
-        file.setMimeType(MimeType.APPLICATION_PDF);
-        String content = FileUtil.extractContent("eng", file, path, path);
-        System.out.println(content);
+        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, "scanned.pdf"));
+        Assert.assertNotNull(formatHandler);
+        Assert.assertTrue(formatHandler instanceof PdfFormatHandler);
+        String content = formatHandler.extractContent("eng", path);
         Assert.assertTrue(content.contains("All human beings are born free and equal in dignity and rights."));
     }
 

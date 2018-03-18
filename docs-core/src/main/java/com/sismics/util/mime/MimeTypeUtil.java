@@ -1,7 +1,6 @@
 package com.sismics.util.mime;
 
 import com.google.common.base.Charsets;
-import com.sismics.docs.core.model.jpa.File;
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.util.zip.ZipInputStream;
 /**
  * Utility to check MIME types.
  *
- * @author jtremeaux
+ * @author bgamard
  */
 public class MimeTypeUtil {
     /**
@@ -27,11 +26,14 @@ public class MimeTypeUtil {
      * @throws IOException e
      */
     public static String guessMimeType(Path file, String name) throws IOException {
+        String mimeType;
         try (InputStream is = Files.newInputStream(file)) {
             byte[] headerBytes = new byte[64];
             is.read(headerBytes);
-            return guessMimeType(headerBytes, name);
+            mimeType = guessMimeType(headerBytes, name);
         }
+
+        return guessOpenDocumentFormat(mimeType, file);
     }
 
     /**
@@ -116,18 +118,17 @@ public class MimeTypeUtil {
      * It's more costly than the simple header check, but needed because open document formats
      * are simple ZIP files on the outside and much bigger on the inside.
      * 
-     * @param file File 
-     * @param unencryptedFile File on disk
+     * @param mimeType Currently detected MIME type
+     * @param file File on disk
      * @return MIME type
      */
-    public static String guessOpenDocumentFormat(File file, Path unencryptedFile) {
-        if (!MimeType.APPLICATION_ZIP.equals(file.getMimeType())) {
+    private static String guessOpenDocumentFormat(String mimeType, Path file) {
+        if (!MimeType.APPLICATION_ZIP.equals(mimeType)) {
             // open document formats are ZIP files
-            return file.getMimeType();
+            return mimeType;
         }
         
-        String mimeType = file.getMimeType();
-        try (InputStream inputStream = Files.newInputStream(unencryptedFile);
+        try (InputStream inputStream = Files.newInputStream(file);
              ZipInputStream zipInputStream = new ZipInputStream(inputStream, Charsets.ISO_8859_1)) {
             ZipEntry archiveEntry = zipInputStream.getNextEntry();
             while (archiveEntry != null) {
@@ -151,7 +152,7 @@ public class MimeTypeUtil {
             }
         } catch (Exception e) {
             // In case of any error, just give up and keep the ZIP MIME type
-            return file.getMimeType();
+            return mimeType;
         }
         
         return mimeType;

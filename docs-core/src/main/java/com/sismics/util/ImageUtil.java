@@ -2,7 +2,6 @@ package com.sismics.util;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
-import com.sismics.util.mime.MimeType;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -65,15 +64,6 @@ public class ImageUtil {
                 writer.dispose();
             }
         }
-    }
-    
-    /**
-     * Returns true if this MIME type is an image.
-     * @param mimeType MIME type
-     * @return True if image
-     */
-    public static boolean isImage(String mimeType) {
-        return mimeType.equals(MimeType.IMAGE_GIF) || mimeType.equals(MimeType.IMAGE_PNG) || mimeType.equals(MimeType.IMAGE_JPEG);
     }
     
     /**

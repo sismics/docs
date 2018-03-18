@@ -87,4 +87,9 @@ public class Constants {
      * Email template for route step validate.
      */
     public static final String EMAIL_TEMPLATE_ROUTE_STEP_VALIDATE = "route_step_validate";
+
+    /**
+     * mm per inch.
+     */
+    public static float MM_PER_INCH = 1 / (10 * 2.54f) * 72f;
 }

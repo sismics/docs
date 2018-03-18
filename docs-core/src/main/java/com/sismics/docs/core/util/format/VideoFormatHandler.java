@@ -1,10 +1,13 @@
-package com.sismics.util;
+package com.sismics.docs.core.util.format;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Closer;
 import com.sismics.util.io.InputStreamReaderThread;
 import com.sismics.util.mime.MimeType;
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.pdmodel.PDDocument;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -15,27 +18,18 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Video processing utilities.
+ * Video format handler.
  *
  * @author bgamard
  */
-public class VideoUtil {
-    /**
-     * Returns true if this MIME type is a video.
-     * @param mimeType MIME type
-     * @return True if video
-     */
-    public static boolean isVideo(String mimeType) {
+public class VideoFormatHandler implements FormatHandler {
+    @Override
+    public boolean accept(String mimeType) {
         return mimeType.equals(MimeType.VIDEO_MP4) || mimeType.equals(MimeType.VIDEO_WEBM);
     }
 
-    /**
-     * Generate a thumbnail from a video file.
-     *
-     * @param file Video file
-     * @return Thumbnail
-     */
-    public static BufferedImage getThumbnail(Path file) throws Exception {
+    @Override
+    public BufferedImage generateThumbnail(Path file) throws IOException {
         List<String> result = Lists.newLinkedList(Arrays.asList("ffmpeg", "-i"));
         result.add(file.toAbsolutePath().toString());
         result.addAll(Arrays.asList("-vf", "thumbnail", "-frames:v", "1", "-f", "mjpeg", "-"));
@@ -52,13 +46,8 @@ public class VideoUtil {
         }
     }
 
-    /**
-     * Extract metadata from a video file.
-     *
-     * @param file Video file
-     * @return Metadata
-     */
-    public static String getMetadata(Path file) {
+    @Override
+    public String extractContent(String language, Path file) {
         List<String> result = Lists.newLinkedList();
         result.add("mediainfo");
         result.add(file.toAbsolutePath().toString());
@@ -80,5 +69,10 @@ public class VideoUtil {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public void appendToPdf(Path file, PDDocument doc, boolean fitImageToPage, int margin, MemoryUsageSetting memUsageSettings, Closer closer) {
+        // Video cannot be appended to PDF files
     }
 }

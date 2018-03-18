@@ -10,9 +10,7 @@ import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.tess4j.Tesseract;
 import com.sismics.util.ImageDeskew;
-import com.sismics.util.ImageUtil;
 import com.sismics.util.Scalr;
-import com.sismics.util.VideoUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeTypeUtil;
 import org.apache.commons.lang.StringUtils;
@@ -21,12 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -50,39 +45,13 @@ public class FileUtil {
     private static Set<String> processingFileSet = Collections.synchronizedSet(new HashSet<String>());
     
     /**
-     * Extract content from a file.
-     * 
-     * @param language Language to extract
-     * @param file File to extract
-     * @param unencryptedFile Unencrypted file
-     * @param unencryptedPdfFile Unencrypted PDF file
-     * @return Content extract
-     */
-    public static String extractContent(String language, File file, Path unencryptedFile, Path unencryptedPdfFile) {
-        String content = null;
-        if (language == null) {
-            return null;
-        }
-
-        if (ImageUtil.isImage(file.getMimeType())) {
-            content = ocrFile(unencryptedFile, language);
-        } else if (VideoUtil.isVideo(file.getMimeType())) {
-            content = VideoUtil.getMetadata(unencryptedFile);
-        } else if (unencryptedPdfFile != null) {
-            content = PdfUtil.extractPdf(unencryptedPdfFile, language);
-        }
-        
-        return content;
-    }
-
-    /**
      * Optical character recognition on an image.
      *
-     * @param image Buffered image
      * @param language Language to OCR
+     * @param image Buffered image
      * @return Content extracted
      */
-    public static String ocrFile(BufferedImage image, String language) {
+    public static String ocrFile(String language, BufferedImage image) {
         // Upscale, grayscale and deskew the image
         String content = null;
         BufferedImage resizedImage = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 3500, Scalr.OP_ANTIALIAS, Scalr.OP_GRAYSCALE);
@@ -103,66 +72,6 @@ public class FileUtil {
         }
 
         return content;
-    }
-
-    /**
-     * Optical character recognition on a file.
-     *
-     * @param unecryptedFile Unencrypted file
-     * @param language Language to OCR
-     * @return Content extracted
-     */
-    private static String ocrFile(Path unecryptedFile, String language) {
-        BufferedImage image;
-        try (InputStream inputStream = Files.newInputStream(unecryptedFile)) {
-            image = ImageIO.read(inputStream);
-        } catch (IOException e) {
-            log.error("Error reading the image", e);
-            return null;
-        }
-
-        return ocrFile(image, language);
-    }
-    
-    /**
-     * Generate file variations.
-     * 
-     * @param file File from database
-     * @param unencryptedFile Unencrypted file
-     * @param unencryptedPdfFile Unencrypted PDF file
-     * @param cipher Cipher to use for encryption
-     */
-    public static void saveVariations(File file, Path unencryptedFile, Path unencryptedPdfFile, Cipher cipher) throws Exception {
-        BufferedImage image = null;
-        if (ImageUtil.isImage(file.getMimeType())) {
-            try (InputStream inputStream = Files.newInputStream(unencryptedFile)) {
-                image = ImageIO.read(inputStream);
-            }
-        } else if (VideoUtil.isVideo(file.getMimeType())) {
-            image = VideoUtil.getThumbnail(unencryptedFile);
-        } else if (unencryptedPdfFile != null) {
-            // Generate preview from the first page of the PDF
-            image = PdfUtil.renderFirstPage(unencryptedPdfFile);
-        }
-        
-        if (image != null) {
-            // Generate thumbnails from image
-            BufferedImage web = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, 1280);
-            BufferedImage thumbnail = Scalr.resize(image, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.AUTOMATIC, 256);
-            image.flush();
-            
-            // Write "web" encrypted image
-            Path outputFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_web");
-            try (OutputStream outputStream = new CipherOutputStream(Files.newOutputStream(outputFile), cipher)) {
-                ImageUtil.writeJpeg(web, outputStream);
-            }
-            
-            // Write "thumb" encrypted image
-            outputFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_thumb");
-            try (OutputStream outputStream = new CipherOutputStream(Files.newOutputStream(outputFile), cipher)) {
-                ImageUtil.writeJpeg(thumbnail, outputStream);
-            }
-        }
     }
 
     /**
