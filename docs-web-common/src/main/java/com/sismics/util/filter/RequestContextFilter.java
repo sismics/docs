@@ -59,12 +59,7 @@ public class RequestContextFilter implements Filter {
         org.apache.log4j.Logger.getRootLogger().addAppender(fileAppender);
         
         // Initialize the application context
-        TransactionUtil.handle(new Runnable() {
-            @Override
-            public void run() {
-                AppContext.getInstance();
-            }
-        });
+        TransactionUtil.handle(AppContext::getInstance);
     }
 
     @Override

@@ -39,7 +39,6 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -506,18 +505,15 @@ public class FileResource extends BaseResource {
             final InputStream responseInputStream = decrypt ?
                     EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey()) : fileInputStream;
                     
-            stream = new StreamingOutput() {
-                @Override
-                public void write(OutputStream outputStream) throws IOException, WebApplicationException {
+            stream = outputStream -> {
+                try {
+                    ByteStreams.copy(responseInputStream, outputStream);
+                } finally {
                     try {
-                        ByteStreams.copy(responseInputStream, outputStream);
-                    } finally {
-                        try {
-                            responseInputStream.close();
-                            outputStream.close();
-                        } catch (IOException e) {
-                            // Ignore
-                        }
+                        responseInputStream.close();
+                        outputStream.close();
+                    } catch (IOException e) {
+                        // Ignore
                     }
                 }
             };
@@ -578,32 +574,29 @@ public class FileResource extends BaseResource {
         final List<File> fileList = fileDao.getByDocumentId(principal.getId(), documentId);
         
         // Create the ZIP stream
-        StreamingOutput stream = new StreamingOutput() {
-            @Override
-            public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
-                    // Add each file to the ZIP stream
-                    int index = 0;
-                    for (File file : fileList) {
-                        java.nio.file.Path storedfile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
-                        InputStream fileInputStream = Files.newInputStream(storedfile);
-                        
-                        // Add the decrypted file to the ZIP stream
-                        // Files are encrypted by the creator of them
-                        User user = userDao.getById(file.getUserId());
-                        try (InputStream decryptedStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey())) {
-                            ZipEntry zipEntry = new ZipEntry(index + "-" + file.getFullName(Integer.toString(index)));
-                            zipOutputStream.putNextEntry(zipEntry);
-                            ByteStreams.copy(decryptedStream, zipOutputStream);
-                            zipOutputStream.closeEntry();
-                        } catch (Exception e) {
-                            throw new WebApplicationException(e);
-                        }
-                        index++;
+        StreamingOutput stream = outputStream -> {
+            try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
+                // Add each file to the ZIP stream
+                int index = 0;
+                for (File file : fileList) {
+                    java.nio.file.Path storedfile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+                    InputStream fileInputStream = Files.newInputStream(storedfile);
+
+                    // Add the decrypted file to the ZIP stream
+                    // Files are encrypted by the creator of them
+                    User user = userDao.getById(file.getUserId());
+                    try (InputStream decryptedStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey())) {
+                        ZipEntry zipEntry = new ZipEntry(index + "-" + file.getFullName(Integer.toString(index)));
+                        zipOutputStream.putNextEntry(zipEntry);
+                        ByteStreams.copy(decryptedStream, zipOutputStream);
+                        zipOutputStream.closeEntry();
+                    } catch (Exception e) {
+                        throw new WebApplicationException(e);
                     }
+                    index++;
                 }
-                outputStream.close();
             }
+            outputStream.close();
         };
         
         // Write to the output

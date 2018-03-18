@@ -67,41 +67,38 @@ public class InboxService extends AbstractScheduledService {
      * Synchronize the inbox.
      */
     public void syncInbox() {
-        TransactionUtil.handle(new Runnable() {
-            @Override
-            public void run() {
-                Boolean enabled = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_ENABLED);
-                if (!enabled) {
-                    return;
-                }
+        TransactionUtil.handle(() -> {
+            Boolean enabled = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_ENABLED);
+            if (!enabled) {
+                return;
+            }
 
-                log.info("Synchronizing IMAP inbox...");
-                Folder inbox = null;
-                lastSyncError = null;
-                lastSyncDate = new Date();
-                lastSyncMessageCount = 0;
+            log.info("Synchronizing IMAP inbox...");
+            Folder inbox = null;
+            lastSyncError = null;
+            lastSyncDate = new Date();
+            lastSyncMessageCount = 0;
+            try {
+                inbox = openInbox();
+                Message[] messages = inbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
+                log.info(messages.length + " messages found");
+                for (Message message : messages) {
+                    importMessage(message);
+                    lastSyncMessageCount++;
+                }
+            } catch (FolderClosedException e) {
+                // Ignore this, we will just continue importing on the next cycle
+            } catch (Exception e) {
+                log.error("Error synching the inbox", e);
+                lastSyncError = e.getMessage();
+            } finally {
                 try {
-                    inbox = openInbox();
-                    Message[] messages = inbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
-                    log.info(messages.length + " messages found");
-                    for (Message message : messages) {
-                        importMessage(message);
-                        lastSyncMessageCount++;
+                    if (inbox != null) {
+                        inbox.close(false);
+                        inbox.getStore().close();
                     }
-                } catch (FolderClosedException e) {
-                    // Ignore this, we will just continue importing on the next cycle
                 } catch (Exception e) {
-                    log.error("Error synching the inbox", e);
-                    lastSyncError = e.getMessage();
-                } finally {
-                    try {
-                        if (inbox != null) {
-                            inbox.close(false);
-                            inbox.getStore().close();
-                        }
-                    } catch (Exception e) {
-                        // NOP
-                    }
+                    // NOP
                 }
             }
         });

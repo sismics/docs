@@ -59,12 +59,9 @@ public class FileCreatedAsyncListener {
 
         // Get the user from the database
         final AtomicReference<User> user = new AtomicReference<>();
-        TransactionUtil.handle(new Runnable() {
-            @Override
-            public void run() {
-                UserDao userDao = new UserDao();
-                user.set(userDao.getById(event.getUserId()));
-            }
+        TransactionUtil.handle(() -> {
+            UserDao userDao = new UserDao();
+            user.set(userDao.getById(event.getUserId()));
         });
         if (user.get() == null) {
             // The user has been deleted meanwhile
@@ -108,18 +105,15 @@ public class FileCreatedAsyncListener {
         log.info(MessageFormat.format("File content extracted in {0}ms", System.currentTimeMillis() - startTime));
 
         // Save the file to database
-        TransactionUtil.handle(new Runnable() {
-            @Override
-            public void run() {
-                FileDao fileDao = new FileDao();
-                if (fileDao.getActiveById(file.getId()) == null) {
-                    // The file has been deleted since the text extraction started, ignore the result
-                    return;
-                }
-
-                file.setContent(content.get());
-                fileDao.update(file);
+        TransactionUtil.handle(() -> {
+            FileDao fileDao = new FileDao();
+            if (fileDao.getActiveById(file.getId()) == null) {
+                // The file has been deleted since the text extraction started, ignore the result
+                return;
             }
+
+            file.setContent(content.get());
+            fileDao.update(file);
         });
 
         if (file.getDocumentId() != null) {

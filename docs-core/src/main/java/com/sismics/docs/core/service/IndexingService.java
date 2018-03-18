@@ -115,11 +115,8 @@ public class IndexingService extends AbstractScheduledService {
     
     @Override
     protected void runOneIteration() {
-        TransactionUtil.handle(new Runnable() {
-            @Override
-            public void run() {
-                // NOP
-            }
+        TransactionUtil.handle(() -> {
+            // NOP
         });
     }
     
