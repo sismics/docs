@@ -267,7 +267,12 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(document2Id, json.getString("id"));
 
         // Export a document in PDF format
-        Response response = target().path("/document/" + document1Id).request()
+        Response response = target().path("/document/" + document1Id + "/pdf")
+                .queryParam("margin", "10")
+                .queryParam("metadata", "true")
+                .queryParam("comments", "true")
+                .queryParam("fitimagetopage", "true")
+                .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
                 .get();
         InputStream is = (InputStream) response.getEntity();
@@ -394,6 +399,20 @@ public class TestDocumentResource extends BaseJerseyTest {
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+
+        // Export a document in PDF format
+        response = target().path("/document/" + document1Id + "/pdf")
+                .queryParam("margin", "10")
+                .queryParam("metadata", "true")
+                .queryParam("comments", "true")
+                .queryParam("fitimagetopage", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentOdtToken)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
     }
     
     /**
@@ -440,6 +459,20 @@ public class TestDocumentResource extends BaseJerseyTest {
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+
+        // Export a document in PDF format
+        response = target().path("/document/" + document1Id + "/pdf")
+                .queryParam("margin", "10")
+                .queryParam("metadata", "true")
+                .queryParam("comments", "true")
+                .queryParam("fitimagetopage", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentDocxToken)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
     }
     
     /**
@@ -486,6 +519,20 @@ public class TestDocumentResource extends BaseJerseyTest {
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+
+        // Export a document in PDF format
+        response = target().path("/document/" + document1Id + "/pdf")
+                .queryParam("margin", "10")
+                .queryParam("metadata", "true")
+                .queryParam("comments", "true")
+                .queryParam("fitimagetopage", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPdfToken)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
     }
 
     /**
@@ -532,6 +579,20 @@ public class TestDocumentResource extends BaseJerseyTest {
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+
+        // Export a document in PDF format
+        response = target().path("/document/" + document1Id + "/pdf")
+                .queryParam("margin", "10")
+                .queryParam("metadata", "true")
+                .queryParam("comments", "true")
+                .queryParam("fitimagetopage", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
     }
 
     /**
@@ -543,12 +604,12 @@ public class TestDocumentResource extends BaseJerseyTest {
     public void testVideoExtraction() throws Exception {
         // Login document_video
         clientUtil.createUser("document_video");
-        String documentPlainToken = clientUtil.login("document_video");
+        String documentVideoToken = clientUtil.login("document_video");
 
         // Create a document
         long create1Date = new Date().getTime();
         JsonObject json = target().path("/document").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentVideoToken)
                 .put(Entity.form(new Form()
                         .param("title", "My super title document 1")
                         .param("description", "My super description for document 1")
@@ -558,13 +619,13 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
 
         // Add a video file
-        String file1Id = clientUtil.addFileToDocument("file/video.webm", "video.webm", documentPlainToken, document1Id);
+        String file1Id = clientUtil.addFileToDocument("file/video.webm", "video.webm", documentVideoToken, document1Id);
 
         // Search documents by query in full content
         json = target().path("/document/list")
                 .queryParam("search", "full:vp9")
                 .request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentVideoToken)
                 .get(JsonObject.class);
         Assert.assertTrue(json.getJsonArray("documents").size() == 1);
 
@@ -572,12 +633,86 @@ public class TestDocumentResource extends BaseJerseyTest {
         Response response = target().path("/file/" + file1Id + "/data")
                 .queryParam("size", "thumb")
                 .request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentVideoToken)
                 .get();
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+
+        // Export a document in PDF format
+        response = target().path("/document/" + document1Id + "/pdf")
+                .queryParam("margin", "10")
+                .queryParam("metadata", "true")
+                .queryParam("comments", "true")
+                .queryParam("fitimagetopage", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentVideoToken)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
+    }
+
+    /**
+     * Test PPTX extraction.
+     *
+     * @throws Exception e
+     */
+    @Test
+    public void testPptxExtraction() throws Exception {
+        // Login document_pptx
+        clientUtil.createUser("document_pptx");
+        String documentPptxToken = clientUtil.login("document_pptx");
+
+        // Create a document
+        long create1Date = new Date().getTime();
+        JsonObject json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPptxToken)
+                .put(Entity.form(new Form()
+                        .param("title", "My super title document 1")
+                        .param("description", "My super description for document 1")
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
+        String document1Id = json.getString("id");
+        Assert.assertNotNull(document1Id);
+
+        // Add a PPTX file
+        String file1Id = clientUtil.addFileToDocument("file/apache.pptx", "apache.pptx", documentPptxToken, document1Id);
+
+        // Search documents by query in full content
+        json = target().path("/document/list")
+                .queryParam("search", "full:scaling")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPptxToken)
+                .get(JsonObject.class);
+        Assert.assertTrue(json.getJsonArray("documents").size() == 1);
+
+        // Get the file thumbnail data
+        Response response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "thumb")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPptxToken)
+                .get();
+        InputStream is = (InputStream) response.getEntity();
+        byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+
+        // Export a document in PDF format
+        response = target().path("/document/" + document1Id + "/pdf")
+                .queryParam("margin", "10")
+                .queryParam("metadata", "true")
+                .queryParam("comments", "true")
+                .queryParam("fitimagetopage", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPptxToken)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
     }
 
     /**

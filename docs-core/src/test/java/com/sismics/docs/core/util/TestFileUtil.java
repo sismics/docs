@@ -45,6 +45,16 @@ public class TestFileUtil {
     }
 
     @Test
+    public void extractContentPowerpointTest() throws Exception {
+        Path path = Paths.get(ClassLoader.getSystemResource("file/apache.pptx").toURI());
+        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, "apache.pptx"));
+        Assert.assertNotNull(formatHandler);
+        Assert.assertTrue(formatHandler instanceof PptxFormatHandler);
+        String content = formatHandler.extractContent("eng", path);
+        Assert.assertTrue(content.contains("Scaling"));
+    }
+
+    @Test
     public void extractContentPdf() throws Exception {
         Path path = Paths.get(ClassLoader.getSystemResource("file/udhr.pdf").toURI());
         FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, "udhr.pdf"));
@@ -70,7 +80,8 @@ public class TestFileUtil {
                 InputStream inputStream1 = Resources.getResource("file/apollo_portrait.jpg").openStream();
                 InputStream inputStream2 = Resources.getResource("file/udhr_encrypted.pdf").openStream();
                 InputStream inputStream3 = Resources.getResource("file/document.docx").openStream();
-                InputStream inputStream4 = Resources.getResource("file/document.odt").openStream()) {
+                InputStream inputStream4 = Resources.getResource("file/document.odt").openStream();
+                InputStream inputStream5 = Resources.getResource("file/apache.pptx").openStream()) {
             // Document
             DocumentDto documentDto = new DocumentDto();
             documentDto.setTitle("My super document 1");
@@ -117,9 +128,16 @@ public class TestFileUtil {
             file4.setId("document_odt");
             file4.setMimeType(MimeType.OPEN_DOCUMENT_TEXT);
 
+            // Sixth file
+            Files.copy(inputStream5, DirectoryUtil.getStorageDirectory().resolve("document_pptx"), StandardCopyOption.REPLACE_EXISTING);
+            File file5 = new File();
+            file5.setId("document_pptx");
+            file5.setMimeType(MimeType.OFFICE_PRESENTATION);
+
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            PdfUtil.convertToPdf(documentDto, Lists.newArrayList(file0, file1, file2, file3, file4), true, true, 10, outputStream);
+            PdfUtil.convertToPdf(documentDto, Lists.newArrayList(file0, file1, file2, file3, file4, file5), true, true, 10, outputStream);
             Assert.assertTrue(outputStream.toByteArray().length > 0);
+            com.google.common.io.Files.write(outputStream.toByteArray(), new java.io.File("C:\\Users\\Jendib\\Downloads\\test.pdf"));
         }
     }
 }

@@ -49,7 +49,7 @@ public class ClientUtil {
                         .param("username", username)
                         .param("email", username + "@docs.com")
                         .param("password", "12345678")
-                        .param("storage_quota", "1000000")), JsonObject.class); // 1MB quota
+                        .param("storage_quota", "10000000")), JsonObject.class); // 10MB quota
         
         // Add to groups
         for (String groupName : groupNameList) {

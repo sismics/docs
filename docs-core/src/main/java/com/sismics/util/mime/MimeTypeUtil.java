@@ -145,6 +145,9 @@ public class MimeTypeUtil {
                     if (content.contains(MimeType.OFFICE_DOCUMENT)) {
                         mimeType =  MimeType.OFFICE_DOCUMENT;
                         break;
+                    } else if (content.contains(MimeType.OFFICE_PRESENTATION)) {
+                        mimeType = MimeType.OFFICE_PRESENTATION;
+                        break;
                     }
                 }
     

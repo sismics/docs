@@ -15,6 +15,7 @@ public class FormatHandlerUtil {
      */
     private static final List<Class<? extends FormatHandler>> FORMAT_HANDLERS = Lists.newArrayList(
             DocxFormatHandler.class,
+            PptxFormatHandler.class,
             OdtFormatHandler.class,
             VideoFormatHandler.class,
             PdfFormatHandler.class,

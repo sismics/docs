@@ -23,5 +23,9 @@ public class TestMimeTypeUtil {
         // Detect DOCX files
         path = Paths.get(ClassLoader.getSystemResource("file/document.docx").toURI());
         Assert.assertEquals(MimeType.OFFICE_DOCUMENT, MimeTypeUtil.guessMimeType(path, "document.odt"));
+
+        // Detect PPTX files
+        path = Paths.get(ClassLoader.getSystemResource("file/apache.pptx").toURI());
+        Assert.assertEquals(MimeType.OFFICE_PRESENTATION, MimeTypeUtil.guessMimeType(path, "apache.pptx"));
     }
 }

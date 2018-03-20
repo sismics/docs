@@ -31,7 +31,7 @@ Features
 
 - Responsive user interface
 - Optical character recognition
-- Support image, PDF, ODT and DOCX files
+- Support image, PDF, ODT, DOCX, PPTX files
 - Video file support ![New!](https://www.sismics.com/public/img/new.png)
 - Flexible search engine
 - Full text search in all supported files
