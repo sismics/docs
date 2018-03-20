@@ -663,7 +663,7 @@ public class TestDocumentResource extends BaseJerseyTest {
     @Test
     public void testPptxExtraction() throws Exception {
         // Login document_pptx
-        clientUtil.createUser("document_pptx");
+        clientUtil.createUser("document_pptx", 10000000); // 10MB quota
         String documentPptxToken = clientUtil.login("document_pptx");
 
         // Create a document

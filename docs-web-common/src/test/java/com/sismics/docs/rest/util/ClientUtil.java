@@ -32,13 +32,19 @@ public class ClientUtil {
     public ClientUtil(WebTarget resource) {
         this.resource = resource;
     }
-    
+
+    public void createUser(String username, String... groupNameList) {
+        createUser(username, 1000000, groupNameList); // 1MB quota by default
+    }
+
     /**
      * Creates a user.
      * 
      * @param username Username
+     * @param quota Quota
+     * @param groupNameList Group names
      */
-    public void createUser(String username, String... groupNameList) {
+    public void createUser(String username, int quota, String... groupNameList) {
         // Login admin to create the user
         String adminToken = login("admin", "admin", false);
         
@@ -49,7 +55,7 @@ public class ClientUtil {
                         .param("username", username)
                         .param("email", username + "@docs.com")
                         .param("password", "12345678")
-                        .param("storage_quota", "10000000")), JsonObject.class); // 10MB quota
+                        .param("storage_quota", String.valueOf(quota))), JsonObject.class);
         
         // Add to groups
         for (String groupName : groupNameList) {
