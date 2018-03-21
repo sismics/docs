@@ -98,7 +98,7 @@ public class DocumentDao {
         sb.append(" from T_DOCUMENT d ");
         sb.append(" join T_USER u on d.DOC_IDUSER_C = u.USE_ID_C ");
         sb.append(" where d.DOC_ID_C = :id and d.DOC_DELETEDATE_D is null ");
-       
+
         Query q = em.createNativeQuery(sb.toString());
         q.setParameter("id", id);
 
@@ -197,22 +197,23 @@ public class DocumentDao {
      * @param paginatedList List of documents (updated by side effects)
      * @param criteria Search criteria
      * @param sortCriteria Sort criteria
-     * @throws Exception
+     * @throws Exception e
      */
     public void findByCriteria(PaginatedList<DocumentDto> paginatedList, DocumentCriteria criteria, SortCriteria sortCriteria) throws Exception {
         Map<String, Object> parameterMap = new HashMap<>();
         List<String> criteriaList = new ArrayList<>();
-        
+
+        // TODO Simplify SELECT clause for count(*)
         StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, ");
         sb.append(" s.count c5, ");
         sb.append(" f.count c6, ");
         sb.append(" rs2.RTP_ID_C c7, rs2.RTP_NAME_C, d.DOC_UPDATEDATE_D c8 ");
         sb.append(" from T_DOCUMENT d ");
-        sb.append(" left join (SELECT count(s.SHA_ID_C), ac.ACL_SOURCEID_C " +
+        sb.append(" left join (SELECT count(s.SHA_ID_C) count, ac.ACL_SOURCEID_C " +
                 "   FROM T_SHARE s, T_ACL ac " +
                 "   WHERE ac.ACL_TARGETID_C = s.SHA_ID_C AND ac.ACL_DELETEDATE_D IS NULL AND " +
                 "         s.SHA_DELETEDATE_D IS NULL group by ac.ACL_SOURCEID_C) s on s.ACL_SOURCEID_C = d.DOC_ID_C " +
-                "  left join (SELECT count(f.FIL_ID_C), f.FIL_IDDOC_C " +
+                "  left join (SELECT count(f.FIL_ID_C) count, f.FIL_IDDOC_C " +
                 "   FROM T_FILE f " +
                 "   WHERE f.FIL_DELETEDATE_D IS NULL group by f.FIL_IDDOC_C) f on f.FIL_IDDOC_C = d.DOC_ID_C ");
         sb.append(" left join (select rs.*, rs3.idDocument " +
