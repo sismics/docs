@@ -139,12 +139,6 @@
         </ul>
 
         <ul class="nav navbar-nav navbar-right" ng-show="!userInfo.anonymous">
-          <li ng-show="errorNumber > 0">
-              <a href="#/settings/log" ng-click="openLogs()" class="nav-text-error">
-                <span class="fas fa-exclamation-triangle"></span>
-                <span translate="index.error_info" translate-values="{ count: errorNumber }"></span>
-              </a>
-          </li>
           <li>
             <a href="{{ userInfo.username == 'guest' ? '#/user/guest' : '#/settings/account' }}"
                translate-attr="{ title: 'index.logged_as' }" translate-values="{ username: userInfo.username }">
