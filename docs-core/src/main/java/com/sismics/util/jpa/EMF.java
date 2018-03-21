@@ -104,8 +104,10 @@ public final class EMF {
         props.put("hibernate.cache.use_second_level_cache", "false");
         props.put("hibernate.c3p0.min_size", "1");
         props.put("hibernate.c3p0.max_size", "10");
-        props.put("hibernate.c3p0.timeout", "0");
+        props.put("hibernate.c3p0.timeout", "5000");
         props.put("hibernate.c3p0.max_statements", "0");
+        props.put("hibernate.c3p0.acquire_increment", "1");
+        props.put("hibernate.c3p0.idle_test_period", "10");
         return props;
     }
     

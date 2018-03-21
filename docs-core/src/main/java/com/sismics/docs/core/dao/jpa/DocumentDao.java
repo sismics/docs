@@ -204,13 +204,20 @@ public class DocumentDao {
         List<String> criteriaList = new ArrayList<>();
         
         StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, ");
-        sb.append(" (select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null) c5, ");
-        sb.append(" (select count(f.FIL_ID_C) from T_FILE f where f.FIL_DELETEDATE_D is null and f.FIL_IDDOC_C = d.DOC_ID_C) c6, ");
+        sb.append(" s.count c5, ");
+        sb.append(" f.count c6, ");
         sb.append(" rs2.RTP_ID_C c7, rs2.RTP_NAME_C, d.DOC_UPDATEDATE_D c8 ");
         sb.append(" from T_DOCUMENT d ");
-        sb.append(" left join (select rs.*, rs3.idDocument\n" +
-                "from T_ROUTE_STEP rs \n" +
-                "join (select r.RTE_IDDOCUMENT_C idDocument, rs.RTP_IDROUTE_C idRoute, min(rs.RTP_ORDER_N) minOrder from T_ROUTE_STEP rs join T_ROUTE r on r.RTE_ID_C = rs.RTP_IDROUTE_C and r.RTE_DELETEDATE_D is null where rs.RTP_DELETEDATE_D is null and rs.RTP_ENDDATE_D is null group by rs.RTP_IDROUTE_C, r.RTE_IDDOCUMENT_C) rs3 on rs.RTP_IDROUTE_C = rs3.idRoute and rs.RTP_ORDER_N = rs3.minOrder \n" +
+        sb.append(" left join (SELECT count(s.SHA_ID_C), ac.ACL_SOURCEID_C " +
+                "   FROM T_SHARE s, T_ACL ac " +
+                "   WHERE ac.ACL_TARGETID_C = s.SHA_ID_C AND ac.ACL_DELETEDATE_D IS NULL AND " +
+                "         s.SHA_DELETEDATE_D IS NULL group by ac.ACL_SOURCEID_C) s on s.ACL_SOURCEID_C = d.DOC_ID_C " +
+                "  left join (SELECT count(f.FIL_ID_C), f.FIL_IDDOC_C " +
+                "   FROM T_FILE f " +
+                "   WHERE f.FIL_DELETEDATE_D IS NULL group by f.FIL_IDDOC_C) f on f.FIL_IDDOC_C = d.DOC_ID_C ");
+        sb.append(" left join (select rs.*, rs3.idDocument " +
+                "from T_ROUTE_STEP rs " +
+                "join (select r.RTE_IDDOCUMENT_C idDocument, rs.RTP_IDROUTE_C idRoute, min(rs.RTP_ORDER_N) minOrder from T_ROUTE_STEP rs join T_ROUTE r on r.RTE_ID_C = rs.RTP_IDROUTE_C and r.RTE_DELETEDATE_D is null where rs.RTP_DELETEDATE_D is null and rs.RTP_ENDDATE_D is null group by rs.RTP_IDROUTE_C, r.RTE_IDDOCUMENT_C) rs3 on rs.RTP_IDROUTE_C = rs3.idRoute and rs.RTP_ORDER_N = rs3.minOrder " +
                 "where rs.RTP_IDTARGET_C in (:targetIdList)) rs2 on rs2.idDocument = d.DOC_ID_C ");
 
         // Add search criterias
@@ -260,7 +267,7 @@ public class DocumentDao {
             criteriaList.add("(" + Joiner.on(" OR ").join(tagCriteriaList) + ")");
         }
         if (criteria.getShared() != null && criteria.getShared()) {
-            criteriaList.add("(select count(s.SHA_ID_C) from T_SHARE s, T_ACL ac where ac.ACL_SOURCEID_C = d.DOC_ID_C and ac.ACL_TARGETID_C = s.SHA_ID_C and ac.ACL_DELETEDATE_D is null and s.SHA_DELETEDATE_D is null) > 0");
+            criteriaList.add("s.count > 0");
         }
         if (criteria.getLanguage() != null) {
             criteriaList.add("d.DOC_LANGUAGE_C = :language");
@@ -295,8 +302,10 @@ public class DocumentDao {
             documentDto.setDescription((String) o[i++]);
             documentDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
             documentDto.setLanguage((String) o[i++]);
-            documentDto.setShared(((Number) o[i++]).intValue() > 0);
-            documentDto.setFileCount(((Number) o[i++]).intValue());
+            Number shareCount = (Number) o[i++];
+            documentDto.setShared(shareCount != null && shareCount.intValue() > 0);
+            Number fileCount = (Number) o[i++];
+            documentDto.setFileCount(fileCount == null ? 0 : fileCount.intValue());
             documentDto.setActiveRoute(o[i++] != null);
             documentDto.setCurrentStepName((String) o[i++]);
             documentDto.setUpdateTimestamp(((Timestamp) o[i]).getTime());
