@@ -86,7 +86,7 @@ public class AuthenticationTokenDao {
      */
     public void updateLastConnectionDate(String id) {
         StringBuilder sb = new StringBuilder("update T_AUTHENTICATION_TOKEN ato ");
-        sb.append(" set ato.AUT_LASTCONNECTIONDATE_D = :currentDate ");
+        sb.append(" set AUT_LASTCONNECTIONDATE_D = :currentDate ");
         sb.append(" where ato.AUT_ID_C = :id");
 
         EntityManager em = ThreadLocalContext.get().getEntityManager();

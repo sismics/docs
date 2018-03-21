@@ -141,7 +141,7 @@ public class RouteStepDao {
      */
     public void endRouteStep(String id, RouteStepTransition transition, String comment, String validatorUserId) {
         StringBuilder sb = new StringBuilder("update T_ROUTE_STEP r ");
-        sb.append(" set r.RTP_ENDDATE_D = :endDate, r.RTP_TRANSITION_C = :transition, r.RTP_COMMENT_C = :comment, r.RTP_IDVALIDATORUSER_C = :validatorUserId ");
+        sb.append(" set RTP_ENDDATE_D = :endDate, RTP_TRANSITION_C = :transition, RTP_COMMENT_C = :comment, RTP_IDVALIDATORUSER_C = :validatorUserId ");
         sb.append(" where r.RTP_ID_C = :id");
 
         EntityManager em = ThreadLocalContext.get().getEntityManager();

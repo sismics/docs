@@ -173,6 +173,12 @@
       <groupId>com.github.jai-imageio</groupId>
       <artifactId>jai-imageio-jpeg2000</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.2.2.jre7</version>
+    </dependency>
     
     <!-- Test dependencies -->
     <dependency>
@@ -213,20 +219,6 @@
     <!-- Production profile -->
     <profile>
       <id>prod</id>
-    </profile>
-
-    <!-- Demo profile -->
-    <profile>
-      <id>demo</id>
-      
-      <build>
-        <resources>
-          <resource>
-            <directory>src/demo/resources</directory>
-            <filtering>true</filtering>
-          </resource>
-        </resources>
-      </build>
     </profile>
   </profiles>
   
