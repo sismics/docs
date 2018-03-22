@@ -10,10 +10,6 @@ angular.module('docs').controller('Navigation', function($scope, $state, $rootSc
       $state.go('login', {}, {
         location: 'replace'
       });
-    } else {
-      $state.go('document.default', {}, {
-        location: 'replace'
-      });
     }
   });
 

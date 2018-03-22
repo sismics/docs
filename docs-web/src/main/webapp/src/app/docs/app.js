@@ -23,7 +23,8 @@ angular.module('docs',
       url: '',
       views: {
         'page': {
-          templateUrl: 'partial/docs/main.html'
+          templateUrl: 'partial/docs/main.html',
+          controller: 'Main'
         }
       }
     })
