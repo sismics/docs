@@ -6,6 +6,15 @@
 angular.module('docs').controller('Navigation', function($scope, $state, $rootScope, User) {
   User.userInfo().then(function(data) {
     $rootScope.userInfo = data;
+    if (data.anonymous) {
+      $state.go('login', {}, {
+        location: 'replace'
+      });
+    } else {
+      $state.go('document.default', {}, {
+        location: 'replace'
+      });
+    }
   });
 
   /**
