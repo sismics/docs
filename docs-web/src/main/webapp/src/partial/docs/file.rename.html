@@ -1,0 +1,16 @@
+<div class="modal-header">
+  <h3>{{ 'file.edit.title' | translate }}</h3>
+</div>
+<form name="fileForm" novalidate>
+  <div class="modal-body">
+    <input type="text" name="name" ng-attr-placeholder="{{ 'file.edit.name' | translate }}" class="form-control"
+           ng-maxlength="200" required ng-model="file.name">
+    <span class="text-danger" ng-show="fileForm.name.$error.maxlength && fileForm.$dirty">{{ 'validation.too_long' | translate }}</span>
+  </div>
+  <div class="modal-footer">
+    <button ng-click="close(file)" ng-disabled="!fileForm.$valid" class="btn btn-primary">
+      <span class="fas fa-pencil-alt"></span> {{ 'save' | translate }}
+    </button>
+    <button ng-click="close(null)" class="btn btn-default">{{ 'cancel' | translate }}</button>
+  </div>
+</form>

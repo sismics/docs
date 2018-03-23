@@ -135,7 +135,25 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(163510L, files.getJsonObject(0).getJsonNumber("size").longValue());
         Assert.assertEquals(file2Id, files.getJsonObject(1).getString("id"));
         Assert.assertEquals("PIA00452.jpg", files.getJsonObject(1).getString("name"));
-        
+
+        // Rename a file
+        target().path("file/" + file1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                .post(Entity.form(new Form()
+                        .param("name", "Pale Blue Dot")), JsonObject.class);
+
+        // Get all files from a document
+        json = target().path("/file/list")
+                .queryParam("id", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                .get(JsonObject.class);
+        files = json.getJsonArray("files");
+        Assert.assertEquals(2, files.size());
+        Assert.assertEquals(file1Id, files.getJsonObject(0).getString("id"));
+        Assert.assertEquals("Pale Blue Dot", files.getJsonObject(0).getString("name"));
+
         // Reorder files
         target().path("/file/reorder").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
@@ -301,7 +319,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Attach a file to a document
-        target().path("/file/" + file1Id).request()
+        target().path("/file/" + file1Id + "/attach").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file3Token)
                 .post(Entity.form(new Form()
                         .param("id", document1Id)), JsonObject.class);

@@ -1,15 +1,14 @@
 package com.sismics.docs.core.dao.lucene;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.sismics.docs.core.model.context.AppContext;
+import com.sismics.docs.core.model.jpa.Document;
+import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.util.LuceneUtil;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
@@ -19,11 +18,9 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 
-import com.sismics.docs.core.model.context.AppContext;
-import com.sismics.docs.core.model.jpa.Document;
-import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.util.LuceneUtil;
-import com.sismics.docs.core.util.LuceneUtil.LuceneRunnable;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Lucene DAO.
@@ -37,23 +34,20 @@ public class LuceneDao {
      * @param fileList List of files
      */
     public void rebuildIndex(final List<Document> documentList, final List<File> fileList) {
-        LuceneUtil.handle(new LuceneRunnable() {
-            @Override
-            public void run(IndexWriter indexWriter) throws Exception {
-                // Empty index
-                indexWriter.deleteAll();
-                
-                // Add all documents
-                for (Document document : documentList) {
-                    org.apache.lucene.document.Document luceneDocument = getDocumentFromDocument(document);
-                    indexWriter.addDocument(luceneDocument);
-                }
-                
-                // Add all files
-                for (File file : fileList) {
-                    org.apache.lucene.document.Document luceneDocument = getDocumentFromFile(file);
-                    indexWriter.addDocument(luceneDocument);
-                }
+        LuceneUtil.handle(indexWriter -> {
+            // Empty index
+            indexWriter.deleteAll();
+
+            // Add all documents
+            for (Document document : documentList) {
+                org.apache.lucene.document.Document luceneDocument = getDocumentFromDocument(document);
+                indexWriter.addDocument(luceneDocument);
+            }
+
+            // Add all files
+            for (File file : fileList) {
+                org.apache.lucene.document.Document luceneDocument = getDocumentFromFile(file);
+                indexWriter.addDocument(luceneDocument);
             }
         });
     }
@@ -64,12 +58,9 @@ public class LuceneDao {
      * @param document Document to add
      */
     public void createDocument(final Document document) {
-        LuceneUtil.handle(new LuceneRunnable() {
-            @Override
-            public void run(IndexWriter indexWriter) throws Exception {
-                org.apache.lucene.document.Document luceneDocument = getDocumentFromDocument(document);
-                indexWriter.addDocument(luceneDocument);
-            }
+        LuceneUtil.handle(indexWriter -> {
+            org.apache.lucene.document.Document luceneDocument = getDocumentFromDocument(document);
+            indexWriter.addDocument(luceneDocument);
         });
     }
     
@@ -79,27 +70,21 @@ public class LuceneDao {
      * @param file File to add
      */
     public void createFile(final File file) {
-        LuceneUtil.handle(new LuceneRunnable() {
-            @Override
-            public void run(IndexWriter indexWriter) throws Exception {
-                org.apache.lucene.document.Document luceneDocument = getDocumentFromFile(file);
-                indexWriter.addDocument(luceneDocument);
-            }
+        LuceneUtil.handle(indexWriter -> {
+            org.apache.lucene.document.Document luceneDocument = getDocumentFromFile(file);
+            indexWriter.addDocument(luceneDocument);
         });
     }
-    
+
     /**
      * Update document index.
      * 
      * @param document Updated document
      */
     public void updateDocument(final Document document) {
-        LuceneUtil.handle(new LuceneRunnable() {
-            @Override
-            public void run(IndexWriter indexWriter) throws Exception {
-                org.apache.lucene.document.Document luceneDocument = getDocumentFromDocument(document);
-                indexWriter.updateDocument(new Term("id", document.getId()), luceneDocument);
-            }
+        LuceneUtil.handle(indexWriter -> {
+            org.apache.lucene.document.Document luceneDocument = getDocumentFromDocument(document);
+            indexWriter.updateDocument(new Term("id", document.getId()), luceneDocument);
         });
     }
     
@@ -109,12 +94,7 @@ public class LuceneDao {
      * @param id Document ID to delete
      */
     public void deleteDocument(final String id) {
-        LuceneUtil.handle(new LuceneRunnable() {
-            @Override
-            public void run(IndexWriter indexWriter) throws Exception {
-                indexWriter.deleteDocuments(new Term("id", id));
-            }
-        });
+        LuceneUtil.handle(indexWriter -> indexWriter.deleteDocuments(new Term("id", id)));
     }
     
     /**
@@ -123,7 +103,7 @@ public class LuceneDao {
      * @param searchQuery Search query on title and description
      * @param fullSearchQuery Search query on all fields
      * @return List of document IDs
-     * @throws Exception
+     * @throws Exception e
      */
     public Set<String> search(String searchQuery, String fullSearchQuery) throws Exception {
         // Escape query and add quotes so QueryParser generate a PhraseQuery

@@ -13,7 +13,7 @@
           <img ng-src="../api/file/{{ file.id }}/data?size=thumb" uib-tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
         </a>
         <div class="file-info">
-          <div class="caption caption-hover-inverse file-name" ng-click="openFile(file)" ng-if="file.name">{{ file.name }}</div>
+          <div class="v-align caption caption-hover-inverse file-name" ng-click="openFile(file)" ng-if="file.name">{{ file.name }}</div>
           <div class="caption caption-hover">
             <button class="btn btn-danger" ng-click="deleteFile($event, file)"><span class="fas fa-trash"></span></button>
           </div>

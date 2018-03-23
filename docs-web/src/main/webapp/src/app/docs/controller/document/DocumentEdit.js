@@ -103,7 +103,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
     var attachOrphanFiles = function(data) {
       var promises = [];
       _.each($scope.orphanFiles, function(fileId) {
-        promises.push(Restangular.one('file/' + fileId).post('', { id: data.id }));
+        promises.push(Restangular.one('file/' + fileId).post('attach', { id: data.id }));
       });
       $scope.orphanFiles = [];
       return $q.all(promises);

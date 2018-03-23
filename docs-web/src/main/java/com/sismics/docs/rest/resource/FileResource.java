@@ -139,8 +139,8 @@ public class FileResource extends BaseResource {
     /**
      * Attach a file to a document.
      *
-     * @api {post} /file/:fileId Attach a file to a document
-     * @apiName PostFile
+     * @api {post} /file/:fileId/attach Attach a file to a document
+     * @apiName PostFileAttach
      * @apiGroup File
      * @apiParam {String} fileId File ID
      * @apiParam {String} id Document ID
@@ -156,7 +156,7 @@ public class FileResource extends BaseResource {
      * @return Response
      */
     @POST
-    @Path("{id: [a-z0-9\\-]+}")
+    @Path("{id: [a-z0-9\\-]+}/attach")
     public Response attach(
             @PathParam("id") String id,
             @FormParam("id") String documentId) {
@@ -210,6 +210,48 @@ public class FileResource extends BaseResource {
             throw new ServerException("AttachError", "Error attaching file to document", e);
         }
         
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Update a file.
+     *
+     * @api {post} /file/:id Update a file
+     * @apiName PostFile
+     * @apiGroup File
+     * @apiParam {String} id File ID
+     * @apiParam {String} name Name
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission user
+     * @apiVersion 1.6.0
+     *
+     * @param id File ID
+     * @return Response
+     */
+    @POST
+    @Path("{id: [a-z0-9\\-]+}")
+    public Response update(@PathParam("id") String id,
+                           @FormParam("name") String name) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get the file
+        File file = findFile(id, null);
+
+        // Validate input data
+        name = ValidationUtil.validateLength(name, "name", 1, 200, false);
+
+        // Update the file
+        FileDao fileDao = new FileDao();
+        file.setName(name);
+        fileDao.update(file);
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
@@ -362,24 +404,10 @@ public class FileResource extends BaseResource {
         }
 
         // Get the file
-        FileDao fileDao = new FileDao();
-        AclDao aclDao = new AclDao();
-        File file = fileDao.getFile(id);
-        if (file == null) {
-            throw new NotFoundException();
-        }
-        
-        if (file.getDocumentId() == null) {
-            // It's an orphan file
-            if (!file.getUserId().equals(principal.getId())) {
-                // But not ours
-                throw new ForbiddenClientException();
-            }
-        } else if (!aclDao.checkPermission(file.getDocumentId(), PermType.WRITE, getTargetIdList(null))) {
-            throw new NotFoundException();
-        }
-        
+        File file = findFile(id, null);
+
         // Delete the file
+        FileDao fileDao = new FileDao();
         fileDao.delete(file.getId(), principal.getId());
         
         // Update the user quota
@@ -448,29 +476,10 @@ public class FileResource extends BaseResource {
         }
         
         // Get the file
-        FileDao fileDao = new FileDao();
-        UserDao userDao = new UserDao();
-        File file = fileDao.getFile(fileId);
-        if (file == null) {
-            throw new NotFoundException();
-        }
-        
-        if (file.getDocumentId() == null) {
-            // It's an orphan file
-            if (!file.getUserId().equals(principal.getId())) {
-                // But not ours
-                throw new ForbiddenClientException();
-            }
-        } else {
-            // Check document accessibility
-            AclDao aclDao = new AclDao();
-            if (!aclDao.checkPermission(file.getDocumentId(), PermType.READ, getTargetIdList(shareId))) {
-                throw new ForbiddenClientException();
-            }
-        }
+        File file = findFile(fileId, shareId);
 
-        
         // Get the stored file
+        UserDao userDao = new UserDao();
         java.nio.file.Path storedFile;
         String mimeType;
         boolean decrypt;
@@ -535,7 +544,7 @@ public class FileResource extends BaseResource {
         }
         return builder.build();
     }
-    
+
     /**
      * Returns all files from a document, zipped.
      *
@@ -604,5 +613,35 @@ public class FileResource extends BaseResource {
                 .header("Content-Type", "application/zip")
                 .header("Content-Disposition", "attachment; filename=\"" + documentDto.getTitle().replaceAll("\\W+", "_") + ".zip\"")
                 .build();
+    }
+
+    /**
+     * Find a file with access rights checking.
+     *
+     * @param fileId File ID
+     * @param shareId Share ID
+     * @return File
+     */
+    private File findFile(String fileId, String shareId) {
+        FileDao fileDao = new FileDao();
+        File file = fileDao.getFile(fileId);
+        if (file == null) {
+            throw new NotFoundException();
+        }
+
+        if (file.getDocumentId() == null) {
+            // It's an orphan file
+            if (!file.getUserId().equals(principal.getId())) {
+                // But not ours
+                throw new ForbiddenClientException();
+            }
+        } else {
+            // Check document accessibility
+            AclDao aclDao = new AclDao();
+            if (!aclDao.checkPermission(file.getDocumentId(), PermType.READ, getTargetIdList(shareId))) {
+                throw new ForbiddenClientException();
+            }
+        }
+        return file;
     }
 }

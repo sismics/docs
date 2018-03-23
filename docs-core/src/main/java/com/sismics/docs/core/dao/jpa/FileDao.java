@@ -140,6 +140,7 @@ public class FileDao {
 
         // Update the file
         fileDb.setDocumentId(file.getDocumentId());
+        fileDb.setName(file.getName());
         fileDb.setContent(file.getContent());
         fileDb.setOrder(file.getOrder());
         fileDb.setMimeType(file.getMimeType());

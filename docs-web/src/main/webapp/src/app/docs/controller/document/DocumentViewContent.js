@@ -3,7 +3,7 @@
 /**
  * Document view content controller.
  */
-angular.module('docs').controller('DocumentViewContent', function ($scope, $rootScope, $stateParams, Restangular, $dialog, $state, Upload, $translate) {
+angular.module('docs').controller('DocumentViewContent', function ($scope, $rootScope, $stateParams, Restangular, $dialog, $state, Upload, $translate, $uibModal) {
   /**
    * Configuration for file sorting.
    */
@@ -129,6 +129,32 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
       if (data.type === 'QuotaReached') {
         newfile.status += ' - ' + $translate.instant('document.view.content.upload_error_quota');
       }
+    });
+  };
+
+  /**
+   * Rename a file.
+   */
+  $scope.renameFile = function (file) {
+    $uibModal.open({
+      templateUrl: 'partial/docs/file.rename.html',
+      controller: 'FileRename',
+      resolve: {
+        file: function () {
+          return angular.copy(file);
+        }
+      }
+    }).result.then(function (fileUpdated) {
+      if (fileUpdated === null) {
+        return;
+      }
+
+      // Rename the file
+      Restangular.one('file/' + file.id).post('', {
+        name: fileUpdated.name
+      }).then(function () {
+        file.name = fileUpdated.name;
+      })
     });
   };
 });

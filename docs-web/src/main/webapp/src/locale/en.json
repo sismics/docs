@@ -194,6 +194,10 @@
       "previous": "Previous",
       "next": "Next",
       "not_found": "File not found"
+    },
+    "edit": {
+      "title": "Edit file",
+      "name": "Filename"
     }
   },
   "tag": {
@@ -531,6 +535,7 @@
   "export": "Export",
   "edit": "Edit",
   "delete": "Delete",
+  "rename": "Rename",
   "loading": "Loading...",
   "send": "Send",
   "enabled": "Enabled",
