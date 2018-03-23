@@ -187,16 +187,46 @@ ul.tag-tree {
 
 // File thumbnails
 .thumbnail {
-  a {
+  .file-processing-indicator {
+    position: absolute;
+    z-index: 2;
+    margin-left: 8px;
+    margin-top: 8px;
+    color: #2ab2dc;
+  }
+
+  a.file-thumbnail {
     height: 200px;
     display: block;
     overflow: hidden;
     background: #eee;
   }
 
-  .caption {
-    height: 60px;
-    overflow: hidden;
+  .file-name {
+    word-wrap: break-word;
+    white-space: normal;
+    display: block;
+    text-overflow: ellipsis;
+  }
+
+  .file-info {
+    display: flex;
+    justify-content: space-between;
+
+    .caption {
+      height: 42px;
+      padding: 0;
+      margin: 9px;
+    }
+
+    .v-align {
+      display: flex;
+      align-items: center;
+
+      > * {
+        margin-right: 8px;
+      }
+    }
   }
 
   input[type="checkbox"] {
@@ -217,33 +247,19 @@ ul.tag-tree {
 
   .caption-hover-inverse {
     display: block;
+    overflow: hidden;
   }
 
   &:hover {
     .caption-hover {
-      display: block;
+      display: flex;
+      align-items: center;
     }
 
     .caption-hover-inverse {
       display: none;
     }
   }
-}
-
-// File processing indicator
-.file-processing-indicator {
-  position: absolute;
-  z-index: 2;
-  margin-left: 8px;
-  margin-top: 8px;
-  color: #2ab2dc;
-}
-
-// File name
-.file-name {
-  word-wrap: break-word;
-  white-space: normal;
-  display: block;
 }
 
 // Permissions table
@@ -670,7 +686,6 @@ input[readonly].share-link {
   box-shadow: 0 7px 14px 0 rgba(50,50,93,.1), 0 3px 6px 0 rgba(0,0,0,.07);
   background: none;
   border-radius: 4px;
-  overflow: hidden;
 
   .well-3d-header {
     font-size: 20px;

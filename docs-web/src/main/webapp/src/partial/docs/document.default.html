@@ -9,18 +9,17 @@
        ngf-allow-dir="false">
     <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
       <div class="thumbnail" ng-class="{ 'thumbnail-checked': file.checked }" ng-if="file.id">
-        <a ng-click="openFile(file)">
+        <a class="file-thumbnail" ng-click="openFile(file)">
           <img ng-src="../api/file/{{ file.id }}/data?size=thumb" uib-tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
         </a>
-        <div class="caption caption-hover-inverse btn btn-link file-name" ng-click="openFile(file)" ng-if="file.name">{{ file.name }}</div>
-        <div class="caption caption-hover">
-          <div class="pull-left">
-            <input type="checkbox" ng-model="file.checked" />
-          </div>
-          <div class="pull-right">
+        <div class="file-info">
+          <div class="caption caption-hover-inverse file-name" ng-click="openFile(file)" ng-if="file.name">{{ file.name }}</div>
+          <div class="caption caption-hover">
             <button class="btn btn-danger" ng-click="deleteFile($event, file)"><span class="fas fa-trash"></span></button>
           </div>
-          <div class="clearfix"></div>
+          <div class="v-align">
+            <input type="checkbox" ng-model="file.checked" />
+          </div>
         </div>
       </div>
 

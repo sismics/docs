@@ -44,24 +44,37 @@
      ngf-allow-dir="false">
   <div ui-sortable="fileSortableOptions" ng-model="files">
     <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 text-center" ng-repeat="file in files">
-      <div class="thumbnail handle" ng-if="file.id">
+      <div class="thumbnail" ng-if="file.id">
         <div class="file-processing-indicator" ng-show="file.processing"
              uib-tooltip="{{ 'document.view.content.file_processing_indicator' | translate }}">
           <span class="fas fa-spin fa-circle-notch"></span>
         </div>
 
-        <a ng-click="openFile(file)">
+        <a class="file-thumbnail" ng-click="openFile(file)">
           <img ng-src="../api/file/{{ file.id }}/data?size=thumb" uib-tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
         </a>
-        <div class="caption caption-hover-inverse btn btn-link file-name" ng-click="openFile(file)" ng-if="file.name">{{ file.name }}</div>
-        <div class="caption caption-hover" ng-show="document.writable">
-          <div class="pull-left">
+
+        <div class="file-info">
+          <div class="caption caption-hover-inverse file-name" ng-click="openFile(file)" ng-if="file.name">{{ file.name }}</div>
+          <div class="caption caption-hover" ng-show="document.writable">
             <div class="btn btn-default handle"><span class="fas fa-arrows-alt-h"></span></div>
           </div>
-          <div class="pull-right">
-            <button class="btn btn-danger" ng-click="deleteFile(file)"><span class="fas fa-trash"></span></button>
+
+          <div class="v-align">
+            <div uib-dropdown>
+              <button class="btn btn-default" uib-dropdown-toggle>
+                <span class="fas fa-ellipsis-v"></span>
+              </button>
+              <ul class="dropdown-menu" uib-dropdown-menu>
+                <li>
+                  <a href ng-click="deleteFile(file)">
+                    <span class="fas fa-trash"></span>
+                    Delete
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
-          <div class="clearfix"></div>
         </div>
       </div>
 
