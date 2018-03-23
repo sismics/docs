@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,19 +44,16 @@ public class ImageFormatHandler implements FormatHandler {
     }
 
     @Override
-    public BufferedImage generateThumbnail(Path file) throws IOException {
+    public BufferedImage generateThumbnail(Path file) throws Exception {
         try (InputStream inputStream = Files.newInputStream(file)) {
             return ImageIO.read(inputStream);
         }
     }
 
     @Override
-    public String extractContent(String language, Path file) {
+    public String extractContent(String language, Path file) throws Exception {
         try (InputStream inputStream = Files.newInputStream(file)) {
             return FileUtil.ocrFile(language, ImageIO.read(inputStream));
-        } catch (IOException e) {
-            log.error("Error reading the image", e);
-            return null;
         }
     }
 

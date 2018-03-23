@@ -40,14 +40,14 @@
     <javax.servlet.javax.servlet-api.version>3.1.0</javax.servlet.javax.servlet-api.version>
     <fr.opensagres.xdocreport.version>1.0.5</fr.opensagres.xdocreport.version>
     <net.java.dev.jna.jna.version>4.2.1</net.java.dev.jna.jna.version>
-    <com.twelvemonkeys.imageio.version>3.2.1</com.twelvemonkeys.imageio.version>
+    <com.twelvemonkeys.imageio.version>3.3.2</com.twelvemonkeys.imageio.version>
     <com.levigo.jbig2.levigo-jbig2-imageio.version>1.6.5</com.levigo.jbig2.levigo-jbig2-imageio.version>
-    <com.github.jai-imageio.jai-imageio-core.version>1.3.1</com.github.jai-imageio.jai-imageio-core.version>
+    <com.github.jai-imageio.jai-imageio-jpeg2000.version>1.3.0</com.github.jai-imageio.jai-imageio-jpeg2000.version>
+    <org.postgresql.postgresql.version>42.2.2</org.postgresql.postgresql.version>
     <org.subethamail.subethasmtp-wiser.version>1.2</org.subethamail.subethasmtp-wiser.version>
     <com.icegreen.greenmail.version>1.5.7</com.icegreen.greenmail.version>
     <com.sun.mail.javax.mail.version>1.5.6</com.sun.mail.javax.mail.version>
     <org.jsoup.jsoup.version>1.11.2</org.jsoup.jsoup.version>
-    <com.github.jai-imageio.jai-imageio-jpeg2000.version>1.3.0</com.github.jai-imageio.jai-imageio-jpeg2000.version>
 
     <org.eclipse.jetty.jetty-server.version>9.3.11.v20160721</org.eclipse.jetty.jetty-server.version>
     <org.eclipse.jetty.jetty-webapp.version>9.3.11.v20160721</org.eclipse.jetty.jetty-webapp.version>
@@ -435,6 +435,12 @@
         <version>${com.sun.mail.javax.mail.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${org.postgresql.postgresql.version}</version>
+      </dependency>
+
       <!-- Servlet listener to register SPI ImageIO plugins -->
       <dependency>
         <groupId>com.twelvemonkeys.servlet</groupId>
@@ -442,18 +448,18 @@
         <version>${com.twelvemonkeys.imageio.version}</version>
       </dependency>
       
-      <!-- JNA for Tesseract -->
-      <dependency>
-        <groupId>net.java.dev.jna</groupId>
-        <artifactId>jna</artifactId>
-        <version>${net.java.dev.jna.jna.version}</version>
-      </dependency>
-      
       <!-- ImageIO plugins -->
-      <!-- Permissive JPEG plugin -->
+      <!-- JPEG -->
       <dependency>
         <groupId>com.twelvemonkeys.imageio</groupId>
         <artifactId>imageio-jpeg</artifactId>
+        <version>${com.twelvemonkeys.imageio.version}</version>
+      </dependency>
+
+      <!-- TIFF -->
+      <dependency>
+        <groupId>com.twelvemonkeys.imageio</groupId>
+        <artifactId>imageio-tiff</artifactId>
         <version>${com.twelvemonkeys.imageio.version}</version>
       </dependency>
 
@@ -463,21 +469,14 @@
         <artifactId>jai-imageio-jpeg2000</artifactId>
         <version>${com.github.jai-imageio.jai-imageio-jpeg2000.version}</version>
       </dependency>
-      
-      <!-- Only JBIG2 -->
+
+      <!-- JBIG2 -->
       <dependency>
         <groupId>com.levigo.jbig2</groupId>
         <artifactId>levigo-jbig2-imageio</artifactId>
         <version>${com.levigo.jbig2.levigo-jbig2-imageio.version}</version>
       </dependency>
-      
-      <!-- Essentially TIFF (for OCR) -->
-      <dependency>
-        <groupId>com.github.jai-imageio</groupId>
-        <artifactId>jai-imageio-core</artifactId>
-        <version>${com.github.jai-imageio.jai-imageio-core.version}</version>
-      </dependency>
-      
+
     </dependencies>
   </dependencyManagement>
   

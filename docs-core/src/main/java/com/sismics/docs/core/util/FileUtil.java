@@ -1,6 +1,9 @@
 package com.sismics.docs.core.util;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.io.CharStreams;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
@@ -8,25 +11,23 @@ import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
-import com.sismics.tess4j.Tesseract;
 import com.sismics.util.ImageDeskew;
 import com.sismics.util.Scalr;
 import com.sismics.util.context.ThreadLocalContext;
+import com.sismics.util.io.InputStreamReaderThread;
 import com.sismics.util.mime.MimeTypeUtil;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * File entity utilities.
@@ -34,11 +35,6 @@ import java.util.Set;
  * @author bgamard
  */
 public class FileUtil {
-    /**
-     * Logger.
-     */
-    private static final Logger log = LoggerFactory.getLogger(FileUtil.class);
-
     /**
      * File ID of files currently being processed.
      */
@@ -50,28 +46,30 @@ public class FileUtil {
      * @param language Language to OCR
      * @param image Buffered image
      * @return Content extracted
+     * @throws Exception e
      */
-    public static String ocrFile(String language, BufferedImage image) {
+    public static String ocrFile(String language, BufferedImage image) throws Exception {
         // Upscale, grayscale and deskew the image
-        String content = null;
         BufferedImage resizedImage = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 3500, Scalr.OP_ANTIALIAS, Scalr.OP_GRAYSCALE);
         image.flush();
         ImageDeskew imageDeskew = new ImageDeskew(resizedImage);
         BufferedImage deskewedImage = Scalr.rotate(resizedImage, - imageDeskew.getSkewAngle(), Scalr.OP_ANTIALIAS, Scalr.OP_GRAYSCALE);
         resizedImage.flush();
-        image = deskewedImage;
+        Path tmpFile = ThreadLocalContext.get().createTemporaryFile();
+        ImageIO.write(deskewedImage, "tiff", tmpFile.toFile());
 
-        // OCR the file
-        try {
-            Tesseract instance = Tesseract.getInstance();
-            log.info("Starting OCR with TESSDATA_PREFIX=" + System.getenv("TESSDATA_PREFIX") + ";LC_NUMERIC=" + System.getenv("LC_NUMERIC"));
-            instance.setLanguage(language);
-            content = instance.doOCR(image);
-        } catch (Throwable e) {
-            log.error("Error while OCR-izing the image", e);
+        List<String> result = Lists.newLinkedList(Arrays.asList("tesseract", tmpFile.toAbsolutePath().toString(), "stdout", "-l", language));
+        ProcessBuilder pb = new ProcessBuilder(result);
+        Process process = pb.start();
+
+        // Consume the process error stream
+        final String commandName = pb.command().get(0);
+        new InputStreamReaderThread(process.getErrorStream(), commandName).start();
+
+        // Consume the data as text
+        try (InputStream is = process.getInputStream()) {
+            return CharStreams.toString(new InputStreamReader(is, Charsets.UTF_8));
         }
-
-        return content;
     }
 
     /**

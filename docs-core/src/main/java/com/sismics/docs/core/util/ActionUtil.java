@@ -5,6 +5,7 @@ import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.util.action.Action;
 import com.sismics.docs.core.util.action.AddTagAction;
 import com.sismics.docs.core.util.action.RemoveTagAction;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.json.JsonObject;
@@ -18,7 +19,7 @@ public class ActionUtil {
     /**
      * Logger.
      */
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(LuceneUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(ActionUtil.class);
 
     /**
      * Find the action associated to an action type.

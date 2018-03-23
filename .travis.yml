@@ -17,8 +17,6 @@ after_success:
   - docker push $REPO
 env:
   global:
-  - TESSDATA_PREFIX=/usr/share/tesseract-ocr
-  - LC_NUMERIC=C
   - secure: LRGpjWORb0qy6VuypZjTAfA8uRHlFUMTwb77cenS9PPRBxuSnctC531asS9Xg3DqC5nsRxBBprgfCKotn5S8nBSD1ceHh84NASyzLSBft3xSMbg7f/2i7MQ+pGVwLncusBU6E/drnMFwZBleo+9M8Tf96axY5zuUp90MUTpSgt0=
   - secure: bCDDR6+I7PmSkuTYZv1HF/z98ANX/SFEESUCqxVmV5Gs0zFC0vQXaPJQ2xaJNRop1HZBFMZLeMMPleb0iOs985smpvK2F6Rbop9Tu+Vyo0uKqv9tbZ7F8Nfgnv9suHKZlL84FNeUQZJX6vsFIYPEJ/r7K5P/M0PdUy++fEwxEhU=
   - secure: ewXnzbkgCIHpDWtaWGMa1OYZJ/ki99zcIl4jcDPIC0eB3njX/WgfcC6i0Ke9mLqDqwXarWJ6helm22sNh+xtQiz6isfBtBX+novfRt9AANrBe3koCMUemMDy7oh5VflBaFNP0DVb8LSCnwf6dx6ZB5E9EB8knvk40quc/cXpGjY=

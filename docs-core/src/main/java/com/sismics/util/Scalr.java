@@ -6,6 +6,11 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ImagingOpException;
 
+/**
+ * Extends Scalr.
+ *
+ * @author bgamard
+ */
 public class Scalr extends org.imgscalr.Scalr {
     /**
      * Rotate an image by a specific amount.
