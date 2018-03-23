@@ -580,6 +580,16 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
 
+        // Get the content data
+        response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "content")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = (InputStream) response.getEntity();
+        Assert.assertTrue(new String(ByteStreams.toByteArray(is)).contains("love"));
+
         // Export a document in PDF format
         response = target().path("/document/" + document1Id + "/pdf")
                 .queryParam("margin", "10")

@@ -40,6 +40,7 @@ import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -119,7 +120,7 @@ public class FileResource extends BaseResource {
 
         try {
             String name = fileBodyPart.getContentDisposition() != null ?
-                    fileBodyPart.getContentDisposition().getFileName() : null;
+                    URLDecoder.decode(fileBodyPart.getContentDisposition().getFileName(), "UTF-8") : null;
             String fileId = FileUtil.createFile(name, unencryptedFile, fileSize, documentDto == null ?
                     null : documentDto.getLanguage(), principal.getId(), documentId);
 
@@ -449,7 +450,7 @@ public class FileResource extends BaseResource {
      * @apiGroup File
      * @apiParam {String} id File ID
      * @apiParam {String} share Share ID
-     * @apiParam {String="web","thumb"} [size] Size variation
+     * @apiParam {String="web","thumb","content"} [size] Size variation
      * @apiSuccess {Object} file The file data is the whole response
      * @apiError (client) SizeError Size must be web or thumb
      * @apiError (client) ForbiddenError Access denied or document not visible
@@ -469,12 +470,10 @@ public class FileResource extends BaseResource {
             @QueryParam("size") String size) {
         authenticate();
         
-        if (size != null) {
-            if (!Lists.newArrayList("web", "thumb").contains(size)) {
-                throw new ClientException("SizeError", "Size must be web or thumb");
-            }
+        if (size != null && !Lists.newArrayList("web", "thumb", "content").contains(size)) {
+            throw new ClientException("SizeError", "Size must be web, thumb or content");
         }
-        
+
         // Get the file
         File file = findFile(fileId, shareId);
 
@@ -484,6 +483,12 @@ public class FileResource extends BaseResource {
         String mimeType;
         boolean decrypt;
         if (size != null) {
+            if (size.equals("content")) {
+                return Response.ok(Strings.nullToEmpty(file.getContent()))
+                        .header(HttpHeaders.CONTENT_TYPE, "text/plain")
+                        .build();
+            }
+
             storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_" + size);
             mimeType = MimeType.IMAGE_JPEG; // Thumbnails are JPEG
             decrypt = true; // Thumbnails are encrypted

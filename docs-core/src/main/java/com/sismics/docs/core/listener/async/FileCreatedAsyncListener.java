@@ -54,6 +54,7 @@ public class FileCreatedAsyncListener {
         FormatHandler formatHandler = FormatHandlerUtil.find(file.getMimeType());
         if (formatHandler == null) {
             log.error("Format unhandled: " + file.getMimeType());
+            FileUtil.endProcessingFile(file.getId());
             return;
         }
 
@@ -65,6 +66,7 @@ public class FileCreatedAsyncListener {
         });
         if (user.get() == null) {
             // The user has been deleted meanwhile
+            FileUtil.endProcessingFile(file.getId());
             return;
         }
 

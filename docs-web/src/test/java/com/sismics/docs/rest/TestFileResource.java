@@ -106,6 +106,14 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
         Assert.assertTrue(fileBytes.length > 0);
         
+        // Get the content data
+        response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "content")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+
         // Get the web data
         response = target().path("/file/" + file1Id + "/data")
                 .queryParam("size", "web")

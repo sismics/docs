@@ -71,6 +71,13 @@ angular.module('docs').controller('FileModalView', function ($uibModalInstance, 
   };
 
   /**
+   * Open the file content a new window.
+   */
+  $scope.openFileContent = function () {
+    window.open('../api/file/' + $stateParams.fileId + '/data?size=content');
+  };
+
+  /**
    * Print the file.
    */
   $scope.printFile = function () {

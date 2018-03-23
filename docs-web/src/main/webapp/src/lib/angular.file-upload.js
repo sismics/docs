@@ -1,4 +1,8 @@
 /**!
+ * =======================================================================
+ * Sismics Docs patch applied to encode filenames with encodeURIComponent.
+ * =======================================================================
+ *
  * AngularJS file upload directives and services. Supoorts: file upload/drop/paste, resume, cancel/abort,
  * progress, resize, thumbnail, preview, validation and CORS
  * @author  Danial  <danial.farid@gmail.com>
@@ -272,7 +276,7 @@ ngFileUpload.service('UploadBase', ['$http', '$q', '$timeout', function ($http, 
             key = split[0];
           }
           config._fileKey = config._fileKey || key;
-          formData.append(key, file, file.ngfName || file.name);
+          formData.append(key, file, file.ngfName || encodeURIComponent(file.name));
         } else {
           if (angular.isObject(val)) {
             if (val.$$ngfCircularDetection) throw 'ngFileUpload: Circular reference in config.data. Make sure specified data for Upload.upload() has no circular reference: ' + key;
