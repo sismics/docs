@@ -31,8 +31,9 @@
       <div class="form-group" ng-class="{ 'has-error': !documentForm.description.$valid }">
         <label class="col-sm-2 control-label" for="inputDescription">{{ 'document.description' | translate }}</label>
         <div class="col-sm-10">
-          <textarea ng-maxlength="4000" class="form-control" rows="5" id="inputDescription" ng-attr-placeholder="{{ 'document.edit.description_placeholder' | translate }}"
-            name="description" ng-model="document.description" ng-disabled="fileIsUploading"></textarea>
+          <pell-editor name="description" id="inputDescription"
+                       ng-maxlength="4000" ng-model="document.description" ng-disabled="fileIsUploading"></pell-editor>
+          <p class="help-block" ng-show="documentForm.description.$error.maxlength && documentForm.$dirty">{{ 'validation.too_long' | translate }}</p>
         </div>
       </div>
       <div class="form-group">
