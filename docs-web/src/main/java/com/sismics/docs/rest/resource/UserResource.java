@@ -16,6 +16,7 @@ import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.*;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.EncryptionUtil;
+import com.sismics.docs.core.util.authentication.AuthenticationUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
@@ -38,7 +39,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -101,11 +101,7 @@ public class UserResource extends BaseResource {
         user.setEmail(email);
         user.setStorageQuota(storageQuota);
         user.setStorageCurrent(0L);
-        try {
-            user.setPrivateKey(EncryptionUtil.generatePrivateKey());
-        } catch (NoSuchAlgorithmException e) {
-            throw new ServerException("PrivateKeyError", "Error while generating a private key", e);
-        }
+        user.setPrivateKey(EncryptionUtil.generatePrivateKey());
         user.setCreateDate(new Date());
         
         // Create the user
@@ -339,7 +335,7 @@ public class UserResource extends BaseResource {
             }
         } else {
             // Login as a normal user
-            user = userDao.authenticate(username, password);
+            user = AuthenticationUtil.authenticate(username, password);
         }
         if (user == null) {
             throw new ForbiddenClientException();

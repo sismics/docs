@@ -5,7 +5,6 @@ import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.model.jpa.User;
 
 import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -26,7 +25,7 @@ public class HeaderBasedSecurityFilter extends SecurityFilter {
     private boolean enabled;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         enabled = Boolean.parseBoolean(filterConfig.getInitParameter("enabled"))
                 || Boolean.parseBoolean(System.getProperty("docs.header_authentication"));
     }

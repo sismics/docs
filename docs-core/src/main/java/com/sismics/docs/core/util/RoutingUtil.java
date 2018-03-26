@@ -50,6 +50,12 @@ public class RoutingUtil {
         }
     }
 
+    /**
+     * Send an email when a route step is validated.
+     *
+     * @param documentId Document ID
+     * @param routeStepDto Route step DTO
+     */
     public static void sendRouteStepEmail(String documentId, RouteStepDto routeStepDto) {
         DocumentDao documentDao = new DocumentDao();
         Document document = documentDao.getById(documentId);

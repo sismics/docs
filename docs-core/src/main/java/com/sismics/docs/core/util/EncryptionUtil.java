@@ -38,11 +38,14 @@ public class EncryptionUtil {
      * Generate a private key.
      * 
      * @return New random private key
-     * @throws NoSuchAlgorithmException 
      */
-    public static String generatePrivateKey() throws NoSuchAlgorithmException {
-        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-        return new BigInteger(176, random).toString(32);
+    public static String generatePrivateKey() {
+        try {
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            return new BigInteger(176, random).toString(32);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     /**
