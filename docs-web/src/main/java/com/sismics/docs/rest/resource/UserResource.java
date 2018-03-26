@@ -15,7 +15,6 @@ import com.sismics.docs.core.event.PasswordLostEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.*;
 import com.sismics.docs.core.util.ConfigUtil;
-import com.sismics.docs.core.util.EncryptionUtil;
 import com.sismics.docs.core.util.authentication.AuthenticationUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
@@ -100,10 +99,7 @@ public class UserResource extends BaseResource {
         user.setPassword(password);
         user.setEmail(email);
         user.setStorageQuota(storageQuota);
-        user.setStorageCurrent(0L);
-        user.setPrivateKey(EncryptionUtil.generatePrivateKey());
-        user.setCreateDate(new Date());
-        
+
         // Create the user
         UserDao userDao = new UserDao();
         try {

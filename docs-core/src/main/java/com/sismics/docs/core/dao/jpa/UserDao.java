@@ -6,6 +6,7 @@ import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
 import com.sismics.docs.core.dao.jpa.dto.UserDto;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.AuditLogUtil;
+import com.sismics.docs.core.util.EncryptionUtil;
 import com.sismics.docs.core.util.jpa.QueryParam;
 import com.sismics.docs.core.util.jpa.QueryUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -71,6 +72,8 @@ public class UserDao {
         // Create the user
         user.setCreateDate(new Date());
         user.setPassword(hashPassword(user.getPassword()));
+        user.setPrivateKey(EncryptionUtil.generatePrivateKey());
+        user.setStorageCurrent(0L);
         em.persist(user);
         
         // Create audit log
