@@ -167,7 +167,10 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
       search += $scope.advsearch.search_simple + ' ';
     }
     if (!_.isEmpty($scope.advsearch.search_fulltext)) {
-      search += 'full:' + $scope.advsearch.search_fulltext + ' ';
+      var fulltext = _.map($scope.advsearch.search_fulltext.split(/\s+/), function (full) {
+        return 'full:' + full
+      });
+      search += fulltext.join(' ') + ' ';
     }
     if (!_.isEmpty($scope.advsearch.creator)) {
       search += 'by:' + $scope.advsearch.creator + ' ';
