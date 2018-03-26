@@ -536,7 +536,7 @@ public class FileResource extends BaseResource {
         }
 
         Response.ResponseBuilder builder = Response.ok(stream)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + file.getFullName("data"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFullName("data") + "\"")
                 .header(HttpHeaders.CONTENT_TYPE, mimeType);
         if (decrypt) {
             // Cache real files
