@@ -229,21 +229,36 @@ const importFile = (file, remove, resolve) => {
   }).start();
 
   request.put({
-    url: prefs.importer.baseUrl + '/api/file',
-    formData: {
-      file: fs.createReadStream(file)
+    url: prefs.importer.baseUrl + '/api/document',
+    form: {
+      title: file.replace(/^.*[\\\/]/, ''),
+      language: 'eng'
     }
-  }, function (error, response) {
+  }, function (error, response, body) {
     if (error || !response || response.statusCode !== 200) {
       spinner.fail('Upload failed for ' + file + ': ' + error);
       resolve();
       return;
     }
-    spinner.succeed('Upload successful for ' + file);
-    if (remove) {
-      fs.unlinkSync(file);
-    }
-    resolve();
+
+    request.put({
+      url: prefs.importer.baseUrl + '/api/file',
+      formData: {
+        id: JSON.parse(body).id,
+        file: fs.createReadStream(file)
+      }
+    }, function (error, response) {
+      if (error || !response || response.statusCode !== 200) {
+        spinner.fail('Upload failed for ' + file + ': ' + error);
+        resolve();
+        return;
+      }
+      spinner.succeed('Upload successful for ' + file);
+      if (remove) {
+        fs.unlinkSync(file);
+      }
+      resolve();
+    });
   });
 };
 
