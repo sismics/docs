@@ -12,8 +12,6 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -27,11 +25,6 @@ import java.nio.file.Path;
  * @author bgamard
  */
 public class ImageFormatHandler implements FormatHandler {
-    /**
-     * Logger.
-     */
-    private static final Logger log = LoggerFactory.getLogger(PdfFormatHandler.class);
-
     /**
      * Saved MIME type.
      */
