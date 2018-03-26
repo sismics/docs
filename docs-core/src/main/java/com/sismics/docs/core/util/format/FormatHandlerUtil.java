@@ -1,6 +1,7 @@
 package com.sismics.docs.core.util.format;
 
 import com.google.common.collect.Lists;
+import com.sismics.util.ClasspathScanner;
 
 import java.util.List;
 
@@ -11,17 +12,10 @@ import java.util.List;
  */
 public class FormatHandlerUtil {
     /**
-     * List of format handlers.
+     * List of format handlers scanned in the classpath.
      */
     private static final List<Class<? extends FormatHandler>> FORMAT_HANDLERS = Lists.newArrayList(
-            DocxFormatHandler.class,
-            PptxFormatHandler.class,
-            OdtFormatHandler.class,
-            VideoFormatHandler.class,
-            PdfFormatHandler.class,
-            TextPlainFormatHandler.class,
-            ImageFormatHandler.class
-    );
+            new ClasspathScanner<FormatHandler>().findClasses(FormatHandler.class, "com.sismics.docs.core.util.format"));
 
     /**
      * Find a suitable format handler for this MIME type.
