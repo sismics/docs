@@ -10,10 +10,10 @@
 <p ng-show="inbox.last_sync.error" class="text-danger">{{ inbox.last_sync.error }}</p>
 
 <form class="form-horizontal" name="inboxForm" novalidate>
-  <div class="form-group" ng-class="{ 'has-error': !smtpForm.hostname.$valid && smtpForm.$dirty }">
+  <div class="form-group">
     <label class="col-sm-2 control-label" for="inboxEnabled">{{ 'settings.inbox.enabled' | translate }}</label>
     <div class="col-sm-7">
-      <input name="hostname" type="checkbox" id="inboxEnabled" ng-model="inbox.enabled" />
+      <input name="enabled" type="checkbox" id="inboxEnabled" ng-model="inbox.enabled" />
     </div>
   </div>
 
