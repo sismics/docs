@@ -2,7 +2,6 @@ package com.sismics.util;
 
 import com.google.common.collect.Lists;
 import com.google.common.reflect.ClassPath;
-import com.sismics.docs.core.util.format.PdfFormatHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +15,7 @@ public class ClasspathScanner<T> {
     /**
      * Logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(PdfFormatHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ClasspathScanner.class);
 
     /**
      * Find classes assignable from another.
