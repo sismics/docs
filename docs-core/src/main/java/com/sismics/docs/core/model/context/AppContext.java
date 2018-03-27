@@ -94,6 +94,17 @@ public class AppContext {
                 userDao.updateHashedPassword(adminUser);
             }
         }
+
+        // Change the admin email if needed
+        String envAdminEmail = System.getenv(Constants.ADMIN_EMAIL_INIT_ENV);
+        if (envAdminEmail != null) {
+            UserDao userDao = new UserDao();
+            User adminUser = userDao.getById("admin");
+            if (Constants.DEFAULT_ADMIN_EMAIL.equals(adminUser.getEmail())) {
+                adminUser.setEmail(envAdminEmail);
+                userDao.update(adminUser, "admin");
+            }
+        }
     }
     
     /**

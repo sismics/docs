@@ -21,6 +21,11 @@ public class Constants {
     public static final String DEFAULT_ADMIN_PASSWORD = "$2a$05$6Ny3TjrW3aVAL1or2SlcR.fhuDgPKp5jp.P9fBXwVNePgeLqb4i3C";
 
     /**
+     * Administrator's default email.
+     */
+    public static final String DEFAULT_ADMIN_EMAIL = "admin@localhost";
+
+    /**
      * RAM Lucene directory storage.
      */
     public static final String LUCENE_DIRECTORY_STORAGE_RAM = "RAM";
@@ -72,6 +77,11 @@ public class Constants {
      * Initial admin password environment variable.
      */
     public static final String ADMIN_PASSWORD_INIT_ENV = "DOCS_ADMIN_PASSWORD_INIT";
+
+    /**
+     * Initial admin password environment variable.
+     */
+    public static final String ADMIN_EMAIL_INIT_ENV = "DOCS_ADMIN_EMAIL_INIT";
 
     /**
      * Expiration time of the password recovery in hours.

@@ -113,7 +113,7 @@ public abstract class SecurityFilter implements Filter {
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         // NOP
     }
 
