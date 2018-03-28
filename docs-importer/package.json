@@ -22,6 +22,7 @@
     "ora": "^2.0.0",
     "preferences": "^1.0.2",
     "recursive-readdir": "^2.2.2",
-    "request": "^2.83.0"
+    "request": "^2.83.0",
+    "underscore": "^1.8.3"
   }
 }

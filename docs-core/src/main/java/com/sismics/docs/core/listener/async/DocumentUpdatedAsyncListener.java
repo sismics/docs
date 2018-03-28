@@ -6,6 +6,7 @@ import com.sismics.docs.core.dao.jpa.DocumentDao;
 import com.sismics.docs.core.dao.lucene.LuceneDao;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.model.jpa.Contributor;
+import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.util.TransactionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,12 @@ public class DocumentUpdatedAsyncListener {
             // Update Lucene index
             DocumentDao documentDao = new DocumentDao();
             LuceneDao luceneDao = new LuceneDao();
-            luceneDao.updateDocument(documentDao.getById(event.getDocumentId()));
+            Document document = documentDao.getById(event.getDocumentId());
+            if (document == null) {
+                // Document deleted since event fired
+                return;
+            }
+            luceneDao.updateDocument(document);
 
             // Update contributors list
             ContributorDao contributorDao = new ContributorDao();

@@ -6,6 +6,7 @@ const inquirer = require('inquirer');
 const preferences = require('preferences');
 const fs = require('fs');
 const argv = require('minimist')(process.argv);
+const _ = require('underscore');
 const request = require('request').defaults({
   jar: true
 });
@@ -140,9 +141,50 @@ const askPath = () => {
 
         recursive(answers.path, function (error, files) {
           spinner.succeed(files.length + ' files in this directory');
-          askDaemon();
+          askTag();
         });
       });
+    });
+  });
+};
+
+// Ask for the tag to add
+const askTag = () => {
+  console.log('');
+
+  // Load tags
+  const spinner = ora({
+    text: 'Loading tags',
+    spinner: 'flips'
+  }).start();
+
+  request.get({
+    url: prefs.importer.baseUrl + '/api/tag/list',
+  }, function (error, response, body) {
+    if (error || !response || response.statusCode !== 200) {
+      spinner.fail('Error loading tags');
+      askTag();
+      return;
+    }
+
+    spinner.succeed('Tags loaded');
+    const tags = JSON.parse(body).tags;
+    const defaultTag = _.findWhere(tags, { id: prefs.importer.tag });
+    const defaultTagName = defaultTag ? defaultTag.name : 'No tag';
+
+    inquirer.prompt([
+      {
+        type: 'list',
+        name: 'tag',
+        message: 'Which tag to add on imported documents?',
+        default: defaultTagName,
+        choices: [ 'No tag' ].concat(_.pluck(tags, 'name'))
+      }
+    ]).then(answers => {
+      // Save tag
+      prefs.importer.tag = answers.tag === 'No tag' ?
+        '' : _.findWhere(tags, { name: answers.tag }).id;
+      askDaemon();
     });
   });
 };
@@ -232,7 +274,8 @@ const importFile = (file, remove, resolve) => {
     url: prefs.importer.baseUrl + '/api/document',
     form: {
       title: file.replace(/^.*[\\\/]/, ''),
-      language: 'eng'
+      language: 'eng',
+      tags: prefs.importer.tag === '' ? undefined : prefs.importer.tag
     }
   }, function (error, response, body) {
     if (error || !response || response.statusCode !== 200) {
@@ -266,8 +309,9 @@ const importFile = (file, remove, resolve) => {
 if (argv.hasOwnProperty('d')) {
   console.log('Starting in quiet mode with the following configuration:\n' +
     'Base URL: ' + prefs.importer.baseUrl + '\n' +
-    'Username: '  + prefs.importer.username + '\n' +
+    'Username: ' + prefs.importer.username + '\n' +
     'Password: ***********\n' +
+    'Tag: ' + prefs.importer.tag + '\n' +
     'Daemon mode: ' + prefs.importer.daemon);
   start();
 } else {
