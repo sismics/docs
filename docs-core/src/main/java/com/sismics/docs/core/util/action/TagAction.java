@@ -1,12 +1,17 @@
 package com.sismics.docs.core.util.action;
 
-import com.sismics.docs.core.dao.jpa.TagDao;
-import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
-import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.dao.TagDao;
+import com.sismics.docs.core.dao.criteria.TagCriteria;
+import com.sismics.docs.core.dao.dto.TagDto;
 
 import javax.json.JsonObject;
 import java.util.List;
 
+/**
+ * Abstract class for tag actions.
+ *
+ * @author bgamard
+ */
 public abstract class TagAction implements Action {
     @Override
     public void validate(JsonObject action) throws Exception {

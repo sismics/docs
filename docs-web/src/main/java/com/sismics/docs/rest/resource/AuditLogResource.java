@@ -2,10 +2,10 @@ package com.sismics.docs.rest.resource;
 
 import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.docs.core.dao.jpa.AuditLogDao;
-import com.sismics.docs.core.dao.jpa.criteria.AuditLogCriteria;
-import com.sismics.docs.core.dao.jpa.dto.AuditLogDto;
+import com.sismics.docs.core.dao.AclDao;
+import com.sismics.docs.core.dao.AuditLogDao;
+import com.sismics.docs.core.dao.criteria.AuditLogCriteria;
+import com.sismics.docs.core.dao.dto.AuditLogDto;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;

@@ -1,12 +1,12 @@
 package com.sismics.docs.rest.resource;
 
 import com.sismics.docs.core.constant.*;
-import com.sismics.docs.core.dao.jpa.*;
-import com.sismics.docs.core.dao.jpa.criteria.RouteCriteria;
-import com.sismics.docs.core.dao.jpa.criteria.RouteStepCriteria;
-import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
-import com.sismics.docs.core.dao.jpa.dto.RouteDto;
-import com.sismics.docs.core.dao.jpa.dto.RouteStepDto;
+import com.sismics.docs.core.dao.*;
+import com.sismics.docs.core.dao.criteria.RouteCriteria;
+import com.sismics.docs.core.dao.criteria.RouteStepCriteria;
+import com.sismics.docs.core.dao.dto.DocumentDto;
+import com.sismics.docs.core.dao.dto.RouteDto;
+import com.sismics.docs.core.dao.dto.RouteStepDto;
 import com.sismics.docs.core.model.jpa.Route;
 import com.sismics.docs.core.model.jpa.RouteModel;
 import com.sismics.docs.core.model.jpa.RouteStep;

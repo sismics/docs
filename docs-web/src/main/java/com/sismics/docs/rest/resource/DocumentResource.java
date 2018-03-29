@@ -6,14 +6,15 @@ import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.*;
-import com.sismics.docs.core.dao.jpa.criteria.DocumentCriteria;
-import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
-import com.sismics.docs.core.dao.jpa.dto.*;
+import com.sismics.docs.core.dao.*;
+import com.sismics.docs.core.dao.criteria.DocumentCriteria;
+import com.sismics.docs.core.dao.criteria.TagCriteria;
+import com.sismics.docs.core.dao.dto.*;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
@@ -363,14 +364,13 @@ public class DocumentResource extends BaseResource {
         JsonObjectBuilder response = Json.createObjectBuilder();
         JsonArrayBuilder documents = Json.createArrayBuilder();
         
-        DocumentDao documentDao = new DocumentDao();
         TagDao tagDao = new TagDao();
         PaginatedList<DocumentDto> paginatedList = PaginatedLists.create(limit, offset);
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
         DocumentCriteria documentCriteria = parseSearchQuery(search);
         documentCriteria.setTargetIdList(getTargetIdList(null));
         try {
-            documentDao.findByCriteria(paginatedList, documentCriteria, sortCriteria);
+            AppContext.getInstance().getIndexingHandler().findByCriteria(paginatedList, documentCriteria, sortCriteria);
         } catch (Exception e) {
             throw new ServerException("SearchError", "Error searching in documents", e);
         }

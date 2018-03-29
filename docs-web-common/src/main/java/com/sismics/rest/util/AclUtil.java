@@ -2,8 +2,8 @@ package com.sismics.rest.util;
 
 import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.docs.core.dao.jpa.dto.AclDto;
+import com.sismics.docs.core.dao.AclDao;
+import com.sismics.docs.core.dao.dto.AclDto;
 import com.sismics.util.JsonUtil;
 
 import javax.json.Json;

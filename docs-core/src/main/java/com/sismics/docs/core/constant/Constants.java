@@ -26,16 +26,6 @@ public class Constants {
     public static final String DEFAULT_ADMIN_EMAIL = "admin@localhost";
 
     /**
-     * RAM Lucene directory storage.
-     */
-    public static final String LUCENE_DIRECTORY_STORAGE_RAM = "RAM";
-    
-    /**
-     * File Lucene directory storage.
-     */
-    public static final String LUCENE_DIRECTORY_STORAGE_FILE = "FILE";
-
-    /**
      * Guest user ID.
      */
     public static final String GUEST_USER_ID = "guest";

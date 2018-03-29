@@ -1,6 +1,5 @@
 package com.sismics.docs.rest;
 
-import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 import com.sismics.util.totp.GoogleAuthenticator;
 import org.junit.Assert;
@@ -419,7 +418,6 @@ public class TestUserResource extends BaseJerseyTest {
                 .post(Entity.form(new Form()
                         .param("username", "absent_minded")), JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
-        AppContext.getInstance().waitForAsync();
         String emailBody = popEmail();
         Assert.assertNotNull("No email to consume", emailBody);
         Assert.assertTrue(emailBody.contains("Please reset your password"));

@@ -1,10 +1,10 @@
 package com.sismics.docs.core.listener.async;
 
 import com.google.common.eventbus.Subscribe;
-import com.sismics.docs.core.dao.jpa.ContributorDao;
-import com.sismics.docs.core.dao.jpa.DocumentDao;
-import com.sismics.docs.core.dao.lucene.LuceneDao;
+import com.sismics.docs.core.dao.ContributorDao;
+import com.sismics.docs.core.dao.DocumentDao;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Contributor;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.util.TransactionUtil;
@@ -38,13 +38,12 @@ public class DocumentUpdatedAsyncListener {
         TransactionUtil.handle(() -> {
             // Update Lucene index
             DocumentDao documentDao = new DocumentDao();
-            LuceneDao luceneDao = new LuceneDao();
             Document document = documentDao.getById(event.getDocumentId());
             if (document == null) {
                 // Document deleted since event fired
                 return;
             }
-            luceneDao.updateDocument(document);
+            AppContext.getInstance().getIndexingHandler().updateDocument(document);
 
             // Update contributors list
             ContributorDao contributorDao = new ContributorDao();

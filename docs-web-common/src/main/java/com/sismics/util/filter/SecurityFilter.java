@@ -1,10 +1,10 @@
 package com.sismics.util.filter;
 
 import com.sismics.docs.core.constant.Constants;
-import com.sismics.docs.core.dao.jpa.GroupDao;
-import com.sismics.docs.core.dao.jpa.RoleBaseFunctionDao;
-import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
-import com.sismics.docs.core.dao.jpa.dto.GroupDto;
+import com.sismics.docs.core.dao.GroupDao;
+import com.sismics.docs.core.dao.RoleBaseFunctionDao;
+import com.sismics.docs.core.dao.criteria.GroupCriteria;
+import com.sismics.docs.core.dao.dto.GroupDto;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.security.AnonymousPrincipal;
 import com.sismics.security.UserPrincipal;

@@ -64,7 +64,7 @@ public class RequestContextFilter implements Filter {
 
     @Override
     public void destroy() {
-        // NOP
+        AppContext.getInstance().shutDown();
     }
 
     @Override

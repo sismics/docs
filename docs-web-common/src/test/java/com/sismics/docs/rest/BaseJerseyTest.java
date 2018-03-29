@@ -79,6 +79,7 @@ public abstract class BaseJerseyTest extends JerseyTest {
 
         httpServer = HttpServer.createSimpleServer(getClass().getResource("/").getFile(), "localhost", getPort());
         WebappContext context = new WebappContext("GrizzlyContext", "/docs");
+        context.addListener("com.twelvemonkeys.servlet.image.IIOProviderContextListener");
         context.addFilter("requestContextFilter", RequestContextFilter.class)
                 .addMappingForUrlPatterns(null, "/*");
         context.addFilter("tokenBasedSecurityFilter", TokenBasedSecurityFilter.class)

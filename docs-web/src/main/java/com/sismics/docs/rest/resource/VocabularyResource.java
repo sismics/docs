@@ -1,6 +1,6 @@
 package com.sismics.docs.rest.resource;
 
-import com.sismics.docs.core.dao.jpa.VocabularyDao;
+import com.sismics.docs.core.dao.VocabularyDao;
 import com.sismics.docs.core.model.jpa.Vocabulary;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ForbiddenClientException;

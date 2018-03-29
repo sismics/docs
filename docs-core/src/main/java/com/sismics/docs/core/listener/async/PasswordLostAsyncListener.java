@@ -2,7 +2,7 @@ package com.sismics.docs.core.listener.async;
 
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.constant.Constants;
-import com.sismics.docs.core.dao.jpa.dto.UserDto;
+import com.sismics.docs.core.dao.dto.UserDto;
 import com.sismics.docs.core.event.PasswordLostEvent;
 import com.sismics.docs.core.model.jpa.PasswordRecovery;
 import com.sismics.docs.core.util.TransactionUtil;

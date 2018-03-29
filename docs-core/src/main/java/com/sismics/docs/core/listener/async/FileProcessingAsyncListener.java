@@ -1,12 +1,12 @@
 package com.sismics.docs.core.listener.async;
 
 import com.google.common.eventbus.Subscribe;
-import com.sismics.docs.core.dao.jpa.FileDao;
-import com.sismics.docs.core.dao.jpa.UserDao;
-import com.sismics.docs.core.dao.lucene.LuceneDao;
+import com.sismics.docs.core.dao.FileDao;
+import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.event.FileEvent;
 import com.sismics.docs.core.event.FileUpdatedAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.DirectoryUtil;
@@ -54,8 +54,7 @@ public class FileProcessingAsyncListener {
         processFile(event);
 
         // Update Lucene index
-        LuceneDao luceneDao = new LuceneDao();
-        luceneDao.createFile(event.getFile());
+        AppContext.getInstance().getIndexingHandler().createFile(event.getFile());
 
         FileUtil.endProcessingFile(event.getFile().getId());
     }
@@ -74,8 +73,7 @@ public class FileProcessingAsyncListener {
         processFile(event);
 
         // Update Lucene index
-        LuceneDao luceneDao = new LuceneDao();
-        luceneDao.updateFile(event.getFile());
+        AppContext.getInstance().getIndexingHandler().updateFile(event.getFile());
 
         FileUtil.endProcessingFile(event.getFile().getId());
     }

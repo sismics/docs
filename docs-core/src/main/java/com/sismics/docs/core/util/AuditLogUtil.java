@@ -1,7 +1,7 @@
 package com.sismics.docs.core.util;
 
 import com.sismics.docs.core.constant.AuditLogType;
-import com.sismics.docs.core.dao.jpa.AuditLogDao;
+import com.sismics.docs.core.dao.AuditLogDao;
 import com.sismics.docs.core.model.jpa.AuditLog;
 import com.sismics.docs.core.model.jpa.Loggable;
 import com.sismics.util.context.ThreadLocalContext;

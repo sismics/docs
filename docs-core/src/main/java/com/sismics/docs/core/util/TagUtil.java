@@ -1,7 +1,7 @@
 package com.sismics.docs.core.util;
 
 import com.google.common.collect.Lists;
-import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.dao.dto.TagDto;
 
 import java.util.List;
 

@@ -1,10 +1,10 @@
 package com.sismics.docs.core.util.action;
 
 import com.google.common.collect.Sets;
-import com.sismics.docs.core.dao.jpa.TagDao;
-import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
-import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
-import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.dao.TagDao;
+import com.sismics.docs.core.dao.criteria.TagCriteria;
+import com.sismics.docs.core.dao.dto.DocumentDto;
+import com.sismics.docs.core.dao.dto.TagDto;
 
 import javax.json.JsonObject;
 import java.util.List;

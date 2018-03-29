@@ -1,7 +1,7 @@
 package com.sismics.docs.core.event;
 
 import com.google.common.base.MoreObjects;
-import com.sismics.docs.core.dao.jpa.dto.UserDto;
+import com.sismics.docs.core.dao.dto.UserDto;
 import com.sismics.docs.core.model.jpa.Document;
 
 /**

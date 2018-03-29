@@ -2,8 +2,8 @@ package com.sismics.docs.core.util;
 
 import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.docs.core.dao.jpa.DocumentDao;
+import com.sismics.docs.core.dao.AclDao;
+import com.sismics.docs.core.dao.DocumentDao;
 import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Document;
 

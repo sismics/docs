@@ -1,7 +1,7 @@
 package com.sismics.util.filter;
 
 import com.google.common.base.Strings;
-import com.sismics.docs.core.dao.jpa.UserDao;
+import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.model.jpa.User;
 
 import javax.servlet.FilterConfig;

@@ -3,7 +3,7 @@ package com.sismics.docs.rest.resource;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.constant.ConfigType;
-import com.sismics.docs.core.dao.jpa.ConfigDao;
+import com.sismics.docs.core.dao.ConfigDao;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.rest.constant.BaseFunction;

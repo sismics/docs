@@ -2,17 +2,14 @@ package com.sismics.docs.core.model.context;
 
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
-import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
-import com.sismics.docs.core.dao.jpa.ConfigDao;
-import com.sismics.docs.core.dao.jpa.UserDao;
+import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.listener.async.*;
-import com.sismics.docs.core.listener.sync.DeadEventListener;
-import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.service.InboxService;
-import com.sismics.docs.core.service.IndexingService;
 import com.sismics.docs.core.util.PdfUtil;
+import com.sismics.docs.core.util.indexing.IndexingHandler;
+import com.sismics.docs.core.util.indexing.LuceneIndexingHandler;
 import com.sismics.util.EnvironmentUtil;
 
 import java.util.ArrayList;
@@ -34,11 +31,6 @@ public class AppContext {
     private static AppContext instance;
 
     /**
-     * Event bus.
-     */
-    private EventBus eventBus;
-    
-    /**
      * Generic asynchronous event bus.
      */
     private EventBus asyncEventBus;
@@ -49,9 +41,9 @@ public class AppContext {
     private EventBus mailEventBus;
 
     /**
-     * Indexing service.
+     * Indexing handler.
      */
-    private IndexingService indexingService;
+    private IndexingHandler indexingHandler;
 
     /**
      * Inbox scanning service.
@@ -69,17 +61,19 @@ public class AppContext {
     private AppContext() {
         resetEventBus();
 
-        // Start indexing service
-        ConfigDao configDao = new ConfigDao();
-        Config luceneStorageConfig = configDao.getById(ConfigType.LUCENE_DIRECTORY_STORAGE);
-        indexingService = new IndexingService(luceneStorageConfig != null ? luceneStorageConfig.getValue() : null);
-        indexingService.startAsync();
-        indexingService.awaitRunning();
+        // Start indexing handler
+        indexingHandler = new LuceneIndexingHandler();
+        try {
+            indexingHandler.startUp();
+        } catch (Exception e) {
+            // Blocking error, the app will not start
+            throw new RuntimeException(e);
+        }
 
         // Start inbox service
         inboxService = new InboxService();
         inboxService.startAsync();
-        indexingService.awaitRunning();
+        inboxService.awaitRunning();
 
         // Register fonts
         PdfUtil.registerFonts();
@@ -111,9 +105,6 @@ public class AppContext {
      * (Re)-initializes the event buses.
      */
     private void resetEventBus() {
-        eventBus = new EventBus();
-        eventBus.register(new DeadEventListener());
-        
         asyncExecutorList = new ArrayList<>();
         
         asyncEventBus = newAsyncEventBus();
@@ -143,29 +134,6 @@ public class AppContext {
     }
     
     /**
-     * Wait for termination of all asynchronous events.
-     * /!\ Must be used only in unit tests and never a multi-user environment. 
-     */
-    public void waitForAsync() {
-        if (EnvironmentUtil.isUnitTest()) {
-            return;
-        }
-        try {
-            for (ExecutorService executor : asyncExecutorList) {
-                // Shutdown executor, don't accept any more tasks (can cause error with nested events)
-                try {
-                    executor.shutdown();
-                    executor.awaitTermination(60, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    // NOP
-                }
-            }
-        } finally {
-            resetEventBus();
-        }
-    }
-
-    /**
      * Creates a new asynchronous event bus.
      * 
      * @return Async event bus
@@ -177,14 +145,10 @@ public class AppContext {
             // /!\ Don't add more threads because a cleanup event is fired at the end of each request
             ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1,
                     0L, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<Runnable>());
+                    new LinkedBlockingQueue<>());
             asyncExecutorList.add(executor);
             return new AsyncEventBus(executor);
         }
-    }
-
-    public EventBus getEventBus() {
-        return eventBus;
     }
 
     public EventBus getAsyncEventBus() {
@@ -195,11 +159,34 @@ public class AppContext {
         return mailEventBus;
     }
 
-    public IndexingService getIndexingService() {
-        return indexingService;
+    public IndexingHandler getIndexingHandler() {
+        return indexingHandler;
     }
 
     public InboxService getInboxService() {
         return inboxService;
+    }
+
+    public void shutDown() {
+        for (ExecutorService executor : asyncExecutorList) {
+            // Shutdown executor, don't accept any more tasks (can cause error with nested events)
+            try {
+                executor.shutdown();
+                executor.awaitTermination(60, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                // NOP
+            }
+        }
+
+        if (indexingHandler != null) {
+            indexingHandler.shutDown();
+        }
+
+        if (inboxService != null) {
+            inboxService.stopAsync();
+            inboxService.awaitTerminated();
+        }
+
+        instance = null;
     }
 }

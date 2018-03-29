@@ -1,10 +1,10 @@
 package com.sismics.docs.core.listener.async;
 
 import com.google.common.eventbus.Subscribe;
-import com.sismics.docs.core.dao.jpa.DocumentDao;
-import com.sismics.docs.core.dao.jpa.FileDao;
-import com.sismics.docs.core.dao.lucene.LuceneDao;
+import com.sismics.docs.core.dao.DocumentDao;
+import com.sismics.docs.core.dao.FileDao;
 import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.TransactionUtil;
@@ -46,8 +46,7 @@ public class RebuildIndexAsyncListener {
             List<File> fileList = fileDao.findAll();
 
             // Rebuild index
-            LuceneDao luceneDao = new LuceneDao();
-            luceneDao.rebuildIndex(documentList, fileList);
+            AppContext.getInstance().getIndexingHandler().rebuildIndex(documentList, fileList);
         });
     }
 }

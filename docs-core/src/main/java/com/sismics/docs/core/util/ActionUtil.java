@@ -1,7 +1,7 @@
 package com.sismics.docs.core.util;
 
 import com.sismics.docs.core.constant.ActionType;
-import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.dao.dto.DocumentDto;
 import com.sismics.docs.core.util.action.Action;
 import com.sismics.docs.core.util.action.AddTagAction;
 import com.sismics.docs.core.util.action.RemoveTagAction;

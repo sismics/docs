@@ -1,12 +1,12 @@
 package com.sismics.docs.rest.resource;
 
 import com.google.common.base.Strings;
-import com.sismics.docs.core.dao.jpa.GroupDao;
-import com.sismics.docs.core.dao.jpa.UserDao;
-import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
-import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
-import com.sismics.docs.core.dao.jpa.dto.GroupDto;
-import com.sismics.docs.core.dao.jpa.dto.UserDto;
+import com.sismics.docs.core.dao.GroupDao;
+import com.sismics.docs.core.dao.UserDao;
+import com.sismics.docs.core.dao.criteria.GroupCriteria;
+import com.sismics.docs.core.dao.criteria.UserCriteria;
+import com.sismics.docs.core.dao.dto.GroupDto;
+import com.sismics.docs.core.dao.dto.UserDto;
 import com.sismics.docs.core.model.jpa.Group;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.model.jpa.UserGroup;

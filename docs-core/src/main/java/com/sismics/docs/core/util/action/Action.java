@@ -1,6 +1,6 @@
 package com.sismics.docs.core.util.action;
 
-import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.dao.dto.DocumentDto;
 
 import javax.json.JsonObject;
 

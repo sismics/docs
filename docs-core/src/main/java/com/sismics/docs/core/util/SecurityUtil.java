@@ -1,8 +1,8 @@
 package com.sismics.docs.core.util;
 
 import com.sismics.docs.core.constant.AclTargetType;
-import com.sismics.docs.core.dao.jpa.GroupDao;
-import com.sismics.docs.core.dao.jpa.UserDao;
+import com.sismics.docs.core.dao.GroupDao;
+import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.model.jpa.Group;
 import com.sismics.docs.core.model.jpa.User;
 

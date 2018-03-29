@@ -1,9 +1,9 @@
 package com.sismics.docs.core.listener.async;
 
 import com.google.common.eventbus.Subscribe;
-import com.sismics.docs.core.dao.jpa.ContributorDao;
-import com.sismics.docs.core.dao.lucene.LuceneDao;
+import com.sismics.docs.core.dao.ContributorDao;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Contributor;
 import com.sismics.docs.core.util.TransactionUtil;
 import org.slf4j.Logger;
@@ -41,7 +41,6 @@ public class DocumentCreatedAsyncListener {
         });
         
         // Update Lucene index
-        LuceneDao luceneDao = new LuceneDao();
-        luceneDao.createDocument(event.getDocument());
+        AppContext.getInstance().getIndexingHandler().createDocument(event.getDocument());
     }
 }

@@ -1,8 +1,8 @@
 package com.sismics.docs.core.listener.async;
 
 import com.google.common.eventbus.Subscribe;
-import com.sismics.docs.core.dao.lucene.LuceneDao;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.FileUtil;
 import org.slf4j.Logger;
@@ -36,7 +36,6 @@ public class FileDeletedAsyncListener {
         FileUtil.delete(file);
         
         // Update Lucene index
-        LuceneDao luceneDao = new LuceneDao();
-        luceneDao.deleteDocument(file.getId());
+        AppContext.getInstance().getIndexingHandler().deleteDocument(file.getId());
     }
 }

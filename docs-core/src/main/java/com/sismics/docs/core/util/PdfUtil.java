@@ -6,7 +6,7 @@ import com.google.common.io.Closer;
 import com.google.common.io.Resources;
 import com.lowagie.text.FontFactory;
 import com.sismics.docs.core.constant.Constants;
-import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.dao.dto.DocumentDto;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.format.FormatHandler;
 import com.sismics.docs.core.util.format.FormatHandlerUtil;
