@@ -117,7 +117,7 @@ public class AppContext {
         asyncExecutorList = new ArrayList<>();
         
         asyncEventBus = newAsyncEventBus();
-        asyncEventBus.register(new FileCreatedAsyncListener());
+        asyncEventBus.register(new FileProcessingAsyncListener());
         asyncEventBus.register(new FileDeletedAsyncListener());
         asyncEventBus.register(new DocumentCreatedAsyncListener());
         asyncEventBus.register(new DocumentUpdatedAsyncListener());

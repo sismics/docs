@@ -5,5 +5,5 @@ package com.sismics.docs.core.event;
  *
  * @author bgamard
  */
-public class FileCreatedAsyncEvent extends FileEvent {
+public class FileUpdatedAsyncEvent extends FileEvent {
 }

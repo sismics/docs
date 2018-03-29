@@ -54,7 +54,7 @@ public class EncryptionUtil {
      * @param is InputStream to encrypt
      * @param privateKey Private key
      * @return Encrypted stream
-     * @throws Exception 
+     * @throws Exception  e
      */
     public static InputStream decryptInputStream(InputStream is, String privateKey) throws Exception {
         return new CipherInputStream(is, getCipher(privateKey, Cipher.DECRYPT_MODE));
@@ -66,7 +66,7 @@ public class EncryptionUtil {
      * @param file Encrypted file
      * @param privateKey Private key
      * @return Decrypted temporary file
-     * @throws Exception
+     * @throws Exception e
      */
     public static Path decryptFile(Path file, String privateKey) throws Exception {
         if (privateKey == null) {
@@ -86,7 +86,7 @@ public class EncryptionUtil {
      * 
      * @param privateKey Private key
      * @return Encryption cipher
-     * @throws Exception
+     * @throws Exception e
      */
     public static Cipher getEncryptionCipher(String privateKey) throws Exception {
         if (Strings.isNullOrEmpty(privateKey)) {
@@ -101,7 +101,7 @@ public class EncryptionUtil {
      * @param privateKey Private key
      * @param mode Mode (encrypt or decrypt)
      * @return Cipher
-     * @throws Exception
+     * @throws Exception e
      */
     private static Cipher getCipher(String privateKey, int mode) throws Exception {
         PBEKeySpec keySpec = new PBEKeySpec(privateKey.toCharArray(), SALT.getBytes(), 2000, 256);

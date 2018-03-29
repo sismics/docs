@@ -220,6 +220,11 @@ public class TestFileResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         files = json.getJsonArray("files");
         Assert.assertEquals(1, files.size());
+
+        // Process a file
+        target().path("/file/" + file2Id + "/process").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                .post(Entity.form(new Form()), JsonObject.class);
     }
 
     /**

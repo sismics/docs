@@ -72,6 +72,10 @@
                     <span class="fas fa-pencil-alt"></span>
                     {{ 'rename' | translate }}
                   </a>
+                  <a href ng-click="processFile(file)">
+                    <span class="fas fa-eye"></span>
+                    {{ 'document.view.content.reprocess_file' | translate }}
+                  </a>
                   <a href ng-click="deleteFile(file)">
                     <span class="fas fa-trash"></span>
                     {{ 'delete' | translate }}

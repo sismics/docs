@@ -5,6 +5,8 @@ import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.lucene.LuceneDao;
 import com.sismics.docs.core.event.FileCreatedAsyncEvent;
+import com.sismics.docs.core.event.FileEvent;
+import com.sismics.docs.core.event.FileUpdatedAsyncEvent;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.DirectoryUtil;
@@ -28,19 +30,19 @@ import java.text.MessageFormat;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Listener on file created.
+ * Listener on file processing.
  * 
  * @author bgamard
  */
-public class FileCreatedAsyncListener {
+public class FileProcessingAsyncListener {
     /**
      * Logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(FileCreatedAsyncListener.class);
+    private static final Logger log = LoggerFactory.getLogger(FileProcessingAsyncListener.class);
 
     /**
      * File created.
-     * 
+     *
      * @param event File created event
      */
     @Subscribe
@@ -49,6 +51,41 @@ public class FileCreatedAsyncListener {
             log.info("File created event: " + event.toString());
         }
 
+        processFile(event);
+
+        // Update Lucene index
+        LuceneDao luceneDao = new LuceneDao();
+        luceneDao.createFile(event.getFile());
+
+        FileUtil.endProcessingFile(event.getFile().getId());
+    }
+
+    /**
+     * File updated.
+     *
+     * @param event File updated event
+     */
+    @Subscribe
+    public void on(final FileUpdatedAsyncEvent event) {
+        if (log.isInfoEnabled()) {
+            log.info("File updated event: " + event.toString());
+        }
+
+        processFile(event);
+
+        // Update Lucene index
+        LuceneDao luceneDao = new LuceneDao();
+        luceneDao.updateFile(event.getFile());
+
+        FileUtil.endProcessingFile(event.getFile().getId());
+    }
+
+    /**
+     * Process the file (create/update).
+     *
+     * @param event File event
+     */
+    private void processFile(FileEvent event) {
         // Find a format handler
         final File file = event.getFile();
         FormatHandler formatHandler = FormatHandlerUtil.find(file.getMimeType());
@@ -102,7 +139,7 @@ public class FileCreatedAsyncListener {
         try {
             content.set(formatHandler.extractContent(event.getLanguage(), event.getUnencryptedFile()));
         } catch (Exception e) {
-            log.error("Error extracting content from: " + event.getFile());
+            log.error("Error extracting content from: " + event.getFile(), e);
         }
         log.info(MessageFormat.format("File content extracted in {0}ms", System.currentTimeMillis() - startTime));
 
@@ -117,13 +154,5 @@ public class FileCreatedAsyncListener {
             file.setContent(content.get());
             fileDao.update(file);
         });
-
-        if (file.getDocumentId() != null) {
-            // Update Lucene index
-            LuceneDao luceneDao = new LuceneDao();
-            luceneDao.createFile(event.getFile());
-        }
-
-        FileUtil.endProcessingFile(file.getId());
     }
 }

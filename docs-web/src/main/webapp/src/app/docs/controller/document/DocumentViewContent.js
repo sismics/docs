@@ -157,4 +157,13 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
       })
     });
   };
+
+  /**
+   * Process a file.
+   */
+  $scope.processFile = function (file) {
+    Restangular.one('file/' + file.id).post('process').then(function () {
+      file.processing = true;
+    });
+  };
 });

@@ -45,6 +45,10 @@ public class ImageFormatHandler implements FormatHandler {
 
     @Override
     public String extractContent(String language, Path file) throws Exception {
+        if (language == null) {
+            return null;
+        }
+
         try (InputStream inputStream = Files.newInputStream(file)) {
             return FileUtil.ocrFile(language, ImageIO.read(inputStream));
         }

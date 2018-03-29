@@ -77,8 +77,20 @@ public class LuceneDao {
     }
 
     /**
-     * Update document index.
+     * Update file index.
      * 
+     * @param file Updated file
+     */
+    public void updateFile(final File file) {
+        LuceneUtil.handle(indexWriter -> {
+            org.apache.lucene.document.Document luceneDocument = getDocumentFromFile(file);
+            indexWriter.updateDocument(new Term("id", file.getId()), luceneDocument);
+        });
+    }
+
+    /**
+     * Update document index.
+     *
      * @param document Updated document
      */
     public void updateDocument(final Document document) {
@@ -87,7 +99,7 @@ public class LuceneDao {
             indexWriter.updateDocument(new Term("id", document.getId()), luceneDocument);
         });
     }
-    
+
     /**
      * Delete document from the index.
      * 
@@ -112,7 +124,7 @@ public class LuceneDao {
         
         // Build search query
         StandardQueryParser qpHelper = new StandardQueryParser(new StandardAnalyzer());
-        qpHelper.setPhraseSlop(100000); // PhraseQuery add terms
+        qpHelper.setPhraseSlop(100); // PhraseQuery add terms
         
         // Search on documents and files
         BooleanQuery query = new BooleanQuery.Builder()
@@ -126,6 +138,7 @@ public class LuceneDao {
                 .add(qpHelper.parse(searchQuery, "type"), Occur.SHOULD)
                 .add(qpHelper.parse(searchQuery, "coverage"), Occur.SHOULD)
                 .add(qpHelper.parse(searchQuery, "rights"), Occur.SHOULD)
+                .add(qpHelper.parse(searchQuery, "filename"), Occur.SHOULD)
                 .add(qpHelper.parse(fullSearchQuery, "content"), Occur.SHOULD)
                 .build();
         
@@ -150,7 +163,9 @@ public class LuceneDao {
             } else if (type.equals("file")) {
                 documentId = document.get("document_id");
             }
-            documentIdList.add(documentId);
+            if (documentId != null) {
+                documentIdList.add(documentId);
+            }
         }
         
         return documentIdList;
@@ -208,7 +223,12 @@ public class LuceneDao {
         org.apache.lucene.document.Document luceneDocument = new org.apache.lucene.document.Document();
         luceneDocument.add(new StringField("id", file.getId(), Field.Store.YES));
         luceneDocument.add(new StringField("doctype", "file", Field.Store.YES));
-        luceneDocument.add(new StringField("document_id", file.getDocumentId(), Field.Store.YES));
+        if (file.getName() != null) {
+            luceneDocument.add(new TextField("filename", file.getName(), Field.Store.NO));
+        }
+        if (file.getDocumentId() != null) {
+            luceneDocument.add(new StringField("document_id", file.getDocumentId(), Field.Store.YES));
+        }
         if (file.getContent() != null) {
             luceneDocument.add(new TextField("content", file.getContent(), Field.Store.NO));
         }

@@ -894,7 +894,8 @@ public class DocumentResource extends BaseResource {
         // Add files to the document
         try {
             for (EmailUtil.FileContent fileContent : mailContent.getFileContentList()) {
-                FileUtil.createFile(fileContent.getName(), fileContent.getFile(), fileContent.getSize(), "eng", principal.getId(), document.getId());
+                FileUtil.createFile(fileContent.getName(), fileContent.getFile(), fileContent.getSize(),
+                        document.getLanguage(), principal.getId(), document.getId());
             }
         } catch (IOException e) {
             throw new ClientException(e.getMessage(), e.getMessage(), e);

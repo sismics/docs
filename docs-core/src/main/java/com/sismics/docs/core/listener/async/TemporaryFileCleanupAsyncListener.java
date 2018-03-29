@@ -17,7 +17,7 @@ public class TemporaryFileCleanupAsyncListener {
 	/**
 	 * Logger.
 	 */
-	private static final Logger log = LoggerFactory.getLogger(FileCreatedAsyncListener.class);
+	private static final Logger log = LoggerFactory.getLogger(TemporaryFileCleanupAsyncListener.class);
 
 	/**
 	 * Cleanup temporary files.

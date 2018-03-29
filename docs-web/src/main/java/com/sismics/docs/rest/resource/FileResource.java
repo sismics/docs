@@ -10,8 +10,8 @@ import com.sismics.docs.core.dao.jpa.FileDao;
 import com.sismics.docs.core.dao.jpa.UserDao;
 import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
-import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
+import com.sismics.docs.core.event.FileUpdatedAsyncEvent;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.DirectoryUtil;
@@ -166,7 +166,7 @@ public class FileResource extends BaseResource {
         }
 
         // Validate input data
-        ValidationUtil.validateRequired(documentId, "id");
+        ValidationUtil.validateRequired(documentId, "documentId");
         
         // Get the current user
         UserDao userDao = new UserDao();
@@ -191,17 +191,17 @@ public class FileResource extends BaseResource {
         file.setOrder(fileDao.getByDocumentId(principal.getId(), documentId).size());
         fileDao.update(file);
         
-        // Raise a new file created event and document updated event (it wasn't sent during file creation)
+        // Raise a new file updated event and document updated event (it wasn't sent during file creation)
         try {
             java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
             java.nio.file.Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey());
             FileUtil.startProcessingFile(id);
-            FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
-            fileCreatedAsyncEvent.setUserId(principal.getId());
-            fileCreatedAsyncEvent.setLanguage(documentDto.getLanguage());
-            fileCreatedAsyncEvent.setFile(file);
-            fileCreatedAsyncEvent.setUnencryptedFile(unencryptedFile);
-            ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
+            FileUpdatedAsyncEvent fileUpdatedAsyncEvent = new FileUpdatedAsyncEvent();
+            fileUpdatedAsyncEvent.setUserId(principal.getId());
+            fileUpdatedAsyncEvent.setLanguage(documentDto.getLanguage());
+            fileUpdatedAsyncEvent.setFile(file);
+            fileUpdatedAsyncEvent.setUnencryptedFile(unencryptedFile);
+            ThreadLocalContext.get().addAsyncEvent(fileUpdatedAsyncEvent);
             
             DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
             documentUpdatedAsyncEvent.setUserId(principal.getId());
@@ -210,7 +210,7 @@ public class FileResource extends BaseResource {
         } catch (Exception e) {
             throw new ServerException("AttachError", "Error attaching file to document", e);
         }
-        
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
@@ -252,6 +252,67 @@ public class FileResource extends BaseResource {
         FileDao fileDao = new FileDao();
         file.setName(name);
         fileDao.update(file);
+
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Process a file manually.
+     *
+     * @api {post} /file/:id/process Process a file manually
+     * @apiName PostFileProcess
+     * @apiGroup File
+     * @apiParam {String} id File ID
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (server) ProcessingError Processing error
+     * @apiPermission user
+     * @apiVersion 1.6.0
+     *
+     * @param id File ID
+     * @return Response
+     */
+    @POST
+    @Path("{id: [a-z0-9\\-]+}/process")
+    public Response process(@PathParam("id") String id) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get the current user
+        UserDao userDao = new UserDao();
+        User user = userDao.getById(principal.getId());
+
+        // Get the document and the file
+        DocumentDao documentDao = new DocumentDao();
+        FileDao fileDao = new FileDao();
+        File file = fileDao.getFile(id);
+        if (file == null) {
+            throw new NotFoundException();
+        }
+        DocumentDto documentDto = documentDao.getDocument(file.getDocumentId(), PermType.WRITE, getTargetIdList(null));
+        if (documentDto == null) {
+            throw new NotFoundException();
+        }
+
+        // Start the processing asynchronously
+        try {
+            java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
+            java.nio.file.Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey());
+            FileUtil.startProcessingFile(id);
+            FileUpdatedAsyncEvent fileUpdatedAsyncEvent = new FileUpdatedAsyncEvent();
+            fileUpdatedAsyncEvent.setUserId(principal.getId());
+            fileUpdatedAsyncEvent.setLanguage(documentDto.getLanguage());
+            fileUpdatedAsyncEvent.setFile(file);
+            fileUpdatedAsyncEvent.setUnencryptedFile(unencryptedFile);
+            ThreadLocalContext.get().addAsyncEvent(fileUpdatedAsyncEvent);
+        } catch (Exception e) {
+            throw new ServerException("ProcessingError", "Error processing this file", e);
+        }
 
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
