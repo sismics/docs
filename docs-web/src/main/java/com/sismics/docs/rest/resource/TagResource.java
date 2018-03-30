@@ -331,7 +331,9 @@ public class TagResource extends BaseResource {
         if (!aclDao.checkPermission(id, PermType.WRITE, getTargetIdList(null))) {
             throw new NotFoundException();
         }
-        
+
+        // TODO Update event for associated documents
+
         // Delete the tag
         TagDao tagDao = new TagDao();
         tagDao.delete(id, principal.getId());

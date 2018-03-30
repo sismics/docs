@@ -96,7 +96,9 @@ public class AclResource extends BaseResource {
         // Avoid duplicates
         if (!aclDao.checkPermission(acl.getSourceId(), acl.getPerm(), Lists.newArrayList(acl.getTargetId()))) {
             aclDao.create(acl, principal.getId());
-            
+
+            // TODO Update event for direct and indirect documents
+
             // Returns the ACL
             JsonObjectBuilder response = Json.createObjectBuilder()
                     .add("perm", acl.getPerm().name())
@@ -167,6 +169,8 @@ public class AclResource extends BaseResource {
 
         // Delete the ACL
         aclDao.delete(sourceId, perm, targetId, principal.getId(), AclType.USER);
+
+        // TODO Update event for direct and indirect documents
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()

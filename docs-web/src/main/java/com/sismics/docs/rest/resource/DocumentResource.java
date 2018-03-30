@@ -800,7 +800,7 @@ public class DocumentResource extends BaseResource {
         // Update relations
         updateRelationList(id, relationList);
         
-        // Raise a document updated event (with the document to update Lucene)
+        // Raise a document updated event
         DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
         documentUpdatedAsyncEvent.setUserId(principal.getId());
         documentUpdatedAsyncEvent.setDocumentId(id);

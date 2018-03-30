@@ -10,10 +10,12 @@ import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.dao.criteria.UserCriteria;
 import com.sismics.docs.core.dao.dto.RouteStepDto;
 import com.sismics.docs.core.dao.dto.UserDto;
+import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.RouteStepValidateEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Document;
+import com.sismics.util.context.ThreadLocalContext;
 
 import java.util.List;
 
@@ -26,17 +28,17 @@ public class RoutingUtil {
     /**
      * Update routing ACLs according to the current route step.
      *
-     * @param sourceId Source ID
+     * @param documentId Document ID
      * @param currentStep Current route step
      * @param previousStep Previous route step
      * @param userId User ID
      */
-    public static void updateAcl(String sourceId, RouteStepDto currentStep, RouteStepDto previousStep, String userId) {
+    public static void updateAcl(String documentId, RouteStepDto currentStep, RouteStepDto previousStep, String userId) {
         AclDao aclDao = new AclDao();
 
         if (previousStep != null) {
             // Remove the previous ACL
-            aclDao.delete(sourceId, PermType.READ, previousStep.getTargetId(), userId, AclType.ROUTING);
+            aclDao.delete(documentId, PermType.READ, previousStep.getTargetId(), userId, AclType.ROUTING);
         }
 
         if (currentStep != null) {
@@ -44,10 +46,16 @@ public class RoutingUtil {
             Acl acl = new Acl();
             acl.setPerm(PermType.READ);
             acl.setType(AclType.ROUTING);
-            acl.setSourceId(sourceId);
+            acl.setSourceId(documentId);
             acl.setTargetId(currentStep.getTargetId());
             aclDao.create(acl, userId);
         }
+
+        // Raise a document updated event
+        DocumentUpdatedAsyncEvent event = new DocumentUpdatedAsyncEvent();
+        event.setUserId(userId);
+        event.setDocumentId(documentId);
+        ThreadLocalContext.get().addAsyncEvent(event);
     }
 
     /**

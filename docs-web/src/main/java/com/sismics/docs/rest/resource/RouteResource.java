@@ -180,12 +180,6 @@ public class RouteResource extends BaseResource {
             throw new ClientException("ValidationError", "Invalid transition for this route step type");
         }
 
-        // Validate the step and update ACLs
-        routeStepDao.endRouteStep(routeStepDto.getId(), routeStepTransition, comment, principal.getId());
-        RouteStepDto newRouteStep = routeStepDao.getCurrentStep(documentId);
-        RoutingUtil.updateAcl(documentId, newRouteStep, routeStepDto, principal.getId());
-        RoutingUtil.sendRouteStepEmail(documentId, routeStepDto);
-
         // Execute actions
         if (routeStepDto.getTransitions() != null) {
             try (JsonReader reader = Json.createReader(new StringReader(routeStepDto.getTransitions()))) {
@@ -205,6 +199,12 @@ public class RouteResource extends BaseResource {
                 }
             }
         }
+
+        // Validate the step and update ACLs
+        routeStepDao.endRouteStep(routeStepDto.getId(), routeStepTransition, comment, principal.getId());
+        RouteStepDto newRouteStep = routeStepDao.getCurrentStep(documentId);
+        RoutingUtil.updateAcl(documentId, newRouteStep, routeStepDto, principal.getId());
+        RoutingUtil.sendRouteStepEmail(documentId, routeStepDto);
 
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("readable", aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(null)));

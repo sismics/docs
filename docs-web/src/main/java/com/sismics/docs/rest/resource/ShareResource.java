@@ -6,12 +6,14 @@ import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.AclDao;
 import com.sismics.docs.core.dao.ShareDao;
+import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Share;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.JsonUtil;
+import com.sismics.util.context.ThreadLocalContext;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
@@ -81,6 +83,12 @@ public class ShareResource extends BaseResource {
         acl.setTargetId(share.getId());
         aclDao.create(acl, principal.getId());
 
+        // Raise a document updated event
+        DocumentUpdatedAsyncEvent event = new DocumentUpdatedAsyncEvent();
+        event.setUserId(principal.getId());
+        event.setDocumentId(documentId);
+        ThreadLocalContext.get().addAsyncEvent(event);
+
         // Returns the created ACL
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("perm", acl.getPerm().name())
@@ -130,6 +138,12 @@ public class ShareResource extends BaseResource {
         // Delete the share
         ShareDao shareDao = new ShareDao();
         shareDao.delete(id);
+
+        // Raise a document updated event
+        DocumentUpdatedAsyncEvent event = new DocumentUpdatedAsyncEvent();
+        event.setUserId(principal.getId());
+        event.setDocumentId(acl.getSourceId());
+        ThreadLocalContext.get().addAsyncEvent(event);
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
