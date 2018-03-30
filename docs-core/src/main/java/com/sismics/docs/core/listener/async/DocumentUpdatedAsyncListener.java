@@ -36,7 +36,7 @@ public class DocumentUpdatedAsyncListener {
         }
 
         TransactionUtil.handle(() -> {
-            // Update Lucene index
+            // Update index
             DocumentDao documentDao = new DocumentDao();
             Document document = documentDao.getById(event.getDocumentId());
             if (document == null) {

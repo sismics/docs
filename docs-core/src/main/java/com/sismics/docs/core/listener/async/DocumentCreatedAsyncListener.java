@@ -38,9 +38,9 @@ public class DocumentCreatedAsyncListener {
             contributor.setDocumentId(event.getDocument().getId());
             contributor.setUserId(event.getUserId());
             contributorDao.create(contributor);
+
+            // Update Lucene index
+            AppContext.getInstance().getIndexingHandler().createDocument(event.getDocument());
         });
-        
-        // Update Lucene index
-        AppContext.getInstance().getIndexingHandler().createDocument(event.getDocument());
     }
 }
