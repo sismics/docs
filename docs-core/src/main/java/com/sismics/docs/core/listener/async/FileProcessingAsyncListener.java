@@ -27,7 +27,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Listener on file processing.
@@ -51,10 +50,13 @@ public class FileProcessingAsyncListener {
             log.info("File created event: " + event.toString());
         }
 
-        processFile(event);
+        TransactionUtil.handle(() -> {
+            // Generate thumbnail, extract content
+            processFile(event);
 
-        // Update index
-        TransactionUtil.handle(() -> AppContext.getInstance().getIndexingHandler().createFile(event.getFile()));
+            // Update index
+            AppContext.getInstance().getIndexingHandler().createFile(event.getFile());
+        });
 
         FileUtil.endProcessingFile(event.getFile().getId());
     }
@@ -133,9 +135,9 @@ public class FileProcessingAsyncListener {
 
         // Extract text content from the file
         long startTime = System.currentTimeMillis();
-        final AtomicReference<String> content = new AtomicReference<>();
+        String content = null;
         try {
-            content.set(formatHandler.extractContent(event.getLanguage(), event.getUnencryptedFile()));
+            content = formatHandler.extractContent(event.getLanguage(), event.getUnencryptedFile());
         } catch (Exception e) {
             log.error("Error extracting content from: " + event.getFile(), e);
         }
@@ -148,7 +150,7 @@ public class FileProcessingAsyncListener {
             return;
         }
 
-        file.setContent(content.get());
+        file.setContent(content);
         fileDao.update(file);
     }
 }
