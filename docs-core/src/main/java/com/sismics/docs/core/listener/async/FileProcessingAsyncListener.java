@@ -53,8 +53,8 @@ public class FileProcessingAsyncListener {
 
         processFile(event);
 
-        // Update Lucene index
-        AppContext.getInstance().getIndexingHandler().createFile(event.getFile());
+        // Update index
+        TransactionUtil.handle(() -> AppContext.getInstance().getIndexingHandler().createFile(event.getFile()));
 
         FileUtil.endProcessingFile(event.getFile().getId());
     }
@@ -70,10 +70,13 @@ public class FileProcessingAsyncListener {
             log.info("File updated event: " + event.toString());
         }
 
-        processFile(event);
+        TransactionUtil.handle(() -> {
+            // Generate thumbnail, extract content
+            processFile(event);
 
-        // Update Lucene index
-        AppContext.getInstance().getIndexingHandler().updateFile(event.getFile());
+            // Update index
+            AppContext.getInstance().getIndexingHandler().updateFile(event.getFile());
+        });
 
         FileUtil.endProcessingFile(event.getFile().getId());
     }
@@ -94,12 +97,9 @@ public class FileProcessingAsyncListener {
         }
 
         // Get the user from the database
-        final AtomicReference<User> user = new AtomicReference<>();
-        TransactionUtil.handle(() -> {
-            UserDao userDao = new UserDao();
-            user.set(userDao.getById(event.getUserId()));
-        });
-        if (user.get() == null) {
+        UserDao userDao = new UserDao();
+        User user = userDao.getById(event.getUserId());
+        if (user == null) {
             // The user has been deleted meanwhile
             FileUtil.endProcessingFile(file.getId());
             return;
@@ -107,7 +107,7 @@ public class FileProcessingAsyncListener {
 
         // Generate file variations
         try {
-            Cipher cipher = EncryptionUtil.getEncryptionCipher(user.get().getPrivateKey());
+            Cipher cipher = EncryptionUtil.getEncryptionCipher(user.getPrivateKey());
             BufferedImage image = formatHandler.generateThumbnail(event.getUnencryptedFile());
             if (image != null) {
                 // Generate thumbnails from image
@@ -142,15 +142,13 @@ public class FileProcessingAsyncListener {
         log.info(MessageFormat.format("File content extracted in {0}ms", System.currentTimeMillis() - startTime));
 
         // Save the file to database
-        TransactionUtil.handle(() -> {
-            FileDao fileDao = new FileDao();
-            if (fileDao.getActiveById(file.getId()) == null) {
-                // The file has been deleted since the text extraction started, ignore the result
-                return;
-            }
+        FileDao fileDao = new FileDao();
+        if (fileDao.getActiveById(file.getId()) == null) {
+            // The file has been deleted since the text extraction started, ignore the result
+            return;
+        }
 
-            file.setContent(content.get());
-            fileDao.update(file);
-        });
+        file.setContent(content.get());
+        fileDao.update(file);
     }
 }

@@ -29,7 +29,7 @@ public class DocumentDeletedAsyncListener {
             log.info("Document deleted event: " + documentDeletedAsyncEvent.toString());
         }
 
-        // Update Lucene index
+        // Update index
         AppContext.getInstance().getIndexingHandler().deleteDocument(documentDeletedAsyncEvent.getDocumentId());
     }
 }

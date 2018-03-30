@@ -39,7 +39,7 @@ public class DocumentCreatedAsyncListener {
             contributor.setUserId(event.getUserId());
             contributorDao.create(contributor);
 
-            // Update Lucene index
+            // Update index
             AppContext.getInstance().getIndexingHandler().createDocument(event.getDocument());
         });
     }

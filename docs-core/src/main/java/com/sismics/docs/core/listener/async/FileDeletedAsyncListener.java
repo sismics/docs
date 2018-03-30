@@ -35,7 +35,7 @@ public class FileDeletedAsyncListener {
         File file = fileDeletedAsyncEvent.getFile();
         FileUtil.delete(file);
         
-        // Update Lucene index
+        // Update index
         AppContext.getInstance().getIndexingHandler().deleteDocument(file.getId());
     }
 }
