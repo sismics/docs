@@ -7,8 +7,6 @@ import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.dao.ConfigDao;
 import com.sismics.docs.core.dao.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.dto.DocumentDto;
-import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
-import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
@@ -85,16 +83,11 @@ public class LuceneIndexingHandler implements IndexingHandler {
                 if (status.clean) {
                     for (CheckIndex.Status.SegmentInfoStatus segmentInfo : status.segmentInfos) {
                         if (!segmentInfo.version.onOrAfter(Version.LATEST)) {
-                            log.info("Index is old (" + segmentInfo.version + "), rebuilding");
-                            RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
-                            AppContext.getInstance().getAsyncEventBus().post(rebuildIndexAsyncEvent);
-                            break;
+                            throw new Exception("Index is old (" + segmentInfo.version + ")");
                         }
                     }
                 } else {
-                    log.info("Index is dirty, rebuilding");
-                    RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
-                    AppContext.getInstance().getAsyncEventBus().post(rebuildIndexAsyncEvent);
+                    throw new Exception("Index is dirty");
                 }
             }
         }

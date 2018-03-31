@@ -4,6 +4,7 @@ import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.UserDao;
+import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
 import com.sismics.docs.core.listener.async.*;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.service.InboxService;
@@ -11,6 +12,8 @@ import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.docs.core.util.indexing.IndexingHandler;
 import com.sismics.docs.core.util.indexing.LuceneIndexingHandler;
 import com.sismics.util.EnvironmentUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,11 @@ import java.util.concurrent.TimeUnit;
  * @author jtremeaux 
  */
 public class AppContext {
+    /**
+     * Logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(AppContext.class);
+
     /**
      * Singleton instance.
      */
@@ -66,8 +74,9 @@ public class AppContext {
         try {
             indexingHandler.startUp();
         } catch (Exception e) {
-            // Blocking error, the app will not start
-            throw new RuntimeException(e);
+            log.error("Error starting the indexing handler, rebuilding the index", e);
+            RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
+            asyncEventBus.post(rebuildIndexAsyncEvent);
         }
 
         // Start inbox service
