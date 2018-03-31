@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Global application context.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class AppContext {
     /**
@@ -62,11 +62,11 @@ public class AppContext {
      * Asynchronous executors.
      */
     private List<ExecutorService> asyncExecutorList;
-    
+
     /**
-     * Private constructor.
+     * Start the application context.
      */
-    private AppContext() {
+    private void startUp() {
         resetEventBus();
 
         // Start indexing handler
@@ -74,7 +74,7 @@ public class AppContext {
         try {
             indexingHandler.startUp();
         } catch (Exception e) {
-            log.error("Error starting the indexing handler, rebuilding the index", e);
+            log.error("Error starting the indexing handler, rebuilding the index: " + e.getMessage());
             RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
             asyncEventBus.post(rebuildIndexAsyncEvent);
         }
@@ -109,13 +109,13 @@ public class AppContext {
             }
         }
     }
-    
+
     /**
      * (Re)-initializes the event buses.
      */
     private void resetEventBus() {
         asyncExecutorList = new ArrayList<>();
-        
+
         asyncEventBus = newAsyncEventBus();
         asyncEventBus.register(new FileProcessingAsyncListener());
         asyncEventBus.register(new FileDeletedAsyncListener());
@@ -132,19 +132,20 @@ public class AppContext {
 
     /**
      * Returns a single instance of the application context.
-     * 
+     *
      * @return Application context
      */
     public static AppContext getInstance() {
         if (instance == null) {
             instance = new AppContext();
+            instance.startUp();
         }
         return instance;
     }
-    
+
     /**
      * Creates a new asynchronous event bus.
-     * 
+     *
      * @return Async event bus
      */
     private EventBus newAsyncEventBus() {

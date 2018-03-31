@@ -13,7 +13,7 @@ public class DialectUtil {
      * @return Object not found
      */
     public static boolean isObjectNotFound(String message) {
-        return EMF.isDriverH2() && message.contains("object not found") ||
+        return EMF.isDriverH2() && message.contains("not found") ||
                 EMF.isDriverPostgresql() && message.contains("does not exist");
     }
 
