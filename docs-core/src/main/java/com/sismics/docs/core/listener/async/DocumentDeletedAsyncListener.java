@@ -3,6 +3,7 @@ package com.sismics.docs.core.listener.async;
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
+import com.sismics.docs.core.util.TransactionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,16 +21,18 @@ public class DocumentDeletedAsyncListener {
     /**
      * Document deleted.
      * 
-     * @param documentDeletedAsyncEvent Document deleted event
-     * @throws Exception
+     * @param event Document deleted event
+     * @throws Exception e
      */
     @Subscribe
-    public void on(final DocumentDeletedAsyncEvent documentDeletedAsyncEvent) throws Exception {
+    public void on(final DocumentDeletedAsyncEvent event) {
         if (log.isInfoEnabled()) {
-            log.info("Document deleted event: " + documentDeletedAsyncEvent.toString());
+            log.info("Document deleted event: " + event.toString());
         }
 
-        // Update index
-        AppContext.getInstance().getIndexingHandler().deleteDocument(documentDeletedAsyncEvent.getDocumentId());
+        TransactionUtil.handle(() -> {
+            // Update index
+            AppContext.getInstance().getIndexingHandler().deleteDocument(event.getDocumentId());
+        });
     }
 }
