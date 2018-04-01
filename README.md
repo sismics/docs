@@ -51,7 +51,7 @@ Features
 - RESTful Web API
 - Fully featured Android client
 - [Bulk files importer](https://github.com/sismics/docs/tree/master/docs-importer) (single or scan mode) ![New!](https://www.sismics.com/public/img/new.png)
-- Tested to 100k documents
+- Tested to one million documents
 
 Install with Docker
 -------------------
