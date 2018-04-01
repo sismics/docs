@@ -124,6 +124,8 @@ public class AppContext {
         asyncEventBus.register(new DocumentDeletedAsyncListener());
         asyncEventBus.register(new RebuildIndexAsyncListener());
         asyncEventBus.register(new TemporaryFileCleanupAsyncListener());
+        asyncEventBus.register(new AclCreatedAsyncListener());
+        asyncEventBus.register(new AclDeletedAsyncListener());
 
         mailEventBus = newAsyncEventBus();
         mailEventBus.register(new PasswordLostAsyncListener());

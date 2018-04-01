@@ -9,6 +9,8 @@ import com.sismics.docs.core.dao.criteria.GroupCriteria;
 import com.sismics.docs.core.dao.criteria.UserCriteria;
 import com.sismics.docs.core.dao.dto.GroupDto;
 import com.sismics.docs.core.dao.dto.UserDto;
+import com.sismics.docs.core.event.AclCreatedAsyncEvent;
+import com.sismics.docs.core.event.AclDeletedAsyncEvent;
 import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.Tag;
@@ -17,6 +19,7 @@ import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.context.ThreadLocalContext;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -97,7 +100,11 @@ public class AclResource extends BaseResource {
         if (!aclDao.checkPermission(acl.getSourceId(), acl.getPerm(), Lists.newArrayList(acl.getTargetId()))) {
             aclDao.create(acl, principal.getId());
 
-            // TODO Update event for direct and indirect documents
+            // Raise an ACL created event
+            AclCreatedAsyncEvent event = new AclCreatedAsyncEvent();
+            event.setUserId(principal.getId());
+            event.setSourceId(sourceId);
+            ThreadLocalContext.get().addAsyncEvent(event);
 
             // Returns the ACL
             JsonObjectBuilder response = Json.createObjectBuilder()
@@ -170,7 +177,11 @@ public class AclResource extends BaseResource {
         // Delete the ACL
         aclDao.delete(sourceId, perm, targetId, principal.getId(), AclType.USER);
 
-        // TODO Update event for direct and indirect documents
+        // Raise an ACL deleted event
+        AclDeletedAsyncEvent event = new AclDeletedAsyncEvent();
+        event.setUserId(principal.getId());
+        event.setSourceId(sourceId);
+        ThreadLocalContext.get().addAsyncEvent(event);
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()

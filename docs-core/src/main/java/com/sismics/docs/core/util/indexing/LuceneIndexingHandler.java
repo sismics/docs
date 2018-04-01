@@ -169,6 +169,16 @@ public class LuceneIndexingHandler implements IndexingHandler {
     }
 
     @Override
+    public void createAcl(String sourceId) {
+        // Lucene does not index ACLs
+    }
+
+    @Override
+    public void deleteAcl(String sourceId) {
+        // Lucene does not index ACLs
+    }
+
+    @Override
     public void findByCriteria(PaginatedList<DocumentDto> paginatedList, DocumentCriteria criteria, SortCriteria sortCriteria) throws Exception {
         Map<String, Object> parameterMap = new HashMap<>();
         List<String> criteriaList = new ArrayList<>();

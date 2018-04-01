@@ -71,6 +71,20 @@ public interface IndexingHandler {
     void deleteDocument(String id);
 
     /**
+     * Create an ACL.
+     *
+     * @param sourceId Source ID
+     */
+    void createAcl(String sourceId);
+
+    /**
+     * Delete an ACL.
+     *
+     * @param sourceId Source ID
+     */
+    void deleteAcl(String sourceId);
+
+    /**
      * Searches documents by criteria.
      *
      * @param paginatedList List of documents (updated by side effects)
