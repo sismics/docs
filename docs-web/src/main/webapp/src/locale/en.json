@@ -146,7 +146,6 @@
     "edit": {
       "document_edited_with_errors": "Document successfully edited but some files cannot be uploaded",
       "document_added_with_errors": "Document successfully added but some files cannot be uploaded",
-      "document_added": "Document successfully added (with {{ count }} file{{ count > 1 ? 's' : '' }})",
       "quota_reached": "Quota reached",
       "primary_metadata": "Primary metadata",
       "title_placeholder": "A name given to the resource",

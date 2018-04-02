@@ -22,7 +22,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
   $scope.closeAlert = function(index) {
     $scope.alerts.splice(index, 1);
   };
-  
+
   /**
    * Returns a promise for typeahead title.
    */
@@ -115,22 +115,10 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
       
       // When all files upload are over, attach orphan files and move on
       var navigateNext = function() {
-        attachOrphanFiles(data).then(function(resolve) {
-          if ($scope.isEdit()) {
-            // Go back to the edited document
-            $scope.pageDocuments();
-            $state.go('document.view', { id: $stateParams.id });
-          } else {
-            // Reset the scope and stay here
-            var fileUploadCount = _.size($scope.newFiles) + resolve.length;
-            $scope.alerts.unshift({
-              type: 'success',
-              msg: $translate.instant('document.edit.document_added', { count: fileUploadCount })
-            });
-
-            $scope.resetForm();
-            $scope.loadDocuments();
-          }
+        attachOrphanFiles(data).then(function() {
+          // Open the edited/created document
+          $scope.pageDocuments();
+          $state.go('document.view', { id: data.id });
         });
       };
       
