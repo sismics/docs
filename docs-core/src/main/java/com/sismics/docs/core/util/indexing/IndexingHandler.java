@@ -1,5 +1,6 @@
 package com.sismics.docs.core.util.indexing;
 
+import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.dto.DocumentDto;
 import com.sismics.docs.core.model.jpa.Document;
@@ -74,15 +75,19 @@ public interface IndexingHandler {
      * Create an ACL.
      *
      * @param sourceId Source ID
+     * @param perm Permission type
+     * @param targetId Target ID
      */
-    void createAcl(String sourceId);
+    void createAcl(String sourceId, PermType perm, String targetId);
 
     /**
      * Delete an ACL.
      *
      * @param sourceId Source ID
+     * @param perm Permission type
+     * @param targetId Target ID
      */
-    void deleteAcl(String sourceId);
+    void deleteAcl(String sourceId, PermType perm, String targetId);
 
     /**
      * Searches documents by criteria.

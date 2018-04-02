@@ -29,8 +29,7 @@ public class AclDeletedAsyncListener {
             log.info("ACL deleted event: " + event.toString());
         }
 
-        TransactionUtil.handle(() -> {
-            AppContext.getInstance().getIndexingHandler().deleteAcl(event.getSourceId());
-        });
+        TransactionUtil.handle(() -> AppContext.getInstance().getIndexingHandler()
+                .deleteAcl(event.getSourceId(), event.getPerm(), event.getTargetId()));
     }
 }

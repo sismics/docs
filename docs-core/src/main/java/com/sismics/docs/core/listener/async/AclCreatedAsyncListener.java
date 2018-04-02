@@ -29,8 +29,7 @@ public class AclCreatedAsyncListener {
             log.info("ACL created event: " + event.toString());
         }
 
-        TransactionUtil.handle(() -> {
-            AppContext.getInstance().getIndexingHandler().createAcl(event.getSourceId());
-        });
+        TransactionUtil.handle(() -> AppContext.getInstance().getIndexingHandler()
+                .createAcl(event.getSourceId(), event.getPerm(), event.getTargetId()));
     }
 }

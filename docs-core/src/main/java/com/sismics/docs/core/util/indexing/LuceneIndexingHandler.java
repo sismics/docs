@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.sismics.docs.core.constant.ConfigType;
+import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.ConfigDao;
 import com.sismics.docs.core.dao.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.dto.DocumentDto;
@@ -169,12 +170,12 @@ public class LuceneIndexingHandler implements IndexingHandler {
     }
 
     @Override
-    public void createAcl(String sourceId) {
+    public void createAcl(String sourceId, PermType perm, String targetId) {
         // Lucene does not index ACLs
     }
 
     @Override
-    public void deleteAcl(String sourceId) {
+    public void deleteAcl(String sourceId, PermType perm, String targetId) {
         // Lucene does not index ACLs
     }
 
