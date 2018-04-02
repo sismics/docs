@@ -104,6 +104,8 @@ public class AclResource extends BaseResource {
             AclCreatedAsyncEvent event = new AclCreatedAsyncEvent();
             event.setUserId(principal.getId());
             event.setSourceId(sourceId);
+            event.setPerm(perm);
+            event.setTargetId(targetId);
             ThreadLocalContext.get().addAsyncEvent(event);
 
             // Returns the ACL
@@ -181,6 +183,8 @@ public class AclResource extends BaseResource {
         AclDeletedAsyncEvent event = new AclDeletedAsyncEvent();
         event.setUserId(principal.getId());
         event.setSourceId(sourceId);
+        event.setPerm(perm);
+        event.setTargetId(targetId);
         ThreadLocalContext.get().addAsyncEvent(event);
         
         // Always return OK

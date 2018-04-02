@@ -29,7 +29,7 @@
     <junit.junit.version>4.12</junit.junit.version>
     <com.h2database.h2.version>1.4.191</com.h2database.h2.version>
     <org.glassfish.jersey.version>2.22.2</org.glassfish.jersey.version>
-    <org.glassfish.javax.json.version>1.0.4</org.glassfish.javax.json.version>
+    <org.glassfish.javax.json.version>1.1.2</org.glassfish.javax.json.version>
     <org.mindrot.jbcrypt>0.3m</org.mindrot.jbcrypt>
     <org.apache.lucene.version>5.5.0</org.apache.lucene.version>
     <org.imgscalr.imgscalr-lib.version>4.2</org.imgscalr.imgscalr-lib.version>
