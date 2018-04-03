@@ -112,7 +112,7 @@ You will get your deployable WAR in the `docs-web/target` directory.
 Contributing
 ------------
 
-All contributions are more than welcomed. Contributions may close an issue, fix a bug (reported or not reported), improve the existing code, add new feature, and so on.
+All contributions are more than welcomed. Contributors may close an issue, fix a bug (reported or not reported), improve the existing code, add new feature, and so on.
 
 The `master` branch is the default and base branch for the project. It is used for development and all Pull Requests should go there.
 
