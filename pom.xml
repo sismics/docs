@@ -38,7 +38,7 @@
     <joda-time.joda-time.version>2.9.2</joda-time.joda-time.version>
     <org.hibernate.hibernate.version>5.1.0.Final</org.hibernate.hibernate.version>
     <javax.servlet.javax.servlet-api.version>3.1.0</javax.servlet.javax.servlet-api.version>
-    <fr.opensagres.xdocreport.version>1.0.5</fr.opensagres.xdocreport.version>
+    <fr.opensagres.xdocreport.version>2.0.1</fr.opensagres.xdocreport.version>
     <net.java.dev.jna.jna.version>4.2.1</net.java.dev.jna.jna.version>
     <com.twelvemonkeys.imageio.version>3.3.2</com.twelvemonkeys.imageio.version>
     <com.levigo.jbig2.levigo-jbig2-imageio.version>1.6.5</com.levigo.jbig2.levigo-jbig2-imageio.version>
@@ -401,13 +401,13 @@
       
       <dependency>
         <groupId>fr.opensagres.xdocreport</groupId>
-        <artifactId>org.odftoolkit.odfdom.converter.pdf</artifactId>
+        <artifactId>fr.opensagres.odfdom.converter.pdf</artifactId>
         <version>${fr.opensagres.xdocreport.version}</version>
       </dependency>
   
       <dependency>
         <groupId>fr.opensagres.xdocreport</groupId>
-        <artifactId>org.apache.poi.xwpf.converter.pdf</artifactId>
+        <artifactId>fr.opensagres.poi.xwpf.converter.pdf</artifactId>
         <version>${fr.opensagres.xdocreport.version}</version>
       </dependency>
 

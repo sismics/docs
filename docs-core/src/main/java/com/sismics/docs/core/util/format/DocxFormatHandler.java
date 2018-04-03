@@ -3,6 +3,8 @@ package com.sismics.docs.core.util.format;
 import com.google.common.io.Closer;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeType;
+import fr.opensagres.poi.xwpf.converter.pdf.PdfConverter;
+import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -60,8 +62,8 @@ public class DocxFormatHandler implements FormatHandler {
             try (InputStream inputStream = Files.newInputStream(file);
                  OutputStream outputStream = Files.newOutputStream(temporaryPdfFile)) {
                 XWPFDocument document = new XWPFDocument(inputStream);
-                org.apache.poi.xwpf.converter.pdf.PdfOptions options = org.apache.poi.xwpf.converter.pdf.PdfOptions.create();
-                org.apache.poi.xwpf.converter.pdf.PdfConverter.getInstance().convert(document, outputStream, options);
+                PdfOptions options = PdfOptions.create();
+                PdfConverter.getInstance().convert(document, outputStream, options);
             }
         }
 

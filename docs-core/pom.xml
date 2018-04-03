@@ -140,12 +140,12 @@
     
     <dependency>
       <groupId>fr.opensagres.xdocreport</groupId>
-      <artifactId>org.odftoolkit.odfdom.converter.pdf</artifactId>
+      <artifactId>fr.opensagres.odfdom.converter.pdf</artifactId>
     </dependency>
 
     <dependency>
       <groupId>fr.opensagres.xdocreport</groupId>
-      <artifactId>org.apache.poi.xwpf.converter.pdf</artifactId>
+      <artifactId>fr.opensagres.poi.xwpf.converter.pdf</artifactId>
     </dependency>
 
     <!-- ImageIO plugins -->

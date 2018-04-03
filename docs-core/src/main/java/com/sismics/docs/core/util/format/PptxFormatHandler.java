@@ -19,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 /**
  * PPTX format handler.
@@ -39,7 +40,7 @@ public class PptxFormatHandler implements FormatHandler {
     @Override
     public BufferedImage generateThumbnail(Path file) throws Exception {
         XMLSlideShow pptx = loadPPtxFile(file);
-        if (pptx.getSlides().length > 0) {
+        if (pptx.getSlides().size() > 0) {
             return generateImageFromSlide(pptx, 0);
         }
 
@@ -55,9 +56,9 @@ public class PptxFormatHandler implements FormatHandler {
     @Override
     public void appendToPdf(Path file, PDDocument doc, boolean fitImageToPage, int margin, MemoryUsageSetting memUsageSettings, Closer closer) throws Exception {
         XMLSlideShow pptx = loadPPtxFile(file);
-        XSLFSlide[] slides = pptx.getSlides();
+        List<XSLFSlide> slides = pptx.getSlides();
         Dimension pgsize = pptx.getPageSize();
-        for (int slideIndex = 0; slideIndex < slides.length; slideIndex++) {
+        for (int slideIndex = 0; slideIndex < slides.size(); slideIndex++) {
             // One PDF page per slide
             PDPage page = new PDPage(new PDRectangle(pgsize.width, pgsize.height));
             try (PDPageContentStream contentStream = new PDPageContentStream(doc, page)) {
@@ -91,7 +92,7 @@ public class PptxFormatHandler implements FormatHandler {
         Graphics2D graphics = img.createGraphics();
         graphics.setPaint(Color.white);
         graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width, pgsize.height));
-        pptx.getSlides()[slideIndex].draw(graphics);
+        pptx.getSlides().get(slideIndex).draw(graphics);
         return img;
     }
 }

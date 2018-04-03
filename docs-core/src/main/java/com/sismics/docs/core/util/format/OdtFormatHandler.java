@@ -3,10 +3,10 @@ package com.sismics.docs.core.util.format;
 import com.google.common.io.Closer;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeType;
+import fr.opensagres.odfdom.converter.pdf.PdfConverter;
+import fr.opensagres.odfdom.converter.pdf.PdfOptions;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.odftoolkit.odfdom.converter.pdf.PdfConverter;
-import org.odftoolkit.odfdom.converter.pdf.PdfOptions;
 import org.odftoolkit.odfdom.doc.OdfTextDocument;
 
 import java.awt.image.BufferedImage;
