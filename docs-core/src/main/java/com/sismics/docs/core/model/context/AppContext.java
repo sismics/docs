@@ -1,5 +1,6 @@
 package com.sismics.docs.core.model.context;
 
+import com.google.common.collect.Lists;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.sismics.docs.core.constant.Constants;
@@ -11,7 +12,7 @@ import com.sismics.docs.core.service.FileService;
 import com.sismics.docs.core.service.InboxService;
 import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.docs.core.util.indexing.IndexingHandler;
-import com.sismics.docs.core.util.indexing.LuceneIndexingHandler;
+import com.sismics.util.ClasspathScanner;
 import com.sismics.util.EnvironmentUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,8 +77,16 @@ public class AppContext {
         resetEventBus();
 
         // Start indexing handler
-        indexingHandler = new LuceneIndexingHandler();
         try {
+            List<Class<? extends IndexingHandler>> indexingHandlerList = Lists.newArrayList(
+                    new ClasspathScanner<IndexingHandler>().findClasses(IndexingHandler.class, "com.sismics.docs.core.util.indexing"));
+            for (Class<? extends IndexingHandler> handlerClass : indexingHandlerList) {
+                IndexingHandler handler = handlerClass.newInstance();
+                if (handler.accept()) {
+                    indexingHandler = handler;
+                    break;
+                }
+            }
             indexingHandler.startUp();
         } catch (Exception e) {
             log.error("Error starting the indexing handler, rebuilding the index: " + e.getMessage());

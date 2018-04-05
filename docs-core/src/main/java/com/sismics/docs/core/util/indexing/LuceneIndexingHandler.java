@@ -16,6 +16,7 @@ import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.QueryParam;
 import com.sismics.docs.core.util.jpa.SortCriteria;
+import com.sismics.util.ClasspathScanner;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -44,6 +45,7 @@ import java.util.*;
  *
  * @author bgamard
  */
+@ClasspathScanner.Priority(100)
 public class LuceneIndexingHandler implements IndexingHandler {
     /**
      * Logger.
@@ -59,6 +61,12 @@ public class LuceneIndexingHandler implements IndexingHandler {
      * Directory reader.
      */
     private DirectoryReader directoryReader;
+
+    @Override
+    public boolean accept() {
+        // Embedded Lucene can always start
+        return true;
+    }
 
     @Override
     public void startUp() throws Exception {

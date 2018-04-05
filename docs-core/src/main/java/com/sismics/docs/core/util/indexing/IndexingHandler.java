@@ -17,6 +17,13 @@ import java.util.List;
  */
 public interface IndexingHandler {
     /**
+     * Return true if this indexing handler can start.
+     *
+     * @return True if able to start
+     */
+    boolean accept();
+
+    /**
      * Start the indexing handler.
      *
      * @throws Exception e
