@@ -844,7 +844,7 @@ public class DocumentResource extends BaseResource {
         // Save the file to a temporary file
         java.nio.file.Path unencryptedFile;
         try {
-            unencryptedFile = ThreadLocalContext.get().createTemporaryFile();
+            unencryptedFile = AppContext.getInstance().getFileService().createTemporaryFile();
             Files.copy(fileBodyPart.getValueAs(InputStream.class), unencryptedFile, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new ServerException("StreamError", "Error reading the input file", e);

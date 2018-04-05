@@ -6,9 +6,9 @@ import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.ConfigDao;
 import com.sismics.docs.core.dao.dto.UserDto;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.util.ConfigUtil;
-import com.sismics.util.context.ThreadLocalContext;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
@@ -196,7 +196,7 @@ public class EmailUtil {
                 if (Part.ATTACHMENT.equalsIgnoreCase(disposition)) {
                     FileContent fileContent = new FileContent();
                     fileContent.name = subPart.getFileName();
-                    fileContent.file = ThreadLocalContext.get().createTemporaryFile();
+                    fileContent.file = AppContext.getInstance().getFileService().createTemporaryFile();
                     Files.copy(subPart.getInputStream(), fileContent.file, StandardCopyOption.REPLACE_EXISTING);
                     fileContent.size = Files.size(fileContent.file);
                     mailContent.fileContentList.add(fileContent);
@@ -219,7 +219,7 @@ public class EmailUtil {
             }
         } else if (content instanceof InputStream) {
             FileContent fileContent = new FileContent();
-            fileContent.file = ThreadLocalContext.get().createTemporaryFile();
+            fileContent.file = AppContext.getInstance().getFileService().createTemporaryFile();
             Files.copy((InputStream) content, fileContent.file, StandardCopyOption.REPLACE_EXISTING);
             fileContent.size = Files.size(fileContent.file);
             mailContent.fileContentList.add(fileContent);

@@ -9,6 +9,7 @@ import com.sismics.docs.core.dao.FileDao;
 import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.FileCreatedAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.util.ImageDeskew;
@@ -55,7 +56,7 @@ public class FileUtil {
         ImageDeskew imageDeskew = new ImageDeskew(resizedImage);
         BufferedImage deskewedImage = Scalr.rotate(resizedImage, - imageDeskew.getSkewAngle(), Scalr.OP_ANTIALIAS, Scalr.OP_GRAYSCALE);
         resizedImage.flush();
-        Path tmpFile = ThreadLocalContext.get().createTemporaryFile();
+        Path tmpFile = AppContext.getInstance().getFileService().createTemporaryFile();
         ImageIO.write(deskewedImage, "tiff", tmpFile.toFile());
 
         List<String> result = Lists.newLinkedList(Arrays.asList("tesseract", tmpFile.toAbsolutePath().toString(), "stdout", "-l", language));

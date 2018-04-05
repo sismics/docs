@@ -1,7 +1,7 @@
 package com.sismics.docs.core.util;
 
 import com.google.common.base.Strings;
-import com.sismics.util.context.ThreadLocalContext;
+import com.sismics.docs.core.model.context.AppContext;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.Cipher;
@@ -74,7 +74,7 @@ public class EncryptionUtil {
             return file;
         }
 
-        Path tmpFile = ThreadLocalContext.get().createTemporaryFile();
+        Path tmpFile = AppContext.getInstance().getFileService().createTemporaryFile();
         try (InputStream is = Files.newInputStream(file)) {
             Files.copy(new CipherInputStream(is, getCipher(privateKey, Cipher.DECRYPT_MODE)), tmpFile, StandardCopyOption.REPLACE_EXISTING);
         }

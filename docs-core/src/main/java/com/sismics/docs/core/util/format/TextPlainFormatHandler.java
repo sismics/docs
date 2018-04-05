@@ -4,7 +4,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Closer;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfWriter;
-import com.sismics.util.context.ThreadLocalContext;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.util.mime.MimeType;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -28,7 +28,7 @@ public class TextPlainFormatHandler implements FormatHandler {
     @Override
     public BufferedImage generateThumbnail(Path file) throws Exception {
         Document output = new Document(PageSize.A4, 40, 40, 40, 40);
-        Path tempFile = ThreadLocalContext.get().createTemporaryFile();
+        Path tempFile = AppContext.getInstance().getFileService().createTemporaryFile();
         OutputStream pdfOutputStream = Files.newOutputStream(tempFile);
         PdfWriter.getInstance(output, pdfOutputStream);
 

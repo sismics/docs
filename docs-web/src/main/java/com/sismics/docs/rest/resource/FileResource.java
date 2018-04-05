@@ -12,6 +12,7 @@ import com.sismics.docs.core.dao.dto.DocumentDto;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.event.FileUpdatedAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.DirectoryUtil;
@@ -111,7 +112,7 @@ public class FileResource extends BaseResource {
         java.nio.file.Path unencryptedFile;
         long fileSize;
         try {
-            unencryptedFile = ThreadLocalContext.get().createTemporaryFile();
+            unencryptedFile = AppContext.getInstance().getFileService().createTemporaryFile();
             Files.copy(fileBodyPart.getValueAs(InputStream.class), unencryptedFile, StandardCopyOption.REPLACE_EXISTING);
             fileSize = Files.size(unencryptedFile);
         } catch (IOException e) {

@@ -7,6 +7,7 @@ import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
 import com.sismics.docs.core.listener.async.*;
 import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.service.FileService;
 import com.sismics.docs.core.service.InboxService;
 import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.docs.core.util.indexing.IndexingHandler;
@@ -59,6 +60,11 @@ public class AppContext {
     private InboxService inboxService;
 
     /**
+     * File service.
+     */
+    private FileService fileService;
+
+    /**
      * Asynchronous executors.
      */
     private List<ExecutorService> asyncExecutorList;
@@ -78,6 +84,11 @@ public class AppContext {
             RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
             asyncEventBus.post(rebuildIndexAsyncEvent);
         }
+
+        // Start file service
+        fileService = new FileService();
+        fileService.startAsync();
+        fileService.awaitRunning();
 
         // Start inbox service
         inboxService = new InboxService();
@@ -123,7 +134,6 @@ public class AppContext {
         asyncEventBus.register(new DocumentUpdatedAsyncListener());
         asyncEventBus.register(new DocumentDeletedAsyncListener());
         asyncEventBus.register(new RebuildIndexAsyncListener());
-        asyncEventBus.register(new TemporaryFileCleanupAsyncListener());
         asyncEventBus.register(new AclCreatedAsyncListener());
         asyncEventBus.register(new AclDeletedAsyncListener());
 
@@ -154,8 +164,7 @@ public class AppContext {
         if (EnvironmentUtil.isUnitTest()) {
             return new EventBus();
         } else {
-            // /!\ Don't add more threads because a cleanup event is fired at the end of each request
-            ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1,
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(8, 8,
                     0L, TimeUnit.MILLISECONDS,
                     new LinkedBlockingQueue<>());
             asyncExecutorList.add(executor);
@@ -179,6 +188,10 @@ public class AppContext {
         return inboxService;
     }
 
+    public FileService getFileService() {
+        return fileService;
+    }
+
     public void shutDown() {
         for (ExecutorService executor : asyncExecutorList) {
             // Shutdown executor, don't accept any more tasks (can cause error with nested events)
@@ -197,6 +210,10 @@ public class AppContext {
         if (inboxService != null) {
             inboxService.stopAsync();
             inboxService.awaitTerminated();
+        }
+
+        if (fileService != null) {
+            fileService.stopAsync();
         }
 
         instance = null;

@@ -1,7 +1,7 @@
 package com.sismics.docs.core.util.format;
 
 import com.google.common.io.Closer;
-import com.sismics.util.context.ThreadLocalContext;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.util.mime.MimeType;
 import fr.opensagres.poi.xwpf.converter.pdf.PdfConverter;
 import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
@@ -58,7 +58,7 @@ public class DocxFormatHandler implements FormatHandler {
      */
     private Path getGeneratedPdf(Path file) throws Exception {
         if (temporaryPdfFile == null) {
-            temporaryPdfFile = ThreadLocalContext.get().createTemporaryFile();
+            temporaryPdfFile = AppContext.getInstance().getFileService().createTemporaryFile();
             try (InputStream inputStream = Files.newInputStream(file);
                  OutputStream outputStream = Files.newOutputStream(temporaryPdfFile)) {
                 XWPFDocument document = new XWPFDocument(inputStream);
