@@ -53,6 +53,15 @@ public class TestDocumentResource extends BaseJerseyTest {
         String tag1Id = json.getString("id");
         Assert.assertNotNull(tag1Id);
 
+        // Create a tag
+        json = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .put(Entity.form(new Form()
+                        .param("name", "HR")
+                        .param("color", "#0000ff")), JsonObject.class);
+        String tag2Id = json.getString("id");
+        Assert.assertNotNull(tag2Id);
+
         // Create a document with document1
         long create1Date = new Date().getTime();
         json = target().path("/document").request()
@@ -69,6 +78,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                         .param("coverage", "Greenland")
                         .param("rights", "Public Domain")
                         .param("tags", tag1Id)
+                        .param("tags", tag2Id)
                         .param("language", "eng")
                         .param("create_date", Long.toString(create1Date))), JsonObject.class);
         String document1Id = json.getString("id");
@@ -80,6 +90,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .put(Entity.form(new Form()
                         .param("title", "My super title document 2")
                         .param("language", "eng")
+                        .param("tags", tag2Id)
                         .param("relations", document1Id)), JsonObject.class);
         String document2Id = json.getString("id");
         Assert.assertNotNull(document2Id);
@@ -102,15 +113,18 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         JsonArray documents = json.getJsonArray("documents");
         JsonArray tags = documents.getJsonObject(0).getJsonArray("tags");
-        Assert.assertTrue(documents.size() == 2);
+        Assert.assertEquals(2, documents.size());
         Assert.assertNotNull(documents.getJsonObject(0).get("update_date"));
         Assert.assertEquals(document1Id, documents.getJsonObject(0).getString("id"));
         Assert.assertEquals("eng", documents.getJsonObject(0).getString("language"));
         Assert.assertEquals(1, documents.getJsonObject(0).getInt("file_count"));
-        Assert.assertEquals(1, tags.size());
-        Assert.assertEquals(tag1Id, tags.getJsonObject(0).getString("id"));
-        Assert.assertEquals("SuperTag", tags.getJsonObject(0).getString("name"));
-        Assert.assertEquals("#ffff00", tags.getJsonObject(0).getString("color"));
+        Assert.assertEquals(2, tags.size());
+        Assert.assertEquals(tag2Id, tags.getJsonObject(0).getString("id"));
+        Assert.assertEquals("HR", tags.getJsonObject(0).getString("name"));
+        Assert.assertEquals("#0000ff", tags.getJsonObject(0).getString("color"));
+        Assert.assertEquals(tag1Id, tags.getJsonObject(1).getString("id"));
+        Assert.assertEquals("SuperTag", tags.getJsonObject(1).getString("name"));
+        Assert.assertEquals("#ffff00", tags.getJsonObject(1).getString("color"));
         Assert.assertFalse(documents.getJsonObject(0).getBoolean("active_route"));
 
         // List all documents from document3
@@ -147,7 +161,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document3Token)
                 .get(JsonObject.class);
         documents = json.getJsonArray("documents");
-        Assert.assertTrue(documents.size() == 1);
+        Assert.assertEquals(1, documents.size());
         
         // Search documents
         Assert.assertEquals(1, searchDocuments("full:uranium full:einstein", document1Token));
@@ -174,6 +188,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(2, searchDocuments("uat:" + DateTimeFormat.forPattern("yyyy-MM-dd").print(new Date().getTime()), document1Token));
         Assert.assertEquals(2, searchDocuments("uafter:2010 ubefore:2040-08", document1Token));
         Assert.assertEquals(1, searchDocuments("tag:super", document1Token));
+        Assert.assertEquals(1, searchDocuments("tag:super tag:hr", document1Token));
         Assert.assertEquals(1, searchDocuments("shared:yes", document1Token));
         Assert.assertEquals(2, searchDocuments("lang:eng", document1Token));
         Assert.assertEquals(1, searchDocuments("after:2010 before:2040-08 tag:super shared:yes lang:eng title description full:uranium", document1Token));
@@ -196,7 +211,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(document1Id, json.getString("id"));
         Assert.assertEquals("document1", json.getString("creator"));
         Assert.assertEquals(1, json.getInt("file_count"));
-        Assert.assertEquals(true, json.getBoolean("shared"));
+        Assert.assertTrue(json.getBoolean("shared"));
         Assert.assertEquals("My super title document 1", json.getString("title"));
         Assert.assertEquals("My super description for document 1", json.getString("description"));
         Assert.assertEquals("Subject document 1", json.getString("subject"));
@@ -211,8 +226,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(create1Date, json.getJsonNumber("create_date").longValue());
         Assert.assertNotNull(json.get("update_date"));
         tags = json.getJsonArray("tags");
-        Assert.assertEquals(1, tags.size());
-        Assert.assertEquals(tag1Id, tags.getJsonObject(0).getString("id"));
+        Assert.assertEquals(2, tags.size());
+        Assert.assertEquals(tag2Id, tags.getJsonObject(0).getString("id"));
+        Assert.assertEquals(tag1Id, tags.getJsonObject(1).getString("id"));
         JsonArray contributors = json.getJsonArray("contributors");
         Assert.assertEquals(1, contributors.size());
         Assert.assertEquals("document1", contributors.getJsonObject(0).getString("username"));
@@ -237,8 +253,8 @@ public class TestDocumentResource extends BaseJerseyTest {
         json = target().path("/tag").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
                 .put(Entity.form(new Form().param("name", "SuperTag2").param("color", "#00ffff")), JsonObject.class);
-        String tag2Id = json.getString("id");
-        Assert.assertNotNull(tag1Id);
+        String tag3Id = json.getString("id");
+        Assert.assertNotNull(tag3Id);
         
         // Update document 1
         json = target().path("/document/" + document1Id).request()
@@ -255,7 +271,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                         .param("coverage", "France")
                         .param("language", "eng")
                         .param("rights", "All Rights Reserved")
-                        .param("tags", tag2Id)), JsonObject.class);
+                        .param("tags", tag3Id)), JsonObject.class);
         Assert.assertEquals(document1Id, json.getString("id"));
         
         // Update document 2
@@ -304,7 +320,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals("All Rights Reserved", json.getString("rights"));
         tags = json.getJsonArray("tags");
         Assert.assertEquals(1, tags.size());
-        Assert.assertEquals(tag2Id, tags.getJsonObject(0).getString("id"));
+        Assert.assertEquals(tag3Id, tags.getJsonObject(0).getString("id"));
         contributors = json.getJsonArray("contributors");
         Assert.assertEquals(1, contributors.size());
         Assert.assertEquals("document1", contributors.getJsonObject(0).getString("username"));
@@ -387,7 +403,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentOdtToken)
                 .get(JsonObject.class);
-        Assert.assertTrue(json.getJsonArray("documents").size() == 1);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
         
         // Get the file thumbnail data
         Response response = target().path("/file/" + file1Id + "/data")
@@ -447,7 +463,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentDocxToken)
                 .get(JsonObject.class);
-        Assert.assertTrue(json.getJsonArray("documents").size() == 1);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
         
         // Get the file thumbnail data
         Response response = target().path("/file/" + file1Id + "/data")
@@ -507,7 +523,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPdfToken)
                 .get(JsonObject.class);
-        Assert.assertTrue(json.getJsonArray("documents").size() == 1);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
         
         // Get the file thumbnail data
         Response response = target().path("/file/" + file1Id + "/data")
@@ -567,7 +583,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
                 .get(JsonObject.class);
-        Assert.assertTrue(json.getJsonArray("documents").size() == 1);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
 
         // Get the file thumbnail data
         Response response = target().path("/file/" + file1Id + "/data")
@@ -637,7 +653,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentVideoToken)
                 .get(JsonObject.class);
-        Assert.assertTrue(json.getJsonArray("documents").size() == 1);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
 
         // Get the file thumbnail data
         Response response = target().path("/file/" + file1Id + "/data")
@@ -697,7 +713,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPptxToken)
                 .get(JsonObject.class);
-        Assert.assertTrue(json.getJsonArray("documents").size() == 1);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
 
         // Get the file thumbnail data
         Response response = target().path("/file/" + file1Id + "/data")
