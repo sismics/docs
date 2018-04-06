@@ -47,8 +47,9 @@ public class DocumentCriteria {
 
     /**
      * Tag IDs.
+     * The first level list will be AND'ed and the second level list will be OR'ed.
      */
-    private List<String> tagIdList;
+    private List<List<String>> tagIdList;
     
     /**
      * Shared status.
@@ -110,11 +111,11 @@ public class DocumentCriteria {
         this.createDateMax = createDateMax;
     }
 
-    public List<String> getTagIdList() {
+    public List<List<String>> getTagIdList() {
         return tagIdList;
     }
 
-    public void setTagIdList(List<String> tagIdList) {
+    public void setTagIdList(List<List<String>> tagIdList) {
         this.tagIdList = tagIdList;
     }
 
@@ -162,8 +163,7 @@ public class DocumentCriteria {
         this.updateDateMax = updateDateMax;
     }
 
-    public DocumentCriteria setActiveRoute(Boolean activeRoute) {
+    public void setActiveRoute(Boolean activeRoute) {
         this.activeRoute = activeRoute;
-        return this;
     }
 }

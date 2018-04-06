@@ -2,6 +2,7 @@ package com.sismics.docs.rest.resource;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
@@ -452,14 +453,17 @@ public class DocumentResource extends BaseResource {
                     }
                     if (tagDtoList.isEmpty()) {
                         // No tag found, the request must returns nothing
-                        documentCriteria.getTagIdList().add(UUID.randomUUID().toString());
-                    }
-                    for (TagDto tagDto : tagDtoList) {
-                        documentCriteria.getTagIdList().add(tagDto.getId());
-                        List<TagDto> childrenTagDtoList = TagUtil.findChildren(tagDto, allTagDtoList);
-                        for (TagDto childrenTagDto : childrenTagDtoList) {
-                            documentCriteria.getTagIdList().add(childrenTagDto.getId());
+                        documentCriteria.getTagIdList().add(Lists.newArrayList(UUID.randomUUID().toString()));
+                    } else {
+                        List<String> tagIdList = Lists.newArrayList();
+                        for (TagDto tagDto : tagDtoList) {
+                            tagIdList.add(tagDto.getId());
+                            List<TagDto> childrenTagDtoList = TagUtil.findChildren(tagDto, allTagDtoList);
+                            for (TagDto childrenTagDto : childrenTagDtoList) {
+                                tagIdList.add(childrenTagDto.getId());
+                            }
                         }
+                        documentCriteria.getTagIdList().add(tagIdList);
                     }
                     break;
                 case "after":

@@ -245,14 +245,16 @@ public class LuceneIndexingHandler implements IndexingHandler {
         }
         if (criteria.getTagIdList() != null && !criteria.getTagIdList().isEmpty()) {
             int index = 0;
-            List<String> tagCriteriaList = Lists.newArrayList();
-            for (String tagId : criteria.getTagIdList()) {
-                sb.append(String.format("left join T_DOCUMENT_TAG dt%d on dt%d.DOT_IDDOCUMENT_C = d.DOC_ID_C and dt%d.DOT_IDTAG_C = :tagId%d and dt%d.DOT_DELETEDATE_D is null ", index, index, index, index, index));
-                parameterMap.put("tagId" + index, tagId);
-                tagCriteriaList.add(String.format("dt%d.DOT_ID_C is not null", index));
-                index++;
+            for (List<String> tagIdList : criteria.getTagIdList()) {
+                List<String> tagCriteriaList = Lists.newArrayList();
+                for (String tagId : tagIdList) {
+                    sb.append(String.format("left join T_DOCUMENT_TAG dt%d on dt%d.DOT_IDDOCUMENT_C = d.DOC_ID_C and dt%d.DOT_IDTAG_C = :tagId%d and dt%d.DOT_DELETEDATE_D is null ", index, index, index, index, index));
+                    parameterMap.put("tagId" + index, tagId);
+                    tagCriteriaList.add(String.format("dt%d.DOT_ID_C is not null", index));
+                    index++;
+                }
+                criteriaList.add("(" + Joiner.on(" OR ").join(tagCriteriaList) + ")");
             }
-            criteriaList.add("(" + Joiner.on(" OR ").join(tagCriteriaList) + ")");
         }
         if (criteria.getShared() != null && criteria.getShared()) {
             criteriaList.add("s.count > 0");
