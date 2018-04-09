@@ -11,7 +11,6 @@ import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.service.InboxService;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.DirectoryUtil;
@@ -509,7 +508,7 @@ public class AppResource extends BaseResource {
         // Get the memory appender
         org.apache.log4j.Logger logger = org.apache.log4j.Logger.getRootLogger();
         Appender appender = logger.getAppender("MEMORY");
-        if (appender == null || !(appender instanceof MemoryAppender)) {
+        if (!(appender instanceof MemoryAppender)) {
             throw new ServerException("ServerError", "MEMORY appender not configured");
         }
         MemoryAppender memoryAppender = (MemoryAppender) appender;
@@ -539,7 +538,7 @@ public class AppResource extends BaseResource {
     }
     
     /**
-     * Destroy and rebuild Lucene index.
+     * Destroy and rebuild the search index.
      *
      * @api {post} /app/batch/reindex Rebuild the search index
      * @apiName PostAppBatchReindex
@@ -680,66 +679,6 @@ public class AppResource extends BaseResource {
         log.info("Deleting {} soft deleted documents", em.createQuery("delete Document d where d.deleteDate is not null").executeUpdate());
         log.info("Deleting {} soft deleted users", em.createQuery("delete User u where u.deleteDate is not null").executeUpdate());
         log.info("Deleting {} soft deleted groups", em.createQuery("delete Group g where g.deleteDate is not null").executeUpdate());
-        
-        // Always return OK
-        JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("status", "ok");
-        return Response.ok().entity(response.build()).build();
-    }
-    
-    /**
-     * Recompute the quota for each user.
-     *
-     * @api {post} /app/batch/recompute_quota Recompute user quotas
-     * @apiName PostAppBatchRecomputeQuota
-     * @apiGroup App
-     * @apiSuccess {String} status Status OK
-     * @apiError (client) ForbiddenError Access denied
-     * @apiError (server) MissingFile File does not exist
-     * @apiPermission admin
-     * @apiVersion 1.5.0
-     *
-     * @return Response
-     */
-    @POST
-    @Path("batch/recompute_quota")
-    public Response batchRecomputeQuota() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
-        checkBaseFunction(BaseFunction.ADMIN);
-        
-        // Get all files
-        FileDao fileDao = new FileDao();
-        List<File> fileList = fileDao.findAll();
-        
-        // Count each file for the corresponding user quota
-        UserDao userDao = new UserDao();
-        Map<String, User> userMap = new HashMap<>();
-        for (File file : fileList) {
-            java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
-            User user;
-            if (userMap.containsKey(file.getUserId())) {
-                user = userMap.get(file.getUserId());
-            } else {
-                user = userDao.getById(file.getUserId());
-                user.setStorageCurrent(0L);
-                userMap.put(user.getId(), user);
-            }
-            
-            try {
-                user.setStorageCurrent(user.getStorageCurrent() + Files.size(storedFile));
-            } catch (IOException e) {
-                throw new ServerException("MissingFile", "File does not exist", e);
-            }
-        }
-        
-        // Save all users
-        for (User user : userMap.values()) {
-            if (user.getDeleteDate() == null) {
-                userDao.updateQuota(user);
-            }
-        }
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()

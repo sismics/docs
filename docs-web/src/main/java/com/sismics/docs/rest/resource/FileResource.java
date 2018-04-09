@@ -284,10 +284,6 @@ public class FileResource extends BaseResource {
             throw new ForbiddenClientException();
         }
 
-        // Get the current user
-        UserDao userDao = new UserDao();
-        User user = userDao.getById(principal.getId());
-
         // Get the document and the file
         DocumentDao documentDao = new DocumentDao();
         FileDao fileDao = new FileDao();
@@ -300,17 +296,21 @@ public class FileResource extends BaseResource {
             throw new NotFoundException();
         }
 
+        // Get the creating user
+        UserDao userDao = new UserDao();
+        User user = userDao.getById(file.getUserId());
+
         // Start the processing asynchronously
         try {
             java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
             java.nio.file.Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey());
             FileUtil.startProcessingFile(id);
-            FileUpdatedAsyncEvent fileUpdatedAsyncEvent = new FileUpdatedAsyncEvent();
-            fileUpdatedAsyncEvent.setUserId(principal.getId());
-            fileUpdatedAsyncEvent.setLanguage(documentDto.getLanguage());
-            fileUpdatedAsyncEvent.setFile(file);
-            fileUpdatedAsyncEvent.setUnencryptedFile(unencryptedFile);
-            ThreadLocalContext.get().addAsyncEvent(fileUpdatedAsyncEvent);
+            FileUpdatedAsyncEvent event = new FileUpdatedAsyncEvent();
+            event.setUserId(principal.getId());
+            event.setLanguage(documentDto.getLanguage());
+            event.setFile(file);
+            event.setUnencryptedFile(unencryptedFile);
+            ThreadLocalContext.get().addAsyncEvent(event);
         } catch (Exception e) {
             throw new ServerException("ProcessingError", "Error processing this file", e);
         }

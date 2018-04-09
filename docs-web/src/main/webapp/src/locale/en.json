@@ -515,7 +515,8 @@
   },
   "action_type": {
     "ADD_TAG": "Add a tag",
-    "REMOVE_TAG": "Remove a tag"
+    "REMOVE_TAG": "Remove a tag",
+    "PROCESS_FILES": "Process files"
   },
   "pagination": {
     "previous": "Previous",

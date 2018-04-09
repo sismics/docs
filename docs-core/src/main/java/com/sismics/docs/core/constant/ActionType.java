@@ -14,5 +14,10 @@ public enum ActionType {
     /**
      * Remove a tag.
      */
-    REMOVE_TAG
+    REMOVE_TAG,
+
+    /**
+     * Process files.
+     */
+    PROCESS_FILES
 }

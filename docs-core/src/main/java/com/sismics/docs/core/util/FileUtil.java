@@ -39,7 +39,7 @@ public class FileUtil {
     /**
      * File ID of files currently being processed.
      */
-    private static Set<String> processingFileSet = Collections.synchronizedSet(new HashSet<String>());
+    private static Set<String> processingFileSet = Collections.synchronizedSet(new HashSet<>());
     
     /**
      * Optical character recognition on an image.

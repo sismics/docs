@@ -4,6 +4,7 @@ import com.sismics.docs.core.constant.ActionType;
 import com.sismics.docs.core.dao.dto.DocumentDto;
 import com.sismics.docs.core.util.action.Action;
 import com.sismics.docs.core.util.action.AddTagAction;
+import com.sismics.docs.core.util.action.ProcessFilesAction;
 import com.sismics.docs.core.util.action.RemoveTagAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,9 @@ public class ActionUtil {
                 break;
             case REMOVE_TAG:
                 action = new RemoveTagAction();
+                break;
+            case PROCESS_FILES:
+                action = new ProcessFilesAction();
                 break;
             default:
                 log.error("Action type not handled: " + actionType);
