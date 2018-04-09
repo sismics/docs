@@ -56,12 +56,6 @@ public class TestAppResource extends BaseJerseyTest {
                 .post(Entity.form(new Form()));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         
-        // Recompute quota
-        response = target().path("/app/batch/recompute_quota").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
-                .post(Entity.form(new Form()));
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-
         // Change the default language
         response = target().path("/app/config").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
