@@ -203,31 +203,22 @@ ul.tag-tree {
   }
 
   .file-name {
+    overflow: hidden;
     word-wrap: break-word;
     white-space: normal;
-    display: block;
     text-overflow: ellipsis;
-    margin-right: auto !important;
-    margin-left: auto !important;
   }
 
   .file-info {
     display: flex;
     justify-content: space-between;
 
-    .caption {
+    .v-align {
       height: 42px;
       padding: 0;
-      margin: 9px;
-    }
-
-    .v-align {
       display: flex;
       align-items: center;
-
-      > * {
-        margin-right: 8px;
-      }
+      margin: 4px;
     }
   }
 
@@ -241,26 +232,6 @@ ul.tag-tree {
     cursor: pointer;
     margin-top: 100px;
     transform: translateY(-50%);
-  }
-
-  .caption-hover {
-    display: none;
-  }
-
-  .caption-hover-inverse {
-    display: block;
-    overflow: hidden;
-  }
-
-  &:hover {
-    .caption-hover {
-      display: flex;
-      align-items: center;
-    }
-
-    .caption-hover-inverse {
-      display: none;
-    }
   }
 }
 

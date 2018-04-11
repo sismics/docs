@@ -62,6 +62,11 @@ public class LuceneIndexingHandler implements IndexingHandler {
      */
     private DirectoryReader directoryReader;
 
+    /**
+     * Index writer.
+     */
+    private IndexWriter indexWriter;
+
     @Override
     public boolean accept() {
         // Embedded Lucene can always start
@@ -83,6 +88,12 @@ public class LuceneIndexingHandler implements IndexingHandler {
             log.info("Using file Lucene storage: {}", luceneDirectory);
             directory = new SimpleFSDirectory(luceneDirectory, NoLockFactory.INSTANCE);
         }
+
+        // Create an index writer
+        IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
+        config.setCommitOnClose(true);
+        config.setMergeScheduler(new SerialMergeScheduler());
+        indexWriter = new IndexWriter(directory, config);
 
         // Check index version and rebuild it if necessary
         if (DirectoryReader.indexExists(directory)) {
@@ -109,6 +120,13 @@ public class LuceneIndexingHandler implements IndexingHandler {
                 directoryReader.close();
             } catch (IOException e) {
                 log.error("Error closing the index reader", e);
+            }
+        }
+        if (indexWriter != null) {
+            try {
+                indexWriter.close();
+            } catch (IOException e) {
+                log.error("Error closing the index writer, index may be corrupt", e);
             }
         }
         if (directory != null) {
@@ -469,42 +487,16 @@ public class LuceneIndexingHandler implements IndexingHandler {
      * @param runnable Runnable
      */
     private void handle(LuceneRunnable runnable) {
-        // Standard analyzer
-        IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
-
-        // Automatically commit when closing this writer
-        config.setCommitOnClose(true);
-
-        // Merge sequentially, because Lucene writing is already done asynchronously
-        config.setMergeScheduler(new SerialMergeScheduler());
-
-        // Creating index writer
-        IndexWriter indexWriter = null;
-        try {
-            indexWriter = new IndexWriter(directory, config);
-        } catch (IOException e) {
-            log.error("Cannot create IndexWriter", e);
-        }
-
         try {
             runnable.run(indexWriter);
         } catch (Exception e) {
-            log.error("Error in running index writing transaction", e);
-            try {
-                if (indexWriter != null) {
-                    indexWriter.rollback();
-                }
-            } catch (IOException e1) {
-                log.error("Cannot rollback index writing transaction", e1);
-            }
+            log.error("Error in running index writing", e);
         }
 
         try {
-            if (indexWriter != null) {
-                indexWriter.close();
-            }
+            indexWriter.commit();
         } catch (IOException e) {
-            log.error("Cannot commit and close IndexWriter", e);
+            log.error("Cannot commit index writer", e);
         }
     }
 

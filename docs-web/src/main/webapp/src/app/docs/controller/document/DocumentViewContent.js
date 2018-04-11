@@ -11,7 +11,6 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
     forceHelperSize: true,
     forcePlaceholderSize: true,
     tolerance: 'pointer',
-    handle: '.handle',
     stop: function () {
       // Send new positions to server
       $scope.$apply(function () {

@@ -55,12 +55,8 @@
         </a>
 
         <div class="file-info">
-          <div class="v-align caption file-name" ng-class="{ 'caption-hover-inverse': document.writable }"
-               ng-click="openFile(file)" ng-if="file.name">{{ file.name }}</div>
-          <div class="caption caption-hover" ng-show="document.writable">
-            <div class="btn btn-default handle"><span class="fas fa-arrows-alt-h"></span></div>
-          </div>
-
+          <div></div><!-- Actually useful -->
+          <div class="v-align file-name" ng-if="file.name">{{ file.name }}</div>
           <div class="v-align" ng-show="document.writable">
             <div uib-dropdown>
               <button class="btn btn-default" uib-dropdown-toggle>
