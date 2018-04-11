@@ -98,6 +98,13 @@ angular.module('docs').controller('DocumentDefault', function ($scope, $rootScop
     return _.where($scope.files, { checked: true });
   };
 
+  // Change checked status
+  $scope.changeChecked = function (checked) {
+    _.each($scope.files, function (file) {
+      file.checked = checked;
+    })
+  };
+
   // Add a document with checked files
   $scope.addDocument = function () {
     $state.go('document.add', { files: _.pluck($scope.checkedFiles(), 'id') });

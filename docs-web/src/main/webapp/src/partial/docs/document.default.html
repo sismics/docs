@@ -1,7 +1,14 @@
 <div class="well well-3d" style="background-color: #f6f9fc">
+  <div class="pull-right" ng-show="files.length > 0">
+    <a href class="btn btn-default" ng-init="selectAll = true" ng-click="changeChecked(selectAll); selectAll = !selectAll">
+      <span class="far" ng-class="{ 'fa-check-square': selectAll, 'fa-square': !selectAll }"></span>
+      {{ selectAll ? 'document.default.select_all' : 'document.default.select_none' | translate }}
+    </a>
+  </div>
   <h3 class="well-3d-header text-muted">
     {{ 'document.default.quick_upload' | translate }}
   </h3>
+
   <div class="row upload-zone"
        ngf-drop="fileDropped($files)"
        ngf-drag-over-class="'bg-success'"

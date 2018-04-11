@@ -173,7 +173,9 @@
       "footer_sismics": "Crafted with <span class=\"fas fa-heart\"></span> by <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
       "api_documentation": "API Documentation",
       "feedback": "Give us a feedback",
-      "workflow_document_list": "Documents assigned to you"
+      "workflow_document_list": "Documents assigned to you",
+      "select_all": "Select all",
+      "select_none": "Select none"
     },
     "pdf": {
       "export_title": "Export to PDF",
