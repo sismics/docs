@@ -1,5 +1,6 @@
 package com.sismics.docs.core.listener.async;
 
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.dao.FileDao;
 import com.sismics.docs.core.dao.UserDao;
@@ -45,6 +46,7 @@ public class FileProcessingAsyncListener {
      * @param event File created event
      */
     @Subscribe
+    @AllowConcurrentEvents
     public void on(final FileCreatedAsyncEvent event) {
         if (log.isInfoEnabled()) {
             log.info("File created event: " + event.toString());

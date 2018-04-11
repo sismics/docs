@@ -1,5 +1,6 @@
 package com.sismics.docs.core.listener.async;
 
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
@@ -27,6 +28,7 @@ public class FileDeletedAsyncListener {
      * @throws Exception e
      */
     @Subscribe
+    @AllowConcurrentEvents
     public void on(final FileDeletedAsyncEvent event) throws Exception {
         if (log.isInfoEnabled()) {
             log.info("File deleted event: " + event.toString());

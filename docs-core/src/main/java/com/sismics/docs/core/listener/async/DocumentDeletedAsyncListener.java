@@ -1,5 +1,6 @@
 package com.sismics.docs.core.listener.async;
 
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
@@ -22,9 +23,9 @@ public class DocumentDeletedAsyncListener {
      * Document deleted.
      * 
      * @param event Document deleted event
-     * @throws Exception e
      */
     @Subscribe
+    @AllowConcurrentEvents
     public void on(final DocumentDeletedAsyncEvent event) {
         if (log.isInfoEnabled()) {
             log.info("Document deleted event: " + event.toString());

@@ -1,5 +1,6 @@
 package com.sismics.docs.core.listener.async;
 
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.dao.ContributorDao;
 import com.sismics.docs.core.dao.DocumentDao;
@@ -30,6 +31,7 @@ public class DocumentUpdatedAsyncListener {
      * @param event Document updated event
      */
     @Subscribe
+    @AllowConcurrentEvents
     public void on(final DocumentUpdatedAsyncEvent event) {
         if (log.isInfoEnabled()) {
             log.info("Document updated event: " + event.toString());

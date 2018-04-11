@@ -1,5 +1,6 @@
 package com.sismics.docs.core.listener.async;
 
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.dto.UserDto;
@@ -27,17 +28,18 @@ public class PasswordLostAsyncListener {
     /**
      * Handle events.
      * 
-     * @param passwordLostEvent Event
+     * @param event Event
      */
     @Subscribe
-    public void onPasswordLost(final PasswordLostEvent passwordLostEvent) {
+    @AllowConcurrentEvents
+    public void on(final PasswordLostEvent event) {
         if (log.isInfoEnabled()) {
-            log.info("Password lost event: " + passwordLostEvent.toString());
+            log.info("Password lost event: " + event.toString());
         }
         
         TransactionUtil.handle(() -> {
-            final UserDto user = passwordLostEvent.getUser();
-            final PasswordRecovery passwordRecovery = passwordLostEvent.getPasswordRecovery();
+            final UserDto user = event.getUser();
+            final PasswordRecovery passwordRecovery = event.getPasswordRecovery();
 
             // Send the password recovery email
             Map<String, Object> paramRootMap = new HashMap<>();

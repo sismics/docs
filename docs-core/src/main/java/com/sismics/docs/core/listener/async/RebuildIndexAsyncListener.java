@@ -1,5 +1,6 @@
 package com.sismics.docs.core.listener.async;
 
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.dao.DocumentDao;
 import com.sismics.docs.core.dao.FileDao;
@@ -27,12 +28,13 @@ public class RebuildIndexAsyncListener {
     /**
      * Rebuild Lucene index.
      * 
-     * @param rebuildIndexAsyncEvent Index rebuild event
+     * @param event Index rebuild event
      */
     @Subscribe
-    public void on(final RebuildIndexAsyncEvent rebuildIndexAsyncEvent) {
+    @AllowConcurrentEvents
+    public void on(final RebuildIndexAsyncEvent event) {
         if (log.isInfoEnabled()) {
-            log.info("Rebuild index event: " + rebuildIndexAsyncEvent.toString());
+            log.info("Rebuild index event: " + event.toString());
         }
         
         // Fetch all documents and files

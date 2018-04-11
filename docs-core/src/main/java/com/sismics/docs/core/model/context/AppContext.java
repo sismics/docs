@@ -174,7 +174,7 @@ public class AppContext {
             return new EventBus();
         } else {
             ThreadPoolExecutor executor = new ThreadPoolExecutor(8, 8,
-                    0L, TimeUnit.MILLISECONDS,
+                    1L, TimeUnit.MINUTES,
                     new LinkedBlockingQueue<>());
             asyncExecutorList.add(executor);
             return new AsyncEventBus(executor);
@@ -206,7 +206,7 @@ public class AppContext {
             // Shutdown executor, don't accept any more tasks (can cause error with nested events)
             try {
                 executor.shutdown();
-                executor.awaitTermination(60, TimeUnit.SECONDS);
+                executor.awaitTermination(1, TimeUnit.MINUTES);
             } catch (InterruptedException e) {
                 // NOP
             }

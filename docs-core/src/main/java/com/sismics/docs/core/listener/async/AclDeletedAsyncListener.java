@@ -1,5 +1,6 @@
 package com.sismics.docs.core.listener.async;
 
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.event.AclDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
@@ -24,6 +25,7 @@ public class AclDeletedAsyncListener {
      * @param event ACL deleted event
      */
     @Subscribe
+    @AllowConcurrentEvents
     public void on(final AclDeletedAsyncEvent event) {
         if (log.isInfoEnabled()) {
             log.info("ACL deleted event: " + event.toString());

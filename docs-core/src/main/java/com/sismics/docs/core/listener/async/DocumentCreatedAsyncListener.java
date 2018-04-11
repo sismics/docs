@@ -1,5 +1,6 @@
 package com.sismics.docs.core.listener.async;
 
+import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.dao.ContributorDao;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
@@ -26,6 +27,7 @@ public class DocumentCreatedAsyncListener {
      * @param event Document created event
      */
     @Subscribe
+    @AllowConcurrentEvents
     public void on(final DocumentCreatedAsyncEvent event) {
         if (log.isInfoEnabled()) {
             log.info("Document created event: " + event.toString());
