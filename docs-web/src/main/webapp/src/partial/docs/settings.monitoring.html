@@ -1,0 +1,25 @@
+<h2 translate="settings.monitoring.background_tasks"></h2>
+<p>
+  <strong>{{ 'settings.monitoring.queued_tasks' | translate: { count: app.queued_tasks } }}</strong>
+  <span class="fas fa-check text-success" ng-if="app.queued_tasks == 0"></span>
+  <span class="fas fa-circle-notch text-warning fa-spin" ng-if="app.queued_tasks > 0"></span>
+</p>
+<p>{{ 'settings.monitoring.queued_tasks_explain' | translate }}</p>
+<h2 translate="settings.monitoring.server_logs"></h2>
+<table class="table table-hover table-logs">
+  <thead>
+    <tr>
+      <th>{{ 'settings.monitoring.log_date' | translate }}</th>
+      <th>{{ 'settings.monitoring.log_tag' | translate }}</th>
+      <th>{{ 'settings.monitoring.log_message' | translate }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="log in logs"
+      ng-class="{ info: log.level == 'INFO' || log.level == 'DEBUG', warning: log.level == 'WARN', danger: log.level == 'ERROR' || log.level == 'FATAL' }">
+      <td>{{ log.date | date: dateTimeFormat }}</td>
+      <td>{{ log.tag }}</td>
+      <td class="cell-message">{{ log.message }}</td>
+    </tr>
+  </tbody>
+</table>

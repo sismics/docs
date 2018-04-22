@@ -262,7 +262,7 @@
     "menu_vocabularies": "Vocabularies",
     "menu_configuration": "Configuration",
     "menu_inbox": "Inbox scanning",
-    "menu_server_logs": "Server logs",
+    "menu_monitoring": "Monitoring",
     "user": {
       "title": "Users management",
       "add_user": "Add a user",
@@ -393,11 +393,14 @@
       "test_success": "The connection to the inbox is successful ({{ count }} <strong>unread</strong> message{{ count > 1 ? 's' : '' }})",
       "test_fail": "An error occurred while connecting to the inbox, please check the parameters"
     },
-    "log": {
-      "title": "Server logs",
-      "date": "Date",
-      "tag": "Tag",
-      "message": "Message"
+    "monitoring": {
+      "background_tasks": "Background tasks",
+      "queued_tasks": "There is currently {{ count }} queued tasks.",
+      "queued_tasks_explain": "File processing, thumbnail creation, index update, optical character recognition are background tasks. A large amount of unprocessed tasks will result in incomplete search results.",
+      "server_logs": "Server logs",
+      "log_date": "Date",
+      "log_tag": "Tag",
+      "log_message": "Message"
     },
     "session": {
       "title": "Opened sessions",

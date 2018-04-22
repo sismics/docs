@@ -66,6 +66,8 @@ public class AppResource extends BaseResource {
      * @apiSuccess {String} current_version API current version
      * @apiSuccess {String} min_version API minimum version
      * @apiSuccess {Boolean} guest_login True if guest login is enabled
+     * @apiSuccess {String} default_language Default platform language
+     * @apiSuccess {Number} queued_tasks Number of queued tasks waiting to be processed
      * @apiSuccess {String} total_memory Allocated JVM memory (in bytes)
      * @apiSuccess {String} free_memory Free JVM memory (in bytes)
      * @apiSuccess {String} document_count Number of documents
@@ -97,6 +99,7 @@ public class AppResource extends BaseResource {
                 .add("min_version", minVersion)
                 .add("guest_login", guestLogin)
                 .add("default_language", defaultLanguage)
+                .add("queued_tasks", AppContext.getInstance().getQueuedTaskCount())
                 .add("total_memory", Runtime.getRuntime().totalMemory())
                 .add("free_memory", Runtime.getRuntime().freeMemory())
                 .add("document_count", documentDao.getDocumentCount())

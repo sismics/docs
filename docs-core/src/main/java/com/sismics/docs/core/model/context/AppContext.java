@@ -68,7 +68,7 @@ public class AppContext {
     /**
      * Asynchronous executors.
      */
-    private List<ExecutorService> asyncExecutorList;
+    private List<ThreadPoolExecutor> asyncExecutorList;
 
     /**
      * Start the application context.
@@ -179,6 +179,19 @@ public class AppContext {
             asyncExecutorList.add(executor);
             return new AsyncEventBus(executor);
         }
+    }
+
+    /**
+     * Return the current number of queued tasks waiting to be processed.
+     *
+     * @return Number of queued tasks
+     */
+    public int getQueuedTaskCount() {
+        int queueSize = 0;
+        for (ThreadPoolExecutor executor : asyncExecutorList) {
+            queueSize += executor.getQueue().size();
+        }
+        return queueSize;
     }
 
     public EventBus getAsyncEventBus() {

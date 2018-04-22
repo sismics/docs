@@ -118,12 +118,12 @@ angular.module('docs',
         }
       }
     })
-    .state('settings.log', {
-      url: '/log',
+    .state('settings.monitoring', {
+      url: '/monitoring',
       views: {
         'settings': {
-          templateUrl: 'partial/docs/settings.log.html',
-          controller: 'SettingsLog'
+          templateUrl: 'partial/docs/settings.monitoring.html',
+          controller: 'SettingsMonitoring'
         }
       }
     })
