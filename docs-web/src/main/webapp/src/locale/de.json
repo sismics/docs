@@ -17,8 +17,8 @@
     "password_lost_error_message": "Wenn Sie keine E-Mail zum Zurücksetzen des Passworts senden können, wenden Sie sich bitte an Ihren Administrator, um einen manuellen Reset durchzuführen."
   },
   "passwordlost": {
-    "title": " Passwort vergessen",
-    "message": " Bitte geben Sie Ihren Benutzernamen ein, um einen Link zum Zurücksetzen des Passworts zu erhalten. Wenn Sie Ihren Benutzernamen vergessen haben, wenden Sie sich bitte an Ihren Administrator.",
+    "title": "Passwort vergessen",
+    "message": "Bitte geben Sie Ihren Benutzernamen ein, um einen Link zum Zurücksetzen des Passworts zu erhalten. Wenn Sie Ihren Benutzernamen vergessen haben, wenden Sie sich bitte an Ihren Administrator.",
     "submit": "Passwort zurücksetzen"
   },
   "passwordreset": {
@@ -39,15 +39,19 @@
     "global_quota_warning": "<strong>Warnung!</strong> Der frei zur Verfügung stehende maximale Speicherplatz ist fast erreicht bei {{ current | number: 0 }}MB ({{ percent | number: 1 }}%) verwendet {{ total | number: 0 }}MB"
   },
   "document": {
+    "navigation_up": "Eine Stufe höher",
+    "toggle_navigation": "Navigation ein-/ausblenden",
     "search_simple": "Einfache Suche",
     "search_fulltext": "Volltext Suche",
     "search_creator": "Urheber",
     "search_language": "Sprache",
     "search_before_date": "Vor diesem Datum",
     "search_after_date": "Nach diesem Datum",
+    "search_before_update_date": "Bearbeitet bevor diesem Datum",
+    "search_after_update_date": "Bearbeitet nach diesem Datum",
     "search_tags": "Tags",
     "search_shared": "Nur freigegebene Dokumente",
-    "search_workflow": "Mir zugeordneter Workflow ",
+    "search_workflow": "Mir zugeordneter Workflow",
     "search_clear": "Leeren",
     "any_language": "Jede Sprache",
     "add_document": "Dokument hinzufügen",
@@ -80,6 +84,7 @@
     "upgrade_quota": "Fragen Sie Ihren Administrator, um Ihr Speicherplatz zu erweitern.",
     "quota": "{{ current | number: 0 }}MB ({{ percent | number: 1 }}%) verwendet von {{ total | number: 0 }}MB",
     "count": "{{ count }} Dokument{{ count > 1 ? 'e' : '' }} gefunden",
+    "last_updated": "Zuletzt bearbeitet {{ date | timeAgo: dateFormat }}",
     "view": {
       "delete_comment_title": "Kommentar löschen",
       "delete_comment_message": "Möchten Sie diesen Kommentar wirklich löschen?",
@@ -109,7 +114,9 @@
         "upload_error": "Fehler beim hochladen",
         "upload_error_quota": "Maximaler Speicherplatz erreicht",
         "drop_zone": "Drag & Drop Dateien hier her ziehen, um diese hochzuladen",
-        "add_files": "Dateien hinzufügen"
+        "add_files": "Dateien hinzufügen",
+        "file_processing_indicator": "Diese Datei wird gerade bearbeitet. Die Suche wird nicht verfügbar sein, bevor sie abgeschlossen ist.",
+        "reprocess_file": "Diese Datei erneut bearbeiten"
       },
       "workflow": {
         "workflow": "Workflow",
@@ -139,7 +146,6 @@
     "edit": {
       "document_edited_with_errors": "Dokument erfolgreich bearbeitet, aber einige Dateien konnten nicht hochgeladen werden",
       "document_added_with_errors": "Dokument erfolgreich erstellt, aber einige Dateien konnten nicht hochgeladen werden",
-      "document_added": "Dokument erfolgreich erstellt (with {{ count }} Datei{{ count > 1 ? 's' : '' }})",
       "quota_reached": "Maximaler Speicherplatz erreicht",
       "primary_metadata": "Primäre Metadaten",
       "title_placeholder": "Titel des Dokuments",
@@ -167,13 +173,15 @@
       "footer_sismics": "Programmiert mit <span class=\"fas fa-heart\"></span> by <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
       "api_documentation": "API Dokumentation",
       "feedback": "Geben Sie uns Feedback",
-      "workflow_document_list": "Mir zugeordnete Dokumente"
+      "workflow_document_list": "Mir zugeordnete Dokumente",
+      "select_all": "Alle auswählen",
+      "select_none": "Nichts auswählen"
     },
     "pdf": {
       "export_title": "Export als PDF",
       "export_metadata": "Export Metadaten",
       "export_comments": "Export Kommentare",
-      "fit_to_page": " Bild an Seite anpassen",
+      "fit_to_page": "Bild an Seite anpassen",
       "margin": "Rand",
       "millimeter": "mm"
     },
@@ -188,17 +196,20 @@
       "previous": "Vorheriges",
       "next": "Nächstes",
       "not_found": "Datei nicht gefunden"
+    },
+    "edit": {
+      "title": "Datei bearbeiten",
+      "name": "Dateinamen"
     }
   },
   "tag": {
     "new_tag": "Neuer Tag",
     "search": "Suche",
-    "edit_tag": "Tag bearbeiten",
     "default": {
       "title": "Tags",
-      "message_1": "<strong>Tags</strong> sind Kategorien, die den Dokumenten zugeordnet sind. ",
+      "message_1": "<strong>Tags</strong> sind Kategorien, die den Dokumenten zugeordnet sind.",
       "message_2": "Ein Dokument kann mit mehreren Tags versehen werden und ein Tag kann auf mehrere Dokumente angewendet werden.",
-      "message_3": " Verwendung der <span class=\"glyphicon glyphicon-pencil\"></span> Schaltfläche können Sie die Berechtigungen für ein Tag bearbeiten.",
+      "message_3": "Verwendung der <span class=\"glyphicon glyphicon-pencil\"></span> Schaltfläche können Sie die Berechtigungen für ein Tag bearbeiten.",
       "message_4": "Wenn ein Tag von einem anderen Benutzer oder einer anderen Gruppe gelesen werden kann, können die zugehörigen Dokumente auch von diesen Personen gelesen werden.",
       "message_5": "Kennzeichnen Sie z.B. Ihre Firmendokumente mit einem Tag <span class=\"label label-info\">MyCompany</span> und fügen Sie die Berechtigung <strong>Can read</strong> zu einer Gruppe hinzu <span class=\"btn btn-default\">employees</span>"
     },
@@ -251,7 +262,7 @@
     "menu_vocabularies": "Vokabulare",
     "menu_configuration": "Einstellungen",
     "menu_inbox": "Inbox scannen",
-    "menu_server_logs": "Server Logs",
+    "menu_monitoring": "Überwachung",
     "user": {
       "title": "Benutzerverwaltung",
       "add_user": "Benutzer hinzufügen",
@@ -274,7 +285,7 @@
         "password_confirm": "Passwort (bestätigen)",
         "disabled": "Deaktivierter Benutzer",
         "password_reset_btn": "Senden Sie eine E-Mail zum Zurücksetzen des Kennworts an diesen Benutzer",
-        "password_lost_sent_title": "Passwort zurücksetzen Email gesendet ",
+        "password_lost_sent_title": "Passwort zurücksetzen Email gesendet",
         "password_lost_sent_message": "Passwort zurücksetzen Email an <strong>{{ username }}</strong> gesendet."
       }
     },
@@ -289,21 +300,23 @@
         "edit_workflow_title": "Bearbeiten \"{{ name }}\"",
         "add_workflow_title": "Neuen Workflow hinzufügen",
         "name": "Name",
-        "name_placeholder": "Name des Bearbeitungschritts oder der Beschreibung ",
-        "drag_help": "Drag & Drop, um die Schritte neu zu ordnen ",
+        "name_placeholder": "Name des Bearbeitungschritts oder der Beschreibung",
+        "drag_help": "Drag & Drop, um die Schritte neu zu ordnen",
         "type": "Bearbeitungsschritt",
         "type_approve": "Genehmigen",
         "type_validate": "Bestätigen",
         "target": "Zugewiesen an",
         "target_help": "<strong>Zulassen:</strong> Überprüfen und fortsetzen des Workflows <br/><strong>Genemigen:</strong> Übernehmen oder lehnen Sie die Überprüfung ab",
-        "add_step": "Workflow Schritt hinzufügen"
+        "add_step": "Workflow Schritt hinzufügen",
+        "actions": "Was passiert danach?",
+        "remove_action": "Aktion entfernen"
       }
     },
     "security": {
       "enable_totp": "Zwei-Faktor-Authentifizierung aktivieren",
       "enable_totp_message": "Stellen Sie sicher, dass Sie eine TOTP-kompatible Anwendung auf Ihrem Handy haben, die bereit ist, ein neues Konto hinzuzufügen.",
       "title": "Zwei-Faktor-Authentifizierung",
-      "message_1": "Die Zwei-Faktor-Authentifizierung ermöglicht Ihnen eine weitere Abischerung Ihres {{ appName }} Benutzerkontos. Bevor Sie diese Funktion aktivieren, stellen Sie sicher, dass Sie eine TOTP-kompatible Anwendung auf Ihrem Telefon haben: ",
+      "message_1": "Die Zwei-Faktor-Authentifizierung ermöglicht Ihnen eine weitere Abischerung Ihres {{ appName }} Benutzerkontos. Bevor Sie diese Funktion aktivieren, stellen Sie sicher, dass Sie eine TOTP-kompatible Anwendung auf Ihrem Telefon haben:",
       "message_google_authenticator": "Für Android, iOS, und Blackberry: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>",
       "message_duo_mobile": "Für Android und iOS: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
       "message_authenticator": "Für Windows Phone: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">Authenticator</a>",
@@ -349,13 +362,13 @@
       "enable_guest_access": "Gastzugang aktivieren",
       "disable_guest_access": "Gastzugang deaktivieren",
       "title_theme": "Aussehen anpassen",
-      "title_general": "Allgemeine Konfiguration ",
-      "default_language": " Standardsprache für neue Dokumente ",
+      "title_general": "Allgemeine Konfiguration",
+      "default_language": "Standardsprache für neue Dokumente",
       "application_name": "Anwendungsname",
       "main_color": "Hauptfarbe",
       "custom_css": "Benutzerdefiniertes CSS",
-      "custom_css_placeholder": "Benutzerdefiniertes CSS, das nach dem Haupt-Stylesheet hinzugefügt werden soll ",
-      "logo": "Logo (quadratische Größe) ",
+      "custom_css_placeholder": "Benutzerdefiniertes CSS, das nach dem Haupt-Stylesheet hinzugefügt werden soll",
+      "logo": "Logo (quadratische Größe)",
       "background_image": "Hintergrundbild",
       "uploading_image": "Bild hochladen...",
       "title_smtp": "SMTP Email Einstellungen <small>für Passwort wiederherstellung</small",
@@ -380,11 +393,14 @@
       "test_success": "Die Verbindung zum Posteingang war erfolgreich ({{ count }} <strong>unread</strong> message{{ count > 1 ? 's' : '' }})",
       "test_fail": "Beim Verbinden mit dem Posteingang ist ein Fehler aufgetreten, bitte überprüfen Sie die Einstellungen"
     },
-    "log": {
-      "title": "Server Logs",
-      "date": "Datum",
-      "tag": "Tag",
-      "message": "Nachricht"
+    "monitoring": {
+      "background_tasks": "Hintergrundaufgaben",
+      "queued_tasks": "Es gibt derzeit {{ count }}} anstehende Tasks.",
+      "queued_tasks_explain": "Dateiverarbeitung, Thumbnail-Erstellung, Index-Update, optische Zeichenerkennung sind Hintergrundaufgaben. Eine große Anzahl unbearbeiteter Aufgaben führt zu unvollständigen Suchergebnissen.",
+      "server_logs": "Server logs",
+      "log_date": "Datum",
+      "log_tag": "Tag",
+      "log_message": "Nachricht"
     },
     "session": {
       "title": "Geöffnete Sitzungen",
@@ -400,7 +416,7 @@
       "title": "Vokabulareinträge",
       "choose_vocabulary": "Wählen Sie ein Vokabular aus, das Sie bearbeiten möchten.",
       "type": "Typ",
-      "Geltungsbereich": "Geltungsbereich",
+      "coverage": "Abdeckung",
       "rights": "Rechte",
       "value": "Wert",
       "order": "Reihenfolge",
@@ -408,7 +424,7 @@
     },
     "fileimporter": {
       "title": "Massen Datei Importeur",
-      "advanced_users": "Für fortgeschrittene Benutzer! ",
+      "advanced_users": "Für fortgeschrittene Benutzer!",
       "need_intro": "Wenn Sie:",
       "need_1": "Ganze Verzeichnisse von Dateien auf einmal importieren möchten",
       "need_2": "Ein Verzeichnis nach neuen Dateien durchsuchen lassen und gefunden Dateien importieren lassen möchten",
@@ -427,8 +443,8 @@
   },
   "import": {
     "title": "Wird importiert",
-    "error_quota": "Speicher Limit erreicht, kontaktieren Sie Ihren Administrator, um den Ihnen zur verfügung gestellten Speicherplatz zu erhöhen. ",
-    "error_general": "Beim Versuch, Ihre Datei zu importieren, ist ein Fehler aufgetreten. Bitte stellen Sie sicher, dass es sich um eine gültige EML-Datei handelt."  
+    "error_quota": "Speicher Limit erreicht, kontaktieren Sie Ihren Administrator, um den Ihnen zur verfügung gestellten Speicherplatz zu erhöhen.",
+    "error_general": "Beim Versuch, Ihre Datei zu importieren, ist ein Fehler aufgetreten. Bitte stellen Sie sicher, dass es sich um eine gültige EML-Datei handelt."
   },
   "app_share": {
     "main": "Fragen Sie nach einen Link zu einem gemeinsam genutzten Dokument, um darauf zuzugreifen.",
@@ -494,13 +510,18 @@
     "VALIDATED": "Validiert"
   },
   "validation": {
-    "required": "Erfordert ",
+    "required": "Erfordert",
     "too_short": "Zu kurz",
     "too_long": "Zu lang",
     "email": "Muss eine gültige E-Mailadresse sein",
     "password_confirm": "Passwort und Passwortbestätigung müssen übereinstimmen",
     "number": "Nummer erfoderlich",
     "no_space": "Leerzeichen sind nicht erlaubt"
+  },
+  "action_type": {
+    "ADD_TAG": "Tag hinzufügen",
+    "REMOVE_TAG": "Tag entfernen",
+    "PROCESS_FILES": "Dateien bearbeiten"
   },
   "pagination": {
     "previous": "Vorherige",
@@ -520,9 +541,9 @@
   "export": "Exportieren",
   "edit": "Bearbeiten",
   "delete": "Löschen",
-  "loading": "Laden...",
-  "send": "Sendenen",
+  "rename": "Umbenennen",
+  "loading": "Lädt...",
+  "send": "Gesendet",
   "enabled": "Aktiviert",
   "disabled": "Deaktiviert"
 }
-

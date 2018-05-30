@@ -39,13 +39,19 @@
     "global_quota_warning": "<strong>Attention !</strong> Quota global presque atteint à {{ current | number: 0 }}Mo ({{ percent | number: 1 }}%) utilisé sur {{ total | number: 0 }}Mo"
   },
   "document": {
+    "navigation_up": "Monter d'un niveau",
+    "toggle_navigation": "Activer la navigation par dossier",
     "search_simple": "Recherche simple",
     "search_fulltext": "Recherche texte intégral",
     "search_creator": "Créateur",
     "search_language": "Langue",
-    "search_before_date": "Avant cette date",
-    "search_after_date": "Après cette date",
+    "search_before_date": "Créé avant cette date",
+    "search_after_date": "Créé après cette date",
+    "search_before_update_date": "Mis à jour avant cette date",
+    "search_after_update_date": "Mis à jour après cette date",
     "search_tags": "Tags",
+    "search_shared": "Seulement les documents partagés",
+    "search_workflow": "Workflow assigné à moi",
     "search_clear": "Vider",
     "any_language": "Toutes les langues",
     "add_document": "Ajouter un document",
@@ -56,6 +62,7 @@
     "search": "Rechercher",
     "search_empty": "Aucun résultat pour <strong>\"{{ search }}\"</strong>",
     "shared": "Partagé",
+    "current_step_name": "Étape en cours",
     "title": "Titre",
     "description": "Description",
     "contributors": "Contributeurs",
@@ -77,6 +84,7 @@
     "upgrade_quota": "Pour augmenter votre quota, veuillez contacter votre administrateur",
     "quota": "{{ current | number: 0 }}Mo ({{ percent | number: 1 }}%) utilisé sur {{ total | number: 0 }}MB",
     "count": "{{ count }} document{{ count > 1 ? 's' : '' }} trouvé{{ count > 1 ? 's' : '' }}",
+    "last_updated": "Dernière mise à jour {{ date | timeAgo: dateFormat }}",
     "view": {
       "delete_comment_title": "Supprimer un commentaire",
       "delete_comment_message": "Etes-vous sûr de vouloir supprimer ce commentaire ?",
@@ -106,7 +114,9 @@
         "upload_error": "Erreur d'envoi",
         "upload_error_quota": "Quota atteint",
         "drop_zone": "Glisser & déposer des fichiers ici pour les envoyer",
-        "add_files": "Ajouter des fichiers"
+        "add_files": "Ajouter des fichiers",
+        "file_processing_indicator": "Ce fichier est en cours de traitement. La recherche ne sera pas disponible avant la fin du traitement.",
+        "reprocess_file": "Retraiter ce fichier"
       },
       "workflow": {
         "workflow": "Workflow",
@@ -136,7 +146,6 @@
     "edit": {
       "document_edited_with_errors": "Document modifié avec succès, mais certains fichiers n'ont pu être envoyés",
       "document_added_with_errors": "Document ajouté avec succès, mais certains fichiers n'ont pu être envoyés",
-      "document_added": "Document ajouté avec succès (avec {{ count }} fichier{{ count > 1 ? 's' : '' }})",
       "quota_reached": "Quota atteint",
       "primary_metadata": "Métadonnées principales",
       "title_placeholder": "Titre principal du document",
@@ -163,7 +172,10 @@
       "latest_activity": "Activité récente",
       "footer_sismics": "Conçu avec <span class=\"fas fa-heart\"></span> par <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
       "api_documentation": "Documentation API",
-      "feedback": "Donnez-nous votre avis"
+      "feedback": "Donnez-nous votre avis",
+      "workflow_document_list": "Documents qui vous sont assignés",
+      "select_all": "Tout sélectionner",
+      "select_none": "Tout déselectionner"
     },
     "pdf": {
       "export_title": "Exporter en PDF",
@@ -184,12 +196,15 @@
       "previous": "Précédent",
       "next": "Suivant",
       "not_found": "Fichier introuvable"
+    },
+    "edit": {
+      "title": "Modifier le fichier",
+      "name": "Nom de fichier"
     }
   },
   "tag": {
     "new_tag": "Nouveau tag",
     "search": "Rechercher",
-    "edit_tag": "Modifier le tag",
     "default": {
       "title": "Tags",
       "message_1": "Les <strong>Tags</strong> sont des libellés associés aux documents.",
@@ -239,6 +254,7 @@
     "menu_user_account": "Compte utilisateur",
     "menu_two_factor_auth": "Authentification en deux étapes",
     "menu_opened_sessions": "Sessions ouvertes",
+    "menu_file_importer": "Importateur de fichiers en masse",
     "menu_general_settings": "Paramètres généraux",
     "menu_workflow": "Workflow",
     "menu_users": "Utilisateurs",
@@ -246,7 +262,7 @@
     "menu_vocabularies": "Vocabulaires",
     "menu_configuration": "Configuration",
     "menu_inbox": "Scanning de boîte de réception",
-    "menu_server_logs": "Logs serveur",
+    "menu_monitoring": "Monitoring",
     "user": {
       "title": "Gestion des utilisateurs",
       "add_user": "Ajouter un utilisateur",
@@ -290,8 +306,10 @@
         "type_approve": "Approbation",
         "type_validate": "Validation",
         "target": "Assigné à",
-        "target_help": "<strong>Approbation :</strong> Examiner et poursuivre le workflow<br/><strong>Validation :</strong> Accepter ou rejeter l'étape de workflow",
-        "add_step": "Ajouter une étape de workflow"
+        "target_help": "<strong>Approbation :</strong> Accepter ou rejeter l'étape de workflow<br/><strong>Validation :</strong> Examiner et poursuivre le workflow",
+        "add_step": "Ajouter une étape de workflow",
+        "actions": "Qu'est-ce qui se passe après?",
+        "remove_action": "Supprimer l'action"
       }
     },
     "security": {
@@ -363,7 +381,7 @@
     },
     "inbox": {
       "title": "Scanning de boîte de réception",
-      "message": "En activant cette fonctionnalité, le système scanne périodiquement la boîte de réception spécifiée pour rechercher de nouveaux messages et les importer automatiquement.",
+      "message": "En activant cette fonctionnalité, le système scanne périodiquement la boîte de réception spécifiée pour rechercher de nouveaux messages et les importer automatiquement.<br/>Après l'importation d'un email, celui-ci sera marqué comme lu.<br/>Paramétrage pour <a href=\"https://support.google.com/mail/answer/7126229?hl=fr\" target=\"_blank\">Gmail</a>, <a href = \"https: // support. office.com/fr-fr/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040 \"target =\" _ blank \">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
       "enabled": "Activer le scan de boîte de réception",
       "hostname": "Nom d'hôte IMAP",
       "port": "Port IMAP (143 ou 993)",
@@ -371,15 +389,18 @@
       "password": "Mot de passe IMAP",
       "tag": "Tag ajouté aux documents importés",
       "test": "Tester les paramètres",
-      "last_sync": "Dernière synchronisation : {{ data.date | date }}, {{ data.count }} message{{ data.count> 1 ? 's' : '' }} importé{{ data.count> 1 ? 's' : '' }}",
-      "test_success": "La connexion à la boîte de réception est réussie ({{ count }} message{{ count> 1 ? 's' : '' }})",
+      "last_sync": "Dernière synchronisation : {{ data.date | date: 'medium' }}, {{ data.count }} message{{ data.count> 1 ? 's' : '' }} importé{{ data.count> 1 ? 's' : '' }}",
+      "test_success": "La connexion à la boîte de réception est réussie ({{ count }} message{{ count> 1 ? 's' : '' }}) non lus",
       "test_fail": "Une erreur est survenue lors de la connexion à la boîte de réception, veuillez vérifier les paramètres"
     },
-    "log": {
-      "title": "Logs serveur",
-      "date": "Date",
-      "tag": "Tag",
-      "message": "Message"
+    "monitoring": {
+      "background_tasks": "Tâches d'arrière-plan",
+      "queued_tasks": "Il y a actuellement {{ count }} tâches en file d'attente.",
+      "queued_tasks_explain": "Le traitement de fichiers, la création de vignettes, la mise à jour d'index, la reconnaissance optique de caractères sont des tâches d'arrière-plan. Une grande quantité de tâches non traitées entraînera des résultats de recherche incomplets.",
+      "server_logs": "Logs serveur",
+      "log_date": "Date",
+      "log_tag": "Tag",
+      "log_message": "Message"
     },
     "session": {
       "title": "Sessions ouvertes",
@@ -400,6 +421,18 @@
       "value": "Valeur",
       "order": "Ordre",
       "new_entry": "Nouvelle entrée"
+    },
+    "fileimporter": {
+      "title": "Importateur de fichiers en masse",
+      "advanced_users": "Pour les utilisateurs avancés !",
+      "need_intro": "Si vous avez besoin de :",
+      "need_1": "Importer un répertoire en une fois",
+      "need_2": "Analyser un répertoire à la recherche de nouveaux fichiers et les importer",
+      "line_1": "Allez sur <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> et téléchargez l'outil d'importation de fichiers pour votre système.",
+      "line_2": "Suivez les <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">instructions ici</a> pour utiliser cet outil.",
+      "line_3": "Vos fichiers seront importés dans <a href=\"#/document\">Envoi rapide</a>, vous pouvez ensuite les regrouper dans des documents.",
+      "download": "Télécharger",
+      "instructions": "Instructions"
     }
   },
   "feedback": {
@@ -485,6 +518,11 @@
     "number": "Nombre requis",
     "no_space": "Les espaces ne sont pas autorisés"
   },
+  "action_type": {
+    "ADD_TAG": "Ajouter un tag",
+    "REMOVE_TAG": "Supprimer un tag",
+    "PROCESS_FILES": "Traiter les fichiers"
+  },
   "pagination": {
     "previous": "Précédent",
     "next": "Suivant",
@@ -503,6 +541,7 @@
   "export": "Exporter",
   "edit": "Modifier",
   "delete": "Supprimer",
+  "rename": "Renommer",
   "loading": "Chargement...",
   "send": "Envoyer",
   "enabled": "Activé",
