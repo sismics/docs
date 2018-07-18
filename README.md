@@ -59,7 +59,11 @@ Install with Docker
 From a Docker host, run this command to download and install Sismics Docs. The server will run on <http://[your-docker-host-ip]:8100>.
 **The default admin password is "admin". Don't forget to change it before going to production.**
 
-    docker run --rm --name sismics_docs_latest -d -p 8100:8080 -v sismics_docs_latest:/data sismics/docs:latest
+    docker run --rm --name sismics_docs_latest -d -e DOCS_BASE_URL='http://[your-docker-host-ip]:8100' -p 8100:8080 -v sismics_docs_latest:/data sismics/docs:latest
+  <img src="http://www.newdesignfile.com/postpic/2011/01/green-info-icon_206509.png" width="16px" height="16px">  **Note:** You will need to change [your-docker-host-ip] with the IP address or FQDN of your docker host e.g.
+  
+  FQDN: http://docs.sismics.com  
+  IP: http://192.168.100.10
 
 Manual installation
 -------------------
