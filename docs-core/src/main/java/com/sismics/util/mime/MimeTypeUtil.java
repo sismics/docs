@@ -59,7 +59,8 @@ public class MimeTypeUtil {
             return MimeType.IMAGE_PNG;
         } else if (headerBytes[0] == ((byte) 0x25) && headerBytes[1] == ((byte) 0x50) && headerBytes[2] == ((byte) 0x44) && headerBytes[3] == ((byte) 0x46)) {
             return MimeType.APPLICATION_PDF;
-        } else if (headerBytes[0] == ((byte) 0x00) && headerBytes[1] == ((byte) 0x00) && headerBytes[2] == ((byte) 0x00) && (headerBytes[3] == ((byte) 0x14) || headerBytes[3] == ((byte) 0x18))
+        } else if (headerBytes[0] == ((byte) 0x00) && headerBytes[1] == ((byte) 0x00) && headerBytes[2] == ((byte) 0x00)
+                && (headerBytes[3] == ((byte) 0x14) || headerBytes[3] == ((byte) 0x18) || headerBytes[3] == ((byte) 0x20))
                 && headerBytes[4] == ((byte) 0x66) && headerBytes[5] == ((byte) 0x74) && headerBytes[6] == ((byte) 0x79) && headerBytes[7] == ((byte) 0x70)) {
             return MimeType.VIDEO_MP4;
         } else if (headerBytes[0] == ((byte) 0x1a) && headerBytes[1] == ((byte) 0x45) && headerBytes[2] == ((byte) 0xdf) && headerBytes[3] == ((byte) 0xa3)) {
