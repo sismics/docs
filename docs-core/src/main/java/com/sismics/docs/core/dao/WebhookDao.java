@@ -36,6 +36,10 @@ public class WebhookDao {
         sb.append(" from T_WEBHOOK w ");
 
         // Add search criterias
+        if (criteria.getEvent() != null) {
+            criteriaList.add("w.WHK_EVENT_C = :event");
+            parameterMap.put("event", criteria.getEvent().name());
+        }
         criteriaList.add("w.WHK_DELETEDATE_D is null");
 
         if (!criteriaList.isEmpty()) {

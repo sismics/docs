@@ -67,6 +67,7 @@ public class WebhookResource extends BaseResource {
      * Add a webhook.
      *
      * @api {put} /webhook Add a webhook
+     * @apiDescription Each time the specified event is raised, the webhook URL will be POST-ed with the following JSON payload: {"event": "Event name", "id": "ID of the document or file"}
      * @apiName PutWebhook
      * @apiWebhook Webhook
      * @apiParam {String="DOCUMENT_CREATED","DOCUMENT_UPDATED","DOCUMENT_DELETED","FILE_CREATED","FILE_UPDATED","FILE_DELETED"} event Event

@@ -48,6 +48,7 @@
     <com.icegreen.greenmail.version>1.5.7</com.icegreen.greenmail.version>
     <com.sun.mail.javax.mail.version>1.5.6</com.sun.mail.javax.mail.version>
     <org.jsoup.jsoup.version>1.11.2</org.jsoup.jsoup.version>
+    <com.squareup.okhttp3.okhttp.version>3.11.0</com.squareup.okhttp3.okhttp.version>
 
     <org.eclipse.jetty.jetty-server.version>9.3.11.v20160721</org.eclipse.jetty.jetty-server.version>
     <org.eclipse.jetty.jetty-webapp.version>9.3.11.v20160721</org.eclipse.jetty.jetty-webapp.version>
@@ -222,6 +223,12 @@
         <groupId>org.jsoup</groupId>
         <artifactId>jsoup</artifactId>
         <version>${org.jsoup.jsoup.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp</artifactId>
+        <version>${com.squareup.okhttp3.okhttp.version}</version>
       </dependency>
 
       <dependency>
