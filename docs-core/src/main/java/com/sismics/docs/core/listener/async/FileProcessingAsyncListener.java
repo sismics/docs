@@ -69,6 +69,7 @@ public class FileProcessingAsyncListener {
      * @param event File updated event
      */
     @Subscribe
+    @AllowConcurrentEvents
     public void on(final FileUpdatedAsyncEvent event) {
         if (log.isInfoEnabled()) {
             log.info("File updated event: " + event.toString());
