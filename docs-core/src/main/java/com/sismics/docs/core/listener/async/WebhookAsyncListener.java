@@ -48,7 +48,7 @@ public class WebhookAsyncListener {
     @Subscribe
     @AllowConcurrentEvents
     public void on(final DocumentDeletedAsyncEvent event) {
-        triggerWebhook(WebhookEvent.DOCUMENT_UPDATED, event.getDocumentId());
+        triggerWebhook(WebhookEvent.DOCUMENT_DELETED, event.getDocumentId());
     }
 
     @Subscribe

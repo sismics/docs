@@ -82,4 +82,30 @@ angular.module('docs').controller('SettingsConfig', function($scope, $rootScope,
   $scope.editGeneralConfig = function () {
     Restangular.one('app').post('config', $scope.general);
   };
+
+  // Get the webhooks
+  $scope.loadWebhooks = function () {
+    Restangular.one('webhook').get().then(function (data) {
+      $scope.webhooks = data.webhooks;
+    });
+  };
+
+  $scope.loadWebhooks();
+
+  // Add a webhook
+  $scope.webhook = {
+    event: 'DOCUMENT_CREATED'
+  };
+  $scope.addWebhook = function () {
+    Restangular.one('webhook').put($scope.webhook).then(function () {
+      $scope.loadWebhooks();
+    })
+  };
+
+  // Delete a webhook
+  $scope.deleteWebhook = function (webhook) {
+    Restangular.one('webhook', webhook.id).remove().then(function () {
+      $scope.loadWebhooks();
+    });
+  };
 });

@@ -377,7 +377,13 @@
       "smtp_from": "Sender e-mail",
       "smtp_username": "SMTP username",
       "smtp_password": "SMTP password",
-      "smtp_updated": "SMTP configuration updated successfully"
+      "smtp_updated": "SMTP configuration updated successfully",
+      "webhooks": "Webhooks",
+      "webhooks_explain": "Webhooks will be called when the specified event occur. The given URL will be POST-ed with a JSON payload containing the event name and the ID of the concerned resource.",
+      "webhook_event": "Event",
+      "webhook_url": "URL",
+      "webhook_create_date": "Create date",
+      "webhook_add": "Add a webhook"
     },
     "inbox": {
       "title": "Inbox scanning",

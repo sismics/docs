@@ -29,7 +29,7 @@ public class WebhookResource extends BaseResource {
      *
      * @api {get} /webhook Get webhooks
      * @apiName GetWebhook
-     * @apiWebhook Webhook
+     * @apiGroup Webhook
      * @apiSuccess {Object[]} webhooks List of webhooks
      * @apiSuccess {String} webhooks.id ID
      * @apiSuccess {String} webhooks.event Event
@@ -69,7 +69,7 @@ public class WebhookResource extends BaseResource {
      * @api {put} /webhook Add a webhook
      * @apiDescription Each time the specified event is raised, the webhook URL will be POST-ed with the following JSON payload: {"event": "Event name", "id": "ID of the document or file"}
      * @apiName PutWebhook
-     * @apiWebhook Webhook
+     * @apiGroup Webhook
      * @apiParam {String="DOCUMENT_CREATED","DOCUMENT_UPDATED","DOCUMENT_DELETED","FILE_CREATED","FILE_UPDATED","FILE_DELETED"} event Event
      * @apiParam {String} url URL
      * @apiSuccess {String} status Status OK
@@ -109,7 +109,7 @@ public class WebhookResource extends BaseResource {
      *
      * @api {delete} /webhook/:id Delete a webhook
      * @apiName DeleteWebhook
-     * @apiWebhook Webhook
+     * @apiGroup Webhook
      * @apiParam {String} id Webhook ID
      * @apiSuccess {String} status Status OK
      * @apiError (client) ForbiddenError Access denied

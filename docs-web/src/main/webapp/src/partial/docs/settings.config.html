@@ -143,3 +143,57 @@
     </div>
   </div>
 </form>
+
+<h2 translate="settings.config.webhooks"></h2>
+<p translate="settings.config.webhooks_explain"></p>
+
+<form class="form-horizontal" name="webhookForm" novalidate>
+  <div class="form-group">
+    <label class="col-sm-2 control-label" for="webhookEvent">{{ 'settings.config.webhook_event' | translate }}</label>
+    <div class="col-sm-7">
+      <select name="event" class="form-control" id="webhookEvent" ng-model="webhook.event" required>
+        <option>DOCUMENT_CREATED</option>
+        <option>DOCUMENT_UPDATED</option>
+        <option>DOCUMENT_DELETED</option>
+        <option>FILE_CREATED</option>
+        <option>FILE_UPDATED</option>
+        <option>FILE_DELETED</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group" ng-class="{ 'has-error': !webhookForm.url.$valid && webhookForm.$dirty }">
+    <label class="col-sm-2 control-label" for="webhookUrl">{{ 'settings.config.webhook_url' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="url" type="text" class="form-control" id="webhookUrl" ng-model="webhook.url" required />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary" ng-click="addWebhook()" ng-disabled="!webhookForm.$valid">
+        <span class="fas fa-plus"></span> {{ 'settings.config.webhook_add' | translate }}
+      </button>
+    </div>
+  </div>
+</form>
+
+<div class="col-sm-10">
+  <table class="table" ng-show="webhooks.length > 0">
+    <tr>
+      <th style="width: 20%">{{ 'settings.config.webhook_event' | translate }}</th>
+      <th>{{ 'settings.config.webhook_url' | translate }}</th>
+      <th style="width: 20%">{{ 'settings.config.webhook_create_date' | translate }}</th>
+      <th style="width: 10%"></th>
+    </tr>
+
+    <tr ng-repeat="webhook in webhooks">
+      <td>{{ webhook.event }}</td>
+      <td>{{ webhook.url }}</td>
+      <td>{{ webhook.create_date | date: dateFormat }}</td>
+      <td>
+        <span ng-click="deleteWebhook(webhook)" class="fas fa-trash pointer text-danger"></span>
+      </td>
+    </tr>
+  </table>
+</div>
