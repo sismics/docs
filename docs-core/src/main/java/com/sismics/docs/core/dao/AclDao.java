@@ -128,8 +128,9 @@ public class AclDao {
         StringBuilder sb = new StringBuilder("select a.ACL_ID_C from T_ACL a ");
         sb.append(" where a.ACL_TARGETID_C in (:targetIdList) and a.ACL_SOURCEID_C = :sourceId and a.ACL_PERM_C = :perm and a.ACL_DELETEDATE_D is null ");
         sb.append(" union all ");
-        sb.append(" select a.ACL_ID_C from T_ACL a, T_DOCUMENT_TAG dt ");
-        sb.append(" where a.ACL_SOURCEID_C = dt.DOT_IDTAG_C and dt.DOT_IDDOCUMENT_C = :sourceId and dt.DOT_DELETEDATE_D is null ");
+        sb.append(" select a.ACL_ID_C from T_ACL a, T_DOCUMENT_TAG dt, T_DOCUMENT d ");
+        sb.append(" where a.ACL_SOURCEID_C = dt.DOT_IDTAG_C and dt.DOT_IDDOCUMENT_C = d.DOC_ID_C and dt.DOT_DELETEDATE_D is null ");
+        sb.append(" and d.DOC_ID_C = :sourceId and d.DOC_DELETEDATE_D is null ");
         sb.append(" and a.ACL_TARGETID_C in (:targetIdList) and a.ACL_PERM_C = :perm and a.ACL_DELETEDATE_D is null ");
         Query q = em.createNativeQuery(sb.toString());
         q.setParameter("sourceId", sourceId);
