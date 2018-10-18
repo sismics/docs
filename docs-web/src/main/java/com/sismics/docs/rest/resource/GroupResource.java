@@ -1,7 +1,9 @@
 package com.sismics.docs.rest.resource;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 import com.sismics.docs.core.dao.GroupDao;
+import com.sismics.docs.core.dao.RoleBaseFunctionDao;
 import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.dao.criteria.GroupCriteria;
 import com.sismics.docs.core.dao.criteria.UserCriteria;
@@ -24,6 +26,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Group REST resources.
@@ -184,6 +187,15 @@ public class GroupResource extends BaseResource {
         Group group = groupDao.getActiveByName(groupName);
         if (group == null) {
             throw new NotFoundException();
+        }
+
+        // Ensure that the admin group is not deleted
+        if (group.getRoleId() != null) {
+            RoleBaseFunctionDao roleBaseFunctionDao = new RoleBaseFunctionDao();
+            Set<String> baseFunctionSet = roleBaseFunctionDao.findByRoleId(Sets.newHashSet(group.getRoleId()));
+            if (baseFunctionSet.contains(BaseFunction.ADMIN.name())) {
+                throw new ClientException("ForbiddenError", "The administrators group cannot be deleted");
+            }
         }
         
         // Delete the group

@@ -216,7 +216,7 @@ public class TestRouteResource extends BaseJerseyTest {
                         .param("documentId", document1Id)
                         .param("transition", "APPROVED")), JsonObject.class);
         Assert.assertFalse(json.containsKey("route_step"));
-        Assert.assertFalse(json.getBoolean("readable"));
+        Assert.assertTrue(json.getBoolean("readable")); // Admin can read everything
         Assert.assertTrue(popEmail().contains("workflow step"));
 
         // Get the route on document 1
@@ -239,10 +239,9 @@ public class TestRouteResource extends BaseJerseyTest {
         Assert.assertEquals("APPROVED", step.getString("transition"));
 
         // Get document 1 as admin
-        Response response = target().path("/document/" + document1Id).request()
+        target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
-                .get();
-        Assert.assertEquals(Response.Status.NOT_FOUND, Response.Status.fromStatusCode(response.getStatus()));
+                .get(JsonObject.class);
 
         // Get document 1 as route1
         json = target().path("/document/" + document1Id).request()
@@ -265,7 +264,7 @@ public class TestRouteResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
         documents = json.getJsonArray("documents");
-        Assert.assertEquals(0, documents.size());
+        Assert.assertEquals(1, documents.size()); // Admin can read all documents
 
         // Start the default route on document 1
         target().path("/route/start").request()
@@ -282,7 +281,7 @@ public class TestRouteResource extends BaseJerseyTest {
         Assert.assertTrue(json.containsKey("route_step"));
 
         // Get document 1 as admin
-        response = target().path("/document/" + document1Id).request()
+        Response response = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get();
         Assert.assertEquals(Response.Status.OK, Response.Status.fromStatusCode(response.getStatus()));
@@ -328,10 +327,9 @@ public class TestRouteResource extends BaseJerseyTest {
         Assert.assertFalse(json.containsKey("route_step"));
 
         // Get document 1 as admin
-        response = target().path("/document/" + document1Id).request()
+        target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
-                .get();
-        Assert.assertEquals(Response.Status.NOT_FOUND, Response.Status.fromStatusCode(response.getStatus()));
+                .get(JsonObject.class); // Admin can see all documents
 
         // List all documents with route1
         json = target().path("/document/list")
@@ -348,7 +346,7 @@ public class TestRouteResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
         documents = json.getJsonArray("documents");
-        Assert.assertEquals(0, documents.size());
+        Assert.assertEquals(1, documents.size());
     }
 
     /**

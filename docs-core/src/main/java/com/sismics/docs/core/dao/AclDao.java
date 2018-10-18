@@ -7,6 +7,7 @@ import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.dto.AclDto;
 import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.util.AuditLogUtil;
+import com.sismics.docs.core.util.SecurityUtil;
 import com.sismics.util.context.ThreadLocalContext;
 
 import javax.persistence.EntityManager;
@@ -124,6 +125,10 @@ public class AclDao {
      * @return True if the document is accessible
      */
     public boolean checkPermission(String sourceId, PermType perm, List<String> targetIdList) {
+        if (SecurityUtil.skipAclCheck(targetIdList)) {
+            return true;
+        }
+
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         StringBuilder sb = new StringBuilder("select a.ACL_ID_C from T_ACL a ");
         sb.append(" where a.ACL_TARGETID_C in (:targetIdList) and a.ACL_SOURCEID_C = :sourceId and a.ACL_PERM_C = :perm and a.ACL_DELETEDATE_D is null ");

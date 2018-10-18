@@ -33,7 +33,7 @@
     <org.mindrot.jbcrypt>0.3m</org.mindrot.jbcrypt>
     <org.apache.lucene.version>5.5.0</org.apache.lucene.version>
     <org.imgscalr.imgscalr-lib.version>4.2</org.imgscalr.imgscalr-lib.version>
-    <org.apache.pdfbox.pdfbox.version>2.0.8</org.apache.pdfbox.pdfbox.version>
+    <org.apache.pdfbox.pdfbox.version>2.0.12</org.apache.pdfbox.pdfbox.version>
     <org.bouncycastle.bcprov-jdk15on.version>1.54</org.bouncycastle.bcprov-jdk15on.version>
     <joda-time.joda-time.version>2.9.2</joda-time.joda-time.version>
     <org.hibernate.hibernate.version>5.1.0.Final</org.hibernate.hibernate.version>

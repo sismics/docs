@@ -12,6 +12,7 @@ import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.DirectoryUtil;
+import com.sismics.docs.core.util.SecurityUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.QueryParam;
@@ -229,11 +230,13 @@ public class LuceneIndexingHandler implements IndexingHandler {
 
         // Add search criterias
         if (criteria.getTargetIdList() != null) {
-            // Read permission is enough for searching
-            sb.append(" left join T_ACL a on a.ACL_TARGETID_C in (:targetIdList) and a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_PERM_C = 'READ' and a.ACL_DELETEDATE_D is null ");
-            sb.append(" left join T_DOCUMENT_TAG dta on dta.DOT_IDDOCUMENT_C = d.DOC_ID_C and dta.DOT_DELETEDATE_D is null ");
-            sb.append(" left join T_ACL a2 on a2.ACL_TARGETID_C in (:targetIdList) and a2.ACL_SOURCEID_C = dta.DOT_IDTAG_C and a2.ACL_PERM_C = 'READ' and a2.ACL_DELETEDATE_D is null ");
-            criteriaList.add("(a.ACL_ID_C is not null or a2.ACL_ID_C is not null)");
+            if (!SecurityUtil.skipAclCheck(criteria.getTargetIdList())) {
+                // Read permission is enough for searching
+                sb.append(" left join T_ACL a on a.ACL_TARGETID_C in (:targetIdList) and a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_PERM_C = 'READ' and a.ACL_DELETEDATE_D is null ");
+                sb.append(" left join T_DOCUMENT_TAG dta on dta.DOT_IDDOCUMENT_C = d.DOC_ID_C and dta.DOT_DELETEDATE_D is null ");
+                sb.append(" left join T_ACL a2 on a2.ACL_TARGETID_C in (:targetIdList) and a2.ACL_SOURCEID_C = dta.DOT_IDTAG_C and a2.ACL_PERM_C = 'READ' and a2.ACL_DELETEDATE_D is null ");
+                criteriaList.add("(a.ACL_ID_C is not null or a2.ACL_ID_C is not null)");
+            }
             parameterMap.put("targetIdList", criteria.getTargetIdList());
         }
         if (!Strings.isNullOrEmpty(criteria.getSearch()) || !Strings.isNullOrEmpty(criteria.getFullSearch())) {

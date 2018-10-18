@@ -6,6 +6,8 @@ import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.model.jpa.Group;
 import com.sismics.docs.core.model.jpa.User;
 
+import java.util.List;
+
 /**
  * Security utilities.
  *
@@ -36,5 +38,15 @@ public class SecurityUtil {
         }
 
         return null;
+    }
+
+    /**
+     * Return true if the ACL targets provided don't need security checks (administrator users).
+     *
+     * @param targetIdList Target ID list
+     * @return True if skip ACL checks
+     */
+    public static boolean skipAclCheck(List<String> targetIdList) {
+        return targetIdList.contains("admin") || targetIdList.contains("administrators");
     }
 }

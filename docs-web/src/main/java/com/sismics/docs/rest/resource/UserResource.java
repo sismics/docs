@@ -445,7 +445,7 @@ public class UserResource extends BaseResource {
             throw new ForbiddenClientException();
         }
         
-        // Ensure that the admin user is not deleted
+        // Ensure that the admin or guest users are not deleted
         if (hasBaseFunction(BaseFunction.ADMIN) || principal.isGuest()) {
             throw new ClientException("ForbiddenError", "This user cannot be deleted");
         }
@@ -519,8 +519,8 @@ public class UserResource extends BaseResource {
         }
         
         // Ensure that the admin user is not deleted
-        RoleBaseFunctionDao userBaseFuction = new RoleBaseFunctionDao();
-        Set<String> baseFunctionSet = userBaseFuction.findByRoleId(Sets.newHashSet(user.getRoleId()));
+        RoleBaseFunctionDao roleBaseFunctionDao = new RoleBaseFunctionDao();
+        Set<String> baseFunctionSet = roleBaseFunctionDao.findByRoleId(Sets.newHashSet(user.getRoleId()));
         if (baseFunctionSet.contains(BaseFunction.ADMIN.name())) {
             throw new ClientException("ForbiddenError", "The admin user cannot be deleted");
         }

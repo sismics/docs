@@ -7,6 +7,7 @@ import com.sismics.docs.core.dao.dto.TagDto;
 import com.sismics.docs.core.model.jpa.DocumentTag;
 import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.docs.core.util.AuditLogUtil;
+import com.sismics.docs.core.util.SecurityUtil;
 import com.sismics.docs.core.util.jpa.QueryParam;
 import com.sismics.docs.core.util.jpa.QueryUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -185,7 +186,7 @@ public class TagDao {
             criteriaList.add("t.TAG_ID_C = :id");
             parameterMap.put("id", criteria.getId());
         }
-        if (criteria.getTargetIdList() != null) {
+        if (criteria.getTargetIdList() != null && !SecurityUtil.skipAclCheck(criteria.getTargetIdList())) {
             sb.append(" left join T_ACL a on a.ACL_TARGETID_C in (:targetIdList) and a.ACL_SOURCEID_C = t.TAG_ID_C and a.ACL_PERM_C = 'READ' and a.ACL_DELETEDATE_D is null ");
             criteriaList.add("a.ACL_ID_C is not null");
             parameterMap.put("targetIdList", criteria.getTargetIdList());

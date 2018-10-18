@@ -377,7 +377,7 @@ public class DocumentResource extends BaseResource {
         }
 
         for (DocumentDto documentDto : paginatedList.getResultList()) {
-            // Get tags added by the current user on this document
+            // Get tags accessible by the current user on this document
             List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria()
                     .setTargetIdList(getTargetIdList(null))
                     .setDocumentId(documentDto.getId()), new SortCriteria(1, true));
