@@ -377,7 +377,7 @@ public class FileResource extends BaseResource {
     /**
      * Returns files linked to a document or not linked to any document.
      *
-     * @api {post} /file/list Get files
+     * @api {get} /file/list Get files
      * @apiName GetFileList
      * @apiGroup File
      * @apiParam {String} id Document ID
@@ -507,7 +507,7 @@ public class FileResource extends BaseResource {
     /**
      * Returns a file.
      *
-     * @api {delete} /file/:id/data Get a file data
+     * @api {get} /file/:id/data Get a file data
      * @apiName GetFile
      * @apiGroup File
      * @apiParam {String} id File ID
