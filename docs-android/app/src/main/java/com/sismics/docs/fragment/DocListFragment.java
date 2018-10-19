@@ -2,6 +2,7 @@ package com.sismics.docs.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,12 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sismics.docs.R;
-import com.sismics.docs.activity.DocumentEditActivity;
 import com.sismics.docs.activity.DocumentViewActivity;
 import com.sismics.docs.adapter.DocListAdapter;
 import com.sismics.docs.event.DocumentAddEvent;
@@ -46,11 +45,6 @@ public class DocListFragment extends Fragment {
      */
     private String query;
 
-    /**
-     * Request code of adding document.
-     */
-    private static final int REQUEST_CODE_ADD_DOCUMENT = 1;
-
     // View cache
     private EmptyRecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -60,11 +54,11 @@ public class DocListFragment extends Fragment {
     private int previousTotal = 0;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.doc_list_fragment, container, false);
 
         // Configure the RecyclerView
-        recyclerView = (EmptyRecyclerView) view.findViewById(R.id.docList);
+        recyclerView = view.findViewById(R.id.docList);
         adapter = new DocListAdapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
@@ -119,16 +113,6 @@ public class DocListFragment extends Fragment {
                     loadDocuments(getView(), false);
                     loading = true;
                 }
-            }
-        });
-
-        // Add document button
-        ImageButton addDocumentButton = (ImageButton) view.findViewById(R.id.addDocumentButton);
-        addDocumentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), DocumentEditActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_ADD_DOCUMENT);
             }
         });
 

@@ -28,6 +28,7 @@
             android:name=".activity.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -43,6 +44,9 @@
         <activity
             android:name=".activity.DocumentViewActivity"
             android:label="">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activity.DocumentEditActivity"
