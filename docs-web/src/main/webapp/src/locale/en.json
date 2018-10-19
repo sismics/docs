@@ -397,7 +397,8 @@
       "test": "Test the parameters",
       "last_sync": "Last synchronization: {{ data.date | date: 'medium' }}, {{ data.count }} message{{ data.count > 1 ? 's' : '' }} imported",
       "test_success": "The connection to the inbox is successful ({{ count }} <strong>unread</strong> message{{ count > 1 ? 's' : '' }})",
-      "test_fail": "An error occurred while connecting to the inbox, please check the parameters"
+      "test_fail": "An error occurred while connecting to the inbox, please check the parameters",
+      "saved": "IMAP configuration saved successfully"
     },
     "monitoring": {
       "background_tasks": "Background tasks",

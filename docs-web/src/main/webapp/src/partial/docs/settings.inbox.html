@@ -71,6 +71,11 @@
   </div>
 </form>
 
+<div class="alert col-sm-9 alert-success"
+     ng-show="saveResult">
+  {{ saveResult }}
+</div>
+
 <div class="alert col-sm-9"
      ng-class="{ 'alert-success': testResult.count >= 0, 'alert-danger': testResult.count == -1 }"
      ng-show="testResult"
