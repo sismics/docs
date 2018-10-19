@@ -21,7 +21,15 @@ angular.module('docs').controller('TagEdit', function($scope, $stateParams, Rest
    */
   $scope.edit = function() {
     // Update the server
-    Restangular.one('tag', $scope.tag.id).post('', $scope.tag);
+    Restangular.one('tag', $scope.tag.id).post('', $scope.tag).then(function () {
+    }, function (e) {
+      if (e.data.type === 'CircularReference') {
+        var title = $translate.instant('tag.edit.circular_reference_title');
+        var msg = $translate.instant('tag.edit.circular_reference_message');
+        var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
+        $dialog.messageBox(title, msg, btns);
+      }
+    });
   };
 
   /**

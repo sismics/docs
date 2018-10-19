@@ -219,7 +219,9 @@
       "name": "Name",
       "color": "Color",
       "parent": "Parent",
-      "info": "Permissions on this tag will also be applied to documents tagged <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>"
+      "info": "Permissions on this tag will also be applied to documents tagged <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>",
+      "circular_reference_title": "Circular reference",
+      "circular_reference_message": "The hierarchy of parent tags makes a loop, please choose another parent."
     }
   },
   "group": {

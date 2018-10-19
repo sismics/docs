@@ -192,7 +192,7 @@ public class TagResource extends BaseResource {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
             }
         }
-        
+
         // Create the tag
         TagDao tagDao = new TagDao();
         Tag tag = new Tag();
@@ -239,6 +239,7 @@ public class TagResource extends BaseResource {
      * @apiError (client) ValidationError Validation error
      * @apiError (client) SpacesNotAllowed Spaces are not allowed in tag name
      * @apiError (client) ParentNotFound Parent not found
+     * @apiError (client) CircularReference Circular reference in parent tag
      * @apiError (client) NotFound Tag not found
      * @apiPermission user
      * @apiVersion 1.5.0
@@ -275,16 +276,25 @@ public class TagResource extends BaseResource {
         }
         
         // Check the parent
+        TagDao tagDao = new TagDao();
         if (StringUtils.isEmpty(parentId)) {
             parentId = null;
         } else {
             if (!aclDao.checkPermission(parentId, PermType.READ, getTargetIdList(null))) {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
             }
+
+            String parentTagId = parentId;
+            do {
+                Tag parentTag = tagDao.getById(parentTagId);
+                parentTagId = parentTag.getParentId();
+                if (parentTag.getId().equals(id)) {
+                    throw new ClientException("CircularReference", "Circular reference in parent tag");
+                }
+            } while (parentTagId != null);
         }
-        
+
         // Update the tag
-        TagDao tagDao = new TagDao();
         Tag tag = tagDao.getById(id);
         if (!StringUtils.isEmpty(name)) {
             tag.setName(name);
