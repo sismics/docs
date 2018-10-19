@@ -18,6 +18,7 @@ import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.QueryParam;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.ClasspathScanner;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -26,6 +27,13 @@ import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.search.*;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.apache.lucene.search.spell.LuceneDictionary;
+import org.apache.lucene.search.suggest.Lookup;
+import org.apache.lucene.search.suggest.analyzing.FuzzySuggester;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NoLockFactory;
 import org.apache.lucene.store.RAMDirectory;
@@ -207,7 +215,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
     }
 
     @Override
-    public void findByCriteria(PaginatedList<DocumentDto> paginatedList, DocumentCriteria criteria, SortCriteria sortCriteria) throws Exception {
+    public void findByCriteria(PaginatedList<DocumentDto> paginatedList, List<String> suggestionList, DocumentCriteria criteria, SortCriteria sortCriteria) throws Exception {
         Map<String, Object> parameterMap = new HashMap<>();
         List<String> criteriaList = new ArrayList<>();
 
@@ -247,6 +255,8 @@ public class LuceneIndexingHandler implements IndexingHandler {
             }
             criteriaList.add("d.DOC_ID_C in :documentIdList");
             parameterMap.put("documentIdList", documentIdList);
+
+            suggestSearchTerms(criteria.getSearch(), suggestionList);
         }
         if (criteria.getCreateDateMin() != null) {
             criteriaList.add("d.DOC_CREATEDATE_D >= :createDateMin");
@@ -327,6 +337,30 @@ public class LuceneIndexingHandler implements IndexingHandler {
     }
 
     /**
+     * Suggest search terms according to the user query.
+     *
+     * @param search User search query
+     * @param suggestionList Suggestion of search query (updated by side effects)
+     * @throws Exception e
+     */
+    private void suggestSearchTerms(String search, List<String> suggestionList) throws Exception {
+        DirectoryReader directoryReader = getDirectoryReader();
+        if (directoryReader == null) {
+            return;
+        }
+
+        FuzzySuggester suggester = new FuzzySuggester(new StandardAnalyzer());
+        LuceneDictionary dictionary = new LuceneDictionary(directoryReader, "title");
+        suggester.build(dictionary);
+        int lastIndex = search.lastIndexOf(' ');
+        String suggestQuery = search.substring(lastIndex < 0 ? 0 : lastIndex);
+        List<Lookup.LookupResult> lookupResultList = suggester.lookup(suggestQuery, false, 10);
+        for (Lookup.LookupResult lookupResult : lookupResultList) {
+            suggestionList.add(lookupResult.key.toString());
+        }
+    }
+
+    /**
      * Fulltext search in files and documents.
      *
      * @param searchQuery Search query on metadatas
@@ -336,27 +370,28 @@ public class LuceneIndexingHandler implements IndexingHandler {
      */
     private Set<String> search(String searchQuery, String fullSearchQuery) throws Exception {
         // Escape query and add quotes so QueryParser generate a PhraseQuery
-        searchQuery = "\"" + QueryParserUtil.escape(searchQuery + " " + fullSearchQuery) + "\"";
-        fullSearchQuery = "\"" + QueryParserUtil.escape(fullSearchQuery) + "\"";
+        String escapedSearchQuery = "\"" + QueryParserUtil.escape(searchQuery + " " + fullSearchQuery) + "\"";
+        String escapedFullSearchQuery = "\"" + QueryParserUtil.escape(fullSearchQuery) + "\"";
 
         // Build search query
-        StandardQueryParser qpHelper = new StandardQueryParser(new StandardAnalyzer());
+        Analyzer analyzer = new StandardAnalyzer();
+        StandardQueryParser qpHelper = new StandardQueryParser(analyzer);
         qpHelper.setPhraseSlop(100); // PhraseQuery add terms
 
         // Search on documents and files
         BooleanQuery query = new BooleanQuery.Builder()
-                .add(qpHelper.parse(searchQuery, "title"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(searchQuery, "description"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(searchQuery, "subject"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(searchQuery, "identifier"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(searchQuery, "publisher"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(searchQuery, "format"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(searchQuery, "source"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(searchQuery, "type"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(searchQuery, "coverage"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(searchQuery, "rights"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(searchQuery, "filename"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(fullSearchQuery, "content"), BooleanClause.Occur.SHOULD)
+                .add(qpHelper.parse(escapedSearchQuery, "title"), BooleanClause.Occur.SHOULD)
+                .add(qpHelper.parse(escapedSearchQuery, "description"), BooleanClause.Occur.SHOULD)
+                .add(qpHelper.parse(escapedSearchQuery, "subject"), BooleanClause.Occur.SHOULD)
+                .add(qpHelper.parse(escapedSearchQuery, "identifier"), BooleanClause.Occur.SHOULD)
+                .add(qpHelper.parse(escapedSearchQuery, "publisher"), BooleanClause.Occur.SHOULD)
+                .add(qpHelper.parse(escapedSearchQuery, "format"), BooleanClause.Occur.SHOULD)
+                .add(qpHelper.parse(escapedSearchQuery, "source"), BooleanClause.Occur.SHOULD)
+                .add(qpHelper.parse(escapedSearchQuery, "type"), BooleanClause.Occur.SHOULD)
+                .add(qpHelper.parse(escapedSearchQuery, "coverage"), BooleanClause.Occur.SHOULD)
+                .add(qpHelper.parse(escapedSearchQuery, "rights"), BooleanClause.Occur.SHOULD)
+                .add(qpHelper.parse(escapedSearchQuery, "filename"), BooleanClause.Occur.SHOULD)
+                .add(qpHelper.parse(escapedFullSearchQuery, "content"), BooleanClause.Occur.SHOULD)
                 .build();
 
         // Search
@@ -370,6 +405,10 @@ public class LuceneIndexingHandler implements IndexingHandler {
         TopDocs topDocs = searcher.search(query, Integer.MAX_VALUE);
         ScoreDoc[] docs = topDocs.scoreDocs;
 
+        SimpleHTMLFormatter simpleHTMLFormatter = new SimpleHTMLFormatter("<strong>", "</strong>");
+        SimpleHTMLEncoder simpleHTMLEncoder = new SimpleHTMLEncoder();
+        Highlighter highlighter = new Highlighter(simpleHTMLFormatter, simpleHTMLEncoder, new QueryScorer(query));
+
         // Extract document IDs
         for (ScoreDoc doc : docs) {
             org.apache.lucene.document.Document document = searcher.doc(doc.doc);
@@ -379,6 +418,15 @@ public class LuceneIndexingHandler implements IndexingHandler {
                 documentId = document.get("id");
             } else if (type.equals("file")) {
                 documentId = document.get("document_id");
+
+                /*
+                needs full reindexing from previous version to make it work, we now need the file content
+                String content = document.get("content");
+                if (content != null) {
+                    String hl = highlighter.getBestFragment(analyzer, "content", content);
+                    System.out.println(hl);
+                }
+                */
             }
             if (documentId != null) {
                 documentIdList.add(documentId);
@@ -447,7 +495,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
             luceneDocument.add(new StringField("document_id", file.getDocumentId(), Field.Store.YES));
         }
         if (file.getContent() != null) {
-            luceneDocument.add(new TextField("content", file.getContent(), Field.Store.NO));
+            luceneDocument.add(new TextField("content", file.getContent(), Field.Store.YES));
         }
 
         return luceneDocument;

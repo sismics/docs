@@ -367,11 +367,12 @@ public class DocumentResource extends BaseResource {
         
         TagDao tagDao = new TagDao();
         PaginatedList<DocumentDto> paginatedList = PaginatedLists.create(limit, offset);
+        List<String> suggestionList = Lists.newArrayList();
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
         DocumentCriteria documentCriteria = parseSearchQuery(search);
         documentCriteria.setTargetIdList(getTargetIdList(null));
         try {
-            AppContext.getInstance().getIndexingHandler().findByCriteria(paginatedList, documentCriteria, sortCriteria);
+            AppContext.getInstance().getIndexingHandler().findByCriteria(paginatedList, suggestionList, documentCriteria, sortCriteria);
         } catch (Exception e) {
             throw new ServerException("SearchError", "Error searching in documents", e);
         }
@@ -402,8 +403,15 @@ public class DocumentResource extends BaseResource {
                     .add("file_count", documentDto.getFileCount())
                     .add("tags", tags));
         }
+
+        JsonArrayBuilder suggestions = Json.createArrayBuilder();
+        for (String suggestion : suggestionList) {
+            suggestions.add(suggestion);
+        }
+
         response.add("total", paginatedList.getResultCount())
-                .add("documents", documents);
+                .add("documents", documents)
+                .add("suggestions", suggestions);
         
         return Response.ok().entity(response.build()).build();
     }

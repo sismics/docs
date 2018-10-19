@@ -38,6 +38,7 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
         .then(function (data) {
           $scope.documents = data.documents;
           $scope.totalDocuments = data.total;
+          $scope.suggestions = data.suggestions;
         });
   };
   

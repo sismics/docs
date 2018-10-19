@@ -100,9 +100,10 @@ public interface IndexingHandler {
      * Searches documents by criteria.
      *
      * @param paginatedList List of documents (updated by side effects)
+     * @param suggestionList Suggestion of search query (updated by side effects)
      * @param criteria Search criteria
      * @param sortCriteria Sort criteria
      * @throws Exception e
      */
-    void findByCriteria(PaginatedList<DocumentDto> paginatedList, DocumentCriteria criteria, SortCriteria sortCriteria) throws Exception;
+    void findByCriteria(PaginatedList<DocumentDto> paginatedList, List<String> suggestionList, DocumentCriteria criteria, SortCriteria sortCriteria) throws Exception;
 }

@@ -19,7 +19,10 @@
       <!-- Search (simple and advanced) -->
       <div class="row search-dropdown-anchor">
         <div class="col-xs-12 input-group">
-          <input type="search" class="form-control" ng-attr-placeholder="{{ 'document.search' | translate }}" ng-model="search" />
+          <input type="search" class="form-control"
+                 uib-typeahead="suggestion for suggestion in suggestions"
+                 typeahead-focus-first="false"
+                 ng-attr-placeholder="{{ 'document.search' | translate }}" ng-model="search" />
           <span class="input-group-addon btn" ng-click="openSearch()">
             <div uib-dropdown
                  auto-close="disabled" is-open="searchOpened" dropdown-append-to="searchDropdownAnchor">
