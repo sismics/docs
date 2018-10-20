@@ -392,6 +392,7 @@ public class DocumentResource extends BaseResource {
             
             documents.add(Json.createObjectBuilder()
                     .add("id", documentDto.getId())
+                    .add("highlight", JsonUtil.nullable(documentDto.getHighlight()))
                     .add("title", documentDto.getTitle())
                     .add("description", JsonUtil.nullable(documentDto.getDescription()))
                     .add("create_date", documentDto.getCreateTimestamp())

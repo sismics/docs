@@ -246,6 +246,8 @@
                 {{ tag.name }}
               </span>
             </div>
+
+            <div ng-if="document.highlight" class="small well-sm" ng-bind-html="document.highlight"></div>
           </td>
         </tr>
         </tbody>

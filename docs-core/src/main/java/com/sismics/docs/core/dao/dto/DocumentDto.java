@@ -101,6 +101,11 @@ public class DocumentDto {
      */
     private String currentStepName;
 
+    /**
+     * Search highlight.
+     */
+    private String highlight;
+
     public String getId() {
         return id;
     }
@@ -251,6 +256,15 @@ public class DocumentDto {
 
     public DocumentDto setCurrentStepName(String currentStepName) {
         this.currentStepName = currentStepName;
+        return this;
+    }
+
+    public String getHighlight() {
+        return highlight;
+    }
+
+    public DocumentDto setHighlight(String highlight) {
+        this.highlight = highlight;
         return this;
     }
 }

@@ -3,6 +3,7 @@ package com.sismics.docs.core.util.indexing;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.ConfigDao;
@@ -218,6 +219,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
     public void findByCriteria(PaginatedList<DocumentDto> paginatedList, List<String> suggestionList, DocumentCriteria criteria, SortCriteria sortCriteria) throws Exception {
         Map<String, Object> parameterMap = new HashMap<>();
         List<String> criteriaList = new ArrayList<>();
+        Map<String, String> documentSearchMap = Maps.newHashMap();
 
         StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, ");
         sb.append(" s.count c5, ");
@@ -248,13 +250,13 @@ public class LuceneIndexingHandler implements IndexingHandler {
             parameterMap.put("targetIdList", criteria.getTargetIdList());
         }
         if (!Strings.isNullOrEmpty(criteria.getSearch()) || !Strings.isNullOrEmpty(criteria.getFullSearch())) {
-            Set<String> documentIdList = search(criteria.getSearch(), criteria.getFullSearch());
-            if (documentIdList.isEmpty()) {
+            documentSearchMap = search(criteria.getSearch(), criteria.getFullSearch());
+            if (documentSearchMap.isEmpty()) {
                 // If the search doesn't find any document, the request should return nothing
-                documentIdList.add(UUID.randomUUID().toString());
+                documentSearchMap.put(UUID.randomUUID().toString(), null);
             }
             criteriaList.add("d.DOC_ID_C in :documentIdList");
-            parameterMap.put("documentIdList", documentIdList);
+            parameterMap.put("documentIdList", documentSearchMap.keySet());
 
             suggestSearchTerms(criteria.getSearch(), suggestionList);
         }
@@ -330,6 +332,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
             documentDto.setActiveRoute(o[i++] != null);
             documentDto.setCurrentStepName((String) o[i++]);
             documentDto.setUpdateTimestamp(((Timestamp) o[i]).getTime());
+            documentDto.setHighlight(documentSearchMap.get(documentDto.getId()));
             documentDtoList.add(documentDto);
         }
 
@@ -365,10 +368,10 @@ public class LuceneIndexingHandler implements IndexingHandler {
      *
      * @param searchQuery Search query on metadatas
      * @param fullSearchQuery Search query on all fields
-     * @return List of document IDs
+     * @return Map of document IDs as key and highlight as value
      * @throws Exception e
      */
-    private Set<String> search(String searchQuery, String fullSearchQuery) throws Exception {
+    private Map<String, String> search(String searchQuery, String fullSearchQuery) throws Exception {
         // Escape query and add quotes so QueryParser generate a PhraseQuery
         String escapedSearchQuery = "\"" + QueryParserUtil.escape(searchQuery + " " + fullSearchQuery) + "\"";
         String escapedFullSearchQuery = "\"" + QueryParserUtil.escape(fullSearchQuery) + "\"";
@@ -396,10 +399,10 @@ public class LuceneIndexingHandler implements IndexingHandler {
 
         // Search
         DirectoryReader directoryReader = getDirectoryReader();
-        Set<String> documentIdList = new HashSet<>();
+        Map<String, String> documentMap = Maps.newHashMap();
         if (directoryReader == null) {
             // The directory reader is not yet initialized (probably because there is nothing indexed)
-            return documentIdList;
+            return documentMap;
         }
         IndexSearcher searcher = new IndexSearcher(directoryReader);
         TopDocs topDocs = searcher.search(query, Integer.MAX_VALUE);
@@ -409,31 +412,28 @@ public class LuceneIndexingHandler implements IndexingHandler {
         SimpleHTMLEncoder simpleHTMLEncoder = new SimpleHTMLEncoder();
         Highlighter highlighter = new Highlighter(simpleHTMLFormatter, simpleHTMLEncoder, new QueryScorer(query));
 
-        // Extract document IDs
+        // Extract document IDs and highlights
         for (ScoreDoc doc : docs) {
             org.apache.lucene.document.Document document = searcher.doc(doc.doc);
             String type = document.get("doctype");
             String documentId = null;
+            String highlight = null;
             if (type.equals("document")) {
                 documentId = document.get("id");
             } else if (type.equals("file")) {
                 documentId = document.get("document_id");
-
-                /*
-                needs full reindexing from previous version to make it work, we now need the file content
                 String content = document.get("content");
                 if (content != null) {
-                    String hl = highlighter.getBestFragment(analyzer, "content", content);
-                    System.out.println(hl);
+                    highlight = highlighter.getBestFragment(analyzer, "content", content);
                 }
-                */
             }
+
             if (documentId != null) {
-                documentIdList.add(documentId);
+                documentMap.put(documentId, highlight);
             }
         }
 
-        return documentIdList;
+        return documentMap;
     }
 
     /**
