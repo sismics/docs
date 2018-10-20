@@ -162,7 +162,25 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         documents = json.getJsonArray("documents");
         Assert.assertEquals(1, documents.size());
-        
+
+        // Check highlights
+        json = target().path("/document/list")
+                .queryParam("search", "full:uranium full:einstein")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .get(JsonObject.class);
+        String highlight = json.getJsonArray("documents").getJsonObject(0).getString("highlight");
+        Assert.assertTrue(highlight.contains("<strong>"));
+
+        // Check suggestions
+        json = target().path("/document/list")
+                .queryParam("search", "docu")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .get(JsonObject.class);
+        String suggestion = json.getJsonArray("suggestions").getString(0);
+        Assert.assertEquals("document", suggestion);
+
         // Search documents
         Assert.assertEquals(1, searchDocuments("full:uranium full:einstein", document1Token));
         Assert.assertEquals(2, searchDocuments("full:title", document1Token));
