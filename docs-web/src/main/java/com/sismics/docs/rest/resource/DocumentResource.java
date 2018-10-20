@@ -325,6 +325,7 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {Number} total Total number of documents
      * @apiSuccess {Object[]} documents List of documents
      * @apiSuccess {String} documents.id ID
+     * @apiSuccess {String} documents.highlight Search highlight (for fulltext search)
      * @apiSuccess {String} documents.title Title
      * @apiSuccess {String} documents.description Description
      * @apiSuccess {Number} documents.create_date Create date (timestamp)
@@ -338,6 +339,7 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String} documents.tags.id ID
      * @apiSuccess {String} documents.tags.name Name
      * @apiSuccess {String} documents.tags.color Color
+     * @apiSuccess {String[]} suggestions List of search suggestions
      * @apiError (client) ForbiddenError Access denied
      * @apiError (server) SearchError Error searching in documents
      * @apiPermission user
