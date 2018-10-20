@@ -33,7 +33,7 @@ Features
 - Optical character recognition
 - Support image, PDF, ODT, DOCX, PPTX files
 - Video file support ![New!](https://www.sismics.com/public/img/new.png)
-- Flexible search engine
+- Flexible search engine with suggestions and highlighting
 - Full text search in all supported files
 - All [Dublin Core](http://dublincore.org/) metadata
 - Workflow system ![New!](https://www.sismics.com/public/img/new.png)
