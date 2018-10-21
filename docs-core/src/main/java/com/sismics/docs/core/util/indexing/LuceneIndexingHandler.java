@@ -39,7 +39,6 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NoLockFactory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
-import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,13 +109,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
             log.info("Checking index health and version");
             try (CheckIndex checkIndex = new CheckIndex(directory)) {
                 CheckIndex.Status status = checkIndex.checkIndex();
-                if (status.clean) {
-                    for (CheckIndex.Status.SegmentInfoStatus segmentInfo : status.segmentInfos) {
-                        if (!segmentInfo.version.onOrAfter(Version.LATEST)) {
-                            throw new Exception("Index is old (" + segmentInfo.version + ")");
-                        }
-                    }
-                } else {
+                if (!status.clean) {
                     throw new Exception("Index is dirty");
                 }
             }
@@ -352,7 +345,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
             return;
         }
 
-        FuzzySuggester suggester = new FuzzySuggester(new StandardAnalyzer());
+        FuzzySuggester suggester = new FuzzySuggester(directory, "", new StandardAnalyzer());
         LuceneDictionary dictionary = new LuceneDictionary(directoryReader, "title");
         suggester.build(dictionary);
         int lastIndex = search.lastIndexOf(' ');

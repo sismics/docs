@@ -73,11 +73,12 @@ public class ImageUtil {
      * @param email Email
      * @return Gravatar hash
      */
+    @SuppressWarnings("deprecation") // Gravatar uses MD5, nothing we can do about it
     public static String computeGravatar(String email) {
         if (email == null) {
             return null;
         }
-        
+
         return Hashing.md5().hashString(
                 email.trim().toLowerCase(), Charsets.UTF_8)
                 .toString();

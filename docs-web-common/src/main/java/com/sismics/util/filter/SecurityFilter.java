@@ -1,5 +1,6 @@
 package com.sismics.util.filter;
 
+import com.google.common.collect.Sets;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.GroupDao;
 import com.sismics.docs.core.dao.RoleBaseFunctionDao;
@@ -8,7 +9,6 @@ import com.sismics.docs.core.dao.dto.GroupDto;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.security.AnonymousPrincipal;
 import com.sismics.security.UserPrincipal;
-import jersey.repackaged.com.google.common.collect.Sets;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
