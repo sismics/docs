@@ -3,58 +3,84 @@
 /**
  * File modal view controller.
  */
-angular.module('docs').controller('FileModalView', function($rootScope, $modalInstance, $scope, $state, $stateParams, Restangular) {
+angular.module('docs').controller('FileModalView', function ($uibModalInstance, $scope, $state, $stateParams, $sce, Restangular, $transitions) {
   // Load files
-  Restangular.one('file').getList('list', { id: $stateParams.id }).then(function(data) {
+  Restangular.one('file/list').get({ id: $stateParams.id }).then(function (data) {
     $scope.files = data.files;
 
     // Search current file
-    _.each($scope.files, function(value) {
-      if (value.id == $stateParams.fileId) {
+    _.each($scope.files, function (value) {
+      if (value.id === $stateParams.fileId) {
         $scope.file = value;
+        $scope.trustedFileUrl = $sce.trustAsResourceUrl('../api/file/' + $stateParams.fileId + '/data');
       }
     });
   });
 
   /**
-   * Navigate to the next file.
+   * Return the next file.
    */
-  $scope.nextFile = function() {
-    _.each($scope.files, function(value, key) {
-      if (value.id == $stateParams.fileId) {
-        var next = $scope.files[key + 1];
-        if (next) {
-          $state.go('^.file', { id: $stateParams.id, fileId: next.id });
-        }
+  $scope.nextFile = function () {
+    var next = undefined;
+    _.each($scope.files, function (value, key) {
+      if (value.id === $stateParams.fileId) {
+        next = $scope.files[key + 1];
       }
     });
+    return next;
+  };
+
+  /**
+   * Return the previous file.
+   */
+  $scope.previousFile = function () {
+    var previous = undefined;
+    _.each($scope.files, function (value, key) {
+      if (value.id === $stateParams.fileId) {
+        previous = $scope.files[key - 1];
+      }
+    });
+    return previous;
+  };
+
+  /**
+   * Navigate to the next file.
+   */
+  $scope.goNextFile = function () {
+    var next = $scope.nextFile();
+    if (next) {
+      $state.go('^.file', { id: $stateParams.id, fileId: next.id });
+    }
   };
 
   /**
    * Navigate to the previous file.
    */
-  $scope.previousFile = function() {
-    _.each($scope.files, function(value, key) {
-      if (value.id == $stateParams.fileId) {
-        var previous = $scope.files[key - 1];
-        if (previous) {
-          $state.go('^.file', { id: $stateParams.id, fileId: previous.id });
-        }
-      }
-    });
+  $scope.goPreviousFile = function () {
+    var previous = $scope.previousFile();
+    if (previous) {
+      $state.go('^.file', { id: $stateParams.id, fileId: previous.id });
+    }
   };
 
   /**
    * Open the file in a new window.
    */
-  $scope.openFile = function() {
+  $scope.openFile = function () {
     window.open('../api/file/' + $stateParams.fileId + '/data');
+  };
+
+  /**
+   * Open the file content a new window.
+   */
+  $scope.openFileContent = function () {
+    window.open('../api/file/' + $stateParams.fileId + '/data?size=content');
   };
 
   /**
    * Print the file.
    */
-  $scope.printFile = function() {
+  $scope.printFile = function () {
     var popup = window.open('../api/file/' + $stateParams.fileId + '/data', '_blank');
     popup.onload = function () {
       popup.print();
@@ -66,18 +92,25 @@ angular.module('docs').controller('FileModalView', function($rootScope, $modalIn
    * Close the file preview.
    */
   $scope.closeFile = function () {
-    $modalInstance.dismiss();
+    $uibModalInstance.dismiss();
   };
 
   // Close the modal when the user exits this state
-  var off = $rootScope.$on('$stateChangeStart', function(event, toState) {
-    if (!$modalInstance.closed) {
-      if (toState.name == $state.current.name) {
-        $modalInstance.close();
+  var off = $transitions.onStart({}, function(transition) {
+    if (!$uibModalInstance.closed) {
+      if (transition.to().name === $state.current.name) {
+        $uibModalInstance.close();
       } else {
-        $modalInstance.dismiss();
+        $uibModalInstance.dismiss();
       }
     }
     off();
   });
+
+  /**
+   * Return true if we can display the preview image.
+   */
+  $scope.canDisplayPreview = function () {
+    return $scope.file && $scope.file.mimetype !== 'application/pdf';
+  };
 });

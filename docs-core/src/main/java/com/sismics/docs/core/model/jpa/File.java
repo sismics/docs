@@ -1,17 +1,11 @@
 package com.sismics.docs.core.model.jpa;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.sismics.util.mime.MimeTypeUtil;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * File entity.
@@ -176,7 +170,8 @@ public class File implements Loggable {
 
     @Override
     public String toMessage() {
-        return documentId;
+        // Attached document ID and name concatenated
+        return (documentId == null ? Strings.repeat(" ", 36) : documentId) + name;
     }
 
     /**

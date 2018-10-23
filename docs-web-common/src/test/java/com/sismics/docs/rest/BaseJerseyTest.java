@@ -1,11 +1,9 @@
 package com.sismics.docs.rest;
 
-import java.net.URI;
-
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.UriBuilder;
-
+import com.sismics.docs.rest.util.ClientUtil;
 import com.sismics.util.filter.HeaderBasedSecurityFilter;
+import com.sismics.util.filter.RequestContextFilter;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.servlet.ServletRegistration;
 import org.glassfish.grizzly.servlet.WebappContext;
@@ -17,10 +15,17 @@ import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.After;
 import org.junit.Before;
+import org.subethamail.wiser.Wiser;
+import org.subethamail.wiser.WiserMessage;
 
-import com.sismics.docs.rest.util.ClientUtil;
-import com.sismics.util.filter.RequestContextFilter;
-import com.sismics.util.filter.TokenBasedSecurityFilter;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.UriBuilder;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
 
 /**
  * Base class of integration tests with Jersey.
@@ -37,6 +42,11 @@ public abstract class BaseJerseyTest extends JerseyTest {
      * Utility class for the REST client.
      */
     protected ClientUtil clientUtil;
+
+    /**
+     * Test mail server.
+     */
+    private Wiser wiser;
     
     @Override
     protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
@@ -45,10 +55,10 @@ public abstract class BaseJerseyTest extends JerseyTest {
     
     @Override
     protected Application configure() {
-        enable(TestProperties.LOG_TRAFFIC);
         String travisEnv = System.getenv("TRAVIS");
         if (travisEnv == null || !travisEnv.equals("true")) {
-            // Travis don't like entity dumped in the logs
+            // Travis doesn't like big logs
+            enable(TestProperties.LOG_TRAFFIC);
             enable(TestProperties.DUMP_ENTITY);
         }
         return new Application();
@@ -66,9 +76,10 @@ public abstract class BaseJerseyTest extends JerseyTest {
         System.setProperty("docs.header_authentication", "true");
 
         clientUtil = new ClientUtil(target());
-        
+
         httpServer = HttpServer.createSimpleServer(getClass().getResource("/").getFile(), "localhost", getPort());
         WebappContext context = new WebappContext("GrizzlyContext", "/docs");
+        context.addListener("com.twelvemonkeys.servlet.image.IIOProviderContextListener");
         context.addFilter("requestContextFilter", RequestContextFilter.class)
                 .addMappingForUrlPatterns(null, "/*");
         context.addFilter("tokenBasedSecurityFilter", TokenBasedSecurityFilter.class)
@@ -84,12 +95,39 @@ public abstract class BaseJerseyTest extends JerseyTest {
         reg.setAsyncSupported(true);
         context.deploy(httpServer);
         httpServer.start();
+
+        wiser = new Wiser();
+        wiser.setPort(2500);
+        wiser.start();
+    }
+
+    /**
+     * Extract an email from the list and consume it.
+     *
+     * @return Email content
+     * @throws MessagingException e
+     * @throws IOException e
+     */
+    protected String popEmail() throws MessagingException, IOException {
+        List<WiserMessage> wiserMessageList = wiser.getMessages();
+        if (wiserMessageList.isEmpty()) {
+            return null;
+        }
+        WiserMessage wiserMessage = wiserMessageList.get(wiserMessageList.size() - 1);
+        wiserMessageList.remove(wiserMessageList.size() - 1);
+        MimeMessage message = wiserMessage.getMimeMessage();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        message.writeTo(os);
+        return os.toString();
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
+        if (wiser != null) {
+            wiser.stop();
+        }
         if (httpServer != null) {
             httpServer.shutdownNow();
         }

@@ -1,0 +1,28 @@
+{
+  "name": "docs-importer",
+  "version": "1.5.1",
+  "description": "Import files to Sismics Docs",
+  "bin": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sismics/docs.git"
+  },
+  "author": "Benjamin Gamard",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/sismics/docs/issues"
+  },
+  "homepage": "https://github.com/sismics/docs#readme",
+  "dependencies": {
+    "inquirer": "^5.1.0",
+    "minimist": "^1.2.0",
+    "ora": "^2.0.0",
+    "preferences": "^1.0.2",
+    "recursive-readdir": "^2.2.2",
+    "request": "^2.83.0",
+    "underscore": "^1.8.3"
+  }
+}

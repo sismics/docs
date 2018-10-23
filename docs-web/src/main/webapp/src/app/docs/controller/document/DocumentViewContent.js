@@ -3,7 +3,7 @@
 /**
  * Document view content controller.
  */
-angular.module('docs').controller('DocumentViewContent', function ($scope, $rootScope, $stateParams, Restangular, $dialog, $state, $upload) {
+angular.module('docs').controller('DocumentViewContent', function ($scope, $rootScope, $stateParams, Restangular, $dialog, $state, Upload, $translate, $uibModal) {
   /**
    * Configuration for file sorting.
    */
@@ -11,7 +11,6 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
     forceHelperSize: true,
     forcePlaceholderSize: true,
     tolerance: 'pointer',
-    handle: '.handle',
     stop: function () {
       // Send new positions to server
       $scope.$apply(function () {
@@ -27,7 +26,7 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
    * Load files from server.
    */
   $scope.loadFiles = function () {
-    Restangular.one('file').getList('list', { id: $stateParams.id }).then(function (data) {
+    Restangular.one('file/list').get({ id: $stateParams.id }).then(function (data) {
       $scope.files = data.files;
       // TODO Keep currently uploading files
     });
@@ -45,15 +44,15 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
    * Delete a file.
    */
   $scope.deleteFile = function (file) {
-    var title = 'Delete file';
-    var msg = 'Do you really want to delete this file?';
+    var title = $translate.instant('document.view.content.delete_file_title');
+    var msg = $translate.instant('document.view.content.delete_file_message');
     var btns = [
-      {result: 'cancel', label: 'Cancel'},
-      {result: 'ok', label: 'OK', cssClass: 'btn-primary'}
+      {result: 'cancel', label: $translate.instant('cancel')},
+      {result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}
     ];
 
     $dialog.messageBox(title, msg, btns, function (result) {
-      if (result == 'ok') {
+      if (result === 'ok') {
         Restangular.one('file', file.id).remove().then(function () {
           // File deleted, decrease used quota
           $rootScope.userInfo.storage_current -= file.size;
@@ -82,7 +81,7 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
           name: file.name,
           create_date: new Date().getTime(),
           mimetype: file.type,
-          status: 'Pending...'
+          status: $translate.instant('document.view.content.upload_pending')
         };
         $scope.files.push(newfile);
         newfiles.push(newfile);
@@ -104,8 +103,8 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
    */
   $scope.uploadFile = function(file, newfile) {
     // Upload the file
-    newfile.status = 'Uploading...';
-    return $upload.upload({
+    newfile.status = $translate.instant('document.view.content.upload_progress');
+    return Upload.upload({
       method: 'PUT',
       url: '../api/file',
       file: file,
@@ -113,22 +112,57 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
         id: $stateParams.id
       }
     })
-        .progress(function(e) {
-          newfile.progress = parseInt(100.0 * e.loaded / e.total);
-        })
-        .success(function(data) {
-          // Update local model with real data
-          newfile.id = data.id;
-          newfile.size = data.size;
+    .progress(function(e) {
+      newfile.progress = parseInt(100.0 * e.loaded / e.total);
+    })
+    .success(function(data) {
+      // Update local model with real data
+      newfile.id = data.id;
+      newfile.size = data.size;
 
-          // New file uploaded, increase used quota
-          $rootScope.userInfo.storage_current += data.size;
-        })
-        .error(function (data) {
-          newfile.status = 'Upload error';
-          if (data.type == 'QuotaReached') {
-            newfile.status += ' - Quota reached';
-          }
-        });
+      // New file uploaded, increase used quota
+      $rootScope.userInfo.storage_current += data.size;
+    })
+    .error(function (data) {
+      newfile.status = $translate.instant('document.view.content.upload_error');
+      if (data.type === 'QuotaReached') {
+        newfile.status += ' - ' + $translate.instant('document.view.content.upload_error_quota');
+      }
+    });
+  };
+
+  /**
+   * Rename a file.
+   */
+  $scope.renameFile = function (file) {
+    $uibModal.open({
+      templateUrl: 'partial/docs/file.rename.html',
+      controller: 'FileRename',
+      resolve: {
+        file: function () {
+          return angular.copy(file);
+        }
+      }
+    }).result.then(function (fileUpdated) {
+      if (fileUpdated === null) {
+        return;
+      }
+
+      // Rename the file
+      Restangular.one('file/' + file.id).post('', {
+        name: fileUpdated.name
+      }).then(function () {
+        file.name = fileUpdated.name;
+      })
+    });
+  };
+
+  /**
+   * Process a file.
+   */
+  $scope.processFile = function (file) {
+    Restangular.one('file/' + file.id).post('process').then(function () {
+      file.processing = true;
+    });
   };
 });

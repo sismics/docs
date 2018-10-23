@@ -2,15 +2,15 @@ package com.sismics.docs.rest.resource;
 
 import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.docs.core.dao.jpa.AuditLogDao;
-import com.sismics.docs.core.dao.jpa.criteria.AuditLogCriteria;
-import com.sismics.docs.core.dao.jpa.dto.AuditLogDto;
+import com.sismics.docs.core.dao.AclDao;
+import com.sismics.docs.core.dao.AuditLogDao;
+import com.sismics.docs.core.dao.criteria.AuditLogCriteria;
+import com.sismics.docs.core.dao.dto.AuditLogDto;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ForbiddenClientException;
-import com.sismics.rest.util.JsonUtil;
+import com.sismics.util.JsonUtil;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -41,7 +41,7 @@ public class AuditLogResource extends BaseResource {
      * @apiSuccess {String} logs.id ID
      * @apiSuccess {String} logs.username Username
      * @apiSuccess {String} logs.target Entity ID
-     * @apiSuccess {String="Acl","Comment","Document","File","Group","Tag","User"} logs.class Entity type
+     * @apiSuccess {String="Acl","Comment","Document","File","Group","Tag","User","RouteModel","Route"} logs.class Entity type
      * @apiSuccess {String="CREATE","UPDATE","DELETE"} logs.type Type
      * @apiSuccess {String} logs.message Message
      * @apiSuccess {Number} logs.create_date Create date (timestamp)

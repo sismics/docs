@@ -1,35 +1,35 @@
-<h1>Vocabulary <small>entries</small></h1>
+<h1 translate="settings.vocabulary.title"></h1>
 
 <div class="row">
   <form class="form-inline">
     <div class="form-group">
-      <label for="inputVocabulary">Choose a vocabulary to edit</label>
+      <label for="inputVocabulary">{{ 'settings.vocabulary.choose_vocabulary' | translate }}</label>
       <select class="form-control" id="inputVocabulary" ng-model="vocabulary" ng-init="vocabulary = 'type'">
-        <option value="type">Type</option>
-        <option value="coverage">Coverage</option>
-        <option value="rights">Rights</option>
+        <option value="type">{{ 'settings.vocabulary.type' | translate }}</option>
+        <option value="coverage">{{ 'settings.vocabulary.coverage' | translate }}</option>
+        <option value="rights">{{ 'settings.vocabulary.rights' | translate }}</option>
       </select>
     </div>
   </form>
 
-  <table class="table table-striped" ng-show="entries">
+  <table class="table" ng-show="entries">
     <thead>
       <tr>
-        <th width="70%">Value</th>
-        <th width="20%">Order</th>
+        <th width="70%">{{ 'settings.vocabulary.value' | translate }}</th>
+        <th width="20%">{{ 'settings.vocabulary.order' | translate }}</th>
         <th width="10%"></th>
       </tr>
     </thead>
     <tbody>
       <tr class="info">
         <td>
-          <input type="text" placeholder="New entry" class="form-control" ng-model="entry.value" maxlength="500" />
+          <input type="text" ng-attr-placeholder="{{ 'settings.vocabulary.new_entry' | translate }}" class="form-control" ng-model="entry.value" maxlength="500" />
         </td>
         <td>
           <input type="number" class="form-control" ng-model="entry.order" />
         </td>
         <td>
-          <span ng-click="addEntry(entry)" class="glyphicon glyphicon-plus pointer"></span>
+          <span ng-click="addEntry(entry)" class="fas fa-plus pointer"></span>
         </td>
       </tr>
       <tr>
@@ -43,7 +43,7 @@
           <input type="number" class="form-control" ng-model="entry.order" ng-blur="updateEntry(entry)" />
         </td>
         <td>
-          <span ng-click="deleteEntry(entry)" class="glyphicon glyphicon-trash pointer"></span>
+          <span ng-click="deleteEntry(entry)" class="fas fa-trash pointer"></span>
         </td>
       </tr>
     </tbody>

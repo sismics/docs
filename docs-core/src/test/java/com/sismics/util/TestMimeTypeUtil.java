@@ -1,16 +1,12 @@
 package com.sismics.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import org.apache.commons.compress.utils.IOUtils;
+import com.sismics.util.mime.MimeType;
+import com.sismics.util.mime.MimeTypeUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.google.common.io.Resources;
-import com.sismics.docs.core.model.jpa.File;
-import com.sismics.util.mime.MimeType;
-import com.sismics.util.mime.MimeTypeUtil;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Test of the utilities to check MIME types.
@@ -18,23 +14,18 @@ import com.sismics.util.mime.MimeTypeUtil;
  * @author bgamard
  */
 public class TestMimeTypeUtil {
-
     @Test
     public void guessOpenDocumentFormatTest() throws Exception {
         // Detect ODT files
-        try (InputStream inputStream = Resources.getResource("file/document.odt").openStream();
-                InputStream byteArrayInputStream = new ByteArrayInputStream(IOUtils.toByteArray(inputStream))) {
-            File file = new File();
-            file.setMimeType(MimeType.APPLICATION_ZIP);
-            Assert.assertEquals(MimeType.OPEN_DOCUMENT_TEXT, MimeTypeUtil.guessOpenDocumentFormat(file, byteArrayInputStream));
-        }
-        
+        Path path = Paths.get(ClassLoader.getSystemResource("file/document.odt").toURI());
+        Assert.assertEquals(MimeType.OPEN_DOCUMENT_TEXT, MimeTypeUtil.guessMimeType(path, "document.odt"));
+
         // Detect DOCX files
-        try (InputStream inputStream = Resources.getResource("file/document.docx").openStream();
-                InputStream byteArrayInputStream = new ByteArrayInputStream(IOUtils.toByteArray(inputStream))) {
-            File file = new File();
-            file.setMimeType(MimeType.APPLICATION_ZIP);
-            Assert.assertEquals(MimeType.OFFICE_DOCUMENT, MimeTypeUtil.guessOpenDocumentFormat(file, byteArrayInputStream));
-        }
+        path = Paths.get(ClassLoader.getSystemResource("file/document.docx").toURI());
+        Assert.assertEquals(MimeType.OFFICE_DOCUMENT, MimeTypeUtil.guessMimeType(path, "document.odt"));
+
+        // Detect PPTX files
+        path = Paths.get(ClassLoader.getSystemResource("file/apache.pptx").toURI());
+        Assert.assertEquals(MimeType.OFFICE_PRESENTATION, MimeTypeUtil.guessMimeType(path, "apache.pptx"));
     }
 }

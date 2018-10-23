@@ -3,43 +3,33 @@
 /**
  * Document default controller.
  */
-angular.module('docs').controller('DocumentDefault', function($scope, $rootScope, $state, Restangular, $upload) {
-  // Load app data
-  Restangular.one('app').get().then(function(data) {
-    $scope.app = data;
-  });
-
+angular.module('docs').controller('DocumentDefault', function ($scope, $rootScope, $state, Restangular, Upload, $translate, $uibModal, $dialog) {
   // Load user audit log
-  Restangular.one('auditlog').get().then(function(data) {
+  Restangular.one('auditlog').get().then(function (data) {
     $scope.logs = data.logs;
   });
 
-  /**
-   * Load unlinked files.
-   */
-  $scope.loadFiles = function() {
-    Restangular.one('file').getList('list').then(function (data) {
+  // Load unlinked files
+  $scope.loadFiles = function () {
+    Restangular.one('file/list').get().then(function (data) {
       $scope.files = data.files;
       // TODO Keep currently uploading files
     });
   };
   $scope.loadFiles();
 
-  /**
-   * File has been drag & dropped.
-   * @param files
-   */
-  $scope.fileDropped = function(files) {
+  // File has been drag & dropped
+  $scope.fileDropped = function (files) {
     if (files && files.length) {
       // Adding files to the UI
       var newfiles = [];
-      _.each(files, function(file) {
+      _.each(files, function (file) {
         var newfile = {
           progress: 0,
           name: file.name,
           create_date: new Date().getTime(),
           mimetype: file.type,
-          status: 'Pending...'
+          status: $translate.instant('document.default.upload_pending')
         };
         $scope.files.push(newfile);
         newfiles.push(newfile);
@@ -47,7 +37,7 @@ angular.module('docs').controller('DocumentDefault', function($scope, $rootScope
 
       // Uploading files sequentially
       var key = 0;
-      var then = function() {
+      var then = function () {
         if (files[key]) {
           $scope.uploadFile(files[key], newfiles[key++]).then(then);
         }
@@ -56,15 +46,11 @@ angular.module('docs').controller('DocumentDefault', function($scope, $rootScope
     }
   };
 
-  /**
-   * Upload a file.
-   * @param file
-   * @param newfile
-   */
-  $scope.uploadFile = function(file, newfile) {
+  // Upload a file
+  $scope.uploadFile = function (file, newfile) {
     // Upload the file
-    newfile.status = 'Uploading...';
-    return $upload.upload({
+    newfile.status = $translate.instant('document.default.upload_progress');
+    return Upload.upload({
       method: 'PUT',
       url: '../api/file',
       file: file
@@ -81,27 +67,23 @@ angular.module('docs').controller('DocumentDefault', function($scope, $rootScope
           $rootScope.userInfo.storage_current += data.size;
         })
         .error(function (data) {
-          newfile.status = 'Upload error';
-          if (data.type == 'QuotaReached') {
-            newfile.status += ' - Quota reached';
+          newfile.status = $translate.instant('document.default.upload_error');
+          if (data.type === 'QuotaReached') {
+            newfile.status += ' - ' + $translate.instant('document.default.upload_error_quota');
           }
         });
   };
 
-  /**
-   * Navigate to the selected file.
-   */
+  // Navigate to the selected file
   $scope.openFile = function (file) {
     $state.go('document.default.file', { fileId: file.id })
   };
 
-  /**
-   * Delete a file.
-   */
+  // Delete a file
   $scope.deleteFile = function ($event, file) {
     $event.stopPropagation();
 
-    Restangular.one('file', file.id).remove().then(function() {
+    Restangular.one('file', file.id).remove().then(function () {
       // File deleted, decrease used quota
       $rootScope.userInfo.storage_current -= file.size;
 
@@ -111,17 +93,53 @@ angular.module('docs').controller('DocumentDefault', function($scope, $rootScope
     return false;
   };
 
-  /**
-   * Returns checked files.
-   */
-  $scope.checkedFiles = function() {
+  // Returns checked files
+  $scope.checkedFiles = function () {
     return _.where($scope.files, { checked: true });
   };
 
-  /**
-   * Add a document with checked files.
-   */
-  $scope.addDocument = function() {
+  // Change checked status
+  $scope.changeChecked = function (checked) {
+    _.each($scope.files, function (file) {
+      file.checked = checked;
+    })
+  };
+
+  // Add a document with checked files
+  $scope.addDocument = function () {
     $state.go('document.add', { files: _.pluck($scope.checkedFiles(), 'id') });
   };
+
+  // Open the feedback modal
+  $scope.openFeedback = function () {
+    $uibModal.open({
+      templateUrl: 'partial/docs/feedback.html',
+      controller: 'ModalFeedback'
+    }).result.then(function (content) {
+      if (content === null) {
+        return;
+      }
+
+      Restangular.withConfig(function (RestangularConfigurer) {
+        RestangularConfigurer.setBaseUrl('https://api.sismicsdocs.com');
+      }).one('api').post('feedback', {
+        content: content
+      }).then(function () {
+        var title = $translate.instant('feedback.sent_title');
+        var msg = $translate.instant('feedback.sent_message');
+        var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
+        $dialog.messageBox(title, msg, btns);
+      });
+    });
+  };
+
+  // Load active routes
+  Restangular.one('document/list').get({
+    asc: false,
+    sort_column: 3,
+    limit: 10,
+    search: 'workflow:me'
+  }).then(function (data) {
+    $scope.documentsWorkflow = data.documents;
+  });
 });

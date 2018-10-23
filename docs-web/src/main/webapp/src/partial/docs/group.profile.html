@@ -2,20 +2,21 @@
   <h1>{{ group.name }}</h1>
 </div>
 
-<h4>Members</h4>
+<h4>{{ 'group.profile.members' | translate }}</h4>
 <ul>
   <li ng-repeat="member in group.members">
     <a href="#/user/{{ member }}">{{ member }}</a>
   </li>
-  <li ng-if="group.members.length == 0">No member</li>
+  <li ng-if="group.members.length == 0">{{ 'group.profile.no_members' | translate }}</li>
 </ul>
 
 <div ng-if="userInfo.base_functions.indexOf('ADMIN') != -1">
-  <h4>Related links</h4>
+  <h4>{{ 'group.profile.related_links' | translate }}</h4>
   <ul>
     <li>
-      <a ng-href="#/settings/group/edit/{{ group.name }}">
-        Edit {{ group.name }} group
+      <a ng-href="#/settings/group/edit/{{ group.name }}"
+         translate="group.profile.edit_group"
+         translate-values="{ name: group.name }">
       </a>
     </li>
   </ul>

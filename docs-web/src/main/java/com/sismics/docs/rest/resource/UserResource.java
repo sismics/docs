@@ -4,24 +4,26 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
-import com.sismics.docs.core.dao.jpa.*;
-import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
-import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
-import com.sismics.docs.core.dao.jpa.dto.GroupDto;
-import com.sismics.docs.core.dao.jpa.dto.UserDto;
+import com.sismics.docs.core.dao.*;
+import com.sismics.docs.core.dao.criteria.GroupCriteria;
+import com.sismics.docs.core.dao.criteria.UserCriteria;
+import com.sismics.docs.core.dao.dto.GroupDto;
+import com.sismics.docs.core.dao.dto.UserDto;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
+import com.sismics.docs.core.event.PasswordLostEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.*;
 import com.sismics.docs.core.util.ConfigUtil;
-import com.sismics.docs.core.util.EncryptionUtil;
+import com.sismics.docs.core.util.authentication.AuthenticationUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
-import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.security.UserPrincipal;
+import com.sismics.util.JsonUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 import com.sismics.util.totp.GoogleAuthenticator;
@@ -36,7 +38,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -98,21 +99,14 @@ public class UserResource extends BaseResource {
         user.setPassword(password);
         user.setEmail(email);
         user.setStorageQuota(storageQuota);
-        user.setStorageCurrent(0L);
-        try {
-            user.setPrivateKey(EncryptionUtil.generatePrivateKey());
-        } catch (NoSuchAlgorithmException e) {
-            throw new ServerException("PrivateKeyError", "Error while generating a private key", e);
-        }
-        user.setCreateDate(new Date());
-        
+
         // Create the user
         UserDao userDao = new UserDao();
         try {
             userDao.create(user, principal.getId());
         } catch (Exception e) {
             if ("AlreadyExistingUsername".equals(e.getMessage())) {
-                throw new ServerException("AlreadyExistingUsername", "Login already used", e);
+                throw new ClientException("AlreadyExistingUsername", "Login already used", e);
             } else {
                 throw new ServerException("UnknownError", "Unknown server error", e);
             }
@@ -184,6 +178,7 @@ public class UserResource extends BaseResource {
      * @apiParam {String{8..50}} password Password
      * @apiParam {String{1..100}} email E-mail
      * @apiParam {Number} storage_quota Storage quota (in bytes)
+     * @apiParam {Boolean} disabled Disabled status
      * @apiSuccess {String} status Status OK
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) ValidationError Validation error
@@ -202,7 +197,8 @@ public class UserResource extends BaseResource {
         @PathParam("username") String username,
         @FormParam("password") String password,
         @FormParam("email") String email,
-        @FormParam("storage_quota") String storageQuotaStr) {
+        @FormParam("storage_quota") String storageQuotaStr,
+        @FormParam("disabled") Boolean disabled) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -216,7 +212,7 @@ public class UserResource extends BaseResource {
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
         if (user == null) {
-            throw new ClientException("UserNotFound", "The user doesn't exist");
+            throw new ClientException("UserNotFound", "The user does not exist");
         }
 
         // Update the user
@@ -226,6 +222,22 @@ public class UserResource extends BaseResource {
         if (StringUtils.isNotBlank(storageQuotaStr)) {
             Long storageQuota = ValidationUtil.validateLong(storageQuotaStr, "storage_quota");
             user.setStorageQuota(storageQuota);
+        }
+        if (disabled != null) {
+            // Cannot disable the admin user or the guest user
+            RoleBaseFunctionDao userBaseFuction = new RoleBaseFunctionDao();
+            Set<String> baseFunctionSet = userBaseFuction.findByRoleId(Sets.newHashSet(user.getRoleId()));
+            if (Constants.GUEST_USER_ID.equals(username) || baseFunctionSet.contains(BaseFunction.ADMIN.name())) {
+                disabled = false;
+            }
+
+            if (disabled && user.getDisableDate() == null) {
+                // Recording the disabled date
+                user.setDisableDate(new Date());
+            } else if (!disabled && user.getDisableDate() != null) {
+                // Emptying the disabled date
+                user.setDisableDate(null);
+            }
         }
         user = userDao.update(user, principal.getId());
         
@@ -319,7 +331,7 @@ public class UserResource extends BaseResource {
             }
         } else {
             // Login as a normal user
-            user = userDao.authenticate(username, password);
+            user = AuthenticationUtil.authenticate(username, password);
         }
         if (user == null) {
             throw new ForbiddenClientException();
@@ -433,7 +445,7 @@ public class UserResource extends BaseResource {
             throw new ForbiddenClientException();
         }
         
-        // Ensure that the admin user is not deleted
+        // Ensure that the admin or guest users are not deleted
         if (hasBaseFunction(BaseFunction.ADMIN) || principal.isGuest()) {
             throw new ClientException("ForbiddenError", "This user cannot be deleted");
         }
@@ -507,8 +519,8 @@ public class UserResource extends BaseResource {
         }
         
         // Ensure that the admin user is not deleted
-        RoleBaseFunctionDao userBaseFuction = new RoleBaseFunctionDao();
-        Set<String> baseFunctionSet = userBaseFuction.findByRoleId(Sets.newHashSet(user.getRoleId()));
+        RoleBaseFunctionDao roleBaseFunctionDao = new RoleBaseFunctionDao();
+        Set<String> baseFunctionSet = roleBaseFunctionDao.findByRoleId(Sets.newHashSet(user.getRoleId()));
         if (baseFunctionSet.contains(BaseFunction.ADMIN.name())) {
             throw new ClientException("ForbiddenError", "The admin user cannot be deleted");
         }
@@ -629,6 +641,7 @@ public class UserResource extends BaseResource {
      * @apiSuccess {Number} storage_quota Storage quota (in bytes)
      * @apiSuccess {Number} storage_current Quota used (in bytes)
      * @apiSuccess {String[]} groups Groups
+     * @apiSuccess {Boolean} disabled True if the user is disabled
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) UserNotFound The user does not exist
      * @apiPermission user
@@ -666,7 +679,8 @@ public class UserResource extends BaseResource {
                 .add("groups", groups)
                 .add("email", user.getEmail())
                 .add("storage_quota", user.getStorageQuota())
-                .add("storage_current", user.getStorageCurrent());
+                .add("storage_current", user.getStorageCurrent())
+                .add("disabled", user.getDisableDate() != null);
         return Response.ok().entity(response.build()).build();
     }
     
@@ -686,6 +700,7 @@ public class UserResource extends BaseResource {
      * @apiSuccess {Number} users.storage_quota Storage quota (in bytes)
      * @apiSuccess {Number} users.storage_current Quota used (in bytes)
      * @apiSuccess {Number} users.create_date Create date (timestamp)
+     * @apiSuccess {Number} users.disabled True if the user is disabled
      * @apiError (client) ForbiddenError Access denied
      * @apiPermission user
      * @apiVersion 1.5.0
@@ -724,10 +739,12 @@ public class UserResource extends BaseResource {
             users.add(Json.createObjectBuilder()
                     .add("id", userDto.getId())
                     .add("username", userDto.getUsername())
+                    .add("totp_enabled", userDto.getTotpKey() != null)
                     .add("email", userDto.getEmail())
                     .add("storage_quota", userDto.getStorageQuota())
                     .add("storage_current", userDto.getStorageCurrent())
-                    .add("create_date", userDto.getCreateTimestamp()));
+                    .add("create_date", userDto.getCreateTimestamp())
+                    .add("disabled", userDto.getDisableTimestamp() != null));
         }
         
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -900,7 +917,111 @@ public class UserResource extends BaseResource {
                 .add("status", "ok");
         return Response.ok().entity(response.build()).build();
     }
-    
+
+    /**
+     * Create a key to reset a password and send it by email.
+     *
+     * @api {post} /user/password_lost Create a key to reset a password and send it by email
+     * @apiName PostUserPasswordLost
+     * @apiGroup User
+     * @apiParam {String} username Username
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) UserNotFound The user is not found
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission none
+     * @apiVersion 1.5.0
+     *
+     * @param username Username
+     * @return Response
+     */
+    @POST
+    @Path("password_lost")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response passwordLost(@FormParam("username") String username) {
+        authenticate();
+
+        // Validate input data
+        ValidationUtil.validateStringNotBlank("username", username);
+
+        // Check for user existence
+        UserDao userDao = new UserDao();
+        List<UserDto> userDtoList = userDao.findByCriteria(new UserCriteria().setUserName(username), null);
+        if (userDtoList.isEmpty()) {
+            throw new ClientException("UserNotFound", "User not found: " + username);
+        }
+        UserDto user = userDtoList.get(0);
+
+        // Create the password recovery key
+        PasswordRecoveryDao passwordRecoveryDao = new PasswordRecoveryDao();
+        PasswordRecovery passwordRecovery = new PasswordRecovery();
+        passwordRecovery.setUsername(user.getUsername());
+        passwordRecoveryDao.create(passwordRecovery);
+
+        // Fire a password lost event
+        PasswordLostEvent passwordLostEvent = new PasswordLostEvent();
+        passwordLostEvent.setUser(user);
+        passwordLostEvent.setPasswordRecovery(passwordRecovery);
+        AppContext.getInstance().getMailEventBus().post(passwordLostEvent);
+
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Reset the user's password.
+     *
+     * @api {post} /user/password_reset Reset the user's password
+     * @apiName PostUserPasswordReset
+     * @apiGroup User
+     * @apiParam {String} key Password recovery key
+     * @apiParam {String} password New password
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) KeyNotFound Password recovery key not found
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission none
+     * @apiVersion 1.5.0
+     *
+     * @param passwordResetKey Password reset key
+     * @param password New password
+     * @return Response
+     */
+    @POST
+    @Path("password_reset")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response passwordReset(
+            @FormParam("key") String passwordResetKey,
+            @FormParam("password") String password) {
+        authenticate();
+
+        // Validate input data
+        ValidationUtil.validateRequired("key", passwordResetKey);
+        password = ValidationUtil.validateLength(password, "password", 8, 50, true);
+
+        // Load the password recovery key
+        PasswordRecoveryDao passwordRecoveryDao = new PasswordRecoveryDao();
+        PasswordRecovery passwordRecovery = passwordRecoveryDao.getActiveById(passwordResetKey);
+        if (passwordRecovery == null) {
+            throw new ClientException("KeyNotFound", "Password recovery key not found");
+        }
+
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveByUsername(passwordRecovery.getUsername());
+
+        // Change the password
+        user.setPassword(password);
+        user = userDao.updatePassword(user, principal.getId());
+
+        // Deletes password recovery requests
+        passwordRecoveryDao.deleteActiveByLogin(user.getUsername());
+
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+
     /**
      * Returns the authentication token value.
      *

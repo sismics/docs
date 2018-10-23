@@ -1,0 +1,510 @@
+{
+  "login": {
+    "username": "用户名",
+    "password": "密码",
+    "validation_code_required": "请输入验证码",
+    "validation_code_title": "您的帐号已经激活了双身份验证. 请输入您配置手机app的提供的验证码.",
+    "validation_code": "验证码",
+    "remember_me": "记住我",
+    "submit": "登录",
+    "login_as_guest": "以游客身份登录",
+    "login_failed_title": "登录失败",
+    "login_failed_message": "用户名或密码不正确",
+    "password_lost_btn": "密码丢失？",
+    "password_lost_sent_title": "密码重置邮件已发送",
+    "password_lost_sent_message": "重置密码的邮件已经发送至<strong>{{ username }}</strong>",
+    "password_lost_error_title": "密码重置出错",
+    "password_lost_error_message": "无法发送密码重置邮件，请联系您的管理员进行手动重置"
+  },
+  "passwordlost": {
+    "title": "丢失密码",
+    "message": "请输入您的用户名用于获取密码重置链接。如您忘记了您的用户名，请联系您的管理员",
+    "submit": "重置我的密码"
+  },
+  "passwordreset": {
+    "message": "请输入新的密码",
+    "submit": "更改我的密码",
+    "error_title": "密码更改出错",
+    "error_message": "您的密码恢复请求已过期，请在登录页面上提交新的请求"
+  },
+  "index": {
+    "toggle_navigation": "切换导航",
+    "nav_documents": "文档",
+    "nav_tags": "标签",
+    "nav_users_groups": "用户 & 群组",
+    "error_info": "{{ count }} 新错误",
+    "logged_as": "以 {{ username }}登录",
+    "nav_settings": "设置",
+    "logout": "退出",
+    "global_quota_warning": "<strong>提醒!</strong> 全球配额存储空间已经使用 {{ current | number: 0 }}MB 占总存储配额 {{ total | number: 0 }}MB 的 ({{ percent | number: 1 }}%)"
+  },
+  "document": {
+    "search_simple": "简单搜索",
+    "search_fulltext": "全文搜索",
+    "search_creator": "创建者",
+    "search_language": "语言",
+    "search_before_date": "在此日期之前",
+    "search_after_date": "在此日期之后",
+    "search_tags": "标签",
+    "search_clear": "清除",
+    "any_language": "所有语言",
+    "add_document": "添加一个文档",
+    "import_eml": "从电子邮件导入（EML格式）",
+    "tags": "标签",
+    "no_tags": "无标签",
+    "no_documents": "数据库中无该文档",
+    "search": "搜索",
+    "search_empty": "无匹配 <strong>\"{{ search }}\"</strong>",
+    "shared": "已共享",
+    "title": "标题",
+    "description": "介绍",
+    "contributors": "贡献者",
+    "language": "语言",
+    "creation_date": "创建时间",
+    "subject": "主题",
+    "identifier": "识别码",
+    "publisher": "发布者",
+    "format": "格式",
+    "source": "来源",
+    "type": "类型",
+    "coverage": "覆盖",
+    "rights": "权利",
+    "relations": "关联",
+    "page_size": "页面大小",
+    "page_size_10": "10 每页",
+    "page_size_20": "20 每页",
+    "page_size_30": "30 每页",
+    "upgrade_quota": "如需要升级您的限额, 请联系管理员",
+    "quota": "{{ current | number: 0 }}MB ({{ current | number: 1 }}%) 已使用 {{ total | number: 0 }}MB",
+    "count": "找到{{ count }}个文件",
+    "view": {
+      "delete_comment_title": "删除评论",
+      "delete_comment_message": "您是否确认删除此评论?",
+      "delete_document_title": "删除文档",
+      "delete_document_message": "您是否确认删除此文档?",
+      "shared_document_title": "已共享文档",
+      "shared_document_message": "您可以直接通过发送该链接来分享该文档. 注意：任何有该链接的人员均可查看该文档.<br/><input class=\"form-control share-link\" type=\"text\" readonly=\"readonly\" value=\"{{ link }}\" onclick=\"this.select(); document.execCommand('copy');\" />",
+      "not_found": "文档未找到",
+      "forbidden": "无权限",
+      "download_files": "下载文档",
+      "export_pdf": "以PDF格式导出",
+      "by_creator": "由",
+      "comments": "评论",
+      "no_comments": "此文档暂无评论",
+      "add_comment": "添加评论",
+      "error_loading_comments": "评论加载失败",
+      "workflow_current": "当前工作流程步骤",
+      "workflow_comment": "添加工作流程评论",
+      "workflow_validated_title": "工作流程步骤已验证",
+      "workflow_validated_message": "工作流程步骤已成功验证。",
+      "content": {
+        "content": "内容",
+        "delete_file_title": "删除文档",
+        "delete_file_message": "您是否确认删除此文档?",
+        "upload_pending": "等待中...",
+        "upload_progress": "上传中...",
+        "upload_error": "上传失败",
+        "upload_error_quota": "已达到您的限额",
+        "drop_zone": "将文件拖放至此处上传",
+        "add_files": "添加文件"
+      },
+      "workflow": {
+        "workflow": "工作流程",
+        "message": "使用工作流程与您的组织的人员验证或验证您的文档。",
+        "workflow_start_label": "哪个工作流程启动？",
+        "add_more_workflow": "添加更多工作流程",
+        "start_workflow_submit": "开始工作流程",
+        "full_name": "<strong>{{ name }}</strong>开始于{{ create_date | date }}",
+        "cancel_workflow": "取消当前的工作流程",
+        "cancel_workflow_title": "取消工作流程",
+        "cancel_workflow_message": "你真的想取消当前的工作流程吗？"
+      },
+      "permissions": {
+        "permissions": "权限",
+        "message": "权限可以直接应用于此文档, 或从 <a href=\"#/tag\">标签</a>获取.",
+        "title": "该文档权限",
+        "inherited_tags": "由标签获取的权限",
+        "acl_source": "从",
+        "acl_target": "为",
+        "acl_permission": "权限"
+      },
+      "activity": {
+        "activity": "活动",
+        "message": "对该文档的任何更改都将记录于此."
+      }
+    },
+    "edit": {
+      "document_edited_with_errors": "文档编辑成功但部分文件没能上传",
+      "document_added_with_errors": "文档成功添加但部分文件没能上传",
+      "document_added": "文档成功上传 (与{{ count }}个文件)",
+      "quota_reached": "达到限额",
+      "primary_metadata": "主要元数据",
+      "title_placeholder": "资源的性质或类型",
+      "description_placeholder": "资源账户",
+      "new_files": "新文件",
+      "orphan_files": "+ {{ count }}个文件",
+      "additional_metadata": "附件",
+      "subject_placeholder": "资源话题",
+      "identifier_placeholder": "在给定的上下文中对资源的明确引用",
+      "publisher_placeholder": "负责提供资源的实体",
+      "format_placeholder": "资源的文件格式, 物理介质或维度",
+      "source_placeholder": "从中导出所描述的资源的相关来源",
+      "uploading_files": "上传文件中..."
+    },
+    "default": {
+      "upload_pending": "等待中...",
+      "upload_progress": "上传中...",
+      "upload_error": "上传失败",
+      "upload_error_quota": "达到限额",
+      "quick_upload": "快速上传",
+      "drop_zone": "将文件拖放至此处上传",
+      "add_files": "添加文件",
+      "add_new_document": "添加至新文档",
+      "latest_activity": "最新活动",
+      "footer_sismics": "由<a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>精心制作",
+      "api_documentation": "API 存档",
+      "feedback": "欢迎提供反馈意见"
+    },
+    "pdf": {
+      "export_title": "以PDF形式导出",
+      "export_metadata": "到处元数据",
+      "export_comments": "到处评论",
+      "fit_to_page": "将图像与页面适配",
+      "margin": "边缘",
+      "millimeter": "毫米"
+    },
+    "share": {
+      "title": "共享文档",
+      "message": "如果您想多次共享同一文档，请将共享命名.",
+      "submit": "共享"
+    }
+  },
+  "file": {
+    "view": {
+      "previous": "上一个",
+      "next": "下一个",
+      "not_found": "文件未找到"
+    }
+  },
+  "tag": {
+    "new_tag": "新标签",
+    "search": "搜索",
+    "edit_tag": "更改标签",
+    "default": {
+      "title": "标签",
+      "message_1": "<strong>标签</strong> 是和文档相关的标示.",
+      "message_2": "一个文档可以由多个标签标记, 同时一个标签可以运用于多个文档.",
+      "message_3": "使用该 <span class=\"fas fa-pencil-alt\"></span> 按钮, 您可以编辑标签的权限.",
+      "message_4": "如果一个标签可以被另一个用户或组读取, 相关的文件也可以被这些人阅读.",
+      "message_5": "例如, 用一个标签标记您公司的文档 <span class=\"label label-info\">我的公司</span> 并同时添加权限 <strong>可读</strong> 给一个群组的 <span class=\"btn btn-default\">成员</span>"
+    },
+    "edit": {
+      "delete_tag_title": "删除标签",
+      "delete_tag_message": "您是否确认删除该标签?",
+      "name": "名称",
+      "color": "颜色",
+      "parent": "母",
+      "info": "此标记的权限也将应用于已标记的文档 <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>"
+    }
+  },
+  "group": {
+    "profile": {
+      "members": "组成员",
+      "no_members": "无组成员",
+      "related_links": "相关链接",
+      "edit_group": "编辑 {{ name }} 组"
+    }
+  },
+  "user": {
+    "profile": {
+      "groups": "群组",
+      "quota_used": "已使用配额",
+      "percent_used": "{{ percent | number: 0 }}% 已使用",
+      "related_links": "相关链接",
+      "document_created": "文档由 {{ username }} 创建",
+      "edit_user": "编辑 {{ username }} 用户"
+    }
+  },
+  "usergroup": {
+    "search_groups": "搜索群组",
+    "search_users": "搜索用户",
+    "you": "您",
+    "default": {
+      "title": "用户 & 群组",
+      "message": "此处您可以浏览用户和群组信息."
+    }
+  },
+  "settings": {
+    "menu_personal_settings": "个人设置",
+    "menu_user_account": "用户帐号",
+    "menu_two_factor_auth": "双重身份验证",
+    "menu_opened_sessions": "已打开会话",
+    "menu_general_settings": "一般设置",
+    "menu_workflow": "工作流程",
+    "menu_users": "用户",
+    "menu_groups": "群组",
+    "menu_vocabularies": "词条",
+    "menu_configuration": "配置",
+    "menu_inbox": "收件箱扫描",
+    "menu_server_logs": "服务器日志",
+    "user": {
+      "title": "用户 <small>管理</small>",
+      "add_user": "添加用户",
+      "username": "用户名",
+      "create_date": "创建日期",
+      "totp_enabled": "为该帐号启用双身份认证",
+      "edit": {
+        "delete_user_title": "删除用户",
+        "delete_user_message": "您是否确认删除该用户? 所有相关文档，文件和标签将被删除",
+        "edit_user_failed_title": "用户已存在",
+        "edit_user_failed_message": "该用户名已被占用",
+        "edit_user_title": "<small>编辑</small> \"{{ username }}\"",
+        "add_user_title": "<small>添加一个</small> 用户",
+        "username": "用户名",
+        "email": "邮箱",
+        "groups": "群组",
+        "storage_quota": "存储限额",
+        "storage_quota_placeholder": "存储限额 (in MB)",
+        "password": "密码",
+        "password_confirm": "密码 (确认)",
+        "disabled": "禁用用户",
+        "password_reset_btn": "给该用户发送密码重置电子邮件",
+        "password_lost_sent_title": "密码重置邮件已发送",
+        "password_lost_sent_message": "密码重置电子邮件已发送至 <strong>{{ username }}</strong>"
+      }
+    },
+    "workflow": {
+      "title": "工作流程<small>配置</small>",
+      "add_workflow": "添加工作流程",
+      "name": "名称",
+      "create_date": "创建日期",
+      "edit": {
+        "delete_workflow_title": "删除工作流程",
+        "delete_workflow_message": "你真的想删除这个工作流程吗？当前正在运行的工作流程不会被删除",
+        "edit_workflow_title": "<small>编辑</small>\"{{ name }}\"",
+        "add_workflow_title": "<small>添加一个</small>工作流程",
+        "name": "名称",
+        "name_placeholder": "步骤名称或说明",
+        "drag_help": "拖放以重新排序步骤",
+        "type": "步骤类型",
+        "type_approve": "批准",
+        "type_validate": "验证",
+        "target": "分配给",
+        "target_help": "<strong>批准：</strong>审核并继续工作流程<strong>验证：</strong>接受或拒绝审核",
+        "add_step": "添加工作流程步骤"
+      }
+    },
+    "security": {
+      "enable_totp": "激活双重身份验证",
+      "enable_totp_message": "请确保您的手机上已经拥有一个TOTP兼容的应用程序方可添加新账户",
+      "title": "双重身份 <small>验证</small>",
+      "message_1": "双重身份验证将让您的<strong>{{ appName }}</strong> 帐号获得多一层的安全保障.<br/>在启用该功能前, 请确保在您的手机上拥有一个与TOTP兼容的应用程序:",
+      "message_google_authenticator": "给安卓, 苹果, and 黑莓系统: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">谷歌认证</a>",
+      "message_duo_mobile": "给 安卓 和 苹果系统: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
+      "message_authenticator": "给 Windows 系统手机: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">认证</a>",
+      "message_2": "这些应用程序会自动生成一个验证码，且该验证码在一段时间内会变化.<br/>每次登录 <strong>{{ appName }}</strong>时您都需要输入该验证码.",
+      "secret_key": "您的秘钥是: <strong>{{ secret }}</strong>",
+      "secret_key_warning": "现在用该秘钥配置您的手机应用程序上的TOTP, 您之后将无获取权限.",
+      "totp_enabled_message": "双重身份验证将确保您的帐号.<br/>每次您登录 <strong>{{ appName }}</strong>时, 您都需要从您配置的手机应用程序的验证码.<br/>如果您丢失您的手机, 您将无法登录您的帐号但有效会话将允许您重新生成密钥.",
+      "disable_totp": {
+        "disable_totp": "不激活双重身份验证",
+        "message": "您的帐户将不再受双重身份验证保护.",
+        "confirm_password": "确认您的密码",
+        "submit": "不激活双重身份验证"
+      }
+    },
+    "group": {
+      "title": "群组 <small>管理</small>",
+      "add_group": "添加组",
+      "name": "名称",
+      "edit": {
+        "delete_group_title": "删除组",
+        "delete_group_message": "您是否确认删除该组?",
+        "edit_group_failed_title": "组已存在",
+        "edit_group_failed_message": "该组名已经被占用",
+        "edit_group_title": "编辑 <small>\"{{ name }}\"</small>",
+        "add_group_title": "<small>添加一个</small>组",
+        "name": "名称",
+        "parent_group": "母群组",
+        "search_group": "搜索组",
+        "members": "成员",
+        "new_member": "新成员",
+        "search_user": "搜索用户"
+      }
+    },
+    "account": {
+      "title": "用户<small>帐号</small>",
+      "password": "密码",
+      "password_confirm": "密码 (确认)",
+      "updated": "帐号更新成功"
+    },
+    "config": {
+      "title_guest_access": "游客 <small>权限</small>",
+      "message_guest_access": "游客权限是所有人都能无需密码即获取 {{ appName }} 的权限模式.<br/>和其他正常用户一样, 游客权限用户也只能通过其获取的权限来访问其文档.<br/>",
+      "enable_guest_access": "激活游客权限",
+      "disable_guest_access": "不激活游客权限",
+      "title_theme": "主题 <small>定制</small>",
+      "title_general": "一般配置",
+      "default_language": "新文档的默认语言",
+      "application_name": "申请名",
+      "main_color": "主颜色",
+      "custom_css": "用户样式表",
+      "custom_css_placeholder": "在主样式表之后添加客户自定义样式表",
+      "logo": "图标 (正方形)",
+      "background_image": "背景图片",
+      "uploading_image": "上传图片中...",
+      "title_smtp": "邮件 <small>组态</small>",
+      "smtp_hostname": "SMTP主机名",
+      "smtp_port": "SMTP 端口",
+      "smtp_from": "发送邮件",
+      "smtp_username": "SMTP 用户名",
+      "smtp_password": "SMTP密码",
+      "smtp_updated": "SMTP组态更新成功"
+    },
+    "inbox": {
+      "title": "收件箱扫描",
+      "message": "通过启用此功能，系统会定期扫描指定收件箱中的新电子邮件并自动导入它们。",
+      "enabled": "启用收件箱扫描",
+      "hostname": "IMAP主机名",
+      "port": "IMAP端口（143或993）",
+      "username": "IMAP用户名",
+      "password": "IMAP密码",
+      "tag": "标签添加到导入的文档",
+      "test": "测试参数",
+      "last_sync": "上次同步：{{ data.date | date }}，{{ data.count }}消息导入",
+      "test_success": "与收件箱的连接成功（{{count}}消息）",
+      "test_fail": "连接到收件箱时发生错误，请检查参数"
+    },
+    "log": {
+      "title": "服务器 <small>日志</small>",
+      "date": "日期",
+      "tag": "标签",
+      "message": "信息"
+    },
+    "session": {
+      "title": "打开 <small>会话</small>",
+      "created_date": "创建日期",
+      "last_connection_date": "最后登录时间",
+      "user_agent": "从",
+      "current": "当前",
+      "current_session": "这是目前会话",
+      "clear_message": "该帐号的所有其他连接将终止",
+      "clear": "清除所有其他会话"
+    },
+    "vocabulary": {
+      "title": "词条 <small>输入</small>",
+      "choose_vocabulary": "选择一个词条编辑",
+      "type": "类型",
+      "coverage": "覆盖",
+      "rights": "权利",
+      "value": "值",
+      "order": "顺序",
+      "new_entry": "新输入"
+    }
+  },
+  "feedback": {
+    "title": "欢迎提供反馈意见",
+    "message": "您是否对Sismics Docs有任何建议或疑问？我们愿意倾听您的反馈意见！",
+    "sent_title": "反馈意见已发送",
+    "sent_message": "非常感谢您的反馈意见！这将帮我们进一步改进Sismics Docs从而更好的为您提供服务。"
+  },
+  "import": {
+    "title": "输入",
+    "error_quota": "已达到配额限制，请联系您的管理员以增加配额",
+    "error_general": "尝试导入文件时发生错误，请确保它是有效的EML文件"
+  },
+  "app_share": {
+    "main": "请求获取文档权限的链接",
+    "403": {
+      "title": "无权限",
+      "message": "您已无权限查看该文档"
+    }
+  },
+  "directive": {
+    "acledit": {
+      "acl_target": "用于",
+      "acl_permission": "允许",
+      "add_permission": "添加一个许可",
+      "search_user_group": "搜索一个用户或组"
+    },
+    "auditlog": {
+      "log_created": "创建",
+      "log_updated": "更新",
+      "log_deleted": "删除",
+      "Acl": "ACL",
+      "Comment": "评论",
+      "Document": "文档",
+      "File": "文件",
+      "Group": "组",
+      "Tag": "标签",
+      "User": "用户",
+      "RouteModel": "工作流程",
+      "Route": "工作流程"
+    },
+    "selectrelation": {
+      "typeahead": "请输入一个文档名称"
+    },
+    "selecttag": {
+      "typeahead": "请输入一个标签"
+    },
+    "datepicker": {
+      "current": "今天",
+      "clear": "清除",
+      "close": "完成"
+    }
+  },
+  "filter": {
+    "filesize": {
+      "mb": "MB",
+      "kb": "kB"
+    }
+  },
+  "acl": {
+    "READ": "可读",
+    "READWRITE": "可写",
+    "WRITE": "可写",
+    "USER": "用户",
+    "GROUP": "组",
+    "SHARE": "已共享"
+  },
+  "workflow_type": {
+    "VALIDATE": "验证",
+    "APPROVE": "赞许"
+  },
+  "workflow_transition": {
+    "APPROVED": "批准",
+    "REJECTED": "拒绝",
+    "VALIDATED": "验证"
+  },
+  "validation": {
+    "required": "必填",
+    "too_short": "过短",
+    "too_long": "过长",
+    "email": "必须是一个有效邮箱地址",
+    "password_confirm": "密码和确认密码必须完全一致",
+    "number": "必须为数字",
+    "no_space": "不允许空格"
+  },
+  "pagination": {
+    "previous": "上一个",
+    "next": "下一个",
+    "first": "第一",
+    "last": "持续"
+  },
+  "ok": "确认",
+  "cancel": "取消",
+  "share": "共享",
+  "unshare": "不共享",
+  "close": "关闭",
+  "add": "添加",
+  "open": "打开",
+  "see": "查看",
+  "save": "保存",
+  "export": "导出",
+  "edit": "编辑",
+  "delete": "删除",
+  "loading": "加载中...",
+  "send": "发送",
+  "enabled": "激活",
+  "disabled": "未激活"
+}

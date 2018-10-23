@@ -1,10 +1,9 @@
 package com.sismics.security;
 
-import java.util.Set;
-
+import com.google.common.collect.Sets;
 import org.joda.time.DateTimeZone;
 
-import jersey.repackaged.com.google.common.collect.Sets;
+import java.util.Set;
 
 /**
  * Anonymous principal.

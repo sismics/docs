@@ -3,7 +3,7 @@
 /**
  * Document edition controller.
  */
-angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $q, $http, $state, $stateParams, Restangular) {
+angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $q, $http, $state, $stateParams, Restangular, $translate) {
   // Alerts
   $scope.alerts = [];
 
@@ -11,7 +11,10 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
   $scope.vocabularies = [];
 
   // Orphan files to add
-  $scope.orphanFiles = $stateParams.files ? $stateParams.files.split(',') : [];
+  $scope.orphanFiles = [];
+  if ($stateParams.files) {
+    $scope.orphanFiles = _.isArray($stateParams.files) ? $stateParams.files : [ $stateParams.files ];
+  }
 
   /**
    * Close an alert.
@@ -19,14 +22,14 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
   $scope.closeAlert = function(index) {
     $scope.alerts.splice(index, 1);
   };
-  
+
   /**
    * Returns a promise for typeahead title.
    */
   $scope.getTitleTypeahead = function($viewValue) {
     var deferred = $q.defer();
-    Restangular.one('document')
-    .getList('list', {
+    Restangular.one('document/list')
+    .get({
       limit: 5,
       sort_column: 1,
       asc: true,
@@ -48,12 +51,26 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
    * Reset the form to add a new document.
    */
   $scope.resetForm = function() {
+    var language = 'eng';
+    if ($rootScope.app && $rootScope.app.default_language) {
+      language = $rootScope.app.default_language;
+    }
+
     $scope.document = {
       tags: [],
       relations: [],
-      language: 'fra'
+      language: language
     };
+
+    if ($scope.navigatedTag) {
+      $scope.document.tags.push($scope.navigatedTag);
+    }
+
     $scope.newFiles = [];
+
+    if ($scope.form) {
+      $scope.form.$setPristine();
+    }
   };
 
   /**
@@ -86,7 +103,7 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
     var attachOrphanFiles = function(data) {
       var promises = [];
       _.each($scope.orphanFiles, function(fileId) {
-        promises.push(Restangular.one('file/' + fileId).post('', { id: data.id }));
+        promises.push(Restangular.one('file/' + fileId).post('attach', { id: data.id }));
       });
       $scope.orphanFiles = [];
       return $q.all(promises);
@@ -94,35 +111,22 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
     
     // Upload files after edition
     promise.then(function(data) {
-      console.log('document created, adding file', $scope.newFiles);
       $scope.fileProgress = 0;
       
       // When all files upload are over, attach orphan files and move on
       var navigateNext = function() {
-        attachOrphanFiles(data).then(function(resolve) {
-          if ($scope.isEdit()) {
-            // Go back to the edited document
-            $scope.pageDocuments();
-            $state.go('document.view', { id: $stateParams.id });
-          } else {
-            // Reset the scope and stay here
-            var fileUploadCount = _.size($scope.newFiles) + resolve.length;
-            $scope.alerts.unshift({
-              type: 'success',
-              msg: 'Document successfully added (with ' + fileUploadCount + ' file' + (fileUploadCount > 1 ? 's' :  '') + ')'
-            });
-
-            $scope.resetForm();
-            $scope.loadDocuments();
-          }
+        attachOrphanFiles(data).then(function() {
+          // Open the edited/created document
+          $scope.pageDocuments();
+          $state.go('document.view', { id: data.id });
         });
       };
       
-      if (_.size($scope.newFiles) == 0) {
+      if (!$scope.newFiles || $scope.newFiles.length === 0) {
         navigateNext();
       } else {
         $scope.fileIsUploading = true;
-        $rootScope.pageTitle = '0% - Sismics Docs';
+        $rootScope.pageTitle = '0% - ' + $rootScope.appName;
         
         // Send a file from the input file array and return a promise
         var sendFile = function(key) {
@@ -134,11 +138,10 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
           };
 
           // Build the payload
-          console.log('sending file', key, $scope.newFiles[key], data);
           var file = $scope.newFiles[key];
           var formData = new FormData();
           formData.append('id', data.id);
-          formData.append('file', file);
+          formData.append('file', file, encodeURIComponent(file.name));
 
           // Send the file
           $.ajax({
@@ -149,7 +152,6 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
             contentType: false,
             processData: false,
             success: function(response) {
-              console.log('file uploaded successfully', formData);
               deferred.resolve(response);
             },
             error: function(jqXHR) {
@@ -172,19 +174,19 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
             // Error uploading a file, we stop here
             $scope.alerts.unshift({
               type: 'danger',
-              msg: 'Document successfully ' + ($scope.isEdit() ? 'edited' : 'added') + ' but some files cannot be uploaded'
-                + (data.responseJSON.type == 'QuotaReached' ? ' - Quota reached' : '')
+              msg: $translate.instant('document.edit.document_' + ($scope.isEdit() ? 'edited' : 'added') + '_with_errors')
+                + (data.responseJSON && data.responseJSON.type === 'QuotaReached' ? (' - ' + $translate.instant('document.edit.quota_reached')) : '')
             });
 
             // Reset view and title
             $scope.fileIsUploading = false;
             $scope.fileProgress = 0;
-            $rootScope.pageTitle = 'Sismics Docs';
+            $rootScope.pageTitle = $rootScope.appName;
           }, function(e) {
             var done = 1 - (e.total - e.loaded) / e.total;
             var chunk = 100 / _.size($scope.newFiles);
             $scope.fileProgress = startProgress + done * chunk;
-            $rootScope.pageTitle = Math.round($scope.fileProgress) + '% - Sismics Docs';
+            $rootScope.pageTitle = Math.round($scope.fileProgress) + '% - ' + $rootScope.appName;
           });
 
           return deferred.promise;
@@ -195,13 +197,11 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
         var then = function() {
           key++;
           if ($scope.newFiles[key]) {
-            console.log('sending new file');
             sendFile(key).then(then);
           } else {
             $scope.fileIsUploading = false;
             $scope.fileProgress = 0;
-            $rootScope.pageTitle = 'Sismics Docs';
-            console.log('finished sending files, bye');
+            $rootScope.pageTitle = $rootScope.appName;
             navigateNext();
           }
         };

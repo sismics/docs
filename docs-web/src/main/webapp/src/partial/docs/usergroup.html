@@ -1,12 +1,12 @@
 <div class="row">
   <div class="col-md-4">
-    <div class="well">
+    <div class="well well-3d">
       <p class="input-group">
-        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-        <input type="search" class="form-control" placeholder="Search in groups" ng-model="searchGroup">
+        <span class="input-group-addon"><span class="fas fa-search"></span></span>
+        <input type="search" class="form-control" ng-attr-placeholder="{{ 'usergroup.search_groups' | translate }}" ng-model="searchGroup">
       </p>
 
-      <table class="row table table-striped table-hover">
+      <table class="row table table-hover">
         <tbody>
         <tr class="pointer" ng-repeat="group in groups | filter: searchGroup"
             ng-click="openGroup(group)" ng-class="{ active: $stateParams.name == group.name }">
@@ -16,26 +16,34 @@
         </tr>
         </tbody>
       </table>
+
+      <div class="well-3d-background">
+        <span class="fas fa-users"></span>
+      </div>
     </div>
 
-    <div class="well">
+    <div class="well well-3d">
       <p class="input-group">
-        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-        <input type="search" class="form-control" placeholder="Search in users" ng-model="searchUser">
+        <span class="input-group-addon"><span class="fas fa-search"></span></span>
+        <input type="search" class="form-control" ng-attr-placeholder="{{ 'usergroup.search_users' | translate }}" ng-model="searchUser">
       </p>
 
-      <table class="row table table-striped table-hover">
+      <table class="row table table-hover">
         <tbody>
         <tr class="pointer" ng-repeat="user in users | filter: searchUser"
             ng-click="openUser(user)" ng-class="{ active: $stateParams.username == user.username }">
           <td class="col-xs-4">
-            <span class="glyphicon glyphicon-user"></span>
+            <span class="fas fa-user"></span>
             {{ user.username }}
-            <span class="text-muted" ng-if="userInfo.username == user.username">It's you!</span>
+            <span class="text-muted" ng-if="userInfo.username == user.username">{{ 'usergroup.you' | translate }}</span>
           </td>
         </tr>
         </tbody>
       </table>
+
+      <div class="well-3d-background">
+        <span class="fas fa-user"></span>
+      </div>
     </div>
   </div>
 

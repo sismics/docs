@@ -1,17 +1,16 @@
 package com.sismics.docs.rest;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
+import org.junit.Assert;
+import org.junit.Test;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.sismics.util.filter.TokenBasedSecurityFilter;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -167,6 +166,15 @@ public class TestGroupResource extends BaseJerseyTest {
         target().path("/group/g1").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .delete(JsonObject.class);
+
+        // Delete group administrators
+        Response response = target().path("/group/administrators").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete();
+        Assert.assertEquals(Response.Status.BAD_REQUEST, Response.Status.fromStatusCode(response.getStatus()));
+        json = response.readEntity(JsonObject.class);
+        Assert.assertEquals("ForbiddenError", json.getString("type"));
+        Assert.assertEquals("The administrators group cannot be deleted", json.getString("message"));
         
         // Check group1 groups (all computed groups)
         json = target().path("/user").request()

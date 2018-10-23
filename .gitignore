@@ -9,3 +9,8 @@
 /.idea
 /.project
 *.iml
+node_modules
+import_test
+docs-importer-linux
+docs-importer-macos
+docs-importer-win.exe

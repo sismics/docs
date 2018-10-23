@@ -27,20 +27,23 @@ All dates are returned in UNIX timestamp format in milliseconds.
 ## Authentication
 #### **Step 1: [POST /user/login](#api-User-PostUserLogin)**
 
-A call to this endpoint will return a cookie header like this:
+A call to this endpoint will return a cookie header. Here is a CURL example:
 ```
-HTTP Response:
+curl -i -X POST -d username=admin -d password=admin https://docs.mycompany.com/api/user/login
 Set-Cookie: auth_token=64085630-2ae6-415c-9a92-4b22c107eaa4
 ```
 
 #### **Step 2: Authenticated API calls**
 
-All following API calls must have a cookie header supplying the given token, like this:
+All following API calls must have a cookie header supplying the given token. Here is a CURL example:
 ```
-HTTP Request:
-Cookie: auth_token=64085630-2ae6-415c-9a92-4b22c107eaa4
+curl -i -X GET -H "Cookie: auth_token=64085630-2ae6-415c-9a92-4b22c107eaa4" https://docs.mycompany.com/api/document/list
+{"total":12,"documents":[...]}
 ```
 
 #### **Step 3: [POST /user/logout](#api-User-PostUserLogout)**
 
 A call to this API with a given `auth_token` cookie will make it unusable for other calls.
+```
+curl -i -X POST -H "Cookie: auth_token=64085630-2ae6-415c-9a92-4b22c107eaa4" https://docs.mycompany.com/api/user/logout
+```

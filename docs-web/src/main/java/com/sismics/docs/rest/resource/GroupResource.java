@@ -1,12 +1,14 @@
 package com.sismics.docs.rest.resource;
 
 import com.google.common.base.Strings;
-import com.sismics.docs.core.dao.jpa.GroupDao;
-import com.sismics.docs.core.dao.jpa.UserDao;
-import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
-import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
-import com.sismics.docs.core.dao.jpa.dto.GroupDto;
-import com.sismics.docs.core.dao.jpa.dto.UserDto;
+import com.google.common.collect.Sets;
+import com.sismics.docs.core.dao.GroupDao;
+import com.sismics.docs.core.dao.RoleBaseFunctionDao;
+import com.sismics.docs.core.dao.UserDao;
+import com.sismics.docs.core.dao.criteria.GroupCriteria;
+import com.sismics.docs.core.dao.criteria.UserCriteria;
+import com.sismics.docs.core.dao.dto.GroupDto;
+import com.sismics.docs.core.dao.dto.UserDto;
 import com.sismics.docs.core.model.jpa.Group;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.model.jpa.UserGroup;
@@ -14,8 +16,8 @@ import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
-import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.JsonUtil;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -24,6 +26,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Group REST resources.
@@ -184,6 +187,15 @@ public class GroupResource extends BaseResource {
         Group group = groupDao.getActiveByName(groupName);
         if (group == null) {
             throw new NotFoundException();
+        }
+
+        // Ensure that the admin group is not deleted
+        if (group.getRoleId() != null) {
+            RoleBaseFunctionDao roleBaseFunctionDao = new RoleBaseFunctionDao();
+            Set<String> baseFunctionSet = roleBaseFunctionDao.findByRoleId(Sets.newHashSet(group.getRoleId()));
+            if (baseFunctionSet.contains(BaseFunction.ADMIN.name())) {
+                throw new ClientException("ForbiddenError", "The administrators group cannot be deleted");
+            }
         }
         
         // Delete the group

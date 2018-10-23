@@ -1,17 +1,15 @@
 package com.sismics.docs.rest;
 
-import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.util.context.ThreadLocalContext;
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
-import com.sismics.util.jpa.EMF;
 import org.junit.Assert;
 import org.junit.Test;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
@@ -41,7 +39,11 @@ public class TestAppResource extends BaseJerseyTest {
         Assert.assertTrue(freeMemory > 0);
         Long totalMemory = json.getJsonNumber("total_memory").longValue();
         Assert.assertTrue(totalMemory > 0 && totalMemory > freeMemory);
+        Assert.assertEquals(0, json.getJsonNumber("queued_tasks").intValue());
         Assert.assertFalse(json.getBoolean("guest_login"));
+        Assert.assertEquals("eng", json.getString("default_language"));
+        Assert.assertTrue(json.containsKey("global_storage_current"));
+        Assert.assertTrue(json.getJsonNumber("active_user_count").longValue() > 0);
 
         // Rebuild Lucene index
         Response response = target().path("/app/batch/reindex").request()
@@ -55,40 +57,27 @@ public class TestAppResource extends BaseJerseyTest {
                 .post(Entity.form(new Form()));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         
-        // Recompute quota
-        response = target().path("/app/batch/recompute_quota").request()
+        // Change the default language
+        response = target().path("/app/config").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
-                .post(Entity.form(new Form()));
+                .post(Entity.form(new Form().param("default_language", "fra")));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
 
-        // Create a tag
-        json = target().path("/tag").request()
+        // Check the application info
+        json = target().path("/app").request()
+                .get(JsonObject.class);
+        Assert.assertEquals("fra", json.getString("default_language"));
+
+        // Change the default language
+        response = target().path("/app/config").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
-                .put(Entity.form(new Form()
-                        .param("name", "Tag4")
-                        .param("color", "#00ff00")), JsonObject.class);
-        String tagId = json.getString("id");
-
-        // Init transactional context
-        EntityManager em = EMF.get().createEntityManager();
-        ThreadLocalContext context = ThreadLocalContext.get();
-        context.setEntityManager(em);
-        EntityTransaction tx = em.getTransaction();
-        tx.begin();
-
-        // Remove base ACLs
-        AclDao aclDao = new AclDao();
-        aclDao.delete(tagId, PermType.READ, "admin", "admin");
-        aclDao.delete(tagId, PermType.WRITE, "admin", "admin");
-        Assert.assertEquals(0, aclDao.getBySourceId(tagId).size());
-        tx.commit();
-
-        // Add base ACLs to tags
-        response = target().path("/app/batch/tag_acls").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
-                .post(Entity.form(new Form()));
+                .post(Entity.form(new Form().param("default_language", "eng")));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        Assert.assertEquals(2, aclDao.getBySourceId(tagId).size());
+
+        // Check the application info
+        json = target().path("/app").request()
+                .get(JsonObject.class);
+        Assert.assertEquals("eng", json.getString("default_language"));
     }
 
     /**
@@ -188,5 +177,156 @@ public class TestAppResource extends BaseJerseyTest {
         target().path("/document/list").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, guestToken)
                 .get(JsonObject.class);
+    }
+
+    /**
+     * Test SMTP configuration changes.
+     */
+    @Test
+    public void testSmtpConfiguration() {
+        // Login admin
+        String adminToken = clientUtil.login("admin", "admin", false);
+
+        // Get SMTP configuration
+        JsonObject json = target().path("/app/config_smtp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertTrue(json.isNull("hostname"));
+        Assert.assertTrue(json.isNull("port"));
+        Assert.assertTrue(json.isNull("username"));
+        Assert.assertTrue(json.isNull("password"));
+        Assert.assertTrue(json.isNull("from"));
+
+        // Change SMTP configuration
+        target().path("/app/config_smtp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("hostname", "smtp.sismics.com")
+                        .param("port", "1234")
+                        .param("username", "sismics")
+                        .param("from", "contact@sismics.com")
+                ), JsonObject.class);
+
+        // Get SMTP configuration
+        json = target().path("/app/config_smtp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertEquals("smtp.sismics.com", json.getString("hostname"));
+        Assert.assertEquals(1234, json.getInt("port"));
+        Assert.assertEquals("sismics", json.getString("username"));
+        Assert.assertTrue(json.isNull("password"));
+        Assert.assertEquals("contact@sismics.com", json.getString("from"));
+    }
+
+    /**
+     * Test inbox scanning.
+     */
+    @Test
+    public void testInbox() {
+        // Login admin
+        String adminToken = clientUtil.login("admin", "admin", false);
+
+        // Create a tag
+        JsonObject json = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("name", "Inbox")
+                        .param("color", "#ff0000")), JsonObject.class);
+        String tagInboxId = json.getString("id");
+
+        // Get inbox configuration
+        json = target().path("/app/config_inbox").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertFalse(json.getBoolean("enabled"));
+        Assert.assertEquals("", json.getString("hostname"));
+        Assert.assertEquals(993, json.getJsonNumber("port").intValue());
+        Assert.assertEquals("", json.getString("username"));
+        Assert.assertEquals("", json.getString("password"));
+        Assert.assertEquals("", json.getString("tag"));
+        JsonObject lastSync = json.getJsonObject("last_sync");
+        Assert.assertTrue(lastSync.isNull("date"));
+        Assert.assertTrue(lastSync.isNull("error"));
+        Assert.assertEquals(0, lastSync.getJsonNumber("count").intValue());
+
+        // Change inbox configuration
+        target().path("/app/config_inbox").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("enabled", "true")
+                        .param("hostname", "localhost")
+                        .param("port", "9755")
+                        .param("username", "test@sismics.com")
+                        .param("password", "12345678")
+                        .param("tag", tagInboxId)
+                ), JsonObject.class);
+
+        // Get inbox configuration
+        json = target().path("/app/config_inbox").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertTrue(json.getBoolean("enabled"));
+        Assert.assertEquals("localhost", json.getString("hostname"));
+        Assert.assertEquals(9755, json.getInt("port"));
+        Assert.assertEquals("test@sismics.com", json.getString("username"));
+        Assert.assertEquals("12345678", json.getString("password"));
+        Assert.assertEquals(tagInboxId, json.getString("tag"));
+
+        ServerSetup serverSetupSmtp = new ServerSetup(9754, null, ServerSetup.PROTOCOL_SMTP);
+        ServerSetup serverSetupImap = new ServerSetup(9755, null, ServerSetup.PROTOCOL_IMAP);
+        GreenMail greenMail = new GreenMail(new ServerSetup[] { serverSetupSmtp, serverSetupImap });
+        greenMail.setUser("test@sismics.com", "12345678");
+        greenMail.start();
+
+        // Test the inbox
+        json = target().path("/app/test_inbox").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()), JsonObject.class);
+        Assert.assertEquals(0, json.getJsonNumber("count").intValue());
+
+        // Send an email
+        GreenMailUtil.sendTextEmail("test@sismics.com", "test@sismicsdocs.com", "Test email 1", "Test content 1", serverSetupSmtp);
+
+        // Trigger an inbox sync
+        AppContext.getInstance().getInboxService().syncInbox();
+
+        // Search for added documents
+        json = target().path("/document/list")
+                .queryParam("search", "tag:Inbox full:content")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
+
+        // Get inbox configuration
+        json = target().path("/app/config_inbox").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        lastSync = json.getJsonObject("last_sync");
+        Assert.assertFalse(lastSync.isNull("date"));
+        Assert.assertTrue(lastSync.isNull("error"));
+        Assert.assertEquals(1, lastSync.getJsonNumber("count").intValue());
+
+        // Trigger an inbox sync
+        AppContext.getInstance().getInboxService().syncInbox();
+
+        // Search for added documents
+        json = target().path("/document/list")
+                .queryParam("search", "tag:Inbox full:content")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
+
+        // Get inbox configuration
+        json = target().path("/app/config_inbox").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        lastSync = json.getJsonObject("last_sync");
+        Assert.assertFalse(lastSync.isNull("date"));
+        Assert.assertTrue(lastSync.isNull("error"));
+        Assert.assertEquals(0, lastSync.getJsonNumber("count").intValue());
+
+        greenMail.stop();
     }
 }

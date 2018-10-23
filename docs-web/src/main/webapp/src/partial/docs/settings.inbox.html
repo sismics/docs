@@ -1,0 +1,83 @@
+<h2>
+  <span translate="settings.inbox.title"></span>
+  <span class="label" ng-show="inbox"
+        ng-class="{ 'label-success': inbox.enabled, 'label-danger': !inbox.enabled }">
+    {{ inbox.enabled ? 'enabled' : 'disabled' | translate }}
+  </span>
+</h2>
+<p translate="settings.inbox.message"></p>
+<p ng-show="inbox.last_sync" translate="settings.inbox.last_sync" translate-values="{ data: inbox.last_sync }"></p>
+<p ng-show="inbox.last_sync.error" class="text-danger">{{ inbox.last_sync.error }}</p>
+
+<form class="form-horizontal" name="inboxForm" novalidate>
+  <div class="form-group">
+    <label class="col-sm-2 control-label" for="inboxEnabled">{{ 'settings.inbox.enabled' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="enabled" type="checkbox" id="inboxEnabled" ng-model="inbox.enabled" />
+    </div>
+  </div>
+
+  <div class="form-group" ng-class="{ 'has-error': !inboxForm.hostname.$valid && inboxForm.$dirty }">
+    <label class="col-sm-2 control-label" for="inboxHostname">{{ 'settings.inbox.hostname' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="hostname" type="text" class="form-control" id="inboxHostname" ng-model="inbox.hostname" />
+    </div>
+  </div>
+
+  <div class="form-group" ng-class="{ 'has-error': !inboxForm.port.$valid && inboxForm.$dirty }">
+    <label class="col-sm-2 control-label" for="inboxPort">{{ 'settings.inbox.port' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="port" type="number" class="form-control" id="inboxPort" ng-model="inbox.port" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-2 control-label" for="inboxUsername">{{ 'settings.inbox.username' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="username" type="text" class="form-control" id="inboxUsername" ng-model="inbox.username" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-2 control-label" for="inboxPassword">{{ 'settings.inbox.password' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="password" type="password" class="form-control" id="inboxPassword" ng-model="inbox.password" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-2 control-label" for="inboxPassword">{{ 'settings.inbox.tag' | translate }}</label>
+    <div class="col-sm-7">
+      <select class="form-control" ng-model="inbox.tag" id="inboxTag">
+        <option value=""></option>
+        <option ng-repeat="tag0 in tags"
+                ng-if="tag0.id != tag.id"
+                ng-selected="inbox.tag == tag0.id"
+                value="{{ tag0.id }}">{{ tag0.name }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary" ng-click="editInboxConfig()" ng-disabled="!inboxForm.$valid">
+        <span class="fas fa-pencil-alt"></span> {{ 'save' | translate }}
+      </button>
+      <button type="submit" class="btn btn-warning" ng-click="testInboxConfig()">
+        <span class="fas fa-pencil-alt"></span> {{ 'settings.inbox.test' | translate }}
+        <span ng-if="testLoading" class="fas fa-circle-notch fa-spin"></span>
+      </button>
+    </div>
+  </div>
+</form>
+
+<div class="alert col-sm-9 alert-success"
+     ng-show="saveResult">
+  {{ saveResult }}
+</div>
+
+<div class="alert col-sm-9"
+     ng-class="{ 'alert-success': testResult.count >= 0, 'alert-danger': testResult.count == -1 }"
+     ng-show="testResult"
+     translate="{{ testResult.count >= 0 ? 'settings.inbox.test_success' : 'settings.inbox.test_fail' }}"
+     translate-values="{ count: testResult.count }"></div>

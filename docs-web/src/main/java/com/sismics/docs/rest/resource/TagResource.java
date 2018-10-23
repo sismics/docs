@@ -1,11 +1,12 @@
 package com.sismics.docs.rest.resource;
 
 import com.google.common.collect.Sets;
+import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.docs.core.dao.jpa.TagDao;
-import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
-import com.sismics.docs.core.dao.jpa.dto.TagDto;
+import com.sismics.docs.core.dao.AclDao;
+import com.sismics.docs.core.dao.TagDao;
+import com.sismics.docs.core.dao.criteria.TagCriteria;
+import com.sismics.docs.core.dao.dto.TagDto;
 import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -116,7 +117,7 @@ public class TagResource extends BaseResource {
 
         TagDao tagDao = new TagDao();
         List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setId(id), null);
-        if (tagDtoList.size() == 0) {
+        if (tagDtoList.isEmpty()) {
             throw new NotFoundException();
         }
 
@@ -191,7 +192,7 @@ public class TagResource extends BaseResource {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
             }
         }
-        
+
         // Create the tag
         TagDao tagDao = new TagDao();
         Tag tag = new Tag();
@@ -205,6 +206,7 @@ public class TagResource extends BaseResource {
         AclDao aclDao = new AclDao();
         Acl acl = new Acl();
         acl.setPerm(PermType.READ);
+        acl.setType(AclType.USER);
         acl.setSourceId(id);
         acl.setTargetId(principal.getId());
         aclDao.create(acl, principal.getId());
@@ -212,6 +214,7 @@ public class TagResource extends BaseResource {
         // Create write ACL
         acl = new Acl();
         acl.setPerm(PermType.WRITE);
+        acl.setType(AclType.USER);
         acl.setSourceId(id);
         acl.setTargetId(principal.getId());
         aclDao.create(acl, principal.getId());
@@ -236,6 +239,7 @@ public class TagResource extends BaseResource {
      * @apiError (client) ValidationError Validation error
      * @apiError (client) SpacesNotAllowed Spaces are not allowed in tag name
      * @apiError (client) ParentNotFound Parent not found
+     * @apiError (client) CircularReference Circular reference in parent tag
      * @apiError (client) NotFound Tag not found
      * @apiPermission user
      * @apiVersion 1.5.0
@@ -272,16 +276,25 @@ public class TagResource extends BaseResource {
         }
         
         // Check the parent
+        TagDao tagDao = new TagDao();
         if (StringUtils.isEmpty(parentId)) {
             parentId = null;
         } else {
             if (!aclDao.checkPermission(parentId, PermType.READ, getTargetIdList(null))) {
                 throw new ClientException("ParentNotFound", MessageFormat.format("Parent not found: {0}", parentId));
             }
+
+            String parentTagId = parentId;
+            do {
+                Tag parentTag = tagDao.getById(parentTagId);
+                parentTagId = parentTag.getParentId();
+                if (parentTag.getId().equals(id)) {
+                    throw new ClientException("CircularReference", "Circular reference in parent tag");
+                }
+            } while (parentTagId != null);
         }
-        
+
         // Update the tag
-        TagDao tagDao = new TagDao();
         Tag tag = tagDao.getById(id);
         if (!StringUtils.isEmpty(name)) {
             tag.setName(name);
@@ -328,7 +341,7 @@ public class TagResource extends BaseResource {
         if (!aclDao.checkPermission(id, PermType.WRITE, getTargetIdList(null))) {
             throw new NotFoundException();
         }
-        
+
         // Delete the tag
         TagDao tagDao = new TagDao();
         tagDao.delete(id, principal.getId());

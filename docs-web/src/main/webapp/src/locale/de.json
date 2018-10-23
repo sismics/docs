@@ -1,0 +1,549 @@
+{
+  "login": {
+    "username": "Benutzername",
+    "password": "Passwort",
+    "validation_code_required": "Ein Validierungscode ist erforderlich",
+    "validation_code_title": "Sie haben die Zwei-Faktor-Authentifizierung für Ihr Konto aktiviert. Bitte geben Sie einen Validierungscode ein, der von der konfigurierten Telefon-App generiert wurde.",
+    "validation_code": "Validierungscode",
+    "remember_me": "Angemeldet bleiben",
+    "submit": "Anmelden",
+    "login_as_guest": "Als Gast anmelden",
+    "login_failed_title": "Login fehlgeschlagen",
+    "login_failed_message": "Benutzername oder Passwort ungültig",
+    "password_lost_btn": "Passwort vergessen?",
+    "password_lost_sent_title": "Passwort zurücksetzen Email gesendet",
+    "password_lost_sent_message": "Eine E-Mail wurde an <strong>{{ username }}</strong> gesendet, um dessen Passwort zurückzusetzen.",
+    "password_lost_error_title": "Fehler beim Zurücksetzen des Passworts",
+    "password_lost_error_message": "Wenn Sie keine E-Mail zum Zurücksetzen des Passworts senden können, wenden Sie sich bitte an Ihren Administrator, um einen manuellen Reset durchzuführen."
+  },
+  "passwordlost": {
+    "title": "Passwort vergessen",
+    "message": "Bitte geben Sie Ihren Benutzernamen ein, um einen Link zum Zurücksetzen des Passworts zu erhalten. Wenn Sie Ihren Benutzernamen vergessen haben, wenden Sie sich bitte an Ihren Administrator.",
+    "submit": "Passwort zurücksetzen"
+  },
+  "passwordreset": {
+    "message": "Bitte geben Sie ein neues Passwort ein.",
+    "submit": "Mein Passwort ändern",
+    "error_title": "Fehler beim ändern des Passworts.",
+    "error_message": "Ihre Anfrage zur Passwort-Wiederherstellung ist abgelaufen, bitte wiederholen Sie die die Anfrage."
+  },
+  "index": {
+    "toggle_navigation": "Navigation ein-/ausblenden",
+    "nav_documents": "Dokumente",
+    "nav_tags": "Tags",
+    "nav_users_groups": "Benutzer & Gruppen",
+    "error_info": "{{ count }} neuer Fehler{{ count > 1 ? 's' : '' }}",
+    "logged_as": "Eingeloggt als {{ username }}",
+    "nav_settings": "Einstellungen",
+    "logout": "Logout",
+    "global_quota_warning": "<strong>Warnung!</strong> Der frei zur Verfügung stehende maximale Speicherplatz ist fast erreicht bei {{ current | number: 0 }}MB ({{ percent | number: 1 }}%) verwendet {{ total | number: 0 }}MB"
+  },
+  "document": {
+    "navigation_up": "Eine Stufe höher",
+    "toggle_navigation": "Navigation ein-/ausblenden",
+    "search_simple": "Einfache Suche",
+    "search_fulltext": "Volltext Suche",
+    "search_creator": "Urheber",
+    "search_language": "Sprache",
+    "search_before_date": "Vor diesem Datum",
+    "search_after_date": "Nach diesem Datum",
+    "search_before_update_date": "Bearbeitet bevor diesem Datum",
+    "search_after_update_date": "Bearbeitet nach diesem Datum",
+    "search_tags": "Tags",
+    "search_shared": "Nur freigegebene Dokumente",
+    "search_workflow": "Mir zugeordneter Workflow",
+    "search_clear": "Leeren",
+    "any_language": "Jede Sprache",
+    "add_document": "Dokument hinzufügen",
+    "import_eml": "Import aus einer E-Mail (EML-Format)",
+    "tags": "Tags",
+    "no_tags": "Keine Tags",
+    "no_documents": "Kein Dokument in der Datenbank",
+    "search": "Suche",
+    "search_empty": "Kein Treffer für <strong>\"{{ search }}\"</strong>",
+    "shared": "Geteilt",
+    "current_step_name": "Aktueller Bearbeitungsschritt",
+    "title": "Titel",
+    "description": "Beschreibung",
+    "contributors": "Mitwirkende",
+    "language": "Sprache",
+    "creation_date": "Erstellungsdatum",
+    "subject": "Thema",
+    "identifier": "Identifikator",
+    "publisher": "Verleger",
+    "format": "Format",
+    "source": "Quelle",
+    "type": "Typ",
+    "coverage": "Geltungsbereich",
+    "rights": "Rechte",
+    "relations": "Beziehung",
+    "page_size": "Seiten Größe",
+    "page_size_10": "10 pro Seite",
+    "page_size_20": "20 pro Seite",
+    "page_size_30": "30 pro Seite",
+    "upgrade_quota": "Fragen Sie Ihren Administrator, um Ihr Speicherplatz zu erweitern.",
+    "quota": "{{ current | number: 0 }}MB ({{ percent | number: 1 }}%) verwendet von {{ total | number: 0 }}MB",
+    "count": "{{ count }} Dokument{{ count > 1 ? 'e' : '' }} gefunden",
+    "last_updated": "Zuletzt bearbeitet {{ date | timeAgo: dateFormat }}",
+    "view": {
+      "delete_comment_title": "Kommentar löschen",
+      "delete_comment_message": "Möchten Sie diesen Kommentar wirklich löschen?",
+      "delete_document_title": "Dokument löschen",
+      "delete_document_message": "Möchten Sie dieses Dokument wirklich löschen?",
+      "shared_document_title": "Geteiltes Dokument",
+      "shared_document_message": "Sie können dieses Dokument mit diesem Link freigeben. Beachten Sie, dass jeder, der diesen Link hat, das Dokument sehen kann.<br/><input class=\"form-control share-link\" type=\"text\" readonly=\"readonly\" value=\"{{ link }}\" onclick=\"this.select(); document.execCommand('copy');\" />",
+      "not_found": "Dokument nicht gefunden",
+      "forbidden": "Zugriff verweigert",
+      "download_files": "Download Datei",
+      "export_pdf": "in PDF exportieren",
+      "by_creator": "von",
+      "comments": "Kommentar",
+      "no_comments": "Noch keine Kommentare zu diesem Dokument vorhanden",
+      "add_comment": "Fügen sie einen Komentar hinzu",
+      "error_loading_comments": "Fehler beim Laden eines Kommentars",
+      "workflow_current": "Aktueller Workflow-Status",
+      "workflow_comment": "Fügen Sie einen Workflow Kommentar hinzu",
+      "workflow_validated_title": "Workflow-Schritt validiert",
+      "workflow_validated_message": "Der Workflow-Schritt wurde erfolgreich validiert.",
+      "content": {
+        "content": "Inhalt",
+        "delete_file_title": "Datei löschen",
+        "delete_file_message": "Wollen Sie diese Datei wirklich löschen?",
+        "upload_pending": "Ausstehend...",
+        "upload_progress": "Hochladen...",
+        "upload_error": "Fehler beim hochladen",
+        "upload_error_quota": "Maximaler Speicherplatz erreicht",
+        "drop_zone": "Drag & Drop Dateien hier her ziehen, um diese hochzuladen",
+        "add_files": "Dateien hinzufügen",
+        "file_processing_indicator": "Diese Datei wird gerade bearbeitet. Die Suche wird nicht verfügbar sein, bevor sie abgeschlossen ist.",
+        "reprocess_file": "Diese Datei erneut bearbeiten"
+      },
+      "workflow": {
+        "workflow": "Workflow",
+        "message": "Verifizieren oder validieren Sie Ihre Dokumente mit Mitarbeitern Ihres Unternehmens mithilfe von Workflows.",
+        "workflow_start_label": "Welcher Workflow soll gestartet werden?",
+        "add_more_workflow": "Fügen Sie weitere Workflows hinzu",
+        "start_workflow_submit": "Starten Sie den Workflow",
+        "full_name": "<strong>{{ name }}</strong> gestartet am {{ create_date | date }}",
+        "cancel_workflow": "Abbrechen des aktuellen Workflows",
+        "cancel_workflow_title": "Abbrechen des Workflows",
+        "cancel_workflow_message": "Wollen Sie den laufenden Workflow wirklich abbrechen?"
+      },
+      "permissions": {
+        "permissions": "Berechtigungen",
+        "message": "Die Berechtigungen können direkt auf dieses Dokument angewendet werden, oder sind erhältlich bei <a href=\"#/tag\">tags</a>.",
+        "title": "Berechtigungen auf diesem Dokument",
+        "inherited_tags": "Von Tags geerbte Berechtigungen",
+        "acl_source": "Von",
+        "acl_target": "Für",
+        "acl_permission": "Berechtigungen"
+      },
+      "activity": {
+        "activity": "Aktivitäten",
+        "message": "Alle Aktionen dieses Dokuments werden hier protokolliert."
+      }
+    },
+    "edit": {
+      "document_edited_with_errors": "Dokument erfolgreich bearbeitet, aber einige Dateien konnten nicht hochgeladen werden",
+      "document_added_with_errors": "Dokument erfolgreich erstellt, aber einige Dateien konnten nicht hochgeladen werden",
+      "quota_reached": "Maximaler Speicherplatz erreicht",
+      "primary_metadata": "Primäre Metadaten",
+      "title_placeholder": "Titel des Dokuments",
+      "description_placeholder": "Zusammenfassung, Inhaltsverzeichnis oder Freitext",
+      "new_files": "New files",
+      "orphan_files": "+ {{ count }} Datei{{ count > 1 ? 's' : '' }}",
+      "additional_metadata": "Weitere Metadaten",
+      "subject_placeholder": "Schlüsselwörter, abstrakte Sätze oder Klassifizierungscodes",
+      "identifier_placeholder": "Eindeutiger Identifikator",
+      "publisher_placeholder": "Name der Person, Organisation oder Abteilung, von der aus das Dokument veröffentlicht wurde.",
+      "format_placeholder": "MIME-Typ oder physisches Format des Dokuments",
+      "source_placeholder": "Ressource, aus der das Dokument stammt",
+      "uploading_files": "Dateien hochladen..."
+    },
+    "default": {
+      "upload_pending": "Ausstehend...",
+      "upload_progress": "Lädt hoch...",
+      "upload_error": "Fehler beim hochladen",
+      "upload_error_quota": "Maximaler Speicherplatz erreicht",
+      "quick_upload": "Schnelles hochladen",
+      "drop_zone": "Drag & Drop Dateien hier her ziehen, um diese hochzuladen",
+      "add_files": "Dateien hinzufügen",
+      "add_new_document": "Neues Dokument hinzufügen",
+      "latest_activity": "Letzte Aktivitäten",
+      "footer_sismics": "Programmiert mit <span class=\"fas fa-heart\"></span> by <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
+      "api_documentation": "API Dokumentation",
+      "feedback": "Geben Sie uns Feedback",
+      "workflow_document_list": "Mir zugeordnete Dokumente",
+      "select_all": "Alle auswählen",
+      "select_none": "Nichts auswählen"
+    },
+    "pdf": {
+      "export_title": "Export als PDF",
+      "export_metadata": "Export Metadaten",
+      "export_comments": "Export Kommentare",
+      "fit_to_page": "Bild an Seite anpassen",
+      "margin": "Rand",
+      "millimeter": "mm"
+    },
+    "share": {
+      "title": "Dokument teilen",
+      "message": "Benennen Sie die Freigabe, wenn Sie dasselbe Dokument mehrfach freigeben möchten.",
+      "submit": "Freigeben"
+    }
+  },
+  "file": {
+    "view": {
+      "previous": "Vorheriges",
+      "next": "Nächstes",
+      "not_found": "Datei nicht gefunden"
+    },
+    "edit": {
+      "title": "Datei bearbeiten",
+      "name": "Dateinamen"
+    }
+  },
+  "tag": {
+    "new_tag": "Neuer Tag",
+    "search": "Suche",
+    "default": {
+      "title": "Tags",
+      "message_1": "<strong>Tags</strong> sind Kategorien, die den Dokumenten zugeordnet sind.",
+      "message_2": "Ein Dokument kann mit mehreren Tags versehen werden und ein Tag kann auf mehrere Dokumente angewendet werden.",
+      "message_3": "Verwendung der <span class=\"glyphicon glyphicon-pencil\"></span> Schaltfläche können Sie die Berechtigungen für ein Tag bearbeiten.",
+      "message_4": "Wenn ein Tag von einem anderen Benutzer oder einer anderen Gruppe gelesen werden kann, können die zugehörigen Dokumente auch von diesen Personen gelesen werden.",
+      "message_5": "Kennzeichnen Sie z.B. Ihre Firmendokumente mit einem Tag <span class=\"label label-info\">MyCompany</span> und fügen Sie die Berechtigung <strong>Can read</strong> zu einer Gruppe hinzu <span class=\"btn btn-default\">employees</span>"
+    },
+    "edit": {
+      "delete_tag_title": "Tag löschen",
+      "delete_tag_message": "Wollen Sie diesen Tag wirklich löschen?",
+      "name": "Name",
+      "color": "Farbe",
+      "parent": "Übergeordnet",
+      "info": "Berechtigungen für dieses Tag werden auch auf Dokumente angewendet, die mit einem Tag versehen sind <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>"
+    }
+  },
+  "group": {
+    "profile": {
+      "members": "Mitglieder",
+      "no_members": "Keine Mitglieder",
+      "related_links": "Weiterführende Links",
+      "edit_group": "Gruppe {{ name }} bearbeiten"
+    }
+  },
+  "user": {
+    "profile": {
+      "groups": "Gruppen",
+      "quota_used": "Benutzter Speicherplatz",
+      "percent_used": "{{ percent | number: 0 }}% Benutzt",
+      "related_links": "Weiterführende Links",
+      "document_created": "Dokumente erstellt von {{ username }}",
+      "edit_user": "Benutzer {{ username }} bearbeiten"
+    }
+  },
+  "usergroup": {
+    "search_groups": "In Gruppen suchen",
+    "search_users": "In Benutzer suchen",
+    "you": "Eigenes Benutzerkonto!",
+    "default": {
+      "title": "Benutzer und Gruppen",
+      "message": "Hier können Sie Informationen über Benutzer und Gruppen einsehen."
+    }
+  },
+  "settings": {
+    "menu_personal_settings": "Peröhnliche Einstellungen",
+    "menu_user_account": "Benutzerkonto",
+    "menu_two_factor_auth": "Zwei-Faktor-Authentifizierung",
+    "menu_opened_sessions": "Geöffnete Sitzung",
+    "menu_file_importer": "Massen Datei Importer",
+    "menu_general_settings": "Generelle Einstellungen",
+    "menu_workflow": "Workflow",
+    "menu_users": "Benutzer",
+    "menu_groups": "Gruppen",
+    "menu_vocabularies": "Vokabulare",
+    "menu_configuration": "Einstellungen",
+    "menu_inbox": "Inbox scannen",
+    "menu_monitoring": "Überwachung",
+    "user": {
+      "title": "Benutzerverwaltung",
+      "add_user": "Benutzer hinzufügen",
+      "username": "Benutzername",
+      "create_date": "Erstellungsdatum",
+      "totp_enabled": "Zwei-Faktor-Authentifizierung für dieses Konto aktiviert",
+      "edit": {
+        "delete_user_title": "Benutzer löschen",
+        "delete_user_message": "Möchten Sie diesen Benutzer wirklich löschen? Alle zugehörigen Dokumente, Dateien und Tags werden gelöscht",
+        "edit_user_failed_title": "Dieser Benutzer existiert bereits",
+        "edit_user_failed_message": "Dieser Benutzername wurde bereits von einem anderen Benutzer gewählt",
+        "edit_user_title": "Bearbeiten \"{{ username }}\"",
+        "add_user_title": "Neuen Benutzer hinzufügen",
+        "username": "Benutzername",
+        "email": "E-mail",
+        "groups": "Gruppen",
+        "storage_quota": "Speicherkontingent",
+        "storage_quota_placeholder": "Speicherkontingent (in MB)",
+        "password": "Passwort",
+        "password_confirm": "Passwort (bestätigen)",
+        "disabled": "Deaktivierter Benutzer",
+        "password_reset_btn": "Senden Sie eine E-Mail zum Zurücksetzen des Kennworts an diesen Benutzer",
+        "password_lost_sent_title": "Passwort zurücksetzen Email gesendet",
+        "password_lost_sent_message": "Passwort zurücksetzen Email an <strong>{{ username }}</strong> gesendet."
+      }
+    },
+    "workflow": {
+      "title": "Workflow Konfigurator",
+      "add_workflow": "Workflow hinzufügen",
+      "name": "Name",
+      "create_date": "Erstellungsdatum",
+      "edit": {
+        "delete_workflow_title": "Workflow löschen",
+        "delete_workflow_message": "Möchten Sie diesen Workflow wirklich löschen? Derzeit ausgeführte Workflows werden nicht gelöscht",
+        "edit_workflow_title": "Bearbeiten \"{{ name }}\"",
+        "add_workflow_title": "Neuen Workflow hinzufügen",
+        "name": "Name",
+        "name_placeholder": "Name des Bearbeitungschritts oder der Beschreibung",
+        "drag_help": "Drag & Drop, um die Schritte neu zu ordnen",
+        "type": "Bearbeitungsschritt",
+        "type_approve": "Genehmigen",
+        "type_validate": "Bestätigen",
+        "target": "Zugewiesen an",
+        "target_help": "<strong>Zulassen:</strong> Überprüfen und fortsetzen des Workflows <br/><strong>Genemigen:</strong> Übernehmen oder lehnen Sie die Überprüfung ab",
+        "add_step": "Workflow Schritt hinzufügen",
+        "actions": "Was passiert danach?",
+        "remove_action": "Aktion entfernen"
+      }
+    },
+    "security": {
+      "enable_totp": "Zwei-Faktor-Authentifizierung aktivieren",
+      "enable_totp_message": "Stellen Sie sicher, dass Sie eine TOTP-kompatible Anwendung auf Ihrem Handy haben, die bereit ist, ein neues Konto hinzuzufügen.",
+      "title": "Zwei-Faktor-Authentifizierung",
+      "message_1": "Die Zwei-Faktor-Authentifizierung ermöglicht Ihnen eine weitere Abischerung Ihres {{ appName }} Benutzerkontos. Bevor Sie diese Funktion aktivieren, stellen Sie sicher, dass Sie eine TOTP-kompatible Anwendung auf Ihrem Telefon haben:",
+      "message_google_authenticator": "Für Android, iOS, und Blackberry: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>",
+      "message_duo_mobile": "Für Android und iOS: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
+      "message_authenticator": "Für Windows Phone: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">Authenticator</a>",
+      "message_2": "Diese Anwendungen generieren automatisch einen Validierungscod der sich nach einer gewissen Zeitspanne ändert. Sie müssen diesen Validierungscode jedes Mal eingeben, wenn Sie sich bei {{ appName }} anmelden. </strong>.",
+      "secret_key": "Ihr geheimer Schlüssel ist: <strong>{{ secret }}</strong>",
+      "secret_key_warning": "Konfigurieren Sie Ihre TOTP-App jetzt mit diesem geheimen Schlüssel auf Ihrem Telefon. Sie können später nicht mehr darauf zugreifen.",
+      "totp_enabled_message": "Die Zwei-Faktor-Authentifizierung ist in Ihrem Konto aktiviert.<br/>Bei jeder Anmeldung auf <strong>{{ appName }}</strong>, werden Sie in Ihrer konfigurierten Telefon-App nach einem Bestätigungscode gefragt.<br/>Wenn Sie Ihr Telefon verlieren, können Sie sich nicht in Ihrem Konto anmelden, aber aktive Sitzungen ermöglichen es Ihnen, einen geheimen Schlüssel neu zu generieren.",
+      "disable_totp": {
+        "disable_totp": "Deaktivieren der Zwei-Faktor-Authentifizierung",
+        "message": "Ihr Konto wird nicht mehr durch die Zwei-Faktor-Authentifizierung geschützt.",
+        "confirm_password": "Bestätigen Sie ihr Passwort",
+        "submit": "Deaktivieren der Zwei-Faktor-Authentifizierung"
+      }
+    },
+    "group": {
+      "title": "Gruppenverwaltung",
+      "add_group": "Gruppe hinzufügen",
+      "name": "Name",
+      "edit": {
+        "delete_group_title": "Gruppe löschen",
+        "delete_group_message": "Wollen Sie diese Gruppe wirklich löschen?",
+        "edit_group_failed_title": "Gruppe existiert bereits",
+        "edit_group_failed_message": "Dieser Gruppenname wird bereits von einer anderen Gruppe übernommen",
+        "edit_group_title": "Bearbeiten \"{{ name }}\"",
+        "add_group_title": "Neue Gruppe hinzufügen",
+        "name": "Name",
+        "parent_group": "Übergruppe",
+        "search_group": "Gruppe suchen",
+        "members": "Mitglieder",
+        "new_member": "Neue Mitglieder",
+        "search_user": "Benutzer suchen"
+      }
+    },
+    "account": {
+      "title": "Benutzerkonto",
+      "password": "Passwort",
+      "password_confirm": "Passwort (bestätigen)",
+      "updated": "Benutzerkonto erfolgreich aktualisiert"
+    },
+    "config": {
+      "title_guest_access": "Gastzugang",
+      "message_guest_access": "Der Gastzugang ist ein Modus in dem jeder Zugriff hat und {{ appName }} ohne Passwort nutzen kann.<br/>Wie ein normaler Benutzer kann der Gastbenutzer nur auf seine Dokumente zugreifen und Berechtigungen zugreifen.<br/>",
+      "enable_guest_access": "Gastzugang aktivieren",
+      "disable_guest_access": "Gastzugang deaktivieren",
+      "title_theme": "Aussehen anpassen",
+      "title_general": "Allgemeine Konfiguration",
+      "default_language": "Standardsprache für neue Dokumente",
+      "application_name": "Anwendungsname",
+      "main_color": "Hauptfarbe",
+      "custom_css": "Benutzerdefiniertes CSS",
+      "custom_css_placeholder": "Benutzerdefiniertes CSS, das nach dem Haupt-Stylesheet hinzugefügt werden soll",
+      "logo": "Logo (quadratische Größe)",
+      "background_image": "Hintergrundbild",
+      "uploading_image": "Bild hochladen...",
+      "title_smtp": "SMTP Email Einstellungen <small>für Passwort wiederherstellung</small",
+      "smtp_hostname": "SMTP Server",
+      "smtp_port": "SMTP Port",
+      "smtp_from": "Absender E-Mail",
+      "smtp_username": "SMTP Benutzername",
+      "smtp_password": "SMTP Passwort",
+      "smtp_updated": "SMTP Konfiguration erfolgreich aktualisiert"
+    },
+    "inbox": {
+      "title": "Posteingang durchsuchen",
+      "message": "Wenn Sie diese Funktion aktivieren, durchsucht das System den angegebenen Posteingang jede Minute nach  <strong>ungelesenen</strong> E-Mails und importieren diese automatisch.<br/>Nach dem Import einer E-Mail wird diese als gelesen markiert.<br/>Folgen Sie den Links zu Konfigurationseinstellungen für  <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
+      "enabled": "Posteingang duchrsuchen aktivieren",
+      "hostname": "IMAP Server",
+      "port": "IMAP Port (143 oder 993)",
+      "username": "IMAP Benutzername",
+      "password": "IMAP Passwort",
+      "tag": "Folgenden Tag zu importierten Dokumenten hinzufügen",
+      "test": "Konfiguration testen",
+      "last_sync": "Letzte Synchronisation: {{ data.date | date: 'medium' }}, {{ data.count }} E-Mail(s){{ data.count > 1 ? 's' : '' }} importiert",
+      "test_success": "Die Verbindung zum Posteingang war erfolgreich ({{ count }} <strong>unread</strong> message{{ count > 1 ? 's' : '' }})",
+      "test_fail": "Beim Verbinden mit dem Posteingang ist ein Fehler aufgetreten, bitte überprüfen Sie die Einstellungen"
+    },
+    "monitoring": {
+      "background_tasks": "Hintergrundaufgaben",
+      "queued_tasks": "Es gibt derzeit {{ count }}} anstehende Tasks.",
+      "queued_tasks_explain": "Dateiverarbeitung, Thumbnail-Erstellung, Index-Update, optische Zeichenerkennung sind Hintergrundaufgaben. Eine große Anzahl unbearbeiteter Aufgaben führt zu unvollständigen Suchergebnissen.",
+      "server_logs": "Server logs",
+      "log_date": "Datum",
+      "log_tag": "Tag",
+      "log_message": "Nachricht"
+    },
+    "session": {
+      "title": "Geöffnete Sitzungen",
+      "created_date": "Erstellungsdatum",
+      "last_connection_date": "Letztes Verbindungsdatum",
+      "user_agent": "Von",
+      "current": "Aktuell",
+      "current_session": "Dies ist die aktuelle Sitzung",
+      "clear_message": "Alle anderen mit diesem Konto verbundenen Geräte werden getrennt",
+      "clear": "Alle anderen Sitzungen löschen"
+    },
+    "vocabulary": {
+      "title": "Vokabulareinträge",
+      "choose_vocabulary": "Wählen Sie ein Vokabular aus, das Sie bearbeiten möchten.",
+      "type": "Typ",
+      "coverage": "Abdeckung",
+      "rights": "Rechte",
+      "value": "Wert",
+      "order": "Reihenfolge",
+      "new_entry": "Neuer Eintrag"
+    },
+    "fileimporter": {
+      "title": "Massen Datei Importeur",
+      "advanced_users": "Für fortgeschrittene Benutzer!",
+      "need_intro": "Wenn Sie:",
+      "need_1": "Ganze Verzeichnisse von Dateien auf einmal importieren möchten",
+      "need_2": "Ein Verzeichnis nach neuen Dateien durchsuchen lassen und gefunden Dateien importieren lassen möchten",
+      "line_1": "Gehen Sie zu <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> und laden Sie das Datei-Importer-Tool für Ihr System herunter.",
+      "line_2": "Folgen Sie dem Link <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">instructions here</a> um das Import-Toll zu nutzen.",
+      "line_3": "Ihre Dateien werden in <a href=\"#/document\">Quick upload</a> importiert, danach können Sie die Dateien weiterbearbeiten und Dokumenten zuordnen oder Dokumente erstellen.",
+      "download": "Herunterladen",
+      "instructions": "Anweisungen"
+    }
+  },
+  "feedback": {
+    "title": "Geben Sie uns Feedback",
+    "message": "Irgendwelche Vorschläge oder Fragen zu Sismics Docs? Wir hören Ihnen genre zu!",
+    "sent_title": "Feedback gesendet",
+    "sent_message": "Vielen Dank für Ihr Feedback! Es wird uns helfen, Sismics Docs noch besser zu machen."
+  },
+  "import": {
+    "title": "Wird importiert",
+    "error_quota": "Speicher Limit erreicht, kontaktieren Sie Ihren Administrator, um den Ihnen zur verfügung gestellten Speicherplatz zu erhöhen.",
+    "error_general": "Beim Versuch, Ihre Datei zu importieren, ist ein Fehler aufgetreten. Bitte stellen Sie sicher, dass es sich um eine gültige EML-Datei handelt."
+  },
+  "app_share": {
+    "main": "Fragen Sie nach einen Link zu einem gemeinsam genutzten Dokument, um darauf zuzugreifen.",
+    "403": {
+      "title": "Nicht erlaubt",
+      "message": "Das Dokument, das Sie anzeigen möchten, ist nicht mehr freigegeben."
+    }
+  },
+  "directive": {
+    "acledit": {
+      "acl_target": "Für",
+      "acl_permission": "Zugriffsberechtigung",
+      "add_permission": "Zugriffsberechtigung hinzufügen",
+      "search_user_group": "Suchen einen Benutzer oder eine Gruppe"
+    },
+    "auditlog": {
+      "log_created": "erstellt",
+      "log_updated": "aktualisiert",
+      "log_deleted": "gelöscht",
+      "Acl": "ACL",
+      "Comment": "Kommentar",
+      "Document": "Dokument",
+      "File": "Datei",
+      "Group": "Guppe",
+      "Tag": "Tag",
+      "User": "Benutzer",
+      "RouteModel": "Workflow-Muster",
+      "Route": "Workflow"
+    },
+    "selectrelation": {
+      "typeahead": "Tippen Sie einen Dokumentnamen ein"
+    },
+    "selecttag": {
+      "typeahead": "Tippen Sie einen Tagnamen ein"
+    },
+    "datepicker": {
+      "current": "Heute",
+      "clear": "Bereinigen",
+      "close": "Erledigt"
+    }
+  },
+  "filter": {
+    "filesize": {
+      "mb": "MB",
+      "kb": "kB"
+    }
+  },
+  "acl": {
+    "READ": "Kann lesen",
+    "READWRITE": "Kann lesen und schreiben",
+    "WRITE": "Kann schreiben",
+    "USER": "Benutzer",
+    "GROUP": "Gruppe",
+    "SHARE": "Geteilt"
+  },
+  "workflow_type": {
+    "VALIDATE": "Validierung",
+    "APPROVE": "Genehmigung"
+  },
+  "workflow_transition": {
+    "APPROVED": "Genehmigt",
+    "REJECTED": "Zurückgewiesen",
+    "VALIDATED": "Validiert"
+  },
+  "validation": {
+    "required": "Erfordert",
+    "too_short": "Zu kurz",
+    "too_long": "Zu lang",
+    "email": "Muss eine gültige E-Mailadresse sein",
+    "password_confirm": "Passwort und Passwortbestätigung müssen übereinstimmen",
+    "number": "Nummer erfoderlich",
+    "no_space": "Leerzeichen sind nicht erlaubt"
+  },
+  "action_type": {
+    "ADD_TAG": "Tag hinzufügen",
+    "REMOVE_TAG": "Tag entfernen",
+    "PROCESS_FILES": "Dateien bearbeiten"
+  },
+  "pagination": {
+    "previous": "Vorherige",
+    "next": "Nächste",
+    "first": "Erste",
+    "last": "Letzte"
+  },
+  "ok": "OK",
+  "cancel": "Abbrechen",
+  "share": "Teilen",
+  "unshare": "Nicht mehr Teilen",
+  "close": "Schliessen",
+  "add": "Hinzufügen",
+  "open": "Öffnen",
+  "see": "Ansehen",
+  "save": "Speichern",
+  "export": "Exportieren",
+  "edit": "Bearbeiten",
+  "delete": "Löschen",
+  "rename": "Umbenennen",
+  "loading": "Lädt...",
+  "send": "Gesendet",
+  "enabled": "Aktiviert",
+  "disabled": "Deaktiviert"
+}

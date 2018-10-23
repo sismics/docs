@@ -3,7 +3,7 @@
 /**
  * Document modal PDF controller.
  */
-angular.module('share').controller('ShareModalPdf', function ($scope, $window, $stateParams, $modalInstance) {
+angular.module('share').controller('ShareModalPdf', function ($scope, $window, $stateParams, $uibModalInstance) {
   $scope.export = {
     metadata: false,
     comments: false,
@@ -20,11 +20,11 @@ angular.module('share').controller('ShareModalPdf', function ($scope, $window, $
         + '&margin=' + $scope.export.margin
         + '&share=' + $stateParams.shareId);
 
-    $modalInstance.close();
+    $uibModalInstance.close();
   };
 
   // Close the modal
   $scope.close = function () {
-    $modalInstance.close();
+    $uibModalInstance.close();
   }
 });

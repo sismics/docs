@@ -3,18 +3,18 @@
 /**
  * Document view controller.
  */
-angular.module('docs').controller('DocumentView', function ($scope, $state, $stateParams, $location, $dialog, $modal, Restangular, $timeout) {
+angular.module('docs').controller('DocumentView', function ($scope, $state, $stateParams, $location, $dialog, $uibModal, Restangular, $translate) {
   // Load document data from server
-  Restangular.one('document', $stateParams.id).get().then(function(data) {
+  Restangular.one('document', $stateParams.id).get().then(function (data) {
     $scope.document = data;
-  }, function(response) {
+  }, function (response) {
     $scope.error = response;
   });
 
   // Load comments from server
-  Restangular.one('comment', $stateParams.id).get().then(function(data) {
+  Restangular.one('comment', $stateParams.id).get().then(function (data) {
     $scope.comments = data.comments;
-  }, function(response) {
+  }, function (response) {
     $scope.commentsError = response;
   });
 
@@ -22,15 +22,15 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
    * Add a comment.
    */
   $scope.comment = '';
-  $scope.addComment = function() {
-    if ($scope.comment.length == 0) {
+  $scope.addComment = function () {
+    if ($scope.comment.length === 0) {
       return;
     }
 
     Restangular.one('comment').put({
       id: $stateParams.id,
       content: $scope.comment
-    }).then(function(data) {
+    }).then(function (data) {
       $scope.comment = '';
       $scope.comments.push(data);
     });
@@ -39,9 +39,20 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
   /**
    * Delete a comment.
    */
-  $scope.deleteComment = function(comment) {
-    Restangular.one('comment', comment.id).remove().then(function() {
-      $scope.comments.splice($scope.comments.indexOf(comment), 1);
+  $scope.deleteComment = function (comment) {
+    var title = $translate.instant('document.view.delete_comment_title');
+    var msg = $translate.instant('document.view.delete_comment_message');
+    var btns = [
+      {result: 'cancel', label: $translate.instant('cancel')},
+      {result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}
+    ];
+
+    $dialog.messageBox(title, msg, btns, function (result) {
+      if (result === 'ok') {
+        Restangular.one('comment', comment.id).remove().then(function () {
+          $scope.comments.splice($scope.comments.indexOf(comment), 1);
+        });
+      }
     });
   };
 
@@ -49,16 +60,16 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
    * Delete a document.
    */
   $scope.deleteDocument = function (document) {
-    var title = 'Delete document';
-    var msg = 'Do you really want to delete this document?';
+    var title = $translate.instant('document.view.delete_document_title');
+    var msg = $translate.instant('document.view.delete_document_message');
     var btns = [
-      {result: 'cancel', label: 'Cancel'},
-      {result: 'ok', label: 'OK', cssClass: 'btn-primary'}
+      {result: 'cancel', label: $translate.instant('cancel')},
+      {result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}
     ];
 
     $dialog.messageBox(title, msg, btns, function (result) {
-      if (result == 'ok') {
-        Restangular.one('document', document.id).remove().then(function() {
+      if (result === 'ok') {
+        Restangular.one('document', document.id).remove().then(function () {
           $scope.loadDocuments();
           $state.go('document.default');
         });
@@ -70,11 +81,11 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
    * Open the share dialog.
    */
   $scope.share = function () {
-    $modal.open({
+    $uibModal.open({
       templateUrl: 'partial/docs/document.share.html',
       controller: 'DocumentModalShare'
     }).result.then(function (name) {
-          if (name == null) {
+          if (name === null) {
             return;
           }
 
@@ -94,24 +105,22 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
   /**
    * Display a share.
    */
-  $scope.showShare = function(share) {
+  $scope.showShare = function (share) {
     // Show the link
     var link = $location.absUrl().replace($location.path(), '').replace('#', '') + 'share.html#/share/' + $stateParams.id + '/' + share.id;
-    var title = 'Shared document';
-    var msg = 'You can share this document by giving this link. ' +
-        'Note that everyone having this link can see the document.<br/>' +
-        '<input class="form-control share-link" type="text" readonly="readonly" value="' + link + '" />';
+    var title = $translate.instant('document.view.shared_document_title');
+    var msg = $translate.instant('document.view.shared_document_message', { link: link });
     var btns = [
-      {result: 'unshare', label: 'Unshare', cssClass: 'btn-danger'},
-      {result: 'close', label: 'Close'}
+      {result: 'unshare', label: $translate.instant('unshare'), cssClass: 'btn-danger'},
+      {result: 'close', label: $translate.instant('close')}
     ];
 
     $dialog.messageBox(title, msg, btns, function (result) {
-      if (result == 'unshare') {
+      if (result === 'unshare') {
         // Unshare this document and update the local shares
         Restangular.one('share', share.id).remove().then(function () {
-          $scope.document.acls = _.reject($scope.document.acls, function(s) {
-            return share.id == s.id;
+          $scope.document.acls = _.reject($scope.document.acls, function (s) {
+            return share.id === s.id;
           });
         });
       }
@@ -121,12 +130,35 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
   /**
    * Export the current document to PDF.
    */
-  $scope.exportPdf = function() {
-    $modal.open({
+  $scope.exportPdf = function () {
+    $uibModal.open({
       templateUrl: 'partial/docs/document.pdf.html',
       controller: 'DocumentModalPdf'
     });
 
     return false;
+  };
+
+  /**
+   * Validate the workflow.
+   */
+  $scope.validateWorkflow = function (transition) {
+    Restangular.one('route').post('validate', {
+      documentId: $stateParams.id,
+      transition: transition,
+      comment: $scope.workflowComment
+    }).then(function (data) {
+      $scope.workflowComment = '';
+      var title = $translate.instant('document.view.workflow_validated_title');
+      var msg = $translate.instant('document.view.workflow_validated_message');
+      var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
+      $dialog.messageBox(title, msg, btns);
+
+      if (data.readable) {
+        $scope.document.route_step = data.route_step;
+      } else {
+        $state.go('document.default');
+      }
+    });
   };
 });

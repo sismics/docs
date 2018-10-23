@@ -1,24 +1,27 @@
-<h1>Opened <small>sessions</small></h1>
-<table class="table table-striped table-hover">
+<h1 translate="settings.session.title"></h1>
+<table class="table table-hover">
   <thead>
     <tr>
-      <th>Created date</th>
-      <th>Last connection date</th>
-      <th>From</th>
-      <th>Current</th>
+      <th>{{ 'settings.session.created_date' | translate }}</th>
+      <th>{{ 'settings.session.last_connection_date' | translate }}</th>
+      <th>{{ 'settings.session.user_agent' | translate }}</th>
+      <th>{{ 'settings.session.current' | translate }}</th>
     </tr>
   </thead>
   <tbody>
     <tr ng-repeat="session in sessions | orderBy: '-current'" ng-class="{ 'info': session.current, 'warning': !session.current }">
-      <td>{{ session.create_date | date: 'yyyy-MM-dd HH:mm' }}</td>
-      <td>{{ session.last_connection_date | date: 'yyyy-MM-dd HH:mm' }}</td>
+      <td>{{ session.create_date | date: dateTimeFormat }}</td>
+      <td>{{ session.last_connection_date | date: dateTimeFormat }}</td>
       <td title="{{ session.user_agent }}">{{ session.ip }}</td>
       <td>
-        <span ng-show="session.current" class="glyphicon glyphicon-ok" title="This is the current session"></span>
+        <span ng-show="session.current" class="fas fa-check"
+          title="{{ 'settings.session.current_session' | translate }}"></span>
       </td>
     </tr>
   </tbody>
 </table>
 <div class="form-actions">
-  <button type="submit" class="btn btn-warning" title="All other devices connected to this account will be disconnected" ng-click="deleteSession()">Clear all other sessions</button>
+  <button type="submit" class="btn btn-warning"
+    title="{{ 'settings.session.clear_message' | translate }}"
+    ng-click="deleteSession()">{{ 'settings.session.clear' | translate }}</button>
 </div>

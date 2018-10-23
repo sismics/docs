@@ -1,45 +1,56 @@
 <table class="table">
   <tr ng-repeat="log in logs">
-    <td width="20%">{{ log.create_date | date: 'yyyy-MM-dd HH:mm' }}</td>
-    <td width="20%">
-      <a ng-href="#/user/{{ log.username }}">
-        <span class="glyphicon glyphicon-user"></span>
+    <td width="20%" class="text-muted small va-middle">{{ log.create_date | timeAgo: $root.dateTimeFormat }}</td>
+    <td width="20%" class="va-middle">
+      <a ng-href="#/user/{{ log.username }}" class="btn btn-xs">
+        <span class="fas fa-user"></span>
         {{ log.username }}
       </a>
     </td>
-    <td>
-      {{ log.class }}
-          <span ng-switch="log.type">
-            <span ng-switch-when="CREATE">created</span>
-            <span ng-switch-when="UPDATE">updated</span>
-            <span ng-switch-when="DELETE">deleted</span>
-          </span>
+    <td class="va-middle">
+      <span ng-class="{ 'text-danger': log.type == 'DELETE', 'text-info': log.type == 'UPDATE', 'text-success': log.type == 'CREATE' }">
+        {{ 'directive.auditlog.' + log.class | translate }}
+        <span ng-switch="log.type">
+          <span ng-switch-when="CREATE">{{ 'directive.auditlog.log_created' | translate }}</span>
+          <span ng-switch-when="UPDATE">{{ 'directive.auditlog.log_updated' | translate }}</span>
+          <span ng-switch-when="DELETE">{{ 'directive.auditlog.log_deleted' | translate }}</span>
+        </span>
+        :
+      </span>
 
-          <span ng-switch="log.class">
-            :
-            <span ng-switch-when="Document">
-              <a ng-href="#/document/view/{{ log.target }}">{{ log.message }}</a>
-            </span>
-            <span ng-switch-when="File">
-              <a ng-if="log.message" ng-href="#/document/view/{{ log.message }}/content/file/{{ log.target }}">Open</a>
-              <a ng-if="!log.message" ng-href="#/document/file/{{ log.target }}">Open</a>
-            </span>
-            <span ng-switch-when="Comment">
-              <a ng-href="#/document/view/{{ log.message }}">See</a>
-            </span>
-            <span ng-switch-when="Acl">
-              {{ log.message }}
-            </span>
-            <span ng-switch-when="Tag">
-              <a href="#/tag">{{ log.message }}</a>
-            </span>
-            <span ng-switch-when="User">
-              <a href="#/user/{{ log.message }}">{{ log.message }}</a>
-            </span>
-            <span ng-switch-when="Group">
-              <a href="#/group/{{ log.message }}">{{ log.message }}</a>
-            </span>
-          </span>
+      <span ng-switch="log.class">
+        <span ng-switch-when="Document">
+          <a ng-href="#/document/view/{{ log.target }}">{{ log.message }}</a>
+        </span>
+        <span ng-switch-when="File" ng-init="hasDocument = log.message.substring(0, 36).trim().length > 0">
+          <a ng-if="log.message" ng-href="#/document/{{ hasDocument ? 'view/' + log.message.substring(0, 36) + '/content/' : '' }}file/{{ log.target }}">
+            <span ng-if="log.message.length > 36">{{ log.message | limitTo: 1000 : 36 }}</span>
+            <span ng-if="log.message.length == 36">{{ 'open' | translate }}</span>
+          </a>
+          <a ng-if="!log.message" ng-href="#/document/file/{{ log.target }}">{{ 'open' | translate }}</a>
+        </span>
+        <span ng-switch-when="Comment">
+          <a ng-href="#/document/view/{{ log.message }}">{{ 'see' | translate }}</a>
+        </span>
+        <span ng-switch-when="Acl" class="label label-default">
+          {{ 'acl.' + log.message | translate }}
+        </span>
+        <span ng-switch-when="Tag">
+          <a href="#/tag">{{ log.message }}</a>
+        </span>
+        <span ng-switch-when="User">
+          <a href="#/user/{{ log.message }}">{{ log.message }}</a>
+        </span>
+        <span ng-switch-when="Group">
+          <a href="#/group/{{ log.message }}">{{ log.message }}</a>
+        </span>
+        <span ng-switch-when="RouteModel">
+          <a href="#/settings/workflow/edit/{{ log.target }}">{{ log.message }}</a>
+        </span>
+        <span ng-switch-when="Route">
+          <a ng-href="#/document/view/{{ log.message }}">{{ 'open' | translate }}</a>
+        </span>
+      </span>
     </td>
   </tr>
 </table>

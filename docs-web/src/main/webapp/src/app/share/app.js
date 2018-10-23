@@ -5,13 +5,15 @@
  */
 angular.module('share',
     // Dependencies
-    ['ui.router', 'ui.bootstrap', 'restangular', 'ngSanitize', 'ngTouch']
+    ['ui.router', 'ui.bootstrap', 'restangular', 'ngSanitize', 'ngTouch', 'pascalprecht.translate', 'tmh.dynamicLocale']
   )
 
 /**
  * Configuring modules.
  */
-.config(function($stateProvider, $httpProvider, RestangularProvider) {
+.config(function($locationProvider, $stateProvider, $httpProvider, RestangularProvider, $translateProvider, tmhDynamicLocaleProvider) {
+  $locationProvider.hashPrefix('');
+
   // Configuring UI Router
   $stateProvider
   .state('main', {
@@ -51,6 +53,33 @@ angular.module('share',
   
   // Configuring Restangular
   RestangularProvider.setBaseUrl('../api');
+
+  // Configuring Angular Translate
+  $translateProvider
+      .useSanitizeValueStrategy(null)
+      .useStaticFilesLoader({
+        prefix: 'locale/',
+        suffix: '.json?@build.date@'
+      })
+      .registerAvailableLanguageKeys(['en', 'fr', 'de', 'ru', 'zh_CN', 'zh_TW'], {
+        'ru_*': 'ru',
+        'en_*': 'en',
+        'fr_*': 'fr',
+        'de_*': 'de',
+        '*': 'en'
+      })
+      .fallbackLanguage('en');
+
+  if (!_.isUndefined(localStorage.overrideLang)) {
+    // Set the current language if an override is saved in local storage
+    $translateProvider.use(localStorage.overrideLang);
+  } else {
+    // Or else determine the language based on the user's browser
+    $translateProvider.determinePreferredLanguage();
+  }
+
+  // Configuring tmhDynamicLocale
+  tmhDynamicLocaleProvider.localeLocationPattern('locale/angular-locale_{{locale}}.js');
   
   // Configuring $http to act like jQuery.ajax
   $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';

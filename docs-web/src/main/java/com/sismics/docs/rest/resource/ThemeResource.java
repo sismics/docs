@@ -3,21 +3,23 @@ package com.sismics.docs.rest.resource;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.constant.ConfigType;
-import com.sismics.docs.core.dao.jpa.ConfigDao;
+import com.sismics.docs.core.dao.ConfigDao;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
-import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.HttpUtil;
+import com.sismics.util.JsonUtil;
 import com.sismics.util.css.Selector;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.json.*;
 import javax.ws.rs.*;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
@@ -26,8 +28,6 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -58,7 +58,7 @@ public class ThemeResource extends BaseResource {
         // Build the stylesheet
     	StringBuilder sb = new StringBuilder();
     	sb.append(new Selector(".navbar")
-            .rule("background-color", themeConfig.getString("color", "#263238")));
+            .rule("background-color", themeConfig.getString("color", "#ffffff")));
         sb.append(themeConfig.getString("css", ""));
 
         return Response.ok().entity(sb.toString()).build();
@@ -83,7 +83,7 @@ public class ThemeResource extends BaseResource {
         JsonObject themeConfig = getThemeConfig();
         JsonObjectBuilder json = Json.createObjectBuilder();
         json.add("name", themeConfig.getString("name", "Sismics Docs"));
-        json.add("color", themeConfig.getString("color", "#263238"));
+        json.add("color", themeConfig.getString("color", "#ffffff"));
         json.add("css", themeConfig.getString("css", ""));
         return Response.ok().entity(json.build()).build();
     }
@@ -235,8 +235,9 @@ public class ThemeResource extends BaseResource {
                 }
             }
         })
-        .header("Content-Type", "image/*")
-        .header("Expires", new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z").format(new Date().getTime() + 3600000 * 24 * 15))
+        .header(HttpHeaders.CONTENT_TYPE, "image/*")
+        .header(HttpHeaders.CACHE_CONTROL, "public")
+        .header(HttpHeaders.EXPIRES, HttpUtil.buildExpiresHeader(3_600_000L * 24L * 15L))
         .build();
     }
 

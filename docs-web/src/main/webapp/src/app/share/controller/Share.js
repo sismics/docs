@@ -3,19 +3,19 @@
 /**
  * Share controller.
  */
-angular.module('share').controller('Share', function($scope, $state, $stateParams, Restangular, $modal) {
+angular.module('share').controller('Share', function($scope, $state, $stateParams, Restangular, $uibModal) {
   // Load document
   Restangular.one('document', $stateParams.documentId).get({ share: $stateParams.shareId })
       .then(function (data) {
         $scope.document = data;
       }, function (response) {
-        if (response.status == 403) {
+        if (response.status === 403) {
           $state.go('403');
         }
       });
 
   // Load files
-  Restangular.one('file').getList('list', { id: $stateParams.documentId, share: $stateParams.shareId })
+  Restangular.one('file/list').get({ id: $stateParams.documentId, share: $stateParams.shareId })
       .then(function (data) {
         $scope.files = data.files;
       });
@@ -38,7 +38,7 @@ angular.module('share').controller('Share', function($scope, $state, $stateParam
    * Export the current document to PDF.
    */
   $scope.exportPdf = function() {
-    $modal.open({
+    $uibModal.open({
       templateUrl: 'partial/share/share.pdf.html',
       controller: 'ShareModalPdf'
     });

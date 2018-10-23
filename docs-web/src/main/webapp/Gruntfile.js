@@ -25,7 +25,7 @@ module.exports = function(grunt) {
         options: {
           separator: ';'
         },
-        src: ['src/lib/jquery.js','src/lib/jquery.ui.js','src/lib/underscore.js','src/lib/colorpicker.js', 'src/lib/angular.js', 'src/lib/angular.*.js',
+        src: ['src/lib/jquery.js','src/lib/jquery.ui.js','src/lib/underscore.js','src/lib/colorpicker.js', 'src/lib/pell.js', 'src/lib/angular.js', 'src/lib/angular.*.js',
           'dist/app/docs/app.js', 'dist/app/docs/controller/**/*.js', 'dist/app/docs/directive/*.js', 'dist/app/docs/filter/*.js', 'dist/app/docs/service/*.js'],
         dest: 'dist/docs.js'
       },
@@ -33,7 +33,7 @@ module.exports = function(grunt) {
         options: {
           separator: ';'
         },
-        src: ['src/lib/jquery.js','src/lib/jquery.ui.js','src/lib/underscore.js','src/lib/colorpicker.js', 'src/lib/angular.js', 'src/lib/angular.*.js',
+        src: ['src/lib/jquery.js','src/lib/jquery.ui.js','src/lib/underscore.js','src/lib/colorpicker.js', 'src/lib/pell.js', 'src/lib/angular.js', 'src/lib/angular.*.js',
           'dist/app/share/app.js', 'dist/app/share/controller/*.js', 'dist/app/share/directive/*.js', 'dist/app/share/filter/*.js', 'dist/app/share/service/*.js'],
         dest: 'dist/share.js'
       },
@@ -72,12 +72,12 @@ module.exports = function(grunt) {
         options: {
           append: true,
           htmlmin: {
-            collapseBooleanAttributes: true,
+            collapseBooleanAttributes: false,
             collapseWhitespace: true,
-            removeAttributeQuotes: true,
+            removeAttributeQuotes: false,
             removeComments: true,
-            removeEmptyAttributes: true,
-            removeRedundantAttributes: true,
+            removeEmptyAttributes: false,
+            removeRedundantAttributes: false,
             removeScriptTypeAttributes: true,
             removeStyleLinkTypeAttributes: true
           }
@@ -90,12 +90,12 @@ module.exports = function(grunt) {
         options: {
           append: true,
           htmlmin: {
-            collapseBooleanAttributes: true,
+            collapseBooleanAttributes: false,
             collapseWhitespace: true,
-            removeAttributeQuotes: true,
+            removeAttributeQuotes: false,
             removeComments: true,
-            removeEmptyAttributes: true,
-            removeRedundantAttributes: true,
+            removeEmptyAttributes: false,
+            removeRedundantAttributes: false,
             removeScriptTypeAttributes: true,
             removeStyleLinkTypeAttributes: true
           }
@@ -106,7 +106,7 @@ module.exports = function(grunt) {
       dist: {
         expand: true,
         cwd: 'src/',
-        src: ['**', '!**/*.js', '!*.html', '!**/*.less', '!**/*.css'],
+        src: ['**', '!**/*.js', '!*.html', '!**/*.less', '!**/*.css', 'locale/**'],
         dest: 'dist/'
       }
     },
@@ -134,6 +134,9 @@ module.exports = function(grunt) {
         replacements: [{
           from: '../api',
           to: grunt.option('apiurl') || '../api'
+        }, {
+          from: '@build.date@',
+          to: new Date().getTime()
         }]
       }
     },

@@ -5,14 +5,18 @@
  */
 angular.module('docs',
     // Dependencies
-    ['ui.router', 'ui.route', 'ui.bootstrap', 'ui.keypress', 'ui.validate', 'dialog', 'ngProgress', 'monospaced.qrcode',
-      'ui.sortable', 'restangular', 'ngSanitize', 'ngTouch', 'colorpicker.module', 'angularFileUpload']
+    ['ui.router', 'ui.bootstrap', 'dialog', 'ngProgress', 'monospaced.qrcode', 'yaru22.angular-timeago', 'ui.validate',
+      'ui.sortable', 'restangular', 'ngSanitize', 'ngTouch', 'colorpicker.module', 'ngFileUpload', 'pascalprecht.translate',
+      'tmh.dynamicLocale']
   )
 
 /**
  * Configuring modules.
  */
-.config(function($stateProvider, $httpProvider, RestangularProvider) {
+.config(function($locationProvider, $urlRouterProvider, $stateProvider, $httpProvider, $qProvider,
+                 RestangularProvider, $translateProvider, timeAgoSettings, tmhDynamicLocaleProvider) {
+  $locationProvider.hashPrefix('');
+
   // Configuring UI Router
   $stateProvider
     .state('main', {
@@ -21,6 +25,15 @@ angular.module('docs',
         'page': {
           templateUrl: 'partial/docs/main.html',
           controller: 'Main'
+        }
+      }
+    })
+    .state('passwordreset', {
+      url: '/passwordreset/:key',
+      views: {
+        'page': {
+          templateUrl: 'partial/docs/passwordreset.html',
+          controller: 'PasswordReset'
         }
       }
     })
@@ -97,12 +110,20 @@ angular.module('docs',
         }
       }
     })
-    .state('settings.log', {
-      url: '/log',
+    .state('settings.fileimporter', {
+      url: '/fileimporter',
       views: {
         'settings': {
-          templateUrl: 'partial/docs/settings.log.html',
-          controller: 'SettingsLog'
+          templateUrl: 'partial/docs/settings.fileimporter.html'
+        }
+      }
+    })
+    .state('settings.monitoring', {
+      url: '/monitoring',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.monitoring.html',
+          controller: 'SettingsMonitoring'
         }
       }
     })
@@ -112,6 +133,15 @@ angular.module('docs',
         'settings': {
           templateUrl: 'partial/docs/settings.config.html',
           controller: 'SettingsConfig'
+        }
+      }
+    })
+    .state('settings.inbox', {
+      url: '/inbox',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.inbox.html',
+          controller: 'SettingsInbox'
         }
       }
     })
@@ -139,6 +169,33 @@ angular.module('docs',
         'user': {
           templateUrl: 'partial/docs/settings.user.edit.html',
           controller: 'SettingsUserEdit'
+        }
+      }
+    })
+    .state('settings.workflow', {
+      url: '/workflow',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.workflow.html',
+          controller: 'SettingsWorkflow'
+        }
+      }
+    })
+    .state('settings.workflow.edit', {
+      url: '/edit/:id',
+      views: {
+        'workflow': {
+          templateUrl: 'partial/docs/settings.workflow.edit.html',
+          controller: 'SettingsWorkflowEdit'
+        }
+      }
+    })
+    .state('settings.workflow.add', {
+      url: '/add',
+      views: {
+        'workflow': {
+          templateUrl: 'partial/docs/settings.workflow.edit.html',
+          controller: 'SettingsWorkflowEdit'
         }
       }
     })
@@ -245,6 +302,15 @@ angular.module('docs',
         }
       }
     })
+    .state('document.view.workflow', {
+      url: '/workflow',
+      views: {
+        'tab': {
+          templateUrl: 'partial/docs/document.view.workflow.html',
+          controller: 'DocumentViewWorkflow'
+        }
+      }
+    })
     .state('document.view.content.file', {
       url: '/file/:fileId',
       views: {
@@ -334,9 +400,40 @@ angular.module('docs',
         }
       }
     });
+
   // Configuring Restangular
   RestangularProvider.setBaseUrl('../api');
-  
+
+  // Configuring Angular Translate
+  $translateProvider
+    .useSanitizeValueStrategy(null)
+    .useStaticFilesLoader({
+      prefix: 'locale/',
+      suffix: '.json?@build.date@'
+    })
+    .registerAvailableLanguageKeys(['en', 'fr', 'de', 'ru', 'zh_CN', 'zh_TW'], {
+      'ru_*': 'ru',
+      'en_*': 'en',
+      'fr_*': 'fr',
+      'de_*': 'de',
+      '*': 'en'
+    })
+    .fallbackLanguage('en');
+
+  if (!_.isUndefined(localStorage.overrideLang)) {
+    // Set the current language if an override is saved in local storage
+    $translateProvider.use(localStorage.overrideLang);
+  } else {
+    // Or else determine the language based on the user's browser
+    $translateProvider.determinePreferredLanguage();
+  }
+
+  // Configuring Timago
+  timeAgoSettings.fullDateAfterSeconds = 60 * 60 * 24 * 30; // 30 days
+
+  // Configuring tmhDynamicLocale
+  tmhDynamicLocaleProvider.localeLocationPattern('locale/angular-locale_{{locale}}.js');
+
   // Configuring $http to act like jQuery.ajax
   $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
   $httpProvider.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
@@ -375,6 +472,9 @@ angular.module('docs',
     
     return angular.isObject(data) && String(data) !== '[object File]' ? param(data) : data;
   }];
+
+  // Silence unhandled rejections
+  $qProvider.errorOnUnhandledRejections(false);
 })
 
 /**
@@ -389,20 +489,26 @@ angular.module('docs',
   Restangular.one('theme').get().then(function(data) {
     $rootScope.appName = data.name;
   });
-})
-/**
- * Redirection support for ui-router.
- * Thanks to https://github.com/acollard
- * See https://github.com/angular-ui/ui-router/issues/1584#issuecomment-76993045
- */
-.run(function($rootScope, $state){
-  $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
-    var redirect = toState.redirectTo;
-    if (redirect) {
-      event.preventDefault();
-      $state.go(redirect, toParams);
-    }
-  });
+
+  // Languages
+  $rootScope.acceptedLanguages = [
+    { key: 'eng', label: 'English' },
+    { key: 'fra', label: 'Français' },
+    { key: 'ita', label: 'Italiano' },
+    { key: 'deu', label: 'Deutsch' },
+    { key: 'spa', label: 'Español' },
+    { key: 'por', label: 'Português' },
+    { key: 'pol', label: 'Polski' },
+    { key: 'rus', label: 'русский' },
+    { key: 'ukr', label: 'українська' },
+    { key: 'ara', label: 'العربية' },
+    { key: 'hin', label: 'हिन्दी' },
+    { key: 'chi_sim', label: '简体中文' },
+    { key: 'chi_tra', label: '繁体中文' },
+    { key: 'jpn', label: '日本語' },
+    { key: 'tha', label: 'ภาษาไทย' },
+    { key: 'kor', label: '한국어' }
+  ];
 })
 /**
  * Initialize ngProgress.
@@ -413,8 +519,8 @@ angular.module('docs',
   // Watch for the number of XHR running
   $rootScope.$watch(function() {
     return $http.pendingRequests.length > 0
-  }, function(count) {
-    if (count == 0) {
+  }, function(loading) {
+    if (!loading) {
       $rootScope.ngProgress.complete();
     } else {
       $rootScope.ngProgress.start();

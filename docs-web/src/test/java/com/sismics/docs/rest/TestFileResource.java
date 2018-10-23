@@ -1,10 +1,16 @@
 package com.sismics.docs.rest;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Date;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Resources;
+import com.sismics.docs.core.util.DirectoryUtil;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
+import com.sismics.util.mime.MimeType;
+import com.sismics.util.mime.MimeTypeUtil;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import org.junit.Assert;
+import org.junit.Test;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -13,19 +19,10 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Resources;
-import com.sismics.docs.core.util.DirectoryUtil;
-import com.sismics.util.filter.TokenBasedSecurityFilter;
-import com.sismics.util.mime.MimeType;
-import com.sismics.util.mime.MimeTypeUtil;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Date;
 
 /**
  * Exhaustive test of the file resource.
@@ -109,6 +106,14 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
         Assert.assertTrue(fileBytes.length > 0);
         
+        // Get the content data
+        response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "content")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+
         // Get the web data
         response = target().path("/file/" + file1Id + "/data")
                 .queryParam("size", "web")
@@ -123,10 +128,8 @@ public class TestFileResource extends BaseJerseyTest {
         
         // Check that the files are not readable directly from FS
         Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file1Id);
-        try (InputStream storedFileInputStream = new BufferedInputStream(Files.newInputStream(storedFile))) {
-            Assert.assertEquals(MimeType.DEFAULT, MimeTypeUtil.guessMimeType(storedFileInputStream, null));
-        }
-        
+        Assert.assertEquals(MimeType.DEFAULT, MimeTypeUtil.guessMimeType(storedFile, null));
+
         // Get all files from a document
         json = target().path("/file/list")
                 .queryParam("id", document1Id)
@@ -140,7 +143,25 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(163510L, files.getJsonObject(0).getJsonNumber("size").longValue());
         Assert.assertEquals(file2Id, files.getJsonObject(1).getString("id"));
         Assert.assertEquals("PIA00452.jpg", files.getJsonObject(1).getString("name"));
-        
+
+        // Rename a file
+        target().path("file/" + file1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                .post(Entity.form(new Form()
+                        .param("name", "Pale Blue Dot")), JsonObject.class);
+
+        // Get all files from a document
+        json = target().path("/file/list")
+                .queryParam("id", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                .get(JsonObject.class);
+        files = json.getJsonArray("files");
+        Assert.assertEquals(2, files.size());
+        Assert.assertEquals(file1Id, files.getJsonObject(0).getString("id"));
+        Assert.assertEquals("Pale Blue Dot", files.getJsonObject(0).getString("name"));
+
         // Reorder files
         target().path("/file/reorder").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
@@ -166,6 +187,7 @@ public class TestFileResource extends BaseJerseyTest {
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         is = (InputStream) response.getEntity();
         fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(MimeType.APPLICATION_ZIP, MimeTypeUtil.guessMimeType(fileBytes, null));
@@ -198,6 +220,11 @@ public class TestFileResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         files = json.getJsonArray("files");
         Assert.assertEquals(1, files.size());
+
+        // Process a file
+        target().path("/file/" + file2Id + "/process").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                .post(Entity.form(new Form()), JsonObject.class);
     }
 
     /**
@@ -266,20 +293,32 @@ public class TestFileResource extends BaseJerseyTest {
                 Assert.assertNotNull(file1Id);
             }
         }
-        
+
         // Get all orphan files
         JsonObject json = target().path("/file/list").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file3Token)
                 .get(JsonObject.class);
         JsonArray files = json.getJsonArray("files");
         Assert.assertEquals(1, files.size());
-        
-        // Get the file data
-        Response response = target().path("/file/" + file1Id + "/data").request()
+
+        // Get the thumbnail data
+        Response response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "thumb")
+                .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file3Token)
                 .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+        Assert.assertTrue(fileBytes.length > 0);
+
+        // Get the file data
+        response = target().path("/file/" + file1Id + "/data").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file3Token)
+                .get();
+        is = (InputStream) response.getEntity();
+        fileBytes = ByteStreams.toByteArray(is);
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
         Assert.assertEquals(163510, fileBytes.length);
         
@@ -293,7 +332,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Attach a file to a document
-        target().path("/file/" + file1Id).request()
+        target().path("/file/" + file1Id + "/attach").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file3Token)
                 .post(Entity.form(new Form()
                         .param("id", document1Id)), JsonObject.class);

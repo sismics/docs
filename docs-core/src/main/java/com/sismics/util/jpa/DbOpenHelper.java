@@ -1,7 +1,19 @@
 package com.sismics.util.jpa;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import com.google.common.base.Strings;
+import com.google.common.io.CharStreams;
+import com.sismics.docs.core.util.ConfigUtil;
+import com.sismics.util.ResourceUtil;
+import org.hibernate.HibernateException;
+import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
+import org.hibernate.engine.jdbc.internal.FormatStyle;
+import org.hibernate.engine.jdbc.internal.Formatter;
+import org.hibernate.engine.jdbc.spi.JdbcServices;
+import org.hibernate.engine.jdbc.spi.SqlStatementLogger;
+import org.hibernate.service.ServiceRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,22 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
-
-import org.hibernate.HibernateException;
-import org.hibernate.JDBCException;
-import org.hibernate.engine.jdbc.connections.spi.JdbcConnectionAccess;
-import org.hibernate.engine.jdbc.internal.FormatStyle;
-import org.hibernate.engine.jdbc.internal.Formatter;
-import org.hibernate.engine.jdbc.spi.JdbcServices;
-import org.hibernate.engine.jdbc.spi.SqlStatementLogger;
-import org.hibernate.service.ServiceRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
-import com.google.common.io.CharStreams;
-import com.sismics.docs.core.util.ConfigUtil;
-import com.sismics.util.ResourceUtil;
 
 /**
  * A helper to update the database incrementally.
@@ -47,8 +43,6 @@ abstract class DbOpenHelper {
     private final List<Exception> exceptions = new ArrayList<>();
 
     private Formatter formatter;
-
-    private boolean haltOnError;
 
     private Statement stmt;
 
@@ -85,12 +79,13 @@ abstract class DbOpenHelper {
                     oldVersion = Integer.parseInt(oldVersionStr);
                 }
             } catch (Exception e) {
-                if (e.getMessage().contains("not found")) {
+                if (DialectUtil.isObjectNotFound(e.getMessage())) {
                     log.info("Unable to get database version: Table T_CONFIG not found");
                 } else {
                     log.error("Unable to get database version", e);
                 }
             } finally {
+                connection.commit();
                 if (stmt != null) {
                     stmt.close();
                     stmt = null;
@@ -133,15 +128,12 @@ abstract class DbOpenHelper {
      * Execute all upgrade scripts in ascending order for a given version.
      * 
      * @param version Version number
-     * @throws Exception
+     * @throws Exception e
      */
     void executeAllScript(final int version) throws Exception {
-        List<String> fileNameList = ResourceUtil.list(getClass(), "/db/update/", new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                String versionString = String.format("%03d", version);
-                return name.matches("dbupdate-" + versionString + "-\\d+\\.sql");
-            }
+        List<String> fileNameList = ResourceUtil.list(getClass(), "/db/update/", (dir, name) -> {
+            String versionString = String.format("%03d", version);
+            return name.matches("dbupdate-" + versionString + "-\\d+\\.sql");
         });
         Collections.sort(fileNameList);
         
@@ -158,33 +150,28 @@ abstract class DbOpenHelper {
      * Execute a SQL script. All statements must be one line only.
      * 
      * @param inputScript Script to execute
-     * @throws IOException
-     * @throws SQLException
+     * @throws IOException e
      */
-    void executeScript(InputStream inputScript) throws IOException, SQLException {
+    private void executeScript(InputStream inputScript) throws IOException {
         List<String> lines = CharStreams.readLines(new InputStreamReader(inputScript));
         
         for (String sql : lines) {
             if (Strings.isNullOrEmpty(sql) || sql.startsWith("--")) {
                 continue;
             }
-            
-            String formatted = formatter.format(sql);
-            try {
-                log.debug(formatted);
-                stmt.executeUpdate(formatted);
-            } catch (SQLException e) {
-                if (haltOnError) {
-                    if (stmt != null) {
-                        stmt.close();
-                        stmt = null;
+
+            String transformed = DialectUtil.transform(sql);
+            if (transformed != null) {
+                String formatted = formatter.format(transformed);
+                try {
+                    log.debug(formatted);
+                    stmt.executeUpdate(formatted);
+                } catch (SQLException e) {
+                    exceptions.add(e);
+                    if (log.isErrorEnabled()) {
+                        log.error("Error executing SQL statement: {}", sql);
+                        log.error(e.getMessage());
                     }
-                    throw new JDBCException("Error during script execution", e);
-                }
-                exceptions.add(e);
-                if (log.isErrorEnabled()) {
-                    log.error("Error executing SQL statement: {}", sql);
-                    log.error(e.getMessage());
                 }
             }
         }
@@ -201,10 +188,6 @@ abstract class DbOpenHelper {
      */
     public List<?> getExceptions() {
         return exceptions;
-    }
-
-    public void setHaltOnError(boolean haltOnError) {
-        this.haltOnError = haltOnError;
     }
 
     /**

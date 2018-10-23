@@ -1,16 +1,14 @@
 package com.sismics.docs.rest;
 
-import java.util.Date;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
+import org.junit.Assert;
+import org.junit.Test;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.sismics.util.filter.TokenBasedSecurityFilter;
+import java.util.Date;
 
 /**
  * Test the audit log resource.
@@ -20,9 +18,11 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 public class TestAuditLogResource extends BaseJerseyTest {
     /**
      * Test the audit log resource.
+     *
+     * @throws Exception e
      */
     @Test
-    public void testAuditLogResource() {
+    public void testAuditLogResource() throws Exception {
         // Login auditlog1
         clientUtil.createUser("auditlog1");
         String auditlog1Token = clientUtil.login("auditlog1");
@@ -91,6 +91,33 @@ public class TestAuditLogResource extends BaseJerseyTest {
         Assert.assertTrue(logs.size() == 3);
         Assert.assertEquals(countByClass(logs, "Document"), 1);
         Assert.assertEquals(countByClass(logs, "Tag"), 2);
+
+        // Get document 1
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, auditlog1Token)
+                .get(JsonObject.class);
+        long update1Date = json.getJsonNumber("update_date").longValue();
+
+        // Add a file to the document
+        clientUtil.addFileToDocument("file/wikipedia.pdf", "wikipedia.pdf", auditlog1Token, document1Id);
+
+        // Get document 1
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, auditlog1Token)
+                .get(JsonObject.class);
+        Assert.assertEquals(update1Date, json.getJsonNumber("update_date").longValue());
+
+        // Get all logs for the document
+        json = target().path("/auditlog")
+                .queryParam("document", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, auditlog1Token)
+                .get(JsonObject.class);
+        logs = json.getJsonArray("logs");
+        Assert.assertEquals(4, logs.size());
+        Assert.assertEquals(countByClass(logs, "Document"), 1);
+        Assert.assertEquals(countByClass(logs, "Acl"), 2);
+        Assert.assertEquals(countByClass(logs, "File"), 1);
     }
     
     /**

@@ -20,7 +20,7 @@ angular.module('docs').directive('selectRelation', function() {
       $scope.addRelation = function($item) {
         // Does the new relation is already in the model
         var duplicate = _.find($scope.relations, function(relation) {
-          if ($item.id == relation.id) {
+          if ($item.id === relation.id) {
             return relation;
           }
         });
@@ -41,7 +41,7 @@ angular.module('docs').directive('selectRelation', function() {
        */
       $scope.deleteRelation = function(deleteRelation) {
         $scope.relations = _.reject($scope.relations, function(relation) {
-          return relation.id == deleteRelation.id;
+          return relation.id === deleteRelation.id;
         })
       };
 
@@ -50,8 +50,8 @@ angular.module('docs').directive('selectRelation', function() {
        */
       $scope.getDocumentTypeahead = function($viewValue) {
         var deferred = $q.defer();
-        Restangular.one('document')
-            .getList('list', {
+        Restangular.one('document/list')
+            .get({
               limit: 5,
               sort_column: 1,
               asc: true,

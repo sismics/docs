@@ -1,13 +1,12 @@
 package com.sismics.docs.core.model.jpa;
 
-import java.util.Date;
+import com.google.common.base.MoreObjects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import com.google.common.base.MoreObjects;
+import java.util.Date;
 
 /**
  * Document entity.
@@ -101,6 +100,12 @@ public class Document implements Loggable {
      */
     @Column(name = "DOC_CREATEDATE_D", nullable = false)
     private Date createDate;
+
+    /**
+     * Creation date.
+     */
+    @Column(name = "DOC_UPDATEDATE_D", nullable = false)
+    private Date updateDate;
 
     /**
      * Deletion date.
@@ -227,6 +232,14 @@ public class Document implements Loggable {
 
     public void setDeleteDate(Date deleteDate) {
         this.deleteDate = deleteDate;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 
     @Override

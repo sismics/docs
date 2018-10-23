@@ -1,7 +1,9 @@
 package com.sismics.docs.rest;
 
-import java.util.Date;
-import java.util.Locale;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
+import com.sismics.util.totp.GoogleAuthenticator;
+import org.junit.Assert;
+import org.junit.Test;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -9,12 +11,10 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.sismics.util.filter.TokenBasedSecurityFilter;
-import com.sismics.util.totp.GoogleAuthenticator;
+import java.util.Date;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Exhaustive test of the user resource.
@@ -55,7 +55,9 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertNotNull(user.getJsonNumber("storage_quota"));
         Assert.assertNotNull(user.getJsonNumber("storage_current"));
         Assert.assertNotNull(user.getJsonNumber("create_date"));
-        
+        Assert.assertFalse(user.getBoolean("totp_enabled"));
+        Assert.assertFalse(user.getBoolean("disabled"));
+
         // Create a user KO (login length validation)
         Response response = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
@@ -114,7 +116,7 @@ public class TestUserResource extends BaseJerseyTest {
                 .param("email", " bob@docs.com ")
                 .param("password", " 12345678 ")
                 .param("storage_quota", "10");
-        json = target().path("/user").request()
+        target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(form), JsonObject.class);
 
@@ -122,7 +124,7 @@ public class TestUserResource extends BaseJerseyTest {
         response = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(form));
-        Assert.assertNotSame(Status.OK, Status.fromStatusCode(response.getStatus()));
+        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
         Assert.assertEquals("AlreadyExistingUsername", json.getString("type"));
 
@@ -178,8 +180,8 @@ public class TestUserResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         Assert.assertEquals("alice@docs.com", json.getString("email"));
         Assert.assertFalse(json.getBoolean("is_default_password"));
-        Assert.assertEquals(0l, json.getJsonNumber("storage_current").longValue());
-        Assert.assertEquals(1000000l, json.getJsonNumber("storage_quota").longValue());
+        Assert.assertEquals(0L, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(1000000L, json.getJsonNumber("storage_quota").longValue());
         
         // Check bob user information
         json = target().path("/user").request()
@@ -243,8 +245,8 @@ public class TestUserResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
         Assert.assertTrue(json.getBoolean("is_default_password"));
-        Assert.assertEquals(0l, json.getJsonNumber("storage_current").longValue());
-        Assert.assertEquals(10000000000l, json.getJsonNumber("storage_quota").longValue());
+        Assert.assertEquals(0L, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(10000000000L, json.getJsonNumber("storage_quota").longValue());
 
         // User admin updates his information
         json = target().path("/user").request()
@@ -260,7 +262,7 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals("newadminemail@docs.com", json.getString("email"));
 
         // User admin update admin_user1 information
-        json = target().path("/user").request()
+        json = target().path("/user/admin_user1").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()
                         .param("email", " alice2@docs.com ")), JsonObject.class);
@@ -273,6 +275,36 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
         Assert.assertEquals("ForbiddenError", json.getString("type"));
+
+        // User admin disable admin_user1
+        json = target().path("/user/admin_user1").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("disabled", "true")), JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
+
+        // User admin_user1 tries to authenticate
+        response = target().path("/user/login").request()
+                .post(Entity.form(new Form()
+                        .param("username", "admin_user1")
+                        .param("password", "12345678")
+                        .param("remember", "false")));
+        Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
+
+        // User admin enable admin_user1
+        json = target().path("/user/admin_user1").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("disabled", "false")), JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
+
+        // User admin_user1 tries to authenticate
+        response = target().path("/user/login").request()
+                .post(Entity.form(new Form()
+                        .param("username", "admin_user1")
+                        .param("password", "12345678")
+                        .param("remember", "false")));
+        Assert.assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
         // User admin deletes user admin_user1
         json = target().path("/user/admin_user1").request()
@@ -323,7 +355,7 @@ public class TestUserResource extends BaseJerseyTest {
         int validationCode = googleAuthenticator.calculateCode(secret, new Date().getTime() / 30000);
         
         // Login with totp1 with a validation code
-        json = target().path("/user/login").request()
+        target().path("/user/login").request()
                 .post(Entity.form(new Form()
                         .param("username", "totp1")
                         .param("password", "12345678")
@@ -337,13 +369,13 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertTrue(json.getBoolean("totp_enabled"));
         
         // Disable TOTP for totp1
-        json = target().path("/user/disable_totp").request()
+        target().path("/user/disable_totp").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
                 .post(Entity.form(new Form()
                         .param("password", "12345678")), JsonObject.class);
         
         // Login with totp1 without a validation code
-        json = target().path("/user/login").request()
+        target().path("/user/login").request()
                 .post(Entity.form(new Form()
                         .param("username", "totp1")
                         .param("password", "12345678")
@@ -354,5 +386,79 @@ public class TestUserResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
                 .get(JsonObject.class);
         Assert.assertFalse(json.getBoolean("totp_enabled"));
+    }
+
+    @Test
+    public void testResetPassword() throws Exception {
+        // Login admin
+        String adminToken = clientUtil.login("admin", "admin", false);
+
+        // Change SMTP configuration to target Wiser
+        target().path("/app/config_smtp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("hostname", "localhost")
+                        .param("port", "2500")
+                        .param("from", "contact@sismicsdocs.com")
+                ), JsonObject.class);
+
+        // Create absent_minded who lost his password
+        clientUtil.createUser("absent_minded");
+
+        // User no_such_user try to recovery its password: invalid user
+        Response response = target().path("/user/password_lost").request()
+                .post(Entity.form(new Form()
+                        .param("username", "no_such_user")));
+        Assert.assertEquals(Response.Status.BAD_REQUEST, Response.Status.fromStatusCode(response.getStatus()));
+        JsonObject json = response.readEntity(JsonObject.class);
+        Assert.assertEquals("UserNotFound", json.getString("type"));
+
+        // User absent_minded try to recovery its password: OK
+        json = target().path("/user/password_lost").request()
+                .post(Entity.form(new Form()
+                        .param("username", "absent_minded")), JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
+        String emailBody = popEmail();
+        Assert.assertNotNull("No email to consume", emailBody);
+        Assert.assertTrue(emailBody.contains("Please reset your password"));
+        Pattern keyPattern = Pattern.compile("/passwordreset/(.+?)\"");
+        Matcher keyMatcher = keyPattern.matcher(emailBody);
+        Assert.assertTrue("Token not found", keyMatcher.find());
+        String key = keyMatcher.group(1).replaceAll("=", "");
+
+        // User absent_minded resets its password: invalid key
+        response = target().path("/user/password_reset").request()
+                .post(Entity.form(new Form()
+                        .param("key", "no_such_key")
+                        .param("password", "87654321")));
+        Assert.assertEquals(Response.Status.BAD_REQUEST, Response.Status.fromStatusCode(response.getStatus()));
+        json = response.readEntity(JsonObject.class);
+        Assert.assertEquals("KeyNotFound", json.getString("type"));
+
+        // User absent_minded resets its password: password invalid
+        response = target().path("/user/password_reset").request()
+                .post(Entity.form(new Form()
+                        .param("key", key)
+                        .param("password", " 1 ")));
+        Assert.assertEquals(Response.Status.BAD_REQUEST, Response.Status.fromStatusCode(response.getStatus()));
+        json = response.readEntity(JsonObject.class);
+        Assert.assertEquals("ValidationError", json.getString("type"));
+        Assert.assertTrue(json.getString("message"), json.getString("message").contains("password"));
+
+        // User absent_minded resets its password: OK
+        json = target().path("/user/password_reset").request()
+                .post(Entity.form(new Form()
+                        .param("key", key)
+                        .param("password", "87654321")), JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
+
+        // User absent_minded resets its password: expired key
+        response = target().path("/user/password_reset").request()
+                .post(Entity.form(new Form()
+                        .param("key", key)
+                        .param("password", "87654321")));
+        Assert.assertEquals(Response.Status.BAD_REQUEST, Response.Status.fromStatusCode(response.getStatus()));
+        json = response.readEntity(JsonObject.class);
+        Assert.assertEquals("KeyNotFound", json.getString("type"));
     }
 }

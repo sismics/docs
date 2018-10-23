@@ -1,30 +1,24 @@
 package com.sismics.util.filter;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.RollingFileAppender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.core.util.TransactionUtil;
 import com.sismics.util.EnvironmentUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.jpa.EMF;
+import org.apache.log4j.Level;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.RollingFileAppender;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.HttpHeaders;
+import java.io.IOException;
+import java.text.MessageFormat;
 
 /**
  * Filter used to process a couple things in the request context.
@@ -38,7 +32,7 @@ public class RequestContextFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(RequestContextFilter.class);
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         // Initialize the app directory
         if (!filterConfig.getServletContext().getServerInfo().startsWith("Grizzly")) {
             EnvironmentUtil.setWebappContext(true);
@@ -65,17 +59,12 @@ public class RequestContextFilter implements Filter {
         org.apache.log4j.Logger.getRootLogger().addAppender(fileAppender);
         
         // Initialize the application context
-        TransactionUtil.handle(new Runnable() {
-            @Override
-            public void run() {
-                AppContext.getInstance();
-            }
-        });
+        TransactionUtil.handle(AppContext::getInstance);
     }
 
     @Override
     public void destroy() {
-        // NOP
+        AppContext.getInstance().shutDown();
     }
 
     @Override
@@ -93,6 +82,7 @@ public class RequestContextFilter implements Filter {
         tx.begin();
         
         try {
+            addCacheHeaders(response);
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             ThreadLocalContext.cleanup();
@@ -146,5 +136,16 @@ public class RequestContextFilter implements Filter {
         context.fireAllAsyncEvents();
 
         ThreadLocalContext.cleanup();
+    }
+
+    /**
+     * Add no-cache header.
+     *
+     * @param response Response
+     */
+    private void addCacheHeaders(ServletResponse response) {
+        HttpServletResponse r = (HttpServletResponse) response;
+        r.addHeader(HttpHeaders.CACHE_CONTROL, "no-cache");
+        r.addHeader(HttpHeaders.EXPIRES, "0");
     }
 }

@@ -1,52 +1,89 @@
-Sismics Docs [![Build Status](https://secure.travis-ci.org/sismics/docs.png)](http://travis-ci.org/sismics/docs)
-============
+<h3 align="center">
+  <img src="https://www.sismicsdocs.com/img/github-title.png" alt="Sismics Docs" width=500 />
+</h3>
 
-_Web interface_
+[![Twitter: @sismicsdocs](https://img.shields.io/badge/contact-@sismicsdocs-blue.svg?style=flat)](https://twitter.com/sismicsdocs)
+[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
+[![Build Status](https://secure.travis-ci.org/sismics/docs.png)](http://travis-ci.org/sismics/docs)
 
-![Web interface](http://sismics.com/docs/screenshot1.png)
+Docs is an open source, lightweight document management system for individuals and businesses.
 
-_Android application_
+**Discuss it on [Product Hunt](https://www.producthunt.com/posts/sismics-docs) 🦄**
 
-![Android documents list](http://sismics.com/docs/android1.png) ![Android navigation](http://sismics.com/docs/android2.png) ![Android document details](http://sismics.com/docs/android3.png) ![Android document actions](http://sismics.com/docs/android4.png)
+<hr />
+<h2 align="center">
+  ✨ We just launched a Cloud version of Sismics Docs! Head to <a href="https://www.sismicsdocs.com/">sismicsdocs.com</a> for more informations ✨
+</h2>
+<hr />
 
-What is Docs?
----------------
+![New!](https://www.sismicsdocs.com/img/laptop-demo.png?20180301)
 
-Docs is an open source, lightweight document management system.
+Demo
+----
 
-Docs is written in Java, and may be run on any operating system with Java support.
+A demo is available at [demo.sismicsdocs.com](https://demo.sismicsdocs.com)
+- Guest login is enabled with read access on all documents
+- "admin" login with "admin" password
+- "demo" login with "password" password 
 
 Features
 --------
 
 - Responsive user interface
 - Optical character recognition
-- Support image, PDF, ODT and DOCX files
-- Flexible search engine
+- Support image, PDF, ODT, DOCX, PPTX files
+- Video file support ![New!](https://www.sismics.com/public/img/new.png)
+- Flexible search engine with suggestions and highlighting
 - Full text search in all supported files
 - All [Dublin Core](http://dublincore.org/) metadata
+- Workflow system ![New!](https://www.sismics.com/public/img/new.png)
 - 256-bit AES encryption of stored files
 - Tag system with nesting
+- Import document from email (EML format) ![New!](https://www.sismics.com/public/img/new.png)
+- Automatic inbox scanning and importing ![New!](https://www.sismics.com/public/img/new.png)
 - User/group permission system
+- 2-factor authentication
 - Hierarchical groups
 - Audit log
 - Comments
 - Storage quota per user
 - Document sharing by URL
 - RESTful Web API
+- Webhooks to trigger external service ![New!](https://www.sismics.com/public/img/new.png)
 - Fully featured Android client
-- Tested to 100k documents
+- [Bulk files importer](https://github.com/sismics/docs/tree/master/docs-importer) (single or scan mode) ![New!](https://www.sismics.com/public/img/new.png)
+- Tested to one million documents
 
-Download
---------
+Install with Docker
+-------------------
 
-The latest release is downloadable here: <https://github.com/sismics/docs/releases> in WAR format.
-You will need a Java webapp server to run it, like [Jetty](http://eclipse.org/jetty/) or [Tomcat](http://tomcat.apache.org/)
+From a Docker host, run this command to download and install Sismics Docs. The server will run on <http://[your-docker-host-ip]:8100>.
+**The default admin password is "admin". Don't forget to change it before going to production.**
+
+    docker run --rm --name sismics_docs_latest -d -e DOCS_BASE_URL='http://[your-docker-host-ip]:8100' -p 8100:8080 -v sismics_docs_latest:/data sismics/docs:latest
+  <img src="http://www.newdesignfile.com/postpic/2011/01/green-info-icon_206509.png" width="16px" height="16px">  **Note:** You will need to change [your-docker-host-ip] with the IP address or FQDN of your docker host e.g.
+  
+  FQDN: http://docs.sismics.com  
+  IP: http://192.168.100.10
+
+Manual installation
+-------------------
+
+#### Requirements
+- Java 8 with the [Java Cryptography Extension](http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html)
+- Tesseract 3 or 4 for OCR
+- ffmpeg for video thumbnails
+- mediainfo for video metadata extraction
+- A webapp server like [Jetty](http://eclipse.org/jetty/) or [Tomcat](http://tomcat.apache.org/)
+
+#### Download
+The latest release is downloadable here: <https://github.com/sismics/docs/releases> in WAR format. 
+**The default admin password is "admin". Don't forget to change it before going to production.**
 
 How to build Docs from the sources
 ----------------------------------
 
-Prerequisites: JDK 7 with JCE, Maven 3, Tesseract 3.02
+Prerequisites: JDK 8 with JCE, Maven 3, Tesseract 3 or 4
 
 Docs is organized in several Maven modules:
 
@@ -76,6 +113,24 @@ From the `docs-web` directory:
     mvn -Pprod -DskipTests clean install
 
 You will get your deployable WAR in the `docs-web/target` directory.
+
+Contributing
+------------
+
+All contributions are more than welcomed. Contributions may close an issue, fix a bug (reported or not reported), improve the existing code, add new feature, and so on.
+
+The `master` branch is the default and base branch for the project. It is used for development and all Pull Requests should go there.
+
+
+Community
+---------
+
+Get updates on Sismics Docs' development and chat with the project maintainers:
+
+- Follow [@sismicsdocs on Twitter](https://twitter.com/sismicsdocs)
+- Read and subscribe to [The Official Sismics Docs Blog](https://blog.sismicsdocs.com/)
+- Check the [Official Website](https://www.sismicsdocs.com)
+- Join us [on Facebook](https://www.facebook.com/sismicsdocs)
 
 License
 -------

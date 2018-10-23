@@ -1,22 +1,40 @@
-<h1>
-  Guest <small>access</small>
+<h2>
+  <span translate="settings.config.title_guest_access"></span>
   <span class="label" ng-class="{ 'label-success': app.guest_login, 'label-danger': !app.guest_login }">
-    {{ app.guest_login ? 'Enabled' : 'Disabled' }}
+    {{ app.guest_login ? 'enabled' : 'disabled' | translate }}
   </span>
-</h1>
-<p>
-  Guest access is a mode where anyone can access {{ appName }} without password.<br/>
-  Like a normal user, the guest user can only access its documents and those accessible through permissions.<br/>
+</h2>
+<p translate="settings.config.message_guest_access" translate-values="{ appName: appName }">
 </p>
 <div ng-if="app">
-  <button ng-if="!app.guest_login" class="btn btn-primary" ng-click="changeGuestLogin(true)">Enable guest access</button>
-  <button ng-if="app.guest_login" class="btn btn-danger" ng-click="changeGuestLogin(false)">Disable guest access</button>
+  <button ng-if="!app.guest_login" class="btn btn-primary" ng-click="changeGuestLogin(true)">{{ 'settings.config.enable_guest_access' | translate }}</button>
+  <button ng-if="app.guest_login" class="btn btn-danger" ng-click="changeGuestLogin(false)">{{ 'settings.config.disable_guest_access' | translate }}</button>
 </div>
 
-<h1>Theme <small>customization</small></h1>
+<h2 translate="settings.config.title_general"></h2>
+<form class="form-horizontal" name="generalForm" novalidate>
+  <div class="form-group" ng-class="{ 'has-error': !generalForm.defaultLanguage.$valid && generalForm.$dirty }">
+    <label class="col-sm-2 control-label" for="defaultLanguage">{{ 'settings.config.default_language' | translate }}</label>
+    <div class="col-sm-7">
+      <select name="defaultLanguage" class="form-control" id="defaultLanguage" ng-model="general.default_language">
+        <option ng-repeat="language in acceptedLanguages" value="{{ language.key }}">{{ language.label }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary" ng-click="editGeneralConfig()" ng-disabled="!generalForm.$valid">
+        <span class="fas fa-pencil-alt"></span> {{ 'save' | translate }}
+      </button>
+    </div>
+  </div>
+</form>
+
+<h2 translate="settings.config.title_theme"></h2>
 <form class="form-horizontal" name="editColorForm" novalidate>
   <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputName">Application name</label>
+    <label class="col-sm-2 control-label" for="inputName">{{ 'settings.config.application_name' | translate }}</label>
     <div class="col-sm-8">
       <input type="text" class="form-control"
         id="inputName" ng-model="theme.name" ng-blur="update()" />
@@ -24,7 +42,7 @@
   </div>
 
   <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputColor">Main color</label>
+    <label class="col-sm-2 control-label" for="inputColor">{{ 'settings.config.main_color' | translate }}</label>
     <div class="col-sm-1">
       <span colorpicker class="btn btn-default" id="inputColor" on-hide="update()"
         data-color="" ng-model="theme.color" ng-style="{ 'background': theme.color }">&nbsp;&nbsp;&nbsp;</span>
@@ -32,37 +50,37 @@
   </div>
 
   <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputCss">Custom CSS</label>
+    <label class="col-sm-2 control-label" for="inputCss">{{ 'settings.config.custom_css' | translate }}</label>
     <div class="col-sm-8">
-      <textarea class="form-control" rows="6" placeholder="Custom CSS to add after the main stylesheet"
+      <textarea class="form-control" rows="6" ng-attr-placeholder="{{ 'settings.config.custom_css_placeholder' | translate }}"
         id="inputCss" ng-model="theme.css" ng-blur="update()"></textarea>
     </div>
   </div>
 
   <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputLogo">Logo</label>
+    <label class="col-sm-2 control-label" for="inputLogo">{{ 'settings.config.logo' | translate }}</label>
     <div class="col-sm-2">
-      <file accept="image/gif,image/png,image/jpg,image/jpeg"
+      <input type="file" ngf-select ngf-accept="'image/gif,image/png,image/jpg,image/jpeg'"
         class="form-control" id="inputLogo" ng-model="logo" ng-disabled="sendingImage" />
     </div>
     <div class="col-sm-2">
       <button class="btn btn-default" ng-click="sendImage('logo', logo)" ng-disabled="sendingImage || !logo">
-        <span class="glyphicon glyphicon-save"></span>
-        Send
+        <span class="fas fa-save"></span>
+        {{ 'send' | translate }}
       </button>
     </div>
   </div>
 
   <div class="form-group">
-    <label class="col-sm-2 control-label" for="inputBackground">Background image</label>
+    <label class="col-sm-2 control-label" for="inputBackground">{{ 'settings.config.background_image' | translate }}</label>
     <div class="col-sm-2">
-      <file accept="image/gif,image/png,image/jpg,image/jpeg"
-            class="form-control" id="inputLogo" ng-model="background" ng-disabled="sendingImage" />
+      <input type="file" ngf-select ngf-accept="'image/gif,image/png,image/jpg,image/jpeg'"
+            class="form-control" id="inputBackground" ng-model="background" ng-disabled="sendingImage" />
     </div>
     <div class="col-sm-2">
       <button class="btn btn-default" ng-click="sendImage('background', background)" ng-disabled="sendingImage || !background">
-        <span class="glyphicon glyphicon-save"></span>
-        Send
+        <span class="fas fa-save"></span>
+        {{ 'send' | translate }}
       </button>
     </div>
   </div>
@@ -71,8 +89,111 @@
     <label class="col-sm-2 control-label"></label>
     <div class="col-sm-10">
       <p class="form-control-static text-info" ng-if="sendingImage">
-        Uploading the image...
+        {{ 'settings.config.uploading_image' | translate }}
       </p>
     </div>
   </div>
 </form>
+
+<h2 translate="settings.config.title_smtp"></h2>
+<form class="form-horizontal" name="smtpForm" novalidate>
+  <div class="form-group" ng-show="smtp.hasOwnProperty('hostname')" ng-class="{ 'has-error': !smtpForm.hostname.$valid && smtpForm.$dirty }">
+    <label class="col-sm-2 control-label" for="smtpHostname">{{ 'settings.config.smtp_hostname' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="hostname" type="text" ng-disabled="!smtp.hasOwnProperty('hostname')" class="form-control" id="smtpHostname" ng-model="smtp.hostname" />
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="smtp.hasOwnProperty('port')" ng-class="{ 'has-error': !smtpForm.port.$valid && smtpForm.$dirty }">
+    <label class="col-sm-2 control-label" for="smtpPort">{{ 'settings.config.smtp_port' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="port" type="number" ng-disabled="!smtp.hasOwnProperty('port')" class="form-control" id="smtpPort" ng-model="smtp.port" />
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="smtp.hasOwnProperty('username')">
+    <label class="col-sm-2 control-label" for="smtpUsername">{{ 'settings.config.smtp_username' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="username" type="text" ng-disabled="!smtp.hasOwnProperty('username')" class="form-control" id="smtpUsername" ng-model="smtp.username" />
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="smtp.hasOwnProperty('password')">
+    <label class="col-sm-2 control-label" for="smtpPassword">{{ 'settings.config.smtp_password' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="password" type="password" ng-disabled="!smtp.hasOwnProperty('password')" class="form-control" id="smtpPassword" ng-model="smtp.password" />
+    </div>
+  </div>
+
+  <div class="form-group" ng-class="{ 'has-error': !smtpForm.from.$valid && smtpForm.$dirty }">
+    <label class="col-sm-2 control-label" for="smtpFrom">{{ 'settings.config.smtp_from' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="from" type="email" class="form-control" id="smtpFrom" ng-model="smtp.from" />
+    </div>
+    <div class="col-sm-3">
+      <span class="help-block" ng-show="smtpForm.from.$error.email && smtpForm.$dirty">{{ 'validation.email' | translate }}</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary" ng-click="editSmtpConfig()" ng-disabled="!smtpForm.$valid">
+        <span class="fas fa-pencil-alt"></span> {{ 'save' | translate }}
+      </button>
+    </div>
+  </div>
+</form>
+
+<h2 translate="settings.config.webhooks"></h2>
+<p translate="settings.config.webhooks_explain"></p>
+
+<form class="form-horizontal" name="webhookForm" novalidate>
+  <div class="form-group">
+    <label class="col-sm-2 control-label" for="webhookEvent">{{ 'settings.config.webhook_event' | translate }}</label>
+    <div class="col-sm-7">
+      <select name="event" class="form-control" id="webhookEvent" ng-model="webhook.event" required>
+        <option>DOCUMENT_CREATED</option>
+        <option>DOCUMENT_UPDATED</option>
+        <option>DOCUMENT_DELETED</option>
+        <option>FILE_CREATED</option>
+        <option>FILE_UPDATED</option>
+        <option>FILE_DELETED</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group" ng-class="{ 'has-error': !webhookForm.url.$valid && webhookForm.$dirty }">
+    <label class="col-sm-2 control-label" for="webhookUrl">{{ 'settings.config.webhook_url' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="url" type="text" class="form-control" id="webhookUrl" ng-model="webhook.url" required />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary" ng-click="addWebhook()" ng-disabled="!webhookForm.$valid">
+        <span class="fas fa-plus"></span> {{ 'settings.config.webhook_add' | translate }}
+      </button>
+    </div>
+  </div>
+</form>
+
+<div class="col-sm-10">
+  <table class="table" ng-show="webhooks.length > 0">
+    <tr>
+      <th style="width: 20%">{{ 'settings.config.webhook_event' | translate }}</th>
+      <th>{{ 'settings.config.webhook_url' | translate }}</th>
+      <th style="width: 20%">{{ 'settings.config.webhook_create_date' | translate }}</th>
+      <th style="width: 10%"></th>
+    </tr>
+
+    <tr ng-repeat="webhook in webhooks">
+      <td>{{ webhook.event }}</td>
+      <td>{{ webhook.url }}</td>
+      <td>{{ webhook.create_date | date: dateFormat }}</td>
+      <td>
+        <span ng-click="deleteWebhook(webhook)" class="fas fa-trash pointer text-danger"></span>
+      </td>
+    </tr>
+  </table>
+</div>

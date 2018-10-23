@@ -32,13 +32,13 @@ public class TestThemeResource extends BaseJerseyTest {
         // Get the stylesheet anonymously
         String stylesheet = target().path("/theme/stylesheet").request()
                 .get(String.class);
-        Assert.assertTrue(stylesheet.contains("background-color: #263238;"));
+        Assert.assertTrue(stylesheet.contains("background-color: #ffffff;"));
 
         // Get the theme configuration anonymously
         JsonObject json = target().path("/theme").request()
                 .get(JsonObject.class);
         Assert.assertEquals("Sismics Docs", json.getString("name"));
-        Assert.assertEquals("#263238", json.getString("color"));
+        Assert.assertEquals("#ffffff", json.getString("color"));
         Assert.assertEquals("", json.getString("css"));
 
         // Update the main color as admin

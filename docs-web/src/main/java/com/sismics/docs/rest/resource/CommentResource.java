@@ -1,9 +1,9 @@
 package com.sismics.docs.rest.resource;
 
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.docs.core.dao.jpa.CommentDao;
-import com.sismics.docs.core.dao.jpa.dto.CommentDto;
+import com.sismics.docs.core.dao.AclDao;
+import com.sismics.docs.core.dao.CommentDao;
+import com.sismics.docs.core.dao.dto.CommentDto;
 import com.sismics.docs.core.model.jpa.Comment;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;

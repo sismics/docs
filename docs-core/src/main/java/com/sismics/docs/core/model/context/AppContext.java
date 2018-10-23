@@ -1,5 +1,22 @@
 package com.sismics.docs.core.model.context;
 
+import com.google.common.collect.Lists;
+import com.google.common.eventbus.AsyncEventBus;
+import com.google.common.eventbus.EventBus;
+import com.sismics.docs.core.constant.Constants;
+import com.sismics.docs.core.dao.UserDao;
+import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
+import com.sismics.docs.core.listener.async.*;
+import com.sismics.docs.core.model.jpa.User;
+import com.sismics.docs.core.service.FileService;
+import com.sismics.docs.core.service.InboxService;
+import com.sismics.docs.core.util.PdfUtil;
+import com.sismics.docs.core.util.indexing.IndexingHandler;
+import com.sismics.util.ClasspathScanner;
+import com.sismics.util.EnvironmentUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -7,158 +24,221 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.eventbus.AsyncEventBus;
-import com.google.common.eventbus.EventBus;
-import com.sismics.docs.core.constant.ConfigType;
-import com.sismics.docs.core.dao.jpa.ConfigDao;
-import com.sismics.docs.core.listener.async.DocumentCreatedAsyncListener;
-import com.sismics.docs.core.listener.async.DocumentDeletedAsyncListener;
-import com.sismics.docs.core.listener.async.DocumentUpdatedAsyncListener;
-import com.sismics.docs.core.listener.async.FileCreatedAsyncListener;
-import com.sismics.docs.core.listener.async.FileDeletedAsyncListener;
-import com.sismics.docs.core.listener.async.RebuildIndexAsyncListener;
-import com.sismics.docs.core.listener.sync.DeadEventListener;
-import com.sismics.docs.core.model.jpa.Config;
-import com.sismics.docs.core.service.IndexingService;
-import com.sismics.util.EnvironmentUtil;
-
 /**
  * Global application context.
  *
- * @author jtremeaux 
+ * @author jtremeaux
  */
 public class AppContext {
+    /**
+     * Logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(AppContext.class);
+
     /**
      * Singleton instance.
      */
     private static AppContext instance;
 
     /**
-     * Event bus.
-     */
-    private EventBus eventBus;
-    
-    /**
      * Generic asynchronous event bus.
      */
     private EventBus asyncEventBus;
 
     /**
-     * Indexing service.
+     * Asynchronous bus for email sending.
      */
-    private IndexingService indexingService;
+    private EventBus mailEventBus;
+
+    /**
+     * Indexing handler.
+     */
+    private IndexingHandler indexingHandler;
+
+    /**
+     * Inbox scanning service.
+     */
+    private InboxService inboxService;
+
+    /**
+     * File service.
+     */
+    private FileService fileService;
 
     /**
      * Asynchronous executors.
      */
-    private List<ExecutorService> asyncExecutorList;
-    
+    private List<ThreadPoolExecutor> asyncExecutorList;
+
     /**
-     * Private constructor.
+     * Start the application context.
      */
-    private AppContext() {
+    private void startUp() {
         resetEventBus();
-        
-        ConfigDao configDao = new ConfigDao();
-        Config luceneStorageConfig = configDao.getById(ConfigType.LUCENE_DIRECTORY_STORAGE);
-        indexingService = new IndexingService(luceneStorageConfig != null ? luceneStorageConfig.getValue() : null);
-        indexingService.startAsync();
+
+        // Start indexing handler
+        try {
+            List<Class<? extends IndexingHandler>> indexingHandlerList = Lists.newArrayList(
+                    new ClasspathScanner<IndexingHandler>().findClasses(IndexingHandler.class, "com.sismics.docs.core.util.indexing"));
+            for (Class<? extends IndexingHandler> handlerClass : indexingHandlerList) {
+                IndexingHandler handler = handlerClass.newInstance();
+                if (handler.accept()) {
+                    indexingHandler = handler;
+                    break;
+                }
+            }
+            indexingHandler.startUp();
+        } catch (Exception e) {
+            log.error("Error starting the indexing handler, rebuilding the index: " + e.getMessage());
+            RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
+            asyncEventBus.post(rebuildIndexAsyncEvent);
+        }
+
+        // Start file service
+        fileService = new FileService();
+        fileService.startAsync();
+        fileService.awaitRunning();
+
+        // Start inbox service
+        inboxService = new InboxService();
+        inboxService.startAsync();
+        inboxService.awaitRunning();
+
+        // Register fonts
+        PdfUtil.registerFonts();
+
+        // Change the admin password if needed
+        String envAdminPassword = System.getenv(Constants.ADMIN_PASSWORD_INIT_ENV);
+        if (envAdminPassword != null) {
+            UserDao userDao = new UserDao();
+            User adminUser = userDao.getById("admin");
+            if (Constants.DEFAULT_ADMIN_PASSWORD.equals(adminUser.getPassword())) {
+                adminUser.setPassword(envAdminPassword);
+                userDao.updateHashedPassword(adminUser);
+            }
+        }
+
+        // Change the admin email if needed
+        String envAdminEmail = System.getenv(Constants.ADMIN_EMAIL_INIT_ENV);
+        if (envAdminEmail != null) {
+            UserDao userDao = new UserDao();
+            User adminUser = userDao.getById("admin");
+            if (Constants.DEFAULT_ADMIN_EMAIL.equals(adminUser.getEmail())) {
+                adminUser.setEmail(envAdminEmail);
+                userDao.update(adminUser, "admin");
+            }
+        }
     }
-    
+
     /**
      * (Re)-initializes the event buses.
      */
     private void resetEventBus() {
-        eventBus = new EventBus();
-        eventBus.register(new DeadEventListener());
-        
         asyncExecutorList = new ArrayList<>();
-        
+
         asyncEventBus = newAsyncEventBus();
-        asyncEventBus.register(new FileCreatedAsyncListener());
+        asyncEventBus.register(new FileProcessingAsyncListener());
         asyncEventBus.register(new FileDeletedAsyncListener());
         asyncEventBus.register(new DocumentCreatedAsyncListener());
         asyncEventBus.register(new DocumentUpdatedAsyncListener());
         asyncEventBus.register(new DocumentDeletedAsyncListener());
         asyncEventBus.register(new RebuildIndexAsyncListener());
+        asyncEventBus.register(new AclCreatedAsyncListener());
+        asyncEventBus.register(new AclDeletedAsyncListener());
+        asyncEventBus.register(new WebhookAsyncListener());
+
+        mailEventBus = newAsyncEventBus();
+        mailEventBus.register(new PasswordLostAsyncListener());
+        mailEventBus.register(new RouteStepValidateAsyncListener());
     }
 
     /**
      * Returns a single instance of the application context.
-     * 
+     *
      * @return Application context
      */
     public static AppContext getInstance() {
         if (instance == null) {
             instance = new AppContext();
+            instance.startUp();
         }
         return instance;
-    }
-    
-    /**
-     * Wait for termination of all asynchronous events.
-     * /!\ Must be used only in unit tests and never a multi-user environment. 
-     */
-    public void waitForAsync() {
-        if (EnvironmentUtil.isUnitTest()) {
-            return;
-        }
-        try {
-            for (ExecutorService executor : asyncExecutorList) {
-                // Shutdown executor, don't accept any more tasks (can cause error with nested events)
-                try {
-                    executor.shutdown();
-                    executor.awaitTermination(60, TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    // NOP
-                }
-            }
-        } finally {
-            resetEventBus();
-        }
     }
 
     /**
      * Creates a new asynchronous event bus.
-     * 
+     *
      * @return Async event bus
      */
     private EventBus newAsyncEventBus() {
         if (EnvironmentUtil.isUnitTest()) {
             return new EventBus();
         } else {
-            ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1,
-                    0L, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<Runnable>());
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(8, 8,
+                    1L, TimeUnit.MINUTES,
+                    new LinkedBlockingQueue<>());
             asyncExecutorList.add(executor);
             return new AsyncEventBus(executor);
         }
     }
 
     /**
-     * Getter of eventBus.
+     * Return the current number of queued tasks waiting to be processed.
      *
-     * @return eventBus
+     * @return Number of queued tasks
      */
-    public EventBus getEventBus() {
-        return eventBus;
+    public int getQueuedTaskCount() {
+        int queueSize = 0;
+        for (ThreadPoolExecutor executor : asyncExecutorList) {
+            queueSize += executor.getQueue().size();
+        }
+        return queueSize;
     }
 
-    /**
-     * Getter of asyncEventBus.
-     *
-     * @return asyncEventBus
-     */
     public EventBus getAsyncEventBus() {
         return asyncEventBus;
     }
 
-    /**
-     * Getter of indexingService.
-     *
-     * @return indexingService
-     */
-    public IndexingService getIndexingService() {
-        return indexingService;
+    public EventBus getMailEventBus() {
+        return mailEventBus;
+    }
+
+    public IndexingHandler getIndexingHandler() {
+        return indexingHandler;
+    }
+
+    public InboxService getInboxService() {
+        return inboxService;
+    }
+
+    public FileService getFileService() {
+        return fileService;
+    }
+
+    public void shutDown() {
+        for (ExecutorService executor : asyncExecutorList) {
+            // Shutdown executor, don't accept any more tasks (can cause error with nested events)
+            try {
+                executor.shutdown();
+                executor.awaitTermination(1, TimeUnit.MINUTES);
+            } catch (InterruptedException e) {
+                // NOP
+            }
+        }
+
+        if (indexingHandler != null) {
+            indexingHandler.shutDown();
+        }
+
+        if (inboxService != null) {
+            inboxService.stopAsync();
+            inboxService.awaitTerminated();
+        }
+
+        if (fileService != null) {
+            fileService.stopAsync();
+        }
+
+        instance = null;
     }
 }

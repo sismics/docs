@@ -18,5 +18,29 @@ public enum ConfigType {
     /**
      * Guest login.
      */
-    GUEST_LOGIN
+    GUEST_LOGIN,
+
+    /**
+     * Default language.
+     */
+    DEFAULT_LANGUAGE,
+
+    /**
+     * SMTP server configuration.
+     */
+    SMTP_HOSTNAME,
+    SMTP_PORT,
+    SMTP_FROM,
+    SMTP_USERNAME,
+    SMTP_PASSWORD,
+
+    /**
+     * Inbox scanning configuration.
+     */
+    INBOX_ENABLED,
+    INBOX_HOSTNAME,
+    INBOX_PORT,
+    INBOX_USERNAME,
+    INBOX_PASSWORD,
+    INBOX_TAG
 }

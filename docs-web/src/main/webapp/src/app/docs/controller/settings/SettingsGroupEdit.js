@@ -3,7 +3,7 @@
 /**
  * Settings group edition page controller.
  */
-angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog, $state, $stateParams, Restangular, $q) {
+angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog, $state, $stateParams, Restangular, $q, $translate) {
   /**
    * Returns true if in edit mode (false in add mode).
    */
@@ -45,6 +45,13 @@ angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog,
         // Go to edit this group to add members
         $state.go('settings.group.edit', { name: group.name });
       }
+    }, function (e) {
+        if (e.data.type === 'GroupAlreadyExists') {
+            var title = $translate.instant('settings.group.edit.edit_group_failed_title');
+            var msg = $translate.instant('settings.group.edit.edit_group_failed_message');
+            var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
+            $dialog.messageBox(title, msg, btns);
+        }
     });
   };
 
@@ -52,12 +59,15 @@ angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog,
    * Delete the current group.
    */
   $scope.remove = function() {
-    var title = 'Delete group';
-    var msg = 'Do you really want to delete this group?';
-    var btns = [{result:'cancel', label: 'Cancel'}, {result:'ok', label: 'OK', cssClass: 'btn-primary'}];
+    var title = $translate.instant('settings.group.edit.delete_group_title');
+    var msg = $translate.instant('settings.group.edit.delete_group_message');
+    var btns = [
+      { result:'cancel', label: $translate.instant('cancel') },
+      { result:'ok', label: $translate.instant('ok'), cssClass: 'btn-primary' }
+    ];
 
     $dialog.messageBox(title, msg, btns, function(result) {
-      if (result == 'ok') {
+      if (result === 'ok') {
         Restangular.one('group', $stateParams.name).remove().then(function() {
           $scope.loadGroups();
           $state.go('settings.group');
@@ -74,7 +84,7 @@ angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog,
   $scope.getGroupTypeahead = function($viewValue) {
     var deferred = $q.defer();
     Restangular.one('group')
-        .getList('', {
+        .get({
           sort_column: 1,
           asc: true
         }).then(function(data) {
@@ -90,8 +100,8 @@ angular.module('docs').controller('SettingsGroupEdit', function($scope, $dialog,
    */
   $scope.getUserTypeahead = function($viewValue) {
     var deferred = $q.defer();
-    Restangular.one('user')
-        .getList('list', {
+    Restangular.one('user/list')
+        .get({
           search: $viewValue,
           sort_column: 1,
           asc: true

@@ -3,9 +3,9 @@
 /**
  * Settings modal disable TOTP controller.
  */
-angular.module('docs').controller('SettingsSecurityModalDisableTotp', function ($scope, $modalInstance) {
+angular.module('docs').controller('SettingsSecurityModalDisableTotp', function ($scope, $uibModalInstance) {
   $scope.password = '';
   $scope.close = function(password) {
-    $modalInstance.close(password);
+    $uibModalInstance.close(password);
   }
 });

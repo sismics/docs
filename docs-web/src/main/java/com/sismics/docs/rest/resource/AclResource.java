@@ -2,17 +2,24 @@ package com.sismics.docs.rest.resource;
 
 import com.google.common.collect.Lists;
 import com.sismics.docs.core.constant.AclTargetType;
+import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.*;
-import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
-import com.sismics.docs.core.dao.jpa.criteria.UserCriteria;
-import com.sismics.docs.core.dao.jpa.dto.GroupDto;
-import com.sismics.docs.core.dao.jpa.dto.UserDto;
-import com.sismics.docs.core.model.jpa.*;
+import com.sismics.docs.core.dao.*;
+import com.sismics.docs.core.dao.criteria.GroupCriteria;
+import com.sismics.docs.core.dao.criteria.UserCriteria;
+import com.sismics.docs.core.dao.dto.GroupDto;
+import com.sismics.docs.core.dao.dto.UserDto;
+import com.sismics.docs.core.event.AclCreatedAsyncEvent;
+import com.sismics.docs.core.event.AclDeletedAsyncEvent;
+import com.sismics.docs.core.model.jpa.Acl;
+import com.sismics.docs.core.model.jpa.Document;
+import com.sismics.docs.core.model.jpa.Tag;
+import com.sismics.docs.core.util.SecurityUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.context.ThreadLocalContext;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -70,29 +77,8 @@ public class AclResource extends BaseResource {
         AclTargetType type = AclTargetType.valueOf(ValidationUtil.validateLength(typeStr, "type", 1, 10, false));
         targetName = ValidationUtil.validateLength(targetName, "target", 1, 50, false);
         
-        // Search user or group
-        String targetId = null;
-        switch (type) {
-        case USER:
-            UserDao userDao = new UserDao();
-            User user = userDao.getActiveByUsername(targetName);
-            if (user != null) {
-                targetId = user.getId();
-            }
-            break;
-        case GROUP:
-            GroupDao groupDao = new GroupDao();
-            Group group = groupDao.getActiveByName(targetName);
-            if (group != null) {
-                targetId = group.getId();
-            }
-            break;
-        case SHARE:
-            // Share must use the Share REST resource
-            break;
-        }
-        
         // Does a target has been found?
+        String targetId = SecurityUtil.getTargetIdFromName(targetName, type);
         if (targetId == null) {
             throw new ClientException("InvalidTarget", MessageFormat.format("This target does not exist: {0}", targetName));
         }
@@ -108,11 +94,20 @@ public class AclResource extends BaseResource {
         acl.setSourceId(sourceId);
         acl.setPerm(perm);
         acl.setTargetId(targetId);
+        acl.setType(AclType.USER);
         
         // Avoid duplicates
         if (!aclDao.checkPermission(acl.getSourceId(), acl.getPerm(), Lists.newArrayList(acl.getTargetId()))) {
             aclDao.create(acl, principal.getId());
-            
+
+            // Raise an ACL created event
+            AclCreatedAsyncEvent event = new AclCreatedAsyncEvent();
+            event.setUserId(principal.getId());
+            event.setSourceId(sourceId);
+            event.setPerm(perm);
+            event.setTargetId(targetId);
+            ThreadLocalContext.get().addAsyncEvent(event);
+
             // Returns the ACL
             JsonObjectBuilder response = Json.createObjectBuilder()
                     .add("perm", acl.getPerm().name())
@@ -182,7 +177,15 @@ public class AclResource extends BaseResource {
         }
 
         // Delete the ACL
-        aclDao.delete(sourceId, perm, targetId, principal.getId());
+        aclDao.delete(sourceId, perm, targetId, principal.getId(), AclType.USER);
+
+        // Raise an ACL deleted event
+        AclDeletedAsyncEvent event = new AclDeletedAsyncEvent();
+        event.setUserId(principal.getId());
+        event.setSourceId(sourceId);
+        event.setPerm(perm);
+        event.setTargetId(targetId);
+        ThreadLocalContext.get().addAsyncEvent(event);
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()

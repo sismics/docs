@@ -6,53 +6,60 @@
   <groupId>com.sismics.docs</groupId>
   <artifactId>docs-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.5-SNAPSHOT</version>
+  <version>1.6-SNAPSHOT</version>
 
   <name>Docs Parent</name>
 
   <properties>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Dependencies version (external) -->
-    <org.apache.commons.commons-compress.version>1.10</org.apache.commons.commons-compress.version>
+    <org.apache.commons.commons-compress.version>1.18</org.apache.commons.commons-compress.version>
     <commons-lang.commons-lang.version>2.6</commons-lang.commons-lang.version>
-    <commons-io.commons-io.version>2.4</commons-io.commons-io.version>
+    <commons-io.commons-io.version>2.6</commons-io.commons-io.version>
+    <org.apache.commons.commons-email.version>1.5</org.apache.commons.commons-email.version>
+    <org.freemarker.freemarker.version>2.3.28</org.freemarker.freemarker.version>
     <commons-dbcp.version>1.4</commons-dbcp.version>
-    <com.google.guava.guava.version>19.0</com.google.guava.guava.version>
+    <com.google.guava.guava.version>26.0-jre</com.google.guava.guava.version>
     <log4j.log4j.version>1.2.16</log4j.log4j.version>
     <org.slf4j.version>1.6.4</org.slf4j.version>
     <org.slf4j.jcl-over-slf4j.version>1.6.6</org.slf4j.jcl-over-slf4j.version>
     <junit.junit.version>4.12</junit.junit.version>
-    <com.h2database.h2.version>1.4.191</com.h2database.h2.version>
-    <org.glassfish.jersey.version>2.22.2</org.glassfish.jersey.version>
+    <com.h2database.h2.version>1.4.197</com.h2database.h2.version>
+    <org.glassfish.jersey.version>2.27</org.glassfish.jersey.version>
+    <org.glassfish.javax.json.version>1.1.3</org.glassfish.javax.json.version>
     <org.mindrot.jbcrypt>0.3m</org.mindrot.jbcrypt>
-    <org.apache.lucene.version>5.5.0</org.apache.lucene.version>
+    <org.apache.lucene.version>7.5.0</org.apache.lucene.version>
     <org.imgscalr.imgscalr-lib.version>4.2</org.imgscalr.imgscalr-lib.version>
-    <org.apache.pdfbox.pdfbox.version>2.0.0-RC3</org.apache.pdfbox.pdfbox.version>
+    <org.apache.pdfbox.pdfbox.version>2.0.12</org.apache.pdfbox.pdfbox.version>
     <org.bouncycastle.bcprov-jdk15on.version>1.54</org.bouncycastle.bcprov-jdk15on.version>
-    <joda-time.joda-time.version>2.9.2</joda-time.joda-time.version>
-    <org.hibernate.hibernate.version>5.1.0.Final</org.hibernate.hibernate.version>
-    <javax.servlet.javax.servlet-api.version>3.1.0</javax.servlet.javax.servlet-api.version>
-    <fr.opensagres.xdocreport.version>1.0.5</fr.opensagres.xdocreport.version>
+    <joda-time.joda-time.version>2.10</joda-time.joda-time.version>
+    <org.hibernate.hibernate.version>5.3.7.Final</org.hibernate.hibernate.version>
+    <javax.servlet.javax.servlet-api.version>4.0.1</javax.servlet.javax.servlet-api.version>
+    <fr.opensagres.xdocreport.version>2.0.1</fr.opensagres.xdocreport.version>
     <net.java.dev.jna.jna.version>4.2.1</net.java.dev.jna.jna.version>
-    <com.twelvemonkeys.imageio.version>3.2.1</com.twelvemonkeys.imageio.version>
+    <com.twelvemonkeys.imageio.version>3.3.2</com.twelvemonkeys.imageio.version>
     <com.levigo.jbig2.levigo-jbig2-imageio.version>1.6.5</com.levigo.jbig2.levigo-jbig2-imageio.version>
-    <com.github.jai-imageio.jai-imageio-core.version>1.3.1</com.github.jai-imageio.jai-imageio-core.version>
+    <com.github.jai-imageio.jai-imageio-jpeg2000.version>1.3.0</com.github.jai-imageio.jai-imageio-jpeg2000.version>
+    <org.postgresql.postgresql.version>42.2.5</org.postgresql.postgresql.version>
+    <org.subethamail.subethasmtp-wiser.version>1.2</org.subethamail.subethasmtp-wiser.version>
+    <com.icegreen.greenmail.version>1.5.8</com.icegreen.greenmail.version>
+    <com.sun.mail.javax.mail.version>1.6.2</com.sun.mail.javax.mail.version>
+    <org.jsoup.jsoup.version>1.11.3</org.jsoup.jsoup.version>
+    <com.squareup.okhttp3.okhttp.version>3.11.0</com.squareup.okhttp3.okhttp.version>
 
-    <org.eclipse.jetty.jetty-server.version>9.2.13.v20150730</org.eclipse.jetty.jetty-server.version>
-    <org.eclipse.jetty.jetty-webapp.version>9.2.13.v20150730</org.eclipse.jetty.jetty-webapp.version>
-    <org.eclipse.jetty.jetty-servlet.version>9.2.13.v20150730</org.eclipse.jetty.jetty-servlet.version>
+    <org.eclipse.jetty.jetty-server.version>9.4.12.v20180830</org.eclipse.jetty.jetty-server.version>
+    <org.eclipse.jetty.jetty-webapp.version>9.4.12.v20180830</org.eclipse.jetty.jetty-webapp.version>
+    <org.eclipse.jetty.jetty-servlet.version>9.4.12.v20180830</org.eclipse.jetty.jetty-servlet.version>
     
     <!-- Plugins version -->
     <org.apache.maven.plugins.maven-antrun-plugin.version>1.8</org.apache.maven.plugins.maven-antrun-plugin.version>
-    <org.apache.maven.plugins.maven-dependency-plugin.version>2.10</org.apache.maven.plugins.maven-dependency-plugin.version>
-    <org.apache.maven.plugins.maven-jar-plugin.version>2.6</org.apache.maven.plugins.maven-jar-plugin.version>
-    <org.apache.maven.plugins.maven-resources-plugin.version>2.7</org.apache.maven.plugins.maven-resources-plugin.version>
-    <org.apache.maven.plugins.maven-war-plugin.version>2.6</org.apache.maven.plugins.maven-war-plugin.version>
-    <org.apache.maven.plugins.maven-surefire-plugin.version>2.19.1</org.apache.maven.plugins.maven-surefire-plugin.version>
-    <org.eclipse.jetty.jetty-maven-plugin.version>9.2.13.v20150730</org.eclipse.jetty.jetty-maven-plugin.version>
+    <org.apache.maven.plugins.maven-jar-plugin.version>3.1.0</org.apache.maven.plugins.maven-jar-plugin.version>
+    <org.apache.maven.plugins.maven-war-plugin.version>3.2.2</org.apache.maven.plugins.maven-war-plugin.version>
+    <org.apache.maven.plugins.maven-surefire-plugin.version>2.22.1</org.apache.maven.plugins.maven-surefire-plugin.version>
+    <org.eclipse.jetty.jetty-maven-plugin.version>9.4.12.v20180830</org.eclipse.jetty.jetty-maven-plugin.version>
   </properties>
   
   <scm>
@@ -83,32 +90,24 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>${org.apache.maven.plugins.maven-dependency-plugin.version}</version>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>${org.apache.maven.plugins.maven-jar-plugin.version}</version>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>${org.apache.maven.plugins.maven-resources-plugin.version}</version>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>${org.apache.maven.plugins.maven-war-plugin.version}</version>
       </plugin>
       
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${org.apache.maven.plugins.maven-jar-plugin.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${org.apache.maven.plugins.maven-surefire-plugin.version}</version>
+        <configuration>
+          <forkCount>1</forkCount>
+          <reuseForks>false</reuseForks>
+        </configuration>
       </plugin>
       
       <plugin>
@@ -187,11 +186,17 @@
         <artifactId>commons-lang</artifactId>
         <version>${commons-lang.commons-lang.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>${commons-io.commons-io.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-email</artifactId>
+        <version>${org.apache.commons.commons-email.version}</version>
       </dependency>
       
       <dependency>
@@ -199,7 +204,19 @@
         <artifactId>guava</artifactId>
         <version>${com.google.guava.guava.version}</version>
       </dependency>
-      
+
+      <dependency>
+        <groupId>org.jsoup</groupId>
+        <artifactId>jsoup</artifactId>
+        <version>${org.jsoup.jsoup.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp</artifactId>
+        <version>${com.squareup.okhttp3.okhttp.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>log4j</groupId>
         <artifactId>log4j</artifactId>
@@ -255,6 +272,12 @@
       </dependency>
       
       <dependency>
+        <groupId>org.glassfish.jersey.inject</groupId>
+        <artifactId>jersey-hk2</artifactId>
+        <version>${org.glassfish.jersey.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.glassfish.jersey.core</groupId>
         <artifactId>jersey-client</artifactId>
         <version>${org.glassfish.jersey.version}</version>
@@ -284,7 +307,13 @@
         <artifactId>jersey-container-grizzly2-servlet</artifactId>
         <version>${org.glassfish.jersey.version}</version>
       </dependency>
-      
+
+      <dependency>
+        <groupId>org.glassfish</groupId>
+        <artifactId>javax.json</artifactId>
+        <version>${org.glassfish.javax.json.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>com.h2database</groupId>
         <artifactId>h2</artifactId>
@@ -314,7 +343,13 @@
         <artifactId>commons-dbcp</artifactId>
         <version>${commons-dbcp.version}</version>
       </dependency>
-      
+
+      <dependency>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>${org.freemarker.freemarker.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>joda-time</groupId>
         <artifactId>joda-time</artifactId>
@@ -346,6 +381,18 @@
       </dependency>
       
       <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-suggest</artifactId>
+        <version>${org.apache.lucene.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.lucene</groupId>
+        <artifactId>lucene-highlighter</artifactId>
+        <version>${org.apache.lucene.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.imgscalr</groupId>
         <artifactId>imgscalr-lib</artifactId>
         <version>${org.imgscalr.imgscalr-lib.version}</version>
@@ -365,14 +412,44 @@
       
       <dependency>
         <groupId>fr.opensagres.xdocreport</groupId>
-        <artifactId>org.odftoolkit.odfdom.converter.pdf</artifactId>
+        <artifactId>fr.opensagres.odfdom.converter.pdf</artifactId>
         <version>${fr.opensagres.xdocreport.version}</version>
       </dependency>
   
       <dependency>
         <groupId>fr.opensagres.xdocreport</groupId>
-        <artifactId>org.apache.poi.xwpf.converter.pdf</artifactId>
+        <artifactId>fr.opensagres.poi.xwpf.converter.pdf</artifactId>
         <version>${fr.opensagres.xdocreport.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.subethamail</groupId>
+        <artifactId>subethasmtp-wiser</artifactId>
+        <version>${org.subethamail.subethasmtp-wiser.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>com.icegreen</groupId>
+        <artifactId>greenmail</artifactId>
+        <version>${com.icegreen.greenmail.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.sun.mail</groupId>
+        <artifactId>javax.mail</artifactId>
+        <version>${com.sun.mail.javax.mail.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${org.postgresql.postgresql.version}</version>
       </dependency>
 
       <!-- Servlet listener to register SPI ImageIO plugins -->
@@ -382,35 +459,35 @@
         <version>${com.twelvemonkeys.imageio.version}</version>
       </dependency>
       
-      <!-- JNA for Tesseract -->
-      <dependency>
-        <groupId>net.java.dev.jna</groupId>
-        <artifactId>jna</artifactId>
-        <version>${net.java.dev.jna.jna.version}</version>
-      </dependency>
-      
       <!-- ImageIO plugins -->
-      <!-- Permissive JPEG plugin -->
+      <!-- JPEG -->
       <dependency>
         <groupId>com.twelvemonkeys.imageio</groupId>
         <artifactId>imageio-jpeg</artifactId>
         <version>${com.twelvemonkeys.imageio.version}</version>
       </dependency>
-      
-      <!-- Only JBIG2 -->
+
+      <!-- TIFF -->
+      <dependency>
+        <groupId>com.twelvemonkeys.imageio</groupId>
+        <artifactId>imageio-tiff</artifactId>
+        <version>${com.twelvemonkeys.imageio.version}</version>
+      </dependency>
+
+      <!-- JPEG 2000 -->
+      <dependency>
+        <groupId>com.github.jai-imageio</groupId>
+        <artifactId>jai-imageio-jpeg2000</artifactId>
+        <version>${com.github.jai-imageio.jai-imageio-jpeg2000.version}</version>
+      </dependency>
+
+      <!-- JBIG2 -->
       <dependency>
         <groupId>com.levigo.jbig2</groupId>
         <artifactId>levigo-jbig2-imageio</artifactId>
         <version>${com.levigo.jbig2.levigo-jbig2-imageio.version}</version>
       </dependency>
-      
-      <!-- Essentially TIFF (for OCR) -->
-      <dependency>
-        <groupId>com.github.jai-imageio</groupId>
-        <artifactId>jai-imageio-core</artifactId>
-        <version>${com.github.jai-imageio.jai-imageio-core.version}</version>
-      </dependency>
-      
+
     </dependencies>
   </dependencyManagement>
   

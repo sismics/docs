@@ -1,0 +1,10 @@
+email.template.password_recovery.subject=R\u00E9initialiser votre mot de passe
+email.template.password_recovery.hello=Bonjour {0}.
+email.template.password_recovery.instruction1=Nous avons re\u00E7u une demande de r\u00E9initialisation de mot de passe.<br/>Si vous n'avez rien demand\u00E9, vous pouvez ignorer cet mail.
+email.template.password_recovery.instruction2=Pour r\u00E9initialiser votre mot de passe, cliquez sur le lien ci-dessous :
+email.template.password_recovery.click_here=Cliquez ici pour r\u00E9initialiser votre mot de passe.
+email.template.route_step_validate.subject=Un document n\u00E9cessite votre attention
+email.template.route_step_validate.hello=Bonjour {0}.
+email.template.route_step_validate.instruction1=Une \u00E9tape de workflow vous a \u00E9t\u00E9 attribu\u00E9e et n\u00E9cessite votre attention.
+email.template.route_step_validate.instruction2=Pour voir le document et valider le workflow, veuillez visiter le lien ci-dessous :
+email.no_html.error=Votre client mail ne supporte pas les messages HTML

@@ -2,10 +2,10 @@
   <ul class="list-inline">
     <li ng-repeat="tag in tags">
       <span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}
-        <span class="glyphicon glyphicon-remove" ng-click="deleteTag(tag)" ng-show="!ngDisabled"></span>
+        <span class="fas fa-times" ng-click="deleteTag(tag)" ng-show="!ngDisabled"></span>
       </span>
     </li>
   </ul>
-  <input class="form-control" type="text" id="{{ ref }}" placeholder="Type a tag" ng-model="input" ng-disabled="ngDisabled"
-    autocomplete="off" typeahead="tag.name for tag in allTags | filter: $viewValue" typeahead-on-select="addTag()" />
+  <input class="form-control" type="text" id="{{ ref }}" ng-attr-placeholder="{{ 'directive.selecttag.typeahead' | translate }}" ng-model="input" ng-disabled="ngDisabled"
+    autocomplete="off" uib-typeahead="tag.name for tag in allTags | filter: $viewValue" typeahead-on-select="addTag()" />
 </div>

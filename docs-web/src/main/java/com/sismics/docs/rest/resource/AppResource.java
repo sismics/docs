@@ -1,13 +1,36 @@
 package com.sismics.docs.rest.resource;
 
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import com.google.common.base.Strings;
+import com.sismics.docs.core.constant.ConfigType;
+import com.sismics.docs.core.constant.Constants;
+import com.sismics.docs.core.dao.ConfigDao;
+import com.sismics.docs.core.dao.DocumentDao;
+import com.sismics.docs.core.dao.FileDao;
+import com.sismics.docs.core.dao.UserDao;
+import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
+import com.sismics.docs.core.model.jpa.Config;
+import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.service.InboxService;
+import com.sismics.docs.core.util.ConfigUtil;
+import com.sismics.docs.core.util.DirectoryUtil;
+import com.sismics.docs.core.util.jpa.PaginatedList;
+import com.sismics.docs.core.util.jpa.PaginatedLists;
+import com.sismics.docs.rest.constant.BaseFunction;
+import com.sismics.rest.exception.ClientException;
+import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.rest.exception.ServerException;
+import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.JsonUtil;
+import com.sismics.util.context.ThreadLocalContext;
+import com.sismics.util.log4j.LogCriteria;
+import com.sismics.util.log4j.LogEntry;
+import com.sismics.util.log4j.MemoryAppender;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Appender;
+import org.apache.log4j.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -16,35 +39,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-
-import com.sismics.docs.core.constant.ConfigType;
-import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.*;
-import com.sismics.docs.core.dao.jpa.criteria.TagCriteria;
-import com.sismics.docs.core.dao.jpa.dto.AclDto;
-import com.sismics.docs.core.dao.jpa.dto.TagDto;
-import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
-import com.sismics.docs.core.model.jpa.Acl;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Appender;
-import org.apache.log4j.Level;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.sismics.docs.core.model.context.AppContext;
-import com.sismics.docs.core.model.jpa.File;
-import com.sismics.docs.core.model.jpa.User;
-import com.sismics.docs.core.util.ConfigUtil;
-import com.sismics.docs.core.util.DirectoryUtil;
-import com.sismics.docs.core.util.jpa.PaginatedList;
-import com.sismics.docs.core.util.jpa.PaginatedLists;
-import com.sismics.docs.rest.constant.BaseFunction;
-import com.sismics.rest.exception.ForbiddenClientException;
-import com.sismics.rest.exception.ServerException;
-import com.sismics.util.context.ThreadLocalContext;
-import com.sismics.util.log4j.LogCriteria;
-import com.sismics.util.log4j.LogEntry;
-import com.sismics.util.log4j.MemoryAppender;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.text.MessageFormat;
+import java.util.*;
 
 /**
  * General app REST resource.
@@ -67,8 +66,14 @@ public class AppResource extends BaseResource {
      * @apiSuccess {String} current_version API current version
      * @apiSuccess {String} min_version API minimum version
      * @apiSuccess {Boolean} guest_login True if guest login is enabled
+     * @apiSuccess {String} default_language Default platform language
+     * @apiSuccess {Number} queued_tasks Number of queued tasks waiting to be processed
      * @apiSuccess {String} total_memory Allocated JVM memory (in bytes)
      * @apiSuccess {String} free_memory Free JVM memory (in bytes)
+     * @apiSuccess {String} document_count Number of documents
+     * @apiSuccess {String} active_user_count Number of active users
+     * @apiSuccess {String} global_storage_current Global storage currently used (in bytes)
+     * @apiSuccess {String} global_storage_quota Maximum global storage (in bytes)
      * @apiPermission none
      * @apiVersion 1.5.0
      *
@@ -80,14 +85,30 @@ public class AppResource extends BaseResource {
         String currentVersion = configBundle.getString("api.current_version");
         String minVersion = configBundle.getString("api.min_version");
         Boolean guestLogin = ConfigUtil.getConfigBooleanValue(ConfigType.GUEST_LOGIN);
+        String defaultLanguage = ConfigUtil.getConfigStringValue(ConfigType.DEFAULT_LANGUAGE);
+        UserDao userDao = new UserDao();
+        DocumentDao documentDao = new DocumentDao();
+        String globalQuotaStr = System.getenv(Constants.GLOBAL_QUOTA_ENV);
+        long globalQuota = 0;
+        if (!Strings.isNullOrEmpty(globalQuotaStr)) {
+            globalQuota = Long.valueOf(globalQuotaStr);
+        }
 
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("current_version", currentVersion.replace("-SNAPSHOT", ""))
                 .add("min_version", minVersion)
                 .add("guest_login", guestLogin)
+                .add("default_language", defaultLanguage)
+                .add("queued_tasks", AppContext.getInstance().getQueuedTaskCount())
                 .add("total_memory", Runtime.getRuntime().totalMemory())
-                .add("free_memory", Runtime.getRuntime().freeMemory());
-        
+                .add("free_memory", Runtime.getRuntime().freeMemory())
+                .add("document_count", documentDao.getDocumentCount())
+                .add("active_user_count", userDao.getActiveUserCount())
+                .add("global_storage_current", userDao.getGlobalStorageCurrent());
+        if (globalQuota > 0) {
+            response.add("global_storage_quota", globalQuota);
+        }
+
         return Response.ok().entity(response.build()).build();
     }
 
@@ -118,7 +139,334 @@ public class AppResource extends BaseResource {
 
         return Response.ok().build();
     }
+
+    /**
+     * General application configuration.
+     *
+     * @api {post} /app/config General application configuration
+     * @apiName PostAppConfig
+     * @apiGroup App
+     * @apiParam {String} default_language Default language
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @param defaultLanguage Default language
+     * @return Response
+     */
+    @POST
+    @Path("config")
+    public Response config(@FormParam("default_language") String defaultLanguage) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        ValidationUtil.validateRequired(defaultLanguage, "default_language");
+        if (!Constants.SUPPORTED_LANGUAGES.contains(defaultLanguage)) {
+            throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", defaultLanguage));
+        }
+
+        ConfigDao configDao = new ConfigDao();
+        configDao.update(ConfigType.DEFAULT_LANGUAGE, defaultLanguage);
+
+        return Response.ok().build();
+    }
+
+    /**
+     * Get the SMTP server configuration.
+     *
+     * @api {get} /app/config_smtp Get the SMTP server configuration
+     * @apiName GetAppConfigSmtp
+     * @apiGroup App
+     * @apiSuccess {String} hostname SMTP hostname
+     * @apiSuccess {String} port SMTP port
+     * @apiSuccess {String} username SMTP username
+     * @apiSuccess {String} password SMTP password
+     * @apiSuccess {String} from From address
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @return Response
+     */
+    @GET
+    @Path("config_smtp")
+    public Response getConfigSmtp() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        ConfigDao configDao = new ConfigDao();
+        Config hostnameConfig = configDao.getById(ConfigType.SMTP_HOSTNAME);
+        Config portConfig = configDao.getById(ConfigType.SMTP_PORT);
+        Config usernameConfig = configDao.getById(ConfigType.SMTP_USERNAME);
+        Config passwordConfig = configDao.getById(ConfigType.SMTP_PASSWORD);
+        Config fromConfig = configDao.getById(ConfigType.SMTP_FROM);
+        JsonObjectBuilder response = Json.createObjectBuilder();
+        if (System.getenv(Constants.SMTP_HOSTNAME_ENV) == null) {
+            if (hostnameConfig == null) {
+                response.addNull("hostname");
+            } else {
+                response.add("hostname", hostnameConfig.getValue());
+            }
+        }
+        if (System.getenv(Constants.SMTP_PORT_ENV) == null) {
+            if (portConfig == null) {
+                response.addNull("port");
+            } else {
+                response.add("port", Integer.valueOf(portConfig.getValue()));
+            }
+        }
+        if (System.getenv(Constants.SMTP_USERNAME_ENV) == null) {
+            if (usernameConfig == null) {
+                response.addNull("username");
+            } else {
+                response.add("username", usernameConfig.getValue());
+            }
+        }
+        if (System.getenv(Constants.SMTP_PASSWORD_ENV) == null) {
+            if (passwordConfig == null) {
+                response.addNull("password");
+            } else {
+                response.add("password", passwordConfig.getValue());
+            }
+        }
+        if (fromConfig == null) {
+            response.addNull("from");
+        } else {
+            response.add("from", fromConfig.getValue());
+        }
+
+        return Response.ok().entity(response.build()).build();
+    }
     
+    /**
+     * Configure the SMTP server.
+     *
+     * @api {post} /app/config_smtp Configure the SMTP server
+     * @apiName PostAppConfigSmtp
+     * @apiGroup App
+     * @apiParam {String} hostname SMTP hostname
+     * @apiParam {Integer} port SMTP port
+     * @apiParam {String} username SMTP username
+     * @apiParam {String} password SMTP password
+     * @apiParam {String} from From address
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @param hostname SMTP hostname
+     * @param portStr SMTP port
+     * @param username SMTP username
+     * @param password SMTP password
+     * @param from From address
+     * @return Response
+     */
+    @POST
+    @Path("config_smtp")
+    public Response configSmtp(@FormParam("hostname") String hostname,
+                               @FormParam("port") String portStr,
+                               @FormParam("username") String username,
+                               @FormParam("password") String password,
+                               @FormParam("from") String from) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        if (!Strings.isNullOrEmpty(portStr)) {
+            ValidationUtil.validateInteger(portStr, "port");
+        }
+
+        // Just update the changed configuration
+        ConfigDao configDao = new ConfigDao();
+        if (!Strings.isNullOrEmpty(hostname)) {
+            configDao.update(ConfigType.SMTP_HOSTNAME, hostname);
+        }
+        if (!Strings.isNullOrEmpty(portStr)) {
+            configDao.update(ConfigType.SMTP_PORT, portStr);
+        }
+        if (!Strings.isNullOrEmpty(username)) {
+            configDao.update(ConfigType.SMTP_USERNAME, username);
+        }
+        if (!Strings.isNullOrEmpty(password)) {
+            configDao.update(ConfigType.SMTP_PASSWORD, password);
+        }
+        if (!Strings.isNullOrEmpty(from)) {
+            configDao.update(ConfigType.SMTP_FROM, from);
+        }
+
+        return Response.ok().build();
+    }
+
+    /**
+     * Get the inbox configuration.
+     *
+     * @api {get} /app/config_inbox Get the inbox scanning configuration
+     * @apiName GetAppConfigInbox
+     * @apiGroup App
+     * @apiSuccess {Boolean} enabled True if the inbox scanning is enabled
+     * @apiSuccess {String} hostname IMAP hostname
+     * @apiSuccess {String} port IMAP port
+     * @apiSuccess {String} username IMAP username
+     * @apiSuccess {String} password IMAP password
+     * @apiSuccess {String} tag Tag for created documents
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @return Response
+     */
+    @GET
+    @Path("config_inbox")
+    public Response getConfigInbox() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        ConfigDao configDao = new ConfigDao();
+        Boolean enabled = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_ENABLED);
+        Config hostnameConfig = configDao.getById(ConfigType.INBOX_HOSTNAME);
+        Config portConfig = configDao.getById(ConfigType.INBOX_PORT);
+        Config usernameConfig = configDao.getById(ConfigType.INBOX_USERNAME);
+        Config passwordConfig = configDao.getById(ConfigType.INBOX_PASSWORD);
+        Config tagConfig = configDao.getById(ConfigType.INBOX_TAG);
+        JsonObjectBuilder response = Json.createObjectBuilder();
+
+        response.add("enabled", enabled);
+        if (hostnameConfig == null) {
+            response.addNull("hostname");
+        } else {
+            response.add("hostname", hostnameConfig.getValue());
+        }
+        if (portConfig == null) {
+            response.addNull("port");
+        } else {
+            response.add("port", Integer.valueOf(portConfig.getValue()));
+        }
+        if (usernameConfig == null) {
+            response.addNull("username");
+        } else {
+            response.add("username", usernameConfig.getValue());
+        }
+        if (passwordConfig == null) {
+            response.addNull("password");
+        } else {
+            response.add("password", passwordConfig.getValue());
+        }
+        if (tagConfig == null) {
+            response.addNull("tag");
+        } else {
+            response.add("tag", tagConfig.getValue());
+        }
+
+        // Informations about the last synchronization
+        InboxService inboxService = AppContext.getInstance().getInboxService();
+        JsonObjectBuilder lastSync = Json.createObjectBuilder();
+        if (inboxService.getLastSyncDate() == null) {
+            lastSync.addNull("date");
+        } else {
+            lastSync.add("date", inboxService.getLastSyncDate().getTime());
+        }
+        lastSync.add("error", JsonUtil.nullable(inboxService.getLastSyncError()));
+        lastSync.add("count", inboxService.getLastSyncMessageCount());
+        response.add("last_sync", lastSync);
+
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Configure the inbox.
+     *
+     * @api {post} /app/config_inbox Configure the inbox scanning
+     * @apiName PostAppConfigInbox
+     * @apiGroup App
+     * @apiParam {Boolean} enabled True if the inbox scanning is enabled
+     * @apiParam {String} hostname IMAP hostname
+     * @apiParam {Integer} port IMAP port
+     * @apiParam {String} username IMAP username
+     * @apiParam {String} password IMAP password
+     * @apiParam {String} tag Tag for created documents
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @param enabled True if the inbox scanning is enabled
+     * @param hostname IMAP hostname
+     * @param portStr IMAP port
+     * @param username IMAP username
+     * @param password IMAP password
+     * @param tag Tag for created documents
+     * @return Response
+     */
+    @POST
+    @Path("config_inbox")
+    public Response configInbox(@FormParam("enabled") Boolean enabled,
+                                @FormParam("hostname") String hostname,
+                                @FormParam("port") String portStr,
+                                @FormParam("username") String username,
+                                @FormParam("password") String password,
+                                @FormParam("tag") String tag) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        ValidationUtil.validateRequired(enabled, "enabled");
+        if (!Strings.isNullOrEmpty(portStr)) {
+            ValidationUtil.validateInteger(portStr, "port");
+        }
+
+        // Just update the changed configuration
+        ConfigDao configDao = new ConfigDao();
+        configDao.update(ConfigType.INBOX_ENABLED, enabled.toString());
+        if (!Strings.isNullOrEmpty(hostname)) {
+            configDao.update(ConfigType.INBOX_HOSTNAME, hostname);
+        }
+        if (!Strings.isNullOrEmpty(portStr)) {
+            configDao.update(ConfigType.INBOX_PORT, portStr);
+        }
+        if (!Strings.isNullOrEmpty(username)) {
+            configDao.update(ConfigType.INBOX_USERNAME, username);
+        }
+        if (!Strings.isNullOrEmpty(password)) {
+            configDao.update(ConfigType.INBOX_PASSWORD, password);
+        }
+        if (!Strings.isNullOrEmpty(tag)) {
+            configDao.update(ConfigType.INBOX_TAG, tag);
+        }
+
+        return Response.ok().build();
+    }
+
+    /**
+     * Test the inbox.
+     *
+     * @api {post} /app/test_inbox Test the inbox scanning
+     * @apiName PostAppTestInbox
+     * @apiGroup App
+     * @apiSuccess {Number} Number of unread emails in the inbox
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.5.0
+     *
+     * @return Response
+     */
+    @POST
+    @Path("test_inbox")
+    public Response testInbox() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        return Response.ok().entity(Json.createObjectBuilder()
+                .add("count", AppContext.getInstance().getInboxService().testInbox())
+                .build()).build();
+    }
+
     /**
      * Retrieve the application logs.
      *
@@ -163,7 +511,7 @@ public class AppResource extends BaseResource {
         // Get the memory appender
         org.apache.log4j.Logger logger = org.apache.log4j.Logger.getRootLogger();
         Appender appender = logger.getAppender("MEMORY");
-        if (appender == null || !(appender instanceof MemoryAppender)) {
+        if (!(appender instanceof MemoryAppender)) {
             throw new ServerException("ServerError", "MEMORY appender not configured");
         }
         MemoryAppender memoryAppender = (MemoryAppender) appender;
@@ -193,7 +541,7 @@ public class AppResource extends BaseResource {
     }
     
     /**
-     * Destroy and rebuild Lucene index.
+     * Destroy and rebuild the search index.
      *
      * @api {post} /app/batch/reindex Rebuild the search index
      * @apiName PostAppBatchReindex
@@ -335,124 +683,6 @@ public class AppResource extends BaseResource {
         log.info("Deleting {} soft deleted users", em.createQuery("delete User u where u.deleteDate is not null").executeUpdate());
         log.info("Deleting {} soft deleted groups", em.createQuery("delete Group g where g.deleteDate is not null").executeUpdate());
         
-        // Always return OK
-        JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("status", "ok");
-        return Response.ok().entity(response.build()).build();
-    }
-    
-    /**
-     * Recompute the quota for each user.
-     *
-     * @api {post} /app/batch/recompute_quota Recompute user quotas
-     * @apiName PostAppBatchRecomputeQuota
-     * @apiGroup App
-     * @apiSuccess {String} status Status OK
-     * @apiError (client) ForbiddenError Access denied
-     * @apiError (server) MissingFile File does not exist
-     * @apiPermission admin
-     * @apiVersion 1.5.0
-     *
-     * @return Response
-     */
-    @POST
-    @Path("batch/recompute_quota")
-    public Response batchRecomputeQuota() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
-        checkBaseFunction(BaseFunction.ADMIN);
-        
-        // Get all files
-        FileDao fileDao = new FileDao();
-        List<File> fileList = fileDao.findAll();
-        
-        // Count each file for the corresponding user quota
-        UserDao userDao = new UserDao();
-        Map<String, User> userMap = new HashMap<>();
-        for (File file : fileList) {
-            java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
-            User user;
-            if (userMap.containsKey(file.getUserId())) {
-                user = userMap.get(file.getUserId());
-            } else {
-                user = userDao.getById(file.getUserId());
-                user.setStorageCurrent(0L);
-                userMap.put(user.getId(), user);
-            }
-            
-            try {
-                user.setStorageCurrent(user.getStorageCurrent() + Files.size(storedFile));
-            } catch (IOException e) {
-                throw new ServerException("MissingFile", "File does not exist", e);
-            }
-        }
-        
-        // Save all users
-        for (User user : userMap.values()) {
-            if (user.getDeleteDate() == null) {
-                userDao.updateQuota(user);
-            }
-        }
-        
-        // Always return OK
-        JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("status", "ok");
-        return Response.ok().entity(response.build()).build();
-    }
-
-    /**
-     * Add base ACLs to tags.
-     *
-     * @api {post} /app/batch/tag_acls Add base ACL to tags
-     * @apiDescription This resource must be used after migrating to 1.5.
-     * It will not do anything if base ACL are already present on tags.
-     * @apiName PostAppBatchTagAcls
-     * @apiGroup App
-     * @apiSuccess {String} status Status OK
-     * @apiError (client) ForbiddenError Access denied
-     * @apiPermission admin
-     * @apiVersion 1.5.0
-     *
-     * @return Response
-     */
-    @POST
-    @Path("batch/tag_acls")
-    public Response batchTagAcls() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
-        checkBaseFunction(BaseFunction.ADMIN);
-
-        // Get all tags
-        TagDao tagDao = new TagDao();
-        UserDao userDao = new UserDao();
-        List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria(), null);
-
-        // Add READ and WRITE ACLs
-        for (TagDto tagDto : tagDtoList) {
-            // Remove old ACLs
-            AclDao aclDao = new AclDao();
-            List<AclDto> aclDtoList = aclDao.getBySourceId(tagDto.getId());
-            String userId = userDao.getActiveByUsername(tagDto.getCreator()).getId();
-
-            if (aclDtoList.size() == 0) {
-                // Create read ACL
-                Acl acl = new Acl();
-                acl.setPerm(PermType.READ);
-                acl.setSourceId(tagDto.getId());
-                acl.setTargetId(userId);
-                aclDao.create(acl, userId);
-
-                // Create write ACL
-                acl = new Acl();
-                acl.setPerm(PermType.WRITE);
-                acl.setSourceId(tagDto.getId());
-                acl.setTargetId(userId);
-                aclDao.create(acl, userId);
-            }
-        }
-
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");

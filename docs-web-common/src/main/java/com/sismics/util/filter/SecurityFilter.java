@@ -1,14 +1,14 @@
 package com.sismics.util.filter;
 
+import com.google.common.collect.Sets;
 import com.sismics.docs.core.constant.Constants;
-import com.sismics.docs.core.dao.jpa.GroupDao;
-import com.sismics.docs.core.dao.jpa.RoleBaseFunctionDao;
-import com.sismics.docs.core.dao.jpa.criteria.GroupCriteria;
-import com.sismics.docs.core.dao.jpa.dto.GroupDto;
+import com.sismics.docs.core.dao.GroupDao;
+import com.sismics.docs.core.dao.RoleBaseFunctionDao;
+import com.sismics.docs.core.dao.criteria.GroupCriteria;
+import com.sismics.docs.core.dao.dto.GroupDto;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.security.AnonymousPrincipal;
 import com.sismics.security.UserPrincipal;
-import jersey.repackaged.com.google.common.collect.Sets;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ public abstract class SecurityFilter implements Filter {
      */
     private void injectUser(HttpServletRequest request, User user) {
         // Check if the user is still valid
-        if (user != null && user.getDeleteDate() == null) {
+        if (user != null && user.getDeleteDate() == null && user.getDisableDate() == null) {
             injectAuthenticatedUser(request, user);
         } else {
             injectAnonymousUser(request);
@@ -90,8 +90,8 @@ public abstract class SecurityFilter implements Filter {
 
         // Add base functions
         groupRoleIdSet.add(user.getRoleId());
-        RoleBaseFunctionDao userBaseFuction = new RoleBaseFunctionDao();
-        Set<String> baseFunctionSet = userBaseFuction.findByRoleId(groupRoleIdSet);
+        RoleBaseFunctionDao userBaseFunction = new RoleBaseFunctionDao();
+        Set<String> baseFunctionSet = userBaseFunction.findByRoleId(groupRoleIdSet);
         userPrincipal.setBaseFunctionSet(baseFunctionSet);
 
         // Add email
@@ -113,7 +113,7 @@ public abstract class SecurityFilter implements Filter {
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
         // NOP
     }
 

@@ -1,16 +1,11 @@
 package com.sismics.docs.core.model.jpa;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import com.google.common.base.MoreObjects;
+import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.PermType;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * ACL entity.
@@ -33,6 +28,13 @@ public class Acl implements Loggable {
     @Column(name = "ACL_PERM_C", length = 30, nullable = false)
     @Enumerated(EnumType.STRING)
     private PermType perm;
+
+    /**
+     * ACL type.
+     */
+    @Column(name = "ACL_TYPE_C", length = 30, nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AclType type;
 
     /**
      * ACL source ID.
@@ -83,7 +85,16 @@ public class Acl implements Loggable {
     public void setTargetId(String targetId) {
         this.targetId = targetId;
     }
-    
+
+    public AclType getType() {
+        return type;
+    }
+
+    public Acl setType(AclType type) {
+        this.type = type;
+        return this;
+    }
+
     @Override
     public Date getDeleteDate() {
         return deleteDate;
@@ -100,6 +111,7 @@ public class Acl implements Loggable {
                 .add("perm", perm)
                 .add("sourceId", sourceId)
                 .add("targetId", targetId)
+                .add("type", type)
                 .toString();
     }
 

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.sismics.docs.core.model.context.AppContext;
 
 import javax.persistence.EntityManager;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -61,6 +62,11 @@ public class ThreadLocalContext {
      * @return entityManager
      */
     public EntityManager getEntityManager() {
+        if (entityManager != null && entityManager.isOpen()) {
+            // This disables the L1 cache
+            entityManager.flush();
+            entityManager.clear();
+        }
         return entityManager;
     }
 
@@ -86,7 +92,10 @@ public class ThreadLocalContext {
      * Fire all pending async events.
      */
     public void fireAllAsyncEvents() {
-        for (Object asyncEvent : asyncEventList) {
+        Iterator<Object> iterator = asyncEventList.iterator();
+        while (iterator.hasNext()) {
+            Object asyncEvent = iterator.next();
+            iterator.remove();
             AppContext.getInstance().getAsyncEventBus().post(asyncEvent);
         }
     }

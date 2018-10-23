@@ -1,32 +1,31 @@
-<p class="well-sm" ng-bind-html="document.description | newline"></p>
+<p class="well-sm" ng-bind-html="document.description"></p>
 <dl class="dl-horizontal">
-  <dt ng-if="document.subject">Subject</dt>
+  <dt ng-if="document.subject">{{ 'document.subject' | translate }}</dt>
   <dd ng-if="document.subject">{{ document.subject }}</dd>
-  <dt ng-if="document.identifier">Identifier</dt>
+  <dt ng-if="document.identifier">{{ 'document.identifier' | translate }}</dt>
   <dd ng-if="document.identifier">{{ document.identifier }}</dd>
-  <dt ng-if="document.publisher">Publisher</dt>
+  <dt ng-if="document.publisher">{{ 'document.publisher' | translate }}</dt>
   <dd ng-if="document.publisher">{{ document.publisher }}</dd>
-  <dt ng-if="document.format">Format</dt>
+  <dt ng-if="document.format">{{ 'document.format' | translate }}</dt>
   <dd ng-if="document.format">{{ document.format }}</dd>
-  <dt ng-if="document.source">Source</dt>
+  <dt ng-if="document.source">{{ 'document.source' | translate }}</dt>
   <dd ng-if="document.source">{{ document.source }}</dd>
-  <dt ng-if="document.type">Type</dt>
+  <dt ng-if="document.type">{{ 'document.type' | translate }}</dt>
   <dd ng-if="document.type">{{ document.type }}</dd>
-  <dt ng-if="document.coverage">Coverage</dt>
+  <dt ng-if="document.coverage">{{ 'document.coverage' | translate }}</dt>
   <dd ng-if="document.coverage">{{ document.coverage }}</dd>
-  <dt ng-if="document.rights">rights</dt>
+  <dt ng-if="document.rights">{{ 'document.rights' | translate }}</dt>
   <dd ng-if="document.rights">{{ document.rights }}</dd>
-  <dt>Contributors</dt>
+  <dt>{{ 'document.contributors' | translate }}</dt>
   <dd>
     <span ng-repeat="contributor in document.contributors">
-      <span class="btn btn-link btn-xs">
-        <a href="#/user/{{ contributor.username }}">
-          {{ contributor.username }}
-        </a>
-      </span>
+      <a class="btn btn-xs" href="#/user/{{ contributor.username }}">
+        <span class="fas fa-user"></span>
+        {{ contributor.username }}
+      </a>
     </span>
   </dd>
-  <dt ng-if="document.relations.length > 0">Relations</dt>
+  <dt ng-if="document.relations.length > 0">{{ 'document.relations' | translate }}</dt>
   <dd ng-if="document.relations.length > 0">
     <span ng-repeat="relation in document.relations">
       <span class="btn btn-link btn-xs">
@@ -38,23 +37,49 @@
   </dd>
 </dl>
 
-<div ng-file-drop drag-over-class="bg-success" ng-multiple="true" allow-dir="false" ng-model="dropFiles"
-     ng-file-change="fileDropped($files, $event, $rejectedFiles)">
-  <div class="row upload-zone" ui-sortable="fileSortableOptions" ng-model="files">
+<div class="row upload-zone"
+     ngf-drop="fileDropped($files)"
+     ngf-drag-over-class="'bg-success'"
+     ngf-multiple="true"
+     ngf-allow-dir="false">
+  <div ui-sortable="fileSortableOptions" ng-model="files">
     <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 text-center" ng-repeat="file in files">
       <div class="thumbnail" ng-if="file.id">
-        <a ng-click="openFile(file)">
-          <img class="thumbnail-file" ng-src="../api/file/{{ file.id }}/data?size=thumb" tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
+        <div class="file-processing-indicator" ng-show="file.processing"
+             uib-tooltip="{{ 'document.view.content.file_processing_indicator' | translate }}">
+          <span class="fas fa-spin fa-circle-notch"></span>
+        </div>
+
+        <a class="file-thumbnail" ng-click="openFile(file)">
+          <img ng-src="../api/file/{{ file.id }}/data?size=thumb" uib-tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
         </a>
-        <div class="caption btn btn-link file-name" ng-click="openFile(file)" ng-if="file.name">{{ file.name }}</div>
-        <div class="caption" ng-show="document.writable">
-          <div class="pull-left">
-            <div class="btn btn-default handle"><span class="glyphicon glyphicon-resize-horizontal"></span></div>
+
+        <div class="file-info">
+          <div></div><!-- Actually useful -->
+          <div class="v-align file-name" ng-if="file.name">{{ file.name }}</div>
+          <div class="v-align" ng-show="document.writable">
+            <div uib-dropdown>
+              <button class="btn btn-default" uib-dropdown-toggle>
+                <span class="fas fa-ellipsis-v"></span>
+              </button>
+              <ul class="dropdown-menu" uib-dropdown-menu>
+                <li>
+                  <a href ng-click="renameFile(file)">
+                    <span class="fas fa-pencil-alt"></span>
+                    {{ 'rename' | translate }}
+                  </a>
+                  <a href ng-click="processFile(file)">
+                    <span class="fas fa-eye"></span>
+                    {{ 'document.view.content.reprocess_file' | translate }}
+                  </a>
+                  <a href ng-click="deleteFile(file)">
+                    <span class="fas fa-trash"></span>
+                    {{ 'delete' | translate }}
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
-          <div class="pull-right">
-            <button class="btn btn-danger" ng-click="deleteFile(file)"><span class="glyphicon glyphicon-trash"></span></button>
-          </div>
-          <div class="clearfix"></div>
         </div>
       </div>
 
@@ -63,16 +88,25 @@
           {{ file.status }}
         </p>
         <div class="caption">
-          <progressbar value="file.progress" class="progress-info active"></progressbar>
+          <uib-progressbar value="file.progress" class="progress-info active"></uib-progressbar>
         </div>
       </div>
     </div>
-
-    <p class="text-center well-lg" ng-if="files.length == 0">
-      <span class="glyphicon glyphicon-move"></span>
-      Drag &amp; drop files here to upload
-    </p>
   </div>
+
+  <p class="text-center well-lg" ng-if="files.length == 0">
+    <span class="fas fa-arrows-alt"></span>
+    {{ 'document.view.content.drop_zone' | translate }}
+  </p>
 </div>
+
+<p class="text-center">
+  <button class="btn btn-primary" ngf-select
+    ngf-change="fileDropped($files, $event)"
+    input-file-multiple="multiple"
+    ngf-multiple="true">
+    {{ 'document.view.content.add_files' | translate }}
+  </button>
+</p>
 
 <div ui-view="file"></div>

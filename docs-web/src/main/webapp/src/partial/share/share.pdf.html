@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h3>Export to PDF</h3>
+  <h3>{{ 'document.pdf.export_title' | translate }}</h3>
 </div>
 <div class="modal-body">
   <form class="form-horizontal">
@@ -7,7 +7,7 @@
       <div class="col-sm-offset-2 col-sm-10">
         <div class="checkbox">
           <label>
-            <input type="checkbox" ng-model="export.metadata" /> Export metadata
+            <input type="checkbox" ng-model="export.metadata" /> {{ 'document.pdf.export_metadata' | translate }}
           </label>
         </div>
       </div>
@@ -16,7 +16,7 @@
       <div class="col-sm-offset-2 col-sm-10">
         <div class="checkbox">
           <label>
-            <input type="checkbox" ng-model="export.comments" /> Export comments
+            <input type="checkbox" ng-model="export.comments" /> {{ 'document.pdf.export_comments' | translate }}
           </label>
         </div>
       </div>
@@ -25,21 +25,21 @@
       <div class="col-sm-offset-2 col-sm-10">
         <div class="checkbox">
           <label>
-            <input type="checkbox" ng-model="export.fitimagetopage" /> Fit image to page
+            <input type="checkbox" ng-model="export.fitimagetopage" /> {{ 'document.pdf.fit_to_page' | translate }}
           </label>
         </div>
       </div>
     </div>
-    <label for="inputMargin" class="col-sm-2 control-label">Margin</label>
+    <label for="inputMargin" class="col-sm-2 control-label">{{ 'document.pdf.margin' | translate }}</label>
     <div class="input-group col-sm-5">
       <input type="number" class="form-control" id="inputMargin" ng-model="export.margin" min="0" max="100" step="1">
-      <div class="input-group-addon">mm</div>
+      <div class="input-group-addon">{{ 'document.pdf.millimeter' | translate }}</div>
     </div>
   </form>
 </div>
 <div class="modal-footer">
   <button ng-click="exportPdf()" class="btn btn-primary">
-    <span class="glyphicon glyphicon-save-file"></span> Export
+    <span class="fas fa-file-pdf"></span> {{ 'export' | translate }}
   </button>
-  <button ng-click="close()" class="btn btn-default">Cancel</button>
+  <button ng-click="close()" class="btn btn-default">{{ 'cancel' | translate }}</button>
 </div>

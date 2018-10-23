@@ -1,5 +1,5 @@
 <div class="pull-right" ng-show="tag.writable">
-  <button class="btn btn-danger" ng-click="deleteTag(tag)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+  <button class="btn btn-danger" ng-click="deleteTag(tag)"><span class="fas fa-trash"></span> {{ 'delete' | translate }}</button>
 </div>
 
 <div class="page-header">
@@ -9,7 +9,7 @@
 <div class="well col-lg-8" ng-show="tag.writable">
   <form class="form-horizontal" name="editTagForm" novalidate>
     <div class="form-group" ng-class="{ 'has-error': !editTagForm.name.$valid, success: editTagForm.name.$valid }">
-      <label class="col-sm-2 control-label" for="inputName">Name</label>
+      <label class="col-sm-2 control-label" for="inputName">{{ 'tag.edit.name' | translate }}</label>
 
       <div class="col-sm-6">
         <input type="text" name="name" class="form-control" id="inputName"
@@ -18,7 +18,7 @@
     </div>
 
     <div class="form-group">
-      <label class="col-sm-2 control-label" for="inputColor">Color</label>
+      <label class="col-sm-2 control-label" for="inputColor">{{ 'tag.edit.color' | translate }}</label>
 
       <div class="col-sm-2">
         <span colorpicker class="btn" data-color="" id="inputColor"
@@ -27,7 +27,7 @@
     </div>
 
     <div class="form-group">
-      <label class="col-sm-2 control-label" for="inputParent">Parent</label>
+      <label class="col-sm-2 control-label" for="inputParent">{{ 'tag.edit.parent' | translate }}</label>
 
       <div class="col-sm-6">
         <select class="form-control" ng-model="tag.parent" id="inputParent">
@@ -43,7 +43,7 @@
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editTagForm.$valid">
-          <span class="glyphicon glyphicon-pencil"></span> Save
+          <span class="fas fa-pencil-alt"></span> {{ 'save' | translate }}
         </button>
       </div>
     </div>
@@ -51,7 +51,7 @@
 </div>
 
 <div class="well col-lg-8">
-  <p>Permissions on this tag will also be applied to documents tagged <span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span></p>
+  <p translate="tag.edit.info" translate-values="{ name: tag.name, color: tag.color }"></p>
 
   <acl-edit source="tag.id"
             acls="tag.acls"

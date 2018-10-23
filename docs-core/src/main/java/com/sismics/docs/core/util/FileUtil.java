@@ -1,26 +1,34 @@
 package com.sismics.docs.core.util;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.io.CharStreams;
+import com.sismics.docs.core.constant.Constants;
+import com.sismics.docs.core.dao.FileDao;
+import com.sismics.docs.core.dao.UserDao;
+import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
+import com.sismics.docs.core.event.FileCreatedAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
+import com.sismics.docs.core.model.jpa.File;
+import com.sismics.docs.core.model.jpa.User;
+import com.sismics.util.ImageDeskew;
+import com.sismics.util.Scalr;
+import com.sismics.util.context.ThreadLocalContext;
+import com.sismics.util.io.InputStreamReaderThread;
+import com.sismics.util.mime.MimeTypeUtil;
+import org.apache.commons.lang.StringUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
 import javax.imageio.ImageIO;
-
-import org.imgscalr.Scalr;
-import org.imgscalr.Scalr.Method;
-import org.imgscalr.Scalr.Mode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.sismics.docs.core.model.jpa.File;
-import com.sismics.tess4j.Tesseract;
-import com.sismics.util.ImageUtil;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
 /**
  * File entity utilities.
@@ -29,121 +37,39 @@ import com.sismics.util.ImageUtil;
  */
 public class FileUtil {
     /**
-     * Logger.
+     * File ID of files currently being processed.
      */
-    private static final Logger log = LoggerFactory.getLogger(FileUtil.class);
+    private static Set<String> processingFileSet = Collections.synchronizedSet(new HashSet<>());
     
     /**
-     * Extract content from a file.
-     * 
-     * @param language Language to extract
-     * @param file File to extract
-     * @param inputStream Unencrypted input stream
-     * @param pdfInputStream Unencrypted PDF input stream
-     * @return Content extract
-     */
-    public static String extractContent(String language, File file, InputStream inputStream, InputStream pdfInputStream) {
-        String content = null;
-        
-        if (ImageUtil.isImage(file.getMimeType())) {
-            content = ocrFile(inputStream, language);
-        } else if (pdfInputStream != null) {
-            content = PdfUtil.extractPdf(pdfInputStream);
-        }
-        
-        return content;
-    }
-    
-    /**
-     * Optical character recognition on a stream.
-     * 
-     * @param inputStream Unencrypted input stream
+     * Optical character recognition on an image.
+     *
      * @param language Language to OCR
+     * @param image Buffered image
      * @return Content extracted
+     * @throws Exception e
      */
-    private static String ocrFile(InputStream inputStream, String language) {
-        Tesseract instance = Tesseract.getInstance();
-        String content = null;
-        BufferedImage image = null;
-        try {
-            image = ImageIO.read(inputStream);
-        } catch (IOException e) {
-            log.error("Error reading the image", e);
-        }
-        
-        // Upscale and grayscale the image
-        BufferedImage resizedImage = Scalr.resize(image, Method.AUTOMATIC, Mode.AUTOMATIC, 3500, Scalr.OP_ANTIALIAS, Scalr.OP_GRAYSCALE);
+    public static String ocrFile(String language, BufferedImage image) throws Exception {
+        // Upscale, grayscale and deskew the image
+        BufferedImage resizedImage = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 3500, Scalr.OP_ANTIALIAS, Scalr.OP_GRAYSCALE);
         image.flush();
-        image = resizedImage;
+        ImageDeskew imageDeskew = new ImageDeskew(resizedImage);
+        BufferedImage deskewedImage = Scalr.rotate(resizedImage, - imageDeskew.getSkewAngle(), Scalr.OP_ANTIALIAS, Scalr.OP_GRAYSCALE);
+        resizedImage.flush();
+        Path tmpFile = AppContext.getInstance().getFileService().createTemporaryFile();
+        ImageIO.write(deskewedImage, "tiff", tmpFile.toFile());
 
-        // OCR the file
-        try {
-            log.info("Starting OCR with TESSDATA_PREFIX=" + System.getenv("TESSDATA_PREFIX") + ";LC_NUMERIC=" + System.getenv("LC_NUMERIC"));
-            instance.setLanguage(language);
-            content = instance.doOCR(image);
-        } catch (Throwable e) {
-            log.error("Error while OCR-izing the image", e);
-        }
-        
-        return content;
-    }
-    
-    /**
-     * Save a file on the storage filesystem.
-     * 
-     * @param inputStream Unencrypted input stream
-     * @param pdf
-     * @param file File to save
-     * @param privateKey Private key used for encryption
-     * @throws Exception
-     */
-    public static void save(InputStream inputStream, InputStream pdfInputStream, File file, String privateKey) throws Exception {
-        Cipher cipher = EncryptionUtil.getEncryptionCipher(privateKey);
-        Path path = DirectoryUtil.getStorageDirectory().resolve(file.getId());
-        Files.copy(new CipherInputStream(inputStream, cipher), path);
-        inputStream.reset();
-        
-        // Generate file variations
-        saveVariations(file, inputStream, pdfInputStream, cipher);
-    }
+        List<String> result = Lists.newLinkedList(Arrays.asList("tesseract", tmpFile.toAbsolutePath().toString(), "stdout", "-l", language));
+        ProcessBuilder pb = new ProcessBuilder(result);
+        Process process = pb.start();
 
-    /**
-     * Generate file variations.
-     * 
-     * @param file File from database
-     * @param inputStream Unencrypted input stream
-     * @param pdfInputStream Unencrypted PDF input stream
-     * @param cipher Cipher to use for encryption
-     * @throws Exception
-     */
-    public static void saveVariations(File file, InputStream inputStream, InputStream pdfInputStream, Cipher cipher) throws Exception {
-        BufferedImage image = null;
-        if (ImageUtil.isImage(file.getMimeType())) {
-            image = ImageIO.read(inputStream);
-            inputStream.reset();
-        } else if(pdfInputStream != null) {
-            // Generate preview from the first page of the PDF
-            image = PdfUtil.renderFirstPage(pdfInputStream);
-            pdfInputStream.reset();
-        }
-        
-        if (image != null) {
-            // Generate thumbnails from image
-            BufferedImage web = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 1280, Scalr.OP_ANTIALIAS);
-            BufferedImage thumbnail = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, 256, Scalr.OP_ANTIALIAS);
-            image.flush();
-            
-            // Write "web" encrypted image
-            Path outputFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_web");
-            try (OutputStream outputStream = new CipherOutputStream(Files.newOutputStream(outputFile), cipher)) {
-                ImageUtil.writeJpeg(web, outputStream);
-            }
-            
-            // Write "thumb" encrypted image
-            outputFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_thumb");
-            try (OutputStream outputStream = new CipherOutputStream(Files.newOutputStream(outputFile), cipher)) {
-                ImageUtil.writeJpeg(thumbnail, outputStream);
-            }
+        // Consume the process error stream
+        final String commandName = pb.command().get(0);
+        new InputStreamReaderThread(process.getErrorStream(), commandName).start();
+
+        // Consume the data as text
+        try (InputStream is = process.getInputStream()) {
+            return CharStreams.toString(new InputStreamReader(is, Charsets.UTF_8));
         }
     }
 
@@ -151,7 +77,6 @@ public class FileUtil {
      * Remove a file from the storage filesystem.
      * 
      * @param file File to delete
-     * @throws IOException 
      */
     public static void delete(File file) throws IOException {
         Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
@@ -167,5 +92,119 @@ public class FileUtil {
         if (Files.exists(thumbnailFile)) {
             Files.delete(thumbnailFile);
         }
+    }
+
+    /**
+     * Create a new file.
+     *
+     * @param name File name, can be null
+     * @param unencryptedFile Path to the unencrypted file
+     * @param fileSize File size
+     * @param language File language, can be null if associated to no document
+     * @param userId User ID creating the file
+     * @param documentId Associated document ID or null if no document
+     * @return File ID
+     * @throws Exception e
+     */
+    public static String createFile(String name, Path unencryptedFile, long fileSize, String language, String userId, String documentId) throws Exception {
+        // Validate mime type
+        String mimeType;
+        try {
+            mimeType = MimeTypeUtil.guessMimeType(unencryptedFile, name);
+        } catch (IOException e) {
+            throw new IOException("ErrorGuessMime", e);
+        }
+
+        // Validate user quota
+        UserDao userDao = new UserDao();
+        User user = userDao.getById(userId);
+        if (user.getStorageCurrent() + fileSize > user.getStorageQuota()) {
+            throw new IOException("QuotaReached");
+        }
+
+        // Validate global quota
+        String globalStorageQuotaStr = System.getenv(Constants.GLOBAL_QUOTA_ENV);
+        if (!Strings.isNullOrEmpty(globalStorageQuotaStr)) {
+            long globalStorageQuota = Long.valueOf(globalStorageQuotaStr);
+            long globalStorageCurrent = userDao.getGlobalStorageCurrent();
+            if (globalStorageCurrent + fileSize > globalStorageQuota) {
+                throw new IOException("QuotaReached");
+            }
+        }
+
+        // Get files of this document
+        FileDao fileDao = new FileDao();
+        int order = 0;
+        if (documentId != null) {
+            for (File file : fileDao.getByDocumentId(userId, documentId)) {
+                file.setOrder(order++);
+            }
+        }
+
+        // Create the file
+        File file = new File();
+        file.setOrder(order);
+        file.setDocumentId(documentId);
+        file.setName(StringUtils.abbreviate(name, 200));
+        file.setMimeType(mimeType);
+        file.setUserId(userId);
+        String fileId = fileDao.create(file, userId);
+
+        // Save the file
+        Cipher cipher = EncryptionUtil.getEncryptionCipher(user.getPrivateKey());
+        Path path = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+        try (InputStream inputStream = Files.newInputStream(unencryptedFile)) {
+            Files.copy(new CipherInputStream(inputStream, cipher), path);
+        }
+
+        // Update the user quota
+        user.setStorageCurrent(user.getStorageCurrent() + fileSize);
+        userDao.updateQuota(user);
+
+        // Raise a new file created event and document updated event if we have a document
+        startProcessingFile(fileId);
+        FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
+        fileCreatedAsyncEvent.setUserId(userId);
+        fileCreatedAsyncEvent.setLanguage(language);
+        fileCreatedAsyncEvent.setFile(file);
+        fileCreatedAsyncEvent.setUnencryptedFile(unencryptedFile);
+        ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
+
+        if (documentId != null) {
+            DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
+            documentUpdatedAsyncEvent.setUserId(userId);
+            documentUpdatedAsyncEvent.setDocumentId(documentId);
+            ThreadLocalContext.get().addAsyncEvent(documentUpdatedAsyncEvent);
+        }
+
+        return fileId;
+    }
+
+    /**
+     * Start processing a file.
+     *
+     * @param fileId File ID
+     */
+    public static void startProcessingFile(String fileId) {
+        processingFileSet.add(fileId);
+    }
+
+    /**
+     * End processing a file.
+     *
+     * @param fileId File ID
+     */
+    public static void endProcessingFile(String fileId) {
+        processingFileSet.remove(fileId);
+    }
+
+    /**
+     * Return true if a file is currently processing.
+     *
+     * @param fileId File ID
+     * @return True if the file is processing
+     */
+    public static boolean isProcessingFile(String fileId) {
+        return processingFileSet.contains(fileId);
     }
 }

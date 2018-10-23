@@ -1,0 +1,76 @@
+<p class="well-sm pull-right" ng-show="document.route_step && document.writable">
+  <span class="btn btn-danger" ng-click="cancelWorkflow()">
+    <span class="fas fa-trash"></span>
+    {{ 'document.view.workflow.cancel_workflow' | translate }}
+  </span>
+</p>
+<p class="well-sm">{{ 'document.view.workflow.message' | translate }}</p>
+
+<form name="startWorkflowForm" class="form-horizontal" novalidate ng-show="!document.route_step">
+  <div class="form-group" ng-class="{ 'has-error': !startWorkflowForm.routemodel.$valid && startWorkflowForm.$dirty }">
+    <label for="inputRouteModel" class="col-sm-3">
+      {{ 'document.view.workflow.workflow_start_label' | translate }}
+      <p ng-if="userInfo.base_functions.indexOf('ADMIN') != -1">
+        <a href="#/settings/workflow">{{ 'document.view.workflow.add_more_workflow' | translate }}</a>
+      </p>
+    </label>
+    <div class="col-sm-6">
+      <select required class="form-control" id="inputRouteModel" name="routemodel" ng-model="routemodel">
+        <option ng-repeat="routemodel in routemodels" value="{{ routemodel.id }}">{{ routemodel.name }}</option>
+      </select>
+    </div>
+    <div class="col-sm-3">
+      <span class="help-block" ng-show="startWorkflowForm.routemodel.$error.required && startWorkflowForm.$dirty">{{ 'validation.required' | translate }}</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-3 col-sm-9">
+      <button type="submit" class="btn btn-primary"
+              ng-disabled="!startWorkflowForm.$valid"
+              ng-click="startWorkflow()">
+        {{ 'document.view.workflow.start_workflow_submit' | translate }}
+      </button>
+    </div>
+  </div>
+</form>
+
+<table class="table" ng-repeat="route in routes">
+  <caption translate="document.view.workflow.full_name"
+           translate-values="{ name: route.name, create_date: route.create_date }"></caption>
+  <thead>
+  <tr>
+    <th>Type</th>
+    <th>Name</th>
+    <th>For</th>
+    <th>Validation</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr ng-repeat="step in route.steps" ng-class="{
+          'bg-success': step.transition == 'VALIDATED' || step.transition == 'APPROVED',
+          'bg-danger': step.transition == 'REJECTED'
+      }">
+    <td>
+      <span class="fas fa-exchange-alt" ng-if="step.type == 'APPROVE'"></span>
+      <span class="fas fa-check-circle" ng-if="step.type == 'VALIDATE'"></span>
+      {{ 'workflow_type.' + step.type | translate }}
+    </td>
+    <td>{{ step.name }}</td>
+    <td>
+      <acl data="step.target"></acl>
+    </td>
+    <td>
+      <span ng-show="step.end_date">
+          {{ 'workflow_transition.' + step.transition | translate }}
+          {{ step.end_date | timeAgo: dateTimeFormat }}
+          by
+        <a href="#/user/{{ step.validator_username }}" class="label label-default">{{ step.validator_username }}</a>
+        <span ng-show="step.comment" class="text-">
+          <br/><em>{{ step.comment }}</em>
+        </span>
+      </span>
+    </td>
+  </tr>
+  </tbody>
+</table>

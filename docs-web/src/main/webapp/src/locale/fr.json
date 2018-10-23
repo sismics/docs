@@ -1,0 +1,549 @@
+{
+  "login": {
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "validation_code_required": "Un code de validation est requis",
+    "validation_code_title": "Vous avez activé l'authentification en deux étapes sur votre compte. Veuillez entrer un code de validation généré par l'application mobile que vous avez configurée.",
+    "validation_code": "Code de validation",
+    "remember_me": "Se souvenir de moi",
+    "submit": "Connexion",
+    "login_as_guest": "Connexion en invité",
+    "login_failed_title": "Echec de connexion",
+    "login_failed_message": "Nom d'utilisateur ou mot de passe invalide",
+    "password_lost_btn": "Mot de passe perdu ?",
+    "password_lost_sent_title": "Email de réinitialisation de mot de passe envoyé",
+    "password_lost_sent_message": "Un email a été envoyé à <strong>{{ username }}</strong> pour réinitialiser votre mot de passe",
+    "password_lost_error_title": "Erreur lors de la réinitialisation du mot de passe",
+    "password_lost_error_message": "Impossible d'envoyer un email de changement de mot de passe, veuillez contacter votre administrateur pour une réinitialisation manuelle"
+  },
+  "passwordlost": {
+    "title": "Mot de passe perdu",
+    "message": "Veuillez entrer votre nom d'utilisateur pour recevoir un lien de réinitialisation de mot de passe. Si vous ne vous souvenez pas de votre nom d'utilisateur, veuillez contacter votre administrateur",
+    "submit": "Réinitialiser mon mot de passe"
+  },
+  "passwordreset": {
+    "message": "Veuillez entrer un nouveau mot de passe",
+    "submit": "Changer mon mot de passe",
+    "error_title": "Erreur lors du changement de mot de passe",
+    "error_message": "Votre demande de changement de mot de passe a expiré, veuillez recommencer depuis la page de connexion"
+  },
+  "index": {
+    "toggle_navigation": "Afficher/cacher la navigation",
+    "nav_documents": "Documents",
+    "nav_tags": "Tags",
+    "nav_users_groups": "Utilisateurs & Groupes",
+    "error_info": "{{ count }} nouvelle{{ count > 1 ? 's' : '' }} erreur{{ count > 1 ? 's' : '' }}",
+    "logged_as": "Connecté en tant que {{ username }}",
+    "nav_settings": "Paramètres",
+    "logout": "Déconnexion",
+    "global_quota_warning": "<strong>Attention !</strong> Quota global presque atteint à {{ current | number: 0 }}Mo ({{ percent | number: 1 }}%) utilisé sur {{ total | number: 0 }}Mo"
+  },
+  "document": {
+    "navigation_up": "Monter d'un niveau",
+    "toggle_navigation": "Activer la navigation par dossier",
+    "search_simple": "Recherche simple",
+    "search_fulltext": "Recherche texte intégral",
+    "search_creator": "Créateur",
+    "search_language": "Langue",
+    "search_before_date": "Créé avant cette date",
+    "search_after_date": "Créé après cette date",
+    "search_before_update_date": "Mis à jour avant cette date",
+    "search_after_update_date": "Mis à jour après cette date",
+    "search_tags": "Tags",
+    "search_shared": "Seulement les documents partagés",
+    "search_workflow": "Workflow assigné à moi",
+    "search_clear": "Vider",
+    "any_language": "Toutes les langues",
+    "add_document": "Ajouter un document",
+    "import_eml": "Importer depuis un email (format EML)",
+    "tags": "Tags",
+    "no_tags": "Aucun tag",
+    "no_documents": "Aucun document dans la base de données",
+    "search": "Rechercher",
+    "search_empty": "Aucun résultat pour <strong>\"{{ search }}\"</strong>",
+    "shared": "Partagé",
+    "current_step_name": "Étape en cours",
+    "title": "Titre",
+    "description": "Description",
+    "contributors": "Contributeurs",
+    "language": "Langue",
+    "creation_date": "Date de création",
+    "subject": "Sujet",
+    "identifier": "Identifiant",
+    "publisher": "Editeur",
+    "format": "Format",
+    "source": "Source",
+    "type": "Type",
+    "coverage": "Couverture",
+    "rights": "Droits",
+    "relations": "Relations",
+    "page_size": "Taille de page",
+    "page_size_10": "10 par page",
+    "page_size_20": "20 par page",
+    "page_size_30": "30 par page",
+    "upgrade_quota": "Pour augmenter votre quota, veuillez contacter votre administrateur",
+    "quota": "{{ current | number: 0 }}Mo ({{ percent | number: 1 }}%) utilisé sur {{ total | number: 0 }}MB",
+    "count": "{{ count }} document{{ count > 1 ? 's' : '' }} trouvé{{ count > 1 ? 's' : '' }}",
+    "last_updated": "Dernière mise à jour {{ date | timeAgo: dateFormat }}",
+    "view": {
+      "delete_comment_title": "Supprimer un commentaire",
+      "delete_comment_message": "Etes-vous sûr de vouloir supprimer ce commentaire ?",
+      "delete_document_title": "Supprimer un document",
+      "delete_document_message": "Etes-vous sûr de vouloir supprimer ce document ?",
+      "shared_document_title": "Document partagé",
+      "shared_document_message": "Vous pouvez partager ce document avec ce lien. Veuillez noter que toute personne ayant ce lien peut accéder au document.<br/><input class=\"form-control share-link\" type=\"text\" readonly=\"readonly\" value=\"{{ link }}\" onclick=\"this.select(); document.execCommand('copy');\" />",
+      "not_found": "Document introuvable",
+      "forbidden": "Accès non autorisé",
+      "download_files": "Télécharger les fichiers",
+      "export_pdf": "Exporter en PDF",
+      "by_creator": "par",
+      "comments": "Commentaires",
+      "no_comments": "Aucun commentaire sur ce document",
+      "add_comment": "Ajouter un commentaire",
+      "error_loading_comments": "Erreur au chargement des commentaires",
+      "workflow_current": "Étape de workflow en cours",
+      "workflow_comment": "Ajouter un commentaire de workflow",
+      "workflow_validated_title": "Étape de workflow validée",
+      "workflow_validated_message": "L'étape de workflow a été validée avec succès.",
+      "content": {
+        "content": "Contenu",
+        "delete_file_title": "Supprimer un fichier",
+        "delete_file_message": "Etes-vous sûr de vouloir supprimer ce fichier ?",
+        "upload_pending": "En attente...",
+        "upload_progress": "Envoi...",
+        "upload_error": "Erreur d'envoi",
+        "upload_error_quota": "Quota atteint",
+        "drop_zone": "Glisser & déposer des fichiers ici pour les envoyer",
+        "add_files": "Ajouter des fichiers",
+        "file_processing_indicator": "Ce fichier est en cours de traitement. La recherche ne sera pas disponible avant la fin du traitement.",
+        "reprocess_file": "Retraiter ce fichier"
+      },
+      "workflow": {
+        "workflow": "Workflow",
+        "message": "Vérifiez ou validez vos documents avec les personnes de votre organisation en utilisant les workflows.",
+        "workflow_start_label": "Quel workflow démarrer ?",
+        "add_more_workflow": "Ajouter plus de workflows",
+        "start_workflow_submit": "Démarrer le workflow",
+        "full_name": "<strong>{{ name }}</strong> a démarré le {{ create_date | date }}",
+        "cancel_workflow": "Annuler le workflow en cours",
+        "cancel_workflow_title": "Annuler le workflow",
+        "cancel_workflow_message": "Voulez-vous vraiment annuler le workflow en cours ?"
+      },
+      "permissions": {
+        "permissions": "Permissions",
+        "message": "Les permissions peuvent être appliquées directement sur ce document, ou provenir de <a href=\"#/tag\">tags</a>.",
+        "title": "Permissions sur ce document",
+        "inherited_tags": "Permissions héritées par tags",
+        "acl_source": "De",
+        "acl_target": "Pour",
+        "acl_permission": "Permission"
+      },
+      "activity": {
+        "activity": "Activité",
+        "message": "Toutes les actions sur ce document sont consignées ici."
+      }
+    },
+    "edit": {
+      "document_edited_with_errors": "Document modifié avec succès, mais certains fichiers n'ont pu être envoyés",
+      "document_added_with_errors": "Document ajouté avec succès, mais certains fichiers n'ont pu être envoyés",
+      "quota_reached": "Quota atteint",
+      "primary_metadata": "Métadonnées principales",
+      "title_placeholder": "Titre principal du document",
+      "description_placeholder": "Résumé, table des matières, ou texte libre",
+      "new_files": "Nouveaux fichiers",
+      "orphan_files": "+ {{ count }} fichier{{ count > 1 ? 's' : '' }}",
+      "additional_metadata": "Métadonnées secondaires",
+      "subject_placeholder": "Mots-clefs, phrases de résumé, ou codes de classement",
+      "identifier_placeholder": "Identificateur non ambigu",
+      "publisher_placeholder": "Nom de la personne, de l'organisation ou du service à l'origine de la publication du document",
+      "format_placeholder": "Type MIME, ou format physique du document",
+      "source_placeholder": "Ressource dont dérive le document",
+      "uploading_files": "Envoi des fichiers..."
+    },
+    "default": {
+      "upload_pending": "En attente...",
+      "upload_progress": "Envoi...",
+      "upload_error": "Erreur d'envoi",
+      "upload_error_quota": "Quota atteint",
+      "quick_upload": "Envoi rapide",
+      "drop_zone": "Glisser & déposer des fichiers ici pour les envoyer",
+      "add_files": "Ajouter des fichiers",
+      "add_new_document": "Ajouter à un nouveau document",
+      "latest_activity": "Activité récente",
+      "footer_sismics": "Conçu avec <span class=\"fas fa-heart\"></span> par <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
+      "api_documentation": "Documentation API",
+      "feedback": "Donnez-nous votre avis",
+      "workflow_document_list": "Documents qui vous sont assignés",
+      "select_all": "Tout sélectionner",
+      "select_none": "Tout déselectionner"
+    },
+    "pdf": {
+      "export_title": "Exporter en PDF",
+      "export_metadata": "Exporter les métadonnées",
+      "export_comments": "Exporter les commentaires",
+      "fit_to_page": "Ajuster les images à la page",
+      "margin": "Marge",
+      "millimeter": "mm"
+    },
+    "share": {
+      "title": "Partager un document",
+      "message": "Nommez le partage si vous souhaitez partager plusieurs fois le même document.",
+      "submit": "Partager"
+    }
+  },
+  "file": {
+    "view": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "not_found": "Fichier introuvable"
+    },
+    "edit": {
+      "title": "Modifier le fichier",
+      "name": "Nom de fichier"
+    }
+  },
+  "tag": {
+    "new_tag": "Nouveau tag",
+    "search": "Rechercher",
+    "default": {
+      "title": "Tags",
+      "message_1": "Les <strong>Tags</strong> sont des libellés associés aux documents.",
+      "message_2": "Un document peut être taggé par plusieurs tags, et un tag peut être appliqué à plusieurs documents.",
+      "message_3": "En utilisant le bouton <span class=\"fas fa-pencil-alt\"></span>, vous pouvez modifier les permissions sur un tag.",
+      "message_4": "Si un tag peut être lu par un autre utilisateur ou groupe, les documents associés peuvent également être lus par ces personnes.",
+      "message_5": "Par exemple, taggez les documents de votre entreprise avec un tag <span class=\"label label-info\">MonEntreprise</span> et ajoutez la permission <strong>Lecture</strong> à un groupe <span class=\"btn btn-default\">employés</span>"
+    },
+    "edit": {
+      "delete_tag_title": "Supprimer un tag",
+      "delete_tag_message": "Etes-vous sûr de vouloir supprimer ce tag ?",
+      "name": "Nom",
+      "color": "Couleur",
+      "parent": "Parent",
+      "info": "Les permissions sur ce tag seront également appliquées aux documents taggés avec <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>"
+    }
+  },
+  "group": {
+    "profile": {
+      "members": "Membres",
+      "no_members": "Aucun membre",
+      "related_links": "Liens relatifs",
+      "edit_group": "Modifer le groupe {{ name }}"
+    }
+  },
+  "user": {
+    "profile": {
+      "groups": "Groupes",
+      "quota_used": "Quota utilisé",
+      "percent_used": "{{ percent | number: 0 }}% utilisé",
+      "related_links": "Liens relatifs",
+      "document_created": "Documents créés par {{ username }}",
+      "edit_user": "Modifier l'utilisateur {{ username }}"
+    }
+  },
+  "usergroup": {
+    "search_groups": "Rechercher dans les groupes",
+    "search_users": "Rechercher dans les utilisateurs",
+    "you": "C'est vous !",
+    "default": {
+      "title": "Utilisateurs & Groupes",
+      "message": "Vous pouvez consulter ici les informations sur les utilisateurs et les groupes."
+    }
+  },
+  "settings": {
+    "menu_personal_settings": "Paramètres personnels",
+    "menu_user_account": "Compte utilisateur",
+    "menu_two_factor_auth": "Authentification en deux étapes",
+    "menu_opened_sessions": "Sessions ouvertes",
+    "menu_file_importer": "Importateur de fichiers en masse",
+    "menu_general_settings": "Paramètres généraux",
+    "menu_workflow": "Workflow",
+    "menu_users": "Utilisateurs",
+    "menu_groups": "Groupes",
+    "menu_vocabularies": "Vocabulaires",
+    "menu_configuration": "Configuration",
+    "menu_inbox": "Scanning de boîte de réception",
+    "menu_monitoring": "Monitoring",
+    "user": {
+      "title": "Gestion des utilisateurs",
+      "add_user": "Ajouter un utilisateur",
+      "username": "Nom d'utilisateur",
+      "create_date": "Date de création",
+      "totp_enabled": "Authentification en deux étapes activée sur ce compte",
+      "edit": {
+        "delete_user_title": "Supprimer un utilisateur",
+        "delete_user_message": "Etes-vous sûr de vouloir supprimer cet utilisateur ? Tous les documents, fichiers et tags associés seront supprimés",
+        "edit_user_failed_title": "Cet utilisateur existe déjà",
+        "edit_user_failed_message": "Ce nom d'utilisateur est déjà pris par un autre utilisateur",
+        "edit_user_title": "Modifier \"{{ username }}\"",
+        "add_user_title": "Ajouter un utilisateur",
+        "username": "Nom d'utilisateur",
+        "email": "E-mail",
+        "groups": "Groupes",
+        "storage_quota": "Quota de stockage",
+        "storage_quota_placeholder": "Quota de stockage (en Mo)",
+        "password": "Mot de passe",
+        "password_confirm": "Mot de passe (confirmation)",
+        "disabled": "Utilisateur désactivé",
+        "password_reset_btn": "Envoyer un email de réinitialisation de mot de passe à cet utilisateur",
+        "password_lost_sent_title": "Email de réinitialisation de mot de passe envoyé",
+        "password_lost_sent_message": "Un email de réinitalisation de mot de passe a été envoyé à <strong>{{ username }}</strong>"
+      }
+    },
+    "workflow": {
+      "title": "Configuration des workflows",
+      "add_workflow": "Ajouter un workflow",
+      "name": "Nom",
+      "create_date": "Date de création",
+      "edit": {
+        "delete_workflow_title": "Supprimer le workflow",
+        "delete_workflow_message": "Voulez-vous vraiment supprimer ce workflow ? Les workflows en cours d'exécution ne seront pas supprimés",
+        "edit_workflow_title": "Modifier \"{{ name }}\"",
+        "add_workflow_title": "Ajouter un workflow",
+        "name": "Nom",
+        "name_placeholder": "Nom de l'étape ou description",
+        "drag_help": "Glisser et déplacer pour réordonner les étapes",
+        "type": "Type d'étape",
+        "type_approve": "Approbation",
+        "type_validate": "Validation",
+        "target": "Assigné à",
+        "target_help": "<strong>Approbation :</strong> Accepter ou rejeter l'étape de workflow<br/><strong>Validation :</strong> Examiner et poursuivre le workflow",
+        "add_step": "Ajouter une étape de workflow",
+        "actions": "Qu'est-ce qui se passe après?",
+        "remove_action": "Supprimer l'action"
+      }
+    },
+    "security": {
+      "enable_totp": "Activer l'authentification en deux étapes",
+      "enable_totp_message": "Assurez-vous d'avoir une application compatible TOTP sur votre téléphone prête à être configurée",
+      "title": "Authentification en deux étapes",
+      "message_1": "L'authentification en deux étapes vous permet d'ajouter une couche de sécurité supplémentaire sur votre compte <strong>{{ appName }}</strong>.<br/>Avant d'activer cette fonctionnalité, assurez-vous d'avoir une application compatible TOTP sur votre téléphone :",
+      "message_google_authenticator": "Pour Android, iOS, et Blackberry: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>",
+      "message_duo_mobile": "Pour Android et iOS: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
+      "message_authenticator": "Pour Windows Phone: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">Authenticator</a>",
+      "message_2": "Ces applications génèrent automatique un code de validation changeant après un intervalle de temps donné.<br/>Il sera nécessaire d'entrer ce code de validation à chaque connexion à <strong>{{ appName }}</strong>.",
+      "secret_key": "Votre clé secrète est : <strong>{{ secret }}</strong>",
+      "secret_key_warning": "Configurez votre application TOTP sur votre téléphone avec cette clé secrète maintenant, elle ne sera plus disponible ensuite.",
+      "totp_enabled_message": "L'authentification en deux étapes est activée sur votre compte.<br/>A chaque connexion sur <strong>{{ appName }}</strong>, un code de validation provenant de votre application mobile vous sera demandé.<br/>Si vous perdez votre téléphone, il ne sera plus possible de vous connecter à votre compte, mais les sessions actives vous permettront de générer une nouvelle clé secrète.",
+      "disable_totp": {
+        "disable_totp": "Désactiver l'authentification en deux étapes",
+        "message": "Votre compte ne sera plus protégé par l'authentification en deux étapes.",
+        "confirm_password": "Confirmez votre mot de passe",
+        "submit": "Désactiver l'authentification en deux étapes"
+      }
+    },
+    "group": {
+      "title": "Gestion des groupes",
+      "add_group": "Ajouter un groupe",
+      "name": "Nom",
+      "edit": {
+        "delete_group_title": "Supprimer un groupe",
+        "delete_group_message": "Etes-vous sûr de vouloir supprimer ce groupe ?",
+        "edit_group_failed_title": "Ce groupe existe déjà",
+        "edit_group_failed_message": "Ce nom de groupe est déjà pris par un autre groupe",
+        "edit_group_title": "Modifier \"{{ name }}\"",
+        "add_group_title": "Ajouter un groupe",
+        "name": "Nom",
+        "parent_group": "Groupe parent",
+        "search_group": "Rechercher un groupe",
+        "members": "Membres",
+        "new_member": "Nouveau membre",
+        "search_user": "Rechercher un utilisateur"
+      }
+    },
+    "account": {
+      "title": "Compte utilisateur",
+      "password": "Mot de passe",
+      "password_confirm": "Mot de passe (confirmation)",
+      "updated": "Compte mis à jour avec succès"
+    },
+    "config": {
+      "title_guest_access": "Accès invité",
+      "message_guest_access": "L'accès invité est un mode dans lequel quiconque peut accéder à {{ appName }} sans mot de passe.<br/>Comme un utilisateur normal, l'invité ne pourra accéder qu'aux documents auquel il a accès via les permissions.<br/>",
+      "enable_guest_access": "Activer l'accès invité",
+      "disable_guest_access": "Désactiver l'accès invité",
+      "title_theme": "Personnalisation de l'interface",
+      "title_general": "Configuration générale",
+      "default_language": "Langage par défaut pour les nouveaux documents",
+      "application_name": "Nom de l'application",
+      "main_color": "Couleur principale",
+      "custom_css": "CSS personnalisée",
+      "custom_css_placeholder": "CSS personnalisée ajoutée après la feuille de style principale",
+      "logo": "Logo (Taille carrée)",
+      "background_image": "Image de fond",
+      "uploading_image": "Envoi de l'image...",
+      "title_smtp": "Configuration email",
+      "smtp_hostname": "Hôte SMTP",
+      "smtp_port": "Port SMTP",
+      "smtp_from": "Email d'envoi",
+      "smtp_username": "Nom d'utilisateur SMTP",
+      "smtp_password": "Mot de passe SMTP",
+      "smtp_updated": "Configuration SMTP mise à jour avec succès"
+    },
+    "inbox": {
+      "title": "Scanning de boîte de réception",
+      "message": "En activant cette fonctionnalité, le système scanne périodiquement la boîte de réception spécifiée pour rechercher de nouveaux messages et les importer automatiquement.<br/>Après l'importation d'un email, celui-ci sera marqué comme lu.<br/>Paramétrage pour <a href=\"https://support.google.com/mail/answer/7126229?hl=fr\" target=\"_blank\">Gmail</a>, <a href = \"https: // support. office.com/fr-fr/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040 \"target =\" _ blank \">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
+      "enabled": "Activer le scan de boîte de réception",
+      "hostname": "Nom d'hôte IMAP",
+      "port": "Port IMAP (143 ou 993)",
+      "username": "Nom d'utilisateur IMAP",
+      "password": "Mot de passe IMAP",
+      "tag": "Tag ajouté aux documents importés",
+      "test": "Tester les paramètres",
+      "last_sync": "Dernière synchronisation : {{ data.date | date: 'medium' }}, {{ data.count }} message{{ data.count> 1 ? 's' : '' }} importé{{ data.count> 1 ? 's' : '' }}",
+      "test_success": "La connexion à la boîte de réception est réussie ({{ count }} message{{ count> 1 ? 's' : '' }}) non lus",
+      "test_fail": "Une erreur est survenue lors de la connexion à la boîte de réception, veuillez vérifier les paramètres"
+    },
+    "monitoring": {
+      "background_tasks": "Tâches d'arrière-plan",
+      "queued_tasks": "Il y a actuellement {{ count }} tâches en file d'attente.",
+      "queued_tasks_explain": "Le traitement de fichiers, la création de vignettes, la mise à jour d'index, la reconnaissance optique de caractères sont des tâches d'arrière-plan. Une grande quantité de tâches non traitées entraînera des résultats de recherche incomplets.",
+      "server_logs": "Logs serveur",
+      "log_date": "Date",
+      "log_tag": "Tag",
+      "log_message": "Message"
+    },
+    "session": {
+      "title": "Sessions ouvertes",
+      "created_date": "Date de création",
+      "last_connection_date": "Date de dernière connexion",
+      "user_agent": "Depuis",
+      "current": "Courante",
+      "current_session": "Ceci est la session courante",
+      "clear_message": "Tous les autres appareils connectés à ce compte seront déconnectés",
+      "clear": "Fermeture des autres sessions"
+    },
+    "vocabulary": {
+      "title": "Entrées de vocabulaire",
+      "choose_vocabulary": "Choisissez un vocabulaire à modifier",
+      "type": "Type",
+      "coverage": "Couverture",
+      "rights": "Droits",
+      "value": "Valeur",
+      "order": "Ordre",
+      "new_entry": "Nouvelle entrée"
+    },
+    "fileimporter": {
+      "title": "Importateur de fichiers en masse",
+      "advanced_users": "Pour les utilisateurs avancés !",
+      "need_intro": "Si vous avez besoin de :",
+      "need_1": "Importer un répertoire en une fois",
+      "need_2": "Analyser un répertoire à la recherche de nouveaux fichiers et les importer",
+      "line_1": "Allez sur <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> et téléchargez l'outil d'importation de fichiers pour votre système.",
+      "line_2": "Suivez les <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">instructions ici</a> pour utiliser cet outil.",
+      "line_3": "Vos fichiers seront importés dans <a href=\"#/document\">Envoi rapide</a>, vous pouvez ensuite les regrouper dans des documents.",
+      "download": "Télécharger",
+      "instructions": "Instructions"
+    }
+  },
+  "feedback": {
+    "title": "Donnez-nous votre avis",
+    "message": "Vous avez des suggestions ou des questions à propos de Sismics Docs ? Nous vous écoutons !",
+    "sent_title": "Avis envoyé",
+    "sent_message": "Merci pour votre avis ! Cela nous aidera à améliorer Sismics Docs."
+  },
+  "import": {
+    "title": "Import en cours",
+    "error_quota": "Limite de quota atteinte, contactez votre administrateur pour augmenter votre quota",
+    "error_general": "Une erreur est survenue lors de la tentative d'importation de votre fichier, assurez-vous qu'il s'agit bien d'un fichier EML valide"
+  },
+  "app_share": {
+    "main": "Demandez un lien de partage d'un document pour y accéder",
+    "403": {
+      "title": "Non autorisé",
+      "message": "Le document que vous tentez de consulter n'est plus disponible"
+    }
+  },
+  "directive": {
+    "acledit": {
+      "acl_target": "Pour",
+      "acl_permission": "Permission",
+      "add_permission": "Ajouter une permission",
+      "search_user_group": "Rechercher un utilisateur ou un groupe"
+    },
+    "auditlog": {
+      "log_created": "créé",
+      "log_updated": "mis à jour",
+      "log_deleted": "supprimé",
+      "Acl": "ACL",
+      "Comment": "Commentaire",
+      "Document": "Document",
+      "File": "Fichier",
+      "Group": "Groupe",
+      "Tag": "Tag",
+      "User": "Utilisateur",
+      "RouteModel": "Modèle de workflow",
+      "Route": "Workflow"
+    },
+    "selectrelation": {
+      "typeahead": "Entrez un titre de document"
+    },
+    "selecttag": {
+      "typeahead": "Entrez un tag"
+    },
+    "datepicker": {
+      "current": "Aujourd'hui",
+      "clear": "Vider",
+      "close": "Fermer"
+    }
+  },
+  "filter": {
+    "filesize": {
+      "mb": "Mo",
+      "kb": "ko"
+    }
+  },
+  "acl": {
+    "READ": "Lecture",
+    "READWRITE": "Ecriture",
+    "WRITE": "Ecriture",
+    "USER": "Utilisateur",
+    "GROUP": "Groupe",
+    "SHARE": "Partage"
+  },
+  "workflow_type": {
+    "VALIDATE": "Validation",
+    "APPROVE": "Approbation"
+  },
+  "workflow_transition": {
+    "APPROVED": "Approuvé",
+    "REJECTED": "Refusé",
+    "VALIDATED": "Validé"
+  },
+  "validation": {
+    "required": "Requis",
+    "too_short": "Trop court",
+    "too_long": "Trop long",
+    "email": "Doit être une adresse e-mail valide",
+    "password_confirm": "Le mot de passe et sa confirmation doivent être identiques",
+    "number": "Nombre requis",
+    "no_space": "Les espaces ne sont pas autorisés"
+  },
+  "action_type": {
+    "ADD_TAG": "Ajouter un tag",
+    "REMOVE_TAG": "Supprimer un tag",
+    "PROCESS_FILES": "Traiter les fichiers"
+  },
+  "pagination": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "first": "Première",
+    "last": "Dernière"
+  },
+  "ok": "OK",
+  "cancel": "Annuler",
+  "share": "Partager",
+  "unshare": "Départager",
+  "close": "Fermer",
+  "add": "Ajouter",
+  "open": "Ouvrir",
+  "see": "Voir",
+  "save": "Enregistrer",
+  "export": "Exporter",
+  "edit": "Modifier",
+  "delete": "Supprimer",
+  "rename": "Renommer",
+  "loading": "Chargement...",
+  "send": "Envoyer",
+  "enabled": "Activé",
+  "disabled": "Désactivé"
+}

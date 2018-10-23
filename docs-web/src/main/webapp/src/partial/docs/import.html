@@ -1,0 +1,10 @@
+<form name="form">
+  <div class="modal-header">
+    <h3>{{ 'import.title' | translate }}</h3>
+  </div>
+  <div class="modal-body">
+    <uib-progressbar max="100" value="progress * 100"></uib-progressbar>
+    <div uib-alert class="alert-danger" ng-if="errorQuota">{{ 'import.error_quota' | translate }}</div>
+    <div uib-alert class="alert-danger" ng-if="errorGeneral">{{ 'import.error_general' | translate }}</div>
+  </div>
+</form>

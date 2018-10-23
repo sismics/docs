@@ -1,19 +1,26 @@
-<h1>Users <small>management</small> <a class="btn btn-primary" href="#/settings/user/add">Add a user</a></h1>
+<h1>
+  <span translate="settings.user.title"></span>
+  <a class="btn btn-primary" href="#/settings/user/add">{{ 'settings.user.add_user' | translate }}</a>
+</h1>
 
 <div class="row">
   <div class="col-md-4 well">
-    <table class="table table-striped table-hover table-users">
+    <table class="table table-hover table-users">
       <thead>
         <tr>
-          <th>Username</th>
-          <th>Create date</th>
+          <th>{{ 'settings.user.username' | translate }}</th>
+          <th>{{ 'settings.user.create_date' | translate }}</th>
         </tr>
       </thead>
       <tbody>
         <tr ng-repeat="user in users | orderBy: 'username'" ng-click="editUser(user)"
             ng-class="{ active: $stateParams.username == user.username }">
-          <td>{{ user.username }}</td>
-          <td>{{ user.create_date | date: 'yyyy-MM-dd' }}</td>
+          <td>
+            <span ng-if="!user.disabled">{{ user.username }}</span>
+            <s ng-if="user.disabled">{{ user.username }}</s>
+            <span class="fas fa-lock" ng-show="user.totp_enabled" uib-tooltip="{{ 'settings.user.totp_enabled' | translate }}"></span>
+          </td>
+          <td>{{ user.create_date | date: dateFormat }}</td>
         </tr>
       </tbody>
     </table>

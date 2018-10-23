@@ -1,7 +1,17 @@
 package com.sismics.docs.rest;
 
-import java.io.InputStream;
-import java.util.Date;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Resources;
+import com.sismics.docs.core.util.DirectoryUtil;
+import com.sismics.util.filter.TokenBasedSecurityFilter;
+import com.sismics.util.mime.MimeType;
+import com.sismics.util.mime.MimeTypeUtil;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import org.joda.time.format.DateTimeFormat;
+import org.junit.Assert;
+import org.junit.Test;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -10,20 +20,8 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
-import org.joda.time.format.DateTimeFormat;
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Resources;
-import com.sismics.docs.core.util.DirectoryUtil;
-import com.sismics.util.filter.TokenBasedSecurityFilter;
-import com.sismics.util.mime.MimeType;
-import com.sismics.util.mime.MimeTypeUtil;
+import java.io.InputStream;
+import java.util.Date;
 
 /**
  * Exhaustive test of the document resource.
@@ -55,6 +53,15 @@ public class TestDocumentResource extends BaseJerseyTest {
         String tag1Id = json.getString("id");
         Assert.assertNotNull(tag1Id);
 
+        // Create a tag
+        json = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .put(Entity.form(new Form()
+                        .param("name", "HR")
+                        .param("color", "#0000ff")), JsonObject.class);
+        String tag2Id = json.getString("id");
+        Assert.assertNotNull(tag2Id);
+
         // Create a document with document1
         long create1Date = new Date().getTime();
         json = target().path("/document").request()
@@ -71,6 +78,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                         .param("coverage", "Greenland")
                         .param("rights", "Public Domain")
                         .param("tags", tag1Id)
+                        .param("tags", tag2Id)
                         .param("language", "eng")
                         .param("create_date", Long.toString(create1Date))), JsonObject.class);
         String document1Id = json.getString("id");
@@ -82,26 +90,15 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .put(Entity.form(new Form()
                         .param("title", "My super title document 2")
                         .param("language", "eng")
+                        .param("tags", tag2Id)
                         .param("relations", document1Id)), JsonObject.class);
         String document2Id = json.getString("id");
         Assert.assertNotNull(document2Id);
         
         // Add a file
-        String file1Id;
-        try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
-                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file1Id = json.getString("id");
-                Assert.assertNotNull(file1Id);
-            }
-        }
-        
+        String file1Id = clientUtil.addFileToDocument("file/Einstein-Roosevelt-letter.png",
+                "Einstein-Roosevelt-letter.png", document1Token, document1Id);
+
         // Share this document
         target().path("/share").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
@@ -116,15 +113,20 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         JsonArray documents = json.getJsonArray("documents");
         JsonArray tags = documents.getJsonObject(0).getJsonArray("tags");
-        Assert.assertTrue(documents.size() == 2);
+        Assert.assertEquals(2, documents.size());
+        Assert.assertNotNull(documents.getJsonObject(0).get("update_date"));
         Assert.assertEquals(document1Id, documents.getJsonObject(0).getString("id"));
         Assert.assertEquals("eng", documents.getJsonObject(0).getString("language"));
         Assert.assertEquals(1, documents.getJsonObject(0).getInt("file_count"));
-        Assert.assertEquals(1, tags.size());
-        Assert.assertEquals(tag1Id, tags.getJsonObject(0).getString("id"));
-        Assert.assertEquals("SuperTag", tags.getJsonObject(0).getString("name"));
-        Assert.assertEquals("#ffff00", tags.getJsonObject(0).getString("color"));
-        
+        Assert.assertEquals(2, tags.size());
+        Assert.assertEquals(tag2Id, tags.getJsonObject(0).getString("id"));
+        Assert.assertEquals("HR", tags.getJsonObject(0).getString("name"));
+        Assert.assertEquals("#0000ff", tags.getJsonObject(0).getString("color"));
+        Assert.assertEquals(tag1Id, tags.getJsonObject(1).getString("id"));
+        Assert.assertEquals("SuperTag", tags.getJsonObject(1).getString("name"));
+        Assert.assertEquals("#ffff00", tags.getJsonObject(1).getString("color"));
+        Assert.assertFalse(documents.getJsonObject(0).getBoolean("active_route"));
+
         // List all documents from document3
         json = target().path("/document/list")
                 .queryParam("sort_column", 3)
@@ -133,7 +135,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document3Token)
                 .get(JsonObject.class);
         documents = json.getJsonArray("documents");
-        Assert.assertTrue(documents.size() == 0);
+        Assert.assertTrue(documents.isEmpty());
         
         // Create a document with document3
         long create3Date = new Date().getTime();
@@ -148,21 +150,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document3Id);
         
         // Add a file
-        String file3Id;
-        try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document3Token)
-                        .put(Entity.entity(multiPart.field("id", document3Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file3Id = json.getString("id");
-                Assert.assertNotNull(file3Id);
-            }
-        }
-        
+        clientUtil.addFileToDocument("file/Einstein-Roosevelt-letter.png",
+                "Einstein-Roosevelt-letter.png", document3Token, document3Id);
+
         // List all documents from document3
         json = target().path("/document/list")
                 .queryParam("sort_column", 3)
@@ -171,8 +161,26 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document3Token)
                 .get(JsonObject.class);
         documents = json.getJsonArray("documents");
-        Assert.assertTrue(documents.size() == 1);
-        
+        Assert.assertEquals(1, documents.size());
+
+        // Check highlights
+        json = target().path("/document/list")
+                .queryParam("search", "full:uranium full:einstein")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .get(JsonObject.class);
+        String highlight = json.getJsonArray("documents").getJsonObject(0).getString("highlight");
+        Assert.assertTrue(highlight.contains("<strong>"));
+
+        // Check suggestions
+        json = target().path("/document/list")
+                .queryParam("search", "docu")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .get(JsonObject.class);
+        String suggestion = json.getJsonArray("suggestions").getString(0);
+        Assert.assertEquals("document", suggestion);
+
         // Search documents
         Assert.assertEquals(1, searchDocuments("full:uranium full:einstein", document1Token));
         Assert.assertEquals(2, searchDocuments("full:title", document1Token));
@@ -193,7 +201,12 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(2, searchDocuments("at:" + DateTimeFormat.forPattern("yyyy-MM").print(new Date().getTime()), document1Token));
         Assert.assertEquals(2, searchDocuments("at:" + DateTimeFormat.forPattern("yyyy-MM-dd").print(new Date().getTime()), document1Token));
         Assert.assertEquals(2, searchDocuments("after:2010 before:2040-08", document1Token));
+        Assert.assertEquals(2, searchDocuments("uat:" + DateTimeFormat.forPattern("yyyy").print(new Date().getTime()), document1Token));
+        Assert.assertEquals(2, searchDocuments("uat:" + DateTimeFormat.forPattern("yyyy-MM").print(new Date().getTime()), document1Token));
+        Assert.assertEquals(2, searchDocuments("uat:" + DateTimeFormat.forPattern("yyyy-MM-dd").print(new Date().getTime()), document1Token));
+        Assert.assertEquals(2, searchDocuments("uafter:2010 ubefore:2040-08", document1Token));
         Assert.assertEquals(1, searchDocuments("tag:super", document1Token));
+        Assert.assertEquals(1, searchDocuments("tag:super tag:hr", document1Token));
         Assert.assertEquals(1, searchDocuments("shared:yes", document1Token));
         Assert.assertEquals(2, searchDocuments("lang:eng", document1Token));
         Assert.assertEquals(1, searchDocuments("after:2010 before:2040-08 tag:super shared:yes lang:eng title description full:uranium", document1Token));
@@ -216,7 +229,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(document1Id, json.getString("id"));
         Assert.assertEquals("document1", json.getString("creator"));
         Assert.assertEquals(1, json.getInt("file_count"));
-        Assert.assertEquals(true, json.getBoolean("shared"));
+        Assert.assertTrue(json.getBoolean("shared"));
         Assert.assertEquals("My super title document 1", json.getString("title"));
         Assert.assertEquals("My super description for document 1", json.getString("description"));
         Assert.assertEquals("Subject document 1", json.getString("subject"));
@@ -229,9 +242,11 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals("Public Domain", json.getString("rights"));
         Assert.assertEquals("eng", json.getString("language"));
         Assert.assertEquals(create1Date, json.getJsonNumber("create_date").longValue());
+        Assert.assertNotNull(json.get("update_date"));
         tags = json.getJsonArray("tags");
-        Assert.assertEquals(1, tags.size());
-        Assert.assertEquals(tag1Id, tags.getJsonObject(0).getString("id"));
+        Assert.assertEquals(2, tags.size());
+        Assert.assertEquals(tag2Id, tags.getJsonObject(0).getString("id"));
+        Assert.assertEquals(tag1Id, tags.getJsonObject(1).getString("id"));
         JsonArray contributors = json.getJsonArray("contributors");
         Assert.assertEquals(1, contributors.size());
         Assert.assertEquals("document1", contributors.getJsonObject(0).getString("username"));
@@ -252,27 +267,19 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertTrue(relations.getJsonObject(0).getBoolean("source"));
         Assert.assertEquals("My super title document 1", relations.getJsonObject(0).getString("title"));
         
-        // Export a document in PDF format
-        Response response = target().path("/document/" + document1Id).request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
-                .get();
-        InputStream is = (InputStream) response.getEntity();
-        byte[] pdfBytes = ByteStreams.toByteArray(is);
-        Assert.assertTrue(pdfBytes.length > 0);
-        
         // Create a tag
         json = target().path("/tag").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
                 .put(Entity.form(new Form().param("name", "SuperTag2").param("color", "#00ffff")), JsonObject.class);
-        String tag2Id = json.getString("id");
-        Assert.assertNotNull(tag1Id);
+        String tag3Id = json.getString("id");
+        Assert.assertNotNull(tag3Id);
         
         // Update document 1
         json = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
                 .post(Entity.form(new Form()
                         .param("title", "My new super document 1")
-                        .param("description", "My new super description for document 1")
+                        .param("description", "My new super description for document\r\n\u00A0\u0009 1")
                         .param("subject", "My new subject for document 1")
                         .param("identifier", "My new identifier for document 1")
                         .param("publisher", "My new publisher for document 1")
@@ -282,7 +289,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                         .param("coverage", "France")
                         .param("language", "eng")
                         .param("rights", "All Rights Reserved")
-                        .param("tags", tag2Id)), JsonObject.class);
+                        .param("tags", tag3Id)), JsonObject.class);
         Assert.assertEquals(document1Id, json.getString("id"));
         
         // Update document 2
@@ -292,7 +299,20 @@ public class TestDocumentResource extends BaseJerseyTest {
                         .param("title", "My super title document 2")
                         .param("language", "eng")), JsonObject.class);
         Assert.assertEquals(document2Id, json.getString("id"));
-        
+
+        // Export a document in PDF format
+        Response response = target().path("/document/" + document1Id + "/pdf")
+                .queryParam("margin", "10")
+                .queryParam("metadata", "true")
+                .queryParam("comments", "true")
+                .queryParam("fitimagetopage", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .get();
+        InputStream is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
+
         // Search documents by query
         json = target().path("/document/list")
                 .queryParam("search", "new")
@@ -318,7 +338,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals("All Rights Reserved", json.getString("rights"));
         tags = json.getJsonArray("tags");
         Assert.assertEquals(1, tags.size());
-        Assert.assertEquals(tag2Id, tags.getJsonObject(0).getString("id"));
+        Assert.assertEquals(tag3Id, tags.getJsonObject(0).getString("id"));
         contributors = json.getJsonArray("contributors");
         Assert.assertEquals(1, contributors.size());
         Assert.assertEquals("document1", contributors.getJsonObject(0).getString("username"));
@@ -393,28 +413,15 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a PDF file
-        String file1Id;
-        try (InputStream is = Resources.getResource("file/document.odt").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "document.odt");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentOdtToken)
-                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file1Id = json.getString("id");
-                Assert.assertNotNull(file1Id);
-            }
-        }
-        
+        String file1Id = clientUtil.addFileToDocument("file/document.odt", "document.odt", documentOdtToken, document1Id);
+
         // Search documents by query in full content
         json = target().path("/document/list")
                 .queryParam("search", "full:ipsum")
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentOdtToken)
                 .get(JsonObject.class);
-        Assert.assertTrue(json.getJsonArray("documents").size() == 1);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
         
         // Get the file thumbnail data
         Response response = target().path("/file/" + file1Id + "/data")
@@ -426,6 +433,20 @@ public class TestDocumentResource extends BaseJerseyTest {
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+
+        // Export a document in PDF format
+        response = target().path("/document/" + document1Id + "/pdf")
+                .queryParam("margin", "10")
+                .queryParam("metadata", "true")
+                .queryParam("comments", "true")
+                .queryParam("fitimagetopage", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentOdtToken)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
     }
     
     /**
@@ -452,28 +473,15 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a PDF file
-        String file1Id;
-        try (InputStream is = Resources.getResource("file/document.docx").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "document.docx");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentDocxToken)
-                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file1Id = json.getString("id");
-                Assert.assertNotNull(file1Id);
-            }
-        }
-        
+        String file1Id = clientUtil.addFileToDocument("file/document.docx", "document.docx", documentDocxToken, document1Id);
+
         // Search documents by query in full content
         json = target().path("/document/list")
                 .queryParam("search", "full:dolor")
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentDocxToken)
                 .get(JsonObject.class);
-        Assert.assertTrue(json.getJsonArray("documents").size() == 1);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
         
         // Get the file thumbnail data
         Response response = target().path("/file/" + file1Id + "/data")
@@ -485,6 +493,20 @@ public class TestDocumentResource extends BaseJerseyTest {
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+
+        // Export a document in PDF format
+        response = target().path("/document/" + document1Id + "/pdf")
+                .queryParam("margin", "10")
+                .queryParam("metadata", "true")
+                .queryParam("comments", "true")
+                .queryParam("fitimagetopage", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentDocxToken)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
     }
     
     /**
@@ -511,28 +533,15 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a PDF file
-        String file1Id;
-        try (InputStream is = Resources.getResource("file/wikipedia.pdf").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "wikipedia.pdf");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPdfToken)
-                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file1Id = json.getString("id");
-                Assert.assertNotNull(file1Id);
-            }
-        }
-        
+        String file1Id = clientUtil.addFileToDocument("file/wikipedia.pdf", "wikipedia.pdf", documentPdfToken, document1Id);
+
         // Search documents by query in full content
         json = target().path("/document/list")
                 .queryParam("search", "full:vrandecic")
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPdfToken)
                 .get(JsonObject.class);
-        Assert.assertTrue(json.getJsonArray("documents").size() == 1);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
         
         // Get the file thumbnail data
         Response response = target().path("/file/" + file1Id + "/data")
@@ -544,5 +553,265 @@ public class TestDocumentResource extends BaseJerseyTest {
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+
+        // Export a document in PDF format
+        response = target().path("/document/" + document1Id + "/pdf")
+                .queryParam("margin", "10")
+                .queryParam("metadata", "true")
+                .queryParam("comments", "true")
+                .queryParam("fitimagetopage", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPdfToken)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
+    }
+
+    /**
+     * Test plain text extraction.
+     *
+     * @throws Exception e
+     */
+    @Test
+    public void testPlainTextExtraction() throws Exception {
+        // Login document_plain
+        clientUtil.createUser("document_plain");
+        String documentPlainToken = clientUtil.login("document_plain");
+
+        // Create a document
+        long create1Date = new Date().getTime();
+        JsonObject json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
+                .put(Entity.form(new Form()
+                        .param("title", "My super title document 1")
+                        .param("description", "My super description for document 1")
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
+        String document1Id = json.getString("id");
+        Assert.assertNotNull(document1Id);
+
+        // Add a plain text file
+        String file1Id = clientUtil.addFileToDocument("file/document.txt", "document.txt", documentPlainToken, document1Id);
+
+        // Search documents by query in full content
+        json = target().path("/document/list")
+                .queryParam("search", "full:love")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
+
+        // Get the file thumbnail data
+        Response response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "thumb")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
+                .get();
+        InputStream is = (InputStream) response.getEntity();
+        byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+
+        // Get the content data
+        response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "content")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = (InputStream) response.getEntity();
+        Assert.assertTrue(new String(ByteStreams.toByteArray(is)).contains("love"));
+
+        // Export a document in PDF format
+        response = target().path("/document/" + document1Id + "/pdf")
+                .queryParam("margin", "10")
+                .queryParam("metadata", "true")
+                .queryParam("comments", "true")
+                .queryParam("fitimagetopage", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
+    }
+
+    /**
+     * Test video extraction.
+     *
+     * @throws Exception e
+     */
+    @Test
+    public void testVideoExtraction() throws Exception {
+        // Login document_video
+        clientUtil.createUser("document_video");
+        String documentVideoToken = clientUtil.login("document_video");
+
+        // Create a document
+        long create1Date = new Date().getTime();
+        JsonObject json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentVideoToken)
+                .put(Entity.form(new Form()
+                        .param("title", "My super title document 1")
+                        .param("description", "My super description for document 1")
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
+        String document1Id = json.getString("id");
+        Assert.assertNotNull(document1Id);
+
+        // Add a video file
+        String file1Id = clientUtil.addFileToDocument("file/video.webm", "video.webm", documentVideoToken, document1Id);
+
+        // Search documents by query in full content
+        json = target().path("/document/list")
+                .queryParam("search", "full:vp9")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentVideoToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
+
+        // Get the file thumbnail data
+        Response response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "thumb")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentVideoToken)
+                .get();
+        InputStream is = (InputStream) response.getEntity();
+        byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+
+        // Export a document in PDF format
+        response = target().path("/document/" + document1Id + "/pdf")
+                .queryParam("margin", "10")
+                .queryParam("metadata", "true")
+                .queryParam("comments", "true")
+                .queryParam("fitimagetopage", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentVideoToken)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
+    }
+
+    /**
+     * Test PPTX extraction.
+     *
+     * @throws Exception e
+     */
+    @Test
+    public void testPptxExtraction() throws Exception {
+        // Login document_pptx
+        clientUtil.createUser("document_pptx", 10000000); // 10MB quota
+        String documentPptxToken = clientUtil.login("document_pptx");
+
+        // Create a document
+        long create1Date = new Date().getTime();
+        JsonObject json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPptxToken)
+                .put(Entity.form(new Form()
+                        .param("title", "My super title document 1")
+                        .param("description", "My super description for document 1")
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
+        String document1Id = json.getString("id");
+        Assert.assertNotNull(document1Id);
+
+        // Add a PPTX file
+        String file1Id = clientUtil.addFileToDocument("file/apache.pptx", "apache.pptx", documentPptxToken, document1Id);
+
+        // Search documents by query in full content
+        json = target().path("/document/list")
+                .queryParam("search", "full:scaling")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPptxToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(1, json.getJsonArray("documents").size());
+
+        // Get the file thumbnail data
+        Response response = target().path("/file/" + file1Id + "/data")
+                .queryParam("size", "thumb")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPptxToken)
+                .get();
+        InputStream is = (InputStream) response.getEntity();
+        byte[] fileBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
+        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
+
+        // Export a document in PDF format
+        response = target().path("/document/" + document1Id + "/pdf")
+                .queryParam("margin", "10")
+                .queryParam("metadata", "true")
+                .queryParam("comments", "true")
+                .queryParam("fitimagetopage", "true")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPptxToken)
+                .get();
+        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
+        is = (InputStream) response.getEntity();
+        byte[] pdfBytes = ByteStreams.toByteArray(is);
+        Assert.assertTrue(pdfBytes.length > 0);
+    }
+
+    /**
+     * Test EML import.
+     *
+     * @throws Exception e
+     */
+    @Test
+    public void testEmlImport() throws Exception {
+        // Login document_eml
+        clientUtil.createUser("document_eml");
+        String documentEmlToken = clientUtil.login("document_eml");
+
+        // Import a document as EML
+        JsonObject json;
+        try (InputStream is = Resources.getResource("file/test_mail.eml").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "test_mail.eml");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                json = target()
+                        .register(MultiPartFeature.class)
+                        .path("/document/eml").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentEmlToken)
+                        .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+            }
+        }
+
+        String documentId = json.getString("id");
+        Assert.assertNotNull(documentId);
+
+        // Get the document
+        json = target().path("/document/" + documentId).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentEmlToken)
+                .get(JsonObject.class);
+        Assert.assertEquals("subject here", json.getString("title"));
+        Assert.assertTrue(json.getString("description").contains("content here"));
+        Assert.assertEquals("subject here", json.getString("subject"));
+        Assert.assertEquals("EML", json.getString("format"));
+        Assert.assertEquals("Email", json.getString("source"));
+        Assert.assertEquals("eng", json.getString("language"));
+        Assert.assertEquals(1519222261000L, json.getJsonNumber("create_date").longValue());
+
+        // Get all files from a document
+        json = target().path("/file/list")
+                .queryParam("id", documentId)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentEmlToken)
+                .get(JsonObject.class);
+        JsonArray files = json.getJsonArray("files");
+        Assert.assertEquals(2, files.size());
+        Assert.assertEquals("14_UNHCR_nd.pdf", files.getJsonObject(0).getString("name"));
+        Assert.assertEquals(251216L, files.getJsonObject(0).getJsonNumber("size").longValue());
+        Assert.assertEquals("application/pdf", files.getJsonObject(0).getString("mimetype"));
+        Assert.assertEquals("refugee status determination.pdf", files.getJsonObject(1).getString("name"));
+        Assert.assertEquals(279276L, files.getJsonObject(1).getJsonNumber("size").longValue());
+        Assert.assertEquals("application/pdf", files.getJsonObject(1).getString("mimetype"));
     }
 }

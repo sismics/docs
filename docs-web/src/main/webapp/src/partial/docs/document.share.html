@@ -1,15 +1,15 @@
 <div class="modal-header">
-  <h3>Share document</h3>
+  <h3>{{ 'document.share.title' | translate }}</h3>
 </div>
 <div class="modal-body">
   <p>
-    <label for="share-result">Name the sharing if you want to share multiple times the same document.</label>
+    <label for="share-result">{{ 'document.share.message' | translate }}</label>
     <input class="form-control" type="text" id="share-result" ng-model="name" />
   </p>
 </div>
 <div class="modal-footer">
   <button ng-click="close(name)" class="btn btn-primary">
-    <span class="glyphicon glyphicon-share"></span> Share
+    <span class="fas fa-share"></span> {{ 'document.share.submit' | translate }}
   </button>
-  <button ng-click="close(null)" class="btn btn-default">Cancel</button>
+  <button ng-click="close(null)" class="btn btn-default">{{ 'cancel' | translate }}</button>
 </div>

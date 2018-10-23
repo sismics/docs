@@ -2,11 +2,11 @@
   <ul class="list-inline">
     <li ng-repeat="relation in relations | filter: { source: true }">
       <span class="label label-info">{{ relation.title }}
-        <span class="glyphicon glyphicon-remove" ng-click="deleteRelation(relation)" ng-show="!ngDisabled"></span>
+        <span class="fas fa-times" ng-click="deleteRelation(relation)" ng-show="!ngDisabled"></span>
       </span>
     </li>
   </ul>
-  <input class="form-control" type="text" id="{{ ref }}" placeholder="Type a document title" ng-model="input" ng-disabled="ngDisabled"
-    autocomplete="off" typeahead="document.title for document in getDocumentTypeahead($viewValue)"
+  <input class="form-control" type="text" id="{{ ref }}" ng-attr-placeholder="{{ 'directive.selectrelation.typeahead' | translate }}" ng-model="input" ng-disabled="ngDisabled"
+    autocomplete="off" uib-typeahead="document.title for document in getDocumentTypeahead($viewValue)"
     typeahead-wait-ms="200" typeahead-on-select="addRelation($item)" />
 </div>

@@ -12,7 +12,19 @@
     <display-name>ImageIO service provider loader/unloader</display-name>
     <listener-class>com.twelvemonkeys.servlet.image.IIOProviderContextListener</listener-class>
   </listener>
-  
+
+  <!-- This filter handles CORS -->
+  <filter>
+    <filter-name>corsFilter</filter-name>
+    <filter-class>com.sismics.util.filter.CorsFilter</filter-class>
+    <async-supported>true</async-supported>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>corsFilter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping>
+
   <!-- This filter is used to process a couple things in the request context -->
   <filter>
     <filter-name>requestContextFilter</filter-name>
@@ -23,7 +35,6 @@
   <filter-mapping>
     <filter-name>requestContextFilter</filter-name>
     <url-pattern>/api/*</url-pattern>
-    <url-pattern>*.jsp</url-pattern>
   </filter-mapping>
 
   <!-- These filters are used to secure URLs -->

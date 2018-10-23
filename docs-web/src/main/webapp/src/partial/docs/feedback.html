@@ -1,0 +1,17 @@
+<form name="form">
+<div class="modal-header">
+  <h3>{{ 'feedback.title' | translate }}</h3>
+</div>
+<div class="modal-body">
+  <p>
+    <label for="inputContent">{{ 'feedback.message' | translate }}</label>
+    <textarea name="content" class="form-control" required id="inputContent" ng-model="content"></textarea>
+  </p>
+</div>
+<div class="modal-footer">
+  <button ng-click="close(content)" class="btn btn-primary" ng-disabled="!form.$valid">
+    <span class="fas fa-envelope"></span> {{ 'send' | translate }}
+  </button>
+  <button ng-click="close(null)" class="btn btn-default">{{ 'cancel' | translate }}</button>
+</div>
+</form>

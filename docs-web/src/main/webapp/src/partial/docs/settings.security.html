@@ -1,43 +1,33 @@
 <h1>
-  Two-factor <small>authentication</small>
+  <span translate="settings.security.title"></span>
   <span class="label" ng-class="{ 'label-success': user.totp_enabled, 'label-danger': !user.totp_enabled }">
-    {{ user.totp_enabled ? 'Enabled' : 'Disabled' }}
+    {{ user.totp_enabled ? 'enabled' : 'disabled' | translate }}
   </span>
 </h1>
 
 <div ng-if="!user.totp_enabled">
-  <p>
-    Two-factor authentication allows you to add a layer of security on your <strong>{{ appName }}</strong> account.<br/>
-    Before activating this feature, make sure you have a TOTP-compatible app on your phone:
-  </p>
+  <p translate="settings.security.message_1" translate-values="{ appName: appName }"></p>
   <ul>
-    <li>For Android, iOS, and Blackberry: <a href="https://support.google.com/accounts/answer/1066447" target="_blank">Google Authenticator</a></li>
-    <li>For Android and iOS: <a href="https://guide.duo.com/third-party-accounts" target="_blank">Duo Mobile</a></li>
-    <li>For Windows Phone: <a href="https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ" target="_blank">Authenticator</a></li>
+    <li translate="settings.security.message_google_authenticator"></li>
+    <li translate="settings.security.message_duo_mobile"></li>
+    <li translate="settings.security.message_authenticator"></li>
   </ul>
+  <p translate="settings.security.message_2" translate-values="{ appName: appName }"></p>
   <p>
-    Those applications automatically generate a validation code that changes after a certain period of time.<br/>
-    You will be required to enter this validation code each time you login on <strong>{{ appName }}</strong>.
-  </p>
-  <p>
-    <button class="btn btn-primary" ng-click="enableTotp()">Enable two-factor authentication</button>
+    <button class="btn btn-primary" ng-click="enableTotp()">{{ 'settings.security.enable_totp' | translate }}</button>
   </p>
 </div>
 
 <div ng-if="user.totp_enabled">
   <div ng-if="secret">
-    <p>Your secret key is: <strong>{{ secret }}</strong></p>
+    <p translate="settings.security.secret_key" translate-values="{ secret: secret }"></p>
     <qrcode data="otpauth://totp/Sismics%20Docs?secret={{ secret }}" size="200"></qrcode>
     <p class="text-danger">
-      <strong>Configure your TOTP app on your phone with this secret key now, you will not be able to access it later.</strong>
+      <strong>{{ 'settings.security.secret_key_warning' | translate }}</strong>
     </p>
   </div>
+  <p translate="settings.security.totp_enabled_message" translate-values="{ appName: appName }"></p>
   <p>
-    Two-factor authentication is enabled on your account.<br/>
-    Each time you login on <strong>{{ appName }}</strong>, you will be asked a validation code from your configured phone app.<br/>
-    If you loose your phone, you will not be able to login into your account but active sessions will allow you to regenerate a secrey key.
-  </p>
-  <p>
-    <button class="btn btn-warning" ng-click="disableTotp()">Disable two-factor authentication</button>
+    <button class="btn btn-warning" ng-click="disableTotp()">{{ 'settings.security.disable_totp' | translate }}</button>
   </p>
 </div>

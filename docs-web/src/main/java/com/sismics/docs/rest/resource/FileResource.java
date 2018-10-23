@@ -4,28 +4,28 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.jpa.AclDao;
-import com.sismics.docs.core.dao.jpa.DocumentDao;
-import com.sismics.docs.core.dao.jpa.FileDao;
-import com.sismics.docs.core.dao.jpa.UserDao;
-import com.sismics.docs.core.dao.jpa.dto.DocumentDto;
+import com.sismics.docs.core.dao.AclDao;
+import com.sismics.docs.core.dao.DocumentDao;
+import com.sismics.docs.core.dao.FileDao;
+import com.sismics.docs.core.dao.UserDao;
+import com.sismics.docs.core.dao.dto.DocumentDto;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
-import com.sismics.docs.core.event.FileCreatedAsyncEvent;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
+import com.sismics.docs.core.event.FileUpdatedAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.core.util.EncryptionUtil;
 import com.sismics.docs.core.util.FileUtil;
-import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
-import com.sismics.rest.util.JsonUtil;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.util.HttpUtil;
+import com.sismics.util.JsonUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeType;
-import com.sismics.util.mime.MimeTypeUtil;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -33,20 +33,19 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.*;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -76,7 +75,6 @@ public class FileResource extends BaseResource {
      * @apiError (client) NotFound Document not found
      * @apiError (server) StreamError Error reading the input file
      * @apiError (server) ErrorGuessMime Error guessing mime type
-     * @apiError (client) InvalidFileType File type not recognized
      * @apiError (client) QuotaReached Quota limit reached
      * @apiError (server) FileError Error adding a file
      * @apiPermission user
@@ -98,10 +96,6 @@ public class FileResource extends BaseResource {
         // Validate input data
         ValidationUtil.validateRequired(fileBodyPart, "file");
 
-        // Get the current user
-        UserDao userDao = new UserDao();
-        User user = userDao.getById(principal.getId());
-        
         // Get the document
         DocumentDto documentDto = null;
         if (Strings.isNullOrEmpty(documentId)) {
@@ -114,84 +108,31 @@ public class FileResource extends BaseResource {
             }
         }
         
-        // Keep unencrypted data in memory, because we will need it two times
-        byte[] fileData;
+        // Keep unencrypted data temporary on disk
+        java.nio.file.Path unencryptedFile;
+        long fileSize;
         try {
-            fileData = ByteStreams.toByteArray(fileBodyPart.getValueAs(InputStream.class));
+            unencryptedFile = AppContext.getInstance().getFileService().createTemporaryFile();
+            Files.copy(fileBodyPart.getValueAs(InputStream.class), unencryptedFile, StandardCopyOption.REPLACE_EXISTING);
+            fileSize = Files.size(unencryptedFile);
         } catch (IOException e) {
             throw new ServerException("StreamError", "Error reading the input file", e);
         }
-        InputStream fileInputStream = new ByteArrayInputStream(fileData);
-        
-        // Validate mime type
-        String name = fileBodyPart.getContentDisposition() != null ?
-                fileBodyPart.getContentDisposition().getFileName() : null;
-        String mimeType;
-        try {
-            mimeType = MimeTypeUtil.guessMimeType(fileInputStream, name);
-        } catch (IOException e) {
-            throw new ServerException("ErrorGuessMime", "Error guessing mime type", e);
-        }
 
-        // Validate quota
-        if (user.getStorageCurrent() + fileData.length > user.getStorageQuota()) {
-            throw new ClientException("QuotaReached", "Quota limit reached");
-        }
-        
         try {
-            // Get files of this document
-            FileDao fileDao = new FileDao();
-            int order = 0;
-            if (documentId != null) {
-                for (File file : fileDao.getByDocumentId(principal.getId(), documentId)) {
-                    file.setOrder(order++);
-                }
-            }
-            
-            // Create the file
-            File file = new File();
-            file.setOrder(order);
-            file.setDocumentId(documentId);
-            file.setName(name);
-            file.setMimeType(mimeType);
-            file.setUserId(principal.getId());
-            String fileId = fileDao.create(file, principal.getId());
-            
-            // Guess the mime type a second time, for open document format (first detected as simple ZIP file)
-            file.setMimeType(MimeTypeUtil.guessOpenDocumentFormat(file, fileInputStream));
-            
-            // Convert to PDF if necessary (for thumbnail and text extraction)
-            InputStream pdfIntputStream = PdfUtil.convertToPdf(file, fileInputStream, true);
-            
-            // Save the file
-            FileUtil.save(fileInputStream, pdfIntputStream, file, user.getPrivateKey());
-            
-            // Update the user quota
-            user.setStorageCurrent(user.getStorageCurrent() + fileData.length);
-            userDao.updateQuota(user);
-            
-            // Raise a new file created event and document updated event if we have a document
-            if (documentId != null) {
-                FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
-                fileCreatedAsyncEvent.setUserId(principal.getId());
-                fileCreatedAsyncEvent.setLanguage(documentDto.getLanguage());
-                fileCreatedAsyncEvent.setFile(file);
-                fileCreatedAsyncEvent.setInputStream(fileInputStream);
-                fileCreatedAsyncEvent.setPdfInputStream(pdfIntputStream);
-                ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
-                
-                DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
-                documentUpdatedAsyncEvent.setUserId(principal.getId());
-                documentUpdatedAsyncEvent.setDocumentId(documentId);
-                ThreadLocalContext.get().addAsyncEvent(documentUpdatedAsyncEvent);
-            }
+            String name = fileBodyPart.getContentDisposition() != null ?
+                    URLDecoder.decode(fileBodyPart.getContentDisposition().getFileName(), "UTF-8") : null;
+            String fileId = FileUtil.createFile(name, unencryptedFile, fileSize, documentDto == null ?
+                    null : documentDto.getLanguage(), principal.getId(), documentId);
 
             // Always return OK
             JsonObjectBuilder response = Json.createObjectBuilder()
                     .add("status", "ok")
                     .add("id", fileId)
-                    .add("size", fileData.length);
+                    .add("size", fileSize);
             return Response.ok().entity(response.build()).build();
+        } catch (IOException e) {
+            throw new ClientException(e.getMessage(), e.getMessage(), e);
         } catch (Exception e) {
             throw new ServerException("FileError", "Error adding a file", e);
         }
@@ -200,8 +141,8 @@ public class FileResource extends BaseResource {
     /**
      * Attach a file to a document.
      *
-     * @api {post} /file/:fileId Attach a file to a document
-     * @apiName PostFile
+     * @api {post} /file/:fileId/attach Attach a file to a document
+     * @apiName PostFileAttach
      * @apiGroup File
      * @apiParam {String} fileId File ID
      * @apiParam {String} id Document ID
@@ -217,7 +158,7 @@ public class FileResource extends BaseResource {
      * @return Response
      */
     @POST
-    @Path("{id: [a-z0-9\\-]+}")
+    @Path("{id: [a-z0-9\\-]+}/attach")
     public Response attach(
             @PathParam("id") String id,
             @FormParam("id") String documentId) {
@@ -226,7 +167,7 @@ public class FileResource extends BaseResource {
         }
 
         // Validate input data
-        ValidationUtil.validateRequired(documentId, "id");
+        ValidationUtil.validateRequired(documentId, "documentId");
         
         // Get the current user
         UserDao userDao = new UserDao();
@@ -251,17 +192,17 @@ public class FileResource extends BaseResource {
         file.setOrder(fileDao.getByDocumentId(principal.getId(), documentId).size());
         fileDao.update(file);
         
-        // Raise a new file created event and document updated event (it wasn't sent during file creation)
+        // Raise a new file updated event and document updated event (it wasn't sent during file creation)
         try {
             java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
-            InputStream fileInputStream = Files.newInputStream(storedFile);
-            final InputStream responseInputStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey());
-            FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
-            fileCreatedAsyncEvent.setUserId(principal.getId());
-            fileCreatedAsyncEvent.setLanguage(documentDto.getLanguage());
-            fileCreatedAsyncEvent.setFile(file);
-            fileCreatedAsyncEvent.setInputStream(responseInputStream);
-            ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
+            java.nio.file.Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey());
+            FileUtil.startProcessingFile(id);
+            FileUpdatedAsyncEvent fileUpdatedAsyncEvent = new FileUpdatedAsyncEvent();
+            fileUpdatedAsyncEvent.setUserId(principal.getId());
+            fileUpdatedAsyncEvent.setLanguage(documentDto.getLanguage());
+            fileUpdatedAsyncEvent.setFile(file);
+            fileUpdatedAsyncEvent.setUnencryptedFile(unencryptedFile);
+            ThreadLocalContext.get().addAsyncEvent(fileUpdatedAsyncEvent);
             
             DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
             documentUpdatedAsyncEvent.setUserId(principal.getId());
@@ -270,7 +211,110 @@ public class FileResource extends BaseResource {
         } catch (Exception e) {
             throw new ServerException("AttachError", "Error attaching file to document", e);
         }
-        
+
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Update a file.
+     *
+     * @api {post} /file/:id Update a file
+     * @apiName PostFile
+     * @apiGroup File
+     * @apiParam {String} id File ID
+     * @apiParam {String} name Name
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission user
+     * @apiVersion 1.6.0
+     *
+     * @param id File ID
+     * @return Response
+     */
+    @POST
+    @Path("{id: [a-z0-9\\-]+}")
+    public Response update(@PathParam("id") String id,
+                           @FormParam("name") String name) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get the file
+        File file = findFile(id, null);
+
+        // Validate input data
+        name = ValidationUtil.validateLength(name, "name", 1, 200, false);
+
+        // Update the file
+        FileDao fileDao = new FileDao();
+        file.setName(name);
+        fileDao.update(file);
+
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Process a file manually.
+     *
+     * @api {post} /file/:id/process Process a file manually
+     * @apiName PostFileProcess
+     * @apiGroup File
+     * @apiParam {String} id File ID
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiError (server) ProcessingError Processing error
+     * @apiPermission user
+     * @apiVersion 1.6.0
+     *
+     * @param id File ID
+     * @return Response
+     */
+    @POST
+    @Path("{id: [a-z0-9\\-]+}/process")
+    public Response process(@PathParam("id") String id) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get the document and the file
+        DocumentDao documentDao = new DocumentDao();
+        FileDao fileDao = new FileDao();
+        File file = fileDao.getFile(id);
+        if (file == null) {
+            throw new NotFoundException();
+        }
+        DocumentDto documentDto = documentDao.getDocument(file.getDocumentId(), PermType.WRITE, getTargetIdList(null));
+        if (documentDto == null) {
+            throw new NotFoundException();
+        }
+
+        // Get the creating user
+        UserDao userDao = new UserDao();
+        User user = userDao.getById(file.getUserId());
+
+        // Start the processing asynchronously
+        try {
+            java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
+            java.nio.file.Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey());
+            FileUtil.startProcessingFile(id);
+            FileUpdatedAsyncEvent event = new FileUpdatedAsyncEvent();
+            event.setUserId(principal.getId());
+            event.setLanguage(documentDto.getLanguage());
+            event.setFile(file);
+            event.setUnencryptedFile(unencryptedFile);
+            ThreadLocalContext.get().addAsyncEvent(event);
+        } catch (Exception e) {
+            throw new ServerException("ProcessingError", "Error processing this file", e);
+        }
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
@@ -333,7 +377,7 @@ public class FileResource extends BaseResource {
     /**
      * Returns files linked to a document or not linked to any document.
      *
-     * @api {post} /file/list Get files
+     * @api {get} /file/list Get files
      * @apiName GetFileList
      * @apiGroup File
      * @apiParam {String} id Document ID
@@ -342,6 +386,7 @@ public class FileResource extends BaseResource {
      * @apiSuccess {String} files.id ID
      * @apiSuccess {String} files.mimetype MIME type
      * @apiSuccess {String} files.name File name
+     * @apiSuccess {String} files.processing True if the file is currently processing
      * @apiSuccess {String} files.document_id Document ID
      * @apiSuccess {String} files.create_date Create date (timestamp)
      * @apiSuccess {String} files.size File size (in bytes)
@@ -380,6 +425,7 @@ public class FileResource extends BaseResource {
             try {
                 files.add(Json.createObjectBuilder()
                         .add("id", fileDb.getId())
+                        .add("processing", FileUtil.isProcessingFile(fileDb.getId()))
                         .add("name", JsonUtil.nullable(fileDb.getName()))
                         .add("mimetype", fileDb.getMimeType())
                         .add("document_id", JsonUtil.nullable(fileDb.getDocumentId()))
@@ -421,24 +467,10 @@ public class FileResource extends BaseResource {
         }
 
         // Get the file
-        FileDao fileDao = new FileDao();
-        AclDao aclDao = new AclDao();
-        File file = fileDao.getFile(id);
-        if (file == null) {
-            throw new NotFoundException();
-        }
-        
-        if (file.getDocumentId() == null) {
-            // It's an orphan file
-            if (!file.getUserId().equals(principal.getId())) {
-                // But not ours
-                throw new ForbiddenClientException();
-            }
-        } else if (!aclDao.checkPermission(file.getDocumentId(), PermType.WRITE, getTargetIdList(null))) {
-            throw new NotFoundException();
-        }
-        
+        File file = findFile(id, null);
+
         // Delete the file
+        FileDao fileDao = new FileDao();
         fileDao.delete(file.getId(), principal.getId());
         
         // Update the user quota
@@ -475,12 +507,12 @@ public class FileResource extends BaseResource {
     /**
      * Returns a file.
      *
-     * @api {delete} /file/:id/data Get a file data
+     * @api {get} /file/:id/data Get a file data
      * @apiName GetFile
      * @apiGroup File
      * @apiParam {String} id File ID
      * @apiParam {String} share Share ID
-     * @apiParam {String="web","thumb"} [size] Size variation
+     * @apiParam {String="web","thumb","content"} [size] Size variation
      * @apiSuccess {Object} file The file data is the whole response
      * @apiError (client) SizeError Size must be web or thumb
      * @apiError (client) ForbiddenError Access denied or document not visible
@@ -500,46 +532,31 @@ public class FileResource extends BaseResource {
             @QueryParam("size") String size) {
         authenticate();
         
-        if (size != null) {
-            if (!Lists.newArrayList("web", "thumb").contains(size)) {
-                throw new ClientException("SizeError", "Size must be web or thumb");
-            }
-        }
-        
-        // Get the file
-        FileDao fileDao = new FileDao();
-        UserDao userDao = new UserDao();
-        File file = fileDao.getFile(fileId);
-        if (file == null) {
-            throw new NotFoundException();
-        }
-        
-        if (file.getDocumentId() == null) {
-            // It's an orphan file
-            if (!file.getUserId().equals(principal.getId())) {
-                // But not ours
-                throw new ForbiddenClientException();
-            }
-        } else {
-            // Check document accessibility
-            AclDao aclDao = new AclDao();
-            if (!aclDao.checkPermission(file.getDocumentId(), PermType.READ, getTargetIdList(shareId))) {
-                throw new ForbiddenClientException();
-            }
+        if (size != null && !Lists.newArrayList("web", "thumb", "content").contains(size)) {
+            throw new ClientException("SizeError", "Size must be web, thumb or content");
         }
 
-        
+        // Get the file
+        File file = findFile(fileId, shareId);
+
         // Get the stored file
+        UserDao userDao = new UserDao();
         java.nio.file.Path storedFile;
         String mimeType;
         boolean decrypt;
         if (size != null) {
+            if (size.equals("content")) {
+                return Response.ok(Strings.nullToEmpty(file.getContent()))
+                        .header(HttpHeaders.CONTENT_TYPE, "text/plain")
+                        .build();
+            }
+
             storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_" + size);
             mimeType = MimeType.IMAGE_JPEG; // Thumbnails are JPEG
             decrypt = true; // Thumbnails are encrypted
             if (!Files.exists(storedFile)) {
                 try {
-                    storedFile = Paths.get(getClass().getResource("/image/file.png").toURI());
+                    storedFile = Paths.get(getClass().getResource("/image/file-" + size + ".png").toURI());
                 } catch (URISyntaxException e) {
                     // Ignore
                 }
@@ -564,18 +581,15 @@ public class FileResource extends BaseResource {
             final InputStream responseInputStream = decrypt ?
                     EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey()) : fileInputStream;
                     
-            stream = new StreamingOutput() {
-                @Override
-                public void write(OutputStream outputStream) throws IOException, WebApplicationException {
+            stream = outputStream -> {
+                try {
+                    ByteStreams.copy(responseInputStream, outputStream);
+                } finally {
                     try {
-                        ByteStreams.copy(responseInputStream, outputStream);
-                    } finally {
-                        try {
-                            responseInputStream.close();
-                            outputStream.close();
-                        } catch (IOException e) {
-                            // Ignore
-                        }
+                        responseInputStream.close();
+                        outputStream.close();
+                    } catch (IOException e) {
+                        // Ignore
                     }
                 }
             };
@@ -583,13 +597,21 @@ public class FileResource extends BaseResource {
             return Response.status(Status.SERVICE_UNAVAILABLE).build();
         }
 
-        return Response.ok(stream)
-                .header("Content-Disposition", "inline; filename=" + file.getFullName("data"))
-                .header("Content-Type", mimeType)
-                .header("Expires", new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z").format(new Date().getTime() + 3600000 * 24))
-                .build();
+        Response.ResponseBuilder builder = Response.ok(stream)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFullName("data") + "\"")
+                .header(HttpHeaders.CONTENT_TYPE, mimeType);
+        if (decrypt) {
+            // Cache real files
+            builder.header(HttpHeaders.CACHE_CONTROL, "private")
+                    .header(HttpHeaders.EXPIRES, HttpUtil.buildExpiresHeader(3_600_000L * 24L * 365L));
+        } else {
+            // Do not cache the temporary thumbnail
+            builder.header(HttpHeaders.CACHE_CONTROL, "no-store, must-revalidate")
+                    .header(HttpHeaders.EXPIRES, "0");
+        }
+        return builder.build();
     }
-    
+
     /**
      * Returns all files from a document, zipped.
      *
@@ -628,32 +650,29 @@ public class FileResource extends BaseResource {
         final List<File> fileList = fileDao.getByDocumentId(principal.getId(), documentId);
         
         // Create the ZIP stream
-        StreamingOutput stream = new StreamingOutput() {
-            @Override
-            public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
-                    // Add each file to the ZIP stream
-                    int index = 0;
-                    for (File file : fileList) {
-                        java.nio.file.Path storedfile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
-                        InputStream fileInputStream = Files.newInputStream(storedfile);
-                        
-                        // Add the decrypted file to the ZIP stream
-                        // Files are encrypted by the creator of them
-                        User user = userDao.getById(file.getUserId());
-                        try (InputStream decryptedStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey())) {
-                            ZipEntry zipEntry = new ZipEntry(file.getFullName(Integer.toString(index)));
-                            zipOutputStream.putNextEntry(zipEntry);
-                            ByteStreams.copy(decryptedStream, zipOutputStream);
-                            zipOutputStream.closeEntry();
-                        } catch (Exception e) {
-                            throw new WebApplicationException(e);
-                        }
-                        index++;
+        StreamingOutput stream = outputStream -> {
+            try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
+                // Add each file to the ZIP stream
+                int index = 0;
+                for (File file : fileList) {
+                    java.nio.file.Path storedfile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+                    InputStream fileInputStream = Files.newInputStream(storedfile);
+
+                    // Add the decrypted file to the ZIP stream
+                    // Files are encrypted by the creator of them
+                    User user = userDao.getById(file.getUserId());
+                    try (InputStream decryptedStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey())) {
+                        ZipEntry zipEntry = new ZipEntry(index + "-" + file.getFullName(Integer.toString(index)));
+                        zipOutputStream.putNextEntry(zipEntry);
+                        ByteStreams.copy(decryptedStream, zipOutputStream);
+                        zipOutputStream.closeEntry();
+                    } catch (Exception e) {
+                        throw new WebApplicationException(e);
                     }
+                    index++;
                 }
-                outputStream.close();
             }
+            outputStream.close();
         };
         
         // Write to the output
@@ -661,5 +680,35 @@ public class FileResource extends BaseResource {
                 .header("Content-Type", "application/zip")
                 .header("Content-Disposition", "attachment; filename=\"" + documentDto.getTitle().replaceAll("\\W+", "_") + ".zip\"")
                 .build();
+    }
+
+    /**
+     * Find a file with access rights checking.
+     *
+     * @param fileId File ID
+     * @param shareId Share ID
+     * @return File
+     */
+    private File findFile(String fileId, String shareId) {
+        FileDao fileDao = new FileDao();
+        File file = fileDao.getFile(fileId);
+        if (file == null) {
+            throw new NotFoundException();
+        }
+
+        if (file.getDocumentId() == null) {
+            // It's an orphan file
+            if (!file.getUserId().equals(principal.getId())) {
+                // But not ours
+                throw new ForbiddenClientException();
+            }
+        } else {
+            // Check document accessibility
+            AclDao aclDao = new AclDao();
+            if (!aclDao.checkPermission(file.getDocumentId(), PermType.READ, getTargetIdList(shareId))) {
+                throw new ForbiddenClientException();
+            }
+        }
+        return file;
     }
 }

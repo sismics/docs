@@ -1,37 +1,35 @@
+<script type="text/ng-template" id="tag-tree-item">
+  <span ng-class="{ active: $stateParams.id == tag.id }">
+    <span class="fas fa-tag" ng-style="{ 'color': tag.color }"></span>
+    <a href="#/tag/{{ tag.id }}">
+      {{ tag.name }}
+    </a>
+  </span>
+  <ul class="list-unstyled">
+    <li ng-repeat="tag in getChildrenTags(tag.id)" ng-include="'tag-tree-item'"></li>
+  </ul>
+</script>
+
 <div class="row">
   <div class="col-md-4">
-    <div class="well">
+    <div class="well well-3d">
       <form name="tagForm" novalidate>
-        <p class="input-group" ng-class="{ 'has-error': !tagForm.name.$valid }">
+        <p class="input-group" ng-class="{ 'has-error': !tagForm.name.$valid && tagForm.$dirty }">
           <span colorpicker class="input-group-addon btn btn-default" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
-          <input type="text" name="name" placeholder="New tag" class="form-control"
+          <input type="text" name="name" ng-attr-placeholder="{{ 'tag.new_tag' | translate }}" class="form-control"
             ng-maxlength="36" required ng-model="tag.name" ui-validate="{ space: '!$value || $value.indexOf(\' \') == -1' }">
-          <span class="input-group-addon btn btn-primary" ng-disabled="!tagForm.$valid" ng-click="addTag()">Add</span>
+          <span class="input-group-addon btn btn-primary" ng-disabled="!tagForm.$valid" ng-click="addTag()">{{ 'add' | translate }}</span>
         </p>
-        <span class="help-block" ng-show="tagForm.name.$error.space">Space are not allowed</span>
+        <span class="text-danger" ng-show="tagForm.name.$error.space && tagForm.$dirty">{{ 'validation.no_space' | translate }}</span>
       </form>
 
-      <p class="input-group">
-        <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-        <input type="search" class="form-control" placeholder="Search" ng-model="search.name">
-      </p>
+      <ul class="tag-tree">
+        <li ng-repeat="tag in getChildrenTags()" ng-include="'tag-tree-item'"></li>
+      </ul>
 
-      <table class="row table table-striped table-hover table-tags">
-        <tbody>
-          <tr ng-repeat="tag in tags | filter:search" class="pointer"
-              ng-class="{ active: $stateParams.id == tag.id }" ng-click="viewTag(tag.id)">
-            <td>
-              <span class="glyphicon glyphicon-tag"></span>&nbsp;
-              <span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span>
-            </td>
-            <td class="col-xs-1">
-              <a href="#/tag/{{ tag.id }}" class="btn btn-primary pull-right" title="Edit tag">
-                <span class="glyphicon glyphicon-pencil"></span>
-              </a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="well-3d-background">
+        <span class="fas fa-tags"></span>
+      </div>
     </div>
   </div>
 

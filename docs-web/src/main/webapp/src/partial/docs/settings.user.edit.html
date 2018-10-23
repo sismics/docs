@@ -1,45 +1,41 @@
-<img src="img/loader.gif" ng-show="!user && isEdit()" />
+<span class="fas fa-circle-notch fa-spin" ng-show="!user && isEdit()"></span>
 
 <div ng-show="user || !isEdit()">
-  <h2 ng-show="isEdit()">Edit
-    <small>"{{ user.username }}"</small>
-  </h2>
-  <h2 ng-show="!isEdit()">Add
-    <small>user</small>
-  </h2>
-  <form class="form-horizontal" name="editUserForm" novalidate>
-    <div class="form-group" ng-class="{ 'has-error': !editUserForm.username.$valid, success: editUserForm.username.$valid }">
-      <label class="col-sm-2 control-label" for="inputUsername">Username</label>
-  
+  <h2 ng-show="isEdit()" translate="settings.user.edit.edit_user_title" translate-values="{ username: user.username }"></h2>
+  <h2 ng-show="!isEdit()" translate="settings.user.edit.add_user_title"></h2>
+
+  <form class="form-horizontal" name="editUserForm" novalidate autocomplete="off">
+    <div class="form-group" ng-class="{ 'has-error': !editUserForm.userUsername.$valid && editUserForm.$dirty, success: editUserForm.userUsername.$valid }">
+      <label class="col-sm-2 control-label" for="inputUserUsername">{{ 'settings.user.edit.username' | translate }}</label>
       <div class="col-sm-7">
-        <input name="username" type="text" id="inputUsername" required ng-disabled="isEdit()" class="form-control"
-               ng-minlength="3" ng-maxlength="50" placeholder="Username" ng-model="user.username"/>
+        <input name="userUsername" type="text" id="inputUserUsername" required ng-disabled="isEdit()" class="form-control"
+               ng-minlength="3" ng-maxlength="50" ng-attr-placeholder="{{ 'settings.user.edit.username' | translate }}" ng-model="user.username"/>
       </div>
 
       <div class="col-sm-3">
-        <span class="help-block" ng-show="editUserForm.username.$error.required">Required</span>
-        <span class="help-block" ng-show="editUserForm.username.$error.minlength">Too short</span>
-        <span class="help-block" ng-show="editUserForm.username.$error.maxlength">Too long</span>
+        <span class="help-block" ng-show="editUserForm.userUsername.$error.required && editUserForm.$dirty">{{ 'validation.required' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userUsername.$error.minlength && editUserForm.$dirty">{{ 'validation.too_short' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userUsername.$error.maxlength && editUserForm.$dirty">{{ 'validation.too_long' | translate }}</span>
       </div>
     </div>
-    <div class="form-group" ng-class="{ 'has-error': !editUserForm.email.$valid, success: editUserForm.email.$valid }">
-      <label class="col-sm-2 control-label" for="inputEmail">E-mail</label>
-  
+
+    <div class="form-group" ng-class="{ 'has-error': !editUserForm.userEmail.$valid && editUserForm.$dirty, success: editUserForm.userEmail.$valid }">
+      <label class="col-sm-2 control-label" for="inputEmail">{{ 'settings.user.edit.email' | translate }}</label>
       <div class="col-sm-7">
-        <input name="email" type="email" id="inputEmail" required class="form-control"
-               ng-minlength="1" ng-maxlength="100" placeholder="E-mail" ng-model="user.email"/>
+        <input name="userEmail" type="email" id="inputEmail" required class="form-control"
+               ng-minlength="1" ng-maxlength="100" ng-attr-placeholder="{{ 'settings.user.edit.email' | translate }}" ng-model="user.email"/>
       </div>
 
       <div class="col-sm-3">
-        <span class="help-block" ng-show="editUserForm.email.$error.required">Required</span>
-        <span class="help-block" ng-show="editUserForm.email.$error.email">Must be a valid e-mail</span>
-        <span class="help-block" ng-show="editUserForm.email.$error.minlength">Too short</span>
-        <span class="help-block" ng-show="editUserForm.email.$error.maxlength">Too long</span>
+        <span class="help-block" ng-show="editUserForm.userEmail.$error.required && editUserForm.$dirty">{{ 'validation.required' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userEmail.$error.email && editUserForm.$dirty">{{ 'validation.email' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userEmail.$error.minlength && editUserForm.$dirty">{{ 'validation.too_short' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userEmail.$error.maxlength && editUserForm.$dirty">{{ 'validation.too_long' | translate }}</span>
       </div>
     </div>
-    <div class="form-group" ng-if="user.groups.length > 0">
-      <label class="col-sm-2 control-label">Groups</label>
 
+    <div class="form-group" ng-show="user.groups.length > 0">
+      <label class="col-sm-2 control-label">{{ 'settings.user.edit.groups' | translate }}</label>
       <div class="col-sm-7">
         <span ng-repeat="group in user.groups">
           <a class="btn btn-default"
@@ -47,55 +43,78 @@
         </span>
       </div>
     </div>
-    <div class="form-group" ng-class="{ 'has-error': !editUserForm.storage_quota.$valid, success: editUserForm.storage_quota.$valid }">
-      <label class="col-sm-2 control-label" for="inputQuota">Storage quota</label>
 
+    <div class="form-group" ng-class="{ 'has-error': !editUserForm.storage_quota.$valid && editUserForm.$dirty, success: editUserForm.storage_quota.$valid }">
+      <label class="col-sm-2 control-label" for="inputQuota">{{ 'settings.user.edit.storage_quota' | translate }}</label>
       <div class="col-sm-7">
         <div class="input-group">
           <input name="storage_quota" type="number" id="inputQuota" required class="form-control"
-                 ng-pattern="/[0-9]*/" placeholder="Storage quota (in MB)" ng-model="user.storage_quota"/>
-          <div class="input-group-addon">MB</div>
+                 ng-pattern="/[0-9]*/" ng-attr-placeholder="{{ 'settings.user.edit.storage_quota_placeholder' | translate }}" ng-model="user.storage_quota"/>
+          <div class="input-group-addon">{{ 'filter.filesize.mb' | translate }}</div>
         </div>
       </div>
 
       <div class="col-sm-3">
-        <span class="help-block" ng-show="editUserForm.storage_quota.$error.pattern">Number required</span>
+        <span class="help-block" ng-show="editUserForm.storage_quota.$error.pattern && editUserForm.$dirty">{{ 'validation.number' | translate }}</span>
       </div>
     </div>
-    <div class="form-group" ng-if="user.username != 'guest'" ng-class="{ 'has-error': !editUserForm.password.$valid, success: editUserForm.password.$valid }">
-      <label class="col-sm-2 control-label" for="inputPassword">Password</label>
-  
+
+    <div class="form-group" ng-if="user.username != 'guest'"
+      ng-class="{ 'has-error': !editUserForm.userPassword.$valid && editUserForm.$dirty, success: editUserForm.userPassword.$valid }">
+      <label class="col-sm-2 control-label" for="inputUserPassword">{{ 'settings.user.edit.password' | translate }}</label>
       <div class="col-sm-7">
-        <input name="password" type="password" id="inputPassword" ng-required="!isEdit()" class="form-control"
-               ng-minlength="8" ng-maxlength="50" placeholder="Password" ng-model="user.password"/>
+        <input type="password" style="display: none;"/><!-- Hack to disable autofill -->
+        <input name="userPassword" type="password" id="inputUserPassword" ng-required="!isEdit()" class="form-control"
+               ng-minlength="8" ng-maxlength="50" ng-attr-placeholder="{{ 'settings.user.edit.password' | translate }}" ng-model="user.password"/>
       </div>
 
       <div class="col-sm-3">
-        <span class="help-block" ng-show="editUserForm.password.$error.required">Required</span>
-        <span class="help-block" ng-show="editUserForm.password.$error.minlength">Too short</span>
-        <span class="help-block" ng-show="editUserForm.password.$error.maxlength">Too long</span>
+        <span class="help-block" ng-show="editUserForm.userPassword.$error.required && editUserForm.$dirty">{{ 'validation.required' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userPassword.$error.minlength && editUserForm.$dirty">{{ 'validation.too_short' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userPassword.$error.maxlength && editUserForm.$dirty">{{ 'validation.too_long' | translate }}</span>
       </div>
     </div>
-    <div class="form-group" ng-if="user.username != 'guest'" ng-class="{ 'has-error': !editUserForm.passwordconfirm.$valid, success: editUserForm.passwordconfirm.$valid }">
-      <label class="col-sm-2 -label" for="inputPasswordConfirm">Password (confirm)</label>
-  
+
+    <div class="form-group" ng-if="user.username != 'guest'"
+      ng-class="{ 'has-error': !editUserForm.passwordconfirm.$valid && editUserForm.$dirty, success: editUserForm.passwordconfirm.$valid }">
+      <label class="col-sm-2 control-label" for="inputPasswordConfirm">{{ 'settings.user.edit.password_confirm' | translate }}</label>
       <div class="col-sm-7">
         <input name="passwordconfirm" type="password" id="inputPasswordConfirm" ng-required="!isEdit()" class="form-control"
                ui-validate="'$value == user.password'" ui-validate-watch="'user.password'"
-               placeholder="Password (confirm)" ng-model="user.passwordconfirm"/>
+               ng-attr-placeholder="{{ 'settings.user.edit.password_confirm' | translate }}" ng-model="user.passwordconfirm"/>
       </div>
 
       <div class="col-sm-3">
-        <span class="help-block" ng-show="editUserForm.passwordconfirm.$error.validator">Password and password confirmation must match</span>
+        <span class="help-block" ng-show="editUserForm.passwordconfirm.$error.validator && editUserForm.$dirty">{{ 'validation.password_confirm' | translate }}</span>
       </div>
     </div>
+
+    <div class="form-group" ng-show="isEdit() && user.username != 'admin' && user.username != 'guest'">
+      <div class="col-sm-offset-2 col-sm-10">
+        <div class="checkbox text-danger">
+          <label>
+            <input name="disabled" type="checkbox" ng-model="user.disabled" />
+            <strong>{{ 'settings.user.edit.disabled' | translate }}</strong>
+          </label>
+        </div>
+      </div>
+    </div>
+
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editUserForm.$valid">
-          <span class="glyphicon glyphicon-pencil"></span> {{ isEdit() ? 'Edit' : 'Add' }}
+          <span class="fas fa-pencil-alt"></span> {{ isEdit() ? 'save' : 'add' | translate }}
         </button>
-        <button type="button" class="btn btn-danger" ng-click="remove()" ng-show="isEdit() && user.username != 'guest'">
-          <span class="glyphicon glyphicon-trash"></span> Delete
+        <button type="button" class="btn btn-danger" ng-click="remove()" ng-show="isEdit() && user.username != 'admin' && user.username != 'guest'">
+          <span class="fas fa-trash"></span> {{ 'delete' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="button" class="btn btn-warning" ng-click="passwordReset()" ng-show="isEdit() && user.username != 'guest'">
+          <span class="fas fa-redo-alt"></span> {{ 'settings.user.edit.password_reset_btn' | translate }}
         </button>
       </div>
     </div>

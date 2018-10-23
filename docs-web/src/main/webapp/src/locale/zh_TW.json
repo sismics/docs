@@ -1,0 +1,510 @@
+{
+  "login": {
+    "username": "用戶名",
+    "password": "密碼",
+    "validation_code_required": "請輸入驗證碼",
+    "validation_code_title": "您的帳號已經激活了雙身份驗證. 請輸入您配置手機app的提供的驗證碼.",
+    "validation_code": "驗證碼",
+    "remember_me": "記住我",
+    "submit": "登錄",
+    "login_as_guest": "以遊客身份登錄",
+    "login_failed_title": "登錄失敗",
+    "login_failed_message": "用戶名或密碼不正確",
+    "password_lost_btn": "密碼丟失？",
+    "password_lost_sent_title": "發送密碼重置郵件",
+    "password_lost_sent_message": "一封電子郵件已經發送到<strong>{{username}}</ strong>以重置您的密碼",
+    "password_lost_error_title": "密碼重置錯誤",
+    "password_lost_error_message": "無法發送密碼重置電子郵件，請聯繫您的管理員進行手動重置"
+  },
+  "passwordlost": {
+    "title": "密碼丟失",
+    "message": "請輸入您的用戶名以接收密碼重置鏈接。 如果您不記得您的用戶名，請聯繫您的管理員",
+    "submit": "重置我的密碼"
+  },
+  "passwordreset": {
+    "message": "請輸入一個新的密碼",
+    "submit": "更改我的密碼",
+    "error_title": "更改密碼出錯",
+    "error_message": "您的密碼恢復請求已超時，請在登錄頁面上提出新的請求"
+  },
+  "index": {
+    "toggle_navigation": "切換導航",
+    "nav_documents": "文檔",
+    "nav_tags": "標籤",
+    "nav_users_groups": "用戶 & 群組",
+    "error_info": "{{ count }} 新錯誤",
+    "logged_as": "以 {{ username }}登錄",
+    "nav_settings": "設置",
+    "logout": "退出",
+    "global_quota_warning": "<strong>提醒！</ strong>存儲空間已經使用{{current | number: 0}} MB（{{percent | number: 1}}％）總計{{total | number: 0}} MB"
+  },
+  "document": {
+    "search_simple": "簡單搜索",
+    "search_fulltext": "全文搜索",
+    "search_creator": "創建者",
+    "search_language": "語言",
+    "search_before_date": "在該日期之前",
+    "search_after_date": "在該日期之後",
+    "search_tags": "標籤",
+    "search_clear": "清除",
+    "any_language": "任何語言",
+    "add_document": "添加一個文檔",
+    "import_eml": "從電子郵件導入（EML格式）",
+    "tags": "標籤",
+    "no_tags": "無標籤",
+    "no_documents": "數據庫中無該文檔",
+    "search": "搜索",
+    "search_empty": "無匹配 <strong>\"{{ search }}\"</strong>",
+    "shared": "分享",
+    "title": "標題",
+    "description": "介绍",
+    "contributors": "貢獻者",
+    "language": "語言",
+    "creation_date": "創建時間",
+    "subject": "主題",
+    "identifier": "識別碼",
+    "publisher": "發布者",
+    "format": "格式",
+    "source": "來源",
+    "type": "類型",
+    "coverage": "覆蓋",
+    "rights": "權利",
+    "relations": "關聯",
+    "page_size": "頁面大小",
+    "page_size_10": "10 每頁",
+    "page_size_20": "20 每頁",
+    "page_size_30": "20 每頁",
+    "upgrade_quota": "如需要升級您的限額, 請聯繫管理員",
+    "quota": "{{ current | number: 0 }}MB ({{ current | number: 1 }}%) 已使用 {{ total | number: 0 }}MB",
+    "count": "{{ count }} 文檔找到",
+    "view": {
+      "delete_comment_title": "刪除評論",
+      "delete_comment_message": "您是否確認刪除此評論?",
+      "delete_document_title": "刪除文檔",
+      "delete_document_message": "您是否確認刪除此文檔?",
+      "shared_document_title": "共享文檔",
+      "shared_document_message": "您可以直接通過發送該鏈接來分享該文檔. 注意：任何有該鏈接的人員均可查看該文檔.<br/><input class=\"form-control share-link\" type=\"text\" readonly=\"readonly\" value=\"{{ link }}\" onclick=\"this.select(); document.execCommand('copy');\" />",
+      "not_found": "文檔未找到",
+      "forbidden": "無權限",
+      "download_files": "下載文檔",
+      "export_pdf": "以PDF格式導出",
+      "by_creator": "由",
+      "comments": "評論",
+      "no_comments": "此文檔暫無評論",
+      "add_comment": "添加評論",
+      "error_loading_comments": "評論加載失敗",
+      "workflow_current": "當前工作流程步驟",
+      "workflow_comment": "添加工作流程評論",
+      "workflow_validated_title": "工作流程步驟已驗證",
+      "workflow_validated_message": "工作流步驟已成功驗證。",
+      "content": {
+        "content": "內容",
+        "delete_file_title": "刪除文檔",
+        "delete_file_message": "您是否確認刪除此文檔?",
+        "upload_pending": "等待中...",
+        "upload_progress": "上傳中...",
+        "upload_error": "上傳失敗",
+        "upload_error_quota": "已達到您的限額",
+        "drop_zone": "將文件拖放至此處上傳",
+        "add_files": "添加文件"
+      },
+      "workflow": {
+        "workflow": "工作流程",
+        "message": "使用工作流程與您的組織的人員驗證或驗證您的文檔。",
+        "workflow_start_label": "哪個工作流程啟動？",
+        "add_more_workflow": "添加更多工作流程",
+        "start_workflow_submit": "開始工作流程",
+        "full_name": "<strong>{{ name }}</strong>開始於{{ create_date | date }}",
+        "cancel_workflow": "取消當前的工作流程",
+        "cancel_workflow_title": "取消工作流程",
+        "cancel_workflow_message": "你真的想取消當前的工作流程嗎？"
+      },
+      "permissions": {
+        "permissions": "權限",
+        "message": "權限可以直接應用於此文檔, 或從 <a href=\"#/tag\">標籤</a>獲取.",
+        "title": "該文檔權限",
+        "inherited_tags": "由標籤獲取的權限",
+        "acl_source": "從",
+        "acl_target": "為",
+        "acl_permission": "權限"
+      },
+      "activity": {
+        "activity": "活動",
+        "message": "對該文檔的任何更改都將記錄於此."
+      }
+    },
+    "edit": {
+      "document_edited_with_errors": "文檔編輯成功但部分文件沒能上傳",
+      "document_added_with_errors": "文檔成功添加但部分文件沒能上傳",
+      "document_added": "文檔已成功添加 (包含 {{ count }} 文件)",
+      "quota_reached": "達到限額",
+      "primary_metadata": "主要元數據",
+      "title_placeholder": "資源的性質或類型",
+      "description_placeholder": "資源的賬戶",
+      "new_files": "新文件",
+      "orphan_files": "+ {{ count }} 文件",
+      "additional_metadata": "附加元數據",
+      "subject_placeholder": "資源話題",
+      "identifier_placeholder": "在給定的上下文中對資源的明確引用",
+      "publisher_placeholder": "負責提供資源的實體",
+      "format_placeholder": "資源的文件格式, 物理介質或維度",
+      "source_placeholder": "從中導出所描述的資源的相關來源",
+      "uploading_files": "上傳文件中..."
+    },
+    "default": {
+      "upload_pending": "等待中...",
+      "upload_progress": "上傳中...",
+      "upload_error": "上傳失敗",
+      "upload_error_quota": "達到限額",
+      "quick_upload": "快速上傳",
+      "drop_zone": "將文件拖放至此處上傳",
+      "add_files": "添加文件",
+      "add_new_document": "添加至新文檔",
+      "latest_activity": "最新活動",
+      "footer_sismics": "<span class=\"fas fa-heart\"></span> 由 <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a> 精心製作",
+      "api_documentation": "API 存檔",
+      "feedback": "歡迎提供反饋意見"
+    },
+    "pdf": {
+      "export_title": "以PDF形式導出",
+      "export_metadata": "導出元數據",
+      "export_comments": "導出評論",
+      "fit_to_page": "使圖像適合頁面",
+      "margin": "餘量",
+      "millimeter": "毫米"
+    },
+    "share": {
+      "title": "共享文檔",
+      "message": "如果您想多次共享同一文檔，請將共享命名.",
+      "submit": "共享"
+    }
+  },
+  "file": {
+    "view": {
+      "previous": "上一個",
+      "next": "下一個",
+      "not_found": "文件未找到"
+    }
+  },
+  "tag": {
+    "new_tag": "新標籤",
+    "search": "搜索",
+    "edit_tag": "更改標籤",
+    "default": {
+      "title": "標籤",
+      "message_1": "<strong>標籤</strong> 是和文檔相關的標示.",
+      "message_2": "一個文檔可以由多個標籤標記, 同時一個標籤可以運用於多個文檔.",
+      "message_3": "使用該 <span class=\"fas fa-pencil-alt\"></span> 按鈕, 您可以編輯標籤的權限.",
+      "message_4": "如果一個標籤可以被另一個用戶或組讀取, 相關的文件也可以被這些人閱讀.",
+      "message_5": "例如, 用一個標籤標記您公司的文檔 <span class=\"label label-info\">我的公司</span> 並同時添加權限 <strong>可讀</strong> 給一個群組的 <span class=\"btn btn-default\">員工</span>"
+    },
+    "edit": {
+      "delete_tag_title": "刪除標籤",
+      "delete_tag_message": "您是否確認刪除該標籤?",
+      "name": "名稱",
+      "color": "顏色",
+      "parent": "母",
+      "info": "此標記的權限也將應用於已標記的文檔 <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>"
+    }
+  },
+  "group": {
+    "profile": {
+      "members": "組成員",
+      "no_members": "無組成員",
+      "related_links": "相關鏈接",
+      "edit_group": "編輯 {{ name }} 組"
+    }
+  },
+  "user": {
+    "profile": {
+      "groups": "群組",
+      "quota_used": "已使用配額",
+      "percent_used": "{{ percent | number: 0 }}% 已使用",
+      "related_links": "相關鏈接",
+      "document_created": "文檔由 {{ username }} 創建",
+      "edit_user": "編輯 {{ username }} 用戶"
+    }
+  },
+  "usergroup": {
+    "search_groups": "搜索群組",
+    "search_users": "搜索用戶",
+    "you": "您",
+    "default": {
+      "title": "用戶 & 群組",
+      "message": "此處您可以瀏覽用戶和群組信息."
+    }
+  },
+  "settings": {
+    "menu_personal_settings": "個人設置",
+    "menu_user_account": "用戶帳號",
+    "menu_two_factor_auth": "雙重身份驗證",
+    "menu_opened_sessions": "已打開會話",
+    "menu_general_settings": "一般設置",
+    "menu_workflow": "工作流程",
+    "menu_users": "用戶",
+    "menu_groups": "群組",
+    "menu_vocabularies": "詞條",
+    "menu_configuration": "配置",
+    "menu_inbox": "收件箱掃描",
+    "menu_server_logs": "服務器日誌",
+    "user": {
+      "title": "用戶 <small>管理</small>",
+      "add_user": "添加用戶",
+      "username": "用戶名",
+      "create_date": "創建日期",
+      "totp_enabled": "為該用戶啟用雙重身份驗證",
+      "edit": {
+        "delete_user_title": "刪除用戶",
+        "delete_user_message": "您是否確認刪除該用戶? 所有相關文檔，文件和標籤將被刪除",
+        "edit_user_failed_title": "用戶已經存在",
+        "edit_user_failed_message": "該用戶名已經被占用",
+        "edit_user_title": "<small>編輯</small> \"{{ username }}\"",
+        "add_user_title": "<small>添加一個</small> 用戶",
+        "username": "用戶名",
+        "email": "郵箱",
+        "groups": "群組",
+        "storage_quota": "存儲限額",
+        "storage_quota_placeholder": "存儲限額 (單位MB)",
+        "password": "密碼",
+        "password_confirm": "密碼 (確認)",
+        "disabled": "禁用用戶",
+        "password_reset_btn": "給該用戶發送密碼重置電子郵件",
+        "password_lost_sent_title": "密碼重置郵件已發送",
+        "password_lost_sent_message": "密碼重置電子郵件已發送至 <strong>{{ username }}</strong>"
+      }
+    },
+    "workflow": {
+      "title": "工作流程<small>配置</small>",
+      "add_workflow": "添加工作流程",
+      "name": "名稱",
+      "create_date": "創建日期",
+      "edit": {
+        "delete_workflow_title": "刪除工作流程",
+        "delete_workflow_message": "你真的想刪除這個工作流程嗎？當前正在運行的工作流程不會被刪除",
+        "edit_workflow_title": "<small>編輯</small>\"{{name}}\"",
+        "add_workflow_title": "<small>添加一個</small>工作流程",
+        "name": "名稱",
+        "name_placeholder": "步驟名稱或說明",
+        "drag_help": "拖放以重新排序步驟",
+        "type": "步驟類型",
+        "type_approve": "批准",
+        "type_validate": "驗證",
+        "target": "分配給",
+        "target_help": "<strong>批准：</strong>審核並繼續工作流程<br/><strong>驗證：</strong>接受或拒絕審核",
+        "add_step": "添加工作流程步驟"
+      }
+    },
+    "security": {
+      "enable_totp": "激活雙重身份驗證",
+      "enable_totp_message": "請確保您的手機上已經擁有一個TOTP兼容的應用程序方可添加新賬戶",
+      "title": "雙重身份 <small>驗證</small>",
+      "message_1": "雙重身份驗證將讓您的<strong>{{ appName }}</strong> 帳號獲得多一層的安全保障.<br/>在啟用該功能前, 請確保在您的手機上擁有一個與TOTP兼容的應用程序:",
+      "message_google_authenticator": "給安卓, 蘋果, 和 黑莓系統: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">谷歌認證</a>",
+      "message_duo_mobile": "給 安卓 和 蘋果系統: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
+      "message_authenticator": "給 Windows 系統手機: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">認證</a>",
+      "message_2": "這些應用程序會自動生成一個驗證碼，且該驗證碼在一段時間內會變化.<br/>每次登錄 <strong>{{ appName }}</strong>時您都需要輸入該驗證碼.",
+      "secret_key": "您的秘鑰是: <strong>{{ secret }}</strong>",
+      "secret_key_warning": "現在用該秘鑰配置您的手機應用程序上的TOTP, 您之後將無獲取權限.",
+      "totp_enabled_message": "雙重身份驗證將確保您的帳號.<br/>每次您登錄 <strong>{{ appName }}</strong>時, 您都需要從您配置的手機應用程序的驗證碼.<br/>如果您丟失您的手機, 您將無法登錄您的帳號但有效會話將允許您重新生成密鑰.",
+      "disable_totp": {
+        "disable_totp": "不激活雙重身份驗證",
+        "message": "您的帳戶將不再受雙重身份驗證保護.",
+        "confirm_password": "確認您的密碼",
+        "submit": "不激活雙重身份驗證"
+      }
+    },
+    "group": {
+      "title": "群組 <small>管理</small>",
+      "add_group": "添加組",
+      "name": "名稱",
+      "edit": {
+        "delete_group_title": "刪除組",
+        "delete_group_message": "您是否確認刪除該組?",
+        "edit_group_failed_title": "組已經存在",
+        "edit_group_failed_message": "這個組名已經被占用",
+        "edit_group_title": "編輯 <small>\"{{ name }}\"</small>",
+        "add_group_title": "添加 <small>組</small>",
+        "name": "名稱",
+        "parent_group": "母群組",
+        "search_group": "搜索組",
+        "members": "成員",
+        "new_member": "新成員",
+        "search_user": "搜索用戶"
+      }
+    },
+    "account": {
+      "title": "用戶<small>帳戶</ small>",
+      "password": "密碼",
+      "password_confirm": "密碼 (確認)",
+      "updated": "帳號更新成功"
+    },
+    "config": {
+      "title_guest_access": "遊客 <small>權限</small>",
+      "message_guest_access": "遊客權限是所有人都能無需密碼即獲取 {{ appName }} 的權限模式.<br/>和其他正常用戶一樣, 遊客權限用戶也只能通過其獲取的權限來訪問其文檔.<br/>",
+      "enable_guest_access": "激活遊客權限",
+      "disable_guest_access": "不激活遊客權限",
+      "title_theme": "主題 <small>定制</small>",
+      "title_general": "一般配置",
+      "default_language": "新文檔的默認語言",
+      "application_name": "申請名",
+      "main_color": "主顏色",
+      "custom_css": "用戶樣式表",
+      "custom_css_placeholder": "在主樣式表之後添加客戶自定義樣式表",
+      "logo": "圖標 (正方形)",
+      "background_image": "背景圖片",
+      "uploading_image": "上傳圖片中...",
+      "title_smtp": "電子郵件<small>配置</ small>",
+      "smtp_hostname": "SMTP主機名",
+      "smtp_port": "SMTP端口",
+      "smtp_from": "發件人的電子郵件",
+      "smtp_username": "SMTP用戶名",
+      "smtp_password": "SMTP密碼",
+      "smtp_updated": "SMTP配置已成功更新"
+    },
+    "inbox": {
+      "title": "收件箱掃描",
+      "message": "通過啟用此功能，系統會定期掃描指定收件箱中的新電子郵件並自動導入它們。",
+      "enabled": "啟用收件箱掃描",
+      "hostname": "IMAP主機名",
+      "port": "IMAP端口（143或993）",
+      "username": "IMAP用戶名",
+      "password": "IMAP密碼",
+      "tag": "標籤添加到導入的文檔",
+      "test": "測試參數",
+      "last_sync": "上次同步：{{ data.date | date }}，{{data.count}}消息導入",
+      "test_success": "與收件箱的連接成功（{{ count }} 消息）",
+      "test_fail": "連接到收件箱時發生錯誤，請檢查參數"
+    },
+    "log": {
+      "title": "服務器 <small>日誌</small>",
+      "date": "日期",
+      "tag": "標籤",
+      "message": "信息"
+    },
+    "session": {
+      "title": "打開 <small>會話</small>",
+      "created_date": "創建日期",
+      "last_connection_date": "最後登錄時間",
+      "user_agent": "從",
+      "current": "當前",
+      "current_session": "這是目前會話",
+      "clear_message": "該帳號的所有其他連接將終止",
+      "clear": "清除所有其他會話"
+    },
+    "vocabulary": {
+      "title": "詞條 <small>輸入</small>",
+      "choose_vocabulary": "選擇一個詞條編輯",
+      "type": "類型",
+      "coverage": "覆蓋",
+      "rights": "權利",
+      "value": "值",
+      "order": "顺序",
+      "new_entry": "新輸入"
+    }
+  },
+  "feedback": {
+    "title": "歡迎提供反饋意見",
+    "message": "對Sismics Docs文檔管理系統有任何建議或疑問？我們靜候您的反饋意見！",
+    "sent_title": "反饋已發送",
+    "sent_message": "感謝您的反饋意見！這將幫助我們進一步優化Sismics Docs文檔管理系統以便更好的為您提供服務。"
+  },
+  "import": {
+    "title": "輸入",
+    "error_quota": "已達到配額限制，請聯繫您的管理員以增加配額",
+    "error_general": "嘗試導入文件時發生錯誤，請確保它是有效的EML文件"
+  },
+  "app_share": {
+    "main": "請求一個共享的文檔鏈接來訪問該文檔",
+    "403": {
+      "title": "未經授權",
+      "message": "您正在查看的文檔已經被取消共享"
+    }
+  },
+  "directive": {
+    "acledit": {
+      "acl_target": "用於",
+      "acl_permission": "允許",
+      "add_permission": "添加一個許可",
+      "search_user_group": "搜索一個用戶或組"
+    },
+    "auditlog": {
+      "log_created": "創建",
+      "log_updated": "更新",
+      "log_deleted": "删除",
+      "Acl": "ACL",
+      "Comment": "評論",
+      "Document": "文檔",
+      "File": "文件",
+      "Group": "組",
+      "Tag": "標籤",
+      "User": "用戶",
+      "RouteModel": "工作流程",
+      "Route": "工作流程"
+    },
+    "selectrelation": {
+      "typeahead": "請輸入文檔名稱"
+    },
+    "selecttag": {
+      "typeahead": "請輸入標籤"
+    },
+    "datepicker": {
+      "current": "今天",
+      "clear": "清除",
+      "close": "完成"
+    }
+  },
+  "filter": {
+    "filesize": {
+      "mb": "MB",
+      "kb": "kB"
+    }
+  },
+  "acl": {
+    "READ": "可讀",
+    "READWRITE": "可寫",
+    "WRITE": "可寫",
+    "USER": "用戶",
+    "GROUP": "組",
+    "SHARE": "已共享"
+  },
+  "workflow_type": {
+    "VALIDATE": "驗證",
+    "APPROVE": "讚許"
+  },
+  "workflow_transition": {
+    "APPROVED": "批准",
+    "REJECTED": "拒絕",
+    "VALIDATED": "驗證"
+  },
+  "validation": {
+    "required": "必填",
+    "too_short": "過短",
+    "too_long": "過長",
+    "email": "必須是一個有效郵箱地址",
+    "password_confirm": "密碼和確認密碼必須完全一致",
+    "number": "必須為數字",
+    "no_space": "不允許空格"
+  },
+  "pagination": {
+    "previous": "以前",
+    "next": "下一個",
+    "first": "首先",
+    "last": "最後"
+  },
+  "ok": "確認",
+  "cancel": "取消",
+  "share": "共享",
+  "unshare": "不共享",
+  "close": "關閉",
+  "add": "添加",
+  "open": "打開",
+  "see": "查看",
+  "save": "保存",
+  "export": "導出",
+  "edit": "編輯",
+  "delete": "刪除",
+  "loading": "加載中...",
+  "send": "發送",
+  "enabled": "激活",
+  "disabled": "未激活"
+}

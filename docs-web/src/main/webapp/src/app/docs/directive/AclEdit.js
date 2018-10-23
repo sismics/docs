@@ -43,7 +43,7 @@ angular.module('docs').directive('aclEdit', function() {
         // Compute ACLs to add
         $scope.acl.source = $scope.source;
         var acls = [];
-        if ($scope.acl.perm == 'READWRITE') {
+        if ($scope.acl.perm === 'READWRITE') {
           acls = [{
             source: $scope.source,
             target: $scope.acl.target.name,

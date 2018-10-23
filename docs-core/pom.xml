@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.sismics.docs</groupId>
     <artifactId>docs-parent</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   
@@ -51,7 +51,27 @@
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-email</artifactId>
+    </dependency>
     
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>javax.json</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
@@ -91,6 +111,26 @@
       <groupId>org.apache.lucene</groupId>
       <artifactId>lucene-queryparser</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-suggest</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-highlighter</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>javax.mail</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+    </dependency>
     
     <!-- Only there to read old index and rebuild them -->
     <dependency>
@@ -113,35 +153,41 @@
       <artifactId>bcprov-jdk15on</artifactId>
     </dependency>
     
-		<dependency>
-			<groupId>fr.opensagres.xdocreport</groupId>
-			<artifactId>org.odftoolkit.odfdom.converter.pdf</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>fr.opensagres.xdocreport</groupId>
-			<artifactId>org.apache.poi.xwpf.converter.pdf</artifactId>
-		</dependency>
+    <dependency>
+      <groupId>fr.opensagres.xdocreport</groupId>
+      <artifactId>fr.opensagres.odfdom.converter.pdf</artifactId>
+    </dependency>
 
     <dependency>
-      <groupId>net.java.dev.jna</groupId>
-      <artifactId>jna</artifactId>
+      <groupId>fr.opensagres.xdocreport</groupId>
+      <artifactId>fr.opensagres.poi.xwpf.converter.pdf</artifactId>
     </dependency>
 
     <!-- ImageIO plugins -->
     <dependency>
-      <groupId>com.levigo.jbig2</groupId>
-      <artifactId>levigo-jbig2-imageio</artifactId>
-    </dependency> 
-
-    <dependency>
       <groupId>com.twelvemonkeys.imageio</groupId>
       <artifactId>imageio-jpeg</artifactId>
     </dependency>
-    
+
+    <dependency>
+      <groupId>com.twelvemonkeys.imageio</groupId>
+      <artifactId>imageio-tiff</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>com.github.jai-imageio</groupId>
-      <artifactId>jai-imageio-core</artifactId>
+      <artifactId>jai-imageio-jpeg2000</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.levigo.jbig2</groupId>
+      <artifactId>levigo-jbig2-imageio</artifactId>
+    </dependency>
+
+    <!-- Only for connecting to PostgreSQL database -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
     </dependency>
     
     <!-- Test dependencies -->
@@ -183,20 +229,6 @@
     <!-- Production profile -->
     <profile>
       <id>prod</id>
-    </profile>
-
-    <!-- Demo profile -->
-    <profile>
-      <id>demo</id>
-      
-      <build>
-        <resources>
-          <resource>
-            <directory>src/demo/resources</directory>
-            <filtering>true</filtering>
-          </resource>
-        </resources>
-      </build>
     </profile>
   </profiles>
   

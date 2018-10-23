@@ -1,60 +1,62 @@
 <div class="row">
   <div class="col-md-10">
-    <div class="pull-right">
-      <div class="dropdown" dropdown>
-        <button class="btn btn-default" dropdown-toggle>
-          <span class="glyphicon glyphicon-export"></span>
-          Export
-          <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-          <li>
-            <a ng-href="../api/file/zip?id={{ document.id }}&share={{ $stateParams.shareId }}" title="Download all files">
-              <span class="glyphicon glyphicon glyphicon-compressed"></span>
-              Download files
-            </a>
-          </li>
-          <li>
-            <a ng-click="exportPdf()" title="Export document to PDF" class="pointer">
-              <span class="glyphicon glyphicon glyphicon-save-file"></span>
-              Export to PDF
-            </a>
-          </li>
+    <div>
+      <div class="pull-right">
+        <div class="dropdown" uib-dropdown>
+          <button class="btn btn-default" uib-dropdown-toggle>
+            <span class="fas fa-cloud-download-alt"></span>
+            {{ 'export' | translate }}
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <a ng-href="../api/file/zip?id={{ document.id }}&share={{ $stateParams.shareId }}">
+                <span class="fas fa-download"></span>
+                {{ 'document.view.download_files' | translate }}
+              </a>
+            </li>
+            <li>
+              <a href ng-click="exportPdf()">
+                <span class="fas fa-file-pdf"></span>
+                {{ 'document.view.export_pdf' | translate }}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <h1>
+          {{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }}</small>
+        </h1>
+        <ul class="list-inline">
+          <li ng-repeat="tag in document.tags"><span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span></li>
         </ul>
       </div>
     </div>
 
-    <div class="page-header">
-      <h1>
-        {{ document.title }} <small>{{ document.create_date | date: 'yyyy-MM-dd' }}</small>
-      </h1>
-      <ul class="list-inline">
-        <li ng-repeat="tag in document.tags"><span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}</span></li>
-      </ul>
-    </div>
-
-    <p ng-bind-html="document.description | newline"></p>
+    <p ng-bind-html="document.description"></p>
     <dl class="dl-horizontal">
-      <dt ng-if="document.subject">Subject</dt>
+      <dt ng-if="document.subject">{{ 'document.subject' | translate }}</dt>
       <dd ng-if="document.subject">{{ document.subject }}</dd>
-      <dt ng-if="document.identifier">Identifier</dt>
+      <dt ng-if="document.identifier">{{ 'document.identifier' | translate }}</dt>
       <dd ng-if="document.identifier">{{ document.identifier }}</dd>
-      <dt ng-if="document.publisher">Publisher</dt>
+      <dt ng-if="document.publisher">{{ 'document.publisher' | translate }}</dt>
       <dd ng-if="document.publisher">{{ document.publisher }}</dd>
-      <dt ng-if="document.format">Format</dt>
+      <dt ng-if="document.format">{{ 'document.format' | translate }}</dt>
       <dd ng-if="document.format">{{ document.format }}</dd>
-      <dt ng-if="document.source">Source</dt>
+      <dt ng-if="document.source">{{ 'document.source' | translate }}</dt>
       <dd ng-if="document.source">{{ document.source }}</dd>
-      <dt ng-if="document.type">Type</dt>
+      <dt ng-if="document.type">{{ 'document.type' | translate }}</dt>
       <dd ng-if="document.type">{{ document.type }}</dd>
-      <dt ng-if="document.coverage">Coverage</dt>
+      <dt ng-if="document.coverage">{{ 'document.coverage' | translate }}</dt>
       <dd ng-if="document.coverage">{{ document.coverage }}</dd>
-      <dt ng-if="document.rights">rights</dt>
+      <dt ng-if="document.rights">{{ 'document.rights' | translate }}</dt>
       <dd ng-if="document.rights">{{ document.rights }}</dd>
-      <dt>Contributors</dt>
+      <dt>{{ 'document.contributors' | translate }}</dt>
       <dd>
         <span ng-repeat="contributor in document.contributors">
-          <span class="btn btn-default btn-xs">
+          <span class="btn btn-link btn-xs">
             <a href="mailto:{{ contributor.email }}">
               {{ contributor.username }}
             </a>
@@ -63,13 +65,12 @@
       </dd>
     </dl>
 
-    <div class="row" ui-sortable="fileSortableOptions" ng-model="files" ng-show="files.length > 0">
+    <div class="row" ng-show="files.length > 0">
       <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
         <div class="thumbnail">
           <a ng-click="openFile(file)">
-            <img class="thumbnail-file"
-                 ng-src="../api/file/{{ file.id }}/data?size=thumb&share={{ $stateParams.shareId }}"
-                 tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
+            <img ng-src="../api/file/{{ file.id }}/data?size=thumb&share={{ $stateParams.shareId }}"
+                 uib-tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
           </a>
         </div>
       </div>
@@ -80,15 +81,15 @@
 
   <div class="col-md-2">
     <p class="page-header">
-      <span class="glyphicon glyphicon-comment"></span>
-      Comments
+      <span class="fas fa-comments"></span>
+      {{ 'document.view.comments' | translate }}
     </p>
 
     <div ng-show="!comments || comments.length == 0" class="text-center text-muted">
-      <h1 class="glyphicon glyphicon-comment"></h1>
-      <p ng-show="!comments && !commentsError">Loading...</p>
-      <p ng-show="comments.length == 0">No comments on this document yet</p>
-      <p ng-show="!comments && commentsError">Error loading comments</p>
+      <h1 class="fas fa-comments"></h1>
+      <p ng-show="!comments && !commentsError">{{ 'loading' | translate }}</p>
+      <p ng-show="comments.length == 0">{{ 'document.view.no_comments' | translate }}</p>
+      <p ng-show="!comments && commentsError">{{ 'document.view.error_loading_comments' | translate }}</p>
     </div>
 
     <div ng-repeat="comment in comments" class="media" style="overflow: hidden">

@@ -1,20 +1,22 @@
 package com.sismics.docs.core.util;
 
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.Security;
+import com.google.common.base.Strings;
+import com.sismics.docs.core.model.context.AppContext;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import com.google.common.base.Strings;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.Security;
 
 /**
  * Encryption utilities.
@@ -22,7 +24,6 @@ import com.google.common.base.Strings;
  * @author bgamard
  */
 public class EncryptionUtil {
-
     /**
      * Salt.
      */
@@ -37,11 +38,14 @@ public class EncryptionUtil {
      * Generate a private key.
      * 
      * @return New random private key
-     * @throws NoSuchAlgorithmException 
      */
-    public static String generatePrivateKey() throws NoSuchAlgorithmException {
-        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-        return new BigInteger(176, random).toString(32);
+    public static String generatePrivateKey() {
+        try {
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            return new BigInteger(176, random).toString(32);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     /**
@@ -50,18 +54,39 @@ public class EncryptionUtil {
      * @param is InputStream to encrypt
      * @param privateKey Private key
      * @return Encrypted stream
-     * @throws Exception 
+     * @throws Exception  e
      */
     public static InputStream decryptInputStream(InputStream is, String privateKey) throws Exception {
         return new CipherInputStream(is, getCipher(privateKey, Cipher.DECRYPT_MODE));
     }
-    
+
+    /**
+     * Decrypt a file to a temporary file using the specified private key.
+     *
+     * @param file Encrypted file
+     * @param privateKey Private key
+     * @return Decrypted temporary file
+     * @throws Exception e
+     */
+    public static Path decryptFile(Path file, String privateKey) throws Exception {
+        if (privateKey == null) {
+            // For unit testing
+            return file;
+        }
+
+        Path tmpFile = AppContext.getInstance().getFileService().createTemporaryFile();
+        try (InputStream is = Files.newInputStream(file)) {
+            Files.copy(new CipherInputStream(is, getCipher(privateKey, Cipher.DECRYPT_MODE)), tmpFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+        return tmpFile;
+    }
+
     /**
      * Return an encryption cipher.
      * 
      * @param privateKey Private key
      * @return Encryption cipher
-     * @throws Exception
+     * @throws Exception e
      */
     public static Cipher getEncryptionCipher(String privateKey) throws Exception {
         if (Strings.isNullOrEmpty(privateKey)) {
@@ -76,7 +101,7 @@ public class EncryptionUtil {
      * @param privateKey Private key
      * @param mode Mode (encrypt or decrypt)
      * @return Cipher
-     * @throws Exception
+     * @throws Exception e
      */
     private static Cipher getCipher(String privateKey, int mode) throws Exception {
         PBEKeySpec keySpec = new PBEKeySpec(privateKey.toCharArray(), SALT.getBytes(), 2000, 256);

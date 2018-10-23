@@ -65,8 +65,6 @@ public class TransactionUtil {
             return;
         }
         
-        ThreadLocalContext.cleanup();
-
         // No error in the current request : commit the transaction
         if (em.isOpen()) {
             if (em.getTransaction() != null && em.getTransaction().isActive()) {
@@ -79,6 +77,12 @@ public class TransactionUtil {
                 }
             }
         }
+
+        // Fire all pending async events after request transaction commit.
+        // This way, all modifications done during this request are available in the listeners.
+        context.fireAllAsyncEvents();
+
+        ThreadLocalContext.cleanup();
     }
     
     /**

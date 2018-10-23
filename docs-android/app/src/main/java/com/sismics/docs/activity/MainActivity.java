@@ -9,11 +9,13 @@ import android.provider.SearchRecentSuggestions;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -61,7 +63,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main_activity);
 
         // Enable ActionBar app icon to behave as action to toggle nav drawer
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
+        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
@@ -75,15 +80,15 @@ public class MainActivity extends AppCompatActivity {
 
         // Fill the drawer user info
         JSONObject userInfo = ApplicationContext.getInstance().getUserInfo();
-        TextView usernameTextView = (TextView) findViewById(R.id.usernameTextView);
+        TextView usernameTextView = findViewById(R.id.usernameTextView);
         usernameTextView.setText(userInfo.optString("username"));
-        TextView emailTextView = (TextView) findViewById(R.id.emailTextView);
+        TextView emailTextView = findViewById(R.id.emailTextView);
         emailTextView.setText(userInfo.optString("email"));
 
         // Get tag list to fill the drawer
-        final ListView tagListView = (ListView) findViewById(R.id.tagListView);
+        final ListView tagListView = findViewById(R.id.tagListView);
         final View tagProgressView = findViewById(R.id.tagProgressView);
-        final TextView tagEmptyView = (TextView) findViewById(R.id.tagEmptyView);
+        final TextView tagEmptyView = findViewById(R.id.tagEmptyView);
         tagListView.setEmptyView(tagProgressView);
         JSONObject cacheTags = PreferenceUtil.getCachedJson(this, PreferenceUtil.PREF_CACHED_TAGS_JSON);
         if (cacheTags != null) {
@@ -142,6 +147,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, AuditLogActivity.class));
+            }
+        });
+
+        // Add document button
+        ImageButton addDocumentButton = findViewById(R.id.addDocumentButton);
+        addDocumentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, DocumentEditActivity.class));
             }
         });
 
