@@ -23,11 +23,6 @@ public class TagCriteria {
      */
     private String documentId;
 
-    /**
-     * Tag name.
-     */
-    private String name;
-
     public String getId() {
         return id;
     }

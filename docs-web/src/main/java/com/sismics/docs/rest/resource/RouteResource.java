@@ -70,6 +70,11 @@ public class RouteResource extends BaseResource {
             throw new NotFoundException();
         }
 
+        // Check permission on this route model
+        if (!aclDao.checkPermission(routeModelId, PermType.READ, getTargetIdList(null))) {
+            throw new ForbiddenClientException();
+        }
+
         // Avoid creating 2 running routes on the same document
         RouteStepDao routeStepDao = new RouteStepDao();
         if (routeStepDao.getCurrentStep(documentId) != null) {

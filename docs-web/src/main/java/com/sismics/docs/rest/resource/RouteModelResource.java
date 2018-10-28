@@ -1,16 +1,14 @@
 package com.sismics.docs.rest.resource;
 
 import com.google.common.collect.Lists;
-import com.sismics.docs.core.constant.AclTargetType;
-import com.sismics.docs.core.constant.ActionType;
-import com.sismics.docs.core.constant.RouteStepTransition;
-import com.sismics.docs.core.constant.RouteStepType;
+import com.sismics.docs.core.constant.*;
+import com.sismics.docs.core.dao.AclDao;
 import com.sismics.docs.core.dao.GroupDao;
 import com.sismics.docs.core.dao.RouteModelDao;
-import com.sismics.docs.core.dao.TagDao;
 import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.dao.criteria.RouteModelCriteria;
 import com.sismics.docs.core.dao.dto.RouteModelDto;
+import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Group;
 import com.sismics.docs.core.model.jpa.RouteModel;
 import com.sismics.docs.core.model.jpa.User;
@@ -19,6 +17,7 @@ import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.rest.util.AclUtil;
 import com.sismics.rest.util.ValidationUtil;
 
 import javax.json.*;
@@ -64,7 +63,7 @@ public class RouteModelResource extends BaseResource {
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
 
         RouteModelDao routeModelDao = new RouteModelDao();
-        List<RouteModelDto> routeModelDtoList = routeModelDao.findByCriteria(new RouteModelCriteria(), sortCriteria);
+        List<RouteModelDto> routeModelDtoList = routeModelDao.findByCriteria(new RouteModelCriteria().setTargetIdList(getTargetIdList(null)), sortCriteria);
         for (RouteModelDto routeModelDto : routeModelDtoList) {
             routeModels.add(Json.createObjectBuilder()
                     .add("id", routeModelDto.getId())
@@ -111,6 +110,23 @@ public class RouteModelResource extends BaseResource {
                 .setName(name)
                 .setSteps(steps), principal.getId());
 
+        // Create read ACL
+        AclDao aclDao = new AclDao();
+        Acl acl = new Acl();
+        acl.setPerm(PermType.READ);
+        acl.setType(AclType.USER);
+        acl.setSourceId(id);
+        acl.setTargetId(principal.getId());
+        aclDao.create(acl, principal.getId());
+
+        // Create write ACL
+        acl = new Acl();
+        acl.setPerm(PermType.WRITE);
+        acl.setType(AclType.USER);
+        acl.setSourceId(id);
+        acl.setTargetId(principal.getId());
+        aclDao.create(acl, principal.getId());
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("id", id);
@@ -125,7 +141,6 @@ public class RouteModelResource extends BaseResource {
     private void validateRouteModelSteps(String steps) {
         UserDao userDao = new UserDao();
         GroupDao groupDao = new GroupDao();
-        TagDao tagDao = new TagDao();
 
         try (JsonReader reader = Json.createReader(new StringReader(steps))) {
             JsonArray stepsJson = reader.readArray();
@@ -373,6 +388,9 @@ public class RouteModelResource extends BaseResource {
                 .add("name", routeModel.getName())
                 .add("create_date", routeModel.getCreateDate().getTime())
                 .add("steps", routeModel.getSteps());
+
+        // Add ACL
+        AclUtil.addAcls(response, id, getTargetIdList(null));
 
         return Response.ok().entity(response.build()).build();
     }

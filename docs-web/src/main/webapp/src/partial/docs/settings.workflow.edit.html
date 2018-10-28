@@ -136,6 +136,16 @@
       </div>
     </div>
 
+    <div class="panel panel-default mt-30" ng-show="isEdit()">
+      <div class="panel-body">
+        <p translate="settings.workflow.edit.acl_info"></p>
+        <acl-edit source="workflow.id"
+                  acls="workflow.acls"
+                  writable="workflow.writable"
+                  creator="workflow.creator"></acl-edit>
+      </div>
+    </div>
+
     <div class="clearfix form-group mt-10">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editWorkflowForm.$valid">

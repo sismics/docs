@@ -311,7 +311,8 @@
         "target_help": "<strong>Approve:</strong> Accept or reject the review<br/><strong>Validate:</strong> Review and continue the workflow",
         "add_step": "Add a workflow step",
         "actions": "What happens after?",
-        "remove_action": "Remove action"
+        "remove_action": "Remove action",
+        "acl_info": "Only users and groups defined here will be able to start this workflow on a document"
       }
     },
     "security": {
