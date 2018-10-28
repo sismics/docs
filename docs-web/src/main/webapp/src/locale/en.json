@@ -127,7 +127,8 @@
         "full_name": "<strong>{{ name }}</strong> started on {{ create_date | date }}",
         "cancel_workflow": "Cancel the current workflow",
         "cancel_workflow_title": "Cancel the workflow",
-        "cancel_workflow_message": "Do you really want to cancel the current workflow?"
+        "cancel_workflow_message": "Do you really want to cancel the current workflow?",
+        "no_workflow": "You cannot start any workflow on this document."
       },
       "permissions": {
         "permissions": "Permissions",

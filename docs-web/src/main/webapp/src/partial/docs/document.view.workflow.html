@@ -6,7 +6,11 @@
 </p>
 <p class="well-sm">{{ 'document.view.workflow.message' | translate }}</p>
 
-<form name="startWorkflowForm" class="form-horizontal" novalidate ng-show="!document.route_step">
+<p class="well-sm text-danger" ng-show="!document.route_step && routemodels.length == 0">
+  <strong translate="document.view.workflow.no_workflow"></strong>
+</p>
+
+<form name="startWorkflowForm" class="form-horizontal" novalidate ng-show="!document.route_step && routemodels.length > 0">
   <div class="form-group" ng-class="{ 'has-error': !startWorkflowForm.routemodel.$valid && startWorkflowForm.$dirty }">
     <label for="inputRouteModel" class="col-sm-3">
       {{ 'document.view.workflow.workflow_start_label' | translate }}
