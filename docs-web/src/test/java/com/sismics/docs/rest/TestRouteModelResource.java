@@ -77,7 +77,7 @@ public class TestRouteModelResource extends BaseJerseyTest {
         Assert.assertEquals(0, routeModels.size());
 
         // Add an ACL READ for routeModel1 with admin
-        json = target().path("/acl").request()
+        target().path("/acl").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
                         .param("source", routeModelId)
