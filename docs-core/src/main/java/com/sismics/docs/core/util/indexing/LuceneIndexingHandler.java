@@ -101,7 +101,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
         // Create an index writer
         IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
         config.setCommitOnClose(true);
-        config.setMergeScheduler(new SerialMergeScheduler());
+        config.setMergeScheduler(new ConcurrentMergeScheduler());
         indexWriter = new IndexWriter(directory, config);
 
         // Check index version and rebuild it if necessary
@@ -142,18 +142,23 @@ public class LuceneIndexingHandler implements IndexingHandler {
     }
 
     @Override
-    public void rebuildIndex(final List<Document> documentList, final List<File> fileList) {
-        handle(indexWriter -> {
-            // Empty index
-            indexWriter.deleteAll();
+    public void clearIndex() {
+        handle(IndexWriter::deleteAll);
+    }
 
-            // Add all documents
+    @Override
+    public void createDocuments(List<Document> documentList) {
+        handle(indexWriter -> {
             for (Document document : documentList) {
                 org.apache.lucene.document.Document luceneDocument = getDocumentFromDocument(document);
                 indexWriter.addDocument(luceneDocument);
             }
+        });
+    }
 
-            // Add all files
+    @Override
+    public void createFiles(List<File> fileList) {
+        handle(indexWriter -> {
             for (File file : fileList) {
                 org.apache.lucene.document.Document luceneDocument = getDocumentFromFile(file);
                 indexWriter.addDocument(luceneDocument);

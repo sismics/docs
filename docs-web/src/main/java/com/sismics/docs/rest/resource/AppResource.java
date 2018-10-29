@@ -595,7 +595,7 @@ public class AppResource extends BaseResource {
         
         // Get all files
         FileDao fileDao = new FileDao();
-        List<File> fileList = fileDao.findAll();
+        List<File> fileList = fileDao.findAll(0, Integer.MAX_VALUE);
         Map<String, File> fileMap = new HashMap<>();
         for (File file : fileList) {
             fileMap.put(file.getId(), file);

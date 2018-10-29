@@ -36,7 +36,7 @@ public class PaginatedLists {
         if (pageSize > MAX_PAGE_SIZE) {
             pageSize = MAX_PAGE_SIZE;
         }
-        return new PaginatedList<E>(pageSize, offset);
+        return new PaginatedList<>(pageSize, offset);
     }
     
     /**
@@ -54,11 +54,11 @@ public class PaginatedLists {
      * @param paginatedList Paginated list object containing parameters, and into which results are added by side effects
      * @param queryParam Query parameters
      */
-    public static <E> void executeCountQuery(PaginatedList<E> paginatedList, QueryParam queryParam) {
+    private static <E> void executeCountQuery(PaginatedList<E> paginatedList, QueryParam queryParam) {
         StringBuilder sb = new StringBuilder("select count(*) as result_count from (");
         sb.append(queryParam.getQueryString());
         sb.append(") as t1");
-        
+
         QueryParam countQueryParam = new QueryParam(sb.toString(), queryParam.getParameterMap());
         
         Query q = QueryUtil.getNativeQuery(countQueryParam);
@@ -70,7 +70,6 @@ public class PaginatedLists {
     /**
      * Executes a query and returns the data of the currunt page.
      * 
-     * @param em EntityManager
      * @param paginatedList Paginated list object containing parameters, and into which results are added by side effects
      * @param queryParam Query parameters
      * @return List of results

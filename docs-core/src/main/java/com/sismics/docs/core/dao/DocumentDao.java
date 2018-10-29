@@ -45,16 +45,20 @@ public class DocumentDao {
     
     /**
      * Returns the list of all active documents.
-     * 
+     *
+     * @param offset Offset
+     * @param limit Limit
      * @return List of documents
      */
     @SuppressWarnings("unchecked")
-    public List<Document> findAll() {
+    public List<Document> findAll(int offset, int limit) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select d from Document d where d.deleteDate is null");
+        q.setFirstResult(offset);
+        q.setMaxResults(limit);
         return q.getResultList();
     }
-    
+
     /**
      * Returns the list of all active documents from a user.
      * 

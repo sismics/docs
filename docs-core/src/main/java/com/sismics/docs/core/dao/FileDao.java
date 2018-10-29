@@ -42,13 +42,17 @@ public class FileDao {
     
     /**
      * Returns the list of all files.
-     * 
+     *
+     * @param offset Offset
+     * @param limit Limit
      * @return List of files
      */
     @SuppressWarnings("unchecked")
-    public List<File> findAll() {
+    public List<File> findAll(int offset, int limit) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select f from File f where f.deleteDate is null");
+        q.setFirstResult(offset);
+        q.setMaxResults(limit);
         return q.getResultList();
     }
     
