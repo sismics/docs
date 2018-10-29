@@ -190,7 +190,7 @@ public class AppContext {
     public int getQueuedTaskCount() {
         int queueSize = 0;
         for (ThreadPoolExecutor executor : asyncExecutorList) {
-            queueSize += executor.getQueue().size();
+            queueSize += executor.getTaskCount() - executor.getCompletedTaskCount();
         }
         return queueSize;
     }

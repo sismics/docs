@@ -63,5 +63,9 @@ public class RebuildIndexAsyncListener {
                 offset += 100;
             } while (fileList.size() > 0);
         });
+
+        if (log.isInfoEnabled()) {
+            log.info("Rebuilding index done");
+        }
     }
 }

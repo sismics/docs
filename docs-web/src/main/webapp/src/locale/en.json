@@ -411,7 +411,11 @@
       "server_logs": "Server logs",
       "log_date": "Date",
       "log_tag": "Tag",
-      "log_message": "Message"
+      "log_message": "Message",
+      "indexing": "Indexing",
+      "indexing_info": "If you notice discrepancies in the search results, you can try to do a full reindexing. Search results will be incomplete until this operation is done.",
+      "start_reindexing": "Start full reindexing",
+      "reindexing_started": "Re-indexing started, please wait until there is no more background tasks."
     },
     "session": {
       "title": "Opened sessions",

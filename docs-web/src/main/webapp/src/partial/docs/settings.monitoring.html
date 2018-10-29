@@ -5,6 +5,14 @@
   <span class="fas fa-circle-notch text-warning fa-spin" ng-if="app.queued_tasks > 0"></span>
 </p>
 <p>{{ 'settings.monitoring.queued_tasks_explain' | translate }}</p>
+
+<h2 translate="settings.monitoring.indexing"></h2>
+{{ 'settings.monitoring.indexing_info' | translate }}
+<div class="mt-10">
+  <button class="btn btn-danger" ng-click="startReindexing()" ng-show="!reindexingStarted">{{ 'settings.monitoring.start_reindexing' | translate }}</button>
+  <span class="text-danger" ng-show="reindexingStarted"><strong>{{ 'settings.monitoring.reindexing_started' | translate }}</strong></span>
+</div>
+
 <h2 translate="settings.monitoring.server_logs"></h2>
 <table class="table table-hover table-logs">
   <thead>

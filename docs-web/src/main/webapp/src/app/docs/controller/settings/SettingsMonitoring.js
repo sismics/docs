@@ -13,4 +13,11 @@ angular.module('docs').controller('SettingsMonitoring', function($scope, Restang
   }).then(function(data) {
     $scope.logs = data.logs;
   });
+
+  $scope.reindexingStarted = false;
+  $scope.startReindexing = function() {
+    Restangular.one('app').post('batch/reindex').then(function () {
+      $scope.reindexingStarted = true;
+    });
+  };
 });
