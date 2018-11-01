@@ -284,7 +284,7 @@
           <div ng-repeat-start="document in documents" class="col-md-4">
             <div class="thumbnail" ng-class="{ active: $stateParams.id == document.id }">
               <a href="#/document/view/{{ document.id }}" class="file-thumbnail">
-                <img class="img-responsive" ng-src="../api/file/{{ document.file_id }}/data?size=thumb" />
+                <img class="img-responsive" ng-if="document.file_id" ng-src="../api/file/{{ document.file_id }}/data?size=thumb" />
               </a>
 
               <div class="file-info">
