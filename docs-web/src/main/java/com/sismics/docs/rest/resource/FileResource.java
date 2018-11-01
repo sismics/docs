@@ -367,6 +367,12 @@ public class FileResource extends BaseResource {
                 file.setOrder(order);
             }
         }
+
+        // Raise a document updated event
+        DocumentUpdatedAsyncEvent event = new DocumentUpdatedAsyncEvent();
+        event.setUserId(principal.getId());
+        event.setDocumentId(documentId);
+        ThreadLocalContext.get().addAsyncEvent(event);
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()

@@ -30,6 +30,12 @@ public class Document implements Loggable {
     private String userId;
     
     /**
+     * Main file ID.
+     */
+    @Column(name = "DOC_IDFILE_C", length = 36)
+    private String fileId;
+
+    /**
      * Language (ISO 639-9).
      */
     @Column(name = "DOC_LANGUAGE_C", nullable = false, length = 3)
@@ -135,6 +141,15 @@ public class Document implements Loggable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getFileId() {
+        return fileId;
+    }
+
+    public Document setFileId(String fileId) {
+        this.fileId = fileId;
+        return this;
     }
 
     public String getTitle() {

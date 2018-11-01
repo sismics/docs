@@ -189,20 +189,35 @@ public class DocumentDao {
     }
     
     /**
-     * Update a document.
+     * Update a document and log the action.
      * 
      * @param document Document to update
      * @param userId User ID
      * @return Updated document
      */
     public Document update(Document document, String userId) {
-        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Document documentDb = updateSilently(document);
         
+        // Create audit log
+        AuditLogUtil.create(documentDb, AuditLogType.UPDATE, userId);
+        
+        return documentDb;
+    }
+
+    /**
+     * Update a document without audit log.
+     *
+     * @param document Document to update
+     * @return Updated document
+     */
+    public Document updateSilently(Document document) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+
         // Get the document
         Query q = em.createQuery("select d from Document d where d.id = :id and d.deleteDate is null");
         q.setParameter("id", document.getId());
         Document documentDb = (Document) q.getSingleResult();
-        
+
         // Update the document
         documentDb.setTitle(document.getTitle());
         documentDb.setDescription(document.getDescription());
@@ -216,11 +231,9 @@ public class DocumentDao {
         documentDb.setRights(document.getRights());
         documentDb.setCreateDate(document.getCreateDate());
         documentDb.setLanguage(document.getLanguage());
+        documentDb.setFileId(document.getFileId());
         documentDb.setUpdateDate(new Date());
-        
-        // Create audit log
-        AuditLogUtil.create(documentDb, AuditLogType.UPDATE, userId);
-        
+
         return documentDb;
     }
 

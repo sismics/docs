@@ -41,6 +41,8 @@
   "document": {
     "navigation_up": "Go up one level",
     "toggle_navigation": "Toggle folder navigation",
+    "display_mode_list": "Display documents in list",
+    "display_mode_grid": "Display documents in grid",
     "search_simple": "Simple search",
     "search_fulltext": "Fulltext search",
     "search_creator": "Creator",

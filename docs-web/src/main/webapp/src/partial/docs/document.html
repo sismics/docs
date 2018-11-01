@@ -169,6 +169,22 @@
         </li>
       </ol>
 
+      <!-- Display mode (list or grid) -->
+      <div class="btn-group mt-10 ml-10 pull-right">
+          <span class="btn btn-default" ng-class="{ active: displayMode == 'list' }"
+                uib-tooltip="{{ 'document.display_mode_list' | translate }}"
+                tooltip-append-to-body="true"
+                ng-click="displayMode = 'list'">
+            <span class="fas fa-list"></span>
+          </span>
+        <span class="btn btn-default" ng-class="{ active: displayMode == 'grid' }"
+              uib-tooltip="{{ 'document.display_mode_grid' | translate }}"
+              tooltip-append-to-body="true"
+              ng-click="displayMode = 'grid'">
+            <span class="fas fa-th"></span>
+          </span>
+      </div>
+
       <div class="btn-group mt-10 pull-right">
         <!-- Go up in the navigation -->
         <button class="btn btn-default" ng-click="navigateUp()"
@@ -209,7 +225,7 @@
       </table>
 
       <!-- Document list -->
-      <table class="row table table-hover table-documents">
+      <table class="row table table-hover table-documents" ng-show="displayMode == 'list'">
         <thead>
         <tr>
           <th class="col-xs-6" ng-click="sortDocuments(1)">{{ 'document.title' | translate }} <span class="fas fa-chevron-{{ sortColumn == 1 ? (asc ? 'down' : 'up') : '' }}"></span></th>
@@ -252,6 +268,39 @@
         </tr>
         </tbody>
       </table>
+
+      <!-- Document grid -->
+      <div class="row table-documents" ng-show="displayMode == 'grid'">
+        <div ng-if="!documents" class="col-md-12 text-center">
+          <span class="fas fa-circle-notch fa-spin"></span>
+        </div>
+
+        <div ng-if="totalDocuments == 0" class=" col-md-12 text-center">
+          <span ng-if="search.length == 0">{{ 'document.no_documents' | translate }}</span>
+          <span ng-if="search.length > 0" translate="document.search_empty" translate-values="{ search: search }"></span>
+        </div>
+
+        <div class="col-md-12 row">
+          <div ng-repeat-start="document in documents" class="col-md-4">
+            <div class="thumbnail" ng-class="{ active: $stateParams.id == document.id }">
+              <a href="#/document/view/{{ document.id }}" class="file-thumbnail">
+                <img class="img-responsive" ng-src="../api/file/{{ document.file_id }}/data?size=thumb" />
+              </a>
+
+              <div class="file-info">
+                <div></div>
+                <div class="v-align file-name text-center">
+                  {{ document.title }} ({{ document.file_count }})
+                  <span class="fas fa-share" ng-if="document.shared" uib-tooltip="{{ 'document.shared' | translate }}"></span>
+                  <span class="fas fa-random" ng-if="document.active_route" uib-tooltip="{{ document.current_step_name }}"></span>
+                </div>
+                <div></div>
+              </div>
+            </div>
+          </div>
+          <div class="clearfix" ng-repeat-end ng-if="($index + 1) % 3 == 0"></div>
+        </div>
+      </div>
 
       <div class="text-center pagination-box">
         <ul uib-pagination

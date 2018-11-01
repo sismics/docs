@@ -154,6 +154,16 @@ public class ClientUtil {
         return authToken;
     }
 
+    /**
+     * Add a file to a document.
+     *
+     * @param file File path
+     * @param filename Filename
+     * @param token Authentication token
+     * @param documentId Document ID
+     * @return File ID
+     * @throws IOException e
+     */
     public String addFileToDocument(String file, String filename, String token, String documentId) throws IOException {
         try (InputStream is = Resources.getResource(file).openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, filename);

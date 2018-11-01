@@ -117,6 +117,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(documents.getJsonObject(0).get("update_date"));
         Assert.assertEquals(document1Id, documents.getJsonObject(0).getString("id"));
         Assert.assertEquals("eng", documents.getJsonObject(0).getString("language"));
+        Assert.assertEquals(file1Id, documents.getJsonObject(0).getString("file_id"));
         Assert.assertEquals(1, documents.getJsonObject(0).getInt("file_count"));
         Assert.assertEquals(2, tags.size());
         Assert.assertEquals(tag2Id, tags.getJsonObject(0).getString("id"));

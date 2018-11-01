@@ -326,6 +326,7 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {Object[]} documents List of documents
      * @apiSuccess {String} documents.id ID
      * @apiSuccess {String} documents.highlight Search highlight (for fulltext search)
+     * @apiSuccess {String} documents.file_id Main file ID
      * @apiSuccess {String} documents.title Title
      * @apiSuccess {String} documents.description Description
      * @apiSuccess {Number} documents.create_date Create date (timestamp)
@@ -395,6 +396,7 @@ public class DocumentResource extends BaseResource {
             documents.add(Json.createObjectBuilder()
                     .add("id", documentDto.getId())
                     .add("highlight", JsonUtil.nullable(documentDto.getHighlight()))
+                    .add("file_id", JsonUtil.nullable(documentDto.getFileId()))
                     .add("title", documentDto.getTitle())
                     .add("description", JsonUtil.nullable(documentDto.getDescription()))
                     .add("create_date", documentDto.getCreateTimestamp())

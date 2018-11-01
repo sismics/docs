@@ -12,6 +12,7 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
   $scope.offset = 0;
   $scope.currentPage = 1;
   $scope.limit = _.isUndefined(localStorage.documentsPageSize) ? '10' : localStorage.documentsPageSize;
+  $scope.displayMode = _.isUndefined(localStorage.displayMode) ? 'list' : localStorage.displayMode;
   $scope.search = $state.params.search ? $state.params.search : '';
   $scope.setSearch = function (search) { $scope.search = search };
   $scope.searchOpened = false;
@@ -113,7 +114,14 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
     }
     $scope.loadDocuments();
   });
-  
+
+  /**
+   * Watch for display mode change.
+   */
+  $scope.$watch('displayMode', function (next) {
+    localStorage.displayMode = next;
+  });
+
   /**
    * Display a document.
    */

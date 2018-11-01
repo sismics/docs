@@ -10,7 +10,12 @@ public class DocumentDto {
      * Document ID.
      */
     private String id;
-    
+
+    /**
+     * Main file ID.
+     */
+    private String fileId;
+
     /**
      * Title.
      */
@@ -112,6 +117,15 @@ public class DocumentDto {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getFileId() {
+        return fileId;
+    }
+
+    public DocumentDto setFileId(String fileId) {
+        this.fileId = fileId;
+        return this;
     }
 
     public String getTitle() {
