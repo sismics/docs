@@ -489,6 +489,7 @@ public class UserResource extends BaseResource {
      * @apiDescription All associated entities will be deleted as well.
      * @apiName DeleteUserUsername
      * @apiGroup User
+     * @apiParam {String} username Username
      * @apiSuccess {String} status Status OK
      * @apiError (client) ForbiddenError Access denied or the user cannot be deleted
      * @apiError (client) UserNotFound The user does not exist
@@ -550,6 +551,47 @@ public class UserResource extends BaseResource {
             ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
         
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Disable time-based one-time password for a specific user.
+     *
+     * @api {post} /user/:username/disable_totp Disable TOTP authentication for a specific user
+     * @apiName PostUserUsernameDisableTotp
+     * @apiGroup User
+     * @apiParam {String} username Username
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied or connected as guest
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
+     * @param username Username
+     * @return Response
+     */
+    @POST
+    @Path("{username: [a-zA-Z0-9_]+}/disable_totp")
+    public Response disableTotpUsername(@PathParam("username") String username) {
+        if (!authenticate() || principal.isGuest()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        // Get the user
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveByUsername(username);
+        if (user == null) {
+            throw new ForbiddenClientException();
+        }
+
+        // Remove the TOTP key
+        user.setTotpKey(null);
+        userDao.update(user, principal.getId());
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
@@ -683,7 +725,7 @@ public class UserResource extends BaseResource {
                 .add("disabled", user.getDisableDate() != null);
         return Response.ok().entity(response.build()).build();
     }
-    
+
     /**
      * Returns all active users.
      *
@@ -876,9 +918,9 @@ public class UserResource extends BaseResource {
     }
     
     /**
-     * Disable time-based one-time password.
+     * Disable time-based one-time password for the current user.
      *
-     * @api {post} /user/disable_totp Disable TOTP authentication
+     * @api {post} /user/disable_totp Disable TOTP authentication for the current user
      * @apiName PostUserDisableTotp
      * @apiGroup User
      * @apiParam {String{1..100}} password Password

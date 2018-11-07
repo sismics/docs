@@ -323,6 +323,9 @@ public class TestUserResource extends BaseJerseyTest {
     
     @Test
     public void testTotp() {
+        // Login admin
+        String adminToken = clientUtil.login("admin", "admin", false);
+
         // Create totp1 user
         clientUtil.createUser("totp1");
         String totp1Token = clientUtil.login("totp1");
@@ -373,7 +376,17 @@ public class TestUserResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
                 .post(Entity.form(new Form()
                         .param("password", "12345678")), JsonObject.class);
-        
+
+        // Enable TOTP for totp1
+        target().path("/user/enable_totp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
+                .post(Entity.form(new Form()), JsonObject.class);
+
+        // Disable TOTP for totp1 with admin
+        target().path("/user/totp1/disable_totp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()), JsonObject.class);
+
         // Login with totp1 without a validation code
         target().path("/user/login").request()
                 .post(Entity.form(new Form()
