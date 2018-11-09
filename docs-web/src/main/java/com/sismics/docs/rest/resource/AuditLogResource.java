@@ -6,6 +6,7 @@ import com.sismics.docs.core.dao.AclDao;
 import com.sismics.docs.core.dao.AuditLogDao;
 import com.sismics.docs.core.dao.criteria.AuditLogCriteria;
 import com.sismics.docs.core.dao.dto.AuditLogDto;
+import com.sismics.docs.core.util.SecurityUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -65,6 +66,7 @@ public class AuditLogResource extends BaseResource {
         if (Strings.isNullOrEmpty(documentId)) {
             // Search logs for a user
             criteria.setUserId(principal.getId());
+            criteria.setAdmin(SecurityUtil.skipAclCheck(getTargetIdList(null)));
         } else {
             // Check ACL on the document
             AclDao aclDao = new AclDao();

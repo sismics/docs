@@ -680,6 +680,7 @@ public class UserResource extends BaseResource {
      * @apiParam {String} username Username
      * @apiSuccess {String} username Username
      * @apiSuccess {String} email E-mail
+     * @apiSuccess {Boolean} totp_enabled True if TOTP authentication is enabled
      * @apiSuccess {Number} storage_quota Storage quota (in bytes)
      * @apiSuccess {Number} storage_current Quota used (in bytes)
      * @apiSuccess {String[]} groups Groups
@@ -720,6 +721,7 @@ public class UserResource extends BaseResource {
                 .add("username", user.getUsername())
                 .add("groups", groups)
                 .add("email", user.getEmail())
+                .add("totp_enabled", user.getTotpKey() != null)
                 .add("storage_quota", user.getStorageQuota())
                 .add("storage_current", user.getStorageCurrent())
                 .add("disabled", user.getDisableDate() != null);
@@ -739,6 +741,7 @@ public class UserResource extends BaseResource {
      * @apiSuccess {String} users.id ID
      * @apiSuccess {String} users.username Username
      * @apiSuccess {String} users.email E-mail
+     * @apiSuccess {Boolean} users.totp_enabled True if TOTP authentication is enabled
      * @apiSuccess {Number} users.storage_quota Storage quota (in bytes)
      * @apiSuccess {Number} users.storage_current Quota used (in bytes)
      * @apiSuccess {Number} users.create_date Create date (timestamp)
@@ -781,8 +784,8 @@ public class UserResource extends BaseResource {
             users.add(Json.createObjectBuilder()
                     .add("id", userDto.getId())
                     .add("username", userDto.getUsername())
-                    .add("totp_enabled", userDto.getTotpKey() != null)
                     .add("email", userDto.getEmail())
+                    .add("totp_enabled", userDto.getTotpKey() != null)
                     .add("storage_quota", userDto.getStorageQuota())
                     .add("storage_current", userDto.getStorageCurrent())
                     .add("create_date", userDto.getCreateTimestamp())

@@ -16,6 +16,11 @@ public class AuditLogCriteria {
      * User ID.
      */
     private String userId;
+
+    /**
+     * The search is done for an admin user.
+     */
+    private boolean isAdmin = false;
     
     public String getDocumentId() {
         return documentId;
@@ -31,5 +36,14 @@ public class AuditLogCriteria {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public AuditLogCriteria setAdmin(boolean admin) {
+        isAdmin = admin;
+        return this;
     }
 }

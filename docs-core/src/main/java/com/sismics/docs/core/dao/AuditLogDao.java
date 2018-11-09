@@ -27,7 +27,6 @@ public class AuditLogDao {
      * 
      * @param auditLog Audit log
      * @return New ID
-     * @throws Exception
      */
     public String create(AuditLog auditLog) {
         // Create the UUID
@@ -47,10 +46,9 @@ public class AuditLogDao {
      * @param paginatedList List of audit logs (updated by side effects)
      * @param criteria Search criteria
      * @param sortCriteria Sort criteria
-     * @return List of audit logs
      */
     public void findByCriteria(PaginatedList<AuditLogDto> paginatedList, AuditLogCriteria criteria, SortCriteria sortCriteria) {
-        Map<String, Object> parameterMap = new HashMap<String, Object>();
+        Map<String, Object> parameterMap = new HashMap<>();
         
         StringBuilder baseQuery = new StringBuilder("select l.LOG_ID_C c0, l.LOG_CREATEDATE_D c1, u.USE_USERNAME_C c2, l.LOG_IDENTITY_C c3, l.LOG_CLASSENTITY_C c4, l.LOG_TYPE_C c5, l.LOG_MESSAGE_C c6 from T_AUDIT_LOG l ");
         baseQuery.append(" join T_USER u on l.LOG_IDUSER_C = u.USE_ID_C ");
@@ -67,10 +65,15 @@ public class AuditLogDao {
         }
         
         if (criteria.getUserId() != null) {
-            // Get all logs originating from the user, not necessarly on owned items
-            // Filter out ACL logs
-            queries.add(baseQuery + " where l.LOG_IDUSER_C = :userId and l.LOG_CLASSENTITY_C != 'Acl' ");
-            parameterMap.put("userId", criteria.getUserId());
+            if (criteria.isAdmin()) {
+                // For admin users, display all logs except ACL logs
+                queries.add(baseQuery + " where l.LOG_CLASSENTITY_C != 'Acl' ");
+            } else {
+                // Get all logs originating from the user, not necessarly on owned items
+                // Filter out ACL logs
+                queries.add(baseQuery + " where l.LOG_IDUSER_C = :userId and l.LOG_CLASSENTITY_C != 'Acl' ");
+                parameterMap.put("userId", criteria.getUserId());
+            }
         }
         
         // Perform the search
@@ -78,7 +81,7 @@ public class AuditLogDao {
         List<Object[]> l = PaginatedLists.executePaginatedQuery(paginatedList, queryParam, sortCriteria);
         
         // Assemble results
-        List<AuditLogDto> auditLogDtoList = new ArrayList<AuditLogDto>();
+        List<AuditLogDto> auditLogDtoList = new ArrayList<>();
         for (Object[] o : l) {
             int i = 0;
             AuditLogDto auditLogDto = new AuditLogDto();
