@@ -98,6 +98,7 @@ public class FileUtil {
      * Create a new file.
      *
      * @param name File name, can be null
+     * @param previousFileId ID of the previous version of the file, if the new file is a new version
      * @param unencryptedFile Path to the unencrypted file
      * @param fileSize File size
      * @param language File language, can be null if associated to no document
@@ -106,7 +107,7 @@ public class FileUtil {
      * @return File ID
      * @throws Exception e
      */
-    public static String createFile(String name, Path unencryptedFile, long fileSize, String language, String userId, String documentId) throws Exception {
+    public static String createFile(String name, String previousFileId, Path unencryptedFile, long fileSize, String language, String userId, String documentId) throws Exception {
         // Validate mime type
         String mimeType;
         try {
@@ -132,22 +133,42 @@ public class FileUtil {
             }
         }
 
-        // Get files of this document
-        FileDao fileDao = new FileDao();
-        int order = 0;
-        if (documentId != null) {
-            for (File file : fileDao.getByDocumentId(userId, documentId)) {
-                file.setOrder(order++);
-            }
-        }
-
-        // Create the file
+        // Prepare the file
         File file = new File();
-        file.setOrder(order);
+        file.setOrder(0);
+        file.setVersion(0);
+        file.setLatestVersion(true);
         file.setDocumentId(documentId);
         file.setName(StringUtils.abbreviate(name, 200));
         file.setMimeType(mimeType);
         file.setUserId(userId);
+
+        // Get files of this document
+        FileDao fileDao = new FileDao();
+        if (documentId != null) {
+            if (previousFileId == null) {
+                // It's not a new version, so put it in last order
+                file.setOrder(fileDao.getByDocumentId(userId, documentId).size());
+            } else {
+                // It's a new version, update the previous version
+                File previousFile = fileDao.getActiveById(previousFileId);
+                if (previousFile == null || !previousFile.getDocumentId().equals(documentId)) {
+                    throw new IOException("Previous version mismatch");
+                }
+
+                if (previousFile.getVersionId() == null) {
+                    previousFile.setVersionId(UUID.randomUUID().toString());
+                }
+
+                previousFile.setLatestVersion(false);
+                file.setVersionId(previousFile.getVersionId());
+                file.setVersion(previousFile.getVersion() + 1);
+
+                fileDao.update(previousFile);
+            }
+        }
+
+        // Create the file
         String fileId = fileDao.create(file, userId);
 
         // Save the file

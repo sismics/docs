@@ -212,7 +212,7 @@ public class InboxService extends AbstractScheduledService {
         }
 
         // Save the document, create the base ACLs
-        document = DocumentUtil.createDocument(document, "admin");
+        DocumentUtil.createDocument(document, "admin");
 
         // Add the tag
         String tagId = ConfigUtil.getConfigStringValue(ConfigType.INBOX_TAG);
@@ -232,7 +232,7 @@ public class InboxService extends AbstractScheduledService {
 
         // Add files to the document
         for (EmailUtil.FileContent fileContent : mailContent.getFileContentList()) {
-            FileUtil.createFile(fileContent.getName(), fileContent.getFile(), fileContent.getSize(),
+            FileUtil.createFile(fileContent.getName(), null, fileContent.getFile(), fileContent.getSize(),
                     document.getLanguage(), "admin", document.getId());
         }
     }

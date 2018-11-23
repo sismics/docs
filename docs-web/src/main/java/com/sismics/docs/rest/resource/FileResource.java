@@ -66,6 +66,7 @@ public class FileResource extends BaseResource {
      * @apiName PutFile
      * @apiGroup File
      * @apiParam {String} id Document ID
+     * @apiParam {String} previousFileId ID of the file to replace by this new version
      * @apiParam {String} file File data
      * @apiSuccess {String} status Status OK
      * @apiSuccess {String} id File ID
@@ -88,6 +89,7 @@ public class FileResource extends BaseResource {
     @Consumes("multipart/form-data")
     public Response add(
             @FormDataParam("id") String documentId,
+            @FormDataParam("previousFileId") String previousFileId,
             @FormDataParam("file") FormDataBodyPart fileBodyPart) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -122,7 +124,7 @@ public class FileResource extends BaseResource {
         try {
             String name = fileBodyPart.getContentDisposition() != null ?
                     URLDecoder.decode(fileBodyPart.getContentDisposition().getFileName(), "UTF-8") : null;
-            String fileId = FileUtil.createFile(name, unencryptedFile, fileSize, documentDto == null ?
+            String fileId = FileUtil.createFile(name, previousFileId, unencryptedFile, fileSize, documentDto == null ?
                     null : documentDto.getLanguage(), principal.getId(), documentId);
 
             // Always return OK
@@ -392,6 +394,7 @@ public class FileResource extends BaseResource {
      * @apiSuccess {String} files.id ID
      * @apiSuccess {String} files.mimetype MIME type
      * @apiSuccess {String} files.name File name
+     * @apiSuccess {String} files.version Zero-based version number
      * @apiSuccess {String} files.processing True if the file is currently processing
      * @apiSuccess {String} files.document_id Document ID
      * @apiSuccess {String} files.create_date Create date (timestamp)
@@ -433,6 +436,7 @@ public class FileResource extends BaseResource {
                         .add("id", fileDb.getId())
                         .add("processing", FileUtil.isProcessingFile(fileDb.getId()))
                         .add("name", JsonUtil.nullable(fileDb.getName()))
+                        .add("version", fileDb.getVersion())
                         .add("mimetype", fileDb.getMimeType())
                         .add("document_id", JsonUtil.nullable(fileDb.getDocumentId()))
                         .add("create_date", fileDb.getCreateDate().getTime())
