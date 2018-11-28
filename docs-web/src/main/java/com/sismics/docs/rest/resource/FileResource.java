@@ -288,7 +288,7 @@ public class FileResource extends BaseResource {
         DocumentDao documentDao = new DocumentDao();
         FileDao fileDao = new FileDao();
         File file = fileDao.getFile(id);
-        if (file == null) {
+        if (file == null || file.getDocumentId() == null) {
             throw new NotFoundException();
         }
         DocumentDto documentDto = documentDao.getDocument(file.getDocumentId(), PermType.WRITE, getTargetIdList(null));
