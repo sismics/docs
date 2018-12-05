@@ -136,20 +136,10 @@
       </div>
     </div>
 
-    <div class="panel panel-default mt-30" ng-show="isEdit()">
-      <div class="panel-body">
-        <p translate="settings.workflow.edit.acl_info"></p>
-        <acl-edit source="workflow.id"
-                  acls="workflow.acls"
-                  writable="workflow.writable"
-                  creator="workflow.creator"></acl-edit>
-      </div>
-    </div>
-
     <div class="clearfix form-group mt-10">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary" ng-click="edit()" ng-disabled="!editWorkflowForm.$valid">
-          <span class="fas fa-pencil-alt"></span> {{ isEdit() ? 'save' : 'add' | translate }}
+          <span class="fas fa-pencil-alt"></span> {{ 'save' | translate }}
         </button>
         <button type="button" class="btn btn-danger" ng-click="remove()" ng-show="isEdit()">
           <span class="fas fa-trash"></span> {{ 'delete' | translate }}
@@ -157,4 +147,14 @@
       </div>
     </div>
   </form>
+
+  <div class="panel panel-default mt-30" ng-show="isEdit()">
+    <div class="panel-body">
+      <p translate="settings.workflow.edit.acl_info"></p>
+      <acl-edit source="workflow.id"
+                acls="workflow.acls"
+                writable="workflow.writable"
+                creator="workflow.creator"></acl-edit>
+    </div>
+  </div>
 </div>
