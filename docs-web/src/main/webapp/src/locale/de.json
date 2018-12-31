@@ -250,7 +250,7 @@
     }
   },
   "settings": {
-    "menu_personal_settings": "Persöhnliche Einstellungen",
+    "menu_personal_settings": "Persönliche Einstellungen",
     "menu_user_account": "Benutzerkonto",
     "menu_two_factor_auth": "Zwei-Faktor-Authentifizierung",
     "menu_opened_sessions": "Geöffnete Sitzung",
