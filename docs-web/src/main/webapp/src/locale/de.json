@@ -118,7 +118,7 @@
         "drop_zone": "Drag & Drop Dateien hier her ziehen, um diese hochzuladen",
         "add_files": "Dateien hinzufügen",
         "file_processing_indicator": "Diese Datei wird gerade bearbeitet. Die Suche wird nicht verfügbar sein, bevor der Vorgang abgeschlossen ist.",
-        "reprocess_file": "Diese Datei erneut bearbeiten"
+        "reprocess_file": "Diese Datei erneut verarbeiten"
       },
       "workflow": {
         "workflow": "Workflow",
