@@ -41,6 +41,8 @@
   "document": {
     "navigation_up": "Eine Stufe höher",
     "toggle_navigation": "Navigation ein-/ausblenden",
+    "display_mode_list": "Dokumente in Liste anzeigen",
+    "display_mode_grid": "Dokumente im Raster anzeigen",
     "search_simple": "Einfache Suche",
     "search_fulltext": "Volltext Suche",
     "search_creator": "Urheber",
@@ -128,6 +130,7 @@
         "cancel_workflow": "Abbrechen des aktuellen Workflows",
         "cancel_workflow_title": "Abbrechen des Workflows",
         "cancel_workflow_message": "Wollen Sie den laufenden Workflow wirklich abbrechen?"
+        "no_workflow": "Sie können keinen Workflow für dieses Dokument starten."
       },
       "permissions": {
         "permissions": "Berechtigungen",
@@ -220,6 +223,8 @@
       "color": "Farbe",
       "parent": "Übergeordnet",
       "info": "Berechtigungen für dieses Tag werden auch auf Dokumente angewendet, die mit einem Tag versehen sind <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>"
+      "circular_reference_title": "Zirkuläre Referenz",
+      "circular_reference_message": "Die Hierarchie der übergeordneten Tags bildet eine Schleife. Bitte wählen Sie ein anderes übergeordnetes Tag."
     }
   },
   "group": {
@@ -310,6 +315,7 @@
         "add_step": "Workflow Schritt hinzufügen",
         "actions": "Was passiert danach?",
         "remove_action": "Aktion entfernen"
+        "acl_info": "Nur hier definierte Benutzer und Gruppen können diesen Workflow für ein Dokument starten"
       }
     },
     "security": {
@@ -378,6 +384,12 @@
       "smtp_username": "SMTP Benutzername",
       "smtp_password": "SMTP Passwort",
       "smtp_updated": "SMTP Konfiguration erfolgreich aktualisiert"
+      "webhooks": "Webhooks",
+      "webhooks_explain": "Webhooks werden aufgerufen, wenn das angegebene Ereignis eintritt. Die angegebene URL wird mit einer JSON-Payload gepostet, die den Ereignisnamen und die ID der betreffenden Ressource enthält.",
+      "webhook_event": "Ereignisse",
+      "webhook_url": "URL",
+      "webhook_create_date": "Erstelldatum",
+      "webhook_add": "Webhook hinzufügen"
     },
     "inbox": {
       "title": "Posteingang durchsuchen",
@@ -392,6 +404,7 @@
       "last_sync": "Letzte Synchronisation: {{ data.date | date: 'medium' }}, {{ data.count }} E-Mail(s){{ data.count > 1 ? 's' : '' }} importiert",
       "test_success": "Die Verbindung zum Posteingang war erfolgreich ({{ count }} <strong>unread</strong> message{{ count > 1 ? 's' : '' }})",
       "test_fail": "Beim Verbinden mit dem Posteingang ist ein Fehler aufgetreten, bitte überprüfen Sie die Einstellungen"
+      "saved": "IMAP Konfiguration erfolgreich gespeichert"
     },
     "monitoring": {
       "background_tasks": "Hintergrundaufgaben",
@@ -401,6 +414,10 @@
       "log_date": "Datum",
       "log_tag": "Tag",
       "log_message": "Nachricht"
+      "indexing": "Indexierung",
+      "indexing_info": "Wenn Sie Unstimmigkeiten in den Suchergebnissen feststellen, können Sie versuchen, eine vollständige Neuindizierung durchzuführen. Die Suchergebnisse sind bis zum Abschluss dieser Operation unvollständig.",
+      "start_reindexing": "Vollständige Neuindizierung starten",
+      "reindexing_started": "Neuindizierung wurde gestartet, bitte warten Sie, bis es keine Hintergrundaufgaben mehr gibt."
     },
     "session": {
       "title": "Geöffnete Sitzungen",
@@ -430,7 +447,7 @@
       "need_2": "Ein Verzeichnis nach neuen Dateien durchsuchen lassen und gefunden Dateien importieren lassen möchten",
       "line_1": "Gehen Sie zu <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> und laden Sie das Datei-Importer-Tool für Ihr System herunter.",
       "line_2": "Folgen Sie den <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">Anweisungen</a>, um das Import-Tool zu nutzen.",
-      "line_3": "Ihre Dateien werden in <a href=\"#/document\">Modus "Schnelles Hochladen"</a> importiert. Danach können Sie die Dateien weiterbearbeiten und Dokumenten zuordnen oder Dokumente erstellen.",
+      "line_3": "Ihre Dateien werden in <a href=\"#/document\">Modus 'Schnelles Hochladen'</a> importiert. Danach können Sie die Dateien weiterbearbeiten und Dokumenten zuordnen oder Dokumente erstellen.",
       "download": "Herunterladen",
       "instructions": "Anweisungen"
     }
