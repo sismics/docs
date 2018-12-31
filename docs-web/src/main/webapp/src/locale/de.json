@@ -129,7 +129,7 @@
         "full_name": "<strong>{{ name }}</strong> gestartet am {{ create_date | date }}",
         "cancel_workflow": "Abbrechen des aktuellen Workflows",
         "cancel_workflow_title": "Abbrechen des Workflows",
-        "cancel_workflow_message": "Wollen Sie den laufenden Workflow wirklich abbrechen?"
+        "cancel_workflow_message": "Wollen Sie den laufenden Workflow wirklich abbrechen?",
         "no_workflow": "Sie können keinen Workflow für dieses Dokument starten."
       },
       "permissions": {
@@ -222,7 +222,7 @@
       "name": "Name",
       "color": "Farbe",
       "parent": "Übergeordnet",
-      "info": "Berechtigungen für dieses Tag werden auch auf Dokumente angewendet, die mit einem Tag versehen sind <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>"
+      "info": "Berechtigungen für dieses Tag werden auch auf Dokumente angewendet, die mit einem Tag versehen sind <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>",
       "circular_reference_title": "Zirkuläre Referenz",
       "circular_reference_message": "Die Hierarchie der übergeordneten Tags bildet eine Schleife. Bitte wählen Sie ein anderes übergeordnetes Tag."
     }
@@ -314,7 +314,7 @@
         "target_help": "<strong>Zulassen:</strong> Überprüfen und fortsetzen des Workflows <br/><strong>Genemigen:</strong> Übernehmen oder lehnen Sie die Überprüfung ab",
         "add_step": "Workflow Schritt hinzufügen",
         "actions": "Was passiert danach?",
-        "remove_action": "Aktion entfernen"
+        "remove_action": "Aktion entfernen",
         "acl_info": "Nur hier definierte Benutzer und Gruppen können diesen Workflow für ein Dokument starten"
       }
     },
@@ -383,7 +383,7 @@
       "smtp_from": "Absender E-Mail",
       "smtp_username": "SMTP Benutzername",
       "smtp_password": "SMTP Passwort",
-      "smtp_updated": "SMTP Konfiguration erfolgreich aktualisiert"
+      "smtp_updated": "SMTP Konfiguration erfolgreich aktualisiert",
       "webhooks": "Webhooks",
       "webhooks_explain": "Webhooks werden aufgerufen, wenn das angegebene Ereignis eintritt. Die angegebene URL wird mit einer JSON-Payload gepostet, die den Ereignisnamen und die ID der betreffenden Ressource enthält.",
       "webhook_event": "Ereignisse",
@@ -403,7 +403,7 @@
       "test": "Konfiguration testen",
       "last_sync": "Letzte Synchronisation: {{ data.date | date: 'medium' }}, {{ data.count }} E-Mail(s){{ data.count > 1 ? 's' : '' }} importiert",
       "test_success": "Die Verbindung zum Posteingang war erfolgreich ({{ count }} <strong>unread</strong> message{{ count > 1 ? 's' : '' }})",
-      "test_fail": "Beim Verbinden mit dem Posteingang ist ein Fehler aufgetreten, bitte überprüfen Sie die Einstellungen"
+      "test_fail": "Beim Verbinden mit dem Posteingang ist ein Fehler aufgetreten, bitte überprüfen Sie die Einstellungen",
       "saved": "IMAP Konfiguration erfolgreich gespeichert"
     },
     "monitoring": {
@@ -413,7 +413,7 @@
       "server_logs": "Server Logs",
       "log_date": "Datum",
       "log_tag": "Tag",
-      "log_message": "Nachricht"
+      "log_message": "Nachricht",
       "indexing": "Indexierung",
       "indexing_info": "Wenn Sie Unstimmigkeiten in den Suchergebnissen feststellen, können Sie versuchen, eine vollständige Neuindizierung durchzuführen. Die Suchergebnisse sind bis zum Abschluss dieser Operation unvollständig.",
       "start_reindexing": "Vollständige Neuindizierung starten",
