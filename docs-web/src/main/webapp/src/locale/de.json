@@ -408,7 +408,7 @@
     },
     "monitoring": {
       "background_tasks": "Hintergrundaufgaben",
-      "queued_tasks": "Es gibt derzeit {{ count }}} anstehende Tasks.",
+      "queued_tasks": "Es gibt derzeit {{ count }} anstehende Tasks.",
       "queued_tasks_explain": "Dateiverarbeitung, Thumbnail-Erstellung, Index-Update, optische Zeichenerkennung sind Hintergrundaufgaben. Eine große Anzahl unbearbeiteter Aufgaben führt zu unvollständigen Suchergebnissen.",
       "server_logs": "Server Logs",
       "log_date": "Datum",
