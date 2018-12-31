@@ -253,15 +253,15 @@
     "menu_personal_settings": "Persönliche Einstellungen",
     "menu_user_account": "Benutzerkonto",
     "menu_two_factor_auth": "Zwei-Faktor-Authentifizierung",
-    "menu_opened_sessions": "Geöffnete Sitzung",
+    "menu_opened_sessions": "Geöffnete Sitzungen",
     "menu_file_importer": "Massen Datei Importer",
     "menu_general_settings": "Generelle Einstellungen",
-    "menu_workflow": "Workflow",
-    "menu_users": "Benutzer",
-    "menu_groups": "Gruppen",
-    "menu_vocabularies": "Vokabulare",
+    "menu_workflow": "Workflows",
+    "menu_users": "Benutzerverwaltung",
+    "menu_groups": "Gruppenverwaltung",
+    "menu_vocabularies": "Vokabulareinträge",
     "menu_configuration": "Einstellungen",
-    "menu_inbox": "Inbox scannen",
+    "menu_inbox": "Posteingang durchsuchen",
     "menu_monitoring": "Überwachung",
     "user": {
       "title": "Benutzerverwaltung",
@@ -290,7 +290,7 @@
       }
     },
     "workflow": {
-      "title": "Workflow Konfigurator",
+      "title": "Workflows",
       "add_workflow": "Workflow hinzufügen",
       "name": "Name",
       "create_date": "Erstellungsdatum",
@@ -413,7 +413,7 @@
       "clear": "Alle anderen Sitzungen löschen"
     },
     "vocabulary": {
-      "title": "Vokabulareinträge",
+      "title": "Vokabular",
       "choose_vocabulary": "Wählen Sie ein Vokabular aus, das Sie bearbeiten möchten.",
       "type": "Typ",
       "coverage": "Abdeckung",
@@ -429,8 +429,8 @@
       "need_1": "Ganze Verzeichnisse von Dateien auf einmal importieren möchten",
       "need_2": "Ein Verzeichnis nach neuen Dateien durchsuchen lassen und gefunden Dateien importieren lassen möchten",
       "line_1": "Gehen Sie zu <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> und laden Sie das Datei-Importer-Tool für Ihr System herunter.",
-      "line_2": "Folgen Sie dem Link <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">instructions here</a> um das Import-Toll zu nutzen.",
-      "line_3": "Ihre Dateien werden in <a href=\"#/document\">Quick upload</a> importiert, danach können Sie die Dateien weiterbearbeiten und Dokumenten zuordnen oder Dokumente erstellen.",
+      "line_2": "Folgen Sie den <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">Anweisungen</a>, um das Import-Tool zu nutzen.",
+      "line_3": "Ihre Dateien werden in <a href=\"#/document\">Modus "Schnelles Hochladen"</a> importiert. Danach können Sie die Dateien weiterbearbeiten und Dokumenten zuordnen oder Dokumente erstellen.",
       "download": "Herunterladen",
       "instructions": "Anweisungen"
     }
