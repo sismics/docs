@@ -101,7 +101,7 @@
       "by_creator": "von",
       "comments": "Kommentar",
       "no_comments": "Noch keine Kommentare zu diesem Dokument vorhanden",
-      "add_comment": "Fügen sie einen Komentar hinzu",
+      "add_comment": "Fügen sie einen Kommentar hinzu",
       "error_loading_comments": "Fehler beim Laden eines Kommentars",
       "workflow_current": "Aktueller Workflow-Status",
       "workflow_comment": "Fügen Sie einen Workflow Kommentar hinzu",
@@ -115,7 +115,7 @@
         "upload_progress": "Hochladen...",
         "upload_error": "Fehler beim Hochladen",
         "upload_error_quota": "Maximaler Speicherplatz erreicht",
-        "drop_zone": "Drag & Drop Dateien hier her ziehen, um diese hochzuladen",
+        "drop_zone": "Drag & Drop Dateien hierherziehen, um diese hochzuladen",
         "add_files": "Dateien hinzufügen",
         "file_processing_indicator": "Diese Datei wird gerade bearbeitet. Die Suche wird nicht verfügbar sein, bevor der Vorgang abgeschlossen ist.",
         "reprocess_file": "Diese Datei erneut verarbeiten"
@@ -153,7 +153,7 @@
       "primary_metadata": "Primäre Metadaten",
       "title_placeholder": "Titel des Dokuments",
       "description_placeholder": "Zusammenfassung, Inhaltsverzeichnis oder Freitext",
-      "new_files": "New files",
+      "new_files": "neue Dateien",
       "orphan_files": "+ {{ count }} Datei{{ count > 1 ? 's' : '' }}",
       "additional_metadata": "Weitere Metadaten",
       "subject_placeholder": "Schlüsselwörter, abstrakte Sätze oder Klassifizierungscodes",
@@ -169,7 +169,7 @@
       "upload_error": "Fehler beim Hochladen",
       "upload_error_quota": "Maximaler Speicherplatz erreicht",
       "quick_upload": "Schnelles Hochladen",
-      "drop_zone": "Drag & Drop Dateien hier her ziehen, um diese hochzuladen",
+      "drop_zone": "Drag & Drop Dateien hierherziehen, um diese hochzuladen",
       "add_files": "Dateien hinzufügen",
       "add_new_document": "Neues Dokument hinzufügen",
       "latest_activity": "Letzte Aktivitäten",
@@ -239,7 +239,7 @@
     "profile": {
       "groups": "Gruppen",
       "quota_used": "Benutzter Speicherplatz",
-      "percent_used": "{{ percent | number: 0 }}% Benutzt",
+      "percent_used": "{{ percent | number: 0 }}% genutzt",
       "related_links": "Weiterführende Links",
       "document_created": "Dokumente erstellt von {{ username }}",
       "edit_user": "Benutzer {{ username }} bearbeiten"
@@ -311,7 +311,7 @@
         "type_approve": "Genehmigen",
         "type_validate": "Bestätigen",
         "target": "Zugewiesen an",
-        "target_help": "<strong>Zulassen:</strong> Überprüfen und fortsetzen des Workflows <br/><strong>Genemigen:</strong> Übernehmen oder lehnen Sie die Überprüfung ab",
+        "target_help": "<strong>Zulassen:</strong> Überprüfen und fortsetzen des Workflows <br/><strong>Genehmigen:</strong> Übernehmen oder lehnen Sie die Überprüfung ab",
         "add_step": "Workflow Schritt hinzufügen",
         "actions": "Was passiert danach?",
         "remove_action": "Aktion entfernen",
@@ -322,7 +322,7 @@
       "enable_totp": "Zwei-Faktor-Authentifizierung aktivieren",
       "enable_totp_message": "Stellen Sie sicher, dass Sie eine TOTP-kompatible Anwendung auf Ihrem Telefon haben, die bereit ist, ein neues Konto hinzuzufügen.",
       "title": "Zwei-Faktor-Authentifizierung",
-      "message_1": "Die Zwei-Faktor-Authentifizierung ermöglicht Ihnen eine weitere Abischerung Ihres {{ appName }} Benutzerkontos. Bevor Sie diese Funktion aktivieren, stellen Sie sicher, dass Sie eine TOTP-kompatible Anwendung auf Ihrem Telefon haben:",
+      "message_1": "Die Zwei-Faktor-Authentifizierung ermöglicht Ihnen eine weitere Absicherung Ihres {{ appName }} Benutzerkontos. Bevor Sie diese Funktion aktivieren, stellen Sie sicher, dass Sie eine TOTP-kompatible Anwendung auf Ihrem Telefon haben:",
       "message_google_authenticator": "Für Android, iOS, und Blackberry: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>",
       "message_duo_mobile": "Für Android und iOS: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
       "message_authenticator": "Für Windows Phone: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">Authenticator</a>",
@@ -377,7 +377,7 @@
       "logo": "Logo (quadratische Größe)",
       "background_image": "Hintergrundbild",
       "uploading_image": "Bild hochladen...",
-      "title_smtp": "SMTP Email Einstellungen <small>für Passwort wiederherstellung</small>",
+      "title_smtp": "SMTP Email Einstellungen <small>für das Zürucksetzen des Passworts</small>",
       "smtp_hostname": "SMTP Server",
       "smtp_port": "SMTP Port",
       "smtp_from": "Absender E-Mail",
@@ -394,7 +394,7 @@
     "inbox": {
       "title": "Posteingang durchsuchen",
       "message": "Wenn Sie diese Funktion aktivieren, durchsucht das System den angegebenen Posteingang jede Minute nach <strong>ungelesenen</strong> E-Mails und importiert diese automatisch.<br/>Nach dem Import einer E-Mail wird diese als gelesen markiert.<br/>Folgen Sie den Links zu Konfigurationseinstellungen für <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
-      "enabled": "Durchsuchen des Posteingang aktivieren",
+      "enabled": "Durchsuchen des Posteingangs aktivieren",
       "hostname": "IMAP Server",
       "port": "IMAP Port (143 oder 993)",
       "username": "IMAP Benutzername",
@@ -464,7 +464,7 @@
     "error_general": "Beim Versuch, Ihre Datei zu importieren, ist ein Fehler aufgetreten. Bitte stellen Sie sicher, dass es sich um eine gültige EML-Datei handelt."
   },
   "app_share": {
-    "main": "Fragen Sie nach einen Link zu einem gemeinsam genutzten Dokument, um darauf zuzugreifen.",
+    "main": "Fragen Sie nach einem Link zu einem gemeinsam genutzten Dokument, um darauf zuzugreifen.",
     "403": {
       "title": "Nicht erlaubt",
       "message": "Das Dokument, das Sie anzeigen möchten, ist nicht mehr freigegeben."
@@ -485,7 +485,7 @@
       "Comment": "Kommentar",
       "Document": "Dokument",
       "File": "Datei",
-      "Group": "Guppe",
+      "Group": "Gruppe",
       "Tag": "Tag",
       "User": "Benutzer",
       "RouteModel": "Workflow-Muster",
