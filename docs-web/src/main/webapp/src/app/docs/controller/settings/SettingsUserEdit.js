@@ -77,6 +77,9 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
     });
   };
 
+  /**
+   * Send a password reset email.
+   */
   $scope.passwordReset = function () {
       Restangular.one('user').post('password_lost', {
           username: $stateParams.username
@@ -86,5 +89,22 @@ angular.module('docs').controller('SettingsUserEdit', function($scope, $dialog, 
           var btns = [{result: 'ok', label: $translate.instant('ok'), cssClass: 'btn-primary'}];
           $dialog.messageBox(title, msg, btns);
       });
+  };
+
+  $scope.disableTotp = function () {
+    var title = $translate.instant('settings.user.edit.disable_totp_title');
+    var msg = $translate.instant('settings.user.edit.disable_totp_message');
+    var btns = [
+      { result:'cancel', label: $translate.instant('cancel') },
+      { result:'ok', label: $translate.instant('ok'), cssClass: 'btn-primary' }
+    ];
+
+    $dialog.messageBox(title, msg, btns, function (result) {
+      if (result === 'ok') {
+        Restangular.one('user/' + $stateParams.username + '/disable_totp').post('').then(function() {
+          $scope.user.totp_enabled = false;
+        });
+      }
+    });
   };
 });

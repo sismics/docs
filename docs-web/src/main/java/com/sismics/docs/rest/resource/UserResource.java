@@ -576,7 +576,7 @@ public class UserResource extends BaseResource {
     @POST
     @Path("{username: [a-zA-Z0-9_]+}/disable_totp")
     public Response disableTotpUsername(@PathParam("username") String username) {
-        if (!authenticate() || principal.isGuest()) {
+        if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);

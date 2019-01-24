@@ -113,8 +113,16 @@
 
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
-        <button type="button" class="btn btn-warning" ng-click="passwordReset()" ng-show="isEdit() && user.username != 'guest'">
+        <button type="button" class="btn btn-info" ng-click="passwordReset()" ng-show="isEdit() && user.username != 'guest'">
           <span class="fas fa-redo-alt"></span> {{ 'settings.user.edit.password_reset_btn' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="button" class="btn btn-warning" ng-click="disableTotp()" ng-show="isEdit() && user.totp_enabled">
+          <span class="fas fa-unlock"></span> {{ 'settings.user.edit.disable_totp_btn' | translate }}
         </button>
       </div>
     </div>
