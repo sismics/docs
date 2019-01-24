@@ -25,8 +25,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.*;
-import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
-import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
+import org.apache.lucene.queryparser.simple.SimpleQueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
@@ -371,29 +370,26 @@ public class LuceneIndexingHandler implements IndexingHandler {
      * @throws Exception e
      */
     private Map<String, String> search(String searchQuery, String fullSearchQuery) throws Exception {
-        // Escape query and add quotes so QueryParser generate a PhraseQuery
-        String escapedSearchQuery = "\"" + QueryParserUtil.escape(searchQuery + " " + fullSearchQuery) + "\"";
-        String escapedFullSearchQuery = "\"" + QueryParserUtil.escape(fullSearchQuery) + "\"";
+        // The fulltext query searches in all fields
+        searchQuery = searchQuery + " " + fullSearchQuery;
 
         // Build search query
         Analyzer analyzer = new StandardAnalyzer();
-        StandardQueryParser qpHelper = new StandardQueryParser(analyzer);
-        qpHelper.setPhraseSlop(100); // PhraseQuery add terms
 
         // Search on documents and files
         BooleanQuery query = new BooleanQuery.Builder()
-                .add(qpHelper.parse(escapedSearchQuery, "title"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "description"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "subject"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "identifier"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "publisher"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "format"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "source"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "type"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "coverage"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "rights"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "filename"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedFullSearchQuery, "content"), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "title").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "description").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "subject").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "identifier").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "publisher").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "format").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "source").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "type").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "coverage").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "rights").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "filename").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "content").parse(fullSearchQuery), BooleanClause.Occur.SHOULD)
                 .build();
 
         // Search
@@ -433,6 +429,19 @@ public class LuceneIndexingHandler implements IndexingHandler {
         }
 
         return documentMap;
+    }
+
+    /**
+     * Build a query parser for searching.
+     *
+     * @param analyzer Analyzer
+     * @param field Field
+     * @return Query parser
+     */
+    private SimpleQueryParser buildQueryParser(Analyzer analyzer, String field) {
+        SimpleQueryParser simpleQueryParser = new SimpleQueryParser(analyzer, field);
+        simpleQueryParser.setDefaultOperator(BooleanClause.Occur.MUST); // AND all the terms
+        return simpleQueryParser;
     }
 
     /**
