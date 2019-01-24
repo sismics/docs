@@ -8,7 +8,7 @@ before_install:
   - sudo apt-get -y -q install haveged && sudo service haveged start
 after_success:
   - |
-    if [ "$TRAVIS_PULL_REQUEST" = "false" ];
+    if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
       mvn -Pprod -DskipTests clean install
       docker login -u $DOCKER_USER -p $DOCKER_PASS
       export REPO=sismics/docs
