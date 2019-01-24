@@ -900,7 +900,7 @@ public class DocumentResource extends BaseResource {
         }
 
         // Save the document, create the base ACLs
-        document = DocumentUtil.createDocument(document, principal.getId());
+        DocumentUtil.createDocument(document, principal.getId());
 
         // Raise a document created event
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
@@ -911,7 +911,7 @@ public class DocumentResource extends BaseResource {
         // Add files to the document
         try {
             for (EmailUtil.FileContent fileContent : mailContent.getFileContentList()) {
-                FileUtil.createFile(fileContent.getName(), fileContent.getFile(), fileContent.getSize(),
+                FileUtil.createFile(fileContent.getName(), null, fileContent.getFile(), fileContent.getSize(),
                         document.getLanguage(), principal.getId(), document.getId());
             }
         } catch (IOException e) {

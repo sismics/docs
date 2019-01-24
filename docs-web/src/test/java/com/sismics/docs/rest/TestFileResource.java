@@ -140,9 +140,11 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(2, files.size());
         Assert.assertEquals(file1Id, files.getJsonObject(0).getString("id"));
         Assert.assertEquals("PIA00452.jpg", files.getJsonObject(0).getString("name"));
+        Assert.assertEquals(0, files.getJsonObject(0).getInt("version"));
         Assert.assertEquals(163510L, files.getJsonObject(0).getJsonNumber("size").longValue());
         Assert.assertEquals(file2Id, files.getJsonObject(1).getString("id"));
         Assert.assertEquals("PIA00452.jpg", files.getJsonObject(1).getString("name"));
+        Assert.assertEquals(0, files.getJsonObject(1).getInt("version"));
 
         // Rename a file
         target().path("file/" + file1Id)
@@ -225,6 +227,38 @@ public class TestFileResource extends BaseJerseyTest {
         target().path("/file/" + file2Id + "/process").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .post(Entity.form(new Form()), JsonObject.class);
+
+        // Add a new version to a file
+        String file3Id;
+        try (InputStream is0 = Resources.getResource("file/document.txt").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is0, "document.txt");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                json = target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                        .put(Entity.entity(
+                                multiPart
+                                        .field("id", document1Id)
+                                        .field("previousFileId", file2Id)
+                                        .bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+                file3Id = json.getString("id");
+                Assert.assertNotNull(file2Id);
+            }
+        }
+
+        // Check the newly created version
+        json = target().path("/file/list")
+                .queryParam("id", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                .get(JsonObject.class);
+        files = json.getJsonArray("files");
+        Assert.assertEquals(1, files.size());
+        Assert.assertEquals(file3Id, files.getJsonObject(0).getString("id"));
+        Assert.assertEquals("document.txt", files.getJsonObject(0).getString("name"));
+        Assert.assertEquals(1, files.getJsonObject(0).getInt("version"));
     }
 
     /**

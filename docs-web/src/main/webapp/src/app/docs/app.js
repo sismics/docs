@@ -507,7 +507,8 @@ angular.module('docs',
     { key: 'chi_tra', label: '繁体中文' },
     { key: 'jpn', label: '日本語' },
     { key: 'tha', label: 'ภาษาไทย' },
-    { key: 'kor', label: '한국어' }
+    { key: 'kor', label: '한국어' },
+    { key: 'nld', label: 'Nederlands' }
   ];
 })
 /**
