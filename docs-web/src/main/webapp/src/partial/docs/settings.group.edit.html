@@ -9,6 +9,7 @@
       <label class="col-sm-2 control-label" for="inputName">{{ 'settings.group.edit.name' | translate }}</label>
       <div class="col-sm-7">
         <input name="name" type="text" id="inputName" required class="form-control"
+               ui-validate="{ space: '!$value || $value.indexOf(\' \') == -1' }"
                ng-minlength="3" ng-maxlength="50" ng-attr-placeholder="{{ 'settings.group.edit.name' | translate }}" ng-model="group.name"/>
       </div>
 
@@ -16,6 +17,7 @@
         <span class="help-block" ng-show="editGroupForm.name.$error.required && editGroupForm.$dirty">{{ 'validation.required' | translate }}</span>
         <span class="help-block" ng-show="editGroupForm.name.$error.minlength && editGroupForm.$dirty">{{ 'validation.too_short' | translate }}</span>
         <span class="help-block" ng-show="editGroupForm.name.$error.maxlength && editGroupForm.$dirty">{{ 'validation.too_long' | translate }}</span>
+        <span class="help-block" ng-show="editGroupForm.name.$error.space && editGroupForm.$dirty">{{ 'validation.no_space' | translate }}</span>
       </div>
     </div>
 

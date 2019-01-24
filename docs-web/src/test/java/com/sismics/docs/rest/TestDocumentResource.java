@@ -185,6 +185,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         // Search documents
         Assert.assertEquals(1, searchDocuments("full:uranium full:einstein", document1Token));
         Assert.assertEquals(2, searchDocuments("tit*", document1Token));
+        Assert.assertEquals(2, searchDocuments("docu*", document1Token));
         Assert.assertEquals(2, searchDocuments("full:title", document1Token));
         Assert.assertEquals(2, searchDocuments("title", document1Token));
         Assert.assertEquals(1, searchDocuments("super description", document1Token));
