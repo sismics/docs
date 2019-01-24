@@ -1,0 +1,10 @@
+email.template.password_recovery.subject=Bitte setzen Sie ihr Passwort zur\u00FCck
+email.template.password_recovery.hello=Hallo {0}.
+email.template.password_recovery.instruction1=Wir haben eine Anfrage zum Zur\u00FCcksetzen Ihres Passworts erhalten.<br/>Wenn Sie keine Hilfe angefordert haben, können Sie diese E-Mail einfach ignorieren.
+email.template.password_recovery.instruction2=Um Ihr Passwort zur\u00FCckzusetzen, besuchen Sie bitte den folgenden Link:
+email.template.password_recovery.click_here=Klicken Sie hier, um Ihr Passwort zur\u00FCckzusetzen
+email.template.route_step_validate.subject=Ein Dokument braucht Ihre Aufmerksamkeit
+email.template.route_step_validate.hello=Hallo {0}.
+email.template.route_step_validate.instruction1=Ihnen wurde ein Workflow-Schritt zugewiesen, der Ihre Aufmerksamkeit erfordert.
+email.template.route_step_validate.instruction2=Um das Dokument anzuzeigen und den Workflow zu \u00FCberpr\u00FCfen, besuchen Sie bitte den folgenden Link:
+email.no_html.error=Ihr E-Mail-Client unterst\u00FCtzt keine HTML-Nachrichten
