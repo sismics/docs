@@ -7,14 +7,17 @@ before_install:
   - sudo apt-get -y -q install ffmpeg mediainfo tesseract-ocr tesseract-ocr-fra tesseract-ocr-ita tesseract-ocr-kor tesseract-ocr-rus tesseract-ocr-ukr tesseract-ocr-spa tesseract-ocr-ara tesseract-ocr-hin tesseract-ocr-deu tesseract-ocr-pol tesseract-ocr-jpn tesseract-ocr-por tesseract-ocr-tha tesseract-ocr-jpn tesseract-ocr-chi-sim tesseract-ocr-chi-tra
   - sudo apt-get -y -q install haveged && sudo service haveged start
 after_success:
-  - mvn -Pprod -DskipTests clean install
-  - docker login -u $DOCKER_USER -p $DOCKER_PASS
-  - export REPO=sismics/docs
-  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
-  - docker build -f Dockerfile -t $REPO:$COMMIT .
-  - docker tag $REPO:$COMMIT $REPO:$TAG
-  - docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
-  - docker push $REPO
+  - |
+    if [ "$TRAVIS_PULL_REQUEST" = "false" ];
+      mvn -Pprod -DskipTests clean install
+      docker login -u $DOCKER_USER -p $DOCKER_PASS
+      export REPO=sismics/docs
+      export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+      docker build -f Dockerfile -t $REPO:$COMMIT .
+      docker tag $REPO:$COMMIT $REPO:$TAG
+      docker tag $REPO:$COMMIT $REPO:travis-$TRAVIS_BUILD_NUMBER
+      docker push $REPO
+    fi
 env:
   global:
   - secure: LRGpjWORb0qy6VuypZjTAfA8uRHlFUMTwb77cenS9PPRBxuSnctC531asS9Xg3DqC5nsRxBBprgfCKotn5S8nBSD1ceHh84NASyzLSBft3xSMbg7f/2i7MQ+pGVwLncusBU6E/drnMFwZBleo+9M8Tf96axY5zuUp90MUTpSgt0=
