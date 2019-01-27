@@ -291,7 +291,10 @@
         "disabled": "Disabled user",
         "password_reset_btn": "Send a password reset email to this user",
         "password_lost_sent_title": "Password reset email sent",
-        "password_lost_sent_message": "A password reset email has been sent to <strong>{{ username }}</strong>"
+        "password_lost_sent_message": "A password reset email has been sent to <strong>{{ username }}</strong>",
+        "disable_totp_btn": "Disable two-factor authentification for this user",
+        "disable_totp_title": "Disable two-factor authentication",
+        "disable_totp_message": "Are you sure you want to disable two-factor authentication for this user?"
       }
     },
     "workflow": {
