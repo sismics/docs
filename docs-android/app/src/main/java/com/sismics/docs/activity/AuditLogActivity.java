@@ -52,7 +52,7 @@ public class AuditLogActivity extends AppCompatActivity {
         }
 
         // Configure the swipe refresh layout
-        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+        SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
@@ -65,7 +65,7 @@ public class AuditLogActivity extends AppCompatActivity {
         });
 
         // Navigate to user profile on click
-        final ListView auditLogListView = (ListView) findViewById(R.id.auditLogListView);
+        final ListView auditLogListView = findViewById(R.id.auditLogListView);
         auditLogListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -88,15 +88,15 @@ public class AuditLogActivity extends AppCompatActivity {
      * Refresh the view.
      */
     private void refreshView(String documentId) {
-        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        final ListView auditLogListView = (ListView) findViewById(R.id.auditLogListView);
+        final SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        final ProgressBar progressBar = findViewById(R.id.progressBar);
+        final ListView auditLogListView = findViewById(R.id.auditLogListView);
         progressBar.setVisibility(View.VISIBLE);
         auditLogListView.setVisibility(View.GONE);
         AuditLogResource.list(this, documentId, new HttpCallback() {
             @Override
             public void onSuccess(JSONObject response) {
-                auditLogListView.setAdapter(new AuditLogListAdapter(response.optJSONArray("logs")));
+                auditLogListView.setAdapter(new AuditLogListAdapter(AuditLogActivity.this, response.optJSONArray("logs")));
             }
 
             @Override

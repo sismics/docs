@@ -489,10 +489,11 @@
       "Document": "Document",
       "File": "File",
       "Group": "Group",
+      "Route": "Workflow",
+      "RouteModel": "Workflow model",
       "Tag": "Tag",
       "User": "User",
-      "RouteModel": "Workflow model",
-      "Route": "Workflow"
+      "Webhook": "Webhook"
     },
     "selectrelation": {
       "typeahead": "Type a document title"

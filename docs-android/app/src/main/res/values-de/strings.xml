@@ -9,7 +9,6 @@
     <string name="validate_error_alphanumeric">Nur Buchstaben und Zahlen</string>
 
     <!-- App -->
-    <string name="app_name" translatable="false">Sismics Docs</string>
     <string name="drawer_open">Navigationsleiste öffnen</string>
     <string name="drawer_close">Navigationsleiste schließen</string>
     <string name="login_explain"><![CDATA[Um zu beginnen, müssen Sie Sismics Docs Server herunterladen und installieren <a href="https://github.com/sismics/docs">github.com/sismics/docs</a>, sowie die Login-Daten unten eingeben]]></string>
@@ -69,9 +68,6 @@
     <string name="pref_clear_history_summary">Leert die aktuellen Suchvorschläge</string>
     <string name="pref_clear_history_success">Suchvorschläge wurden gelöscht</string>
     <string name="pref_cache_size">Cache Größe</string>
-    <string name="language_french" translatable="false">Français</string>
-    <string name="language_english" translatable="false">English</string>
-    <string name="language_german" translatable="false">Deutsch</string>
     <string name="save">Speichern</string>
     <string name="edit_document">Bearbeiten</string>
     <string name="error_editing_document">Netzwerkfehler, bitte versuchen Sie es erneut</string>
@@ -144,5 +140,20 @@
     <string name="rights">Rechte</string>
     <string name="contributors">Mitwirkende</string>
     <string name="relations">Beziehungen</string>
+
+    <!-- Audit log -->
+    <string name="auditlog_Acl">ACL</string>
+    <string name="auditlog_Comment">Kommentar</string>
+    <string name="auditlog_Document">Dokument</string>
+    <string name="auditlog_File">Datei</string>
+    <string name="auditlog_Group">Gruppe</string>
+    <string name="auditlog_Route">Workflow</string>
+    <string name="auditlog_RouteModel">Workflow-Muster</string>
+    <string name="auditlog_Tag">Tag</string>
+    <string name="auditlog_User">Benutzer</string>
+    <string name="auditlog_Webhook">Webhook</string>
+    <string name="auditlog_created">erstellt</string>
+    <string name="auditlog_updated">aktualisiert</string>
+    <string name="auditlog_deleted">gelöscht</string>
 
 </resources>
