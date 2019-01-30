@@ -118,7 +118,8 @@
         "drop_zone": "Drag & drop files here to upload",
         "add_files": "Add files",
         "file_processing_indicator": "This file is being processed. Searching will not be available before it is complete.",
-        "reprocess_file": "Reprocess this file"
+        "reprocess_file": "Reprocess this file",
+        "upload_new_version": "Upload a new version"
       },
       "workflow": {
         "workflow": "Workflow",
