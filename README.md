@@ -32,15 +32,16 @@ Features
 - Responsive user interface
 - Optical character recognition
 - Support image, PDF, ODT, DOCX, PPTX files
-- Video file support ![New!](https://www.sismics.com/public/img/new.png)
+- Video file support
 - Flexible search engine with suggestions and highlighting
 - Full text search in all supported files
 - All [Dublin Core](http://dublincore.org/) metadata
 - Workflow system ![New!](https://www.sismics.com/public/img/new.png)
 - 256-bit AES encryption of stored files
+- File versioning ![New!](https://www.sismics.com/public/img/new.png)
 - Tag system with nesting
-- Import document from email (EML format) ![New!](https://www.sismics.com/public/img/new.png)
-- Automatic inbox scanning and importing ![New!](https://www.sismics.com/public/img/new.png)
+- Import document from email (EML format)
+- Automatic inbox scanning and importing
 - User/group permission system
 - 2-factor authentication
 - Hierarchical groups
@@ -49,9 +50,9 @@ Features
 - Storage quota per user
 - Document sharing by URL
 - RESTful Web API
-- Webhooks to trigger external service ![New!](https://www.sismics.com/public/img/new.png)
+- Webhooks to trigger external service
 - Fully featured Android client
-- [Bulk files importer](https://github.com/sismics/docs/tree/master/docs-importer) (single or scan mode) ![New!](https://www.sismics.com/public/img/new.png)
+- [Bulk files importer](https://github.com/sismics/docs/tree/master/docs-importer) (single or scan mode)
 - Tested to one million documents
 
 Install with Docker

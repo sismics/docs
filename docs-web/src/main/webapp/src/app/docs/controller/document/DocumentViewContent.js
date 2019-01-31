@@ -64,6 +64,9 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
     });
   };
 
+  /**
+   * Upload a new version.
+   */
   $scope.uploadNewVersion = function (files, file) {
     if (!$scope.document.writable || !files || files.length === 0) {
       return;
@@ -181,5 +184,17 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
     Restangular.one('file/' + file.id).post('process').then(function () {
       file.processing = true;
     });
+  };
+
+  $scope.openVersions = function (file) {
+    $uibModal.open({
+      templateUrl: 'partial/docs/file.versions.html',
+      controller: 'ModalFileVersions',
+      resolve: {
+        file: function () {
+          return file;
+        }
+      }
+    })
   };
 });

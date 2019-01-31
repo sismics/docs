@@ -4,17 +4,27 @@
  * File modal view controller.
  */
 angular.module('docs').controller('FileModalView', function ($uibModalInstance, $scope, $state, $stateParams, $sce, Restangular, $transitions) {
-  // Load files
-  Restangular.one('file/list').get({ id: $stateParams.id }).then(function (data) {
-    $scope.files = data.files;
-
+  var setFile = function (files) {
     // Search current file
-    _.each($scope.files, function (value) {
+    _.each(files, function (value) {
       if (value.id === $stateParams.fileId) {
         $scope.file = value;
         $scope.trustedFileUrl = $sce.trustAsResourceUrl('../api/file/' + $stateParams.fileId + '/data');
       }
     });
+  };
+
+  // Load files
+  Restangular.one('file/list').get({ id: $stateParams.id }).then(function (data) {
+    $scope.files = data.files;
+    setFile(data.files);
+
+    // File not found, maybe it's a version
+    if (!$scope.file) {
+      Restangular.one('file/' + $stateParams.fileId + '/versions').get().then(function (data) {
+        setFile(data.files);
+      });
+    }
   });
 
   /**

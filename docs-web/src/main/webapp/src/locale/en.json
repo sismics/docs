@@ -119,7 +119,8 @@
         "add_files": "Add files",
         "file_processing_indicator": "This file is being processed. Searching will not be available before it is complete.",
         "reprocess_file": "Reprocess this file",
-        "upload_new_version": "Upload a new version"
+        "upload_new_version": "Upload a new version",
+        "open_versions": "Show version history"
       },
       "workflow": {
         "workflow": "Workflow",
@@ -204,6 +205,13 @@
     "edit": {
       "title": "Edit file",
       "name": "Filename"
+    },
+    "versions": {
+      "title": "Version history",
+      "filename": "Filename",
+      "mimetype": "Type",
+      "create_date": "Creation date",
+      "version": "Version"
     }
   },
   "tag": {

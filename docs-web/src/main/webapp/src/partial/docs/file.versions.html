@@ -1,0 +1,30 @@
+<div class="modal-header">
+  <h3>{{ 'file.versions.title' | translate }}</h3>
+</div>
+<div class="modal-body">
+    <table class="table table-striped table-hover">
+      <thead>
+      <tr>
+        <th>{{ 'file.versions.filename' | translate }}</th>
+        <th>{{ 'file.versions.mimetype' | translate }}</th>
+        <th>{{ 'file.versions.create_date' | translate }}</th>
+        <th>{{ 'file.versions.version' | translate }}</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="file in files">
+        <td>{{ file.name }}</td>
+        <td>{{ file.mimetype }}</td>
+        <td>{{ file.create_date | timeAgo: dateFormat }}</td>
+        <td>v{{ file.version +1 }}.0</td>
+        <td>
+          <span class="fas fa-eye pointer" ng-click="openFile(file)"></span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+</div>
+<div class="modal-footer">
+  <button ng-click="close()" class="btn btn-default">{{ 'close' | translate }}</button>
+</div>
