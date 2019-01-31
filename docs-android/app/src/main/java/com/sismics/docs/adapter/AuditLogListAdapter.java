@@ -1,8 +1,6 @@
 package com.sismics.docs.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,11 +29,18 @@ public class AuditLogListAdapter extends BaseAdapter {
     private List<JSONObject> logList;
 
     /**
+     * Context.
+     */
+    private Context context;
+
+    /**
      * Audit log list adapter.
      *
+     * @param context Context
      * @param logs Logs
      */
-    public AuditLogListAdapter(JSONArray logs) {
+    public AuditLogListAdapter(Context context, JSONArray logs) {
+        this.context = context;
         this.logList = new ArrayList<>();
 
         for (int i = 0; i < logs.length(); i++) {
@@ -67,11 +72,21 @@ public class AuditLogListAdapter extends BaseAdapter {
 
         // Build message
         final JSONObject log = getItem(position);
-        StringBuilder message = new StringBuilder(log.optString("class"));
+        StringBuilder message = new StringBuilder();
+
+        // Translate entity name
+        int stringId = context.getResources().getIdentifier("auditlog_" + log.optString("class"), "string", context.getPackageName());
+        if (stringId == 0) {
+            message.append(log.optString("class"));
+        } else {
+            message.append(context.getResources().getString(stringId));
+        }
+        message.append(" ");
+
         switch (log.optString("type")) {
-            case "CREATE": message.append(" created"); break;
-            case "UPDATE": message.append(" updated"); break;
-            case "DELETE": message.append(" deleted"); break;
+            case "CREATE": message.append(context.getResources().getString(R.string.auditlog_created)); break;
+            case "UPDATE": message.append(context.getResources().getString(R.string.auditlog_updated)); break;
+            case "DELETE": message.append(context.getResources().getString(R.string.auditlog_deleted)); break;
         }
         switch (log.optString("class")) {
             case "Document":
@@ -85,9 +100,9 @@ public class AuditLogListAdapter extends BaseAdapter {
         }
 
         // Fill the view
-        TextView usernameTextView = (TextView) view.findViewById(R.id.usernameTextView);
-        TextView messageTextView = (TextView) view.findViewById(R.id.messageTextView);
-        TextView dateTextView = (TextView) view.findViewById(R.id.dateTextView);
+        TextView usernameTextView = view.findViewById(R.id.usernameTextView);
+        TextView messageTextView = view.findViewById(R.id.messageTextView);
+        TextView dateTextView = view.findViewById(R.id.dateTextView);
         usernameTextView.setText(log.optString("username"));
         messageTextView.setText(message);
         String date = DateFormat.getDateFormat(parent.getContext()).format(new Date(log.optLong("create_date")));

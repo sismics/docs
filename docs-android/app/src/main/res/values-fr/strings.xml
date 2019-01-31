@@ -141,4 +141,19 @@
     <string name="contributors">Contributeurs</string>
     <string name="relations">Relations</string>
 
+    <!-- Audit log -->
+    <string name="auditlog_Acl">ACL</string>
+    <string name="auditlog_Comment">Commentaire</string>
+    <string name="auditlog_Document">Document</string>
+    <string name="auditlog_File">Fichier</string>
+    <string name="auditlog_Group">Groupe</string>
+    <string name="auditlog_Route">Workflow</string>
+    <string name="auditlog_RouteModel">Modèle de workflow</string>
+    <string name="auditlog_Tag">Tag</string>
+    <string name="auditlog_User">Utilisateur</string>
+    <string name="auditlog_Webhook">Webhook</string>
+    <string name="auditlog_created">créé</string>
+    <string name="auditlog_updated">mis à jour</string>
+    <string name="auditlog_deleted">supprimé</string>
+
 </resources>

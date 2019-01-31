@@ -190,4 +190,18 @@ public class FileDao {
         q.setParameter("documentId", documentId);
         return q.getResultList();
     }
+
+    /**
+     * Get all files from a version.
+     *
+     * @param versionId Version ID
+     * @return List of files
+     */
+    @SuppressWarnings("unchecked")
+    public List<File> getByVersionId(String versionId) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select f from File f where f.versionId = :versionId and f.deleteDate is null order by f.order asc");
+        q.setParameter("versionId", versionId);
+        return q.getResultList();
+    }
 }

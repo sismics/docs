@@ -56,7 +56,7 @@
 
         <div class="file-info">
           <div></div><!-- Actually useful -->
-          <div class="v-align file-name" ng-if="file.name">{{ file.name }}</div>
+          <div class="v-align file-name" ng-if="file.name" title="{{ file.name }} (v{{ file.version + 1 }}.0)">{{ file.name }}</div>
           <div class="v-align" ng-show="document.writable">
             <div uib-dropdown>
               <button class="btn btn-default" uib-dropdown-toggle>
@@ -68,12 +68,32 @@
                     <span class="fas fa-pencil-alt"></span>
                     {{ 'rename' | translate }}
                   </a>
+                </li>
+                <li>
                   <a href ng-click="processFile(file)">
                     <span class="fas fa-eye"></span>
                     {{ 'document.view.content.reprocess_file' | translate }}
                   </a>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li>
+                  <a href ngf-select
+                     ngf-change="uploadNewVersion($files, file)"
+                     ngf-multiple="false">
+                    <span class="fas fa-plus"></span>
+                    {{ 'document.view.content.upload_new_version' | translate }}
+                  </a>
+                </li>
+                <li>
+                  <a href ng-click="openVersions(file)">
+                    <span class="fas fa-angle-double-left"></span>
+                    {{ 'document.view.content.open_versions' | translate }}
+                  </a>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li>
                   <a href ng-click="deleteFile(file)">
-                    <span class="fas fa-trash"></span>
+                    <span class="fas fa-trash text-danger"></span>
                     {{ 'delete' | translate }}
                   </a>
                 </li>

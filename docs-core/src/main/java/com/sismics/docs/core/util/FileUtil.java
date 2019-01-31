@@ -160,10 +160,13 @@ public class FileUtil {
                     previousFile.setVersionId(UUID.randomUUID().toString());
                 }
 
-                previousFile.setLatestVersion(false);
+                // Copy the previous file metadata
+                file.setOrder(previousFile.getOrder());
                 file.setVersionId(previousFile.getVersionId());
                 file.setVersion(previousFile.getVersion() + 1);
 
+                // Update the previous file
+                previousFile.setLatestVersion(false);
                 fileDao.update(previousFile);
             }
         }

@@ -118,7 +118,9 @@
         "drop_zone": "Drag & drop files here to upload",
         "add_files": "Add files",
         "file_processing_indicator": "This file is being processed. Searching will not be available before it is complete.",
-        "reprocess_file": "Reprocess this file"
+        "reprocess_file": "Reprocess this file",
+        "upload_new_version": "Upload a new version",
+        "open_versions": "Show version history"
       },
       "workflow": {
         "workflow": "Workflow",
@@ -203,6 +205,13 @@
     "edit": {
       "title": "Edit file",
       "name": "Filename"
+    },
+    "versions": {
+      "title": "Version history",
+      "filename": "Filename",
+      "mimetype": "Type",
+      "create_date": "Creation date",
+      "version": "Version"
     }
   },
   "tag": {
@@ -489,10 +498,11 @@
       "Document": "Document",
       "File": "File",
       "Group": "Group",
+      "Route": "Workflow",
+      "RouteModel": "Workflow model",
       "Tag": "Tag",
       "User": "User",
-      "RouteModel": "Workflow model",
-      "Route": "Workflow"
+      "Webhook": "Webhook"
     },
     "selectrelation": {
       "typeahead": "Type a document title"

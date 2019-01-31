@@ -392,10 +392,10 @@ public class FileResource extends BaseResource {
      * @apiParam {String} share Share ID
      * @apiSuccess {Object[]} files List of files
      * @apiSuccess {String} files.id ID
-     * @apiSuccess {String} files.mimetype MIME type
+     * @apiSuccess {String} files.processing True if the file is currently processing
      * @apiSuccess {String} files.name File name
      * @apiSuccess {String} files.version Zero-based version number
-     * @apiSuccess {String} files.processing True if the file is currently processing
+     * @apiSuccess {String} files.mimetype MIME type
      * @apiSuccess {String} files.document_id Document ID
      * @apiSuccess {String} files.create_date Create date (timestamp)
      * @apiSuccess {String} files.size File size (in bytes)
@@ -446,6 +446,57 @@ public class FileResource extends BaseResource {
             }
         }
         
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("files", files);
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * List all versions of a file.
+     *
+     * @api {get} /file/id/versions Get versions of a file
+     * @apiName GetFileVersions
+     * @apiGroup File
+     * @apiParam {String} id File ID
+     * @apiSuccess {Object[]} files List of files
+     * @apiSuccess {String} files.id ID
+     * @apiSuccess {String} files.name File name
+     * @apiSuccess {String} files.version Zero-based version number
+     * @apiSuccess {String} files.mimetype MIME type
+     * @apiSuccess {String} files.create_date Create date (timestamp)
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) NotFound File not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
+     * @param id File ID
+     * @return Response
+     */
+    @GET
+    @Path("{id: [a-z0-9\\-]+}/versions")
+    public Response versions(@PathParam("id") String id) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get versions
+        File file = findFile(id, null);
+        FileDao fileDao = new FileDao();
+        List<File> fileList = Lists.newArrayList(file);
+        if (file.getVersionId() != null) {
+            fileList = fileDao.getByVersionId(file.getVersionId());
+        }
+
+        JsonArrayBuilder files = Json.createArrayBuilder();
+        for (File fileDb : fileList) {
+            files.add(Json.createObjectBuilder()
+                    .add("id", fileDb.getId())
+                    .add("name", JsonUtil.nullable(fileDb.getName()))
+                    .add("version", fileDb.getVersion())
+                    .add("mimetype", fileDb.getMimeType())
+                    .add("create_date", fileDb.getCreateDate().getTime()));
+        }
+
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("files", files);
         return Response.ok().entity(response.build()).build();

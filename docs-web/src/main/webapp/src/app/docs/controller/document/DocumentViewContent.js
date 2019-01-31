@@ -65,9 +65,28 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
   };
 
   /**
+   * Upload a new version.
+   */
+  $scope.uploadNewVersion = function (files, file) {
+    if (!$scope.document.writable || !files || files.length === 0) {
+      return;
+    }
+
+    var uploadedfile = files[0];
+    var previousFileId = file.id;
+    file.id = undefined;
+    file.progress = 0;
+    file.name = uploadedfile.name;
+    file.create_date = new Date().getTime();
+    file.mimetype = uploadedfile.type;
+    file.version++;
+    $scope.uploadFile(uploadedfile, file, previousFileId);
+  };
+
+  /**
    * File has been drag & dropped.
    */
-  $scope.fileDropped = function(files) {
+  $scope.fileDropped = function (files) {
     if (!$scope.document.writable) {
       return;
     }
@@ -75,7 +94,7 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
     if (files && files.length) {
       // Adding files to the UI
       var newfiles = [];
-      _.each(files, function(file) {
+      _.each(files, function (file) {
         var newfile = {
           progress: 0,
           name: file.name,
@@ -101,7 +120,7 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
   /**
    * Upload a file.
    */
-  $scope.uploadFile = function(file, newfile) {
+  $scope.uploadFile = function(file, newfile, previousFileId) {
     // Upload the file
     newfile.status = $translate.instant('document.view.content.upload_progress');
     return Upload.upload({
@@ -109,7 +128,8 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
       url: '../api/file',
       file: file,
       fields: {
-        id: $stateParams.id
+        id: $stateParams.id,
+        previousFileId: previousFileId
       }
     })
     .progress(function(e) {
@@ -164,5 +184,17 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
     Restangular.one('file/' + file.id).post('process').then(function () {
       file.processing = true;
     });
+  };
+
+  $scope.openVersions = function (file) {
+    $uibModal.open({
+      templateUrl: 'partial/docs/file.versions.html',
+      controller: 'ModalFileVersions',
+      resolve: {
+        file: function () {
+          return file;
+        }
+      }
+    })
   };
 });
