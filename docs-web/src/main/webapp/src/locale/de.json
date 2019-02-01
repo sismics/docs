@@ -118,7 +118,9 @@
         "drop_zone": "Drag & Drop Dateien hierherziehen, um diese hochzuladen",
         "add_files": "Dateien hinzufügen",
         "file_processing_indicator": "Diese Datei wird gerade bearbeitet. Die Suche wird nicht verfügbar sein, bevor der Vorgang abgeschlossen ist.",
-        "reprocess_file": "Diese Datei erneut verarbeiten"
+        "reprocess_file": "Diese Datei erneut verarbeiten",
+        "upload_new_version": "Neue Version hochladen",
+        "open_versions": "Versionshistorie anzeigen"
       },
       "workflow": {
         "workflow": "Workflow",
@@ -203,6 +205,13 @@
     "edit": {
       "title": "Datei bearbeiten",
       "name": "Dateinamen"
+    },
+    "versions": {
+      "title": "Versionshistorie",
+      "filename": "Datiename",
+      "mimetype": "Typ",
+      "create_date": "Erstellungsdatum",
+      "version": "Version"
     }
   },
   "tag": {
@@ -291,7 +300,10 @@
         "disabled": "Deaktivierter Benutzer",
         "password_reset_btn": "Senden Sie eine E-Mail zum Zurücksetzen des Kennworts an diesen Benutzer",
         "password_lost_sent_title": "Passwort zurücksetzen Email gesendet",
-        "password_lost_sent_message": "Passwort zurücksetzen Email an <strong>{{ username }}</strong> gesendet."
+        "password_lost_sent_message": "Passwort zurücksetzen Email an <strong>{{ username }}</strong> gesendet.",
+        "disable_totp_btn": "Zwei-Faktor-Authentifizierung für diesen Benutzer deaktivieren",
+        "disable_totp_title": "Zwei-Faktor-Authentifizierung deaktivieren",
+        "disable_totp_message": "Sind Sie sicher, dass sie die Zwei-Faktor-Authentifizierung für den Benutzer deaktivieren möchten?"
       }
     },
     "workflow": {
@@ -486,10 +498,11 @@
       "Document": "Dokument",
       "File": "Datei",
       "Group": "Gruppe",
+      "RouteModel": "Workflow-Muster",
+      "Route": "Workflow",
       "Tag": "Tag",
       "User": "Benutzer",
-      "RouteModel": "Workflow-Muster",
-      "Route": "Workflow"
+      "Webhook": "Webhook"
     },
     "selectrelation": {
       "typeahead": "Tippen Sie einen Dokumentnamen ein"
