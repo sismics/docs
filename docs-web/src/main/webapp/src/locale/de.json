@@ -119,7 +119,7 @@
         "add_files": "Dateien hinzufügen",
         "file_processing_indicator": "Diese Datei wird gerade bearbeitet. Die Suche wird nicht verfügbar sein, bevor der Vorgang abgeschlossen ist.",
         "reprocess_file": "Diese Datei erneut verarbeiten",
-		"upload_new_version": "Neue Version hochladen",
+        "upload_new_version": "Neue Version hochladen",
         "open_versions": "Versionshistorie anzeigen"
       },
       "workflow": {
