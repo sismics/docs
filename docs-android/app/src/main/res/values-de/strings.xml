@@ -9,7 +9,6 @@
     <string name="validate_error_alphanumeric">Nur Buchstaben und Zahlen</string>
 
     <!-- App -->
-	<string name="app_name" translatable="false">Sismics Docs</string>
     <string name="drawer_open">Navigationsleiste öffnen</string>
     <string name="drawer_close">Navigationsleiste schließen</string>
     <string name="login_explain"><![CDATA[Um zu beginnen, müssen Sie Sismics Docs Server herunterladen und installieren <a href="https://github.com/sismics/docs">github.com/sismics/docs</a>, sowie die Login-Daten unten eingeben]]></string>
