@@ -919,6 +919,47 @@ public class UserResource extends BaseResource {
                 .add("secret", key.getKey());
         return Response.ok().entity(response.build()).build();
     }
+
+    /**
+     * Test time-based one-time password.
+     *
+     * @api {post} /user/test_totp Test TOTP authentication
+     * @apiDescription Test a TOTP validation code.
+     * @apiName PostUserTestTotp
+     * @apiParam {String} code TOTP validation code
+     * @apiGroup User
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError The validation code is not valid or access denied
+     * @apiPermission user
+     * @apiVersion 1.6.0
+     *
+     * @return Response
+     */
+    @POST
+    @Path("test_totp")
+    public Response testTotp(@FormParam("code") String validationCodeStr) {
+        if (!authenticate() || principal.isGuest()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get the user
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveByUsername(principal.getName());
+
+        // Test the validation code
+        if (user.getTotpKey() != null) {
+            int validationCode = ValidationUtil.validateInteger(validationCodeStr, "code");
+            GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
+            if (!googleAuthenticator.authorize(user.getTotpKey(), validationCode)) {
+                throw new ForbiddenClientException();
+            }
+        }
+
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
     
     /**
      * Disable time-based one-time password for the current user.

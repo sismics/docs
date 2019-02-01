@@ -370,7 +370,16 @@ public class TestUserResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
                 .get(JsonObject.class);
         Assert.assertTrue(json.getBoolean("totp_enabled"));
-        
+
+        // Generate a OTP
+        validationCode = googleAuthenticator.calculateCode(secret, new Date().getTime() / 30000);
+
+        // Test a validation code
+        target().path("/user/test_totp").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
+                .post(Entity.form(new Form()
+                        .param("code", Integer.toString(validationCode))), JsonObject.class);
+
         // Disable TOTP for totp1
         target().path("/user/disable_totp").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
