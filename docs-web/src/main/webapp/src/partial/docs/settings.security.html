@@ -19,12 +19,26 @@
 </div>
 
 <div ng-if="user.totp_enabled">
-  <div ng-if="secret">
-    <p translate="settings.security.secret_key" translate-values="{ secret: secret }"></p>
-    <qrcode data="otpauth://totp/Sismics%20Docs?secret={{ secret }}" size="200"></qrcode>
-    <p class="text-danger">
-      <strong>{{ 'settings.security.secret_key_warning' | translate }}</strong>
-    </p>
+  <div class="row mt-30 mb-19" ng-if="secret">
+    <div class="col-sm-3">
+      <p translate="settings.security.secret_key" translate-values="{ secret: secret }"></p>
+      <qrcode data="otpauth://totp/Sismics%20Docs?secret={{ secret }}" size="200"></qrcode>
+      <p class="text-danger">
+        <strong>{{ 'settings.security.secret_key_warning' | translate }}</strong>
+      </p>
+    </div>
+    <div class="col-sm-3">
+      <p class="mt-30"><strong>{{ 'settings.security.test_totp' | translate }}</strong></p>
+      <form class="form-inline">
+        <input type="text" class="form-control" ng-model="testValidationCode" />
+        <button class="btn btn-primary" ng-click="testTotp(testValidationCode)">{{ 'ok' | translate }}</button>
+      </form>
+      <p class="mt-10" ng-if="testValidationCodeSuccess != null"
+         ng-class="{ 'text-success': testValidationCodeSuccess, 'text-danger': !testValidationCodeSuccess }">
+        <strong ng-if="testValidationCodeSuccess">{{ 'settings.security.test_code_success' | translate }}</strong>
+        <strong ng-if="!testValidationCodeSuccess">{{ 'settings.security.test_code_fail' | translate }}</strong>
+      </p>
+    </div>
   </div>
   <p translate="settings.security.totp_enabled_message" translate-values="{ appName: appName }"></p>
   <p>

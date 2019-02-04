@@ -347,7 +347,10 @@
         "message": "Your account will not be protected by the two-factor authentication anymore.",
         "confirm_password": "Confirm your password",
         "submit": "Disable two-factor authentication"
-      }
+      },
+      "test_totp": "Please enter the validation code displayed on your phone :",
+      "test_code_success": "Validation code OK",
+      "test_code_fail": "This code is not valid, please double check that your phone is properly configured or disable Two-factor authentication"
     },
     "group": {
       "title": "Groups management",
