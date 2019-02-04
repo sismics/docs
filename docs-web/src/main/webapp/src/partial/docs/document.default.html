@@ -114,6 +114,6 @@
 
 <div ui-view="file"></div>
 
-<a href class="feedback" ng-click="openFeedback()">
+<a href class="feedback" ng-if="userInfo.base_functions.indexOf('ADMIN') != -1" ng-click="openFeedback()">
   {{ 'document.default.feedback' | translate }}
 </a>
