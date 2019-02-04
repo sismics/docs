@@ -498,8 +498,8 @@
       "Document": "Dokument",
       "File": "Datei",
       "Group": "Gruppe",
-      "RouteModel": "Workflow-Muster",
       "Route": "Workflow",
+      "RouteModel": "Workflow-Muster",
       "Tag": "Tag",
       "User": "Benutzer",
       "Webhook": "Webhook"
