@@ -4,6 +4,15 @@
  * Document view content controller.
  */
 angular.module('docs').controller('DocumentViewContent', function ($scope, $rootScope, $stateParams, Restangular, $dialog, $state, Upload, $translate, $uibModal) {
+  $scope.displayMode = _.isUndefined(localStorage.fileDisplayMode) ? 'grid' : localStorage.fileDisplayMode;
+
+  /**
+   * Watch for display mode change.
+   */
+  $scope.$watch('displayMode', function (next) {
+    localStorage.fileDisplayMode = next;
+  });
+
   /**
    * Configuration for file sorting.
    */

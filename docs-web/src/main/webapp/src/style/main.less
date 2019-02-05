@@ -239,6 +239,30 @@ ul.tag-tree {
   }
 }
 
+// File list
+.table-files {
+  td {
+    vertical-align: middle !important;
+  }
+
+  .thumbnail-list {
+    display: inline-block;
+    position: relative;
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+
+    img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      height: 100%;
+      width: auto;
+      transform: translate(-50%,-50%);
+    }
+  }
+}
+
 // Permissions table
 .table-permissions {
   .label-acl {

@@ -120,7 +120,9 @@
         "file_processing_indicator": "This file is being processed. Searching will not be available before it is complete.",
         "reprocess_file": "Reprocess this file",
         "upload_new_version": "Upload a new version",
-        "open_versions": "Show version history"
+        "open_versions": "Show version history",
+        "display_mode_list": "Display files in list",
+        "display_mode_grid": "Display files in grid"
       },
       "workflow": {
         "workflow": "Workflow",
