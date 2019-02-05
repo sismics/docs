@@ -120,7 +120,9 @@
         "file_processing_indicator": "Ce fichier est en cours de traitement. La recherche ne sera pas disponible avant la fin du traitement.",
         "reprocess_file": "Retraiter ce fichier",
         "upload_new_version": "Envoyer une nouvelle version",
-        "open_versions": "Afficher l'historique de versions"
+        "open_versions": "Afficher l'historique de versions",
+        "display_mode_list": "Afficher les fichiers en liste",
+        "display_mode_grid": "Afficher les fichiers en grille"
       },
       "workflow": {
         "workflow": "Workflow",
@@ -347,7 +349,10 @@
         "message": "Votre compte ne sera plus protégé par l'authentification en deux étapes.",
         "confirm_password": "Confirmez votre mot de passe",
         "submit": "Désactiver l'authentification en deux étapes"
-      }
+      },
+      "test_totp": "Veuillez saisir le code de validation affiché sur votre téléphone :",
+      "test_code_success": "Code de validation OK",
+      "test_code_fail": "Ce code n'est pas valide. Vérifiez que votre téléphone est correctement configuré ou désactivez l'authentification en deux étapes."
     },
     "group": {
       "title": "Gestion des groupes",
@@ -558,6 +563,28 @@
     "next": "Suivant",
     "first": "Première",
     "last": "Dernière"
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Première fois ici ?",
+      "description": "Si vous utilisez Sismics Docs pour la première fois, cliquez sur le bouton Suivant. Sinon, n'hésitez pas à me fermer."
+    },
+    "step2": {
+      "title": "Documents",
+      "description": "Sismics Docs est organisé en documents et chaque document contient plusieurs fichiers."
+    },
+    "step3": {
+      "title": "Fichiers",
+      "description": "Vous pouvez ajouter des fichiers après la création d'un document ou avant en utilisant cette zone d'envoi rapide."
+    },
+    "step4": {
+      "title": "Rechercher",
+      "description": "C'est le moyen principal de retrouver vos documents. Il existe également une recherche avancée avec le bouton loupe."
+    },
+    "step5": {
+      "title": "Tags",
+      "description": "Les documents peuvent être organisés en tags (qui sont comme des super-dossiers). Créez-les ici."
+    }
   },
   "ok": "OK",
   "cancel": "Annuler",
