@@ -156,32 +156,36 @@ angular.module('docs').controller('DocumentDefault', function ($scope, $rootScop
       {
         title: $translate.instant('onboarding.step1.title'),
         description: $translate.instant('onboarding.step1.description'),
-        position: "centered",
+        position: 'centered',
         width: 300
       },
       {
         title: $translate.instant('onboarding.step2.title'),
         description: $translate.instant('onboarding.step2.description'),
-        attachTo: "#document-add-btn",
-        position: "right"
+        attachTo: '#document-add-btn',
+        position: 'right',
+        width: 300
       },
       {
         title: $translate.instant('onboarding.step3.title'),
         description: $translate.instant('onboarding.step3.description'),
-        attachTo: "#quick-upload-zone",
-        position: "left"
+        attachTo: '#quick-upload-zone',
+        position: 'left',
+        width: 300
       },
       {
         title: $translate.instant('onboarding.step4.title'),
         description: $translate.instant('onboarding.step4.description'),
-        attachTo: "#search-box",
-        position: "right"
+        attachTo: '#search-box',
+        position: 'right',
+        width: 300
       },
       {
         title: $translate.instant('onboarding.step5.title'),
         description: $translate.instant('onboarding.step5.description'),
-        attachTo: "#navigation-tag",
-        position: "right"
+        attachTo: '#navigation-tag',
+        position: "right",
+        width: 300
       }
     ];
   });
