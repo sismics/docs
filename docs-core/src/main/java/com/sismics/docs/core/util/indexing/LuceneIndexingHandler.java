@@ -9,6 +9,8 @@ import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.ConfigDao;
 import com.sismics.docs.core.dao.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.dto.DocumentDto;
+import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
@@ -42,7 +44,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -83,6 +87,25 @@ public class LuceneIndexingHandler implements IndexingHandler {
 
     @Override
     public void startUp() throws Exception {
+        try {
+            initLucene();
+        } catch (Exception e) {
+            // An error occurred initializing Lucene, the index is out of date or broken, delete everything
+            log.info("Unable to initialize Lucene, cleaning up the index: " + e.getMessage());
+            Path luceneDirectory = DirectoryUtil.getLuceneDirectory();
+            Files.walk(luceneDirectory)
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(java.io.File::delete);
+
+            // Re-initialize and schedule a full reindex
+            initLucene();
+            RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
+            AppContext.getInstance().getAsyncEventBus().post(rebuildIndexAsyncEvent);
+        }
+    }
+
+    private void initLucene() throws Exception {
         ConfigDao configDao = new ConfigDao();
         Config luceneStorageConfig = configDao.getById(ConfigType.LUCENE_DIRECTORY_STORAGE);
         String luceneStorage = luceneStorageConfig == null ? null : luceneStorageConfig.getValue();

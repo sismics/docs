@@ -89,9 +89,7 @@ public class AppContext {
             }
             indexingHandler.startUp();
         } catch (Exception e) {
-            log.error("Error starting the indexing handler, rebuilding the index: " + e.getMessage());
-            RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
-            asyncEventBus.post(rebuildIndexAsyncEvent);
+            log.error("Error starting the indexing handler", e);
         }
 
         // Start file service
