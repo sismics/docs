@@ -142,4 +142,47 @@ angular.module('docs').controller('DocumentDefault', function ($scope, $rootScop
   }).then(function (data) {
     $scope.documentsWorkflow = data.documents;
   });
+
+  // Onboarding
+  $translate('onboarding.step1.title').then(function () {
+    if (localStorage.onboardingDisplayed || $(window).width() < 1000) {
+      return;
+    }
+    localStorage.onboardingDisplayed = true;
+
+    $rootScope.onboardingEnabled = true;
+
+    $rootScope.onboardingSteps = [
+      {
+        title: $translate.instant('onboarding.step1.title'),
+        description: $translate.instant('onboarding.step1.description'),
+        position: "centered",
+        width: 300
+      },
+      {
+        title: $translate.instant('onboarding.step2.title'),
+        description: $translate.instant('onboarding.step2.description'),
+        attachTo: "#document-add-btn",
+        position: "right"
+      },
+      {
+        title: $translate.instant('onboarding.step3.title'),
+        description: $translate.instant('onboarding.step3.description'),
+        attachTo: "#quick-upload-zone",
+        position: "left"
+      },
+      {
+        title: $translate.instant('onboarding.step4.title'),
+        description: $translate.instant('onboarding.step4.description'),
+        attachTo: "#search-box",
+        position: "right"
+      },
+      {
+        title: $translate.instant('onboarding.step5.title'),
+        description: $translate.instant('onboarding.step5.description'),
+        attachTo: "#navigation-tag",
+        position: "right"
+      }
+    ];
+  });
 });

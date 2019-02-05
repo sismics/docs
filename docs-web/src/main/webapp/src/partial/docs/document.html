@@ -3,7 +3,7 @@
     <div class="well well-3d">
       <!-- Main new document button -->
       <div class="text-center mb-19">
-        <div class="btn-group" uib-dropdown>
+        <div class="btn-group" uib-dropdown id="document-add-btn">
           <a href="#/document/add" class="btn btn-primary">
             <span class="fas fa-plus"></span> {{ 'document.add_document' | translate }}
           </a>
@@ -18,7 +18,7 @@
 
       <!-- Search (simple and advanced) -->
       <div class="row search-dropdown-anchor">
-        <div class="col-xs-12 input-group">
+        <div class="col-xs-12 input-group" id="search-box">
           <input type="search" class="form-control"
                  uib-typeahead="suggestion for suggestion in suggestions"
                  typeahead-focus-first="false"

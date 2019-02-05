@@ -7,7 +7,7 @@ angular.module('docs',
     // Dependencies
     ['ui.router', 'ui.bootstrap', 'dialog', 'ngProgress', 'monospaced.qrcode', 'yaru22.angular-timeago', 'ui.validate',
       'ui.sortable', 'restangular', 'ngSanitize', 'ngTouch', 'colorpicker.module', 'ngFileUpload', 'pascalprecht.translate',
-      'tmh.dynamicLocale']
+      'tmh.dynamicLocale', 'ngOnboarding']
   )
 
 /**
@@ -514,7 +514,7 @@ angular.module('docs',
 /**
  * Initialize ngProgress.
  */
-.run(function($rootScope, ngProgressFactory, $http) {
+.run (function ($rootScope, ngProgressFactory, $http) {
   $rootScope.ngProgress = ngProgressFactory.createInstance();
 
   // Watch for the number of XHR running
@@ -527,6 +527,12 @@ angular.module('docs',
       $rootScope.ngProgress.start();
     }
   });
+})
+/**
+ * Initialize ngOnboarding.
+ */
+.run (function ($rootScope) {
+  $rootScope.onboardingEnabled = false;
 });
 
 if (location.search.indexOf("protractor") > -1) {

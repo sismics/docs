@@ -564,6 +564,28 @@
     "first": "First",
     "last": "Last"
   },
+  "onboarding": {
+    "step1": {
+      "title": "First time?",
+      "description": "If it's your first time on Sismics Docs, click the Next button, otherwise feel free to close me."
+    },
+    "step2": {
+      "title": "Documents",
+      "description": "Sismics Docs is organized in documents and each document contains multiple files."
+    },
+    "step3": {
+      "title": "Files",
+      "description": "You can add files after creating a document or before using this Quick upload area."
+    },
+    "step4": {
+      "title": "Search",
+      "description": "This is the main way to find your documents back. There is also an advanced search with the magnifier button."
+    },
+    "step5": {
+      "title": "Tags",
+      "description": "Documents can be organized in tags (which are like super-folders). Create them here."
+    }
+  },
   "ok": "OK",
   "cancel": "Cancel",
   "share": "Share",

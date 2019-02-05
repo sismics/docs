@@ -1,0 +1,196 @@
+.onboarding-popover {
+  position: absolute;
+  z-index: 100001;
+  padding: 1px;
+  text-align: left;
+  white-space: normal;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  background-clip: padding-box;
+  max-width: 800px;
+  max-height: 800px;
+  min-width: 100px;
+  min-height: 50px;
+}
+.onboarding-popover.onboarding-top {
+  margin-top: -10px;
+}
+.onboarding-popover.onboarding-right {
+  margin-left: 10px;
+}
+.onboarding-popover.onboarding-bottom {
+  margin-top: 10px;
+}
+.onboarding-popover.onboarding-left {
+  margin-left: -10px;
+}
+.onboarding-popover.onboarding-centered {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+}
+.onboarding-arrow,
+.onboarding-arrow:after {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+}
+.onboarding-arrow {
+  border-width: 11px;
+}
+.onboarding-arrow:after {
+  border-width: 10px;
+  content: "";
+}
+.onboarding-popover.onboarding-bottom .onboarding-arrow {
+  top: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-bottom-color: #cccccc;
+  border-top-width: 0;
+}
+.onboarding-popover.onboarding-bottom .onboarding-arrow:after {
+  content: " ";
+  top: 1px;
+  margin-left: -10px;
+  border-top-width: 0;
+  border-bottom-color: #ffffff;
+}
+.onboarding-popover.onboarding-top .onboarding-arrow {
+  bottom: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-top-color: #cccccc;
+  border-bottom-width: 0;
+}
+.onboarding-popover.onboarding-top .onboarding-arrow:after {
+  content: " ";
+  bottom: 1px;
+  margin-left: -10px;
+  border-bottom-width: 0;
+  border-top-color: #ffffff;
+}
+.onboarding-popover.onboarding-left .onboarding-arrow {
+  top: 14px;
+  right: -11px;
+  margin-top: -11px;
+  border-left-color: #cccccc;
+  border-right-width: 0;
+}
+.onboarding-popover.onboarding-left .onboarding-arrow:after {
+  content: " ";
+  right: 1px;
+  border-right-width: 0;
+  border-left-color: #ffffff;
+  bottom: -10px;
+}
+.onboarding-popover.onboarding-right .onboarding-arrow {
+  top: 14px;
+  left: -11px;
+  margin-top: -11px;
+  border-right-color: #cccccc;
+  border-left-width: 0;
+}
+.onboarding-popover.onboarding-right .onboarding-arrow:after {
+  content: " ";
+  left: 1px;
+  bottom: -10px;
+  border-left-width: 0;
+  border-right-color: #ffffff;
+}
+.onboarding-popover-title {
+  position: relative;
+  padding: 8px 14px;
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 18px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #ebebeb;
+  border-radius: 5px 5px 0 0;
+}
+.onboarding-close-button {
+  position: absolute;
+  top: 2px;
+  right: 5px;
+  display: inline-block;
+  padding: 5px;
+  font-size: 110%;
+  font-family: Arial, sans-serif;
+}
+.onboarding-close-button,
+.onboarding-close-button:hover,
+.onboarding-close-button:visited {
+  color: #333;
+  text-decoration: none;
+}
+.onboarding-popover-content {
+  padding: 9px 14px;
+}
+.onboarding-button-container {
+  text-align: right;
+  padding: 7px;
+  display: block;
+  background-color: #f4f4f4;
+}
+.onboarding-button {
+  padding: 5px 10px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.5;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  color: #333;
+  background-color: #fff;
+  display: inline-block;
+  text-decoration: none;
+}
+.onboarding-button:hover,
+.onboarding-button:active {
+  color: #333;
+  background-color: #ebebeb;
+  border-color: #adadad;
+  outline: 0;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.onboarding-overlay {
+  position: absolute;
+  z-index: 99999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1000%;
+  background-color: #000000;
+}
+.onboarding-focus {
+  /*z-index: 100000 !important;*/
+}
+.onboarding-step-info {
+  float: left;
+  text-align: left;
+  display: inline-block;
+  margin-top: 7px;
+  font-size: 80%;
+  font-style: italic;
+}
