@@ -196,21 +196,6 @@ public class DocumentDao {
      * @return Updated document
      */
     public Document update(Document document, String userId) {
-        Document documentDb = updateSilently(document);
-        
-        // Create audit log
-        AuditLogUtil.create(documentDb, AuditLogType.UPDATE, userId);
-        
-        return documentDb;
-    }
-
-    /**
-     * Update a document without audit log.
-     *
-     * @param document Document to update
-     * @return Updated document
-     */
-    public Document updateSilently(Document document) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
 
         // Get the document
@@ -233,8 +218,25 @@ public class DocumentDao {
         documentDb.setLanguage(document.getLanguage());
         documentDb.setFileId(document.getFileId());
         documentDb.setUpdateDate(new Date());
-
+        
+        // Create audit log
+        AuditLogUtil.create(documentDb, AuditLogType.UPDATE, userId);
+        
         return documentDb;
+    }
+
+    /**
+     * Update the file ID on a document.
+     *
+     * @param document Document
+     */
+    public void updateFileId(Document document) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query query = em.createNativeQuery("update T_DOCUMENT d set d.DOC_IDFILE_C = :fileId where d.DOC_ID_C = :id");
+        query.setParameter("fileId", document.getFileId());
+        query.setParameter("id", document.getId());
+        query.executeUpdate();
+
     }
 
     /**

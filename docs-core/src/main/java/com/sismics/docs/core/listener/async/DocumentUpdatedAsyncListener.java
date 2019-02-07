@@ -58,7 +58,7 @@ public class DocumentUpdatedAsyncListener {
             }
 
             // Update database and index
-            documentDao.updateSilently(document);
+            documentDao.updateFileId(document);
             AppContext.getInstance().getIndexingHandler().updateDocument(document);
 
             // Update contributors list
