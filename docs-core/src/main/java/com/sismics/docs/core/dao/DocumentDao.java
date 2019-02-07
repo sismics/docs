@@ -231,11 +231,11 @@ public class DocumentDao {
      * @param document Document
      */
     public void updateFileId(Document document) {
-        /*EntityManager em = ThreadLocalContext.get().getEntityManager();
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query query = em.createNativeQuery("update T_DOCUMENT d set d.DOC_IDFILE_C = :fileId where d.DOC_ID_C = :id");
         query.setParameter("fileId", document.getFileId());
         query.setParameter("id", document.getId());
-        query.executeUpdate();*/
+        query.executeUpdate();
 
     }
 
