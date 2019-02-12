@@ -1,7 +1,7 @@
 {
-  "name": "docs-importer",
+  "name": "teedy-importer",
   "version": "1.5.1",
-  "description": "Import files to Sismics Docs",
+  "description": "Import files to Teedy",
   "bin": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

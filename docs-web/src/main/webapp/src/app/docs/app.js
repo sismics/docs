@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Sismics Docs application.
+ * Teedy application.
  */
 angular.module('docs',
     // Dependencies

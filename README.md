@@ -1,27 +1,27 @@
 <h3 align="center">
-  <img src="https://www.sismicsdocs.com/img/github-title.png" alt="Sismics Docs" width=500 />
+  <img src="https://teedy.io/img/github-title.png" alt="Teedy" width=500 />
 </h3>
 
-[![Twitter: @sismicsdocs](https://img.shields.io/badge/contact-@sismicsdocs-blue.svg?style=flat)](https://twitter.com/sismicsdocs)
+[![Twitter: @teedyio](https://img.shields.io/badge/contact-@teedyio-blue.svg?style=flat)](https://twitter.com/teedyio)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 [![Build Status](https://secure.travis-ci.org/sismics/docs.png)](http://travis-ci.org/sismics/docs)
 
-Docs is an open source, lightweight document management system for individuals and businesses.
+Teedy is an open source, lightweight document management system for individuals and businesses.
 
 **Discuss it on [Product Hunt](https://www.producthunt.com/posts/sismics-docs) 🦄**
 
 <hr />
 <h2 align="center">
-  ✨ We just launched a Cloud version of Sismics Docs! Head to <a href="https://www.sismicsdocs.com/">sismicsdocs.com</a> for more informations ✨
+  ✨ Sismics Docs is now called Teedy! You can still find our cloud and support offer on <a href="https://teedy.io">teedy.io</a> ✨
 </h2>
 <hr />
 
-![New!](https://www.sismicsdocs.com/img/laptop-demo.png?20180301)
+![New!](https://teedy.io/img/laptop-demo.png?20180301)
 
 Demo
 ----
 
-A demo is available at [demo.sismicsdocs.com](https://demo.sismicsdocs.com)
+A demo is available at [demo.teedy.io](https://demo.teedy.io)
 - Guest login is enabled with read access on all documents
 - "admin" login with "admin" password
 - "demo" login with "password" password 
@@ -58,13 +58,13 @@ Features
 Install with Docker
 -------------------
 
-From a Docker host, run this command to download and install Sismics Docs. The server will run on <http://[your-docker-host-ip]:8100>.
+From a Docker host, run this command to download and install Teedy. The server will run on <http://[your-docker-host-ip]:8100>.
 **The default admin password is "admin". Don't forget to change it before going to production.**
 
-    docker run --rm --name sismics_docs_latest -d -e DOCS_BASE_URL='http://[your-docker-host-ip]:8100' -p 8100:8080 -v sismics_docs_latest:/data sismics/docs:latest
+    docker run --rm --name teedy_latest -d -e DOCS_BASE_URL='http://[your-docker-host-ip]:8100' -p 8100:8080 -v teedy_latest:/data sismics/docs:latest
   <img src="http://www.newdesignfile.com/postpic/2011/01/green-info-icon_206509.png" width="16px" height="16px">  **Note:** You will need to change [your-docker-host-ip] with the IP address or FQDN of your docker host e.g.
   
-  FQDN: http://docs.sismics.com  
+  FQDN: http://docs.mycompany.com  
   IP: http://192.168.100.10
 
 Manual installation
@@ -81,12 +81,12 @@ Manual installation
 The latest release is downloadable here: <https://github.com/sismics/docs/releases> in WAR format. 
 **The default admin password is "admin". Don't forget to change it before going to production.**
 
-How to build Docs from the sources
+How to build Teedy from the sources
 ----------------------------------
 
 Prerequisites: JDK 8 with JCE, Maven 3, Tesseract 3 or 4
 
-Docs is organized in several Maven modules:
+Teedy is organized in several Maven modules:
 
   - docs-core
   - docs-web
@@ -126,15 +126,15 @@ The `master` branch is the default and base branch for the project. It is used f
 Community
 ---------
 
-Get updates on Sismics Docs' development and chat with the project maintainers:
+Get updates on Teedy's development and chat with the project maintainers:
 
-- Follow [@sismicsdocs on Twitter](https://twitter.com/sismicsdocs)
-- Read and subscribe to [The Official Sismics Docs Blog](https://blog.sismicsdocs.com/)
-- Check the [Official Website](https://www.sismicsdocs.com)
-- Join us [on Facebook](https://www.facebook.com/sismicsdocs)
+- Follow [@teedyio on Twitter](https://twitter.com/teedyio)
+- Read and subscribe to [The Official Teedy Blog](https://blog.teedy.io/)
+- Check the [Official Website](https://teedy.io)
+- Join us [on Facebook](https://www.facebook.com/teedyio)
 
 License
 -------
 
-Docs is released under the terms of the GPL license. See `COPYING` for more
+Teedy is released under the terms of the GPL license. See `COPYING` for more
 information or see <http://opensource.org/licenses/GPL-2.0>.

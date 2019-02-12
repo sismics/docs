@@ -63,14 +63,13 @@ public class DocListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLongClickable(true);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getResources().getDrawable(R.drawable.abc_list_divider_mtrl_alpha)));
 
         // Configure the LayoutManager
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
         // Configure the swipe refresh layout
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
@@ -194,7 +193,7 @@ public class DocListFragment extends Fragment {
     private void loadDocuments(final View view, final boolean reset) {
         if (view == null) return;
         final View progressBar = view.findViewById(R.id.progressBar);
-        final TextView documentsEmptyView = (TextView) view.findViewById(R.id.documentsEmptyView);
+        final TextView documentsEmptyView = view.findViewById(R.id.documentsEmptyView);
 
         if (reset) {
             loading = true;

@@ -404,9 +404,9 @@
   },
   "feedback": {
     "title": "歡迎提供反饋意見",
-    "message": "對Sismics Docs文檔管理系統有任何建議或疑問？我們靜候您的反饋意見！",
+    "message": "對Teedy文檔管理系統有任何建議或疑問？我們靜候您的反饋意見！",
     "sent_title": "反饋已發送",
-    "sent_message": "感謝您的反饋意見！這將幫助我們進一步優化Sismics Docs文檔管理系統以便更好的為您提供服務。"
+    "sent_message": "感謝您的反饋意見！這將幫助我們進一步優化Teedy文檔管理系統以便更好的為您提供服務。"
   },
   "import": {
     "title": "輸入",

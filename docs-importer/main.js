@@ -22,9 +22,9 @@ const prefs = new preferences('com.sismics.docs.importer',{
 });
 
 // Welcome message
-console.log('Sismics Docs Importer 1.0.0, https://www.sismicsdocs.com' +
+console.log('Teedy Importer 1.0.0, https://teedy.io' +
   '\n\n' +
-  'This program let you import files from your system to Sismics Docs' +
+  'This program let you import files from your system to Teedy' +
   '\n');
 
 // Ask for the base URL
@@ -33,7 +33,7 @@ const askBaseUrl = () => {
     {
       type: 'input',
       name: 'baseUrl',
-      message: 'What is the base URL of your Docs? (eg. https://docs.mycompany.com)',
+      message: 'What is the base URL of your Teedy? (eg. https://teedy.mycompany.com)',
       default: prefs.importer.baseUrl
     }
   ]).then(answers => {
@@ -42,12 +42,12 @@ const askBaseUrl = () => {
 
     // Test base URL
     const spinner = ora({
-      text: 'Checking connection to Docs',
+      text: 'Checking connection to Teedy',
       spinner: 'flips'
     }).start();
     request(answers.baseUrl + '/api/app', function (error, response) {
       if (!response || response.statusCode !== 200) {
-        spinner.fail('Connection to Docs failed: ' + error);
+        spinner.fail('Connection to Teedy failed: ' + error);
         askBaseUrl();
         return;
       }
@@ -82,7 +82,7 @@ const askCredentials = () => {
 
     // Test credentials
     const spinner = ora({
-      text: 'Checking connection to Docs',
+      text: 'Checking connection to Teedy',
       spinner: 'flips'
     }).start();
     request.post({

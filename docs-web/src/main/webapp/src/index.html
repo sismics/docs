@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="docs">
   <head>
-    <title ng-bind-template="{{ pageTitle ? pageTitle : appName }}">Sismics Docs</title>
+    <title ng-bind-template="{{ pageTitle ? pageTitle : appName }}">Teedy</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -121,15 +121,11 @@
           <span class="icon-bar"></span>
         </button>
 
-        <div class="hidden-xs navbar-text navbar-logo">
-          <img src="../api/theme/image/logo" />
-        </div>
-
         <a class="navbar-brand" href="#">
-          <span ng-if="appName == 'Sismics Docs'">
-            <span style="color: #e43935;">Sismics</span> <span style="color: #2aabd2;">Docs</span>
+          <span ng-if="appName == 'Teedy'">
+            <span style="color: #2aabd2;">teedy</span>
           </span>
-          <span ng-if="appName != 'Sismics Docs'" style="color: #888;">{{ appName }}</span>
+          <span ng-if="appName != 'Teedy'" style="color: #888;">{{ appName }}</span>
         </a>
       </div>
 

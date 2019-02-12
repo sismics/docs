@@ -29,7 +29,7 @@ angular.module('docs').controller('SettingsConfig', function($scope, $rootScope,
 
   // Update the theme
   $scope.update = function () {
-    $scope.theme.name = $scope.theme.name.length === 0 ? 'Sismics Docs' : $scope.theme.name;
+    $scope.theme.name = $scope.theme.name.length === 0 ? 'Teedy' : $scope.theme.name;
     Restangular.one('theme').post('', $scope.theme).then(function () {
       var stylesheet = $('#theme-stylesheet')[0];
       stylesheet.href = stylesheet.href.replace(/\?.*|$/, '?' + new Date().getTime());

@@ -22,9 +22,9 @@ public class DirectoryUtil {
      */
     public static Path getBaseDataDirectory() {
         Path baseDataDir = null;
-        if (StringUtils.isNotBlank(EnvironmentUtil.getDocsHome())) {
+        if (StringUtils.isNotBlank(EnvironmentUtil.getTeedyHome())) {
             // If the docs.home property is set then use it
-            baseDataDir = Paths.get(EnvironmentUtil.getDocsHome());
+            baseDataDir = Paths.get(EnvironmentUtil.getTeedyHome());
         } else if (EnvironmentUtil.isUnitTest()) {
             // For unit testing, use a temporary directory
             baseDataDir = Paths.get(System.getProperty("java.io.tmpdir"));

@@ -471,9 +471,9 @@
   },
   "feedback": {
     "title": "Give us a feedback",
-    "message": "Any suggestion or question about Sismics Docs? We listen to you!",
+    "message": "Any suggestion or question about Teedy? We listen to you!",
     "sent_title": "Feedback sent",
-    "sent_message": "Thank you for your feedback! It will help us make Sismics Docs even better."
+    "sent_message": "Thank you for your feedback! It will help us make Teedy even better."
   },
   "import": {
     "title": "Importing",
@@ -567,11 +567,11 @@
   "onboarding": {
     "step1": {
       "title": "First time?",
-      "description": "If it's your first time on Sismics Docs, click the Next button, otherwise feel free to close me."
+      "description": "If it's your first time on Teedy, click the Next button, otherwise feel free to close me."
     },
     "step2": {
       "title": "Documents",
-      "description": "Sismics Docs is organized in documents and each document contains multiple files."
+      "description": "Teedy is organized in documents and each document contains multiple files."
     },
     "step3": {
       "title": "Files",

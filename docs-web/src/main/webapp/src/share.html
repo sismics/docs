@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="share">
   <head>
-    <title ng-bind-template="{{ appName }}">Sismics Docs</title>
+    <title ng-bind-template="{{ appName }}">Teedy</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -49,11 +49,12 @@
   <body translate-cloak ng-cloak>
     <div class="navbar navbar-inverse" role="navigation">
       <div class="navbar-header">
-        <div class="hidden-xs navbar-text navbar-logo">
-          <img src="../api/theme/image/logo" />
-        </div>
-
-        <a class="navbar-brand" href="#"> {{ appName }}</a>
+        <a class="navbar-brand" href="#">
+          <span ng-if="appName == 'Teedy'">
+            <span style="color: #2aabd2;">teedy</span>
+          </span>
+          <span ng-if="appName != 'Teedy'" style="color: #888;">{{ appName }}</span>
+        </a>
       </div>
     </div>
 

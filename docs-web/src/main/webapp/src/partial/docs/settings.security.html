@@ -22,7 +22,7 @@
   <div class="row mt-30 mb-19" ng-if="secret">
     <div class="col-sm-3">
       <p translate="settings.security.secret_key" translate-values="{ secret: secret }"></p>
-      <qrcode data="otpauth://totp/Sismics%20Docs?secret={{ secret }}" size="200"></qrcode>
+      <qrcode data="otpauth://totp/Teedy?secret={{ secret }}" size="200"></qrcode>
       <p class="text-danger">
         <strong>{{ 'settings.security.secret_key_warning' | translate }}</strong>
       </p>

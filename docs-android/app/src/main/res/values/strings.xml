@@ -9,10 +9,10 @@
     <string name="validate_error_alphanumeric">Only letters and numbers</string>
 
     <!-- App -->
-    <string name="app_name" translatable="false">Sismics Docs</string>
+    <string name="app_name" translatable="false">Teedy</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    <string name="login_explain"><![CDATA[To start, you must download and install Sismics Docs Server on <a href="https://github.com/sismics/docs">github.com/sismics/docs</a> and enter its below]]></string>
+    <string name="login_explain"><![CDATA[To start, you must download and install Teedy Server on <a href="https://github.com/sismics/docs">github.com/sismics/docs</a> and enter its below]]></string>
     <string name="server">Server</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -87,7 +87,7 @@
     <string name="file_delete_failure">Network error while deleting the current file</string>
     <string name="file_deleting_message">Deleting file</string>
     <string name="error_reading_file">Error while reading the file</string>
-    <string name="upload_notification_title">Sismics Docs</string>
+    <string name="upload_notification_title">Teedy</string>
     <string name="upload_notification_message">Uploading the new file to the document</string>
     <string name="upload_notification_error">Error uploading the new file</string>
     <string name="delete_file">Delete current file</string>
@@ -123,9 +123,9 @@
     <string name="export_comments">Export comments</string>
     <string name="export_metadata">Export metadata</string>
     <string name="mm">mm</string>
-    <string name="download_file_title">Sismics Docs file export</string>
-    <string name="download_document_title">Sismics Docs document export</string>
-    <string name="download_pdf_title">Sismics Docs PDF export</string>
+    <string name="download_file_title">Teedy file export</string>
+    <string name="download_document_title">Teedy document export</string>
+    <string name="download_pdf_title">Teedy PDF export</string>
     <string name="latest_activity">Latest activity</string>
     <string name="activity">Activity</string>
     <string name="email">E-mail</string>

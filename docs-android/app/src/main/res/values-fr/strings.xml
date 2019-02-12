@@ -11,7 +11,7 @@
     <!-- App -->
     <string name="drawer_open">Ouvrir le menu de navigation</string>
     <string name="drawer_close">Fermer le menu de navigation</string>
-    <string name="login_explain"><![CDATA[Pour commencer, vous devez télécharger et installer le serveur Sismics Docs sur <a href="https://github.com/sismics/docs">github.com/sismics/docs</a> et entrer son URL ci-dessous]]></string>
+    <string name="login_explain"><![CDATA[Pour commencer, vous devez télécharger et installer le serveur Teedy sur <a href="https://github.com/sismics/docs">github.com/sismics/docs</a> et entrer son URL ci-dessous]]></string>
     <string name="server">Serveur</string>
     <string name="username">Nom d\'utilisateur</string>
     <string name="password">Mot de passe</string>
@@ -83,7 +83,7 @@
     <string name="file_delete_failure">Erreur réseau lors de la suppression du fichier</string>
     <string name="file_deleting_message">Suppression du fichier</string>
     <string name="error_reading_file">Erreur lors de la lecture du fichier</string>
-    <string name="upload_notification_title">Sismics Docs</string>
+    <string name="upload_notification_title">Teedy</string>
     <string name="upload_notification_message">Envoi du nouveau fichier</string>
     <string name="upload_notification_error">Erreur lors de l\'envoi du nouveau fichier</string>
     <string name="delete_file">Supprimer ce fichier</string>
@@ -119,9 +119,9 @@
     <string name="export_comments">Exporter les commentaires</string>
     <string name="export_metadata">Exporter les métadonnées</string>
     <string name="mm">mm</string>
-    <string name="download_file_title">Export de fichier Sismics Docs</string>
-    <string name="download_document_title">Export de document Sismics Docs</string>
-    <string name="download_pdf_title">Export PDF Sismics Docs</string>
+    <string name="download_file_title">Export de fichier Teedy</string>
+    <string name="download_document_title">Export de document Teedy</string>
+    <string name="download_pdf_title">Export PDF Teedy</string>
     <string name="latest_activity">Activité récente</string>
     <string name="activity">Activité</string>
     <string name="email">E-mail</string>

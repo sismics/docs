@@ -11,7 +11,7 @@
     <!-- App -->
     <string name="drawer_open">Navigationsleiste öffnen</string>
     <string name="drawer_close">Navigationsleiste schließen</string>
-    <string name="login_explain"><![CDATA[Um zu beginnen, müssen Sie Sismics Docs Server herunterladen und installieren <a href="https://github.com/sismics/docs">github.com/sismics/docs</a>, sowie die Login-Daten unten eingeben]]></string>
+    <string name="login_explain"><![CDATA[Um zu beginnen, müssen Sie Teedy Server herunterladen und installieren <a href="https://github.com/sismics/docs">github.com/sismics/docs</a>, sowie die Login-Daten unten eingeben]]></string>
     <string name="server">Server</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -83,7 +83,7 @@
     <string name="file_delete_failure">Netzwerkfehler beim Löschen der Datei</string>
     <string name="file_deleting_message">Lösche Datei</string>
     <string name="error_reading_file">Fehler beim Lesen der Datei</string>
-    <string name="upload_notification_title">Sismics Docs</string>
+    <string name="upload_notification_title">Teedy</string>
     <string name="upload_notification_message">Neue Datei in das Dokument hochladen</string>
     <string name="upload_notification_error">Fehler beim Hochladen der neuen Datei</string>
     <string name="delete_file">Aktuelle Datei löschen</string>
@@ -119,9 +119,9 @@
     <string name="export_comments">Kommentare exportieren</string>
     <string name="export_metadata">Metadaten exportieren</string>
     <string name="mm">mm</string>
-    <string name="download_file_title">Sismics Docs Datei Export</string>
-    <string name="download_document_title">Sismics Docs Dokumentenexport</string>
-    <string name="download_pdf_title">Sismics Docs PDF Export</string>
+    <string name="download_file_title">Teedy Datei Export</string>
+    <string name="download_document_title">Teedy Dokumentenexport</string>
+    <string name="download_pdf_title">Teedy PDF Export</string>
     <string name="latest_activity">Letzte Aktivität</string>
     <string name="activity">Aktivitäten</string>
     <string name="email">E-Mail</string>
