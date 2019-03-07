@@ -508,7 +508,8 @@ angular.module('docs',
     { key: 'jpn', label: '日本語' },
     { key: 'tha', label: 'ภาษาไทย' },
     { key: 'kor', label: '한국어' },
-    { key: 'nld', label: 'Nederlands' }
+    { key: 'nld', label: 'Nederlands' },
+    { key: 'tur', label: 'Türkçe' }
   ];
 })
 /**
