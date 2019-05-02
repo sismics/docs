@@ -2,6 +2,7 @@ package com.sismics.docs.rest.resource;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.*;
@@ -15,6 +16,7 @@ import com.sismics.docs.core.event.PasswordLostEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.*;
 import com.sismics.docs.core.util.ConfigUtil;
+import com.sismics.docs.core.util.RoutingUtil;
 import com.sismics.docs.core.util.authentication.AuthenticationUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
@@ -449,6 +451,12 @@ public class UserResource extends BaseResource {
         if (hasBaseFunction(BaseFunction.ADMIN) || principal.isGuest()) {
             throw new ClientException("ForbiddenError", "This user cannot be deleted");
         }
+
+        // Check that this user is not used in any workflow
+        String routeModelName = RoutingUtil.findRouteModelNameByTargetName(AclTargetType.USER, principal.getName());
+        if (routeModelName != null) {
+            throw new ClientException("UserUsedInRouteModel", routeModelName);
+        }
         
         // Find linked data
         DocumentDao documentDao = new DocumentDao();
@@ -512,7 +520,7 @@ public class UserResource extends BaseResource {
             throw new ClientException("ForbiddenError", "The guest user cannot be deleted");
         }
 
-        // Check if the user exists
+        // Check that the user exists
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
         if (user == null) {
@@ -524,6 +532,12 @@ public class UserResource extends BaseResource {
         Set<String> baseFunctionSet = roleBaseFunctionDao.findByRoleId(Sets.newHashSet(user.getRoleId()));
         if (baseFunctionSet.contains(BaseFunction.ADMIN.name())) {
             throw new ClientException("ForbiddenError", "The admin user cannot be deleted");
+        }
+
+        // Check that this user is not used in any workflow
+        String routeModelName = RoutingUtil.findRouteModelNameByTargetName(AclTargetType.USER, username);
+        if (routeModelName != null) {
+            throw new ClientException("UserUsedInRouteModel", routeModelName);
         }
         
         // Find linked data

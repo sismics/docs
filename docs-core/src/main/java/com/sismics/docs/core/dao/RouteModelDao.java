@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.dao.criteria.RouteModelCriteria;
 import com.sismics.docs.core.dao.dto.RouteModelDto;
+import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.RouteModel;
 import com.sismics.docs.core.util.AuditLogUtil;
 import com.sismics.docs.core.util.SecurityUtil;
@@ -86,6 +87,18 @@ public class RouteModelDao {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    /**
+     * Returns the list of all route models.
+     *
+     * @return List of route models
+     */
+    @SuppressWarnings("unchecked")
+    public List<RouteModel> findAll() {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select r from RouteModel r where r.deleteDate is null");
+        return q.getResultList();
     }
 
     /**

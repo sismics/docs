@@ -2,6 +2,7 @@ package com.sismics.docs.rest.resource;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.dao.GroupDao;
 import com.sismics.docs.core.dao.RoleBaseFunctionDao;
 import com.sismics.docs.core.dao.UserDao;
@@ -12,6 +13,7 @@ import com.sismics.docs.core.dao.dto.UserDto;
 import com.sismics.docs.core.model.jpa.Group;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.model.jpa.UserGroup;
+import com.sismics.docs.core.util.RoutingUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
@@ -148,6 +150,14 @@ public class GroupResource extends BaseResource {
             }
             parentId = parentGroup.getId();
         }
+
+        // Check that this group is not used in any workflow in case of renaming
+        if (!name.equals(groupName)) {
+            String routeModelName = RoutingUtil.findRouteModelNameByTargetName(AclTargetType.GROUP, groupName);
+            if (routeModelName != null) {
+                throw new ClientException("GroupUsedInRouteModel", routeModelName);
+            }
+        }
         
         // Update the group
         groupDao.update(group.setName(name)
@@ -197,7 +207,13 @@ public class GroupResource extends BaseResource {
                 throw new ClientException("ForbiddenError", "The administrators group cannot be deleted");
             }
         }
-        
+
+        // Check that this group is not used in any workflow
+        String routeModelName = RoutingUtil.findRouteModelNameByTargetName(AclTargetType.GROUP, groupName);
+        if (routeModelName != null) {
+            throw new ClientException("GroupUsedInRouteModel", routeModelName);
+        }
+
         // Delete the group
         groupDao.delete(group.getId(), principal.getId());
         

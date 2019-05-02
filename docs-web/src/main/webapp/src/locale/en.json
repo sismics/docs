@@ -288,6 +288,8 @@
       "edit": {
         "delete_user_title": "Delete user",
         "delete_user_message": "Do you really want to delete this user? All associated documents, files and tags will be deleted",
+        "user_used_title": "User in use",
+        "user_used_message": "This user is used in the workflow \"{{ name }}\"",
         "edit_user_failed_title": "User already exists",
         "edit_user_failed_message": "This username is already taken by another user",
         "edit_user_title": "Edit \"{{ username }}\"",
@@ -363,6 +365,8 @@
         "delete_group_message": "Do you really want to delete this group?",
         "edit_group_failed_title": "Group already exists",
         "edit_group_failed_message": "This group name is already taken by another group",
+        "group_used_title": "Group in use",
+        "group_used_message": "This group is used in the workflow \"{{ name }}\"",
         "edit_group_title": "Edit \"{{ name }}\"",
         "add_group_title": "Add a group",
         "name": "Name",
