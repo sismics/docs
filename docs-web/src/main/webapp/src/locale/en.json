@@ -464,7 +464,7 @@
       "need_2": "Scan a directory for new files and import them",
       "line_1": "Go to <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> and download the file importer tool for your system.",
       "line_2": "Follow the <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">instructions here</a> to use this tool.",
-      "line_3": "Your files will be imported in <a href=\"#/document\">Quick upload</a>, then you can group them into documents.",
+      "line_3": "Your files will be imported in documents according to the file importer configuration.",
       "download": "Download",
       "instructions": "Instructions"
     }

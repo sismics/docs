@@ -464,7 +464,7 @@
       "need_2": "Analyser un répertoire à la recherche de nouveaux fichiers et les importer",
       "line_1": "Allez sur <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> et téléchargez l'outil d'importation de fichiers pour votre système.",
       "line_2": "Suivez les <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">instructions ici</a> pour utiliser cet outil.",
-      "line_3": "Vos fichiers seront importés dans <a href=\"#/document\">Envoi rapide</a>, vous pouvez ensuite les regrouper dans des documents.",
+      "line_3": "Vos fichiers seront importés dans des documents conformément à la configuration de l'importeur.",
       "download": "Télécharger",
       "instructions": "Instructions"
     }
