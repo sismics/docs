@@ -960,15 +960,30 @@ public class DocumentResource extends BaseResource {
         
         // Delete the document
         documentDao.delete(id, principal.getId());
-        
-        // Raise file deleted events (don't bother sending document updated event)
+
+        long totalSize = 0L;
         for (File file : fileList) {
+            // Store the file size to update the quota
+            java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+            try {
+                totalSize += Files.size(storedFile);
+            } catch (IOException e) {
+                // The file doesn't exists on disk, which is weird, but not fatal
+            }
+
+            // Raise file deleted event
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
             fileDeletedAsyncEvent.setFile(file);
             ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
-        
+
+        // Update the user quota
+        UserDao userDao = new UserDao();
+        User user = userDao.getById(principal.getId());
+        user.setStorageCurrent(user.getStorageCurrent() - totalSize);
+        userDao.updateQuota(user);
+
         // Raise a document deleted event
         DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
         documentDeletedAsyncEvent.setUserId(principal.getId());

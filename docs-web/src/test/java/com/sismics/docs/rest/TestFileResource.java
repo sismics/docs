@@ -532,5 +532,47 @@ public class TestFileResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
         Assert.assertEquals(585282L, json.getJsonNumber("storage_current").longValue());
+
+        // Create a document
+        long create1Date = new Date().getTime();
+        json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
+                .put(Entity.form(new Form()
+                        .param("title", "File test document 1")
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
+        String document1Id = json.getString("id");
+        Assert.assertNotNull(document1Id);
+
+        // Add a file to this document (163510 bytes large)
+        try (InputStream is = Resources.getResource("file/PIA00452.jpg").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "PIA00452.jpg");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
+                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+            }
+        }
+
+        // Check current quota
+        json = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(748792, json.getJsonNumber("storage_current").longValue());
+
+        // Deletes the document
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
+                .delete(JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
+
+        // Check current quota
+        json = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(585282L, json.getJsonNumber("storage_current").longValue());
     }
 }
