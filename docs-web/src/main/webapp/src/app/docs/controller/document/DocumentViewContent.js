@@ -195,10 +195,14 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
     });
   };
 
+  /**
+   * Open versions history.
+   */
   $scope.openVersions = function (file) {
     $uibModal.open({
       templateUrl: 'partial/docs/file.versions.html',
       controller: 'ModalFileVersions',
+      size: 'lg',
       resolve: {
         file: function () {
           return file;
