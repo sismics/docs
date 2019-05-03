@@ -111,6 +111,9 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
     }
 
     if (files && files.length) {
+      // Sort by filename
+      files = _.sortBy(files, 'name');
+
       // Adding files to the UI
       var newfiles = [];
       _.each(files, function (file) {
