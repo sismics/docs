@@ -209,7 +209,9 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(2, searchDocuments("uat:" + DateTimeFormat.forPattern("yyyy-MM-dd").print(new Date().getTime()), document1Token));
         Assert.assertEquals(2, searchDocuments("uafter:2010 ubefore:2040-08", document1Token));
         Assert.assertEquals(1, searchDocuments("tag:super", document1Token));
+        Assert.assertEquals(1, searchDocuments("!tag:super", document1Token));
         Assert.assertEquals(1, searchDocuments("tag:super tag:hr", document1Token));
+        Assert.assertEquals(0, searchDocuments("tag:super !tag:hr", document1Token));
         Assert.assertEquals(1, searchDocuments("shared:yes", document1Token));
         Assert.assertEquals(2, searchDocuments("lang:eng", document1Token));
         Assert.assertEquals(1, searchDocuments("after:2010 before:2040-08 tag:super shared:yes lang:eng title description full:uranium", document1Token));

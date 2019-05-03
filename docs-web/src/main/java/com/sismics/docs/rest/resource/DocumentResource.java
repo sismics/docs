@@ -459,10 +459,14 @@ public class DocumentResource extends BaseResource {
 
             switch (params[0]) {
                 case "tag":
+                case "!tag":
                     // New tag criteria
                     List<TagDto> tagDtoList = TagUtil.findByName(params[1], allTagDtoList);
                     if (documentCriteria.getTagIdList() == null) {
                         documentCriteria.setTagIdList(new ArrayList<>());
+                    }
+                    if (documentCriteria.getExcludedTagIdList() == null) {
+                        documentCriteria.setExcludedTagIdList(new ArrayList<>());
                     }
                     if (tagDtoList.isEmpty()) {
                         // No tag found, the request must returns nothing
@@ -476,7 +480,11 @@ public class DocumentResource extends BaseResource {
                                 tagIdList.add(childrenTagDto.getId());
                             }
                         }
-                        documentCriteria.getTagIdList().add(tagIdList);
+                        if (params[0].startsWith("!")) {
+                            documentCriteria.getExcludedTagIdList().add(tagIdList);
+                        } else {
+                            documentCriteria.getTagIdList().add(tagIdList);
+                        }
                     }
                     break;
                 case "after":

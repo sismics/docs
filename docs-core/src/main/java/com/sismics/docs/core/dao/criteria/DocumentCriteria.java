@@ -52,6 +52,12 @@ public class DocumentCriteria {
     private List<List<String>> tagIdList;
     
     /**
+     * Tag IDs to excluded.
+     * The first and second level list will be excluded.
+     */
+    private List<List<String>> excludedTagIdList;
+
+    /**
      * Shared status.
      */
     private Boolean shared;
@@ -117,6 +123,15 @@ public class DocumentCriteria {
 
     public void setTagIdList(List<List<String>> tagIdList) {
         this.tagIdList = tagIdList;
+    }
+
+    public List<List<String>> getExcludedTagIdList() {
+        return excludedTagIdList;
+    }
+
+    public DocumentCriteria setExcludedTagIdList(List<List<String>> excludedTagIdList) {
+        this.excludedTagIdList = excludedTagIdList;
+        return this;
     }
 
     public Boolean getShared() {

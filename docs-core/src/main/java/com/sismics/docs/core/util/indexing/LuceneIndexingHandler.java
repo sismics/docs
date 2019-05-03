@@ -309,6 +309,19 @@ public class LuceneIndexingHandler implements IndexingHandler {
                 criteriaList.add("(" + Joiner.on(" OR ").join(tagCriteriaList) + ")");
             }
         }
+        if (criteria.getExcludedTagIdList() != null && !criteria.getExcludedTagIdList().isEmpty()) {
+            int index = 0;
+            for (List<String> tagIdList : criteria.getExcludedTagIdList()) {
+                List<String> tagCriteriaList = Lists.newArrayList();
+                for (String tagId : tagIdList) {
+                    sb.append(String.format("left join T_DOCUMENT_TAG dtex%d on dtex%d.DOT_IDDOCUMENT_C = d.DOC_ID_C and dtex%d.DOT_IDTAG_C = :tagIdEx%d and dtex%d.DOT_DELETEDATE_D is null ", index, index, index, index, index));
+                    parameterMap.put("tagIdEx" + index, tagId);
+                    tagCriteriaList.add(String.format("dtex%d.DOT_ID_C is null", index));
+                    index++;
+                }
+                criteriaList.add("(" + Joiner.on(" AND ").join(tagCriteriaList) + ")");
+            }
+        }
         if (criteria.getShared() != null && criteria.getShared()) {
             criteriaList.add("s.count > 0");
         }

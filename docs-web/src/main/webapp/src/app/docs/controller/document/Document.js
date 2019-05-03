@@ -319,9 +319,9 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
    */
   $scope.extractNavigatedTag = function () {
     // Find the current tag in the search query
-    var tagFound = /tag:([^ ]*)/.exec($scope.search);
+    var tagFound = /(^| )tag:([^ ]*)/.exec($scope.search);
     if (tagFound) {
-      tagFound = tagFound[1];
+      tagFound = tagFound[2];
       // We search only for exact match
       $scope.navigatedTag = _.findWhere($scope.tags, { name: tagFound });
     } else {
