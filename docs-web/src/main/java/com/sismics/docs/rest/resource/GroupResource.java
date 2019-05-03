@@ -179,6 +179,7 @@ public class GroupResource extends BaseResource {
      * @apiSuccess {String} status Status OK
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) NotFound Group not found
+     * @apiError (client) GroupUsedInRouteModel The group is used in a route model
      * @apiPermission admin
      * @apiVersion 1.5.0
      *

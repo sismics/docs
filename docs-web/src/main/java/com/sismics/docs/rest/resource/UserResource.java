@@ -436,6 +436,7 @@ public class UserResource extends BaseResource {
      * @apiGroup User
      * @apiSuccess {String} status Status OK
      * @apiError (client) ForbiddenError Access denied or the user cannot be deleted
+     * @apiError (client) UserUsedInRouteModel The user is used in a route model
      * @apiPermission user
      * @apiVersion 1.5.0
      *
@@ -501,6 +502,7 @@ public class UserResource extends BaseResource {
      * @apiSuccess {String} status Status OK
      * @apiError (client) ForbiddenError Access denied or the user cannot be deleted
      * @apiError (client) UserNotFound The user does not exist
+     * @apiError (client) UserUsedInRouteModel The user is used in a route model
      * @apiPermission admin
      * @apiVersion 1.5.0
      *
