@@ -20,7 +20,15 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
     forceHelperSize: true,
     forcePlaceholderSize: true,
     tolerance: 'pointer',
+    start: function() {
+      $(this).addClass('currently-dragging');
+    },
     stop: function () {
+      var _this = this;
+      setTimeout(function(){
+        $(_this).removeClass('currently-dragging');
+      }, 300);
+
       // Send new positions to server
       $scope.$apply(function () {
         Restangular.one('file').post('reorder', {
@@ -45,8 +53,10 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
   /**
    * Navigate to the selected file.
    */
-  $scope.openFile = function (file) {
-    $state.go('document.view.content.file', { id: $stateParams.id, fileId: file.id })
+  $scope.openFile = function (file, $event) {
+    if ($($event.target).parents('.currently-dragging').length === 0) {
+      $state.go('document.view.content.file', {id: $stateParams.id, fileId: file.id})
+    }
   };
 
   /**

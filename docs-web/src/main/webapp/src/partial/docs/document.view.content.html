@@ -70,7 +70,7 @@
           <span class="fas fa-spin fa-circle-notch"></span>
         </div>
 
-        <a class="file-thumbnail" ng-click="openFile(file)">
+        <a class="file-thumbnail" ng-click="openFile(file, $event)">
           <img ng-src="../api/file/{{ file.id }}/data?size=thumb" uib-tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
         </a>
 
@@ -148,12 +148,12 @@
     </thead>
     <tbody ui-sortable="fileSortableOptions" ng-model="files">
     <tr ng-repeat="file in files">
-      <td class="pointer" ng-click="openFile(file)">
+      <td class="pointer" ng-click="openFile(file, $event)">
         <div class="thumbnail-list">
           <img ng-src="../api/file/{{ file.id }}/data?size=thumb" />
         </div>
       </td>
-      <td class="pointer" ng-click="openFile(file)">
+      <td class="pointer" ng-click="openFile(file, $event)">
         {{ file.name }}
         <span class="fas fa-spin fa-circle-notch"
               ng-show="file.processing"
