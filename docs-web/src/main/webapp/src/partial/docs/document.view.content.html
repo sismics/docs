@@ -84,6 +84,13 @@
               </button>
               <ul class="dropdown-menu" uib-dropdown-menu>
                 <li>
+                  <a ng-href="../api/file/{{ file.id }}/data" target="_blank">
+                    <span class="fas fa-download"></span>
+                    {{ 'download' | translate }}
+                  </a>
+                </li>
+                <li role="separator" class="divider"></li>
+                <li>
                   <a href ng-click="renameFile(file)">
                     <span class="fas fa-pencil-alt"></span>
                     {{ 'rename' | translate }}
@@ -168,6 +175,13 @@
             <span class="fas fa-ellipsis-v"></span>
           </button>
           <ul class="dropdown-menu" uib-dropdown-menu>
+            <li>
+              <a ng-href="../api/file/{{ file.id }}/data" target="_blank">
+                <span class="fas fa-download"></span>
+                {{ 'download' | translate }}
+              </a>
+            </li>
+            <li role="separator" class="divider"></li>
             <li>
               <a href ng-click="renameFile(file)">
                 <span class="fas fa-pencil-alt"></span>
