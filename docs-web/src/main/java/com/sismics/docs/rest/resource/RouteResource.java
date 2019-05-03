@@ -326,7 +326,7 @@ public class RouteResource extends BaseResource {
 
         // Delete the route and the steps
         RouteDao routeDao = new RouteDao();
-        routeDao.deleteRoute(routeStepDto.getRouteId());
+        routeDao.deleteRoute(routeStepDto.getRouteId(), principal.getId());
 
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
