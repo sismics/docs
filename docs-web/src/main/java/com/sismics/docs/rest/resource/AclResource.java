@@ -228,8 +228,11 @@ public class AclResource extends BaseResource {
         SortCriteria sortCriteria = new SortCriteria(1, true);
         List<UserDto> userDtoList = userDao.findByCriteria(new UserCriteria().setSearch(search), sortCriteria);
         for (UserDto userDto : userDtoList) {
-            users.add(Json.createObjectBuilder()
-                    .add("name", userDto.getUsername()));
+            // No need to add users who will skip ACL check anyways
+            if (!SecurityUtil.skipAclCheck(Lists.newArrayList(userDto.getId()))) {
+                users.add(Json.createObjectBuilder()
+                        .add("name", userDto.getUsername()));
+            }
         }
         
         // Search groups
@@ -237,8 +240,11 @@ public class AclResource extends BaseResource {
         JsonArrayBuilder groups = Json.createArrayBuilder();
         List<GroupDto> groupDtoList = groupDao.findByCriteria(new GroupCriteria().setSearch(search), sortCriteria);
         for (GroupDto groupDto : groupDtoList) {
-            groups.add(Json.createObjectBuilder()
-                    .add("name", groupDto.getName()));
+            // No need to add users who will skip ACL check anyways
+            if (!SecurityUtil.skipAclCheck(Lists.newArrayList(groupDto.getId()))) {
+                groups.add(Json.createObjectBuilder()
+                        .add("name", groupDto.getName()));
+            }
         }
         
         JsonObjectBuilder response = Json.createObjectBuilder()
