@@ -172,7 +172,7 @@ public class TestUserResource extends BaseJerseyTest {
                 .get();
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
-        Assert.assertEquals(true, json.getBoolean("anonymous"));
+        Assert.assertTrue(json.getBoolean("anonymous"));
         
         // Check alice user information
         json = target().path("/user").request()
@@ -187,8 +187,20 @@ public class TestUserResource extends BaseJerseyTest {
         json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, bobToken)
                 .get(JsonObject.class);
+        Assert.assertTrue(json.getBoolean("onboarding"));
         Assert.assertEquals("bob@docs.com", json.getString("email"));
-        
+
+        // Pass onboarding
+        target().path("/user/onboarded").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, bobToken)
+                .post(Entity.form(new Form()), JsonObject.class);
+
+        // Check bob user information
+        json = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, bobToken)
+                .get(JsonObject.class);
+        Assert.assertFalse(json.getBoolean("onboarding"));
+
         // Test login KO (user not found)
         response = target().path("/user/login").request()
                 .post(Entity.form(new Form()
