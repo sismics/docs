@@ -96,7 +96,7 @@ public class FileProcessingAsyncListener {
         final File file = event.getFile();
         FormatHandler formatHandler = FormatHandlerUtil.find(file.getMimeType());
         if (formatHandler == null) {
-            log.error("Format unhandled: " + file.getMimeType());
+            log.info("Format unhandled: " + file.getMimeType());
             FileUtil.endProcessingFile(file.getId());
             return;
         }

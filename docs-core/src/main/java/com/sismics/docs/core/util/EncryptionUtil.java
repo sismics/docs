@@ -32,6 +32,7 @@ public class EncryptionUtil {
     static {
         // Initialize Bouncy Castle provider
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
+        Security.removeProvider("SunRsaSign");
     }
     
     /**
