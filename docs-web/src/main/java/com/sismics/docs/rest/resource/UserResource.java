@@ -101,6 +101,7 @@ public class UserResource extends BaseResource {
         user.setPassword(password);
         user.setEmail(email);
         user.setStorageQuota(storageQuota);
+        user.setOnboarding(true);
 
         // Create the user
         UserDao userDao = new UserDao();
@@ -622,6 +623,7 @@ public class UserResource extends BaseResource {
      * @apiGroup User
      * @apiSuccess {Boolean} anonymous True if no user is connected
      * @apiSuccess {Boolean} is_default_password True if the admin has the default password
+     * @apiSuccess {Boolean} onboarding True if the UI needs to display the onboarding
      * @apiSuccess {String} username Username
      * @apiSuccess {String} email E-mail
      * @apiSuccess {Number} storage_quota Storage quota (in bytes)
@@ -665,8 +667,9 @@ public class UserResource extends BaseResource {
                     .add("email", user.getEmail())
                     .add("storage_quota", user.getStorageQuota())
                     .add("storage_current", user.getStorageCurrent())
-                    .add("totp_enabled", user.getTotpKey() != null);
-            
+                    .add("totp_enabled", user.getTotpKey() != null)
+                    .add("onboarding", user.isOnboarding());
+
             // Base functions
             JsonArrayBuilder baseFunctions = Json.createArrayBuilder();
             for (String baseFunction : ((UserPrincipal) principal).getBaseFunctionSet()) {
@@ -893,6 +896,39 @@ public class UserResource extends BaseResource {
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
         authenticationTokenDao.deleteByUserId(principal.getId(), authToken);
         
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Mark the onboarding experience as passed.
+     *
+     * @api {post} /user/onboarded Mark the onboarding experience as passed
+     * @apiDescription Once the onboarding experience has been passed by the user, this resource prevent it from being displayed again.
+     * @apiName PostUserOnboarded
+     * @apiGroup User
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission user
+     * @apiVersion 1.7.0
+     *
+     * @return Response
+     */
+    @POST
+    @Path("onboarded")
+    public Response onboarded() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Save it
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveByUsername(principal.getName());
+        user.setOnboarding(false);
+        userDao.updateOnboarding(user);
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");

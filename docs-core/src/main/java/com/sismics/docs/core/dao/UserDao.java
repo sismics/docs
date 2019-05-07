@@ -172,6 +172,26 @@ public class UserDao {
     }
 
     /**
+     * Update the onboarding status.
+     *
+     * @param user User to update
+     * @return Updated user
+     */
+    public User updateOnboarding(User user) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+
+        // Get the user
+        Query q = em.createQuery("select u from User u where u.id = :id and u.deleteDate is null");
+        q.setParameter("id", user.getId());
+        User userDb = (User) q.getSingleResult();
+
+        // Update the user
+        userDb.setOnboarding(user.isOnboarding());
+
+        return user;
+    }
+
+    /**
      * Gets a user by its ID.
      * 
      * @param id User ID
