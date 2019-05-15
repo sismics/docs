@@ -4,7 +4,6 @@ import com.google.common.base.Joiner;
 import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.dao.criteria.RouteModelCriteria;
 import com.sismics.docs.core.dao.dto.RouteModelDto;
-import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.RouteModel;
 import com.sismics.docs.core.util.AuditLogUtil;
 import com.sismics.docs.core.util.SecurityUtil;
@@ -62,7 +61,7 @@ public class RouteModelDao {
         q.setParameter("id", routeModel.getId());
         RouteModel routeModelDb = (RouteModel) q.getSingleResult();
 
-        // Update the group
+        // Update the route model
         routeModelDb.setName(routeModel.getName());
         routeModelDb.setSteps(routeModel.getSteps());
 
