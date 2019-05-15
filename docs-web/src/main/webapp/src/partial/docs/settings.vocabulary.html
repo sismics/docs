@@ -11,41 +11,45 @@
       </select>
     </div>
   </form>
+</div>
 
-  <table class="table" ng-show="entries">
-    <thead>
-      <tr>
-        <th width="70%">{{ 'settings.vocabulary.value' | translate }}</th>
-        <th width="20%">{{ 'settings.vocabulary.order' | translate }}</th>
-        <th width="10%"></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="info">
-        <td>
-          <input type="text" ng-attr-placeholder="{{ 'settings.vocabulary.new_entry' | translate }}" class="form-control" ng-model="entry.value" maxlength="500" />
-        </td>
-        <td>
-          <input type="number" class="form-control" ng-model="entry.order" />
-        </td>
-        <td>
-          <span ng-click="addEntry(entry)" class="fas fa-plus pointer"></span>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="3">&nbsp;</td>
-      </tr>
-      <tr ng-repeat="entry in entries | orderBy: 'order'">
-        <td>
-          <input type="text" class="form-control" ng-model="entry.value" maxlength="500" ng-blur="updateEntry(entry)" />
-        </td>
-        <td>
-          <input type="number" class="form-control" ng-model="entry.order" ng-blur="updateEntry(entry)" />
-        </td>
-        <td>
-          <span ng-click="deleteEntry(entry)" class="fas fa-trash pointer"></span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div class="row">
+  <div class="col-md-12 well">
+    <table class="table" ng-show="entries">
+      <thead>
+        <tr>
+          <th width="70%">{{ 'settings.vocabulary.value' | translate }}</th>
+          <th width="20%">{{ 'settings.vocabulary.order' | translate }}</th>
+          <th width="10%"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="info">
+          <td>
+            <input type="text" ng-attr-placeholder="{{ 'settings.vocabulary.new_entry' | translate }}" class="form-control" ng-model="entry.value" maxlength="500" />
+          </td>
+          <td>
+            <input type="number" class="form-control" ng-model="entry.order" />
+          </td>
+          <td>
+            <span ng-click="addEntry(entry)" class="fas fa-plus pointer"></span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">&nbsp;</td>
+        </tr>
+        <tr ng-repeat="entry in entries | orderBy: 'order'">
+          <td>
+            <input type="text" class="form-control" ng-model="entry.value" maxlength="500" ng-blur="updateEntry(entry)" />
+          </td>
+          <td>
+            <input type="number" class="form-control" ng-model="entry.order" ng-blur="updateEntry(entry)" />
+          </td>
+          <td>
+            <span ng-click="deleteEntry(entry)" class="fas fa-trash pointer"></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

@@ -145,6 +145,15 @@ angular.module('docs',
         }
       }
     })
+    .state('settings.metadata', {
+      url: '/metadata',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.metadata.html',
+          controller: 'SettingsMetadata'
+        }
+      }
+    })
     .state('settings.user', {
       url: '/user',
       views: {

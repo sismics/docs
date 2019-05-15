@@ -278,6 +278,7 @@
     "menu_vocabularies": "Vocabularies",
     "menu_configuration": "Configuration",
     "menu_inbox": "Inbox scanning",
+    "menu_metadata": "Custom metadata",
     "menu_monitoring": "Monitoring",
     "user": {
       "title": "Users management",
@@ -411,6 +412,12 @@
       "webhook_url": "URL",
       "webhook_create_date": "Create date",
       "webhook_add": "Add a webhook"
+    },
+    "metadata": {
+      "title": "Custom metadata configuration",
+      "message": "Here you can add custom metadata to your documents like an internal identifier or an expiration date. Please note that the metadata type cannot be changed after creation.",
+      "name": "Metadata name",
+      "type": "Metadata type"
     },
     "inbox": {
       "title": "Inbox scanning",

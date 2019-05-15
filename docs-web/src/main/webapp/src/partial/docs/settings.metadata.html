@@ -1,0 +1,70 @@
+<h2>
+  <span translate="settings.metadata.title"></span>
+</h2>
+<p translate="settings.metadata.message"></p>
+
+<div class="row">
+  <form class="form-horizontal" name="metadataForm" novalidate>
+    <div class="form-group" ng-class="{ 'has-error': !metadataForm.name.$valid && metadataForm.$dirty }">
+      <label class="col-sm-2 control-label" for="metadataName">{{ 'settings.metadata.name' | translate }}</label>
+      <div class="col-sm-4">
+        <input name="name" type="text" class="form-control" id="metadataName" ng-model="newmetadata.name" required ng-maxlength="50" />
+      </div>
+      <div class="col-sm-4">
+        <span class="help-block" ng-show="metadataForm.name.$error.required && metadataForm.$dirty">{{ 'validation.required' | translate }}</span>
+        <span class="help-block" ng-show="metadataForm.name.$error.maxlength && metadataForm.$dirty">{{ 'validation.too_long' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="form-group" ng-class="{ 'has-error': !metadataForm.type.$valid && metadataForm.$dirty }">
+      <label class="col-sm-2 control-label" for="metadataType">{{ 'settings.metadata.type' | translate }}</label>
+      <div class="col-sm-4">
+        <select name="type" class="form-control" ng-model="newmetadata.type" id="metadataType" required>
+          <option value="STRING">String (eg. "myvalue")</option>
+          <option value="INTEGER">Integer (eg. "874")</option>
+          <option value="FLOAT">Float (eg. 54.8)</option>
+          <option value="DATE">Date</option>
+          <option value="BOOLEAN">Boolean (true/false)</option>
+        </select>
+      </div>
+      <div class="col-sm-4">
+        <span class="help-block" ng-show="metadataForm.type.$error.required && metadataForm.$dirty">{{ 'validation.required' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary" ng-click="addMetadata()" ng-disabled="!metadataForm.$valid">
+          <span class="fas fa-pencil-alt"></span> {{ 'save' | translate }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="row">
+  <div class="col-md-12 well">
+    <table class="table" ng-show="metadata">
+      <thead>
+      <tr>
+        <th width="70%">{{ 'settings.metadata.name' | translate }}</th>
+        <th width="20%">{{ 'settings.metadata.type' | translate }}</th>
+        <th width="10%"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="meta in metadata">
+        <td>
+          <input type="text" class="form-control" ng-model="meta.name" maxlength="50" ng-blur="updateMetadata(meta)" />
+        </td>
+        <td>
+          {{ meta.type }}
+        </td>
+        <td>
+          <span ng-click="deleteMetadata(meta)" class="fas fa-trash pointer"></span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
