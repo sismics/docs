@@ -819,4 +819,82 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(279276L, files.getJsonObject(1).getJsonNumber("size").longValue());
         Assert.assertEquals("application/pdf", files.getJsonObject(1).getString("mimetype"));
     }
+
+    /**
+     * Test custom metadata.
+     *
+     * @throws Exception e
+     */
+    @Test
+    public void testCustomMetadata() throws Exception {
+        // Login admin
+        String adminToken = clientUtil.login("admin", "admin", false);
+
+        // Login metadata1
+        clientUtil.createUser("metadata1");
+        String metadata1Token = clientUtil.login("metadata1");
+
+        // Create some metadata with admin
+        JsonObject json = target().path("/metadata").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("name", "str")
+                        .param("type", "STRING")), JsonObject.class);
+        String metadataStrId = json.getString("id");
+        json = target().path("/metadata").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("name", "int")
+                        .param("type", "INTEGER")), JsonObject.class);
+        String metadataIntId = json.getString("id");
+        json = target().path("/metadata").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("name", "float")
+                        .param("type", "FLOAT")), JsonObject.class);
+        String metadataFloatId = json.getString("id");
+        json = target().path("/metadata").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("name", "date")
+                        .param("type", "DATE")), JsonObject.class);
+        String metadataDateId = json.getString("id");
+        json = target().path("/metadata").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("name", "bool")
+                        .param("type", "BOOLEAN")), JsonObject.class);
+        String metadataBoolId = json.getString("id");
+
+        // Create a document with metadata1
+        json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, metadata1Token)
+                .put(Entity.form(new Form()
+                        .param("title", "Metadata 1")
+                        .param("language", "eng")
+                        .param("metadata_id", metadataStrId)
+                        .param("metadata_id", metadataIntId)
+                        .param("metadata_id", metadataFloatId)
+                        .param("metadata_value", "my string")
+                        .param("metadata_value", "50")
+                        .param("metadata_value", "12.4")), JsonObject.class);
+        String document1Id = json.getString("id");
+
+        // Update the document with metadata1
+        target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, metadata1Token)
+                .post(Entity.form(new Form()
+                        .param("title", "Metadata 1")
+                        .param("language", "eng")
+                        .param("metadata_id", metadataStrId)
+                        .param("metadata_id", metadataIntId)
+                        .param("metadata_id", metadataFloatId)
+                        .param("metadata_id", metadataDateId)
+                        .param("metadata_id", metadataBoolId)
+                        .param("metadata_value", "my string 2")
+                        .param("metadata_value", "52")
+                        .param("metadata_value", "14.4")
+                        .param("metadata_value", Long.toString(new Date().getTime()))
+                        .param("metadata_value", "true")), JsonObject.class);
+    }
 }

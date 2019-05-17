@@ -614,6 +614,8 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String} [rights] Rights
      * @apiParam {String[]} [tags] List of tags ID
      * @apiParam {String[]} [relations] List of related documents ID
+     * @apiParam {String[]} [metadata_id] List of metadata ID
+     * @apiParam {String[]} [metadata_value] List of metadata values
      * @apiParam {String} language Language
      * @apiParam {Number} [create_date] Create date (timestamp)
      * @apiSuccess {String} id Document ID
@@ -634,6 +636,8 @@ public class DocumentResource extends BaseResource {
      * @param rights Rights
      * @param tagList Tags
      * @param relationList Relations
+     * @param metadataIdList Metadata ID list
+     * @param metadataValueList Metadata value list
      * @param language Language
      * @param createDateStr Creation date
      * @return Response
@@ -652,6 +656,8 @@ public class DocumentResource extends BaseResource {
             @FormParam("rights") String rights,
             @FormParam("tags") List<String> tagList,
             @FormParam("relations") List<String> relationList,
+            @FormParam("metadata_id") List<String> metadataIdList,
+            @FormParam("metadata_value") List<String> metadataValueList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
         if (!authenticate()) {
@@ -674,7 +680,7 @@ public class DocumentResource extends BaseResource {
         if (!Constants.SUPPORTED_LANGUAGES.contains(language)) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", language));
         }
-        
+
         // Create the document
         Document document = new Document();
         document.setUserId(principal.getId());
@@ -703,6 +709,13 @@ public class DocumentResource extends BaseResource {
 
         // Update relations
         updateRelationList(document.getId(), relationList);
+
+        // Update custom metadata
+        try {
+            MetadataUtil.updateMetadata(document.getId(), metadataIdList, metadataValueList);
+        } catch (Exception e) {
+            throw new ClientException("ValidationError", e.getMessage());
+        }
 
         // Raise a document created event
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
@@ -734,6 +747,8 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String} [rights] Rights
      * @apiParam {String[]} [tags] List of tags ID
      * @apiParam {String[]} [relations] List of related documents ID
+     * @apiParam {String[]} [metadata_id] List of metadata ID
+     * @apiParam {String[]} [metadata_value] List of metadata values
      * @apiParam {String} language Language
      * @apiParam {Number} [create_date] Create date (timestamp)
      * @apiSuccess {String} id Document ID
@@ -763,6 +778,8 @@ public class DocumentResource extends BaseResource {
             @FormParam("rights") String rights,
             @FormParam("tags") List<String> tagList,
             @FormParam("relations") List<String> relationList,
+            @FormParam("metadata_id") List<String> metadataIdList,
+            @FormParam("metadata_value") List<String> metadataValueList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
         if (!authenticate()) {
@@ -824,7 +841,14 @@ public class DocumentResource extends BaseResource {
         
         // Update relations
         updateRelationList(id, relationList);
-        
+
+        // Update custom metadata
+        try {
+            MetadataUtil.updateMetadata(document.getId(), metadataIdList, metadataValueList);
+        } catch (Exception e) {
+            throw new ClientException("ValidationError", e.getMessage());
+        }
+
         // Raise a document updated event
         DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
         documentUpdatedAsyncEvent.setUserId(principal.getId());

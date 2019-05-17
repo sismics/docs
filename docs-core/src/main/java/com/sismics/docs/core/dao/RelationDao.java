@@ -36,13 +36,13 @@ public class RelationDao {
         List<Object[]> l = q.getResultList();
         
         // Assemble results
-        List<RelationDto> relationDtoList = new ArrayList<RelationDto>();
+        List<RelationDto> relationDtoList = new ArrayList<>();
         for (Object[] o : l) {
             int i = 0;
             RelationDto relationDto = new RelationDto();
             relationDto.setId((String) o[i++]);
             relationDto.setTitle((String) o[i++]);
-            String fromDocId = (String) o[i++];
+            String fromDocId = (String) o[i];
             relationDto.setSource(documentId.equals(fromDocId));
             relationDtoList.add(relationDto);
         }
