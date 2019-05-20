@@ -58,14 +58,15 @@ Features
 Install with Docker
 -------------------
 
-From a Docker host, run this command to download and install Teedy. The server will run on <http://[your-docker-host-ip]:8100>.
-**The default admin password is "admin". Don't forget to change it before going to production.**
+A preconfigured Docker image is available, including OCR and media conversion tools, listening on port 8080. The database is an embedded H2 database but PostgreSQL is also supported for more performance.
 
-    docker run --rm --name teedy_latest -d -e DOCS_BASE_URL='http://[your-docker-host-ip]:8100' -p 8100:8080 -v teedy_latest:/data sismics/docs:latest
-  <img src="http://www.newdesignfile.com/postpic/2011/01/green-info-icon_206509.png" width="16px" height="16px">  **Note:** You will need to change [your-docker-host-ip] with the IP address or FQDN of your docker host e.g.
-  
-  FQDN: http://docs.mycompany.com  
-  IP: http://192.168.100.10
+**The default admin password is "admin". Don't forget to change it before going to production.**
+- Master branch, can be unstable. Not recommended for production use: `sismics/docs:latest`
+- Latest stable version: `sismics/docs:v1.6`
+
+The data directory is `/data`. Don't forget to mount a volume on it.
+
+To build external URL, the server is expecting a `DOCS_BASE_URL` environment variable (for example https://teedy.mycompany.com)
 
 Manual installation
 -------------------
