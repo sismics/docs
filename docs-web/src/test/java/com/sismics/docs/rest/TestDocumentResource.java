@@ -838,31 +838,31 @@ public class TestDocumentResource extends BaseJerseyTest {
         JsonObject json = target().path("/metadata").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
-                        .param("name", "str")
+                        .param("name", "0str")
                         .param("type", "STRING")), JsonObject.class);
         String metadataStrId = json.getString("id");
         json = target().path("/metadata").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
-                        .param("name", "int")
+                        .param("name", "1int")
                         .param("type", "INTEGER")), JsonObject.class);
         String metadataIntId = json.getString("id");
         json = target().path("/metadata").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
-                        .param("name", "float")
+                        .param("name", "2float")
                         .param("type", "FLOAT")), JsonObject.class);
         String metadataFloatId = json.getString("id");
         json = target().path("/metadata").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
-                        .param("name", "date")
+                        .param("name", "3date")
                         .param("type", "DATE")), JsonObject.class);
         String metadataDateId = json.getString("id");
         json = target().path("/metadata").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
-                        .param("name", "bool")
+                        .param("name", "4bool")
                         .param("type", "BOOLEAN")), JsonObject.class);
         String metadataBoolId = json.getString("id");
 
@@ -880,7 +880,40 @@ public class TestDocumentResource extends BaseJerseyTest {
                         .param("metadata_value", "12.4")), JsonObject.class);
         String document1Id = json.getString("id");
 
-        // Update the document with metadata1
+        // Check the values
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, metadata1Token)
+                .get(JsonObject.class);
+        JsonArray metadata = json.getJsonArray("metadata");
+        Assert.assertEquals(5, metadata.size());
+        JsonObject meta = metadata.getJsonObject(0);
+        Assert.assertEquals(metadataStrId, meta.getString("id"));
+        Assert.assertEquals("0str", meta.getString("name"));
+        Assert.assertEquals("STRING", meta.getString("type"));
+        Assert.assertEquals("my string", meta.getString("value"));
+        meta = metadata.getJsonObject(1);
+        Assert.assertEquals(metadataIntId, meta.getString("id"));
+        Assert.assertEquals("1int", meta.getString("name"));
+        Assert.assertEquals("INTEGER", meta.getString("type"));
+        Assert.assertEquals("50", meta.getString("value"));
+        meta = metadata.getJsonObject(2);
+        Assert.assertEquals(metadataFloatId, meta.getString("id"));
+        Assert.assertEquals("2float", meta.getString("name"));
+        Assert.assertEquals("FLOAT", meta.getString("type"));
+        Assert.assertEquals("12.4", meta.getString("value"));
+        meta = metadata.getJsonObject(3);
+        Assert.assertEquals(metadataDateId, meta.getString("id"));
+        Assert.assertEquals("3date", meta.getString("name"));
+        Assert.assertEquals("DATE", meta.getString("type"));
+        Assert.assertFalse(meta.containsKey("value"));
+        meta = metadata.getJsonObject(4);
+        Assert.assertEquals(metadataBoolId, meta.getString("id"));
+        Assert.assertEquals("4bool", meta.getString("name"));
+        Assert.assertEquals("BOOLEAN", meta.getString("type"));
+        Assert.assertFalse(meta.containsKey("value"));
+
+        // Update the document with metadata1 (add more metadata)
+        String dateValue = Long.toString(new Date().getTime());
         target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, metadata1Token)
                 .post(Entity.form(new Form()
@@ -894,7 +927,84 @@ public class TestDocumentResource extends BaseJerseyTest {
                         .param("metadata_value", "my string 2")
                         .param("metadata_value", "52")
                         .param("metadata_value", "14.4")
-                        .param("metadata_value", Long.toString(new Date().getTime()))
+                        .param("metadata_value", dateValue)
                         .param("metadata_value", "true")), JsonObject.class);
+
+        // Check the values
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, metadata1Token)
+                .get(JsonObject.class);
+        metadata = json.getJsonArray("metadata");
+        Assert.assertEquals(5, metadata.size());
+        meta = metadata.getJsonObject(0);
+        Assert.assertEquals(metadataStrId, meta.getString("id"));
+        Assert.assertEquals("0str", meta.getString("name"));
+        Assert.assertEquals("STRING", meta.getString("type"));
+        Assert.assertEquals("my string 2", meta.getString("value"));
+        meta = metadata.getJsonObject(1);
+        Assert.assertEquals(metadataIntId, meta.getString("id"));
+        Assert.assertEquals("1int", meta.getString("name"));
+        Assert.assertEquals("INTEGER", meta.getString("type"));
+        Assert.assertEquals("52", meta.getString("value"));
+        meta = metadata.getJsonObject(2);
+        Assert.assertEquals(metadataFloatId, meta.getString("id"));
+        Assert.assertEquals("2float", meta.getString("name"));
+        Assert.assertEquals("FLOAT", meta.getString("type"));
+        Assert.assertEquals("14.4", meta.getString("value"));
+        meta = metadata.getJsonObject(3);
+        Assert.assertEquals(metadataDateId, meta.getString("id"));
+        Assert.assertEquals("3date", meta.getString("name"));
+        Assert.assertEquals("DATE", meta.getString("type"));
+        Assert.assertEquals(dateValue, meta.getString("value"));
+        meta = metadata.getJsonObject(4);
+        Assert.assertEquals(metadataBoolId, meta.getString("id"));
+        Assert.assertEquals("4bool", meta.getString("name"));
+        Assert.assertEquals("BOOLEAN", meta.getString("type"));
+        Assert.assertEquals("true", meta.getString("value"));
+
+        // Update the document with metadata1 (remove some metadata)
+        target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, metadata1Token)
+                .post(Entity.form(new Form()
+                        .param("title", "Metadata 1")
+                        .param("language", "eng")
+                        .param("metadata_id", metadataFloatId)
+                        .param("metadata_id", metadataDateId)
+                        .param("metadata_id", metadataBoolId)
+                        .param("metadata_value", "14.4")
+                        .param("metadata_value", dateValue)
+                        .param("metadata_value", "true")), JsonObject.class);
+
+        // Check the values
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, metadata1Token)
+                .get(JsonObject.class);
+        metadata = json.getJsonArray("metadata");
+        Assert.assertEquals(5, metadata.size());
+        meta = metadata.getJsonObject(0);
+        Assert.assertEquals(metadataStrId, meta.getString("id"));
+        Assert.assertEquals("0str", meta.getString("name"));
+        Assert.assertEquals("STRING", meta.getString("type"));
+        Assert.assertTrue(meta.isNull("value"));
+        meta = metadata.getJsonObject(1);
+        Assert.assertEquals(metadataIntId, meta.getString("id"));
+        Assert.assertEquals("1int", meta.getString("name"));
+        Assert.assertEquals("INTEGER", meta.getString("type"));
+        Assert.assertTrue(meta.isNull("value"));
+        meta = metadata.getJsonObject(2);
+        Assert.assertEquals(metadataFloatId, meta.getString("id"));
+        Assert.assertEquals("2float", meta.getString("name"));
+        Assert.assertEquals("FLOAT", meta.getString("type"));
+        Assert.assertEquals("14.4", meta.getString("value"));
+        meta = metadata.getJsonObject(3);
+        Assert.assertEquals(metadataDateId, meta.getString("id"));
+        Assert.assertEquals("3date", meta.getString("name"));
+        Assert.assertEquals("DATE", meta.getString("type"));
+        Assert.assertEquals(dateValue, meta.getString("value"));
+        meta = metadata.getJsonObject(4);
+        Assert.assertEquals(metadataBoolId, meta.getString("id"));
+        Assert.assertEquals("4bool", meta.getString("name"));
+        Assert.assertEquals("BOOLEAN", meta.getString("type"));
+        Assert.assertEquals("true", meta.getString("value"));
     }
 }

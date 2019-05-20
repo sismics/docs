@@ -8,7 +8,12 @@ import com.sismics.docs.core.dao.criteria.MetadataCriteria;
 import com.sismics.docs.core.dao.dto.DocumentMetadataDto;
 import com.sismics.docs.core.dao.dto.MetadataDto;
 import com.sismics.docs.core.model.jpa.DocumentMetadata;
+import com.sismics.docs.core.util.jpa.SortCriteria;
+import com.sismics.util.JsonUtil;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
@@ -143,5 +148,32 @@ public class MetadataUtil {
         documentMetadata.setId(documentMetadataId);
         documentMetadata.setValue(value);
         documentMetadataDao.update(documentMetadata);
+    }
+
+    /**
+     * Add custom metadata to a JSON response.
+     *
+     * @param json JSON
+     * @param documentId Document ID
+     */
+    public static void addMetadata(JsonObjectBuilder json, String documentId) {
+        DocumentMetadataDao documentMetadataDao = new DocumentMetadataDao();
+        MetadataDao metadataDao = new MetadataDao();
+        List<MetadataDto> metadataDtoList = metadataDao.findByCriteria(new MetadataCriteria(), new SortCriteria(1, true));
+        List<DocumentMetadataDto> documentMetadataDtoList = documentMetadataDao.getByDocumentId(documentId);
+        JsonArrayBuilder metadata = Json.createArrayBuilder();
+        for (MetadataDto metadataDto : metadataDtoList) {
+            JsonObjectBuilder meta = Json.createObjectBuilder()
+                    .add("id", metadataDto.getId())
+                    .add("name", metadataDto.getName())
+                    .add("type", metadataDto.getType().name());
+            for (DocumentMetadataDto documentMetadataDto : documentMetadataDtoList) {
+                if (documentMetadataDto.getMetadataId().equals(metadataDto.getId())) {
+                    meta.add("value", JsonUtil.nullable(documentMetadataDto.getValue()));
+                }
+            }
+            metadata.add(meta);
+        }
+        json.add("metadata", metadata);
     }
 }

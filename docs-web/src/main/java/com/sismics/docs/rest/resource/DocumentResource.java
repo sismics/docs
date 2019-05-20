@@ -234,7 +234,10 @@ public class DocumentResource extends BaseResource {
             step.add("transitionable", getTargetIdList(null).contains(routeStepDto.getTargetId()));
             document.add("route_step", step);
         }
-        
+
+        // Add custom metadata
+        MetadataUtil.addMetadata(document, documentId);
+
         return Response.ok().entity(document.build()).build();
     }
     

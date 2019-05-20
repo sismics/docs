@@ -43,7 +43,7 @@ public class DocumentMetadata implements Serializable {
     /**
      * Value.
      */
-    @Column(name = "DME_VALUE_C", nullable = false, length = 4000)
+    @Column(name = "DME_VALUE_C", length = 4000)
     private String value;
 
     public String getId() {
