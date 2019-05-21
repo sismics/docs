@@ -36,6 +36,7 @@ Features
 - Flexible search engine with suggestions and highlighting
 - Full text search in all supported files
 - All [Dublin Core](http://dublincore.org/) metadata
+- Custom user-defined metadata ![New!](https://www.sismics.com/public/img/new.png)
 - Workflow system ![New!](https://www.sismics.com/public/img/new.png)
 - 256-bit AES encryption of stored files
 - File versioning ![New!](https://www.sismics.com/public/img/new.png)
@@ -62,7 +63,7 @@ A preconfigured Docker image is available, including OCR and media conversion to
 
 **The default admin password is "admin". Don't forget to change it before going to production.**
 - Master branch, can be unstable. Not recommended for production use: `sismics/docs:latest`
-- Latest stable version: `sismics/docs:v1.6`
+- Latest stable version: `sismics/docs:v1.7`
 
 The data directory is `/data`. Don't forget to mount a volume on it.
 
