@@ -822,11 +822,9 @@ public class TestDocumentResource extends BaseJerseyTest {
 
     /**
      * Test custom metadata.
-     *
-     * @throws Exception e
      */
     @Test
-    public void testCustomMetadata() throws Exception {
+    public void testCustomMetadata() {
         // Login admin
         String adminToken = clientUtil.login("admin", "admin", false);
 
@@ -895,12 +893,12 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(metadataIntId, meta.getString("id"));
         Assert.assertEquals("1int", meta.getString("name"));
         Assert.assertEquals("INTEGER", meta.getString("type"));
-        Assert.assertEquals("50", meta.getString("value"));
+        Assert.assertEquals(50, meta.getInt("value"));
         meta = metadata.getJsonObject(2);
         Assert.assertEquals(metadataFloatId, meta.getString("id"));
         Assert.assertEquals("2float", meta.getString("name"));
         Assert.assertEquals("FLOAT", meta.getString("type"));
-        Assert.assertEquals("12.4", meta.getString("value"));
+        Assert.assertEquals(12.4, meta.getJsonNumber("value").doubleValue(), 0);
         meta = metadata.getJsonObject(3);
         Assert.assertEquals(metadataDateId, meta.getString("id"));
         Assert.assertEquals("3date", meta.getString("name"));
@@ -913,7 +911,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertFalse(meta.containsKey("value"));
 
         // Update the document with metadata1 (add more metadata)
-        String dateValue = Long.toString(new Date().getTime());
+        long dateValue = new Date().getTime();
         target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, metadata1Token)
                 .post(Entity.form(new Form()
@@ -927,7 +925,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                         .param("metadata_value", "my string 2")
                         .param("metadata_value", "52")
                         .param("metadata_value", "14.4")
-                        .param("metadata_value", dateValue)
+                        .param("metadata_value", Long.toString(dateValue))
                         .param("metadata_value", "true")), JsonObject.class);
 
         // Check the values
@@ -945,22 +943,22 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(metadataIntId, meta.getString("id"));
         Assert.assertEquals("1int", meta.getString("name"));
         Assert.assertEquals("INTEGER", meta.getString("type"));
-        Assert.assertEquals("52", meta.getString("value"));
+        Assert.assertEquals(52, meta.getInt("value"));
         meta = metadata.getJsonObject(2);
         Assert.assertEquals(metadataFloatId, meta.getString("id"));
         Assert.assertEquals("2float", meta.getString("name"));
         Assert.assertEquals("FLOAT", meta.getString("type"));
-        Assert.assertEquals("14.4", meta.getString("value"));
+        Assert.assertEquals(14.4, meta.getJsonNumber("value").doubleValue(), 0);
         meta = metadata.getJsonObject(3);
         Assert.assertEquals(metadataDateId, meta.getString("id"));
         Assert.assertEquals("3date", meta.getString("name"));
         Assert.assertEquals("DATE", meta.getString("type"));
-        Assert.assertEquals(dateValue, meta.getString("value"));
+        Assert.assertEquals(dateValue, meta.getJsonNumber("value").longValue());
         meta = metadata.getJsonObject(4);
         Assert.assertEquals(metadataBoolId, meta.getString("id"));
         Assert.assertEquals("4bool", meta.getString("name"));
         Assert.assertEquals("BOOLEAN", meta.getString("type"));
-        Assert.assertEquals("true", meta.getString("value"));
+        Assert.assertTrue(meta.getBoolean("value"));
 
         // Update the document with metadata1 (remove some metadata)
         target().path("/document/" + document1Id).request()
@@ -972,7 +970,7 @@ public class TestDocumentResource extends BaseJerseyTest {
                         .param("metadata_id", metadataDateId)
                         .param("metadata_id", metadataBoolId)
                         .param("metadata_value", "14.4")
-                        .param("metadata_value", dateValue)
+                        .param("metadata_value", Long.toString(dateValue))
                         .param("metadata_value", "true")), JsonObject.class);
 
         // Check the values
@@ -985,26 +983,26 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(metadataStrId, meta.getString("id"));
         Assert.assertEquals("0str", meta.getString("name"));
         Assert.assertEquals("STRING", meta.getString("type"));
-        Assert.assertTrue(meta.isNull("value"));
+        Assert.assertFalse(meta.containsKey("value"));
         meta = metadata.getJsonObject(1);
         Assert.assertEquals(metadataIntId, meta.getString("id"));
         Assert.assertEquals("1int", meta.getString("name"));
         Assert.assertEquals("INTEGER", meta.getString("type"));
-        Assert.assertTrue(meta.isNull("value"));
+        Assert.assertFalse(meta.containsKey("value"));
         meta = metadata.getJsonObject(2);
         Assert.assertEquals(metadataFloatId, meta.getString("id"));
         Assert.assertEquals("2float", meta.getString("name"));
         Assert.assertEquals("FLOAT", meta.getString("type"));
-        Assert.assertEquals("14.4", meta.getString("value"));
+        Assert.assertEquals(14.4, meta.getJsonNumber("value").doubleValue(), 0);
         meta = metadata.getJsonObject(3);
         Assert.assertEquals(metadataDateId, meta.getString("id"));
         Assert.assertEquals("3date", meta.getString("name"));
         Assert.assertEquals("DATE", meta.getString("type"));
-        Assert.assertEquals(dateValue, meta.getString("value"));
+        Assert.assertEquals(dateValue, meta.getJsonNumber("value").longValue());
         meta = metadata.getJsonObject(4);
         Assert.assertEquals(metadataBoolId, meta.getString("id"));
         Assert.assertEquals("4bool", meta.getString("name"));
         Assert.assertEquals("BOOLEAN", meta.getString("type"));
-        Assert.assertEquals("true", meta.getString("value"));
+        Assert.assertTrue(meta.getBoolean("value"));
     }
 }
