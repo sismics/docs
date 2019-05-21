@@ -586,6 +586,8 @@
       "description": "Les documents peuvent être organisés en tags (qui sont comme des super-dossiers). Créez-les ici."
     }
   },
+  "yes": "Oui",
+  "no": "Non",
   "ok": "OK",
   "cancel": "Annuler",
   "share": "Partager",

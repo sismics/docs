@@ -9,7 +9,6 @@ import com.sismics.docs.core.dao.dto.DocumentMetadataDto;
 import com.sismics.docs.core.dao.dto.MetadataDto;
 import com.sismics.docs.core.model.jpa.DocumentMetadata;
 import com.sismics.docs.core.util.jpa.SortCriteria;
-import com.sismics.util.JsonUtil;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -105,7 +104,7 @@ public class MetadataUtil {
                 break;
             case FLOAT:
                 try {
-                    Float.parseFloat(value);
+                    Double.parseDouble(value);
                 } catch (NumberFormatException e) {
                     throw new Exception("Float value not parsable");
                 }
@@ -169,7 +168,25 @@ public class MetadataUtil {
                     .add("type", metadataDto.getType().name());
             for (DocumentMetadataDto documentMetadataDto : documentMetadataDtoList) {
                 if (documentMetadataDto.getMetadataId().equals(metadataDto.getId())) {
-                    meta.add("value", JsonUtil.nullable(documentMetadataDto.getValue()));
+                    if (documentMetadataDto.getValue() != null) {
+                        switch (metadataDto.getType()) {
+                            case STRING:
+                                meta.add("value", documentMetadataDto.getValue());
+                                break;
+                            case BOOLEAN:
+                                meta.add("value", Boolean.parseBoolean(documentMetadataDto.getValue()));
+                                break;
+                            case DATE:
+                                meta.add("value", Long.parseLong(documentMetadataDto.getValue()));
+                                break;
+                            case FLOAT:
+                                meta.add("value", Double.parseDouble(documentMetadataDto.getValue()));
+                                break;
+                            case INTEGER:
+                                meta.add("value", Integer.parseInt(documentMetadataDto.getValue()));
+                                break;
+                        }
+                    }
                 }
             }
             metadata.add(meta);

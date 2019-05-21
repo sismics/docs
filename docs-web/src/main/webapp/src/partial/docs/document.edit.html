@@ -44,7 +44,7 @@
                  clear-text="{{ 'directive.datepicker.clear' | translate }}"
                  close-text="{{ 'directive.datepicker.close' | translate }}"
                  ng-readonly="true" uib-datepicker-popup="{{ dateFormat }}" class="form-control"
-                 ng-model="document.create_date" datepicker-options="{ startingDay:1, showWeeks: false }"
+                 ng-model="document.create_date" datepicker-options="{ startingDay: 1, showWeeks: false }"
                  ng-click="datepickerOpened = true" is-open="datepickerOpened" ng-disabled="fileIsUploading" />
         </div>
       </div>
@@ -70,6 +70,42 @@
         <label class="col-sm-2 control-label" for="inputTags">{{ 'document.tags' | translate }}</label>
         <div class="col-sm-10">
           <select-tag tags="document.tags" ref="inputTags" ng-disabled="fileIsUploading"></select-tag>
+        </div>
+      </div>
+
+      <!-- Custom metadata -->
+      <div class="form-group"
+           ng ng-repeat="meta in document.metadata"
+           ng-class="{ 'has-error': !documentForm[meta.id].$valid && documentForm.$dirty }">
+        <label class="col-sm-2 control-label" for="inputTitle">{{ meta.name }}</label>
+        <div class="col-sm-10">
+          <input ng-if="meta.type == 'STRING'"
+                 ng-maxlength="4000" class="form-control" type="text" id="input{{ meta.id }}"
+                 name="{{ meta.id }}" ng-model="meta.value" autocomplete="off"
+                 ng-disabled="fileIsUploading" />
+
+          <input ng-if="meta.type == 'DATE'"
+                 type="text" id="input{{ meta.id }}" name="{{ meta.id }}"
+                 current-text="{{ 'directive.datepicker.current' | translate }}"
+                 clear-text="{{ 'directive.datepicker.clear' | translate }}"
+                 close-text="{{ 'directive.datepicker.close' | translate }}"
+                 ng-readonly="true" uib-datepicker-popup="{{ dateFormat }}" class="form-control"
+                 ng-model="meta.value" datepicker-options="{ startingDay: 1, showWeeks: false }"
+                 ng-click="datepickerOpenedMeta[meta.id] = true" is-open="datepickerOpenedMeta[meta.id]" ng-disabled="fileIsUploading" />
+
+          <input ng-if="meta.type == 'INTEGER'"
+                 ng-pattern="/^[0-9]*$/" class="form-control" type="text" id="input{{ meta.id }}"
+                 name="{{ meta.id }}" ng-model="meta.value" autocomplete="off"
+                 ng-disabled="fileIsUploading" />
+
+          <input ng-if="meta.type == 'FLOAT'"
+                 ng-pattern="/^-?[0-9]*\.?[0-9]*$/" class="form-control" type="text" id="input{{ meta.id }}"
+                 name="{{ meta.id }}" ng-model="meta.value" autocomplete="off"
+                 ng-disabled="fileIsUploading" />
+
+          <input type="checkbox" ng-if="meta.type == 'BOOLEAN'"
+                 id="input{{ meta.id }}" name="{{ meta.id }}"
+                 ng-model="meta.value" ng-disabled="fileIsUploading" />
         </div>
       </div>
     </fieldset>

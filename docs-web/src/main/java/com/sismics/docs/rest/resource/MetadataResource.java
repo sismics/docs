@@ -37,7 +37,7 @@ public class MetadataResource extends BaseResource {
      * @apiSuccess {String} metadata.name Name
      * @apiSuccess {String="STRING","INTEGER","FLOAT","DATE","BOOLEAN"} metadata.type Type
      * @apiError (client) ForbiddenError Access denied
-     * @apiPermission admin
+     * @apiPermission user
      * @apiVersion 1.7.0
      *
      * @return Response

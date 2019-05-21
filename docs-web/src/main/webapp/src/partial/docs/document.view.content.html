@@ -35,6 +35,13 @@
       </span>
     </span>
   </dd>
+
+  <dt ng-if="false" ng-repeat-start="meta in document.metadata"></dt>
+  <dt ng-if="meta.value != null">{{ meta.name }}</dt>
+  <dd ng-if="meta.value != null && (meta.type == 'STRING' || meta.type == 'INTEGER' || meta.type == 'FLOAT')">{{ meta.value }}</dd>
+  <dd ng-if="meta.value != null && meta.type == 'DATE'">{{ meta.value | date: dateFormat }}</dd>
+  <dd ng-if="meta.value != null && meta.type == 'BOOLEAN'">{{ meta.value ? 'yes' : 'no' | translate }}</dd>
+  <dd ng-if="false" ng-repeat-end></dd>
 </dl>
 
 <!-- Display mode (list or grid) -->

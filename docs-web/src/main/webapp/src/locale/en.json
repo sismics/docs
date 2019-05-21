@@ -597,6 +597,8 @@
       "description": "Documents can be organized in tags (which are like super-folders). Create them here."
     }
   },
+  "yes": "Yes",
+  "no": "No",
   "ok": "OK",
   "cancel": "Cancel",
   "share": "Share",
