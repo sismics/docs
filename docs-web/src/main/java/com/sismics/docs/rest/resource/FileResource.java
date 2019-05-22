@@ -608,7 +608,7 @@ public class FileResource extends BaseResource {
         if (size != null) {
             if (size.equals("content")) {
                 return Response.ok(Strings.nullToEmpty(file.getContent()))
-                        .header(HttpHeaders.CONTENT_TYPE, "text/plain")
+                        .header(HttpHeaders.CONTENT_TYPE, "text/plain; charset=utf-8")
                         .build();
             }
 
