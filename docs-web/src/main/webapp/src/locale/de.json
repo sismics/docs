@@ -107,6 +107,8 @@
       "workflow_comment": "Fügen Sie einen Workflow Kommentar hinzu",
       "workflow_validated_title": "Workflow-Schritt validiert",
       "workflow_validated_message": "Der Workflow-Schritt wurde erfolgreich validiert.",
+      "display_mode_list": "Dateien in Liste anzeigen",
+      "display_mode_grid": "Dateien im Raster anzeigen",
       "content": {
         "content": "Inhalt",
         "delete_file_title": "Datei löschen",
@@ -276,6 +278,7 @@
     "menu_vocabularies": "Vokabulareinträge",
     "menu_configuration": "Einstellungen",
     "menu_inbox": "Posteingang durchsuchen",
+    "menu_metadata": "Benutzerdefinierte Metadaten",	
     "menu_monitoring": "Überwachung",
     "user": {
       "title": "Benutzerverwaltung",
@@ -286,6 +289,8 @@
       "edit": {
         "delete_user_title": "Benutzer löschen",
         "delete_user_message": "Möchten Sie diesen Benutzer wirklich löschen? Alle zugehörigen Dokumente, Dateien und Tags werden gelöscht",
+        "user_used_title": "Benutzer in Verwendung",
+        "user_used_message": "Dieser Benutzer wird im Workflow \"{{ name }}\" benutzt",		
         "edit_user_failed_title": "Dieser Benutzer existiert bereits",
         "edit_user_failed_message": "Dieser Benutzername wurde bereits von einem anderen Benutzer gewählt",
         "edit_user_title": "Bearbeiten \"{{ username }}\"",
@@ -347,7 +352,10 @@
         "message": "Ihr Konto wird nicht mehr durch die Zwei-Faktor-Authentifizierung geschützt.",
         "confirm_password": "Bestätigen Sie ihr Passwort",
         "submit": "Deaktivieren der Zwei-Faktor-Authentifizierung"
-      }
+      },
+      "test_totp": "Bitte geben Sie den auf Ihrem Telefon angezeigten Validierungscode ein:",
+      "test_code_success": "Validierungscode OK",
+      "test_code_fail": "Dieser Code ist nicht gültig. Überprüfen Sie, ob Ihr Telefon ordnungsgemäß konfiguriert ist, oder deaktivieren Sie die Zwei-Faktor-Authentifizierung"
     },
     "group": {
       "title": "Gruppenverwaltung",
@@ -358,6 +366,8 @@
         "delete_group_message": "Wollen Sie diese Gruppe wirklich löschen?",
         "edit_group_failed_title": "Gruppe existiert bereits",
         "edit_group_failed_message": "Dieser Gruppenname wird bereits von einer anderen Gruppe übernommen",
+        "group_used_title": "Gruppe in Verwendung",
+        "group_used_message": "Diese Gruppe wird im Workflow \"{{ name }}\" verwendet",	
         "edit_group_title": "Bearbeiten \"{{ name }}\"",
         "add_group_title": "Neue Gruppe hinzufügen",
         "name": "Name",
@@ -403,6 +413,12 @@
       "webhook_create_date": "Erstelldatum",
       "webhook_add": "Webhook hinzufügen"
     },
+    "metadata": {
+      "title": "Konfiguration benutzerdefinierter Metadaten",
+      "message": "Hier können Sie Ihren Dokumenten benutzerdefinierte Metadaten wie eine interne Kennung oder ein Ablaufdatum hinzufügen. Bitte beachten Sie, dass der Metadatentyp nach der Erstellung nicht mehr geändert werden kann.",
+      "name": "Metadatensatz Name",
+      "type": "Metadatensatz Typ"
+    },	
     "inbox": {
       "title": "Posteingang durchsuchen",
       "message": "Wenn Sie diese Funktion aktivieren, durchsucht das System den angegebenen Posteingang jede Minute nach <strong>ungelesenen</strong> E-Mails und importiert diese automatisch.<br/>Nach dem Import einer E-Mail wird diese als gelesen markiert.<br/>Folgen Sie den Links zu Konfigurationseinstellungen für <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
@@ -559,6 +575,30 @@
     "first": "Erste",
     "last": "Letzte"
   },
+  "onboarding": {
+    "step1": {
+      "title": "Das erste Mal?",
+      "description": "Wenn Sie Teedy zum ersten Mal nutzen, klicken Sie auf die Schaltfläche Weiter. Andernfalls können Sie mich schließen."
+    },
+    "step2": {
+      "title": "Dokumente",
+      "description": "Teedy ist in Dokumenten organisiert und jedes Dokument enthält mehrere Dateien."
+    },
+    "step3": {
+      "title": "Dateien",
+      "description": "Sie können Dateien hinzufügen, nachdem Sie ein Dokument erstellt haben oder vorher, indem Sie diesen Schnell-Hochlade-Bereich verwenden."
+    },
+    "step4": {
+      "title": "Suche",
+      "description": "Dies ist die Hauptmethode, um Ihre Dokumente wiederzufinden. Es gibt auch eine erweiterte Suche mit dem Suchbutton."
+    },
+    "step5": {
+      "title": "Tags",
+      "description": "Dokumente können in Tags organisiert werden (ähnlich wie Oberordner). Erstellen Sie sie hier."
+    }
+  },
+  "yes": "Ja",
+  "no": "Nein",  
   "ok": "OK",
   "cancel": "Abbrechen",
   "share": "Teilen",
@@ -572,6 +612,7 @@
   "edit": "Bearbeiten",
   "delete": "Löschen",
   "rename": "Umbenennen",
+  "download": "Herunterladen",  
   "loading": "Lädt...",
   "send": "Absenden",
   "enabled": "Aktiviert",
