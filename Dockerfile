@@ -1,11 +1,17 @@
-FROM sismics/ubuntu-jetty:9.4.12
-MAINTAINER b.gamard@sismics.com
+FROM jetty:jre8-alpine
 
-RUN apt-get update && apt-get -y -q install ffmpeg mediainfo tesseract-ocr tesseract-ocr-fra tesseract-ocr-ita tesseract-ocr-kor tesseract-ocr-rus tesseract-ocr-ukr tesseract-ocr-spa tesseract-ocr-ara tesseract-ocr-hin tesseract-ocr-deu tesseract-ocr-pol tesseract-ocr-jpn tesseract-ocr-por tesseract-ocr-tha tesseract-ocr-jpn tesseract-ocr-chi-sim tesseract-ocr-chi-tra tesseract-ocr-nld tesseract-ocr-tur tesseract-ocr-heb && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+USER root
 
-# Remove the embedded javax.mail jar from Jetty
-RUN rm -f /opt/jetty/lib/mail/javax.mail.glassfish-*.jar
+RUN apk add \
+    ffmpeg mediainfo tesseract-ocr tesseract-ocr-data-fra tesseract-ocr-data-ita \
+    tesseract-ocr-data-kor tesseract-ocr-data-rus tesseract-ocr-data-ukr \
+    tesseract-ocr-data-spa tesseract-ocr-data-ara tesseract-ocr-data-hin \
+    tesseract-ocr-data-deu tesseract-ocr-data-pol tesseract-ocr-data-jpn \
+    tesseract-ocr-data-por tesseract-ocr-data-tha tesseract-ocr-data-jpn \
+    tesseract-ocr-data-chi_sim tesseract-ocr-data-chi_tra tesseract-ocr-data-nld \
+    tesseract-ocr-data-tur tesseract-ocr-data-heb
 
-ADD docs.xml /opt/jetty/webapps/docs.xml
-ADD docs-web/target/docs-web-*.war /opt/jetty/webapps/docs.war
+USER jetty
+
+COPY ./docs.xml /var/lib/jetty/webapps/
+COPY ./docs-web/target/docs-web-*.war /var/lib/jetty/webapps/docs.war
