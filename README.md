@@ -66,6 +66,8 @@ A preconfigured Docker image is available, including OCR and media conversion to
 - Latest stable version: `sismics/docs:v1.7`
 
 The data directory is `/data`. Don't forget to mount a volume on it.
+> Note: Because the docker container uses the jetty user 100(uid):101(gid), you need to make sure the permissions for the data directory are set correctly:
+> chown -R 100:101 <your_data_dir>
 
 To build external URL, the server is expecting a `DOCS_BASE_URL` environment variable (for example https://teedy.mycompany.com)
 
