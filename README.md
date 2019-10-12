@@ -122,17 +122,6 @@ All contributions are more than welcomed. Contributions may close an issue, fix 
 
 The `master` branch is the default and base branch for the project. It is used for development and all Pull Requests should go there.
 
-
-Community
----------
-
-Get updates on Teedy's development and chat with the project maintainers:
-
-- Follow [@teedyio on Twitter](https://twitter.com/teedyio)
-- Read and subscribe to [The Official Teedy Blog](https://blog.teedy.io/)
-- Check the [Official Website](https://teedy.io)
-- Join us [on Facebook](https://www.facebook.com/teedyio)
-
 License
 -------
 
