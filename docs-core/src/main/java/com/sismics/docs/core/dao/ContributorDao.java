@@ -56,7 +56,7 @@ public class ContributorDao {
     @SuppressWarnings("unchecked")
     public List<ContributorDto> getByDocumentId(String documentId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select u.USE_USERNAME_C, u.USE_EMAIL_C from T_CONTRIBUTOR c ");
+        StringBuilder sb = new StringBuilder("select distinct u.USE_USERNAME_C, u.USE_EMAIL_C from T_CONTRIBUTOR c ");
         sb.append(" join T_USER u on u.USE_ID_C = c.CTR_IDUSER_C ");
         sb.append(" where c.CTR_IDDOC_C = :documentId ");
         Query q = em.createNativeQuery(sb.toString());

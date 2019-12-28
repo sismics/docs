@@ -8,11 +8,9 @@
 
 Teedy is an open source, lightweight document management system for individuals and businesses.
 
-**Discuss it on [Product Hunt](https://www.producthunt.com/posts/sismics-docs) 🦄**
-
 <hr />
 <h2 align="center">
-  ✨ Sismics Docs is now called Teedy! You can still find our cloud and support offer on <a href="https://teedy.io">teedy.io</a> ✨
+  ✨ <a href="https://github.com/users/jendib/sponsorship">Sponsor this project if you use and appreciate it!</a> ✨
 </h2>
 <hr />
 
@@ -123,17 +121,6 @@ Contributing
 All contributions are more than welcomed. Contributions may close an issue, fix a bug (reported or not reported), improve the existing code, add new feature, and so on.
 
 The `master` branch is the default and base branch for the project. It is used for development and all Pull Requests should go there.
-
-
-Community
----------
-
-Get updates on Teedy's development and chat with the project maintainers:
-
-- Follow [@teedyio on Twitter](https://twitter.com/teedyio)
-- Read and subscribe to [The Official Teedy Blog](https://blog.teedy.io/)
-- Check the [Official Website](https://teedy.io)
-- Join us [on Facebook](https://www.facebook.com/teedyio)
 
 License
 -------

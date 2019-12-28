@@ -96,7 +96,7 @@
       "shared_document_message": "Sie können dieses Dokument mit diesem Link freigeben. Beachten Sie, dass jeder, der diesen Link hat, das Dokument sehen kann.<br/><input class=\"form-control share-link\" type=\"text\" readonly=\"readonly\" value=\"{{ link }}\" onclick=\"this.select(); document.execCommand('copy');\" />",
       "not_found": "Dokument nicht gefunden",
       "forbidden": "Zugriff verweigert",
-      "download_files": "Datei herunterladen",
+      "download_files": "Dateien herunterladen",
       "export_pdf": "in PDF exportieren",
       "by_creator": "von",
       "comments": "Kommentar",
