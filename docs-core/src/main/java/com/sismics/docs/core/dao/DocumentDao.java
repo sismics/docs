@@ -232,7 +232,7 @@ public class DocumentDao {
      */
     public void updateFileId(Document document) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query query = em.createNativeQuery("update T_DOCUMENT d set d.DOC_IDFILE_C = :fileId, d.DOC_UPDATEDATE_D = :updateDate where d.DOC_ID_C = :id");
+        Query query = em.createNativeQuery("update T_DOCUMENT d set DOC_IDFILE_C = :fileId, DOC_UPDATEDATE_D = :updateDate where d.DOC_ID_C = :id");
         query.setParameter("updateDate", new Date());
         query.setParameter("fileId", document.getFileId());
         query.setParameter("id", document.getId());
