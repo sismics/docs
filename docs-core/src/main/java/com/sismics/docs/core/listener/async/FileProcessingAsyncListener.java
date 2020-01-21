@@ -101,9 +101,9 @@ public class FileProcessingAsyncListener {
             return;
         }
 
-        // Get the user from the database
+        // Get the creating user from the database for its private key
         UserDao userDao = new UserDao();
-        User user = userDao.getById(event.getUserId());
+        User user = userDao.getById(file.getUserId());
         if (user == null) {
             // The user has been deleted meanwhile
             FileUtil.endProcessingFile(file.getId());
