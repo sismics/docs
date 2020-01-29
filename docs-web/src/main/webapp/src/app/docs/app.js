@@ -520,7 +520,8 @@ angular.module('docs',
     { key: 'kor', label: '한국어' },
     { key: 'nld', label: 'Nederlands' },
     { key: 'tur', label: 'Türkçe' },
-    { key: 'heb', label: 'עברית' }
+    { key: 'heb', label: 'עברית' },
+    { key: 'hun', label: 'Magyar' }
   ];
 })
 /**
