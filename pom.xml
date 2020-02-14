@@ -26,6 +26,7 @@
     <log4j.log4j.version>1.2.16</log4j.log4j.version>
     <org.slf4j.version>1.6.4</org.slf4j.version>
     <org.slf4j.jcl-over-slf4j.version>1.6.6</org.slf4j.jcl-over-slf4j.version>
+    <org.slf4j.jul-to-slf4j.version>1.6.6</org.slf4j.jul-to-slf4j.version>
     <junit.junit.version>4.12</junit.junit.version>
     <com.h2database.h2.version>1.4.197</com.h2database.h2.version>
     <org.glassfish.jersey.version>2.27</org.glassfish.jersey.version>
@@ -240,7 +241,13 @@
         <artifactId>jcl-over-slf4j</artifactId>
         <version>${org.slf4j.jcl-over-slf4j.version}</version>
       </dependency>
-      
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jul-to-slf4j</artifactId>
+        <version>${org.slf4j.jul-to-slf4j.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>

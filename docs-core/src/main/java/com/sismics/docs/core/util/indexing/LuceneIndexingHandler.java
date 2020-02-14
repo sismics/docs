@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -390,7 +389,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
         LuceneDictionary dictionary = new LuceneDictionary(directoryReader, "title");
         suggester.build(dictionary);
         int lastIndex = search.lastIndexOf(' ');
-        String suggestQuery = search.substring(lastIndex < 0 ? 0 : lastIndex);
+        String suggestQuery = search.substring(Math.max(lastIndex, 0));
         List<Lookup.LookupResult> lookupResultList = suggester.lookup(suggestQuery, false, 10);
         for (Lookup.LookupResult lookupResult : lookupResultList) {
             suggestionList.add(lookupResult.key.toString());

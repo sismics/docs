@@ -11,6 +11,7 @@ import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -57,6 +58,8 @@ public class RequestContextFilter implements Filter {
         fileAppender.setMaxBackupIndex(5);
         fileAppender.activateOptions();
         org.apache.log4j.Logger.getRootLogger().addAppender(fileAppender);
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
         
         // Initialize the application context
         TransactionUtil.handle(AppContext::getInstance);
