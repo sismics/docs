@@ -6,7 +6,15 @@ import org.junit.Test;
 
 import java.nio.file.Paths;
 
+/**
+ * Test of {@link PdfFormatHandler}
+ *
+ * @author bgamard
+ */
 public class TestPdfFormatHandler {
+    /**
+     * Test related to https://github.com/sismics/docs/issues/373.
+     */
     @Test
     public void testIssue373() throws Exception {
         PdfFormatHandler formatHandler = new PdfFormatHandler();

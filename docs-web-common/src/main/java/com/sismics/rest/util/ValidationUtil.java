@@ -111,7 +111,18 @@ public class ValidationUtil {
     public static void validateHexColor(String s, String name, boolean nullable) throws ClientException {
         ValidationUtil.validateLength(s, name, 7, 7, nullable);
     }
-    
+
+    /**
+     * Validate a tag name.
+     *
+     * @param name Name of the tag
+     */
+    public static void validateTagName(String name) throws ClientException {
+        if (name.contains(" ") || name.contains(":")) {
+            throw new ClientException("IllegalTagName", "Spaces and colons are not allowed in tag name");
+        }
+    }
+
     /**
      * Validates that the provided string matches an URL with HTTP or HTTPS scheme.
      * 

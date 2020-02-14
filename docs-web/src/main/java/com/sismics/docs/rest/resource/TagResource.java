@@ -155,7 +155,7 @@ public class TagResource extends BaseResource {
      * @apiSuccess {String} id Tag ID
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) ValidationError Validation error
-     * @apiError (client) SpacesNotAllowed Spaces are not allowed in tag name
+     * @apiError (client) IllegalTagName Spaces and colons are not allowed in tag name
      * @apiError (client) ParentNotFound Parent not found
      * @apiPermission user
      * @apiVersion 1.5.0
@@ -177,12 +177,8 @@ public class TagResource extends BaseResource {
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 36, false);
         ValidationUtil.validateHexColor(color, "color", true);
-        
-        // Don't allow spaces
-        if (name.contains(" ")) {
-            throw new ClientException("SpacesNotAllowed", "Spaces are not allowed in tag name");
-        }
-        
+        ValidationUtil.validateTagName(name);
+
         // Check the parent
         if (StringUtils.isEmpty(parentId)) {
             parentId = null;
@@ -237,7 +233,7 @@ public class TagResource extends BaseResource {
      * @apiSuccess {String} id Tag ID
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) ValidationError Validation error
-     * @apiError (client) SpacesNotAllowed Spaces are not allowed in tag name
+     * @apiError (client) IllegalTagName Spaces and colons are not allowed in tag name
      * @apiError (client) ParentNotFound Parent not found
      * @apiError (client) CircularReference Circular reference in parent tag
      * @apiError (client) NotFound Tag not found
@@ -263,12 +259,8 @@ public class TagResource extends BaseResource {
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 36, true);
         ValidationUtil.validateHexColor(color, "color", true);
-        
-        // Don't allow spaces
-        if (name.contains(" ")) {
-            throw new ClientException("SpacesNotAllowed", "Spaces are not allowed in tag name");
-        }
-        
+        ValidationUtil.validateTagName(name);
+
         // Check permission
         AclDao aclDao = new AclDao();
         if (!aclDao.checkPermission(id, PermType.WRITE, getTargetIdList(null))) {

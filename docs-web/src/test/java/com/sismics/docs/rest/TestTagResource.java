@@ -25,7 +25,23 @@ public class TestTagResource extends BaseJerseyTest {
         // Login tag1
         clientUtil.createUser("tag1");
         String tag1Token = clientUtil.login("tag1");
-        
+
+        // Create a tag with a wrong name
+        Response response = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .put(Entity.form(new Form()
+                        .param("name", "Tag:3")
+                        .param("color", "#ff0000")));
+        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+
+        // Create a tag with a wrong name
+        response = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .put(Entity.form(new Form()
+                        .param("name", "Tag 3")
+                        .param("color", "#ff0000")));
+        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+
         // Create a tag
         JsonObject json = target().path("/tag").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
@@ -46,7 +62,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertNotNull(tag4Id);
 
         // Create a circular reference
-        Response response = target().path("/tag/" + tag3Id).request()
+        response = target().path("/tag/" + tag3Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
                 .post(Entity.form(new Form()
                         .param("name", "Tag3")
