@@ -84,7 +84,7 @@ The latest release is downloadable here: <https://github.com/sismics/docs/releas
 How to build Teedy from the sources
 ----------------------------------
 
-Prerequisites: JDK 8 with JCE, Maven 3, Tesseract 3 or 4
+Prerequisites: JDK 8 with JCE, Maven 3, NPM, Grunt, Tesseract 3 or 4
 
 Teedy is organized in several Maven modules:
 
