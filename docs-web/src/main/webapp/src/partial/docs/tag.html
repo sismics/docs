@@ -13,13 +13,17 @@
 <div class="row">
   <div class="col-md-4">
     <div class="well well-3d">
-      <form name="tagForm" novalidate>
-        <p class="input-group" ng-class="{ 'has-error': !tagForm.name.$valid && tagForm.$dirty }">
+      <form class="form-inline text-center" name="tagForm" novalidate>
+        <div class="input-group" ng-class="{ 'has-error': !tagForm.color.$valid && tagForm.$dirty }">
           <span colorpicker class="input-group-addon btn btn-default" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
+          <input type="text" name="color" class="form-control" ng-maxlength="7" ng-model="tag.color" ng-show="hexaField">
+          <button class="btn btn-default" ng-click="hexaField = true" ng-show="!hexaField"><span class="fas fa-microchip"></span></button>
+        </div>
+        <div class="form-group" ng-class="{ 'has-error': !tagForm.name.$valid && tagForm.$dirty }">
           <input type="text" name="name" ng-attr-placeholder="{{ 'tag.new_tag' | translate }}" class="form-control"
-            ng-maxlength="36" required ng-model="tag.name" ui-validate="{ space: '!$value || $value.indexOf(\' \') == -1' }">
-          <span class="input-group-addon btn btn-primary" ng-disabled="!tagForm.$valid" ng-click="addTag()">{{ 'add' | translate }}</span>
-        </p>
+                 ng-maxlength="36" required ng-model="tag.name" ui-validate="{ space: '!$value || $value.indexOf(\' \') == -1 && $value.indexOf(\':\') == -1' }">
+        </div>
+        <span class="btn btn-primary" ng-disabled="!tagForm.$valid" ng-click="addTag()">{{ 'add' | translate }}</span>
         <span class="text-danger" ng-show="tagForm.name.$error.space && tagForm.$dirty">{{ 'validation.no_space' | translate }}</span>
       </form>
 

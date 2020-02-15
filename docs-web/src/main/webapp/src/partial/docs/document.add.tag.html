@@ -1,14 +1,18 @@
 <div class="modal-header">
   <h3>{{ 'tag.new_tag' | translate }}</h3>
 </div>
-<form name="tagForm" novalidate>
+<form name="tagForm" class="form-inline text-center" novalidate>
   <div class="modal-body">
-      <p class="input-group" ng-class="{ 'has-error': !tagForm.name.$valid && tagForm.$dirty }">
-        <span colorpicker class="input-group-addon btn btn-default" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
-        <input type="text" name="name" ng-attr-placeholder="{{ 'tag.new_tag' | translate }}" class="form-control"
-               ng-maxlength="36" required ng-model="tag.name" ui-validate="{ space: '!$value || $value.indexOf(\' \') == -1' }">
-      </p>
-      <span class="text-danger" ng-show="tagForm.name.$error.space && tagForm.$dirty">{{ 'validation.no_space' | translate }}</span>
+      <div class="input-group" ng-class="{ 'has-error': !tagForm.color.$valid && tagForm.$dirty }">
+          <span colorpicker class="input-group-addon btn btn-default" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
+          <input type="text" name="color" class="form-control" ng-maxlength="7" ng-model="tag.color" ng-show="hexaField">
+          <button class="btn btn-default" ng-click="hexaField = true" ng-show="!hexaField"><span class="fas fa-microchip"></span></button>
+      </div>
+      <div class="form-group" ng-class="{ 'has-error': !tagForm.name.$valid && tagForm.$dirty }">
+          <input type="text" name="name" ng-attr-placeholder="{{ 'tag.new_tag' | translate }}" class="form-control"
+                 ng-maxlength="36" required ng-model="tag.name" ui-validate="{ space: '!$value || $value.indexOf(\' \') == -1 && $value.indexOf(\':\') == -1' }">
+      </div>
+      <p class="text-danger" ng-show="tagForm.name.$error.space && tagForm.$dirty">{{ 'validation.no_space' | translate }}</p>
   </div>
   <div class="modal-footer">
     <button ng-click="close(tag)" ng-disabled="!tagForm.$valid" class="btn btn-primary">

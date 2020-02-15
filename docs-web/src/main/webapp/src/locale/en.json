@@ -562,7 +562,7 @@
     "email": "Must be a valid e-mail",
     "password_confirm": "Password and password confirmation must match",
     "number": "Number required",
-    "no_space": "Spaces are not allowed"
+    "no_space": "Spaces and colons are not allowed"
   },
   "action_type": {
     "ADD_TAG": "Add a tag",
