@@ -251,7 +251,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
                 "         s.SHA_DELETEDATE_D IS NULL group by ac.ACL_SOURCEID_C) s on s.ACL_SOURCEID_C = d.DOC_ID_C " +
                 "  left join (SELECT count(f.FIL_ID_C) count, f.FIL_IDDOC_C " +
                 "   FROM T_FILE f " +
-                "   WHERE f.FIL_DELETEDATE_D IS NULL group by f.FIL_IDDOC_C) f on f.FIL_IDDOC_C = d.DOC_ID_C ");
+                "   WHERE f.FIL_DELETEDATE_D is null group by f.FIL_IDDOC_C) f on f.FIL_IDDOC_C = d.DOC_ID_C ");
         sb.append(" left join (select rs.*, rs3.idDocument " +
                 "from T_ROUTE_STEP rs " +
                 "join (select r.RTE_IDDOCUMENT_C idDocument, rs.RTP_IDROUTE_C idRoute, min(rs.RTP_ORDER_N) minOrder from T_ROUTE_STEP rs join T_ROUTE r on r.RTE_ID_C = rs.RTP_IDROUTE_C and r.RTE_DELETEDATE_D is null where rs.RTP_DELETEDATE_D is null and rs.RTP_ENDDATE_D is null group by rs.RTP_IDROUTE_C, r.RTE_IDDOCUMENT_C) rs3 on rs.RTP_IDROUTE_C = rs3.idRoute and rs.RTP_ORDER_N = rs3.minOrder " +
@@ -323,6 +323,10 @@ public class LuceneIndexingHandler implements IndexingHandler {
         }
         if (criteria.getShared() != null && criteria.getShared()) {
             criteriaList.add("s.count > 0");
+        }
+        if (criteria.getMimeType() != null) {
+            sb.append("left join T_FILE f0 on f0.FIL_IDDOC_C = d.DOC_ID_C and f0.FIL_DELETEDATE_D is null");
+            criteriaList.add("f0.FIL_ID_C is not null");
         }
         if (criteria.getLanguage() != null) {
             criteriaList.add("d.DOC_LANGUAGE_C = :language");

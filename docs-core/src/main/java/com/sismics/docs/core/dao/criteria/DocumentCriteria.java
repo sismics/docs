@@ -76,6 +76,11 @@ public class DocumentCriteria {
      * A route is active.
      */
     private Boolean activeRoute;
+
+    /**
+     * MIME type of a file.
+     */
+    private String mimeType;
     
     public List<String> getTargetIdList() {
         return targetIdList;
@@ -180,5 +185,13 @@ public class DocumentCriteria {
 
     public void setActiveRoute(Boolean activeRoute) {
         this.activeRoute = activeRoute;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 }

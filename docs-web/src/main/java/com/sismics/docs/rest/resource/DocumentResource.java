@@ -569,6 +569,10 @@ public class DocumentResource extends BaseResource {
                         documentCriteria.setLanguage(UUID.randomUUID().toString());
                     }
                     break;
+                case "mime":
+                    // New mime type criteria
+                    documentCriteria.setMimeType(params[1]);
+                    break;
                 case "by":
                     // New creator criteria
                     User user = userDao.getActiveByUsername(params[1]);

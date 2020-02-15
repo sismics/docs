@@ -214,6 +214,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(0, searchDocuments("tag:super !tag:hr", document1Token));
         Assert.assertEquals(1, searchDocuments("shared:yes", document1Token));
         Assert.assertEquals(2, searchDocuments("lang:eng", document1Token));
+        Assert.assertEquals(1, searchDocuments("mime:image/png", document1Token));
         Assert.assertEquals(1, searchDocuments("after:2010 before:2040-08 tag:super shared:yes lang:eng title description full:uranium", document1Token));
 
         // Search documents (nothing)
