@@ -325,7 +325,8 @@ public class LuceneIndexingHandler implements IndexingHandler {
             criteriaList.add("s.count > 0");
         }
         if (criteria.getMimeType() != null) {
-            sb.append("left join T_FILE f0 on f0.FIL_IDDOC_C = d.DOC_ID_C and f0.FIL_DELETEDATE_D is null");
+            sb.append("left join T_FILE f0 on f0.FIL_IDDOC_C = d.DOC_ID_C and f0.FIL_MIMETYPE_C = :mimeType and f0.FIL_DELETEDATE_D is null");
+            parameterMap.put("mimeType", criteria.getMimeType());
             criteriaList.add("f0.FIL_ID_C is not null");
         }
         if (criteria.getLanguage() != null) {
