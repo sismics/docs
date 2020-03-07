@@ -9,6 +9,7 @@ angular.module('docs').directive('selectRelation', function() {
     templateUrl: 'partial/docs/directive.selectrelation.html',
     replace: true,
     scope: {
+      id: '=',
       relations: '=',
       ref: '@',
       ngDisabled: '='
@@ -18,21 +19,12 @@ angular.module('docs').directive('selectRelation', function() {
        * Add a relation.
        */
       $scope.addRelation = function($item) {
-        // Does the new relation is already in the model
-        var duplicate = _.find($scope.relations, function(relation) {
-          if ($item.id === relation.id) {
-            return relation;
-          }
-        });
-
         // Add the new relation
-        if (!duplicate) {
-          $scope.relations.push({
-            id: $item.id,
-            title: $item.title,
-            source: true
-          });
-        }
+        $scope.relations.push({
+          id: $item.id,
+          title: $item.title,
+          source: true
+        });
         $scope.input = '';
       };
       
@@ -42,11 +34,11 @@ angular.module('docs').directive('selectRelation', function() {
       $scope.deleteRelation = function(deleteRelation) {
         $scope.relations = _.reject($scope.relations, function(relation) {
           return relation.id === deleteRelation.id;
-        })
+        });
       };
 
       /**
-       * Returns a promise for typeahead title.
+       * Returns a promise for typeahead document.
        */
       $scope.getDocumentTypeahead = function($viewValue) {
         var deferred = $q.defer();
@@ -57,8 +49,16 @@ angular.module('docs').directive('selectRelation', function() {
               asc: true,
               search: $viewValue
             }).then(function(data) {
-          deferred.resolve(data.documents);
-        });
+              deferred.resolve(_.reject(data.documents, function(document) {
+                var duplicate = _.find($scope.relations, function(relation) {
+                  if (document.id === relation.id) {
+                    return relation;
+                  }
+                });
+
+                return document.id === $scope.id || duplicate;
+              }));
+            });
         return deferred.promise;
       };
     },
