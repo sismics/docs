@@ -161,7 +161,7 @@
     </tr>
     </thead>
     <tbody ui-sortable="fileSortableOptions" ng-model="files">
-    <tr ng-repeat="file in files">
+    <tr ng-repeat="file in files" ng-class="{ 'active': openedFile.id == file.id }">
       <td class="pointer" ng-click="openFile(file, $event)">
         <div class="thumbnail-list">
           <img ng-src="../api/file/{{ file.id }}/data?size=thumb" />

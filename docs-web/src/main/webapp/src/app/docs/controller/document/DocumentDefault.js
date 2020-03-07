@@ -13,7 +13,6 @@ angular.module('docs').controller('DocumentDefault', function ($scope, $rootScop
   $scope.loadFiles = function () {
     Restangular.one('file/list').get().then(function (data) {
       $scope.files = data.files;
-      // TODO Keep currently uploading files
     });
   };
   $scope.loadFiles();
