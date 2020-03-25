@@ -9,6 +9,7 @@
       <label class="col-sm-2 control-label" for="inputUserUsername">{{ 'settings.user.edit.username' | translate }}</label>
       <div class="col-sm-7">
         <input name="userUsername" type="text" id="inputUserUsername" required ng-disabled="isEdit()" class="form-control"
+               ng-pattern="/^[a-zA-Z0-9_]*$/"
                ng-minlength="3" ng-maxlength="50" ng-attr-placeholder="{{ 'settings.user.edit.username' | translate }}" ng-model="user.username"/>
       </div>
 
@@ -16,6 +17,7 @@
         <span class="help-block" ng-show="editUserForm.userUsername.$error.required && editUserForm.$dirty">{{ 'validation.required' | translate }}</span>
         <span class="help-block" ng-show="editUserForm.userUsername.$error.minlength && editUserForm.$dirty">{{ 'validation.too_short' | translate }}</span>
         <span class="help-block" ng-show="editUserForm.userUsername.$error.maxlength && editUserForm.$dirty">{{ 'validation.too_long' | translate }}</span>
+        <span class="help-block" ng-show="editUserForm.userUsername.$error.pattern && editUserForm.$dirty">{{ 'validation.alphanumeric' | translate }}</span>
       </div>
     </div>
 

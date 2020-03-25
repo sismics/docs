@@ -436,6 +436,9 @@ angular.module('docs',
   } else {
     // Or else determine the language based on the user's browser
     $translateProvider.determinePreferredLanguage();
+    if (!$translateProvider.use()) {
+      $translateProvider.use('en');
+    }
   }
 
   // Configuring Timago

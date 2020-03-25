@@ -551,7 +551,8 @@
     "email": "Doit être une adresse e-mail valide",
     "password_confirm": "Le mot de passe et sa confirmation doivent être identiques",
     "number": "Nombre requis",
-    "no_space": "Les espaces ne sont pas autorisés"
+    "no_space": "Les espaces ne sont pas autorisés",
+    "alphanumeric": "Seuls les lettres et les chiffres sont autorisés"
   },
   "action_type": {
     "ADD_TAG": "Ajouter un tag",
