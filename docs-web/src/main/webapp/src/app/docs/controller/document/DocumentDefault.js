@@ -120,7 +120,7 @@ angular.module('docs').controller('DocumentDefault', function ($scope, $rootScop
       }
 
       Restangular.withConfig(function (RestangularConfigurer) {
-        RestangularConfigurer.setBaseUrl('https://api.sismicsdocs.com');
+        RestangularConfigurer.setBaseUrl('https://api.teedy.io');
       }).one('api').post('feedback', {
         content: content
       }).then(function () {
