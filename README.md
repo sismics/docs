@@ -2,7 +2,6 @@
   <img src="https://teedy.io/img/github-title.png" alt="Teedy" width=500 />
 </h3>
 
-[![Twitter: @teedyio](https://img.shields.io/badge/contact-@teedyio-blue.svg?style=flat)](https://twitter.com/teedyio)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 [![Build Status](https://secure.travis-ci.org/sismics/docs.png)](http://travis-ci.org/sismics/docs)
 
@@ -61,7 +60,7 @@ A preconfigured Docker image is available, including OCR and media conversion to
 
 **The default admin password is "admin". Don't forget to change it before going to production.**
 - Master branch, can be unstable. Not recommended for production use: `sismics/docs:latest`
-- Latest stable version: `sismics/docs:v1.7`
+- Latest stable version: `sismics/docs:v1.8`
 
 The data directory is `/data`. Don't forget to mount a volume on it.
 
