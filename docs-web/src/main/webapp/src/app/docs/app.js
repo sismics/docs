@@ -524,7 +524,9 @@ angular.module('docs',
     { key: 'nld', label: 'Nederlands' },
     { key: 'tur', label: 'Türkçe' },
     { key: 'heb', label: 'עברית' },
-    { key: 'hun', label: 'Magyar' }
+    { key: 'hun', label: 'Magyar' },
+    { key: 'fin', label: 'Suomi' },
+    { key: 'swe', label: 'Svenska' }
   ];
 })
 /**
