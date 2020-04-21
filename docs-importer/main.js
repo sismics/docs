@@ -22,7 +22,7 @@ const prefs = new preferences('com.sismics.docs.importer',{
 });
 
 // Welcome message
-console.log('Teedy Importer 1.0.0, https://teedy.io' +
+console.log('Teedy Importer 1.8, https://teedy.io' +
   '\n\n' +
   'This program let you import files from your system to Teedy' +
   '\n');

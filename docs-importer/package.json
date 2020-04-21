@@ -1,6 +1,6 @@
 {
   "name": "teedy-importer",
-  "version": "1.5.1",
+  "version": "1.8",
   "description": "Import files to Teedy",
   "bin": "main.js",
   "scripts": {
