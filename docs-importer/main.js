@@ -273,7 +273,7 @@ const importFile = (file, remove, resolve) => {
   request.put({
     url: prefs.importer.baseUrl + '/api/document',
     form: {
-      title: file.replace(/^.*[\\\/]/, ''),
+      title: file.replace(/^.*[\\\/]/, '').substring(0, 100),
       language: 'eng',
       tags: prefs.importer.tag === '' ? undefined : prefs.importer.tag
     }
