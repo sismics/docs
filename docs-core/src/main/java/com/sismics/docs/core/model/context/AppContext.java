@@ -5,7 +5,6 @@ import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.UserDao;
-import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
 import com.sismics.docs.core.listener.async.*;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.service.FileService;
@@ -172,7 +171,8 @@ public class AppContext {
         if (EnvironmentUtil.isUnitTest()) {
             return new EventBus();
         } else {
-            ThreadPoolExecutor executor = new ThreadPoolExecutor(8, 8,
+            int threadCount = Runtime.getRuntime().availableProcessors() / 2;
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(threadCount, threadCount,
                     1L, TimeUnit.MINUTES,
                     new LinkedBlockingQueue<>());
             asyncExecutorList.add(executor);
