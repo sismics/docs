@@ -171,7 +171,7 @@ public class AppContext {
         if (EnvironmentUtil.isUnitTest()) {
             return new EventBus();
         } else {
-            int threadCount = Runtime.getRuntime().availableProcessors() / 2;
+            int threadCount = Math.max(Runtime.getRuntime().availableProcessors() / 2, 2);
             ThreadPoolExecutor executor = new ThreadPoolExecutor(threadCount, threadCount,
                     1L, TimeUnit.MINUTES,
                     new LinkedBlockingQueue<>());
