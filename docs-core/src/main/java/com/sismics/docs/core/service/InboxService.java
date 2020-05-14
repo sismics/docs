@@ -280,7 +280,7 @@ public class InboxService extends AbstractScheduledService {
             return null;
         }
         TagDao tagDao = new TagDao();
-        List<TagDto> tags = tagDao.findByCriteria(new TagCriteria().setTargetIdList(Lists.newArrayList("admin")), new SortCriteria(1, true));
+        List<TagDto> tags = tagDao.findByCriteria(new TagCriteria().setTargetIdList(null), new SortCriteria(1, true));
 
         HashMap<String, String> tagsNameToId = new HashMap<>();
         for (TagDto tagDto : tags) {
