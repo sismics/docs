@@ -1,16 +1,21 @@
 package com.sismics.docs.core.service;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.dao.TagDao;
+import com.sismics.docs.core.dao.criteria.TagCriteria;
+import com.sismics.docs.core.dao.dto.TagDto;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
+import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.DocumentUtil;
 import com.sismics.docs.core.util.FileUtil;
 import com.sismics.docs.core.util.TransactionUtil;
+import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.EmailUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import org.apache.commons.lang.StringUtils;
@@ -19,9 +24,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.mail.*;
 import javax.mail.search.FlagTerm;
-import java.util.Date;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Inbox scanning service.
@@ -79,11 +85,13 @@ public class InboxService extends AbstractScheduledService {
             lastSyncDate = new Date();
             lastSyncMessageCount = 0;
             try {
+                HashMap<String, String> tagsNameToId = getAllTags();
+
                 inbox = openInbox();
                 Message[] messages = inbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
                 log.info(messages.length + " messages found");
                 for (Message message : messages) {
-                    importMessage(message);
+                    importMessage(message, tagsNameToId);
                     lastSyncMessageCount++;
                 }
             } catch (FolderClosedException e) {
@@ -94,7 +102,8 @@ public class InboxService extends AbstractScheduledService {
             } finally {
                 try {
                     if (inbox != null) {
-                        inbox.close(false);
+                        // The parameter controls if the messages flagged to be deleted, should actually get deleted.
+                        inbox.close(ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_DELETE_IMPORTED));
                         inbox.getStore().close();
                     }
                 } catch (Exception e) {
@@ -183,7 +192,7 @@ public class InboxService extends AbstractScheduledService {
      * @param message Message
      * @throws Exception e
      */
-    private void importMessage(Message message) throws Exception {
+    private void importMessage(Message message, HashMap<String, String> tags) throws Exception {
         log.info("Importing message: " + message.getSubject());
 
         // Parse the mail
@@ -194,12 +203,27 @@ public class InboxService extends AbstractScheduledService {
 
         // Create the document
         Document document = new Document();
-        document.setUserId("admin");
-        if (mailContent.getSubject() == null) {
-            document.setTitle("Imported email from EML file");
-        } else {
-            document.setTitle(StringUtils.abbreviate(mailContent.getSubject(), 100));
+        String subject = mailContent.getSubject();
+        if (subject == null) {
+            subject = "Imported email from EML file";
         }
+
+        HashSet<String> tagsFound = new HashSet<>();
+        if (tags != null) {
+            Pattern pattern = Pattern.compile("#([^\\s:#]+)");
+            Matcher matcher = pattern.matcher(subject);
+            while (matcher.find()) {
+                if (tags.containsKey(matcher.group(1)) && tags.get(matcher.group(1)) != null) {
+                    tagsFound.add(tags.get(matcher.group(1)));
+                    subject = subject.replaceFirst("#" + matcher.group(1), "");
+                }
+            }
+            log.debug("Tags found: " + String.join(", ", tagsFound));
+            subject = subject.trim().replaceAll(" +", " ");
+        }
+
+        document.setUserId("admin");
+        document.setTitle(StringUtils.abbreviate(subject, 100));
         document.setDescription(StringUtils.abbreviate(mailContent.getMessage(), 4000));
         document.setSubject(StringUtils.abbreviate(mailContent.getSubject(), 500));
         document.setFormat("EML");
@@ -220,8 +244,13 @@ public class InboxService extends AbstractScheduledService {
             TagDao tagDao = new TagDao();
             Tag tag = tagDao.getById(tagId);
             if (tag != null) {
-                tagDao.updateTagList(document.getId(), Sets.newHashSet(tagId));
+                tagsFound.add(tagId);
             }
+        }
+
+        // Update tags
+        if (!tagsFound.isEmpty()) {
+            new TagDao().updateTagList(document.getId(), tagsFound);
         }
 
         // Raise a document created event
@@ -235,6 +264,29 @@ public class InboxService extends AbstractScheduledService {
             FileUtil.createFile(fileContent.getName(), null, fileContent.getFile(), fileContent.getSize(),
                     document.getLanguage(), "admin", document.getId());
         }
+
+        if (ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_DELETE_IMPORTED)) {
+            message.setFlag(Flags.Flag.DELETED, true);
+        }
+    }
+
+    /**
+     * Fetches a HashMap with all tag names as keys and their respective ids as values.
+     *
+     * @return HashMap with all tags or null if not enabled
+     */
+    private HashMap<String, String> getAllTags() {
+        if (!ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_AUTOMATIC_TAGS)) {
+            return null;
+        }
+        TagDao tagDao = new TagDao();
+        List<TagDto> tags = tagDao.findByCriteria(new TagCriteria().setTargetIdList(null), new SortCriteria(1, true));
+
+        HashMap<String, String> tagsNameToId = new HashMap<>();
+        for (TagDto tagDto : tags) {
+            tagsNameToId.put(tagDto.getName(), tagDto.getId());
+        }
+        return tagsNameToId;
     }
 
     public Date getLastSyncDate() {
