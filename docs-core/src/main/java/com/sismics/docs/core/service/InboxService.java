@@ -218,7 +218,7 @@ public class InboxService extends AbstractScheduledService {
                     subject = subject.replaceFirst("#" + matcher.group(1), "");
                 }
             }
-            log.info("Tags found: " + String.join(", ", tagsFound));
+            log.debug("Tags found: " + String.join(", ", tagsFound));
             subject = subject.trim().replaceAll(" +", " ");
         }
 
@@ -284,11 +284,7 @@ public class InboxService extends AbstractScheduledService {
 
         HashMap<String, String> tagsNameToId = new HashMap<>();
         for (TagDto tagDto : tags) {
-            if (tagsNameToId.containsKey(tagDto.getName())) {
-                tagsNameToId.put(tagDto.getName(), null);
-            } else {
-                tagsNameToId.put(tagDto.getName(), tagDto.getId());
-            }
+            tagsNameToId.put(tagDto.getName(), tagDto.getId());
         }
         return tagsNameToId;
     }
