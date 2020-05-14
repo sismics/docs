@@ -271,7 +271,7 @@ public class InboxService extends AbstractScheduledService {
     }
 
     /**
-     * Fetches a HashMap with all tag names in lowercase as keys and their respective ids as values.
+     * Fetches a HashMap with all tag names as keys and their respective ids as values.
      *
      * @return HashMap with all tags or null if not enabled
      */
