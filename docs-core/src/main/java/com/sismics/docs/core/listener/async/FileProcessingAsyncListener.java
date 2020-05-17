@@ -152,7 +152,7 @@ public class FileProcessingAsyncListener {
         } catch (Exception e) {
             log.error("Error extracting content from: " + file, e);
         }
-        log.info(MessageFormat.format("File content extracted in {0}ms", System.currentTimeMillis() - startTime));
+        log.info(MessageFormat.format("File content extracted in {0}ms: " + file.getId(), System.currentTimeMillis() - startTime));
 
         // Save the file to database
         FileDao fileDao = new FileDao();

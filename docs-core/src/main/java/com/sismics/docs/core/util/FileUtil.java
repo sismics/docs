@@ -18,6 +18,8 @@ import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.io.InputStreamReaderThread;
 import com.sismics.util.mime.MimeTypeUtil;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -36,6 +38,11 @@ import java.util.*;
  * @author bgamard
  */
 public class FileUtil {
+    /**
+     * Logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(FileUtil.class);
+
     /**
      * File ID of files currently being processed.
      */
@@ -211,6 +218,7 @@ public class FileUtil {
      */
     public static void startProcessingFile(String fileId) {
         processingFileSet.add(fileId);
+        log.info("Processing started for file: " + fileId);
     }
 
     /**
@@ -220,6 +228,7 @@ public class FileUtil {
      */
     public static void endProcessingFile(String fileId) {
         processingFileSet.remove(fileId);
+        log.info("Processing ended for file: " + fileId);
     }
 
     /**
