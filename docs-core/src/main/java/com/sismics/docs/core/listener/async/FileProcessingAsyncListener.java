@@ -54,13 +54,18 @@ public class FileProcessingAsyncListener {
 
         TransactionUtil.handle(() -> {
             // Generate thumbnail, extract content
-            processFile(event);
+            File file = new FileDao().getActiveById(event.getFileId());
+            if (file == null) {
+                // The file has been deleted since
+                return;
+            }
+            processFile(event, file);
 
-            // Update index
-            AppContext.getInstance().getIndexingHandler().createFile(event.getFile());
+            // Update index with the file updated by side effect
+            AppContext.getInstance().getIndexingHandler().createFile(file);
         });
 
-        FileUtil.endProcessingFile(event.getFile().getId());
+        FileUtil.endProcessingFile(event.getFileId());
     }
 
     /**
@@ -77,27 +82,31 @@ public class FileProcessingAsyncListener {
 
         TransactionUtil.handle(() -> {
             // Generate thumbnail, extract content
-            processFile(event);
+            File file = new FileDao().getActiveById(event.getFileId());
+            if (file == null) {
+                // The file has been deleted since
+                return;
+            }
+            processFile(event, file);
 
-            // Update index
-            AppContext.getInstance().getIndexingHandler().updateFile(event.getFile());
+            // Update index with the file updated by side effect
+            AppContext.getInstance().getIndexingHandler().updateFile(file);
         });
 
-        FileUtil.endProcessingFile(event.getFile().getId());
+        FileUtil.endProcessingFile(event.getFileId());
     }
 
     /**
      * Process the file (create/update).
      *
      * @param event File event
+     * @param file Fresh file
      */
-    private void processFile(FileEvent event) {
+    private void processFile(FileEvent event, File file) {
         // Find a format handler
-        final File file = event.getFile();
         FormatHandler formatHandler = FormatHandlerUtil.find(file.getMimeType());
         if (formatHandler == null) {
             log.info("Format unhandled: " + file.getMimeType());
-            FileUtil.endProcessingFile(file.getId());
             return;
         }
 
@@ -106,7 +115,6 @@ public class FileProcessingAsyncListener {
         User user = userDao.getById(file.getUserId());
         if (user == null) {
             // The user has been deleted meanwhile
-            FileUtil.endProcessingFile(file.getId());
             return;
         }
 
@@ -133,7 +141,7 @@ public class FileProcessingAsyncListener {
                 }
             }
         } catch (Exception e) {
-            log.error("Unable to generate thumbnails", e);
+            log.error("Unable to generate thumbnails for: " + file, e);
         }
 
         // Extract text content from the file
@@ -142,7 +150,7 @@ public class FileProcessingAsyncListener {
         try {
             content = formatHandler.extractContent(event.getLanguage(), event.getUnencryptedFile());
         } catch (Exception e) {
-            log.error("Error extracting content from: " + event.getFile(), e);
+            log.error("Error extracting content from: " + file, e);
         }
         log.info(MessageFormat.format("File content extracted in {0}ms", System.currentTimeMillis() - startTime));
 
@@ -154,6 +162,6 @@ public class FileProcessingAsyncListener {
         }
 
         file.setContent(content);
-        fileDao.update(file);
+        fileDao.updateContent(file);
     }
 }

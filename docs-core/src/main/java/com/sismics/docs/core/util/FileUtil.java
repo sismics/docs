@@ -76,12 +76,12 @@ public class FileUtil {
     /**
      * Remove a file from the storage filesystem.
      * 
-     * @param file File to delete
+     * @param fileId ID of file to delete
      */
-    public static void delete(File file) throws IOException {
-        Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
-        Path webFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_web");
-        Path thumbnailFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_thumb");
+    public static void delete(String fileId) throws IOException {
+        Path storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId);
+        Path webFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_web");
+        Path thumbnailFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_thumb");
         
         if (Files.exists(storedFile)) {
             Files.delete(storedFile);
@@ -126,7 +126,7 @@ public class FileUtil {
         // Validate global quota
         String globalStorageQuotaStr = System.getenv(Constants.GLOBAL_QUOTA_ENV);
         if (!Strings.isNullOrEmpty(globalStorageQuotaStr)) {
-            long globalStorageQuota = Long.valueOf(globalStorageQuotaStr);
+            long globalStorageQuota = Long.parseLong(globalStorageQuotaStr);
             long globalStorageCurrent = userDao.getGlobalStorageCurrent();
             if (globalStorageCurrent + fileSize > globalStorageQuota) {
                 throw new IOException("QuotaReached");
@@ -190,7 +190,7 @@ public class FileUtil {
         FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
         fileCreatedAsyncEvent.setUserId(userId);
         fileCreatedAsyncEvent.setLanguage(language);
-        fileCreatedAsyncEvent.setFile(file);
+        fileCreatedAsyncEvent.setFileId(file.getId());
         fileCreatedAsyncEvent.setUnencryptedFile(unencryptedFile);
         ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
 

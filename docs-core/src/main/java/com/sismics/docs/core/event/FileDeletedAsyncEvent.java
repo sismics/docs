@@ -1,7 +1,6 @@
 package com.sismics.docs.core.event;
 
 import com.google.common.base.MoreObjects;
-import com.sismics.docs.core.model.jpa.File;
 
 /**
  * File deleted event.
@@ -10,22 +9,22 @@ import com.sismics.docs.core.model.jpa.File;
  */
 public class FileDeletedAsyncEvent extends UserEvent {
     /**
-     * Deleted file.
+     * File ID.
      */
-    private File file;
-    
-    public File getFile() {
-        return file;
+    private String fileId;
+
+    public String getFileId() {
+        return fileId;
     }
 
-    public void setFile(File file) {
-        this.file = file;
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
     }
-    
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-            .add("file", file)
+            .add("fileId", fileId)
             .toString();
     }
 }

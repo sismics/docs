@@ -202,7 +202,7 @@ public class FileResource extends BaseResource {
             FileUpdatedAsyncEvent fileUpdatedAsyncEvent = new FileUpdatedAsyncEvent();
             fileUpdatedAsyncEvent.setUserId(principal.getId());
             fileUpdatedAsyncEvent.setLanguage(documentDto.getLanguage());
-            fileUpdatedAsyncEvent.setFile(file);
+            fileUpdatedAsyncEvent.setFileId(file.getId());
             fileUpdatedAsyncEvent.setUnencryptedFile(unencryptedFile);
             ThreadLocalContext.get().addAsyncEvent(fileUpdatedAsyncEvent);
             
@@ -310,7 +310,7 @@ public class FileResource extends BaseResource {
             FileUpdatedAsyncEvent event = new FileUpdatedAsyncEvent();
             event.setUserId(principal.getId());
             event.setLanguage(documentDto.getLanguage());
-            event.setFile(file);
+            event.setFileId(file.getId());
             event.setUnencryptedFile(unencryptedFile);
             ThreadLocalContext.get().addAsyncEvent(event);
         } catch (Exception e) {
@@ -548,7 +548,7 @@ public class FileResource extends BaseResource {
         // Raise a new file deleted event
         FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
         fileDeletedAsyncEvent.setUserId(principal.getId());
-        fileDeletedAsyncEvent.setFile(file);
+        fileDeletedAsyncEvent.setFileId(file.getId());
         ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         
         if (file.getDocumentId() != null) {

@@ -727,7 +727,7 @@ public class DocumentResource extends BaseResource {
         // Raise a document created event
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
         documentCreatedAsyncEvent.setUserId(principal.getId());
-        documentCreatedAsyncEvent.setDocument(document);
+        documentCreatedAsyncEvent.setDocumentId(document.getId());
         ThreadLocalContext.get().addAsyncEvent(documentCreatedAsyncEvent);
 
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -944,7 +944,7 @@ public class DocumentResource extends BaseResource {
         // Raise a document created event
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
         documentCreatedAsyncEvent.setUserId(principal.getId());
-        documentCreatedAsyncEvent.setDocument(document);
+        documentCreatedAsyncEvent.setDocumentId(document.getId());
         ThreadLocalContext.get().addAsyncEvent(documentCreatedAsyncEvent);
 
         // Add files to the document
@@ -1013,7 +1013,7 @@ public class DocumentResource extends BaseResource {
             // Raise file deleted event
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
-            fileDeletedAsyncEvent.setFile(file);
+            fileDeletedAsyncEvent.setFileId(file.getId());
             ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
 

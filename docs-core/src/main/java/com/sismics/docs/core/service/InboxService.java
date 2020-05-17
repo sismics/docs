@@ -227,7 +227,7 @@ public class InboxService extends AbstractScheduledService {
         // Raise a document created event
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
         documentCreatedAsyncEvent.setUserId("admin");
-        documentCreatedAsyncEvent.setDocument(document);
+        documentCreatedAsyncEvent.setDocumentId(document.getId());
         ThreadLocalContext.get().addAsyncEvent(documentCreatedAsyncEvent);
 
         // Add files to the document

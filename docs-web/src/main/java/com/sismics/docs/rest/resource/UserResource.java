@@ -482,7 +482,7 @@ public class UserResource extends BaseResource {
         for (File file : fileList) {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
-            fileDeletedAsyncEvent.setFile(file);
+            fileDeletedAsyncEvent.setFileId(file.getId());
             ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
         
@@ -564,7 +564,7 @@ public class UserResource extends BaseResource {
         for (File file : fileList) {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
-            fileDeletedAsyncEvent.setFile(file);
+            fileDeletedAsyncEvent.setFileId(file.getId());
             ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
         
