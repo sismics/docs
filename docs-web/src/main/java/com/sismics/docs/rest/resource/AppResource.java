@@ -328,6 +328,8 @@ public class AppResource extends BaseResource {
 
         ConfigDao configDao = new ConfigDao();
         Boolean enabled = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_ENABLED);
+        Boolean autoTags = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_AUTOMATIC_TAGS);
+        Boolean deleteImported = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_DELETE_IMPORTED);
         Config hostnameConfig = configDao.getById(ConfigType.INBOX_HOSTNAME);
         Config portConfig = configDao.getById(ConfigType.INBOX_PORT);
         Config usernameConfig = configDao.getById(ConfigType.INBOX_USERNAME);
@@ -336,6 +338,8 @@ public class AppResource extends BaseResource {
         JsonObjectBuilder response = Json.createObjectBuilder();
 
         response.add("enabled", enabled);
+        response.add("autoTagsEnabled", autoTags);
+        response.add("deleteImported", deleteImported);
         if (hostnameConfig == null) {
             response.addNull("hostname");
         } else {
@@ -405,6 +409,8 @@ public class AppResource extends BaseResource {
     @POST
     @Path("config_inbox")
     public Response configInbox(@FormParam("enabled") Boolean enabled,
+                                @FormParam("autoTagsEnabled") Boolean autoTagsEnabled,
+                                @FormParam("deleteImported") Boolean deleteImported,
                                 @FormParam("hostname") String hostname,
                                 @FormParam("port") String portStr,
                                 @FormParam("username") String username,
@@ -422,6 +428,8 @@ public class AppResource extends BaseResource {
         // Just update the changed configuration
         ConfigDao configDao = new ConfigDao();
         configDao.update(ConfigType.INBOX_ENABLED, enabled.toString());
+        configDao.update(ConfigType.INBOX_AUTOMATIC_TAGS, autoTagsEnabled.toString());
+        configDao.update(ConfigType.INBOX_DELETE_IMPORTED, deleteImported.toString());
         if (!Strings.isNullOrEmpty(hostname)) {
             configDao.update(ConfigType.INBOX_HOSTNAME, hostname);
         }
