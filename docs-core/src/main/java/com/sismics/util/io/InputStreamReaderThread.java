@@ -34,9 +34,7 @@ public class InputStreamReaderThread extends Thread {
         try {
             BufferedReader reader = closer.register(new BufferedReader(new InputStreamReader(is)));
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug(String.format(name + ": %s", line));
-                }
+                logger.error(String.format(name + ": %s", line));
             }
         } catch (IOException x) {
             // NOP
