@@ -166,17 +166,17 @@ public class FileProcessingAsyncListener {
                     ImageUtil.writeJpeg(thumbnail, outputStream);
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("Unable to generate thumbnails for: " + file, e);
         }
 
         // Extract text content from the file
         long startTime = System.currentTimeMillis();
         String content = null;
-        log.error("Start extracting content from: " + file);
+        log.info("Start extracting content from: " + file);
         try {
             content = formatHandler.extractContent(event.getLanguage(), event.getUnencryptedFile());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("Error extracting content from: " + file, e);
         }
         log.info(MessageFormat.format("File content extracted in {0}ms: " + file.getId(), System.currentTimeMillis() - startTime));
