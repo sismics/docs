@@ -76,11 +76,11 @@ public class FileProcessingAsyncListener {
     @Subscribe
     @AllowConcurrentEvents
     public void on(final FileUpdatedAsyncEvent event) {
-        if (log.isInfoEnabled()) {
-            log.info("File updated event: " + event.toString());
-        }
+        log.info("File updated event: " + event.toString());
 
         TransactionUtil.handle(() -> {
+            log.info("File processing phase 0: " + event.getFileId());
+
             // Generate thumbnail, extract content
             File file = new FileDao().getActiveById(event.getFileId());
             if (file == null) {
@@ -91,6 +91,8 @@ public class FileProcessingAsyncListener {
 
             // Update index with the file updated by side effect
             AppContext.getInstance().getIndexingHandler().updateFile(file);
+
+            log.info("File processing phase 6: " + file.getId());
         });
 
         FileUtil.endProcessingFile(event.getFileId());
@@ -103,12 +105,16 @@ public class FileProcessingAsyncListener {
      * @param file Fresh file
      */
     private void processFile(FileEvent event, File file) {
+        log.info("File processing phase 1: " + file.getId());
+
         // Find a format handler
         FormatHandler formatHandler = FormatHandlerUtil.find(file.getMimeType());
         if (formatHandler == null) {
             log.info("Format unhandled: " + file.getMimeType());
             return;
         }
+
+        log.info("File processing phase 2: " + file.getId());
 
         // Get the creating user from the database for its private key
         UserDao userDao = new UserDao();
@@ -117,6 +123,8 @@ public class FileProcessingAsyncListener {
             // The user has been deleted meanwhile
             return;
         }
+
+        log.info("File processing phase 3: " + file.getId());
 
         // Generate file variations
         try {
@@ -144,6 +152,8 @@ public class FileProcessingAsyncListener {
             log.error("Unable to generate thumbnails for: " + file, e);
         }
 
+        log.info("File processing phase 4: " + file.getId());
+
         // Extract text content from the file
         long startTime = System.currentTimeMillis();
         String content = null;
@@ -163,5 +173,7 @@ public class FileProcessingAsyncListener {
 
         file.setContent(content);
         fileDao.updateContent(file);
+
+        log.info("File processing phase 5: " + file.getId());
     }
 }
