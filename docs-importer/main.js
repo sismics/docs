@@ -10,6 +10,7 @@ const _ = require('underscore');
 const request = require('request').defaults({
   jar: true
 });
+const qs = require('querystring');
 
 // Load preferences
 const prefs = new preferences('com.sismics.docs.importer',{
@@ -176,7 +177,7 @@ const askTag = () => {
       {
         type: 'list',
         name: 'tag',
-        message: 'Which tag to add on imported documents?',
+        message: 'Which tag to add to all imported documents?',
         default: defaultTagName,
         choices: [ 'No tag' ].concat(_.pluck(tags, 'name'))
       }
@@ -270,37 +271,74 @@ const importFile = (file, remove, resolve) => {
     spinner: 'flips'
   }).start();
 
-  request.put({
-    url: prefs.importer.baseUrl + '/api/document',
-    form: {
-      title: file.replace(/^.*[\\\/]/, '').substring(0, 100),
-      language: 'eng',
-      tags: prefs.importer.tag === '' ? undefined : prefs.importer.tag
-    }
-  }, function (error, response, body) {
+  // Remove path of file
+  let filename = file.replace(/^.*[\\\/]/, '');
+
+  // Get Tags given as hashtags from filename
+  let taglist = filename.match(/#[^\s:#]+/mg);
+  taglist = taglist ? taglist.map(s => s.substr(1)) : [];
+  
+  // Get available tags and UUIDs from server
+  request.get({
+      url: prefs.importer.baseUrl + '/api/tag/list',
+    }, function (error, response, body) {
     if (error || !response || response.statusCode !== 200) {
-      spinner.fail('Upload failed for ' + file + ': ' + error);
-      resolve();
+      spinner.fail('Error loading tags');
       return;
     }
+    
+    let tagsarray = {};
+    for (let l of JSON.parse(body).tags) {
+      tagsarray[l.name] = l.id;
+    }
 
-    request.put({
-      url: prefs.importer.baseUrl + '/api/file',
-      formData: {
-        id: JSON.parse(body).id,
-        file: fs.createReadStream(file)
+    // Intersect tags from filename with existing tags on server
+    let foundtags = [];
+    for (let j of taglist) {
+      if (tagsarray.hasOwnProperty(j) && !foundtags.includes(tagsarray[j])) {
+        foundtags.push(tagsarray[j]);
+        filename = filename.split('#'+j).join('');
       }
-    }, function (error, response) {
+    }
+    if (prefs.importer.tag !== '' && !foundtags.includes(prefs.importer.tag)){
+      foundtags.push(prefs.importer.tag);
+    }
+    
+    
+    // Create document
+    request.put({
+      url: prefs.importer.baseUrl + '/api/document',
+      form: qs.stringify({
+        title: file.replace(/^.*[\\\/]/, '').substring(0, 100),
+        language: 'eng',
+        tags: foundtags
+      })
+    }, function (error, response, body) {
       if (error || !response || response.statusCode !== 200) {
         spinner.fail('Upload failed for ' + file + ': ' + error);
         resolve();
         return;
       }
-      spinner.succeed('Upload successful for ' + file);
-      if (remove) {
-        fs.unlinkSync(file);
-      }
-      resolve();
+      
+      // Upload file
+      request.put({
+        url: prefs.importer.baseUrl + '/api/file',
+        formData: {
+          id: JSON.parse(body).id,
+          file: fs.createReadStream(file)
+        }
+      }, function (error, response) {
+        if (error || !response || response.statusCode !== 200) {
+          spinner.fail('Upload failed for ' + file + ': ' + error);
+          resolve();
+          return;
+        }
+        spinner.succeed('Upload successful for ' + file);
+        if (remove) {
+          fs.unlinkSync(file);
+        }
+        resolve();
+      });
     });
   });
 };

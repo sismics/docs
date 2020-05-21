@@ -15,7 +15,8 @@ Usage
 docs-importer-win.exe (for Windows)
 ```
 
-A wizard will ask you for the import configuration and write it in `~/.config/preferences/com.sismics.docs.importer.pref`
+A wizard will ask you for the import configuration and write it in `~/.config/preferences/com.sismics.docs.importer.pref`.
+Words following a `#` in the filename will be added as tags to the document, if there is a tag with the same name on the Server.
 
 For the next start, pass the `-d` argument to skip the wizard:
 ```console
