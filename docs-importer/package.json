@@ -11,6 +11,9 @@
     "url": "git+https://github.com/sismics/docs.git"
   },
   "author": "Benjamin Gamard",
+  "contributors": [
+    "Cornelius Hoffmann <coding@hoffmn.de>"
+  ],
   "license": "GPL-2.0",
   "bugs": {
     "url": "https://github.com/sismics/docs/issues"
