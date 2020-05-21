@@ -360,15 +360,24 @@ const importFile = (file, remove, resolve) => {
       foundtags.push(prefs.importer.tag);
     }
     
-    
+    let data = {}
+    if (prefs.importer.addtags) {
+      data = {
+        title: prefs.importer.addtags ? filename : file.replace(/^.*[\\\/]/, '').substring(0, 100),
+        language: prefs.importer.lang || 'eng',
+        tags: foundtags 
+      }
+    }
+    else {
+      data = {
+        title: prefs.importer.addtags ? filename : file.replace(/^.*[\\\/]/, '').substring(0, 100),
+        language: prefs.importer.lang || 'eng'
+      }
+    }
     // Create document
     request.put({
       url: prefs.importer.baseUrl + '/api/document',
-      form: qs.stringify({
-        title: file.replace(/^.*[\\\/]/, '').substring(0, 100),
-        language: !prefs.importer.lang ? 'eng' : prefs.importer.lang,
-        tags: !prefs.importer.addtags ? foundtags : undefined
-      })
+      form: qs.stringify(data)
     }, function (error, response, body) {
       if (error || !response || response.statusCode !== 200) {
         spinner.fail('Upload failed for ' + file + ': ' + error);
