@@ -185,6 +185,41 @@ const askTag = () => {
       // Save tag
       prefs.importer.tag = answers.tag === 'No tag' ?
         '' : _.findWhere(tags, { name: answers.tag }).id;
+      askLang();
+    });
+  });
+};
+
+const askLang = () => {
+  console.log('');
+
+  // Load tags
+  const spinner = ora({
+    text: 'Loading default language',
+    spinner: 'flips'
+  }).start();
+
+  request.get({
+    url: prefs.importer.baseUrl + '/api/app',
+  }, function (error, response, body) {
+    if (error || !response || response.statusCode !== 200) {
+      spinner.fail('Connection to Teedy failed: ' + error);
+      askLang();
+      return;
+    }
+    spinner.succeed('Language loaded');
+    const defaultLang = prefs.importer.lang ? prefs.importer.lang : JSON.parse(body).default_language;
+
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'lang',
+        message: 'Which should be the default language of the document?',
+        default: defaultLang
+      }
+    ]).then(answers => {
+      // Save tag
+      prefs.importer.lang = answers.lang
       askDaemon();
     });
   });
@@ -310,7 +345,7 @@ const importFile = (file, remove, resolve) => {
       url: prefs.importer.baseUrl + '/api/document',
       form: qs.stringify({
         title: file.replace(/^.*[\\\/]/, '').substring(0, 100),
-        language: 'eng',
+        language: prefs.importer.lang,
         tags: foundtags
       })
     }, function (error, response, body) {
@@ -350,7 +385,8 @@ if (argv.hasOwnProperty('d')) {
     'Username: ' + prefs.importer.username + '\n' +
     'Password: ***********\n' +
     'Tag: ' + prefs.importer.tag + '\n' +
-    'Daemon mode: ' + prefs.importer.daemon);
+    'Daemon mode: ' + prefs.importer.daemon + '\n' +
+    'Language: ' + prefs.importer.lang);
   start();
 } else {
   askBaseUrl();
