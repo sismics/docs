@@ -27,6 +27,15 @@ Daemon mode
 -----------
 The daemon mode scan the input directory every 30 seconds for new files. Once a file is found and imported, it is **deleted**.
 
+Docker
+------
+The docker image needs a volume mount of a previously generated preference file to `/root/.config/preferences/com.sismics.docs.importer.pref`. The container will start the importer in daemon mode. It will look for files in `/import`.
+Example usage:
+```docker
+docker build -t teedy-import .
+docker run --name teedy-import -d -v /path/to/preferencefile:/root/.config/preferences/com.sismics.docs.importer.pref teedy-import
+```
+
 Build from sources
 ------------------
 ```console
