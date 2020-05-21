@@ -185,10 +185,31 @@ const askTag = () => {
       // Save tag
       prefs.importer.tag = answers.tag === 'No tag' ?
         '' : _.findWhere(tags, { name: answers.tag }).id;
-      askLang();
+      askAddTag();
     });
   });
 };
+
+
+const askAddTag = () => {
+  console.log('');
+
+  inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'addtags',
+      message: 'Do you want to add tags from the filename given with # ?',
+      default: prefs.importer.addtags === true
+    }
+  ]).then(answers => {
+    // Save daemon
+    prefs.importer.addtags = answers.addtags;
+
+    // Save all preferences in case the program is sig-killed
+    askLang();
+  });
+}
+
 
 const askLang = () => {
   console.log('');
@@ -345,8 +366,8 @@ const importFile = (file, remove, resolve) => {
       url: prefs.importer.baseUrl + '/api/document',
       form: qs.stringify({
         title: file.replace(/^.*[\\\/]/, '').substring(0, 100),
-        language: prefs.importer.lang,
-        tags: foundtags
+        language: !prefs.importer.lang ? 'eng' : prefs.importer.lang,
+        tags: !prefs.importer.addtags ? foundtags : undefined
       })
     }, function (error, response, body) {
       if (error || !response || response.statusCode !== 200) {
@@ -385,8 +406,10 @@ if (argv.hasOwnProperty('d')) {
     'Username: ' + prefs.importer.username + '\n' +
     'Password: ***********\n' +
     'Tag: ' + prefs.importer.tag + '\n' +
-    'Daemon mode: ' + prefs.importer.daemon + '\n' +
-    'Language: ' + prefs.importer.lang);
+    'Add tags given #: ' + prefs.importer.addtags + '\n' +
+    'Language: ' + prefs.importer.lang + '\n' +
+    'Daemon mode: ' + prefs.importer.daemon
+    );
   start();
 } else {
   askBaseUrl();
