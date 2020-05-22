@@ -10,6 +10,7 @@ const _ = require('underscore');
 const request = require('request').defaults({
   jar: true
 });
+const qs = require('querystring');
 
 // Load preferences
 const prefs = new preferences('com.sismics.docs.importer',{
@@ -176,7 +177,7 @@ const askTag = () => {
       {
         type: 'list',
         name: 'tag',
-        message: 'Which tag to add on imported documents?',
+        message: 'Which tag to add to all imported documents?',
         default: defaultTagName,
         choices: [ 'No tag' ].concat(_.pluck(tags, 'name'))
       }
@@ -184,6 +185,62 @@ const askTag = () => {
       // Save tag
       prefs.importer.tag = answers.tag === 'No tag' ?
         '' : _.findWhere(tags, { name: answers.tag }).id;
+      askAddTag();
+    });
+  });
+};
+
+
+const askAddTag = () => {
+  console.log('');
+
+  inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'addtags',
+      message: 'Do you want to add tags from the filename given with # ?',
+      default: prefs.importer.addtags === true
+    }
+  ]).then(answers => {
+    // Save daemon
+    prefs.importer.addtags = answers.addtags;
+
+    // Save all preferences in case the program is sig-killed
+    askLang();
+  });
+}
+
+
+const askLang = () => {
+  console.log('');
+
+  // Load tags
+  const spinner = ora({
+    text: 'Loading default language',
+    spinner: 'flips'
+  }).start();
+
+  request.get({
+    url: prefs.importer.baseUrl + '/api/app',
+  }, function (error, response, body) {
+    if (error || !response || response.statusCode !== 200) {
+      spinner.fail('Connection to Teedy failed: ' + error);
+      askLang();
+      return;
+    }
+    spinner.succeed('Language loaded');
+    const defaultLang = prefs.importer.lang ? prefs.importer.lang : JSON.parse(body).default_language;
+
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'lang',
+        message: 'Which should be the default language of the document?',
+        default: defaultLang
+      }
+    ]).then(answers => {
+      // Save tag
+      prefs.importer.lang = answers.lang
       askDaemon();
     });
   });
@@ -270,37 +327,83 @@ const importFile = (file, remove, resolve) => {
     spinner: 'flips'
   }).start();
 
-  request.put({
-    url: prefs.importer.baseUrl + '/api/document',
-    form: {
-      title: file.replace(/^.*[\\\/]/, '').substring(0, 100),
-      language: 'eng',
-      tags: prefs.importer.tag === '' ? undefined : prefs.importer.tag
-    }
-  }, function (error, response, body) {
+  // Remove path of file
+  let filename = file.replace(/^.*[\\\/]/, '');
+
+  // Get Tags given as hashtags from filename
+  let taglist = filename.match(/#[^\s:#]+/mg);
+  taglist = taglist ? taglist.map(s => s.substr(1)) : [];
+  
+  // Get available tags and UUIDs from server
+  request.get({
+      url: prefs.importer.baseUrl + '/api/tag/list',
+    }, function (error, response, body) {
     if (error || !response || response.statusCode !== 200) {
-      spinner.fail('Upload failed for ' + file + ': ' + error);
-      resolve();
+      spinner.fail('Error loading tags');
       return;
     }
+    
+    let tagsarray = {};
+    for (let l of JSON.parse(body).tags) {
+      tagsarray[l.name] = l.id;
+    }
 
-    request.put({
-      url: prefs.importer.baseUrl + '/api/file',
-      formData: {
-        id: JSON.parse(body).id,
-        file: fs.createReadStream(file)
+    // Intersect tags from filename with existing tags on server
+    let foundtags = [];
+    for (let j of taglist) {
+      if (tagsarray.hasOwnProperty(j) && !foundtags.includes(tagsarray[j])) {
+        foundtags.push(tagsarray[j]);
+        filename = filename.split('#'+j).join('');
       }
-    }, function (error, response) {
+    }
+    if (prefs.importer.tag !== '' && !foundtags.includes(prefs.importer.tag)){
+      foundtags.push(prefs.importer.tag);
+    }
+    
+    let data = {}
+    if (prefs.importer.addtags) {
+      data = {
+        title: prefs.importer.addtags ? filename : file.replace(/^.*[\\\/]/, '').substring(0, 100),
+        language: prefs.importer.lang || 'eng',
+        tags: foundtags 
+      }
+    }
+    else {
+      data = {
+        title: prefs.importer.addtags ? filename : file.replace(/^.*[\\\/]/, '').substring(0, 100),
+        language: prefs.importer.lang || 'eng'
+      }
+    }
+    // Create document
+    request.put({
+      url: prefs.importer.baseUrl + '/api/document',
+      form: qs.stringify(data)
+    }, function (error, response, body) {
       if (error || !response || response.statusCode !== 200) {
         spinner.fail('Upload failed for ' + file + ': ' + error);
         resolve();
         return;
       }
-      spinner.succeed('Upload successful for ' + file);
-      if (remove) {
-        fs.unlinkSync(file);
-      }
-      resolve();
+      
+      // Upload file
+      request.put({
+        url: prefs.importer.baseUrl + '/api/file',
+        formData: {
+          id: JSON.parse(body).id,
+          file: fs.createReadStream(file)
+        }
+      }, function (error, response) {
+        if (error || !response || response.statusCode !== 200) {
+          spinner.fail('Upload failed for ' + file + ': ' + error);
+          resolve();
+          return;
+        }
+        spinner.succeed('Upload successful for ' + file);
+        if (remove) {
+          fs.unlinkSync(file);
+        }
+        resolve();
+      });
     });
   });
 };
@@ -312,7 +415,10 @@ if (argv.hasOwnProperty('d')) {
     'Username: ' + prefs.importer.username + '\n' +
     'Password: ***********\n' +
     'Tag: ' + prefs.importer.tag + '\n' +
-    'Daemon mode: ' + prefs.importer.daemon);
+    'Add tags given #: ' + prefs.importer.addtags + '\n' +
+    'Language: ' + prefs.importer.lang + '\n' +
+    'Daemon mode: ' + prefs.importer.daemon
+    );
   start();
 } else {
   askBaseUrl();

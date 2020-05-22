@@ -1,6 +1,6 @@
 {
   "name": "teedy-importer",
-  "version": "1.8",
+  "version": "1.8.0",
   "description": "Import files to Teedy",
   "bin": "main.js",
   "scripts": {
@@ -11,6 +11,9 @@
     "url": "git+https://github.com/sismics/docs.git"
   },
   "author": "Benjamin Gamard",
+  "contributors": [
+    "Cornelius Hoffmann <coding@hoffmn.de>"
+  ],
   "license": "GPL-2.0",
   "bugs": {
     "url": "https://github.com/sismics/docs/issues"
@@ -18,9 +21,10 @@
   "homepage": "https://github.com/sismics/docs#readme",
   "dependencies": {
     "inquirer": "^5.1.0",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.5",
     "ora": "^2.0.0",
     "preferences": "^1.0.2",
+    "qs": "^6.9.4",
     "recursive-readdir": "^2.2.2",
     "request": "^2.83.0",
     "underscore": "^1.8.3"
