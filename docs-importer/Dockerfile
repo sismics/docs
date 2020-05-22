@@ -6,7 +6,7 @@ RUN npm install && npm install -g pkg
 RUN pkg -t node14-alpine-x64 .
 
 FROM alpine
-ENV tag= addTags=false lang=eng baseUrl='http://localhost:8080' username=username password=password
+ENV TEEDY_TAG= TEEDY_ADDTAGS=false TEEDY_LANG=eng TEEDY_URL='http://localhost:8080' TEEDY_USERNAME=username TEEDY_PASSWORD=password
 RUN apk add --no-cache \
     libc6-compat \
     libstdc++ 
