@@ -34,7 +34,7 @@ Example usage:
 
 ```docker
 docker build -t teedy-import .
-docker run --name teedy-import -d -v /path/to/preferencefile:/root/.config/preferences/com.sismics.docs.importer.pref teedy-import
+docker run --name teedy-import -d -v /path/to/preferencefile:/root/.config/preferences/com.sismics.docs.importer.pref -v /path/to/import/folder:/import teedy-import
 ```
 ### Environment variables
 Instead of mounting the preferences file, the options can also be set by setting the environment variables `tag`, `addTags`, `lang`, `baseUrl`, `username` and password `password`.
@@ -43,7 +43,7 @@ Example usage:
 
 ```docker
 docker build -t teedy-import .
-docker run --name teedy-import -d -e tag= -e addTags=false -e lang=eng -e baseUrl='http://teedy.example.com:port' -e username=username -e password=superSecretPassword teedy-import
+docker run --name teedy-import -d -e tag= -e addTags=false -e lang=eng -e baseUrl='http://teedy.example.com:port' -e username=username -e password=superSecretPassword -v /path/to/import/folder:/import teedy-import
 ```
 
 ## Build from sources
