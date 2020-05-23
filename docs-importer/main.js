@@ -400,6 +400,10 @@ const importFile = (file, remove, resolve) => {
         }
         spinner.succeed('Upload successful for ' + file);
         if (remove) {
+          if (prefs.importer.copyFolder) {
+            let filename = file.replace(/^.*[\\\/]/, '');
+            fs.copyFileSync(file, prefs.importer.copyFolder + filename);
+          }
           fs.unlinkSync(file);
         }
         resolve();
@@ -417,7 +421,8 @@ if (argv.hasOwnProperty('d')) {
     'Tag: ' + prefs.importer.tag + '\n' +
     'Add tags given #: ' + prefs.importer.addtags + '\n' +
     'Language: ' + prefs.importer.lang + '\n' +
-    'Daemon mode: ' + prefs.importer.daemon
+    'Daemon mode: ' + prefs.importer.daemon + '\n' +
+    'Copy folder: ' + prefs.importer.copyFolder
     );
   start();
 } else {

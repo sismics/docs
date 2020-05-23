@@ -7,3 +7,4 @@ importer:
   baseUrl: 'env4'
   username: 'env5'
   password: 'env6'
+  copyFolder: 'env7'
