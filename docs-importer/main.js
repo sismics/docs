@@ -401,7 +401,6 @@ const importFile = (file, remove, resolve) => {
         spinner.succeed('Upload successful for ' + file);
         if (remove) {
           if (prefs.importer.copyFolder) {
-            let filename = file.replace(/^.*[\\\/]/, '');
             fs.copyFileSync(file, prefs.importer.copyFolder + filename);
           }
           fs.unlinkSync(file);
