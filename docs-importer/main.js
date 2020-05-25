@@ -254,7 +254,7 @@ const askCopyFolder = () => {
       type: 'input',
       name: 'copyFolder',
       message: 'Enter a path to copy files before they are deleted or leave empty to disable.',
-      default: prefs.importer.copyFolder = ""
+      default: prefs.importer.copyFolder
     }
   ]).then(answers => {
     // Save path
