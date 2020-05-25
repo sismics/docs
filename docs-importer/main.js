@@ -251,19 +251,41 @@ const askCopyFolder = () => {
 
   inquirer.prompt([
     {
-      type: 'confirm',
-      name: 'copyfolder',
-      message: 'Enter a path to copy files before they are deleted. (Leave empty to disable)',
-      default: prefs.importer.addtags = ""
+      type: 'input',
+      name: 'copyFolder',
+      message: 'Enter a path to copy files before they are deleted or leave empty to disable.',
+      default: prefs.importer.copyFolder = ""
     }
   ]).then(answers => {
-    // Save daemon
-    prefs.importer.copyFolder = answers.copyfolder;
+    // Save path
+    prefs.importer.copyFolder = answers.copyFolder;
 
-    // Save all preferences in case the program is sig-killed
-    askDaemon();
+    // Test path
+    const spinner = ora({
+      text: 'Checking copy folder path',
+      spinner: 'flips'
+    }).start();
+    fs.lstat(answers.copyFolder, (error, stats) => {
+      if (error || !stats.isDirectory()) {
+        spinner.fail('Please enter a valid directory path');
+        askCopyFolder();
+        return;
+      }
+
+      fs.access(answers.copyFolder, fs.W_OK | fs.R_OK, (error) => {
+        if (error) {
+          spinner.fail('This directory is not writable');
+          askCopyFolder();
+          return;
+        }
+
+        spinner.succeed(answers.copyFolder + ' set!');
+        askDaemon();
+      });
+    });
   });
-}
+};
+
 
 // Ask for daemon mode
 const askDaemon = () => {
