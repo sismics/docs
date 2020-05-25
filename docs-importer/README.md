@@ -25,7 +25,7 @@ For the next start, pass the `-d` argument to skip the wizard:
 
 ## Daemon mode
 
-The daemon mode scan the input directory every 30 seconds for new files. Once a file is found and imported, it is **deleted**. You can set the a `copyFolder` to copy the file to before deletion.
+The daemon mode scan the input directory every 30 seconds for new files. Once a file is found and imported, it is **deleted**. You can set a `copyFolder` to copy the file to before deletion.
 
 ## Docker
 
