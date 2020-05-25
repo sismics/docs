@@ -279,11 +279,12 @@ const askCopyFolder = () => {
           askCopyFolder();
           return;
         }
-        spinner.succeed('Copy folder set!');              
+        spinner.succeed('Copy folder set!');
+        askDaemon();              
       });
     });
   }
-    askDaemon();
+  else {askDaemon();}
   });
 };
 
