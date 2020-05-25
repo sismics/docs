@@ -259,7 +259,8 @@ const askCopyFolder = () => {
   ]).then(answers => {
     // Save path
     prefs.importer.copyFolder = answers.copyFolder;
-
+    
+    if (prefs.importer.copyFolder) {
     // Test path
     const spinner = ora({
       text: 'Checking copy folder path',
@@ -278,11 +279,11 @@ const askCopyFolder = () => {
           askCopyFolder();
           return;
         }
-
-        spinner.succeed('Copy folder set!');
-        askDaemon();
+        spinner.succeed('Copy folder set!');              
       });
     });
+  }
+    askDaemon();
   });
 };
 
