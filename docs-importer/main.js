@@ -279,7 +279,7 @@ const askCopyFolder = () => {
           return;
         }
 
-        spinner.succeed(answers.copyFolder + ' set!');
+        spinner.succeed('Copy folder set!');
         askDaemon();
       });
     });
