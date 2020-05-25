@@ -443,9 +443,10 @@ const importFile = (file, remove, resolve) => {
         spinner.succeed('Upload successful for ' + file);
         if (remove) {
           if (prefs.importer.copyFolder) {
-            fs.copyFileSync(file, prefs.importer.copyFolder + filename);
+            fs.copyFileSync(file, prefs.importer.copyFolder + file.replace(/^.*[\\\/]/, ''));
+            fs.unlinkSync(file);
           }
-          fs.unlinkSync(file);
+          else {fs.unlinkSync(file);}
         }
         resolve();
       });
