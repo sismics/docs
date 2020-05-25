@@ -241,8 +241,50 @@ const askLang = () => {
     ]).then(answers => {
       // Save tag
       prefs.importer.lang = answers.lang
-      askDaemon();
+      askCopyFolder();
     });
+  });
+};
+
+const askCopyFolder = () => {
+  console.log('');
+
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'copyFolder',
+      message: 'Enter a path to copy files before they are deleted or leave empty to disable. The path must end with a \'/\' on MacOS and Linux or with a \'\\\' on Windows. Entering \'undefined\' will disable this again after setting the folder.',
+      default: prefs.importer.copyFolder
+    }
+  ]).then(answers => {
+    // Save path
+    prefs.importer.copyFolder = answers.copyFolder=='undefined' ? '' : answers.copyFolder;
+
+    if (prefs.importer.copyFolder) {
+    // Test path
+    const spinner = ora({
+      text: 'Checking copy folder path',
+      spinner: 'flips'
+    }).start();
+    fs.lstat(answers.copyFolder, (error, stats) => {
+      if (error || !stats.isDirectory()) {
+        spinner.fail('Please enter a valid directory path');
+        askCopyFolder();
+        return;
+      }
+
+      fs.access(answers.copyFolder, fs.W_OK | fs.R_OK, (error) => {
+        if (error) {
+          spinner.fail('This directory is not writable');
+          askCopyFolder();
+          return;
+        }
+        spinner.succeed('Copy folder set!');
+        askDaemon();              
+      });
+    });
+  }
+  else {askDaemon();}
   });
 };
 
@@ -400,7 +442,11 @@ const importFile = (file, remove, resolve) => {
         }
         spinner.succeed('Upload successful for ' + file);
         if (remove) {
-          fs.unlinkSync(file);
+          if (prefs.importer.copyFolder) {
+            fs.copyFileSync(file, prefs.importer.copyFolder + file.replace(/^.*[\\\/]/, ''));
+            fs.unlinkSync(file);
+          }
+          else {fs.unlinkSync(file);}
         }
         resolve();
       });
@@ -417,7 +463,8 @@ if (argv.hasOwnProperty('d')) {
     'Tag: ' + prefs.importer.tag + '\n' +
     'Add tags given #: ' + prefs.importer.addtags + '\n' +
     'Language: ' + prefs.importer.lang + '\n' +
-    'Daemon mode: ' + prefs.importer.daemon
+    'Daemon mode: ' + prefs.importer.daemon + '\n' +
+    'Copy folder: ' + prefs.importer.copyFolder
     );
   start();
 } else {
