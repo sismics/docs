@@ -241,10 +241,29 @@ const askLang = () => {
     ]).then(answers => {
       // Save tag
       prefs.importer.lang = answers.lang
-      askDaemon();
+      askCopyFolder();
     });
   });
 };
+
+const askCopyFolder = () => {
+  console.log('');
+
+  inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'copyfolder',
+      message: 'Enter a path to copy files before they are deleted. (Leave empty to disable)',
+      default: prefs.importer.addtags = ""
+    }
+  ]).then(answers => {
+    // Save daemon
+    prefs.importer.copyFolder = answers.copyfolder;
+
+    // Save all preferences in case the program is sig-killed
+    askDaemon();
+  });
+}
 
 // Ask for daemon mode
 const askDaemon = () => {
