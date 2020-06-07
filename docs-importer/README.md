@@ -25,7 +25,7 @@ For the next start, pass the `-d` argument to skip the wizard:
 
 ## Daemon mode
 
-The daemon mode scan the input directory every 30 seconds for new files. Once a file is found and imported, it is **deleted**.
+The daemon mode scan the input directory every 30 seconds for new files. Once a file is found and imported, it is **deleted**. You can set a `copyFolder` to copy the file to before deletion.
 
 ## Docker
 
@@ -37,7 +37,7 @@ docker build -t teedy-import .
 docker run --name teedy-import -d -v /path/to/preferencefile:/root/.config/preferences/com.sismics.docs.importer.pref -v /path/to/import/folder:/import teedy-import
 ```
 ### Environment variables
-Instead of mounting the preferences file, the options can also be set by setting the environment variables `TEEDY_TAG`, `TEEDY_ADDTAGS`, `TEEDY_LANG`, `TEEDY_URL`, `TEEDY_USERNAME` and `TEEDY_PASSWORD`.
+Instead of mounting the preferences file, the options can also be set by setting the environment variables `TEEDY_TAG`, `TEEDY_ADDTAGS`, `TEEDY_LANG`, `TEEDY_COPYFOLDER`, `TEEDY_URL`, `TEEDY_USERNAME` and `TEEDY_PASSWORD`.
 The latter three have to be set for the importer to work. The value of `TEEDY_TAG` has to be set to the UUID of the tag, not the name (The UUID can be found by visiting `baseUrl/api/tag/list` in your browser).
 Example usage:
 
