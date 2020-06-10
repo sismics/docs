@@ -209,7 +209,9 @@ public class RouteResource extends BaseResource {
         routeStepDao.endRouteStep(routeStepDto.getId(), routeStepTransition, comment, principal.getId());
         RouteStepDto newRouteStep = routeStepDao.getCurrentStep(documentId);
         RoutingUtil.updateAcl(documentId, newRouteStep, routeStepDto, principal.getId());
-        RoutingUtil.sendRouteStepEmail(documentId, routeStepDto);
+        if (newRouteStep != null) {
+            RoutingUtil.sendRouteStepEmail(documentId, newRouteStep);
+        }
 
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("readable", aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(null)));
