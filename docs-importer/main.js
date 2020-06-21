@@ -413,7 +413,8 @@ const importFile = (file, remove, resolve) => {
     else {
       data = {
         title: prefs.importer.addtags ? filename : file.replace(/^.*[\\\/]/, '').substring(0, 100),
-        language: prefs.importer.lang || 'eng'
+        language: prefs.importer.lang || 'eng',
+        tags: prefs.importer.tag === '' ? undefined : prefs.importer.tag
       }
     }
     // Create document
