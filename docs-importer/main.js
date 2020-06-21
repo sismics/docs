@@ -158,12 +158,12 @@ const askFileFilter = () => {
     {
       type: 'input',
       name: 'fileFilter',
-      message: 'What pattern do you want to use to match files? (eg. *.+(pdf|txt|jpg) - defaults to *)',
-      default: prefs.importer.fileFilter
+      message: 'What pattern do you want to use to match files? (eg. *.+(pdf|txt|jpg))',
+      default: prefs.importer.fileFilter || "*"
     }
   ]).then(answers => {
     // Save fileFilter
-    prefs.importer.fileFilter = answers.fileFilter  ? answers.fileFilter : '*';
+    prefs.importer.fileFilter = answers.fileFilter;
 
     askTag();
   });
