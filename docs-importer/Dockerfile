@@ -1,6 +1,5 @@
 FROM node:14.2-alpine AS builder
 WORKDIR /build
-COPY node_modules/ ./node_modules/
 COPY main.js package-lock.json package.json ./
 RUN npm install && npm install -g pkg
 RUN pkg -t node14-alpine-x64 .
