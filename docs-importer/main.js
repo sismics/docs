@@ -142,10 +142,29 @@ const askPath = () => {
 
         recursive(answers.path, function (error, files) {
           spinner.succeed(files.length + ' files in this directory');
-          askTag();
+          askFileFilter();
         });
       });
     });
+  });
+};
+
+// Ask for the file filter
+const askFileFilter = () => {
+  console.log('');
+
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'fileFilter',
+      message: 'What pattern do you want to use to match files? (eg. *.+(pdf|txt|jpg) - defaults to *)',
+      default: prefs.importer.fileFilter
+    }
+  ]).then(answers => {
+    // Save fileFilter
+    prefs.importer.fileFilter = answers.fileFilter  ? answers.fileFilter : '*';
+
+    askTag();
   });
 };
 
@@ -464,7 +483,8 @@ if (argv.hasOwnProperty('d')) {
     'Add tags given #: ' + prefs.importer.addtags + '\n' +
     'Language: ' + prefs.importer.lang + '\n' +
     'Daemon mode: ' + prefs.importer.daemon + '\n' +
-    'Copy folder: ' + prefs.importer.copyFolder
+    'Copy folder: ' + prefs.importer.copyFolder + '\n' +
+    'File filter: ' + prefs.importer.fileFilter
     );
   start();
 } else {
