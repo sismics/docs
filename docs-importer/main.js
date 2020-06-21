@@ -1,6 +1,7 @@
 'use strict';
 
 const recursive = require('recursive-readdir');
+const minimatch = require("minimatch");
 const ora = require('ora');
 const inquirer = require('inquirer');
 const preferences = require('preferences');
@@ -363,6 +364,8 @@ const start = () => {
 // Import the files
 const importFiles = (remove, filesImported) => {
   recursive(prefs.importer.path, function (error, files) {
+
+    files = files.filter(minimatch.filter(prefs.importer.fileFilter ?? "*", {matchBase: true}));
     if (files.length === 0) {
       filesImported();
       return;
