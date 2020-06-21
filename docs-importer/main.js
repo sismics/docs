@@ -393,6 +393,12 @@ const importFile = (file, remove, resolve) => {
     // Intersect tags from filename with existing tags on server
     let foundtags = [];
     for (let j of taglist) {
+      // If the tag is last in the filename it could include a file extension and would not be recognized
+      if (j.includes('.') && !tagsarray.hasOwnProperty(j) && !foundtags.includes(tagsarray[j])) {
+        while (j.includes('.') && !tagsarray.hasOwnProperty(j)) {
+          j = j.replace(/\.[^.]*$/,'');
+        }
+      }
       if (tagsarray.hasOwnProperty(j) && !foundtags.includes(tagsarray[j])) {
         foundtags.push(tagsarray[j]);
         filename = filename.split('#'+j).join('');
