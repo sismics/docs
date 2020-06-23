@@ -1,6 +1,7 @@
 'use strict';
 
 const recursive = require('recursive-readdir');
+const minimatch = require("minimatch");
 const ora = require('ora');
 const inquirer = require('inquirer');
 const preferences = require('preferences');
@@ -142,10 +143,29 @@ const askPath = () => {
 
         recursive(answers.path, function (error, files) {
           spinner.succeed(files.length + ' files in this directory');
-          askTag();
+          askFileFilter();
         });
       });
     });
+  });
+};
+
+// Ask for the file filter
+const askFileFilter = () => {
+  console.log('');
+
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'fileFilter',
+      message: 'What pattern do you want to use to match files? (eg. *.+(pdf|txt|jpg))',
+      default: prefs.importer.fileFilter || "*"
+    }
+  ]).then(answers => {
+    // Save fileFilter
+    prefs.importer.fileFilter = answers.fileFilter;
+
+    askTag();
   });
 };
 
@@ -344,6 +364,8 @@ const start = () => {
 // Import the files
 const importFiles = (remove, filesImported) => {
   recursive(prefs.importer.path, function (error, files) {
+
+    files = files.filter(minimatch.filter(prefs.importer.fileFilter ?? "*", {matchBase: true}));
     if (files.length === 0) {
       filesImported();
       return;
@@ -471,7 +493,8 @@ if (argv.hasOwnProperty('d')) {
     'Add tags given #: ' + prefs.importer.addtags + '\n' +
     'Language: ' + prefs.importer.lang + '\n' +
     'Daemon mode: ' + prefs.importer.daemon + '\n' +
-    'Copy folder: ' + prefs.importer.copyFolder
+    'Copy folder: ' + prefs.importer.copyFolder + '\n' +
+    'File filter: ' + prefs.importer.fileFilter
     );
   start();
 } else {

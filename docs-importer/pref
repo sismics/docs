@@ -8,3 +8,4 @@ importer:
   username: 'env5'
   password: 'env6'
   copyFolder: 'env7'
+  fileFilter: 'env8'
