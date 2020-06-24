@@ -29,12 +29,11 @@ The daemon mode scan the input directory every 30 seconds for new files. Once a 
 
 ## Docker
 
-The docker image needs a volume mount of a previously generated preference file to `/root/.config/preferences/com.sismics.docs.importer.pref`. The container will start the importer in daemon mode. It will look for files in `/import`.
+The docker image needs a volume mounted from a previously generated preference file at `/root/.config/preferences/com.sismics.docs.importer.pref`. The container will start the importer in daemon mode. It will look for files in `/import`.
 Example usage:
 
 ```
-docker build -t teedy-import .
-docker run --name teedy-import -d -v /path/to/preferencefile:/root/.config/preferences/com.sismics.docs.importer.pref -v /path/to/import/folder:/import teedy-import
+docker run --name teedy-import -d -v /path/to/preferencefile:/root/.config/preferences/com.sismics.docs.importer.pref -v /path/to/import/folder:/import sismics/docs-importer:latest
 ```
 ### Environment variables
 Instead of mounting the preferences file, the options can also be set by setting the environment variables `TEEDY_TAG`, `TEEDY_ADDTAGS`, `TEEDY_LANG`, `TEEDY_COPYFOLDER`, `TEEDY_FILEFILTER`, `TEEDY_URL`, `TEEDY_USERNAME` and `TEEDY_PASSWORD`.
@@ -42,8 +41,7 @@ The latter three have to be set for the importer to work. The value of `TEEDY_TA
 Example usage:
 
 ```
-docker build -t teedy-import .
-docker run --name teedy-import -d -e TEEDY_TAG=2071fdf7-0e26-409d-b53d-f25823a5eb9e -e TEEDY_ADDTAGS=false -e TEEDY_LANG=eng -e TEEDY_URL='http://teedy.example.com:port' -e TEEDY_USERNAME=username -e TEEDY_PASSWORD=superSecretPassword -v /path/to/import/folder:/import teedy-import
+docker run --name teedy-import -d -e TEEDY_TAG=2071fdf7-0e26-409d-b53d-f25823a5eb9e -e TEEDY_ADDTAGS=false -e TEEDY_LANG=eng -e TEEDY_URL='http://teedy.example.com:port' -e TEEDY_USERNAME=username -e TEEDY_PASSWORD=superSecretPassword -v /path/to/import/folder:/import sismics/docs-importer:latest
 ```
 
 ## Build from sources
