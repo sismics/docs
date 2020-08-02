@@ -527,7 +527,8 @@ angular.module('docs',
     { key: 'hun', label: 'Magyar' },
     { key: 'fin', label: 'Suomi' },
     { key: 'swe', label: 'Svenska' },
-    { key: 'lav', label: 'Latviešu' }  
+    { key: 'lav', label: 'Latviešu' },
+    { key: 'dan', label: 'Dansk' }
   ];
 })
 /**
