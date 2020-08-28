@@ -278,7 +278,21 @@
     "menu_vocabularies": "Vocabulaires",
     "menu_configuration": "Configuration",
     "menu_inbox": "Scanning de boîte de réception",
+    "menu_ldap": "Authentification LDAP",
     "menu_monitoring": "Monitoring",
+    "ldap": {
+      "title": "Authentification LDAP",
+      "enabled": "Activer l'authentication LDAP",
+      "host": "Hôte LDAP",
+      "port": "Port LDAP (389 par défaut)",
+      "admin_dn": "DN administrateur",
+      "admin_password": "Mot de passe administrateur",
+      "base_dn": "DN de recherche",
+      "filter": "Filtre de recherche (doit contenir USERNAME, cf. \"(uid=USERNAME)\")",
+      "default_email": "Email par défaut pour les utilisateurs LDAP",
+      "default_storage": "Stockage par défaut pour les utilisateurs LDAP",
+      "saved": "Configuration IMAP sauvegardée avec succès"
+    },
     "user": {
       "title": "Gestion des utilisateurs",
       "add_user": "Ajouter un utilisateur",

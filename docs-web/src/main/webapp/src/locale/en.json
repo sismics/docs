@@ -278,8 +278,22 @@
     "menu_vocabularies": "Vocabularies",
     "menu_configuration": "Configuration",
     "menu_inbox": "Inbox scanning",
+    "menu_ldap": "LDAP authentication",
     "menu_metadata": "Custom metadata",
     "menu_monitoring": "Monitoring",
+    "ldap": {
+      "title": "LDAP authentication",
+      "enabled": "Enable LDAP authentication",
+      "host": "LDAP hostname",
+      "port": "LDAP port (389 by default)",
+      "admin_dn": "Admin DN",
+      "admin_password": "Admin password",
+      "base_dn": "Base search DN",
+      "filter": "Search filter (must contains USERNAME, eg. \"(uid=USERNAME)\")",
+      "default_email": "Default email for LDAP user",
+      "default_storage": "Default storage for LDAP user",
+      "saved": "LDAP configuration saved successfully"
+    },
     "user": {
       "title": "Users management",
       "add_user": "Add a user",

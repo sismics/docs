@@ -50,6 +50,7 @@
     <com.sun.mail.javax.mail.version>1.6.2</com.sun.mail.javax.mail.version>
     <org.jsoup.jsoup.version>1.11.3</org.jsoup.jsoup.version>
     <com.squareup.okhttp3.okhttp.version>3.11.0</com.squareup.okhttp3.okhttp.version>
+    <org.apache.directory.server.apacheds-all.version>2.0.0-M17</org.apache.directory.server.apacheds-all.version>
 
     <org.eclipse.jetty.jetty-server.version>9.4.17.v20190418</org.eclipse.jetty.jetty-server.version>
     <org.eclipse.jetty.jetty-webapp.version>9.4.17.v20190418</org.eclipse.jetty.jetty-webapp.version>
@@ -457,6 +458,12 @@
         <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
         <version>${org.postgresql.postgresql.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.directory.server</groupId>
+        <artifactId>apacheds-all</artifactId>
+        <version>${org.apache.directory.server.apacheds-all.version}</version>
       </dependency>
 
       <!-- Servlet listener to register SPI ImageIO plugins -->

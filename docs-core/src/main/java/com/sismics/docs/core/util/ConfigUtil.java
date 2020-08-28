@@ -51,6 +51,19 @@ public class ConfigUtil {
     }
 
     /**
+     * Returns the long value of a configuration parameter.
+     *
+     * @param configType Type of the configuration parameter
+     * @return Long value of the configuration parameter
+     * @throws IllegalStateException Configuration parameter undefined
+     */
+    public static long getConfigLongValue(ConfigType configType) {
+        String value = getConfigStringValue(configType);
+
+        return Long.parseLong(value);
+    }
+
+    /**
      * Returns the boolean value of a configuration parameter.
      * 
      * @param configType Type of the configuration parameter

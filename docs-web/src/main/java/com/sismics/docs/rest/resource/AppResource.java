@@ -14,6 +14,7 @@ import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.service.InboxService;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.DirectoryUtil;
+import com.sismics.docs.core.util.authentication.LdapAuthenticationHandler;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.rest.constant.BaseFunction;
@@ -695,5 +696,139 @@ public class AppResource extends BaseResource {
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
         return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Get the LDAP authentication configuration.
+     *
+     * @api {get} /app/config_ldap Get the LDAP authentication configuration
+     * @apiName GetAppConfigLdap
+     * @apiGroup App
+     * @apiSuccess {Boolean} enabled LDAP authentication enabled
+     * @apiSuccess {String} host LDAP server host
+     * @apiSuccess {Integer} port LDAP server port
+     * @apiSuccess {String} admin_dn Admin DN
+     * @apiSuccess {String} admin_password Admin password
+     * @apiSuccess {String} base_dn Base DN
+     * @apiSuccess {String} filter LDAP filter
+     * @apiSuccess {String} default_email LDAP default email
+     * @apiSuccess {Integer} default_storage LDAP default storage
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.9.0
+     *
+     * @return Response
+     */
+    @GET
+    @Path("config_ldap")
+    public Response getConfigLdap() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        ConfigDao configDao = new ConfigDao();
+        Config enabled = configDao.getById(ConfigType.LDAP_ENABLED);
+
+        JsonObjectBuilder response = Json.createObjectBuilder();
+        if (enabled != null && Boolean.parseBoolean(enabled.getValue())) {
+            // LDAP enabled
+            response.add("enabled", true)
+                    .add("host", ConfigUtil.getConfigStringValue(ConfigType.LDAP_HOST))
+                    .add("port", ConfigUtil.getConfigIntegerValue(ConfigType.LDAP_PORT))
+                    .add("admin_dn", ConfigUtil.getConfigStringValue(ConfigType.LDAP_ADMIN_DN))
+                    .add("admin_password", ConfigUtil.getConfigStringValue(ConfigType.LDAP_ADMIN_PASSWORD))
+                    .add("base_dn", ConfigUtil.getConfigStringValue(ConfigType.LDAP_BASE_DN))
+                    .add("filter", ConfigUtil.getConfigStringValue(ConfigType.LDAP_FILTER))
+                    .add("default_email", ConfigUtil.getConfigStringValue(ConfigType.LDAP_DEFAULT_EMAIL))
+                    .add("default_storage", ConfigUtil.getConfigLongValue(ConfigType.LDAP_DEFAULT_STORAGE));
+        } else {
+            // LDAP disabled
+            response.add("enabled", false);
+        }
+
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Configure the LDAP authentication.
+     *
+     * @api {post} /app/config_ldap Configure the LDAP authentication
+     * @apiName PostAppConfigLdap
+     * @apiGroup App
+     * @apiParam {Boolean} enabled LDAP authentication enabled
+     * @apiParam {String} host LDAP server host
+     * @apiParam {Integer} port LDAP server port
+     * @apiParam {String} admin_dn Admin DN
+     * @apiParam {String} admin_password Admin password
+     * @apiParam {String} base_dn Base DN
+     * @apiParam {String} filter LDAP filter
+     * @apiParam {String} default_email LDAP default email
+     * @apiParam {Integer} default_storage LDAP default storage
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission admin
+     * @apiVersion 1.9.0
+     *
+     * @param enabled LDAP authentication enabled
+     * @param host LDAP server host
+     * @param portStr LDAP server port
+     * @param adminDn Admin DN
+     * @param adminPassword Admin password
+     * @param baseDn Base DN
+     * @param filter LDAP filter
+     * @param defaultEmail LDAP default email
+     * @param defaultStorageStr LDAP default storage
+     * @return Response
+     */
+    @POST
+    @Path("config_ldap")
+    public Response configLdap(@FormParam("enabled") Boolean enabled,
+                               @FormParam("host") String host,
+                               @FormParam("port") String portStr,
+                               @FormParam("admin_dn") String adminDn,
+                               @FormParam("admin_password") String adminPassword,
+                               @FormParam("base_dn") String baseDn,
+                               @FormParam("filter") String filter,
+                               @FormParam("default_email") String defaultEmail,
+                               @FormParam("default_storage") String defaultStorageStr) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        ConfigDao configDao = new ConfigDao();
+
+        if (enabled != null && enabled) {
+            // LDAP enabled, validate everything
+            ValidationUtil.validateLength(host, "host", 1, 250);
+            ValidationUtil.validateInteger(portStr, "port");
+            ValidationUtil.validateLength(adminDn, "admin_dn", 1, 250);
+            ValidationUtil.validateLength(adminPassword, "admin_password", 1, 250);
+            ValidationUtil.validateLength(baseDn, "base_dn", 1, 250);
+            ValidationUtil.validateLength(filter, "filter", 1, 250);
+            if (!filter.contains("USERNAME")) {
+                throw new ClientException("ValidationError", "'filter' must contains 'USERNAME'");
+            }
+            ValidationUtil.validateLength(defaultEmail, "default_email", 1, 250);
+            ValidationUtil.validateLong(defaultStorageStr, "default_storage");
+            configDao.update(ConfigType.LDAP_ENABLED, Boolean.TRUE.toString());
+            configDao.update(ConfigType.LDAP_HOST, host);
+            configDao.update(ConfigType.LDAP_PORT, portStr);
+            configDao.update(ConfigType.LDAP_ADMIN_DN, adminDn);
+            configDao.update(ConfigType.LDAP_ADMIN_PASSWORD, adminPassword);
+            configDao.update(ConfigType.LDAP_BASE_DN, baseDn);
+            configDao.update(ConfigType.LDAP_FILTER, filter);
+            configDao.update(ConfigType.LDAP_DEFAULT_EMAIL, defaultEmail);
+            configDao.update(ConfigType.LDAP_DEFAULT_STORAGE, defaultStorageStr);
+        } else {
+            // LDAP disabled
+            configDao.update(ConfigType.LDAP_ENABLED, Boolean.FALSE.toString());
+        }
+
+        // Reset the LDAP pool to reconnect with the new configuration
+        LdapAuthenticationHandler.reset();
+
+        return Response.ok().build();
     }
 }

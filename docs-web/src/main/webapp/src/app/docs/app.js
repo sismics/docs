@@ -244,6 +244,15 @@ angular.module('docs',
         }
       }
     })
+    .state('settings.ldap', {
+      url: '/ldap',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.ldap.html',
+          controller: 'SettingsLdap'
+        }
+      }
+    })
     .state('document', {
       url: '/document',
       abstract: true,
