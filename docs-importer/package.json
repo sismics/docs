@@ -26,6 +26,7 @@
     "preferences": "^1.0.2",
     "qs": "^6.9.4",
     "recursive-readdir": "^2.2.2",
+    "minimatch": "^3.0.4",
     "request": "^2.83.0",
     "underscore": "^1.8.3"
   }

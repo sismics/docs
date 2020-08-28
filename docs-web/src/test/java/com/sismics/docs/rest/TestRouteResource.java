@@ -226,7 +226,7 @@ public class TestRouteResource extends BaseJerseyTest {
                         .param("transition", "APPROVED")), JsonObject.class);
         Assert.assertFalse(json.containsKey("route_step"));
         Assert.assertTrue(json.getBoolean("readable")); // Admin can read everything
-        Assert.assertTrue(popEmail().contains("workflow step"));
+        Assert.assertNull(popEmail()); // Last step does not send any email
 
         // Get the route on document 1
         json = target().path("/route")

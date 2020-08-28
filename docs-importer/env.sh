@@ -7,4 +7,5 @@ sed -i "s,env4,$TEEDY_URL,g" $file
 sed -i "s/env5/$TEEDY_USERNAME/g" $file
 sed -i "s/env6/$TEEDY_PASSWORD/g" $file
 sed -i "s,env7,$TEEDY_COPYFOLDER,g" $file
+sed -i "s,env8,$TEEDY_FILEFILTER,g" $file
 echo "Environment variables replaced"
