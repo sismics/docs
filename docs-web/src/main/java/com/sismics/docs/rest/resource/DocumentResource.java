@@ -455,8 +455,8 @@ public class DocumentResource extends BaseResource {
         for (String criteria : criteriaList) {
             String[] params = criteria.split(":");
             if (params.length != 2 || Strings.isNullOrEmpty(params[0]) || Strings.isNullOrEmpty(params[1])) {
-                // This is not a special criteria
-                query.add(criteria);
+                // This is not a special criteria, do a fulltext search on it
+                fullQuery.add(criteria);
                 continue;
             }
 
@@ -588,12 +588,16 @@ public class DocumentResource extends BaseResource {
                     // New shared state criteria
                     documentCriteria.setActiveRoute(params[1].equals("me"));
                     break;
+                case "simple":
+                    // New simple search criteria
+                    query.add(params[1]);
+                    break;
                 case "full":
-                    // New full content search criteria
+                    // New fulltext search criteria
                     fullQuery.add(params[1]);
                     break;
                 default:
-                    query.add(criteria);
+                    fullQuery.add(criteria);
                     break;
             }
         }
