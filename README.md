@@ -28,6 +28,7 @@ Features
 
 - Responsive user interface
 - Optical character recognition
+- LDAP authentication ![New!](https://www.sismics.com/public/img/new.png)
 - Support image, PDF, ODT, DOCX, PPTX files
 - Video file support
 - Flexible search engine with suggestions and highlighting
