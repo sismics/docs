@@ -133,14 +133,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.directory.server</groupId>
-      <artifactId>apacheds-core</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>bouncycastle</groupId>
-          <artifactId>bcprov-jdk15</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.apache.directory.api</groupId>
+      <artifactId>api-all</artifactId>
     </dependency>
 
     <!-- Only there to read old index and rebuild them -->

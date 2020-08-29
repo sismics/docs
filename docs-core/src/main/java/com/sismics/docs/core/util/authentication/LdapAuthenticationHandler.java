@@ -17,7 +17,7 @@ import org.apache.directory.api.ldap.model.message.SearchScope;
 import org.apache.directory.ldap.client.api.DefaultLdapConnectionFactory;
 import org.apache.directory.ldap.client.api.LdapConnectionConfig;
 import org.apache.directory.ldap.client.api.LdapConnectionPool;
-import org.apache.directory.ldap.client.api.PoolableLdapConnectionFactory;
+import org.apache.directory.ldap.client.api.ValidatingPoolableLdapConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +74,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         GenericObjectPool.Config poolConfig = new GenericObjectPool.Config();
         poolConfig.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_GROW;
         poolConfig.maxWait = 500;
-        pool = new LdapConnectionPool(new PoolableLdapConnectionFactory(factory), poolConfig);
+        pool = new LdapConnectionPool(new ValidatingPoolableLdapConnectionFactory(factory), poolConfig);
     }
 
     @Override
