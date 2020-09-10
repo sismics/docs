@@ -114,7 +114,7 @@ public class FileProcessingAsyncListener {
             }
 
             freshFile.setContent(content);
-            fileDao.updateContent(freshFile);
+            fileDao.update(freshFile);
 
             // Update index with the updated file
             if (isFileCreated) {

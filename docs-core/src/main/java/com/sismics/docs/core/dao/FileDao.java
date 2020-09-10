@@ -154,14 +154,6 @@ public class FileDao {
         return file;
     }
 
-    public void updateContent(File file) {
-        EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query query = em.createNativeQuery("update T_FILE f set FIL_CONTENT_C = :content where f.FIL_ID_C = :id");
-        query.setParameter("content", file.getContent());
-        query.setParameter("id", file.getId());
-        query.executeUpdate();
-    }
-
     /**
      * Gets a file by its ID.
      * 
