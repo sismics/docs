@@ -1,7 +1,7 @@
 <div>
   <ul class="list-inline">
     <li ng-repeat="tag in tags">
-      <span class="label label-info" ng-style="{ 'background': tag.color }">{{ tag.name }}
+      <span class="label label-info" ng-style="{ 'background': tag.color }" invert-text-color="{{ tag.color }}">{{ tag.name }}
         <span class="fas fa-times" ng-click="deleteTag(tag)" ng-show="!ngDisabled"></span>
       </span>
     </li>

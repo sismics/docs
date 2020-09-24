@@ -140,9 +140,12 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(2, files.size());
         Assert.assertEquals(file1Id, files.getJsonObject(0).getString("id"));
         Assert.assertEquals("PIA00452.jpg", files.getJsonObject(0).getString("name"));
+        Assert.assertEquals("image/jpeg", files.getJsonObject(0).getString("mimetype"));
+        Assert.assertEquals(0, files.getJsonObject(0).getInt("version"));
         Assert.assertEquals(163510L, files.getJsonObject(0).getJsonNumber("size").longValue());
         Assert.assertEquals(file2Id, files.getJsonObject(1).getString("id"));
         Assert.assertEquals("PIA00452.jpg", files.getJsonObject(1).getString("name"));
+        Assert.assertEquals(0, files.getJsonObject(1).getInt("version"));
 
         // Rename a file
         target().path("file/" + file1Id)
@@ -225,6 +228,70 @@ public class TestFileResource extends BaseJerseyTest {
         target().path("/file/" + file2Id + "/process").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
                 .post(Entity.form(new Form()), JsonObject.class);
+
+        // Get all versions from a file
+        json = target().path("/file/" + file2Id + "/versions")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                .get(JsonObject.class);
+        files = json.getJsonArray("files");
+        Assert.assertEquals(1, files.size());
+        JsonObject file = files.getJsonObject(0);
+        Assert.assertEquals(file2Id, file.getString("id"));
+        Assert.assertEquals("PIA00452.jpg", file.getString("name"));
+        Assert.assertEquals("image/jpeg", file.getString("mimetype"));
+        Assert.assertEquals(0, file.getInt("version"));
+
+        // Add a new version to a file
+        String file3Id;
+        try (InputStream is0 = Resources.getResource("file/document.txt").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is0, "document.txt");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                json = target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                        .put(Entity.entity(
+                                multiPart
+                                        .field("id", document1Id)
+                                        .field("previousFileId", file2Id)
+                                        .bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+                file3Id = json.getString("id");
+                Assert.assertNotNull(file2Id);
+            }
+        }
+
+        // Get all versions from a file
+        json = target().path("/file/" + file2Id + "/versions")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                .get(JsonObject.class);
+        files = json.getJsonArray("files");
+        Assert.assertEquals(2, files.size());
+        file = files.getJsonObject(1);
+        Assert.assertEquals(file3Id, file.getString("id"));
+        Assert.assertEquals("document.txt", file.getString("name"));
+        Assert.assertEquals("text/plain", file.getString("mimetype"));
+        Assert.assertEquals(1, file.getInt("version"));
+
+        // Delete the previous version
+        json = target().path("/file/" + file2Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                .delete(JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
+
+        // Check the newly created version
+        json = target().path("/file/list")
+                .queryParam("id", document1Id)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
+                .get(JsonObject.class);
+        files = json.getJsonArray("files");
+        Assert.assertEquals(1, files.size());
+        Assert.assertEquals(file3Id, files.getJsonObject(0).getString("id"));
+        Assert.assertEquals("document.txt", files.getJsonObject(0).getString("name"));
+        Assert.assertEquals(1, files.getJsonObject(0).getInt("version"));
     }
 
     /**
@@ -460,6 +527,48 @@ public class TestFileResource extends BaseJerseyTest {
                 .delete(JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
+        // Check current quota
+        json = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(585282L, json.getJsonNumber("storage_current").longValue());
+
+        // Create a document
+        long create1Date = new Date().getTime();
+        json = target().path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
+                .put(Entity.form(new Form()
+                        .param("title", "File test document 1")
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
+        String document1Id = json.getString("id");
+        Assert.assertNotNull(document1Id);
+
+        // Add a file to this document (163510 bytes large)
+        try (InputStream is = Resources.getResource("file/PIA00452.jpg").openStream()) {
+            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "PIA00452.jpg");
+            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
+                target()
+                        .register(MultiPartFeature.class)
+                        .path("/file").request()
+                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
+                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
+                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
+            }
+        }
+
+        // Check current quota
+        json = target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
+                .get(JsonObject.class);
+        Assert.assertEquals(748792, json.getJsonNumber("storage_current").longValue());
+
+        // Deletes the document
+        json = target().path("/document/" + document1Id).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
+                .delete(JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
+
         // Check current quota
         json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)

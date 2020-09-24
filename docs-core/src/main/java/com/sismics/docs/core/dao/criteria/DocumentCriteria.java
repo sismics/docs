@@ -52,6 +52,12 @@ public class DocumentCriteria {
     private List<List<String>> tagIdList;
     
     /**
+     * Tag IDs to excluded.
+     * The first and second level list will be excluded.
+     */
+    private List<List<String>> excludedTagIdList;
+
+    /**
      * Shared status.
      */
     private Boolean shared;
@@ -70,6 +76,11 @@ public class DocumentCriteria {
      * A route is active.
      */
     private Boolean activeRoute;
+
+    /**
+     * MIME type of a file.
+     */
+    private String mimeType;
     
     public List<String> getTargetIdList() {
         return targetIdList;
@@ -119,6 +130,15 @@ public class DocumentCriteria {
         this.tagIdList = tagIdList;
     }
 
+    public List<List<String>> getExcludedTagIdList() {
+        return excludedTagIdList;
+    }
+
+    public DocumentCriteria setExcludedTagIdList(List<List<String>> excludedTagIdList) {
+        this.excludedTagIdList = excludedTagIdList;
+        return this;
+    }
+
     public Boolean getShared() {
         return shared;
     }
@@ -165,5 +185,13 @@ public class DocumentCriteria {
 
     public void setActiveRoute(Boolean activeRoute) {
         this.activeRoute = activeRoute;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 }

@@ -36,12 +36,23 @@ public interface IndexingHandler {
     void shutDown();
 
     /**
-     * Fully rebuild the index.
+     * Clear the index.
+     */
+    void clearIndex();
+
+    /**
+     * Index a list of documents.
      *
      * @param documentList All documents
+     */
+    void createDocuments(List<Document> documentList);
+
+    /**
+     * Index a list of files.
+     *
      * @param fileList All files
      */
-    void rebuildIndex(List<Document> documentList, List<File> fileList);
+    void createFiles(List<File> fileList);
 
     /**
      * Index a new document.

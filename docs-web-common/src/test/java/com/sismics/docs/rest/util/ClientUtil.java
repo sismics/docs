@@ -5,6 +5,7 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import org.junit.Assert;
 
 import javax.json.JsonObject;
 import javax.ws.rs.client.Entity;
@@ -113,7 +114,8 @@ public class ClientUtil {
                         .param("username", username)
                         .param("password", password)
                         .param("remember", remember.toString())));
-        
+        Assert.assertEquals(200, response.getStatus());
+
         return getAuthenticationCookie(response);
     }
 
@@ -154,6 +156,16 @@ public class ClientUtil {
         return authToken;
     }
 
+    /**
+     * Add a file to a document.
+     *
+     * @param file File path
+     * @param filename Filename
+     * @param token Authentication token
+     * @param documentId Document ID
+     * @return File ID
+     * @throws IOException e
+     */
     public String addFileToDocument(String file, String filename, String token, String documentId) throws IOException {
         try (InputStream is = Resources.getResource(file).openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, filename);

@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
-        android:textColor="#212121"
+        android:textColor="?android:attr/textColorPrimary"
         android:text="Test"
         android:textSize="16sp"
         android:ellipsize="end"
@@ -46,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-light"
-        android:textColor="#777777"
+        android:textColor="?android:attr/textColorPrimary"
         android:text="test2"
         android:textSize="16sp"
         android:maxLines="1"
@@ -69,7 +69,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:textColor="#777777"
+        android:textColor="?android:attr/textColorPrimary"
         android:fontFamily="sans-serif-light"/>
     
 </RelativeLayout>

@@ -2,6 +2,7 @@ package com.sismics.docs.rest.resource;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.sismics.docs.core.constant.AclTargetType;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.*;
@@ -15,6 +16,7 @@ import com.sismics.docs.core.event.PasswordLostEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.*;
 import com.sismics.docs.core.util.ConfigUtil;
+import com.sismics.docs.core.util.RoutingUtil;
 import com.sismics.docs.core.util.authentication.AuthenticationUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
@@ -99,6 +101,7 @@ public class UserResource extends BaseResource {
         user.setPassword(password);
         user.setEmail(email);
         user.setStorageQuota(storageQuota);
+        user.setOnboarding(true);
 
         // Create the user
         UserDao userDao = new UserDao();
@@ -434,6 +437,7 @@ public class UserResource extends BaseResource {
      * @apiGroup User
      * @apiSuccess {String} status Status OK
      * @apiError (client) ForbiddenError Access denied or the user cannot be deleted
+     * @apiError (client) UserUsedInRouteModel The user is used in a route model
      * @apiPermission user
      * @apiVersion 1.5.0
      *
@@ -448,6 +452,12 @@ public class UserResource extends BaseResource {
         // Ensure that the admin or guest users are not deleted
         if (hasBaseFunction(BaseFunction.ADMIN) || principal.isGuest()) {
             throw new ClientException("ForbiddenError", "This user cannot be deleted");
+        }
+
+        // Check that this user is not used in any workflow
+        String routeModelName = RoutingUtil.findRouteModelNameByTargetName(AclTargetType.USER, principal.getName());
+        if (routeModelName != null) {
+            throw new ClientException("UserUsedInRouteModel", routeModelName);
         }
         
         // Find linked data
@@ -472,7 +482,7 @@ public class UserResource extends BaseResource {
         for (File file : fileList) {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
-            fileDeletedAsyncEvent.setFile(file);
+            fileDeletedAsyncEvent.setFileId(file.getId());
             ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
         
@@ -489,9 +499,11 @@ public class UserResource extends BaseResource {
      * @apiDescription All associated entities will be deleted as well.
      * @apiName DeleteUserUsername
      * @apiGroup User
+     * @apiParam {String} username Username
      * @apiSuccess {String} status Status OK
      * @apiError (client) ForbiddenError Access denied or the user cannot be deleted
      * @apiError (client) UserNotFound The user does not exist
+     * @apiError (client) UserUsedInRouteModel The user is used in a route model
      * @apiPermission admin
      * @apiVersion 1.5.0
      *
@@ -511,7 +523,7 @@ public class UserResource extends BaseResource {
             throw new ClientException("ForbiddenError", "The guest user cannot be deleted");
         }
 
-        // Check if the user exists
+        // Check that the user exists
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
         if (user == null) {
@@ -523,6 +535,12 @@ public class UserResource extends BaseResource {
         Set<String> baseFunctionSet = roleBaseFunctionDao.findByRoleId(Sets.newHashSet(user.getRoleId()));
         if (baseFunctionSet.contains(BaseFunction.ADMIN.name())) {
             throw new ClientException("ForbiddenError", "The admin user cannot be deleted");
+        }
+
+        // Check that this user is not used in any workflow
+        String routeModelName = RoutingUtil.findRouteModelNameByTargetName(AclTargetType.USER, username);
+        if (routeModelName != null) {
+            throw new ClientException("UserUsedInRouteModel", routeModelName);
         }
         
         // Find linked data
@@ -546,10 +564,51 @@ public class UserResource extends BaseResource {
         for (File file : fileList) {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
-            fileDeletedAsyncEvent.setFile(file);
+            fileDeletedAsyncEvent.setFileId(file.getId());
             ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
         
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Disable time-based one-time password for a specific user.
+     *
+     * @api {post} /user/:username/disable_totp Disable TOTP authentication for a specific user
+     * @apiName PostUserUsernameDisableTotp
+     * @apiGroup User
+     * @apiParam {String} username Username
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied or connected as guest
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
+     * @param username Username
+     * @return Response
+     */
+    @POST
+    @Path("{username: [a-zA-Z0-9_]+}/disable_totp")
+    public Response disableTotpUsername(@PathParam("username") String username) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        // Get the user
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveByUsername(username);
+        if (user == null) {
+            throw new ForbiddenClientException();
+        }
+
+        // Remove the TOTP key
+        user.setTotpKey(null);
+        userDao.update(user, principal.getId());
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
@@ -564,6 +623,7 @@ public class UserResource extends BaseResource {
      * @apiGroup User
      * @apiSuccess {Boolean} anonymous True if no user is connected
      * @apiSuccess {Boolean} is_default_password True if the admin has the default password
+     * @apiSuccess {Boolean} onboarding True if the UI needs to display the onboarding
      * @apiSuccess {String} username Username
      * @apiSuccess {String} email E-mail
      * @apiSuccess {Number} storage_quota Storage quota (in bytes)
@@ -607,8 +667,9 @@ public class UserResource extends BaseResource {
                     .add("email", user.getEmail())
                     .add("storage_quota", user.getStorageQuota())
                     .add("storage_current", user.getStorageCurrent())
-                    .add("totp_enabled", user.getTotpKey() != null);
-            
+                    .add("totp_enabled", user.getTotpKey() != null)
+                    .add("onboarding", user.isOnboarding());
+
             // Base functions
             JsonArrayBuilder baseFunctions = Json.createArrayBuilder();
             for (String baseFunction : ((UserPrincipal) principal).getBaseFunctionSet()) {
@@ -638,6 +699,7 @@ public class UserResource extends BaseResource {
      * @apiParam {String} username Username
      * @apiSuccess {String} username Username
      * @apiSuccess {String} email E-mail
+     * @apiSuccess {Boolean} totp_enabled True if TOTP authentication is enabled
      * @apiSuccess {Number} storage_quota Storage quota (in bytes)
      * @apiSuccess {Number} storage_current Quota used (in bytes)
      * @apiSuccess {String[]} groups Groups
@@ -678,12 +740,13 @@ public class UserResource extends BaseResource {
                 .add("username", user.getUsername())
                 .add("groups", groups)
                 .add("email", user.getEmail())
+                .add("totp_enabled", user.getTotpKey() != null)
                 .add("storage_quota", user.getStorageQuota())
                 .add("storage_current", user.getStorageCurrent())
                 .add("disabled", user.getDisableDate() != null);
         return Response.ok().entity(response.build()).build();
     }
-    
+
     /**
      * Returns all active users.
      *
@@ -697,6 +760,7 @@ public class UserResource extends BaseResource {
      * @apiSuccess {String} users.id ID
      * @apiSuccess {String} users.username Username
      * @apiSuccess {String} users.email E-mail
+     * @apiSuccess {Boolean} users.totp_enabled True if TOTP authentication is enabled
      * @apiSuccess {Number} users.storage_quota Storage quota (in bytes)
      * @apiSuccess {Number} users.storage_current Quota used (in bytes)
      * @apiSuccess {Number} users.create_date Create date (timestamp)
@@ -739,8 +803,8 @@ public class UserResource extends BaseResource {
             users.add(Json.createObjectBuilder()
                     .add("id", userDto.getId())
                     .add("username", userDto.getUsername())
-                    .add("totp_enabled", userDto.getTotpKey() != null)
                     .add("email", userDto.getEmail())
+                    .add("totp_enabled", userDto.getTotpKey() != null)
                     .add("storage_quota", userDto.getStorageQuota())
                     .add("storage_current", userDto.getStorageCurrent())
                     .add("create_date", userDto.getCreateTimestamp())
@@ -837,6 +901,39 @@ public class UserResource extends BaseResource {
                 .add("status", "ok");
         return Response.ok().entity(response.build()).build();
     }
+
+    /**
+     * Mark the onboarding experience as passed.
+     *
+     * @api {post} /user/onboarded Mark the onboarding experience as passed
+     * @apiDescription Once the onboarding experience has been passed by the user, this resource prevent it from being displayed again.
+     * @apiName PostUserOnboarded
+     * @apiGroup User
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission user
+     * @apiVersion 1.7.0
+     *
+     * @return Response
+     */
+    @POST
+    @Path("onboarded")
+    public Response onboarded() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Save it
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveByUsername(principal.getName());
+        user.setOnboarding(false);
+        userDao.updateOnboarding(user);
+
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
     
     /**
      * Enable time-based one-time password.
@@ -874,11 +971,52 @@ public class UserResource extends BaseResource {
                 .add("secret", key.getKey());
         return Response.ok().entity(response.build()).build();
     }
+
+    /**
+     * Test time-based one-time password.
+     *
+     * @api {post} /user/test_totp Test TOTP authentication
+     * @apiDescription Test a TOTP validation code.
+     * @apiName PostUserTestTotp
+     * @apiParam {String} code TOTP validation code
+     * @apiGroup User
+     * @apiSuccess {String} status Status OK
+     * @apiError (client) ForbiddenError The validation code is not valid or access denied
+     * @apiPermission user
+     * @apiVersion 1.6.0
+     *
+     * @return Response
+     */
+    @POST
+    @Path("test_totp")
+    public Response testTotp(@FormParam("code") String validationCodeStr) {
+        if (!authenticate() || principal.isGuest()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get the user
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveByUsername(principal.getName());
+
+        // Test the validation code
+        if (user.getTotpKey() != null) {
+            int validationCode = ValidationUtil.validateInteger(validationCodeStr, "code");
+            GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
+            if (!googleAuthenticator.authorize(user.getTotpKey(), validationCode)) {
+                throw new ForbiddenClientException();
+            }
+        }
+
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("status", "ok");
+        return Response.ok().entity(response.build()).build();
+    }
     
     /**
-     * Disable time-based one-time password.
+     * Disable time-based one-time password for the current user.
      *
-     * @api {post} /user/disable_totp Disable TOTP authentication
+     * @api {post} /user/disable_totp Disable TOTP authentication for the current user
      * @apiName PostUserDisableTotp
      * @apiGroup User
      * @apiParam {String{1..100}} password Password

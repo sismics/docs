@@ -1,0 +1,88 @@
+<h2 translate="settings.ldap.title"></h2>
+<form class="form-horizontal" name="form" novalidate>
+  <div class="form-group">
+    <label class="col-sm-2 control-label" for="ldapEnabled">{{ 'settings.ldap.enabled' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="enabled" type="checkbox" id="ldapEnabled" ng-model="ldap.enabled" />
+    </div>
+  </div>
+
+  <div ng-if="ldap.enabled" class="form-group" ng-class="{ 'has-error': !form.hostname.$valid && form.$dirty }">
+    <label class="col-sm-2 control-label" for="ldapHost">{{ 'settings.ldap.host' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="hostname" type="text" class="form-control" id="ldapHost" ng-model="ldap.host" ng-maxlength="250" required />
+    </div>
+  </div>
+
+  <div ng-if="ldap.enabled" class="form-group" ng-class="{ 'has-error': !form.port.$valid && form.$dirty }">
+    <label class="col-sm-2 control-label" for="ldapPort">{{ 'settings.ldap.port' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="port" type="number" class="form-control" id="ldapPort" ng-model="ldap.port" required />
+    </div>
+  </div>
+
+  <div ng-if="ldap.enabled" class="form-group" ng-class="{ 'has-error': !form.adminDn.$valid && form.$dirty }">
+    <label class="col-sm-2 control-label" for="ldapAdminDn">{{ 'settings.ldap.admin_dn' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="adminDn" type="text" class="form-control" id="ldapAdminDn" ng-model="ldap.admin_dn" ng-maxlength="250" required />
+    </div>
+  </div>
+
+  <div ng-if="ldap.enabled" class="form-group" ng-class="{ 'has-error': !form.adminPassword.$valid && form.$dirty }">
+    <label class="col-sm-2 control-label" for="ldapAdminPassword">{{ 'settings.ldap.admin_password' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="adminPassword" type="password" class="form-control" id="ldapAdminPassword" ng-model="ldap.admin_password" ng-maxlength="250" required />
+    </div>
+  </div>
+
+  <div ng-if="ldap.enabled" class="form-group" ng-class="{ 'has-error': !form.baseDn.$valid && form.$dirty }">
+    <label class="col-sm-2 control-label" for="ldapBaseDn">{{ 'settings.ldap.base_dn' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="baseDn" type="text" class="form-control" id="ldapBaseDn" ng-model="ldap.base_dn" ng-maxlength="250" required />
+    </div>
+  </div>
+
+  <div ng-if="ldap.enabled" class="form-group" ng-class="{ 'has-error': !form.filter.$valid && form.$dirty }">
+    <label class="col-sm-2 control-label" for="ldapFilter">{{ 'settings.ldap.filter' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="filter" type="text" class="form-control" id="ldapFilter"
+             ng-pattern="/(USERNAME)+/"
+             ng-model="ldap.filter" ng-maxlength="250" required />
+    </div>
+  </div>
+
+  <div ng-if="ldap.enabled" class="form-group" ng-class="{ 'has-error': !form.defaultEmail.$valid && form.$dirty }">
+    <label class="col-sm-2 control-label" for="ldapDefaultEmail">{{ 'settings.ldap.default_email' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="defaultEmail" type="text" class="form-control" id="ldapDefaultEmail" ng-model="ldap.default_email" ng-maxlength="250" required />
+    </div>
+  </div>
+
+  <div ng-if="ldap.enabled" class="form-group" ng-class="{ 'has-error': !form.defaultStorage.$valid && form.$dirty }">
+    <label class="col-sm-2 control-label" for="ldapDefaultStorage">{{ 'settings.ldap.default_storage' | translate }}</label>
+    <div class="col-sm-7">
+      <div class="input-group">
+        <input name="defaultStorage" type="number" id="ldapDefaultStorage" required class="form-control"
+               ng-pattern="/[0-9]*/" ng-model="ldap.default_storage"/>
+        <div class="input-group-addon">{{ 'filter.filesize.mb' | translate }}</div>
+      </div>
+    </div>
+
+    <div class="col-sm-3">
+      <span class="help-block" ng-show="form.default_storage.$error.pattern && form.$dirty">{{ 'validation.number' | translate }}</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary" ng-click="save()" ng-disabled="!form.$valid">
+        <span class="fas fa-pencil-alt"></span> {{ 'save' | translate }}
+      </button>
+    </div>
+  </div>
+</form>
+
+<div class="alert col-sm-9 alert-success"
+     ng-show="saveResult">
+  {{ saveResult }}
+</div>

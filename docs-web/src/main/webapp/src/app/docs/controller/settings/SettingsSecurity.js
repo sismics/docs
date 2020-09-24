@@ -11,7 +11,7 @@ angular.module('docs').controller('SettingsSecurity', function($scope, User, $di
   /**
    * Enable TOTP.
    */
-  $scope.enableTotp = function() {
+  $scope.enableTotp = function () {
     var title = $translate.instant('settings.security.enable_totp');
     var msg = $translate.instant('settings.security.enable_totp_message');
     var btns = [
@@ -34,7 +34,7 @@ angular.module('docs').controller('SettingsSecurity', function($scope, User, $di
   /**
    * Disable TOTP.
    */
-  $scope.disableTotp = function() {
+  $scope.disableTotp = function () {
     $uibModal.open({
       templateUrl: 'partial/docs/settings.security.disabletotp.html',
       controller: 'SettingsSecurityModalDisableTotp'
@@ -51,6 +51,20 @@ angular.module('docs').controller('SettingsSecurity', function($scope, User, $di
           $scope.user = data;
         })
       });
+    });
+  };
+
+  /**
+   * Test TOTP.
+   */
+  $scope.testValidationCodeSuccess = null;
+  $scope.testTotp = function (code) {
+    Restangular.one('user/test_totp').post('', {
+      code: code
+    }).then(function() {
+      $scope.testValidationCodeSuccess = true;
+    }, function () {
+      $scope.testValidationCodeSuccess = false;
     });
   };
 });

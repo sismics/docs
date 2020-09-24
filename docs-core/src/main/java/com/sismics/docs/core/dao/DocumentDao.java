@@ -45,16 +45,20 @@ public class DocumentDao {
     
     /**
      * Returns the list of all active documents.
-     * 
+     *
+     * @param offset Offset
+     * @param limit Limit
      * @return List of documents
      */
     @SuppressWarnings("unchecked")
-    public List<Document> findAll() {
+    public List<Document> findAll(int offset, int limit) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select d from Document d where d.deleteDate is null");
+        q.setFirstResult(offset);
+        q.setMaxResults(limit);
         return q.getResultList();
     }
-    
+
     /**
      * Returns the list of all active documents from a user.
      * 
@@ -185,7 +189,7 @@ public class DocumentDao {
     }
     
     /**
-     * Update a document.
+     * Update a document and log the action.
      * 
      * @param document Document to update
      * @param userId User ID
@@ -193,12 +197,12 @@ public class DocumentDao {
      */
     public Document update(Document document, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        
+
         // Get the document
         Query q = em.createQuery("select d from Document d where d.id = :id and d.deleteDate is null");
         q.setParameter("id", document.getId());
         Document documentDb = (Document) q.getSingleResult();
-        
+
         // Update the document
         documentDb.setTitle(document.getTitle());
         documentDb.setDescription(document.getDescription());
@@ -212,12 +216,28 @@ public class DocumentDao {
         documentDb.setRights(document.getRights());
         documentDb.setCreateDate(document.getCreateDate());
         documentDb.setLanguage(document.getLanguage());
+        documentDb.setFileId(document.getFileId());
         documentDb.setUpdateDate(new Date());
         
         // Create audit log
         AuditLogUtil.create(documentDb, AuditLogType.UPDATE, userId);
         
         return documentDb;
+    }
+
+    /**
+     * Update the file ID on a document.
+     *
+     * @param document Document
+     */
+    public void updateFileId(Document document) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query query = em.createNativeQuery("update T_DOCUMENT d set DOC_IDFILE_C = :fileId, DOC_UPDATEDATE_D = :updateDate where d.DOC_ID_C = :id");
+        query.setParameter("updateDate", new Date());
+        query.setParameter("fileId", document.getFileId());
+        query.setParameter("id", document.getId());
+        query.executeUpdate();
+
     }
 
     /**

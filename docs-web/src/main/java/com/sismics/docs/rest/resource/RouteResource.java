@@ -70,6 +70,11 @@ public class RouteResource extends BaseResource {
             throw new NotFoundException();
         }
 
+        // Check permission on this route model
+        if (!aclDao.checkPermission(routeModelId, PermType.READ, getTargetIdList(null))) {
+            throw new ForbiddenClientException();
+        }
+
         // Avoid creating 2 running routes on the same document
         RouteStepDao routeStepDao = new RouteStepDao();
         if (routeStepDao.getCurrentStep(documentId) != null) {
@@ -204,7 +209,9 @@ public class RouteResource extends BaseResource {
         routeStepDao.endRouteStep(routeStepDto.getId(), routeStepTransition, comment, principal.getId());
         RouteStepDto newRouteStep = routeStepDao.getCurrentStep(documentId);
         RoutingUtil.updateAcl(documentId, newRouteStep, routeStepDto, principal.getId());
-        RoutingUtil.sendRouteStepEmail(documentId, routeStepDto);
+        if (newRouteStep != null) {
+            RoutingUtil.sendRouteStepEmail(documentId, newRouteStep);
+        }
 
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("readable", aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(null)));
@@ -321,7 +328,7 @@ public class RouteResource extends BaseResource {
 
         // Delete the route and the steps
         RouteDao routeDao = new RouteDao();
-        routeDao.deleteRoute(routeStepDto.getRouteId());
+        routeDao.deleteRoute(routeStepDto.getRouteId(), principal.getId());
 
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()

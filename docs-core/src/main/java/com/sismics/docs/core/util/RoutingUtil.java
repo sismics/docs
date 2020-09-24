@@ -6,6 +6,7 @@ import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.AclDao;
 import com.sismics.docs.core.dao.DocumentDao;
+import com.sismics.docs.core.dao.RouteModelDao;
 import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.dao.criteria.UserCriteria;
 import com.sismics.docs.core.dao.dto.RouteStepDto;
@@ -15,8 +16,14 @@ import com.sismics.docs.core.event.RouteStepValidateEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Acl;
 import com.sismics.docs.core.model.jpa.Document;
+import com.sismics.docs.core.model.jpa.RouteModel;
 import com.sismics.util.context.ThreadLocalContext;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import java.io.StringReader;
 import java.util.List;
 
 /**
@@ -86,5 +93,32 @@ public class RoutingUtil {
             routeStepValidateEvent.setDocument(document);
             AppContext.getInstance().getMailEventBus().post(routeStepValidateEvent);
         }
+    }
+
+    /**
+     * Find the first route model name matching a target type and name.
+     *
+     * @param targetType Target type
+     * @param targetName Target name
+     * @return Route model name or null if none is matching
+     */
+    public static String findRouteModelNameByTargetName(AclTargetType targetType, String targetName) {
+        RouteModelDao routeModelDao = new RouteModelDao();
+        List<RouteModel> routeModelList = routeModelDao.findAll();
+        for (RouteModel routeModel : routeModelList) {
+            try (JsonReader reader = Json.createReader(new StringReader(routeModel.getSteps()))) {
+                JsonArray stepsJson = reader.readArray();
+                for (int order = 0; order < stepsJson.size(); order++) {
+                    JsonObject step = stepsJson.getJsonObject(order);
+                    JsonObject target = step.getJsonObject("target");
+                    AclTargetType routeTargetType = AclTargetType.valueOf(target.getString("type"));
+                    String routeTargetName = target.getString("name");
+                    if (targetType == routeTargetType && targetName.equals(routeTargetName)) {
+                        return routeModel.getName();
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

@@ -5,7 +5,6 @@ import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.UserDao;
-import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
 import com.sismics.docs.core.listener.async.*;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.service.FileService;
@@ -89,9 +88,7 @@ public class AppContext {
             }
             indexingHandler.startUp();
         } catch (Exception e) {
-            log.error("Error starting the indexing handler, rebuilding the index: " + e.getMessage());
-            RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
-            asyncEventBus.post(rebuildIndexAsyncEvent);
+            log.error("Error starting the indexing handler", e);
         }
 
         // Start file service
@@ -174,7 +171,8 @@ public class AppContext {
         if (EnvironmentUtil.isUnitTest()) {
             return new EventBus();
         } else {
-            ThreadPoolExecutor executor = new ThreadPoolExecutor(8, 8,
+            int threadCount = Math.max(Runtime.getRuntime().availableProcessors() / 2, 2);
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(threadCount, threadCount,
                     1L, TimeUnit.MINUTES,
                     new LinkedBlockingQueue<>());
             asyncExecutorList.add(executor);
@@ -190,7 +188,7 @@ public class AppContext {
     public int getQueuedTaskCount() {
         int queueSize = 0;
         for (ThreadPoolExecutor executor : asyncExecutorList) {
-            queueSize += executor.getQueue().size();
+            queueSize += executor.getTaskCount() - executor.getCompletedTaskCount();
         }
         return queueSize;
     }

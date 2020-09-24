@@ -12,6 +12,7 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
   $scope.offset = 0;
   $scope.currentPage = 1;
   $scope.limit = _.isUndefined(localStorage.documentsPageSize) ? '10' : localStorage.documentsPageSize;
+  $scope.displayMode = _.isUndefined(localStorage.displayMode) ? 'list' : localStorage.displayMode;
   $scope.search = $state.params.search ? $state.params.search : '';
   $scope.setSearch = function (search) { $scope.search = search };
   $scope.searchOpened = false;
@@ -113,7 +114,14 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
     }
     $scope.loadDocuments();
   });
-  
+
+  /**
+   * Watch for display mode change.
+   */
+  $scope.$watch('displayMode', function (next) {
+    localStorage.displayMode = next;
+  });
+
   /**
    * Display a document.
    */
@@ -165,7 +173,10 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
   $scope.startSearch = function () {
     var search = '';
     if (!_.isEmpty($scope.advsearch.search_simple)) {
-      search += $scope.advsearch.search_simple + ' ';
+      var simplesearch = _.map($scope.advsearch.search_simple.split(/\s+/), function (simple) {
+        return 'simple:' + simple
+      });
+      search += simplesearch.join(' ') + ' ';
     }
     if (!_.isEmpty($scope.advsearch.search_fulltext)) {
       var fulltext = _.map($scope.advsearch.search_fulltext.split(/\s+/), function (full) {
@@ -311,9 +322,9 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
    */
   $scope.extractNavigatedTag = function () {
     // Find the current tag in the search query
-    var tagFound = /tag:([^ ]*)/.exec($scope.search);
+    var tagFound = /(^| )tag:([^ ]*)/.exec($scope.search);
     if (tagFound) {
-      tagFound = tagFound[1];
+      tagFound = tagFound[2];
       // We search only for exact match
       $scope.navigatedTag = _.findWhere($scope.tags, { name: tagFound });
     } else {

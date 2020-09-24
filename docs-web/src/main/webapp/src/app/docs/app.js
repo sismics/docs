@@ -1,13 +1,13 @@
 'use strict';
 
 /**
- * Sismics Docs application.
+ * Teedy application.
  */
 angular.module('docs',
     // Dependencies
     ['ui.router', 'ui.bootstrap', 'dialog', 'ngProgress', 'monospaced.qrcode', 'yaru22.angular-timeago', 'ui.validate',
       'ui.sortable', 'restangular', 'ngSanitize', 'ngTouch', 'colorpicker.module', 'ngFileUpload', 'pascalprecht.translate',
-      'tmh.dynamicLocale']
+      'tmh.dynamicLocale', 'ngOnboarding']
   )
 
 /**
@@ -145,6 +145,15 @@ angular.module('docs',
         }
       }
     })
+    .state('settings.metadata', {
+      url: '/metadata',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.metadata.html',
+          controller: 'SettingsMetadata'
+        }
+      }
+    })
     .state('settings.user', {
       url: '/user',
       views: {
@@ -232,6 +241,15 @@ angular.module('docs',
         'settings': {
           templateUrl: 'partial/docs/settings.vocabulary.html',
           controller: 'SettingsVocabulary'
+        }
+      }
+    })
+    .state('settings.ldap', {
+      url: '/ldap',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.ldap.html',
+          controller: 'SettingsLdap'
         }
       }
     })
@@ -411,9 +429,10 @@ angular.module('docs',
       prefix: 'locale/',
       suffix: '.json?@build.date@'
     })
-    .registerAvailableLanguageKeys(['en', 'fr', 'de', 'ru', 'zh_CN', 'zh_TW'], {
+    .registerAvailableLanguageKeys(['en', 'es', 'fr', 'de', 'ru', 'zh_CN', 'zh_TW'], {
       'ru_*': 'ru',
       'en_*': 'en',
+      'es_*': 'es',
       'fr_*': 'fr',
       'de_*': 'de',
       '*': 'en'
@@ -426,6 +445,9 @@ angular.module('docs',
   } else {
     // Or else determine the language based on the user's browser
     $translateProvider.determinePreferredLanguage();
+    if (!$translateProvider.use()) {
+      $translateProvider.use('en');
+    }
   }
 
   // Configuring Timago
@@ -507,13 +529,21 @@ angular.module('docs',
     { key: 'chi_tra', label: '繁体中文' },
     { key: 'jpn', label: '日本語' },
     { key: 'tha', label: 'ภาษาไทย' },
-    { key: 'kor', label: '한국어' }
+    { key: 'kor', label: '한국어' },
+    { key: 'nld', label: 'Nederlands' },
+    { key: 'tur', label: 'Türkçe' },
+    { key: 'heb', label: 'עברית' },
+    { key: 'hun', label: 'Magyar' },
+    { key: 'fin', label: 'Suomi' },
+    { key: 'swe', label: 'Svenska' },
+    { key: 'lav', label: 'Latviešu' },
+    { key: 'dan', label: 'Dansk' }
   ];
 })
 /**
  * Initialize ngProgress.
  */
-.run(function($rootScope, ngProgressFactory, $http) {
+.run (function ($rootScope, ngProgressFactory, $http) {
   $rootScope.ngProgress = ngProgressFactory.createInstance();
 
   // Watch for the number of XHR running
@@ -526,6 +556,12 @@ angular.module('docs',
       $rootScope.ngProgress.start();
     }
   });
+})
+/**
+ * Initialize ngOnboarding.
+ */
+.run (function ($rootScope) {
+  $rootScope.onboardingEnabled = false;
 });
 
 if (location.search.indexOf("protractor") > -1) {

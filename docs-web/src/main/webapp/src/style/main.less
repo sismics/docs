@@ -120,6 +120,10 @@ ul.tag-tree {
     cursor: pointer;
 
     td {
+      .tags {
+        line-height: 190%;
+      }
+
       .label {
         margin-left: 5px;
       }
@@ -187,6 +191,10 @@ ul.tag-tree {
 
 // File thumbnails
 .thumbnail {
+  &.active {
+    border: 1px solid #2ab2dc;
+  }
+
   .file-processing-indicator {
     position: absolute;
     z-index: 2;
@@ -232,6 +240,30 @@ ul.tag-tree {
     cursor: pointer;
     margin-top: 100px;
     transform: translateY(-50%);
+  }
+}
+
+// File list
+.table-files {
+  td {
+    vertical-align: middle !important;
+  }
+
+  .thumbnail-list {
+    display: inline-block;
+    position: relative;
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+
+    img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      height: 100%;
+      width: auto;
+      transform: translate(-50%,-50%);
+    }
   }
 }
 
@@ -607,6 +639,10 @@ input[readonly].share-link {
   margin-bottom: 19px;
 }
 
+.mt-30 {
+  margin-top: 30px;
+}
+
 .ml-10 {
   margin-left: 10px;
 }
@@ -643,6 +679,11 @@ input[readonly].share-link {
   .navbar-brand {
     color: white;
   }
+}
+
+.navbar-brand {
+  font-weight: 600;
+  font-family: "Open Sans", sans-serif;
 }
 
 .nav > li {

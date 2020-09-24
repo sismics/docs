@@ -38,6 +38,15 @@ public class TestRouteResource extends BaseJerseyTest {
                         .param("from", "contact@sismicsdocs.com")
                 ), JsonObject.class);
 
+        // Add an ACL READ for route1 with admin on the default workflow
+        target().path("/acl").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("source", "default-document-review")
+                        .param("perm", "READ")
+                        .param("target", "route1")
+                        .param("type", "USER")), JsonObject.class);
+
         // Get all route models
         JsonObject json = target().path("/routemodel")
                 .queryParam("sort_column", "2")
@@ -217,7 +226,7 @@ public class TestRouteResource extends BaseJerseyTest {
                         .param("transition", "APPROVED")), JsonObject.class);
         Assert.assertFalse(json.containsKey("route_step"));
         Assert.assertTrue(json.getBoolean("readable")); // Admin can read everything
-        Assert.assertTrue(popEmail().contains("workflow step"));
+        Assert.assertNull(popEmail()); // Last step does not send any email
 
         // Get the route on document 1
         json = target().path("/route")

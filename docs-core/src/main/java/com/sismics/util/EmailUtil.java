@@ -124,11 +124,11 @@ public class EmailUtil {
 
             // Application name
             Config themeConfig = configDao.getById(ConfigType.THEME);
-            String appName = "Sismics Docs";
+            String appName = "Teedy";
             if (themeConfig != null) {
                 try (JsonReader reader = Json.createReader(new StringReader(themeConfig.getValue()))) {
                     JsonObject themeJson = reader.readObject();
-                    appName = themeJson.getString("name", "Sismics Docs");
+                    appName = themeJson.getString("name", "Teedy");
                 }
             }
 

@@ -42,13 +42,17 @@ public class FileDao {
     
     /**
      * Returns the list of all files.
-     * 
+     *
+     * @param offset Offset
+     * @param limit Limit
      * @return List of files
      */
     @SuppressWarnings("unchecked")
-    public List<File> findAll() {
+    public List<File> findAll(int offset, int limit) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         Query q = em.createQuery("select f from File f where f.deleteDate is null");
+        q.setFirstResult(offset);
+        q.setMaxResults(limit);
         return q.getResultList();
     }
     
@@ -144,10 +148,12 @@ public class FileDao {
         fileDb.setContent(file.getContent());
         fileDb.setOrder(file.getOrder());
         fileDb.setMimeType(file.getMimeType());
-        
+        fileDb.setVersionId(file.getVersionId());
+        fileDb.setLatestVersion(file.isLatestVersion());
+
         return file;
     }
-    
+
     /**
      * Gets a file by its ID.
      * 
@@ -176,12 +182,26 @@ public class FileDao {
     public List<File> getByDocumentId(String userId, String documentId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         if (documentId == null) {
-            Query q = em.createQuery("select f from File f where f.documentId is null and f.deleteDate is null and f.userId = :userId order by f.createDate asc");
+            Query q = em.createQuery("select f from File f where f.documentId is null and f.deleteDate is null and f.latestVersion = true and f.userId = :userId order by f.createDate asc");
             q.setParameter("userId", userId);
             return q.getResultList();
         }
-        Query q = em.createQuery("select f from File f where f.documentId = :documentId and f.deleteDate is null order by f.order asc");
+        Query q = em.createQuery("select f from File f where f.documentId = :documentId and f.latestVersion = true and f.deleteDate is null order by f.order asc");
         q.setParameter("documentId", documentId);
+        return q.getResultList();
+    }
+
+    /**
+     * Get all files from a version.
+     *
+     * @param versionId Version ID
+     * @return List of files
+     */
+    @SuppressWarnings("unchecked")
+    public List<File> getByVersionId(String versionId) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        Query q = em.createQuery("select f from File f where f.versionId = :versionId and f.deleteDate is null order by f.order asc");
+        q.setParameter("versionId", versionId);
         return q.getResultList();
     }
 }

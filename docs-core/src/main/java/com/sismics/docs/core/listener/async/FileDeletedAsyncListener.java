@@ -4,7 +4,6 @@ import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
-import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.FileUtil;
 import com.sismics.docs.core.util.TransactionUtil;
 import org.slf4j.Logger;
@@ -35,12 +34,11 @@ public class FileDeletedAsyncListener {
         }
 
         // Delete the file from storage
-        File file = event.getFile();
-        FileUtil.delete(file);
+        FileUtil.delete(event.getFileId());
 
         TransactionUtil.handle(() -> {
             // Update index
-            AppContext.getInstance().getIndexingHandler().deleteDocument(file.getId());
+            AppContext.getInstance().getIndexingHandler().deleteDocument(event.getFileId());
         });
     }
 }

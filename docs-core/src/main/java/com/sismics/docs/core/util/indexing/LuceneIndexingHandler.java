@@ -9,6 +9,8 @@ import com.sismics.docs.core.constant.PermType;
 import com.sismics.docs.core.dao.ConfigDao;
 import com.sismics.docs.core.dao.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.dto.DocumentDto;
+import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
+import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
@@ -25,8 +27,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.*;
-import org.apache.lucene.queryparser.flexible.standard.QueryParserUtil;
-import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
+import org.apache.lucene.queryparser.simple.SimpleQueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
@@ -43,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.*;
@@ -84,6 +86,25 @@ public class LuceneIndexingHandler implements IndexingHandler {
 
     @Override
     public void startUp() throws Exception {
+        try {
+            initLucene();
+        } catch (Exception e) {
+            // An error occurred initializing Lucene, the index is out of date or broken, delete everything
+            log.info("Unable to initialize Lucene, cleaning up the index: " + e.getMessage());
+            Path luceneDirectory = DirectoryUtil.getLuceneDirectory();
+            Files.walk(luceneDirectory)
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(java.io.File::delete);
+
+            // Re-initialize and schedule a full reindex
+            initLucene();
+            RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
+            AppContext.getInstance().getAsyncEventBus().post(rebuildIndexAsyncEvent);
+        }
+    }
+
+    private void initLucene() throws Exception {
         ConfigDao configDao = new ConfigDao();
         Config luceneStorageConfig = configDao.getById(ConfigType.LUCENE_DIRECTORY_STORAGE);
         String luceneStorage = luceneStorageConfig == null ? null : luceneStorageConfig.getValue();
@@ -101,7 +122,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
         // Create an index writer
         IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
         config.setCommitOnClose(true);
-        config.setMergeScheduler(new SerialMergeScheduler());
+        config.setMergeScheduler(new ConcurrentMergeScheduler());
         indexWriter = new IndexWriter(directory, config);
 
         // Check index version and rebuild it if necessary
@@ -142,18 +163,23 @@ public class LuceneIndexingHandler implements IndexingHandler {
     }
 
     @Override
-    public void rebuildIndex(final List<Document> documentList, final List<File> fileList) {
-        handle(indexWriter -> {
-            // Empty index
-            indexWriter.deleteAll();
+    public void clearIndex() {
+        handle(IndexWriter::deleteAll);
+    }
 
-            // Add all documents
+    @Override
+    public void createDocuments(List<Document> documentList) {
+        handle(indexWriter -> {
             for (Document document : documentList) {
                 org.apache.lucene.document.Document luceneDocument = getDocumentFromDocument(document);
                 indexWriter.addDocument(luceneDocument);
             }
+        });
+    }
 
-            // Add all files
+    @Override
+    public void createFiles(List<File> fileList) {
+        handle(indexWriter -> {
             for (File file : fileList) {
                 org.apache.lucene.document.Document luceneDocument = getDocumentFromFile(file);
                 indexWriter.addDocument(luceneDocument);
@@ -214,7 +240,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
         List<String> criteriaList = new ArrayList<>();
         Map<String, String> documentSearchMap = Maps.newHashMap();
 
-        StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, ");
+        StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, d.DOC_IDFILE_C, ");
         sb.append(" s.count c5, ");
         sb.append(" f.count c6, ");
         sb.append(" rs2.RTP_ID_C c7, rs2.RTP_NAME_C, d.DOC_UPDATEDATE_D c8 ");
@@ -225,7 +251,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
                 "         s.SHA_DELETEDATE_D IS NULL group by ac.ACL_SOURCEID_C) s on s.ACL_SOURCEID_C = d.DOC_ID_C " +
                 "  left join (SELECT count(f.FIL_ID_C) count, f.FIL_IDDOC_C " +
                 "   FROM T_FILE f " +
-                "   WHERE f.FIL_DELETEDATE_D IS NULL group by f.FIL_IDDOC_C) f on f.FIL_IDDOC_C = d.DOC_ID_C ");
+                "   WHERE f.FIL_DELETEDATE_D is null group by f.FIL_IDDOC_C) f on f.FIL_IDDOC_C = d.DOC_ID_C ");
         sb.append(" left join (select rs.*, rs3.idDocument " +
                 "from T_ROUTE_STEP rs " +
                 "join (select r.RTE_IDDOCUMENT_C idDocument, rs.RTP_IDROUTE_C idRoute, min(rs.RTP_ORDER_N) minOrder from T_ROUTE_STEP rs join T_ROUTE r on r.RTE_ID_C = rs.RTP_IDROUTE_C and r.RTE_DELETEDATE_D is null where rs.RTP_DELETEDATE_D is null and rs.RTP_ENDDATE_D is null group by rs.RTP_IDROUTE_C, r.RTE_IDDOCUMENT_C) rs3 on rs.RTP_IDROUTE_C = rs3.idRoute and rs.RTP_ORDER_N = rs3.minOrder " +
@@ -251,7 +277,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
             criteriaList.add("d.DOC_ID_C in :documentIdList");
             parameterMap.put("documentIdList", documentSearchMap.keySet());
 
-            suggestSearchTerms(criteria.getSearch(), suggestionList);
+            suggestSearchTerms(criteria.getFullSearch(), suggestionList);
         }
         if (criteria.getCreateDateMin() != null) {
             criteriaList.add("d.DOC_CREATEDATE_D >= :createDateMin");
@@ -282,8 +308,26 @@ public class LuceneIndexingHandler implements IndexingHandler {
                 criteriaList.add("(" + Joiner.on(" OR ").join(tagCriteriaList) + ")");
             }
         }
+        if (criteria.getExcludedTagIdList() != null && !criteria.getExcludedTagIdList().isEmpty()) {
+            int index = 0;
+            for (List<String> tagIdList : criteria.getExcludedTagIdList()) {
+                List<String> tagCriteriaList = Lists.newArrayList();
+                for (String tagId : tagIdList) {
+                    sb.append(String.format("left join T_DOCUMENT_TAG dtex%d on dtex%d.DOT_IDDOCUMENT_C = d.DOC_ID_C and dtex%d.DOT_IDTAG_C = :tagIdEx%d and dtex%d.DOT_DELETEDATE_D is null ", index, index, index, index, index));
+                    parameterMap.put("tagIdEx" + index, tagId);
+                    tagCriteriaList.add(String.format("dtex%d.DOT_ID_C is null", index));
+                    index++;
+                }
+                criteriaList.add("(" + Joiner.on(" AND ").join(tagCriteriaList) + ")");
+            }
+        }
         if (criteria.getShared() != null && criteria.getShared()) {
             criteriaList.add("s.count > 0");
+        }
+        if (criteria.getMimeType() != null) {
+            sb.append("left join T_FILE f0 on f0.FIL_IDDOC_C = d.DOC_ID_C and f0.FIL_MIMETYPE_C = :mimeType and f0.FIL_DELETEDATE_D is null");
+            parameterMap.put("mimeType", criteria.getMimeType());
+            criteriaList.add("f0.FIL_ID_C is not null");
         }
         if (criteria.getLanguage() != null) {
             criteriaList.add("d.DOC_LANGUAGE_C = :language");
@@ -318,6 +362,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
             documentDto.setDescription((String) o[i++]);
             documentDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
             documentDto.setLanguage((String) o[i++]);
+            documentDto.setFileId((String) o[i++]);
             Number shareCount = (Number) o[i++];
             documentDto.setShared(shareCount != null && shareCount.intValue() > 0);
             Number fileCount = (Number) o[i++];
@@ -349,7 +394,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
         LuceneDictionary dictionary = new LuceneDictionary(directoryReader, "title");
         suggester.build(dictionary);
         int lastIndex = search.lastIndexOf(' ');
-        String suggestQuery = search.substring(lastIndex < 0 ? 0 : lastIndex);
+        String suggestQuery = search.substring(Math.max(lastIndex, 0));
         List<Lookup.LookupResult> lookupResultList = suggester.lookup(suggestQuery, false, 10);
         for (Lookup.LookupResult lookupResult : lookupResultList) {
             suggestionList.add(lookupResult.key.toString());
@@ -365,29 +410,26 @@ public class LuceneIndexingHandler implements IndexingHandler {
      * @throws Exception e
      */
     private Map<String, String> search(String searchQuery, String fullSearchQuery) throws Exception {
-        // Escape query and add quotes so QueryParser generate a PhraseQuery
-        String escapedSearchQuery = "\"" + QueryParserUtil.escape(searchQuery + " " + fullSearchQuery) + "\"";
-        String escapedFullSearchQuery = "\"" + QueryParserUtil.escape(fullSearchQuery) + "\"";
+        // The fulltext query searches in all fields
+        searchQuery = searchQuery + " " + fullSearchQuery;
 
         // Build search query
         Analyzer analyzer = new StandardAnalyzer();
-        StandardQueryParser qpHelper = new StandardQueryParser(analyzer);
-        qpHelper.setPhraseSlop(100); // PhraseQuery add terms
 
         // Search on documents and files
         BooleanQuery query = new BooleanQuery.Builder()
-                .add(qpHelper.parse(escapedSearchQuery, "title"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "description"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "subject"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "identifier"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "publisher"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "format"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "source"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "type"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "coverage"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "rights"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedSearchQuery, "filename"), BooleanClause.Occur.SHOULD)
-                .add(qpHelper.parse(escapedFullSearchQuery, "content"), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "title").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "description").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "subject").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "identifier").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "publisher").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "format").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "source").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "type").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "coverage").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "rights").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "filename").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "content").parse(fullSearchQuery), BooleanClause.Occur.SHOULD)
                 .build();
 
         // Search
@@ -427,6 +469,19 @@ public class LuceneIndexingHandler implements IndexingHandler {
         }
 
         return documentMap;
+    }
+
+    /**
+     * Build a query parser for searching.
+     *
+     * @param analyzer Analyzer
+     * @param field Field
+     * @return Query parser
+     */
+    private SimpleQueryParser buildQueryParser(Analyzer analyzer, String field) {
+        SimpleQueryParser simpleQueryParser = new SimpleQueryParser(analyzer, field);
+        simpleQueryParser.setDefaultOperator(BooleanClause.Occur.MUST); // AND all the terms
+        return simpleQueryParser;
     }
 
     /**

@@ -85,7 +85,7 @@ public class FileService extends AbstractScheduledService {
      *
      * @author bgamard
      */
-    class TemporaryPathReference extends PhantomReference<Path> {
+    static class TemporaryPathReference extends PhantomReference<Path> {
         String path;
         TemporaryPathReference(Path referent, ReferenceQueue<? super Path> q) {
             super(referent, q);

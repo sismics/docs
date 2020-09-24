@@ -46,7 +46,13 @@ public class User implements Loggable {
      */
     @Column(name = "USE_PRIVATEKEY_C", nullable = false, length = 100)
     private String privateKey;
-    
+
+    /**
+     * False when the user passed the onboarding.
+     */
+    @Column(name = "USE_ONBOARDING_B", nullable = false)
+    private boolean onboarding;
+
     /**
      * TOTP secret key.
      */
@@ -195,6 +201,15 @@ public class User implements Loggable {
 
     public User setTotpKey(String totpKey) {
         this.totpKey = totpKey;
+        return this;
+    }
+
+    public boolean isOnboarding() {
+        return onboarding;
+    }
+
+    public User setOnboarding(boolean onboarding) {
+        this.onboarding = onboarding;
         return this;
     }
 

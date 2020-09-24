@@ -13,16 +13,19 @@
 
       <div class="col-sm-6">
         <input type="text" name="name" class="form-control" id="inputName"
-          ng-maxlength="36" required ng-model="tag.name" ui-validate="{ space: '!$value || $value.indexOf(\' \') == -1' }">
+          ng-maxlength="36" required ng-model="tag.name" ui-validate="{ space: '!$value || $value.indexOf(\' \') == -1 && $value.indexOf(\':\') == -1' }">
       </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" ng-class="{ 'has-error': !editTagForm.color.$valid, success: editTagForm.color.$valid }">
       <label class="col-sm-2 control-label" for="inputColor">{{ 'tag.edit.color' | translate }}</label>
 
       <div class="col-sm-2">
-        <span colorpicker class="btn" data-color="" id="inputColor"
-          ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
+        <div class="input-group" id="inputColor" ng-class="{ 'has-error': !editTagForm.color.$valid && tagForm.$dirty }">
+          <span colorpicker class="input-group-addon btn btn-default" data-color="#3a87ad" ng-model="tag.color" ng-style="{ 'background': tag.color }">&nbsp;</span>
+          <button class="btn btn-default" ng-click="hexaField = true" ng-show="!hexaField"><span class="fas fa-microchip"></span></button>
+          <input type="text" name="color" class="form-control" ng-maxlength="7" ng-model="tag.color" ng-show="hexaField">
+        </div>
       </div>
     </div>
 

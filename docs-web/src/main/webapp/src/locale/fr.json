@@ -41,6 +41,8 @@
   "document": {
     "navigation_up": "Monter d'un niveau",
     "toggle_navigation": "Activer la navigation par dossier",
+    "display_mode_list": "Afficher les documents en liste",
+    "display_mode_grid": "Afficher les documents en grille",
     "search_simple": "Recherche simple",
     "search_fulltext": "Recherche texte intégral",
     "search_creator": "Créateur",
@@ -116,7 +118,11 @@
         "drop_zone": "Glisser & déposer des fichiers ici pour les envoyer",
         "add_files": "Ajouter des fichiers",
         "file_processing_indicator": "Ce fichier est en cours de traitement. La recherche ne sera pas disponible avant la fin du traitement.",
-        "reprocess_file": "Retraiter ce fichier"
+        "reprocess_file": "Retraiter ce fichier",
+        "upload_new_version": "Envoyer une nouvelle version",
+        "open_versions": "Afficher l'historique de versions",
+        "display_mode_list": "Afficher les fichiers en liste",
+        "display_mode_grid": "Afficher les fichiers en grille"
       },
       "workflow": {
         "workflow": "Workflow",
@@ -127,7 +133,8 @@
         "full_name": "<strong>{{ name }}</strong> a démarré le {{ create_date | date }}",
         "cancel_workflow": "Annuler le workflow en cours",
         "cancel_workflow_title": "Annuler le workflow",
-        "cancel_workflow_message": "Voulez-vous vraiment annuler le workflow en cours ?"
+        "cancel_workflow_message": "Voulez-vous vraiment annuler le workflow en cours ?",
+        "no_workflow": "Vous ne pouvez pas démarrer de workflow sur ce document"
       },
       "permissions": {
         "permissions": "Permissions",
@@ -200,6 +207,13 @@
     "edit": {
       "title": "Modifier le fichier",
       "name": "Nom de fichier"
+    },
+    "versions": {
+      "title": "Historique des versions",
+      "filename": "Nom de fichier",
+      "mimetype": "Type",
+      "create_date": "Date de création",
+      "version": "Version"
     }
   },
   "tag": {
@@ -219,7 +233,9 @@
       "name": "Nom",
       "color": "Couleur",
       "parent": "Parent",
-      "info": "Les permissions sur ce tag seront également appliquées aux documents taggés avec <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>"
+      "info": "Les permissions sur ce tag seront également appliquées aux documents taggés avec <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>",
+      "circular_reference_title": "Référence circulaire",
+      "circular_reference_message": "La hiérarchie des tags parents forment une boucle, veuillez choisir un autre parent."
     }
   },
   "group": {
@@ -262,7 +278,21 @@
     "menu_vocabularies": "Vocabulaires",
     "menu_configuration": "Configuration",
     "menu_inbox": "Scanning de boîte de réception",
+    "menu_ldap": "Authentification LDAP",
     "menu_monitoring": "Monitoring",
+    "ldap": {
+      "title": "Authentification LDAP",
+      "enabled": "Activer l'authentication LDAP",
+      "host": "Hôte LDAP",
+      "port": "Port LDAP (389 par défaut)",
+      "admin_dn": "DN administrateur",
+      "admin_password": "Mot de passe administrateur",
+      "base_dn": "DN de recherche",
+      "filter": "Filtre de recherche (doit contenir USERNAME, cf. \"(uid=USERNAME)\")",
+      "default_email": "Email par défaut pour les utilisateurs LDAP",
+      "default_storage": "Stockage par défaut pour les utilisateurs LDAP",
+      "saved": "Configuration IMAP sauvegardée avec succès"
+    },
     "user": {
       "title": "Gestion des utilisateurs",
       "add_user": "Ajouter un utilisateur",
@@ -286,7 +316,10 @@
         "disabled": "Utilisateur désactivé",
         "password_reset_btn": "Envoyer un email de réinitialisation de mot de passe à cet utilisateur",
         "password_lost_sent_title": "Email de réinitialisation de mot de passe envoyé",
-        "password_lost_sent_message": "Un email de réinitalisation de mot de passe a été envoyé à <strong>{{ username }}</strong>"
+        "password_lost_sent_message": "Un email de réinitalisation de mot de passe a été envoyé à <strong>{{ username }}</strong>",
+        "disable_totp_btn": "Désactiver l'authentification en deux étapes pour cet utilisateur",
+        "disable_totp_title": "Désactiver l'authentification en deux étapes",
+        "disable_totp_message": "Etes-vous sûr de vouloir désactiver l'authentification en deux étapes pour cet utilisateur ?"
       }
     },
     "workflow": {
@@ -306,10 +339,11 @@
         "type_approve": "Approbation",
         "type_validate": "Validation",
         "target": "Assigné à",
-        "target_help": "<strong>Approbation :</strong> Accepter ou rejeter l'étape de workflow<br/><strong>Validation :</strong> Examiner et poursuivre le workflow",
+        "target_help": "<strong>Approbation :</strong> Accepter ou rejeter l\\'étape de workflow<br/><strong>Validation :</strong> Examiner et poursuivre le workflow",
         "add_step": "Ajouter une étape de workflow",
         "actions": "Qu'est-ce qui se passe après?",
-        "remove_action": "Supprimer l'action"
+        "remove_action": "Supprimer l'action",
+        "acl_info": "Seulement les utilisateurs et les groupes définis ici pourront démarrer ce workflow sur un document"
       }
     },
     "security": {
@@ -329,7 +363,10 @@
         "message": "Votre compte ne sera plus protégé par l'authentification en deux étapes.",
         "confirm_password": "Confirmez votre mot de passe",
         "submit": "Désactiver l'authentification en deux étapes"
-      }
+      },
+      "test_totp": "Veuillez saisir le code de validation affiché sur votre téléphone :",
+      "test_code_success": "Code de validation OK",
+      "test_code_fail": "Ce code n'est pas valide. Vérifiez que votre téléphone est correctement configuré ou désactivez l'authentification en deux étapes."
     },
     "group": {
       "title": "Gestion des groupes",
@@ -377,7 +414,13 @@
       "smtp_from": "Email d'envoi",
       "smtp_username": "Nom d'utilisateur SMTP",
       "smtp_password": "Mot de passe SMTP",
-      "smtp_updated": "Configuration SMTP mise à jour avec succès"
+      "smtp_updated": "Configuration SMTP mise à jour avec succès",
+      "webhooks": "Webhooks",
+      "webhooks_explain": "Les webhooks seront appelés lorsque l'évènement spécifié surgira. L'URL donné sera POST-ée avec un JSON contenant le nom de l'évènement et l'identifiant de la ressource concernée.",
+      "webhook_event": "Evènement",
+      "webhook_url": "URL",
+      "webhook_create_date": "Date de création",
+      "webhook_add": "Ajouter un webhook"
     },
     "inbox": {
       "title": "Scanning de boîte de réception",
@@ -391,7 +434,8 @@
       "test": "Tester les paramètres",
       "last_sync": "Dernière synchronisation : {{ data.date | date: 'medium' }}, {{ data.count }} message{{ data.count> 1 ? 's' : '' }} importé{{ data.count> 1 ? 's' : '' }}",
       "test_success": "La connexion à la boîte de réception est réussie ({{ count }} message{{ count> 1 ? 's' : '' }}) non lus",
-      "test_fail": "Une erreur est survenue lors de la connexion à la boîte de réception, veuillez vérifier les paramètres"
+      "test_fail": "Une erreur est survenue lors de la connexion à la boîte de réception, veuillez vérifier les paramètres",
+      "saved": "Configuration IMAP sauvegardée avec succès"
     },
     "monitoring": {
       "background_tasks": "Tâches d'arrière-plan",
@@ -400,7 +444,11 @@
       "server_logs": "Logs serveur",
       "log_date": "Date",
       "log_tag": "Tag",
-      "log_message": "Message"
+      "log_message": "Message",
+      "indexing": "Indexation",
+      "indexing_info": "Si nous notez des incohérences dans les résultats de recherche, vous pouvez essayer une réindexation complète. Les résultats de recherche seront incomplets pendant l'opération.",
+      "start_reindexing": "Démarrer une réindexation complète",
+      "reindexing_started": "Réindexation démarrée, veuillez patienter jusqu'à ce qu'il ne reste aucune tâche en arrière plan."
     },
     "session": {
       "title": "Sessions ouvertes",
@@ -430,16 +478,16 @@
       "need_2": "Analyser un répertoire à la recherche de nouveaux fichiers et les importer",
       "line_1": "Allez sur <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> et téléchargez l'outil d'importation de fichiers pour votre système.",
       "line_2": "Suivez les <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">instructions ici</a> pour utiliser cet outil.",
-      "line_3": "Vos fichiers seront importés dans <a href=\"#/document\">Envoi rapide</a>, vous pouvez ensuite les regrouper dans des documents.",
+      "line_3": "Vos fichiers seront importés dans des documents conformément à la configuration de l'importeur.",
       "download": "Télécharger",
       "instructions": "Instructions"
     }
   },
   "feedback": {
     "title": "Donnez-nous votre avis",
-    "message": "Vous avez des suggestions ou des questions à propos de Sismics Docs ? Nous vous écoutons !",
+    "message": "Vous avez des suggestions ou des questions à propos de Teedy ? Nous vous écoutons !",
     "sent_title": "Avis envoyé",
-    "sent_message": "Merci pour votre avis ! Cela nous aidera à améliorer Sismics Docs."
+    "sent_message": "Merci pour votre avis ! Cela nous aidera à améliorer Teedy."
   },
   "import": {
     "title": "Import en cours",
@@ -469,10 +517,11 @@
       "Document": "Document",
       "File": "Fichier",
       "Group": "Groupe",
+      "Route": "Workflow",
+      "RouteModel": "Modèle de workflow",
       "Tag": "Tag",
       "User": "Utilisateur",
-      "RouteModel": "Modèle de workflow",
-      "Route": "Workflow"
+      "Webhook": "Webhook"
     },
     "selectrelation": {
       "typeahead": "Entrez un titre de document"
@@ -516,7 +565,8 @@
     "email": "Doit être une adresse e-mail valide",
     "password_confirm": "Le mot de passe et sa confirmation doivent être identiques",
     "number": "Nombre requis",
-    "no_space": "Les espaces ne sont pas autorisés"
+    "no_space": "Les espaces ne sont pas autorisés",
+    "alphanumeric": "Seuls les lettres et les chiffres sont autorisés"
   },
   "action_type": {
     "ADD_TAG": "Ajouter un tag",
@@ -529,6 +579,30 @@
     "first": "Première",
     "last": "Dernière"
   },
+  "onboarding": {
+    "step1": {
+      "title": "Première fois ici ?",
+      "description": "Si vous utilisez Teedy pour la première fois, cliquez sur le bouton Suivant. Sinon, n'hésitez pas à me fermer."
+    },
+    "step2": {
+      "title": "Documents",
+      "description": "Teedy est organisé en documents et chaque document contient plusieurs fichiers."
+    },
+    "step3": {
+      "title": "Fichiers",
+      "description": "Vous pouvez ajouter des fichiers après la création d'un document ou avant en utilisant cette zone d'envoi rapide."
+    },
+    "step4": {
+      "title": "Rechercher",
+      "description": "C'est le moyen principal de retrouver vos documents. Il existe également une recherche avancée avec le bouton loupe."
+    },
+    "step5": {
+      "title": "Tags",
+      "description": "Les documents peuvent être organisés en tags (qui sont comme des super-dossiers). Créez-les ici."
+    }
+  },
+  "yes": "Oui",
+  "no": "Non",
   "ok": "OK",
   "cancel": "Annuler",
   "share": "Partager",
@@ -542,6 +616,7 @@
   "edit": "Modifier",
   "delete": "Supprimer",
   "rename": "Renommer",
+  "download": "Télécharger",
   "loading": "Chargement...",
   "send": "Envoyer",
   "enabled": "Activé",

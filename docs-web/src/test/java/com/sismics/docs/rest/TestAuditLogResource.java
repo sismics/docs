@@ -56,7 +56,7 @@ public class TestAuditLogResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, auditlog1Token)
                 .get(JsonObject.class);
         JsonArray logs = json.getJsonArray("logs");
-        Assert.assertTrue(logs.size() == 3);
+        Assert.assertEquals(3, logs.size());
         Assert.assertEquals(countByClass(logs, "Document"), 1);
         Assert.assertEquals(countByClass(logs, "Acl"), 2);
         Assert.assertEquals("auditlog1", logs.getJsonObject(0).getString("username"));
@@ -73,7 +73,7 @@ public class TestAuditLogResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, auditlog1Token)
                 .get(JsonObject.class);
         logs = json.getJsonArray("logs");
-        Assert.assertTrue(logs.size() == 2);
+        Assert.assertEquals(2, logs.size());
         Assert.assertEquals(countByClass(logs, "Document"), 1);
         Assert.assertEquals(countByClass(logs, "Tag"), 1);
         
@@ -88,7 +88,7 @@ public class TestAuditLogResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, auditlog1Token)
                 .get(JsonObject.class);
         logs = json.getJsonArray("logs");
-        Assert.assertTrue(logs.size() == 3);
+        Assert.assertEquals(3, logs.size());
         Assert.assertEquals(countByClass(logs, "Document"), 1);
         Assert.assertEquals(countByClass(logs, "Tag"), 2);
 
@@ -105,7 +105,7 @@ public class TestAuditLogResource extends BaseJerseyTest {
         json = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, auditlog1Token)
                 .get(JsonObject.class);
-        Assert.assertEquals(update1Date, json.getJsonNumber("update_date").longValue());
+        Assert.assertTrue(json.getJsonNumber("update_date").longValue() > update1Date); // Adding a file to a document updates it
 
         // Get all logs for the document
         json = target().path("/auditlog")

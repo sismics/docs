@@ -9,8 +9,8 @@
     "url": "git://github.com/sismics/docs.git"
   },
   "apidoc": {
-    "name": "Sismics Docs API",
-    "title": "Sismics Docs API",
+    "name": "Teedy API",
+    "title": "Teedy API",
     "url": "/api",
     "template": {
       "withCompare": false,

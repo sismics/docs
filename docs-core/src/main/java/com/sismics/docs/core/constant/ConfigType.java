@@ -42,5 +42,20 @@ public enum ConfigType {
     INBOX_PORT,
     INBOX_USERNAME,
     INBOX_PASSWORD,
-    INBOX_TAG
+    INBOX_TAG,
+    INBOX_AUTOMATIC_TAGS,
+    INBOX_DELETE_IMPORTED,
+
+    /**
+     * LDAP connection.
+     */
+    LDAP_ENABLED,
+    LDAP_HOST,
+    LDAP_PORT,
+    LDAP_ADMIN_DN,
+    LDAP_ADMIN_PASSWORD,
+    LDAP_BASE_DN,
+    LDAP_FILTER,
+    LDAP_DEFAULT_EMAIL,
+    LDAP_DEFAULT_STORAGE
 }

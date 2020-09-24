@@ -26,7 +26,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Stress app for Sismics Docs.
+ * Stress app for Teedy.
  * 
  * @author bgamard
  */

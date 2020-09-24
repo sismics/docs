@@ -263,9 +263,9 @@ public class TestAclResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, acl1Token)
                 .get(JsonObject.class);
         users = json.getJsonArray("users");
-        Assert.assertEquals(1, users.size());
+        Assert.assertEquals(0, users.size());
         groups = json.getJsonArray("groups");
-        Assert.assertEquals(1, groups.size());
+        Assert.assertEquals(0, groups.size());
     }
 
     @Test

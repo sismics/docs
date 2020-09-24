@@ -49,7 +49,6 @@ public class File implements Loggable {
     /**
      * OCR-ized content.
      */
-    @Lob
     @Column(name = "FIL_CONTENT_C")
     private String content;
     
@@ -71,6 +70,24 @@ public class File implements Loggable {
     @Column(name = "FIL_ORDER_N")
     private Integer order;
     
+    /**
+     * Version ID.
+     */
+    @Column(name = "FIL_IDVERSION_C")
+    private String versionId;
+
+    /**
+     * Version number (starting at 0).
+     */
+    @Column(name = "FIL_VERSION_N", nullable = false)
+    private Integer version;
+
+    /**
+     * True if it's the latest version of the file.
+     */
+    @Column(name = "FIL_LATESTVERSION_B", nullable = false)
+    private boolean latestVersion;
+
     /**
      * Private key to decrypt the file.
      * Not saved to database, of course.
@@ -158,6 +175,33 @@ public class File implements Loggable {
 
     public void setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
+    }
+
+    public String getVersionId() {
+        return versionId;
+    }
+
+    public File setVersionId(String versionId) {
+        this.versionId = versionId;
+        return this;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public File setVersion(Integer version) {
+        this.version = version;
+        return this;
+    }
+
+    public boolean isLatestVersion() {
+        return latestVersion;
+    }
+
+    public File setLatestVersion(boolean latestVersion) {
+        this.latestVersion = latestVersion;
+        return this;
     }
 
     @Override

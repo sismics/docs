@@ -24,6 +24,10 @@ public class TestRouteModelResource extends BaseJerseyTest {
         // Login admin
         String adminToken = clientUtil.login("admin", "admin", false);
 
+        // Login routeModel1
+        clientUtil.createUser("routeModel1");
+        String routeModel1Token = clientUtil.login("routeModel1");
+
         // Create a tag
         JsonObject json = target().path("/tag").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
@@ -32,7 +36,7 @@ public class TestRouteModelResource extends BaseJerseyTest {
                         .param("color", "#ff0000")), JsonObject.class);
         String tagRouteId = json.getString("id");
 
-        // Get all route models
+        // Get all route models with admin
         json = target().path("/routemodel")
                 .queryParam("sort_column", "2")
                 .queryParam("asc", "false")
@@ -50,7 +54,7 @@ public class TestRouteModelResource extends BaseJerseyTest {
                         .param("steps", "[{\"type\":\"VALIDATE\",\"transitions\":[{\"name\":\"VALIDATED\",\"actions\":[]}],\"target\":{\"name\":\"administrators\",\"type\":\"GROUP\"},\"name\":\"Check the document's metadata\"}]")), JsonObject.class);
         String routeModelId = json.getString("id");
 
-        // Get all route models
+        // Get all route models with admin
         json = target().path("/routemodel")
                 .queryParam("sort_column", "2")
                 .queryParam("asc", "false")
@@ -62,6 +66,35 @@ public class TestRouteModelResource extends BaseJerseyTest {
         Assert.assertEquals(routeModelId, routeModels.getJsonObject(0).getString("id"));
         Assert.assertEquals("Workflow validation 1", routeModels.getJsonObject(0).getString("name"));
 
+        // Get all route models with routeModel1
+        json = target().path("/routemodel")
+                .queryParam("sort_column", "2")
+                .queryParam("asc", "false")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, routeModel1Token)
+                .get(JsonObject.class);
+        routeModels = json.getJsonArray("routemodels");
+        Assert.assertEquals(0, routeModels.size());
+
+        // Add an ACL READ for routeModel1 with admin
+        target().path("/acl").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .put(Entity.form(new Form()
+                        .param("source", routeModelId)
+                        .param("perm", "READ")
+                        .param("target", "routeModel1")
+                        .param("type", "USER")), JsonObject.class);
+
+        // Get all route models with routeModel1
+        json = target().path("/routemodel")
+                .queryParam("sort_column", "2")
+                .queryParam("asc", "false")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, routeModel1Token)
+                .get(JsonObject.class);
+        routeModels = json.getJsonArray("routemodels");
+        Assert.assertEquals(1, routeModels.size());
+
         // Get the route model
         json = target().path("/routemodel/" + routeModelId)
                 .request()
@@ -70,6 +103,8 @@ public class TestRouteModelResource extends BaseJerseyTest {
         Assert.assertEquals(routeModelId, json.getString("id"));
         Assert.assertEquals("Workflow validation 1", json.getString("name"));
         Assert.assertEquals("[{\"type\":\"VALIDATE\",\"transitions\":[{\"name\":\"VALIDATED\",\"actions\":[]}],\"target\":{\"name\":\"administrators\",\"type\":\"GROUP\"},\"name\":\"Check the document's metadata\"}]", json.getString("steps"));
+        JsonArray acls = json.getJsonArray("acls");
+        Assert.assertEquals(3, acls.size());// 2 for admin, 1 for routeModel1
 
         // Update the route model with actions
         target().path("/routemodel/" + routeModelId).request()

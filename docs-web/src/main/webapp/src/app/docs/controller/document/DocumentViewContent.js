@@ -4,6 +4,16 @@
  * Document view content controller.
  */
 angular.module('docs').controller('DocumentViewContent', function ($scope, $rootScope, $stateParams, Restangular, $dialog, $state, Upload, $translate, $uibModal) {
+  $scope.displayMode = _.isUndefined(localStorage.fileDisplayMode) ? 'grid' : localStorage.fileDisplayMode;
+  $scope.openedFile = undefined;
+
+  /**
+   * Watch for display mode change.
+   */
+  $scope.$watch('displayMode', function (next) {
+    localStorage.fileDisplayMode = next;
+  });
+
   /**
    * Configuration for file sorting.
    */
@@ -11,7 +21,15 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
     forceHelperSize: true,
     forcePlaceholderSize: true,
     tolerance: 'pointer',
+    start: function() {
+      $(this).addClass('currently-dragging');
+    },
     stop: function () {
+      var _this = this;
+      setTimeout(function(){
+        $(_this).removeClass('currently-dragging');
+      }, 300);
+
       // Send new positions to server
       $scope.$apply(function () {
         Restangular.one('file').post('reorder', {
@@ -28,7 +46,6 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
   $scope.loadFiles = function () {
     Restangular.one('file/list').get({ id: $stateParams.id }).then(function (data) {
       $scope.files = data.files;
-      // TODO Keep currently uploading files
     });
   };
   $scope.loadFiles();
@@ -36,8 +53,11 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
   /**
    * Navigate to the selected file.
    */
-  $scope.openFile = function (file) {
-    $state.go('document.view.content.file', { id: $stateParams.id, fileId: file.id })
+  $scope.openFile = function (file, $event) {
+    if ($($event.target).parents('.currently-dragging').length === 0) {
+      $scope.openedFile = file;
+      $state.go('document.view.content.file', { id: $stateParams.id, fileId: file.id });
+    }
   };
 
   /**
@@ -65,17 +85,39 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
   };
 
   /**
+   * Upload a new version.
+   */
+  $scope.uploadNewVersion = function (files, file) {
+    if (!$scope.document.writable || !files || files.length === 0) {
+      return;
+    }
+
+    var uploadedfile = files[0];
+    var previousFileId = file.id;
+    file.id = undefined;
+    file.progress = 0;
+    file.name = uploadedfile.name;
+    file.create_date = new Date().getTime();
+    file.mimetype = uploadedfile.type;
+    file.version++;
+    $scope.uploadFile(uploadedfile, file, previousFileId);
+  };
+
+  /**
    * File has been drag & dropped.
    */
-  $scope.fileDropped = function(files) {
+  $scope.fileDropped = function (files) {
     if (!$scope.document.writable) {
       return;
     }
 
     if (files && files.length) {
+      // Sort by filename
+      files = _.sortBy(files, 'name');
+
       // Adding files to the UI
       var newfiles = [];
-      _.each(files, function(file) {
+      _.each(files, function (file) {
         var newfile = {
           progress: 0,
           name: file.name,
@@ -101,7 +143,7 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
   /**
    * Upload a file.
    */
-  $scope.uploadFile = function(file, newfile) {
+  $scope.uploadFile = function(file, newfile, previousFileId) {
     // Upload the file
     newfile.status = $translate.instant('document.view.content.upload_progress');
     return Upload.upload({
@@ -109,7 +151,8 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
       url: '../api/file',
       file: file,
       fields: {
-        id: $stateParams.id
+        id: $stateParams.id,
+        previousFileId: previousFileId
       }
     })
     .progress(function(e) {
@@ -164,5 +207,21 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
     Restangular.one('file/' + file.id).post('process').then(function () {
       file.processing = true;
     });
+  };
+
+  /**
+   * Open versions history.
+   */
+  $scope.openVersions = function (file) {
+    $uibModal.open({
+      templateUrl: 'partial/docs/file.versions.html',
+      controller: 'ModalFileVersions',
+      size: 'lg',
+      resolve: {
+        file: function () {
+          return file;
+        }
+      }
+    })
   };
 });

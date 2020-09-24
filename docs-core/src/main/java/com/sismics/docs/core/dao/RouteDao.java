@@ -91,9 +91,14 @@ public class RouteDao {
      * Deletes a route and the associated steps.
      *
      * @param routeId Route ID
+     * @param userId User ID
      */
-    public void deleteRoute(String routeId) {
+    public void deleteRoute(String routeId, String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
+
+        // Create audit log
+        Route route = em.find(Route.class, routeId);
+        AuditLogUtil.create(route, AuditLogType.DELETE, userId);
 
         em.createNativeQuery("update T_ROUTE_STEP rs set RTP_DELETEDATE_D = :dateNow where rs.RTP_IDROUTE_C = :routeId and rs.RTP_DELETEDATE_D is null")
                 .setParameter("routeId", routeId)

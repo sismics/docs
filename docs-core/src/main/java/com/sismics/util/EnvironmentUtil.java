@@ -15,7 +15,7 @@ public class EnvironmentUtil {
 
     private static String MAC_OS_USER_HOME = System.getProperty("user.home");
 
-    private static String DOCS_HOME = System.getProperty("docs.home");
+    private static String TEEDY_HOME = System.getProperty("docs.home");
 
     /**
      * In a web application context.
@@ -90,8 +90,8 @@ public class EnvironmentUtil {
      *
      * @return Home directory
      */
-    public static String getDocsHome() {
-        return DOCS_HOME;
+    public static String getTeedyHome() {
+        return TEEDY_HOME;
     }
 
     /**

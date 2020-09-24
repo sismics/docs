@@ -1,27 +1,24 @@
 <h3 align="center">
-  <img src="https://www.sismicsdocs.com/img/github-title.png" alt="Sismics Docs" width=500 />
+  <img src="https://teedy.io/img/github-title.png" alt="Teedy" width=500 />
 </h3>
 
-[![Twitter: @sismicsdocs](https://img.shields.io/badge/contact-@sismicsdocs-blue.svg?style=flat)](https://twitter.com/sismicsdocs)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 [![Build Status](https://secure.travis-ci.org/sismics/docs.png)](http://travis-ci.org/sismics/docs)
 
-Docs is an open source, lightweight document management system for individuals and businesses.
-
-**Discuss it on [Product Hunt](https://www.producthunt.com/posts/sismics-docs) 🦄**
+Teedy is an open source, lightweight document management system for individuals and businesses.
 
 <hr />
 <h2 align="center">
-  ✨ We just launched a Cloud version of Sismics Docs! Head to <a href="https://www.sismicsdocs.com/">sismicsdocs.com</a> for more informations ✨
+  ✨ <a href="https://github.com/users/jendib/sponsorship">Sponsor this project if you use and appreciate it!</a> ✨
 </h2>
 <hr />
 
-![New!](https://www.sismicsdocs.com/img/laptop-demo.png?20180301)
+![New!](https://teedy.io/img/laptop-demo.png?20180301)
 
 Demo
 ----
 
-A demo is available at [demo.sismicsdocs.com](https://demo.sismicsdocs.com)
+A demo is available at [demo.teedy.io](https://demo.teedy.io)
 - Guest login is enabled with read access on all documents
 - "admin" login with "admin" password
 - "demo" login with "password" password 
@@ -31,16 +28,19 @@ Features
 
 - Responsive user interface
 - Optical character recognition
+- LDAP authentication ![New!](https://www.sismics.com/public/img/new.png)
 - Support image, PDF, ODT, DOCX, PPTX files
-- Video file support ![New!](https://www.sismics.com/public/img/new.png)
+- Video file support
 - Flexible search engine with suggestions and highlighting
 - Full text search in all supported files
 - All [Dublin Core](http://dublincore.org/) metadata
+- Custom user-defined metadata ![New!](https://www.sismics.com/public/img/new.png)
 - Workflow system ![New!](https://www.sismics.com/public/img/new.png)
 - 256-bit AES encryption of stored files
+- File versioning ![New!](https://www.sismics.com/public/img/new.png)
 - Tag system with nesting
-- Import document from email (EML format) ![New!](https://www.sismics.com/public/img/new.png)
-- Automatic inbox scanning and importing ![New!](https://www.sismics.com/public/img/new.png)
+- Import document from email (EML format)
+- Automatic inbox scanning and importing
 - User/group permission system
 - 2-factor authentication
 - Hierarchical groups
@@ -49,22 +49,23 @@ Features
 - Storage quota per user
 - Document sharing by URL
 - RESTful Web API
-- Webhooks to trigger external service ![New!](https://www.sismics.com/public/img/new.png)
+- Webhooks to trigger external service
 - Fully featured Android client
-- [Bulk files importer](https://github.com/sismics/docs/tree/master/docs-importer) (single or scan mode) ![New!](https://www.sismics.com/public/img/new.png)
+- [Bulk files importer](https://github.com/sismics/docs/tree/master/docs-importer) (single or scan mode)
 - Tested to one million documents
 
 Install with Docker
 -------------------
 
-From a Docker host, run this command to download and install Sismics Docs. The server will run on <http://[your-docker-host-ip]:8100>.
-**The default admin password is "admin". Don't forget to change it before going to production.**
+A preconfigured Docker image is available, including OCR and media conversion tools, listening on port 8080. The database is an embedded H2 database but PostgreSQL is also supported for more performance.
 
-    docker run --rm --name sismics_docs_latest -d -e DOCS_BASE_URL='http://[your-docker-host-ip]:8100' -p 8100:8080 -v sismics_docs_latest:/data sismics/docs:latest
-  <img src="http://www.newdesignfile.com/postpic/2011/01/green-info-icon_206509.png" width="16px" height="16px">  **Note:** You will need to change [your-docker-host-ip] with the IP address or FQDN of your docker host e.g.
-  
-  FQDN: http://docs.sismics.com  
-  IP: http://192.168.100.10
+**The default admin password is "admin". Don't forget to change it before going to production.**
+- Master branch, can be unstable. Not recommended for production use: `sismics/docs:latest`
+- Latest stable version: `sismics/docs:v1.8`
+
+The data directory is `/data`. Don't forget to mount a volume on it.
+
+To build external URL, the server is expecting a `DOCS_BASE_URL` environment variable (for example https://teedy.mycompany.com)
 
 Manual installation
 -------------------
@@ -80,12 +81,12 @@ Manual installation
 The latest release is downloadable here: <https://github.com/sismics/docs/releases> in WAR format. 
 **The default admin password is "admin". Don't forget to change it before going to production.**
 
-How to build Docs from the sources
+How to build Teedy from the sources
 ----------------------------------
 
-Prerequisites: JDK 8 with JCE, Maven 3, Tesseract 3 or 4
+Prerequisites: JDK 8 with JCE, Maven 3, NPM, Grunt, Tesseract 3 or 4
 
-Docs is organized in several Maven modules:
+Teedy is organized in several Maven modules:
 
   - docs-core
   - docs-web
@@ -121,19 +122,8 @@ All contributions are more than welcomed. Contributions may close an issue, fix 
 
 The `master` branch is the default and base branch for the project. It is used for development and all Pull Requests should go there.
 
-
-Community
----------
-
-Get updates on Sismics Docs' development and chat with the project maintainers:
-
-- Follow [@sismicsdocs on Twitter](https://twitter.com/sismicsdocs)
-- Read and subscribe to [The Official Sismics Docs Blog](https://blog.sismicsdocs.com/)
-- Check the [Official Website](https://www.sismicsdocs.com)
-- Join us [on Facebook](https://www.facebook.com/sismicsdocs)
-
 License
 -------
 
-Docs is released under the terms of the GPL license. See `COPYING` for more
+Teedy is released under the terms of the GPL license. See `COPYING` for more
 information or see <http://opensource.org/licenses/GPL-2.0>.

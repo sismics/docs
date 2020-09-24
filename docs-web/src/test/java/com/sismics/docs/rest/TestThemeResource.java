@@ -37,7 +37,7 @@ public class TestThemeResource extends BaseJerseyTest {
         // Get the theme configuration anonymously
         JsonObject json = target().path("/theme").request()
                 .get(JsonObject.class);
-        Assert.assertEquals("Sismics Docs", json.getString("name"));
+        Assert.assertEquals("Teedy", json.getString("name"));
         Assert.assertEquals("#ffffff", json.getString("color"));
         Assert.assertEquals("", json.getString("css"));
 

@@ -3,7 +3,7 @@
 /**
  * Document default controller.
  */
-angular.module('docs').controller('DocumentDefault', function ($scope, $rootScope, $state, Restangular, Upload, $translate, $uibModal, $dialog) {
+angular.module('docs').controller('DocumentDefault', function ($scope, $rootScope, $state, Restangular, Upload, $translate, $uibModal, $dialog, User) {
   // Load user audit log
   Restangular.one('auditlog').get().then(function (data) {
     $scope.logs = data.logs;
@@ -13,7 +13,6 @@ angular.module('docs').controller('DocumentDefault', function ($scope, $rootScop
   $scope.loadFiles = function () {
     Restangular.one('file/list').get().then(function (data) {
       $scope.files = data.files;
-      // TODO Keep currently uploading files
     });
   };
   $scope.loadFiles();
@@ -121,7 +120,7 @@ angular.module('docs').controller('DocumentDefault', function ($scope, $rootScop
       }
 
       Restangular.withConfig(function (RestangularConfigurer) {
-        RestangularConfigurer.setBaseUrl('https://api.sismicsdocs.com');
+        RestangularConfigurer.setBaseUrl('https://api.teedy.io');
       }).one('api').post('feedback', {
         content: content
       }).then(function () {
@@ -141,5 +140,55 @@ angular.module('docs').controller('DocumentDefault', function ($scope, $rootScop
     search: 'workflow:me'
   }).then(function (data) {
     $scope.documentsWorkflow = data.documents;
+  });
+
+  // Onboarding
+  $translate('onboarding.step1.title').then(function () {
+    User.userInfo().then(function(userData) {
+      if (!userData.onboarding || $(window).width() < 1000) {
+        return;
+      }
+      Restangular.one('user').post('onboarded');
+      $rootScope.userInfo.onboarding = false;
+
+      $rootScope.onboardingEnabled = true;
+
+      $rootScope.onboardingSteps = [
+        {
+          title: $translate.instant('onboarding.step1.title'),
+          description: $translate.instant('onboarding.step1.description'),
+          position: 'centered',
+          width: 300
+        },
+        {
+          title: $translate.instant('onboarding.step2.title'),
+          description: $translate.instant('onboarding.step2.description'),
+          attachTo: '#document-add-btn',
+          position: 'right',
+          width: 300
+        },
+        {
+          title: $translate.instant('onboarding.step3.title'),
+          description: $translate.instant('onboarding.step3.description'),
+          attachTo: '#quick-upload-zone',
+          position: 'left',
+          width: 300
+        },
+        {
+          title: $translate.instant('onboarding.step4.title'),
+          description: $translate.instant('onboarding.step4.description'),
+          attachTo: '#search-box',
+          position: 'right',
+          width: 300
+        },
+        {
+          title: $translate.instant('onboarding.step5.title'),
+          description: $translate.instant('onboarding.step5.description'),
+          attachTo: '#navigation-tag',
+          position: "right",
+          width: 300
+        }
+      ];
+    });
   });
 });

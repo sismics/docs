@@ -1,0 +1,606 @@
+{
+  "login": {
+    "username": "Usuario",
+    "password": "Contraseña",
+    "validation_code_required": "Validación de código requerida",
+    "validation_code_title": "Ha activado la autenticación en dos pasos para su cuenta. Por favor, introduzca el código generado por la app en su teléfono.",
+    "validation_code": "Código de validación",
+    "remember_me": "Recordarme",
+    "submit": "Iniciar sesión",
+    "login_as_guest": "Iniciar sesión como invitado",
+    "login_failed_title": "Error al iniciar sesión",
+    "login_failed_message": "Usuario o contraseña incorrectos",
+    "password_lost_btn": "¿Contraseña olvidada?",
+    "password_lost_sent_title": "Correo de reestablecimiento de contraseña enviado",
+    "password_lost_sent_message": "Se ha enviado un correo a <strong>{{ username }}</strong> para reestablecer su contraseña",
+    "password_lost_error_title": "Error al reestablecer la contraseña",
+    "password_lost_error_message": "Imposible enviar correo de reestablecimiento de contraseña, por favor, contacte a su administrador para hacerlo manualmente"
+  },
+  "passwordlost": {
+    "title": "Contraseña olvidada",
+    "message": "Por favor, introduzca su usuario para recibir un enlace de reestablecimiento. Si no recuerda su usuario, por favor, contacte a su administrador",
+    "submit": "Reestablecer mi contraseña"
+  },
+  "passwordreset": {
+    "message": "Por favor, introduzca la nueva contraseña",
+    "submit": "Cambiar mi contraseña",
+    "error_title": "Error al cambiar tu contraseña",
+    "error_message": "Su petición de recuperación de contraseña ha expirado, por favor, pídala nuevamente en la página de inicio de sesión"
+  },
+  "index": {
+    "toggle_navigation": "Cambiar modo navegación",
+    "nav_documents": "Documentos",
+    "nav_tags": "Etiquetas",
+    "nav_users_groups": "Usuarios y Grupos",
+    "error_info": "{{ count }} nuevo error{{ count > 1 ? 's' : '' }}",
+    "logged_as": "Sesión iniciada como {{ username }}",
+    "nav_settings": "Ajustes",
+    "logout": "Cerrar sesión",
+    "global_quota_warning": "<strong>¡Advertencia!</strong> Cuota global casi alcanzada en {{ current | number: 0 }}MB ({{ percent | number: 1 }}%) usados en {{ total | number: 0 }}MB"
+  },
+  "document": {
+    "navigation_up": "Subir un nivel",
+    "toggle_navigation": "Cambiar modo navegación",
+    "display_mode_list": "Mostrar documentos en lista",
+    "display_mode_grid": "Mostrar documentos en cuadrícula",
+    "search_simple": "Búsqueda sencilla",
+    "search_fulltext": "Búsqueda texto completo",
+    "search_creator": "Creador",
+    "search_language": "Idioma",
+    "search_before_date": "Creado antes de esta fecha",
+    "search_after_date": "Creado después de esta fecha",
+    "search_before_update_date": "Actualizado antes de esta fecha",
+    "search_after_update_date": "Actualizado después de esta fecha",
+    "search_tags": "Etiquetas",
+    "search_shared": "Solo documentos compartidos",
+    "search_workflow": "Flujo de trabajo asignado a mi",
+    "search_clear": "Limpiar",
+    "any_language": "Cualquier idioma",
+    "add_document": "Añadir un documento",
+    "import_eml": "Importar desde un correo (formato EML)",
+    "tags": "Etiquetas",
+    "no_tags": "Ninguna etiqueta",
+    "no_documents": "No hay documento(s) en la base de datos",
+    "search": "Buscar",
+    "search_empty": "Sin coincidencias para <strong>\"{{ search }}\"</strong>",
+    "shared": "Compartido",
+    "current_step_name": "Progreso actual",
+    "title": "Título",
+    "description": "Descripción",
+    "contributors": "Contribuidores",
+    "language": "Idioma",
+    "creation_date": "Fecha de creación",
+    "subject": "Tema",
+    "identifier": "Identificador",
+    "publisher": "Editor",
+    "format": "Formato",
+    "source": "Fuente",
+    "type": "Tipo",
+    "coverage": "Cobertura",
+    "rights": "Derechos",
+    "relations": "Relations",
+    "page_size": "Tamaño página",
+    "page_size_10": "10 por página",
+    "page_size_20": "20 por página",
+    "page_size_30": "30 por página",
+    "upgrade_quota": "Para actualizar su cuota, pregunte al administrador",
+    "quota": "{{ current | number: 0 }}MB ({{ percent | number: 1 }}%) usados en {{ total | number: 0 }}MB",
+    "count": "{{ count }} documento{{ count > 1 ? 's' : '' }} encontrado{{ count > 1 ? 's' : '' }}",
+    "last_updated": "Último actualizado {{ date | timeAgo: dateFormat }}",
+    "view": {
+      "delete_comment_title": "Eliminar comentario",
+      "delete_comment_message": "¿Desea realmente eliminar este comentario?",
+      "delete_document_title": "Eliminar documento",
+      "delete_document_message": "¿Desea realmente eliminar este documento?",
+      "shared_document_title": "Documento compartido",
+      "shared_document_message": "Puede compartir el documento ofreciendo este enlace. Tenga en cuenta que cualquiera que tenga este enlace puede ver el documento.<br/><input class=\"form-control share-link\" type=\"text\" readonly=\"readonly\" value=\"{{ link }}\" onclick=\"this.select(); document.execCommand('copy');\" />",
+      "not_found": "Documento no encontrado",
+      "forbidden": "Acceso denegado",
+      "download_files": "Descargar archivos",
+      "export_pdf": "Exportar a PDF",
+      "by_creator": "por",
+      "comments": "Comentarios",
+      "no_comments": "Aún no hay comentarios sobre este documento",
+      "add_comment": "Añadir un comentario",
+      "error_loading_comments": "Error al cargar comentarios",
+      "workflow_current": "Flujo de trabajo actual",
+      "workflow_comment": "Añadir comentario de flujo de trabajo",
+      "workflow_validated_title": "Flujo de trabajo validado",
+      "workflow_validated_message": "El flujo de trabajo ha sido validado con éxito",
+      "content": {
+        "content": "Contenido",
+        "delete_file_title": "Eliminar archivo",
+        "delete_file_message": "¿Desea realmente eliminar este archivo?",
+        "upload_pending": "Pendiente...",
+        "upload_progress": "Subiendo...",
+        "upload_error": "Error al subir",
+        "upload_error_quota": "Cuota alcanzada",
+        "drop_zone": "Arrastre y suelte archivos aquí para subir",
+        "add_files": "Añadir archivos",
+        "file_processing_indicator": "El archivo esta siendo procesado. La búsqueda no estará disponible hasta que finalize el proceso.",
+        "reprocess_file": "Volver a procesar el archivo",
+        "upload_new_version": "Subir una nueva versión",
+        "open_versions": "Mostrar historial de versiones",
+        "display_mode_list": "Mostrar documentos en lista",
+        "display_mode_grid": "Mostrar documentos en cuadrícula"
+      },
+      "workflow": {
+        "workflow": "Flujo de trabajo",
+        "message": "Verifique o valide sus documentos con gente de su organización usando flujos de trabajo.",
+        "workflow_start_label": "¿Qué flujo de trabajo iniciar?",
+        "add_more_workflow": "Añadir más flujos de trabajo",
+        "start_workflow_submit": "Iniciar flujo de trabajo",
+        "full_name": "<strong>{{ name }}</strong> iniciado a {{ create_date | date }}",
+        "cancel_workflow": "Cancelar el flujo de trabajo actual",
+        "cancel_workflow_title": "Cancelar flujo de trabajo",
+        "cancel_workflow_message": "¿Desea realmente cancelar el flujo de trabajo actual?",
+        "no_workflow": "No puede iniciar ningún flujo de trabajo en este documento."
+      },
+      "permissions": {
+        "permissions": "Permisos",
+        "message": "Los permisos pueden ser aplicados directamente a este documento, o pueden provenir de <a href=\"#/tag\">etiquetas</a>.",
+        "title": "Permisos en este documento",
+        "inherited_tags": "Permisos heredados por etiquetas",
+        "acl_source": "De",
+        "acl_target": "Para",
+        "acl_permission": "Permisos"
+      },
+      "activity": {
+        "activity": "Actividad",
+        "message": "Todas las acciones en este documento se registran aquí."
+      }
+    },
+    "edit": {
+      "document_edited_with_errors": "Documento editado correctamente, pero algunos archivos no pueden ser subidos",
+      "document_added_with_errors": "Documento añadido correctamente, pero algunos archivos no pueden ser subidos",
+      "quota_reached": "Cuota alcanzada",
+      "primary_metadata": "Metadatos primarios",
+      "title_placeholder": "Nombre dado al recurso",
+      "description_placeholder": "Cuenta del recurso",
+      "new_files": "Nuevos archivos",
+      "orphan_files": "+ {{ count }} archivo{{ count > 1 ? 's' : '' }}",
+      "additional_metadata": "Metadatos adicionales",
+      "subject_placeholder": "Tema del recurso",
+      "identifier_placeholder": "Una referencia inequívoca al recurso dentro de un contexto dado",
+      "publisher_placeholder": "Una entidad responsable de hacer que el recurso esté disponible",
+      "format_placeholder": "El formato de archivo, medio físico o dimensiones del recurso.",
+      "source_placeholder": "Un recurso relacionado del cual se deriva el recurso descrito",
+      "uploading_files": "Subiendo archivos..."
+    },
+    "default": {
+      "upload_pending": "Pendiente...",
+      "upload_progress": "Subiendo...",
+      "upload_error": "Error al subir",
+      "upload_error_quota": "Cuota alcanzada",
+      "quick_upload": "Subida rápida",
+      "drop_zone": "Arrastre y suelte archivos aquí para subir",
+      "add_files": "Añadir archivos",
+      "add_new_document": "Añadir al nuevo documento",
+      "latest_activity": "Última actividad",
+      "footer_sismics": "Hecho a mano con <span class=\"fas fa-heart\"></span> por <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
+      "api_documentation": "Documentación API",
+      "feedback": "Déjenos un comentario",
+      "workflow_document_list": "Documentos asignados para usted",
+      "select_all": "Seleccionar todo",
+      "select_none": "Deseleccionar"
+    },
+    "pdf": {
+      "export_title": "Exportar a PDF",
+      "export_metadata": "Exportar metadatos",
+      "export_comments": "Exportar comentarios",
+      "fit_to_page": "Ajustar imagen a página",
+      "margin": "Margen",
+      "millimeter": "mm"
+    },
+    "share": {
+      "title": "Compartir documento",
+      "message": "Nombre el uso compartido si desea compartir el mismo documento más veces.",
+      "submit": "Compartir"
+    }
+  },
+  "file": {
+    "view": {
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "not_found": "Archivo no encontrado"
+    },
+    "edit": {
+      "title": "Editar archivo",
+      "name": "Nombre de archivo"
+    },
+    "versions": {
+      "title": "Historial de versiones",
+      "filename": "Nombre de archivo",
+      "mimetype": "Tipo",
+      "create_date": "Fecha de creación",
+      "version": "Versión"
+    }
+  },
+  "tag": {
+    "new_tag": "Nueva etiqueta",
+    "search": "Buscar",
+    "default": {
+      "title": "Etiquetas",
+      "message_1": "<strong>Etiquetas</strong> son rótulos asociados a documentos.",
+      "message_2": "Un documento puede ser etiquetdo por múltiples etiquetas, y una etiqueta puede ser aplicada a varios documentos.",
+      "message_3": "Usando el botón <span class=\"fas fa-pencil-alt\"></span> , puedes editar permisos en una etiqueta.",
+      "message_4": "Si una etiqueta puede ser leida por otro usuario o grupo, los documentos asociados podrán ser leidos por estos también.",
+      "message_5": "Por ejemplo, etiquete los documentos de su compañia con una etiqueta <span class=\"label label-info\">MiCompañia</span> y añada el permiso <strong>Puede leer</strong> a un grupo <span class=\"btn btn-default\">empleados</span>"
+    },
+    "edit": {
+      "delete_tag_title": "Eliminar etiqueta",
+      "delete_tag_message": "¿Desea realmente eliminar esta etiqueta?",
+      "name": "Nombre",
+      "color": "Color",
+      "parent": "Principal",
+      "info": "Los permisos en esta etiqueta también se aplicarán a los documentos etiquetados <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>",
+      "circular_reference_title": "Referencia circular",
+      "circular_reference_message": "La jerarquía de las etiquetas principales se encuentra en un búcle redundante, elija otra principal."
+    }
+  },
+  "group": {
+    "profile": {
+      "members": "Miembros",
+      "no_members": "Sin miembros",
+      "related_links": "Enlaces relacionados",
+      "edit_group": "Editar {{ name }} grupo"
+    }
+  },
+  "user": {
+    "profile": {
+      "groups": "Grupos",
+      "quota_used": "Cuota usada",
+      "percent_used": "{{ percent | number: 0 }}% Usado",
+      "related_links": "Enlaces relacionados",
+      "document_created": "Documentos creados por {{ username }}",
+      "edit_user": "Editar {{ username }} usuario"
+    }
+  },
+  "usergroup": {
+    "search_groups": "Buscar en grupos",
+    "search_users": "Buscar en usuarios",
+    "you": "¡Eres tú!",
+    "default": {
+      "title": "Usuarios y Grupos",
+      "message": "Aquí puede ver información sobre usuarios y grupos."
+    }
+  },
+  "settings": {
+    "menu_personal_settings": "Ajustes personales",
+    "menu_user_account": "Cuenta de usuario",
+    "menu_two_factor_auth": "Autenticación en dos pasos",
+    "menu_opened_sessions": "Sesiones abiertas",
+    "menu_file_importer": "Importador de archivos en masa",
+    "menu_general_settings": "Ajustes generales",
+    "menu_workflow": "Flujo de trabajo",
+    "menu_users": "Usuarios",
+    "menu_groups": "Grupos",
+    "menu_vocabularies": "Vocabularios",
+    "menu_configuration": "Configuración",
+    "menu_inbox": "Escaneo bandeja de entrada",
+    "menu_monitoring": "Monitorización",
+    "user": {
+      "title": "Administración de usuarios",
+      "add_user": "Añadir usuario",
+      "username": "Usuario",
+      "create_date": "Fecha creación",
+      "totp_enabled": "Autenticación en dos pasos activada para esta cuenta",
+      "edit": {
+        "delete_user_title": "Eliminar usuario",
+        "delete_user_message": "¿Desea realmente eliminar este usuario? Todos los documentos, archivos y etiquetas asociados serán eliminados",
+        "edit_user_failed_title": "El usuario ya existe",
+        "edit_user_failed_message": "Este nombre de usuario ya fue escogido por otro usuario",
+        "edit_user_title": "Editar \"{{ username }}\"",
+        "add_user_title": "Añadir usuario",
+        "username": "Usuario",
+        "email": "Correo",
+        "groups": "Grupos",
+        "storage_quota": "Cuota almacenamiento",
+        "storage_quota_placeholder": "Cuota de almacenamiento (en MB)",
+        "password": "Contraseña",
+        "password_confirm": "Contraseña (confirmar)",
+        "disabled": "Usuario deshabilitado",
+        "password_reset_btn": "Enviar correo de reestablecimiento de contraseña a este usuario",
+        "password_lost_sent_title": "Correo de reestablecimiento enviado",
+        "password_lost_sent_message": "Un correo de reestablecimiento de contraseña a sido enviado a <strong>{{ username }}</strong>",
+        "disable_totp_btn": "Desactivar autenticación en dos pasos para este usuario",
+        "disable_totp_title": "Desactivar autenticación en dos pasos",
+        "disable_totp_message": "¿Desea realmente desactivar la autenticación en dos pasos para este usuario?"
+      }
+    },
+    "workflow": {
+      "title": "Configuración flujo de trabajo",
+      "add_workflow": "Añadir flujo de trabajo",
+      "name": "Nombre",
+      "create_date": "Fecha creación",
+      "edit": {
+        "delete_workflow_title": "Eliminar flujo de trabajo",
+        "delete_workflow_message": "¿Desea realmente eliminar este flujo de trabajo? Los flujos de trabajo ejecutándose actualmente no serán eliminados",
+        "edit_workflow_title": "Editar \"{{ name }}\"",
+        "add_workflow_title": "Añadir flujo de trabajo",
+        "name": "Nombre",
+        "name_placeholder": "Nombre del paso o descripción",
+        "drag_help": "Arrastre y suelte para reordenar el paso",
+        "type": "Tipo de paso",
+        "type_approve": "Aprobar",
+        "type_validate": "Validar",
+        "target": "Asignado a",
+        "target_help": "<strong>Aprobar:</strong> Aceptar o rechazar la revisión <br/><strong>Validar:</strong> Revisar y continuar con el flujo de trabajo",
+        "add_step": "Añadir un paso de flujo de trabajo",
+        "actions": "¿Qué ocurre después?",
+        "remove_action": "Eliminar acción",
+        "acl_info": "Solo los usuarios y grupos definidos aquí podrán iniciar este flujo de trabajo en un documento"
+      }
+    },
+    "security": {
+      "enable_totp": "Activar autenticación en dos pasos",
+      "enable_totp_message": "Asegúrese de tener una aplicación compatible con TOTP en su teléfono lista para agregar una nueva cuenta",
+      "title": "Autenticación en dos pasos",
+      "message_1": "La autenticación en dos pasos le permite añadir una capa de seguridad en su <strong>{{ appName }}</strong> cuenta.<br/>Antes de activar esta característica, compruebe que disponga de una app compatible con TOTP en su teléfono:",
+      "message_google_authenticator": "Para Android, iOS, y Blackberry: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>",
+      "message_duo_mobile": "Para Android y iOS: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
+      "message_authenticator": "Para Windows Phone: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">Authenticator</a>",
+      "message_2": "Estas aplicaciones generan automaticamente un código de validación que cambia cada cirto tiempo.<br/>Necesitará introducir el código cada vez que acceda a <strong>{{ appName }}</strong>.",
+      "secret_key": "Su clave secreta es: <strong>{{ secret }}</strong>",
+      "secret_key_warning": "Configure your TOTP app on your phone with this secret key now, you will not be able to access it later.",
+      "totp_enabled_message": "La autenticación en dos pasos esta habilitada par su cuenta.<br/>Cada vez que inicie sesión en <strong>{{ appName }}</strong>, se le pedirá el código de su teléfono.<br/>Si pierde su teléfono, no podrá volver a iniciar sesión, pero sesiones activas le permitirán regenerar la clave secreta.",
+      "disable_totp": {
+        "disable_totp": "Desactivar autenticación en dos pasos",
+        "message": "Su cuenta dejará de estar protegida con la autenticación en dos pasos.",
+        "confirm_password": "Confirme su contraseña",
+        "submit": "Desactivar autenticación en dos pasos"
+      },
+      "test_totp": "Por favor, introduzca el código mostrado en su teléfono :",
+      "test_code_success": "Código CORRECTO",
+      "test_code_fail": "El código no es válido, por favor, asegúrerse de que su teléfono esté debidamente configurado, o desactive la autenticación en dos pasos"
+    },
+    "group": {
+      "title": "Administración de grupos",
+      "add_group": "Añadir grupo",
+      "name": "Nombre",
+      "edit": {
+        "delete_group_title": "Eliminar grupo",
+        "delete_group_message": "¿Desea realmente eliminar este grupo?",
+        "edit_group_failed_title": "El grupo ya existe",
+        "edit_group_failed_message": "Este nombre de grupo ya fue escogido por otro grupo",
+        "edit_group_title": "Editar \"{{ name }}\"",
+        "add_group_title": "Añadir grupo",
+        "name": "Nombre",
+        "parent_group": "Grupo principal",
+        "search_group": "Buscar un grupo",
+        "members": "Miembros",
+        "new_member": "Nuevo miembro",
+        "search_user": "Buscar un usuario"
+      }
+    },
+    "account": {
+      "title": "Cuenta de usuario",
+      "password": "Contraseña",
+      "password_confirm": "Contraseña (confirmar)",
+      "updated": "Cuenta actualizada correctamente"
+    },
+    "config": {
+      "title_guest_access": "Acceso invitado",
+      "message_guest_access": "Acceso invitado es un modo en el que cualquiera puede acceder {{ appName }} sin contraseña.<br/>Como un usuario normal, el invitado solo puede acceder a sus documentos, y aquellos accesibles a través de permisos.<br/>",
+      "enable_guest_access": "Activar acceso invitado",
+      "disable_guest_access": "Desactivar acceso invitado",
+      "title_theme": "Personalizar apariencia",
+      "title_general": "Configuración general",
+      "default_language": "Idioma por defecto para nuevos documentos",
+      "application_name": "Nombre aplicación",
+      "main_color": "Color principal",
+      "custom_css": "CSS personalizado",
+      "custom_css_placeholder": "CSS personalizado para agregar después de la hoja de estilo principal",
+      "logo": "Logo (tamaño cuadrado)",
+      "background_image": "Imagen de fondo",
+      "uploading_image": "Subiendo la imagen...",
+      "title_smtp": "Configuración correo",
+      "smtp_hostname": "Host SMTP",
+      "smtp_port": "Puerto SMTP",
+      "smtp_from": "Correo remitente",
+      "smtp_username": "Usuario SMTP",
+      "smtp_password": "Contraseña SMTP",
+      "smtp_updated": "Configuración SMTP actualizada correctamente",
+      "webhooks": "Webhooks",
+      "webhooks_explain": "Los webhooks serán llamados cuando ocurra el evento especificado. La URL dada será el POST (editado) con un JSON que contendrá el nombre del evento e ID del recurso en cuestión.",
+      "webhook_event": "Evento",
+      "webhook_url": "URL",
+      "webhook_create_date": "Fecha creación",
+      "webhook_add": "Añadir Webhook"
+    },
+    "inbox": {
+      "title": "Escaneo bandeja de entrada",
+      "message": "Al activar esta opción, el sistema escaneará la bandeja especificada cada minuto buscando correos <strong>no leidos</strong>, y los importará automaticamente.<br/>Después de importar un correo, éste será marcado como leido.<br/>Ajustes de configuración para <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
+      "enabled": "Activar escaneo de bandeja de entrada",
+      "hostname": "Host IMAP",
+      "port": "Puerto IMAP (143 o 993)",
+      "username": "Usuario IMAP",
+      "password": "Contraseña IMAP",
+      "tag": "Etiqueta añadida a documentos importado",
+      "test": "Comprobar parámetros",
+      "last_sync": "Última sincronización: {{ data.date | date: 'medium' }}, {{ data.count }} mensaje{{ data.count > 1 ? 's' : '' }} importado{{ data.count > 1 ? 's' : '' }}",
+      "test_success": "La conexión con la bandeja de entrada es correcta ({{ count }} mensaje{{ count > 1 ? 's' : '' }} <strong>no leido{{ count > 1 ? 's' : '' }}</strong>)",
+      "test_fail": "Ha ocurrido un error al conectar con la bandeja de entrada, por favor, compruebe los parámetros",
+      "saved": "Configuración IMAP guardada correctamente"
+    },
+    "monitoring": {
+      "background_tasks": "Tareas en segundo plano",
+      "queued_tasks": "Actualmente hay {{ count }} tarea{{ count > 1 ? 's' : '' }} en cola.",
+      "queued_tasks_explain": "Procesamiento de archivos, creación de miniaturas, actualización del índice y reconocimiento óptico de caracteres (OCR) son tareas en segundo plano. Gran cantidad de tareas sin procesar resultarán en búsquedas incompletas.",
+      "server_logs": "Registros del servidor",
+      "log_date": "Fecha",
+      "log_tag": "Etiqueta",
+      "log_message": "Mensaje",
+      "indexing": "Indexación",
+      "indexing_info": "Si observa discrepancias en los resultados de búsqueda, puede intentar realizar una reindexación completa. Los resultados de la búsqueda estarán incompletos hasta que se realice esta operación.",
+      "start_reindexing": "Iniciar reindexación completa",
+      "reindexing_started": "Reindexación iniciada, por favor, espere hasta que ya no queden tareas en segundo plano."
+    },
+    "session": {
+      "title": "Sesiones abiertas",
+      "created_date": "Fecha creación",
+      "last_connection_date": "Última fecha de conexión",
+      "user_agent": "De",
+      "current": "Actual",
+      "current_session": "Esta es la sesión actual",
+      "clear_message": "El resto de los dispositivos conectados a esta cuenta serán desconectados",
+      "clear": "Eliminar el resto de las sesiones"
+    },
+    "vocabulary": {
+      "title": "Entradas de vocabulario",
+      "choose_vocabulary": "Seleccione un vocabulario para editar",
+      "type": "Tipo",
+      "coverage": "Cobertura",
+      "rights": "Derechos",
+      "value": "Valor",
+      "order": "Órden",
+      "new_entry": "Nueva entrada"
+    },
+    "fileimporter": {
+      "title": "Importador de archivos en masa",
+      "advanced_users": "¡Para usuarios avanzados!",
+      "need_intro": "Si necesita:",
+      "need_1": "Importar un directorio de archivos de una vez",
+      "need_2": "Escanear un directorio en busca de nuevos archivos, e importados",
+      "line_1": "Vaya a  <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> y descargue la herramienta 'file importer' para su sistema.",
+      "line_2": "Siga las <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">instrucciones aquí</a> para usar esta herramienta.",
+      "line_3": "Sus archivos serán importados en <a href=\"#/document\">Subida rápida</a>, luego podrá agruparlos en documentos.",
+      "download": "Descargar",
+      "instructions": "Instrucciones"
+    }
+  },
+  "feedback": {
+    "title": "Déjenos un comentario",
+    "message": "¿Alguna sugerencia o pregunta sobre Teedy? ¡Te escuchamos!",
+    "sent_title": "Comentario enviado",
+    "sent_message": "¡Gracias por su comentario! Nos ayudará a hacer Teedy mucho mejor."
+  },
+  "import": {
+    "title": "Importando",
+    "error_quota": "Límite de cuota alcanzado, contacte a su administrador para incrementarla",
+    "error_general": "Ha ocurrido un error al intentar importar sus archivos, por favor, asegúrese de que sea un archivo EML válido"
+  },
+  "app_share": {
+    "main": "Pedir enlace al documento para acceder a él",
+    "403": {
+      "title": "No autorizado",
+      "message": "El documento que esta intentando ver ya no se cuentra compartido"
+    }
+  },
+  "directive": {
+    "acledit": {
+      "acl_target": "Para",
+      "acl_permission": "Permiso",
+      "add_permission": "Añadir un permiso",
+      "search_user_group": "Buscar un usuario o grupo"
+    },
+    "auditlog": {
+      "log_created": "creado",
+      "log_updated": "actualizado",
+      "log_deleted": "eliminado",
+      "Acl": "ACL",
+      "Comment": "Comentario",
+      "Document": "Documento",
+      "File": "Archivo",
+      "Group": "Grupo",
+      "Route": "Flujo de trabajo",
+      "RouteModel": "Modelo flujo de trabajo",
+      "Tag": "Etiqueta",
+      "User": "Usuario",
+      "Webhook": "Webhook"
+    },
+    "selectrelation": {
+      "typeahead": "Introduzca el título de un documento"
+    },
+    "selecttag": {
+      "typeahead": "Introduzca una etiqueta"
+    },
+    "datepicker": {
+      "current": "Hoy",
+      "clear": "Borrar",
+      "close": "Hecho"
+    }
+  },
+  "filter": {
+    "filesize": {
+      "mb": "MB",
+      "kb": "KB"
+    }
+  },
+  "acl": {
+    "READ": "Puede leer",
+    "READWRITE": "Puede escribir",
+    "WRITE": "Puede escribir",
+    "USER": "Usuario",
+    "GROUP": "Grupo",
+    "SHARE": "Compartido"
+  },
+  "workflow_type": {
+    "VALIDATE": "Validación",
+    "APPROVE": "Aprobación"
+  },
+  "workflow_transition": {
+    "APPROVED": "Aprobado",
+    "REJECTED": "Rechazado",
+    "VALIDATED": "Validado"
+  },
+  "validation": {
+    "required": "Requerido",
+    "too_short": "Muy corto",
+    "too_long": "Muy largo",
+    "email": "Debe ser un correo válido",
+    "password_confirm": "Contraseña y Contraseña (confirmar) deben coincidir",
+    "number": "Número requerido",
+    "no_space": "Los espacios no estan permitidos"
+  },
+  "action_type": {
+    "ADD_TAG": "Añadir etiqueta",
+    "REMOVE_TAG": "Eliminar etiqueta",
+    "PROCESS_FILES": "Procesar archivos"
+  },
+  "pagination": {
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "first": "Primero",
+    "last": "Último"
+  },
+  "onboarding": {
+    "step1": {
+      "title": "¿Primera vez?",
+      "description": "Si es su primera vez en Teedy, presione el botón Siguiente, de otro modo ciérreme si así lo desea."
+    },
+    "step2": {
+      "title": "Documentos",
+      "description": "Teedy esta organizado en documentos y cada uno contiene múltiples archivos."
+    },
+    "step3": {
+      "title": "Archivos",
+      "description": "Puede agregar archivos después de crear un documento, o antes de usar la zona de subida rápida."
+    },
+    "step4": {
+      "title": "Buscar",
+      "description": "Esta es la forma más rápida de buscar un documento. Está disponible una búsqueda avanzada con el botón lupa."
+    },
+    "step5": {
+      "title": "Etiquetas",
+      "description": "Los documentos pueden ser organizados en etiquetas (las cuales son como super-carpetas). Creelas aquí."
+    }
+  },
+  "ok": "OK",
+  "cancel": "Cancelar",
+  "share": "Compartir",
+  "unshare": "No compartir",
+  "close": "Cerrar",
+  "add": "Añadir",
+  "open": "Abrir",
+  "see": "Ver",
+  "save": "Guardar",
+  "export": "Exportar",
+  "edit": "Editar",
+  "delete": "Eliminar",
+  "rename": "Renombrar",
+  "loading": "Cargando...",
+  "send": "Enviar",
+  "enabled": "Activado",
+  "disabled": "Desactivado"
+}

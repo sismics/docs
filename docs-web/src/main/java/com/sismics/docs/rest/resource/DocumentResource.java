@@ -234,7 +234,10 @@ public class DocumentResource extends BaseResource {
             step.add("transitionable", getTargetIdList(null).contains(routeStepDto.getTargetId()));
             document.add("route_step", step);
         }
-        
+
+        // Add custom metadata
+        MetadataUtil.addMetadata(document, documentId);
+
         return Response.ok().entity(document.build()).build();
     }
     
@@ -326,6 +329,7 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {Object[]} documents List of documents
      * @apiSuccess {String} documents.id ID
      * @apiSuccess {String} documents.highlight Search highlight (for fulltext search)
+     * @apiSuccess {String} documents.file_id Main file ID
      * @apiSuccess {String} documents.title Title
      * @apiSuccess {String} documents.description Description
      * @apiSuccess {Number} documents.create_date Create date (timestamp)
@@ -395,6 +399,7 @@ public class DocumentResource extends BaseResource {
             documents.add(Json.createObjectBuilder()
                     .add("id", documentDto.getId())
                     .add("highlight", JsonUtil.nullable(documentDto.getHighlight()))
+                    .add("file_id", JsonUtil.nullable(documentDto.getFileId()))
                     .add("title", documentDto.getTitle())
                     .add("description", JsonUtil.nullable(documentDto.getDescription()))
                     .add("create_date", documentDto.getCreateTimestamp())
@@ -450,17 +455,21 @@ public class DocumentResource extends BaseResource {
         for (String criteria : criteriaList) {
             String[] params = criteria.split(":");
             if (params.length != 2 || Strings.isNullOrEmpty(params[0]) || Strings.isNullOrEmpty(params[1])) {
-                // This is not a special criteria
-                query.add(criteria);
+                // This is not a special criteria, do a fulltext search on it
+                fullQuery.add(criteria);
                 continue;
             }
 
             switch (params[0]) {
                 case "tag":
+                case "!tag":
                     // New tag criteria
                     List<TagDto> tagDtoList = TagUtil.findByName(params[1], allTagDtoList);
                     if (documentCriteria.getTagIdList() == null) {
                         documentCriteria.setTagIdList(new ArrayList<>());
+                    }
+                    if (documentCriteria.getExcludedTagIdList() == null) {
+                        documentCriteria.setExcludedTagIdList(new ArrayList<>());
                     }
                     if (tagDtoList.isEmpty()) {
                         // No tag found, the request must returns nothing
@@ -474,7 +483,11 @@ public class DocumentResource extends BaseResource {
                                 tagIdList.add(childrenTagDto.getId());
                             }
                         }
-                        documentCriteria.getTagIdList().add(tagIdList);
+                        if (params[0].startsWith("!")) {
+                            documentCriteria.getExcludedTagIdList().add(tagIdList);
+                        } else {
+                            documentCriteria.getTagIdList().add(tagIdList);
+                        }
                     }
                     break;
                 case "after":
@@ -556,6 +569,10 @@ public class DocumentResource extends BaseResource {
                         documentCriteria.setLanguage(UUID.randomUUID().toString());
                     }
                     break;
+                case "mime":
+                    // New mime type criteria
+                    documentCriteria.setMimeType(params[1]);
+                    break;
                 case "by":
                     // New creator criteria
                     User user = userDao.getActiveByUsername(params[1]);
@@ -571,12 +588,16 @@ public class DocumentResource extends BaseResource {
                     // New shared state criteria
                     documentCriteria.setActiveRoute(params[1].equals("me"));
                     break;
+                case "simple":
+                    // New simple search criteria
+                    query.add(params[1]);
+                    break;
                 case "full":
-                    // New full content search criteria
+                    // New fulltext search criteria
                     fullQuery.add(params[1]);
                     break;
                 default:
-                    query.add(criteria);
+                    fullQuery.add(criteria);
                     break;
             }
         }
@@ -604,6 +625,8 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String} [rights] Rights
      * @apiParam {String[]} [tags] List of tags ID
      * @apiParam {String[]} [relations] List of related documents ID
+     * @apiParam {String[]} [metadata_id] List of metadata ID
+     * @apiParam {String[]} [metadata_value] List of metadata values
      * @apiParam {String} language Language
      * @apiParam {Number} [create_date] Create date (timestamp)
      * @apiSuccess {String} id Document ID
@@ -624,6 +647,8 @@ public class DocumentResource extends BaseResource {
      * @param rights Rights
      * @param tagList Tags
      * @param relationList Relations
+     * @param metadataIdList Metadata ID list
+     * @param metadataValueList Metadata value list
      * @param language Language
      * @param createDateStr Creation date
      * @return Response
@@ -642,6 +667,8 @@ public class DocumentResource extends BaseResource {
             @FormParam("rights") String rights,
             @FormParam("tags") List<String> tagList,
             @FormParam("relations") List<String> relationList,
+            @FormParam("metadata_id") List<String> metadataIdList,
+            @FormParam("metadata_value") List<String> metadataValueList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
         if (!authenticate()) {
@@ -664,7 +691,7 @@ public class DocumentResource extends BaseResource {
         if (!Constants.SUPPORTED_LANGUAGES.contains(language)) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", language));
         }
-        
+
         // Create the document
         Document document = new Document();
         document.setUserId(principal.getId());
@@ -694,10 +721,17 @@ public class DocumentResource extends BaseResource {
         // Update relations
         updateRelationList(document.getId(), relationList);
 
+        // Update custom metadata
+        try {
+            MetadataUtil.updateMetadata(document.getId(), metadataIdList, metadataValueList);
+        } catch (Exception e) {
+            throw new ClientException("ValidationError", e.getMessage());
+        }
+
         // Raise a document created event
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
         documentCreatedAsyncEvent.setUserId(principal.getId());
-        documentCreatedAsyncEvent.setDocument(document);
+        documentCreatedAsyncEvent.setDocumentId(document.getId());
         ThreadLocalContext.get().addAsyncEvent(documentCreatedAsyncEvent);
 
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -724,6 +758,8 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String} [rights] Rights
      * @apiParam {String[]} [tags] List of tags ID
      * @apiParam {String[]} [relations] List of related documents ID
+     * @apiParam {String[]} [metadata_id] List of metadata ID
+     * @apiParam {String[]} [metadata_value] List of metadata values
      * @apiParam {String} language Language
      * @apiParam {Number} [create_date] Create date (timestamp)
      * @apiSuccess {String} id Document ID
@@ -753,6 +789,8 @@ public class DocumentResource extends BaseResource {
             @FormParam("rights") String rights,
             @FormParam("tags") List<String> tagList,
             @FormParam("relations") List<String> relationList,
+            @FormParam("metadata_id") List<String> metadataIdList,
+            @FormParam("metadata_value") List<String> metadataValueList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
         if (!authenticate()) {
@@ -814,7 +852,14 @@ public class DocumentResource extends BaseResource {
         
         // Update relations
         updateRelationList(id, relationList);
-        
+
+        // Update custom metadata
+        try {
+            MetadataUtil.updateMetadata(document.getId(), metadataIdList, metadataValueList);
+        } catch (Exception e) {
+            throw new ClientException("ValidationError", e.getMessage());
+        }
+
         // Raise a document updated event
         DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
         documentUpdatedAsyncEvent.setUserId(principal.getId());
@@ -898,18 +943,18 @@ public class DocumentResource extends BaseResource {
         }
 
         // Save the document, create the base ACLs
-        document = DocumentUtil.createDocument(document, principal.getId());
+        DocumentUtil.createDocument(document, principal.getId());
 
         // Raise a document created event
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
         documentCreatedAsyncEvent.setUserId(principal.getId());
-        documentCreatedAsyncEvent.setDocument(document);
+        documentCreatedAsyncEvent.setDocumentId(document.getId());
         ThreadLocalContext.get().addAsyncEvent(documentCreatedAsyncEvent);
 
         // Add files to the document
         try {
             for (EmailUtil.FileContent fileContent : mailContent.getFileContentList()) {
-                FileUtil.createFile(fileContent.getName(), fileContent.getFile(), fileContent.getSize(),
+                FileUtil.createFile(fileContent.getName(), null, fileContent.getFile(), fileContent.getSize(),
                         document.getLanguage(), principal.getId(), document.getId());
             }
         } catch (IOException e) {
@@ -958,15 +1003,30 @@ public class DocumentResource extends BaseResource {
         
         // Delete the document
         documentDao.delete(id, principal.getId());
-        
-        // Raise file deleted events (don't bother sending document updated event)
+
+        long totalSize = 0L;
         for (File file : fileList) {
+            // Store the file size to update the quota
+            java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+            try {
+                totalSize += Files.size(storedFile);
+            } catch (IOException e) {
+                // The file doesn't exists on disk, which is weird, but not fatal
+            }
+
+            // Raise file deleted event
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
-            fileDeletedAsyncEvent.setFile(file);
+            fileDeletedAsyncEvent.setFileId(file.getId());
             ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
-        
+
+        // Update the user quota
+        UserDao userDao = new UserDao();
+        User user = userDao.getById(principal.getId());
+        user.setStorageCurrent(user.getStorageCurrent() - totalSize);
+        userDao.updateQuota(user);
+
         // Raise a document deleted event
         DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
         documentDeletedAsyncEvent.setUserId(principal.getId());

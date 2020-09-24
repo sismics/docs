@@ -1,3 +1,4 @@
+
 'use strict';
 
 /**
@@ -59,26 +60,6 @@ angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dial
     return $stateParams.id;
   };
   
-  /**
-   * In edit mode, load the current workflow.
-   */
-  if ($scope.isEdit()) {
-    Restangular.one('routemodel', $stateParams.id).get().then(function (data) {
-      $scope.workflow = data;
-      $scope.workflow.steps = JSON.parse(data.steps);
-      _.each($scope.workflow.steps, function (step) {
-        if (!step.transitions) {
-          // Patch for old route models
-          $scope.updateTransitions(step);
-        }
-      });
-    });
-  } else {
-    $scope.workflow = {
-      steps: []
-    }
-  }
-
   /**
    * Update the current workflow.
    */
@@ -188,4 +169,25 @@ angular.module('docs').controller('SettingsWorkflowEdit', function($scope, $dial
   Restangular.one('tag/list').get().then(function(data) {
     $scope.tags = data.tags;
   });
+
+  /**
+   * In edit mode, load the current workflow.
+   */
+  if ($scope.isEdit()) {
+    Restangular.one('routemodel', $stateParams.id).get().then(function (data) {
+      $scope.workflow = data;
+      $scope.workflow.steps = JSON.parse(data.steps);
+      _.each($scope.workflow.steps, function (step) {
+        if (!step.transitions) {
+          // Patch for old route models
+          $scope.updateTransitions(step);
+        }
+      });
+    });
+  } else {
+    $scope.workflow = {
+      steps: []
+    };
+    $scope.addStep();
+  }
 });

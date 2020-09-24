@@ -18,6 +18,8 @@ import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.io.InputStreamReaderThread;
 import com.sismics.util.mime.MimeTypeUtil;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -36,6 +38,11 @@ import java.util.*;
  * @author bgamard
  */
 public class FileUtil {
+    /**
+     * Logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(FileUtil.class);
+
     /**
      * File ID of files currently being processed.
      */
@@ -76,12 +83,12 @@ public class FileUtil {
     /**
      * Remove a file from the storage filesystem.
      * 
-     * @param file File to delete
+     * @param fileId ID of file to delete
      */
-    public static void delete(File file) throws IOException {
-        Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
-        Path webFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_web");
-        Path thumbnailFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_thumb");
+    public static void delete(String fileId) throws IOException {
+        Path storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId);
+        Path webFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_web");
+        Path thumbnailFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_thumb");
         
         if (Files.exists(storedFile)) {
             Files.delete(storedFile);
@@ -98,6 +105,7 @@ public class FileUtil {
      * Create a new file.
      *
      * @param name File name, can be null
+     * @param previousFileId ID of the previous version of the file, if the new file is a new version
      * @param unencryptedFile Path to the unencrypted file
      * @param fileSize File size
      * @param language File language, can be null if associated to no document
@@ -106,7 +114,7 @@ public class FileUtil {
      * @return File ID
      * @throws Exception e
      */
-    public static String createFile(String name, Path unencryptedFile, long fileSize, String language, String userId, String documentId) throws Exception {
+    public static String createFile(String name, String previousFileId, Path unencryptedFile, long fileSize, String language, String userId, String documentId) throws Exception {
         // Validate mime type
         String mimeType;
         try {
@@ -125,29 +133,52 @@ public class FileUtil {
         // Validate global quota
         String globalStorageQuotaStr = System.getenv(Constants.GLOBAL_QUOTA_ENV);
         if (!Strings.isNullOrEmpty(globalStorageQuotaStr)) {
-            long globalStorageQuota = Long.valueOf(globalStorageQuotaStr);
+            long globalStorageQuota = Long.parseLong(globalStorageQuotaStr);
             long globalStorageCurrent = userDao.getGlobalStorageCurrent();
             if (globalStorageCurrent + fileSize > globalStorageQuota) {
                 throw new IOException("QuotaReached");
             }
         }
 
-        // Get files of this document
-        FileDao fileDao = new FileDao();
-        int order = 0;
-        if (documentId != null) {
-            for (File file : fileDao.getByDocumentId(userId, documentId)) {
-                file.setOrder(order++);
-            }
-        }
-
-        // Create the file
+        // Prepare the file
         File file = new File();
-        file.setOrder(order);
+        file.setOrder(0);
+        file.setVersion(0);
+        file.setLatestVersion(true);
         file.setDocumentId(documentId);
         file.setName(StringUtils.abbreviate(name, 200));
         file.setMimeType(mimeType);
         file.setUserId(userId);
+
+        // Get files of this document
+        FileDao fileDao = new FileDao();
+        if (documentId != null) {
+            if (previousFileId == null) {
+                // It's not a new version, so put it in last order
+                file.setOrder(fileDao.getByDocumentId(userId, documentId).size());
+            } else {
+                // It's a new version, update the previous version
+                File previousFile = fileDao.getActiveById(previousFileId);
+                if (previousFile == null || !previousFile.getDocumentId().equals(documentId)) {
+                    throw new IOException("Previous version mismatch");
+                }
+
+                if (previousFile.getVersionId() == null) {
+                    previousFile.setVersionId(UUID.randomUUID().toString());
+                }
+
+                // Copy the previous file metadata
+                file.setOrder(previousFile.getOrder());
+                file.setVersionId(previousFile.getVersionId());
+                file.setVersion(previousFile.getVersion() + 1);
+
+                // Update the previous file
+                previousFile.setLatestVersion(false);
+                fileDao.update(previousFile);
+            }
+        }
+
+        // Create the file
         String fileId = fileDao.create(file, userId);
 
         // Save the file
@@ -166,7 +197,7 @@ public class FileUtil {
         FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
         fileCreatedAsyncEvent.setUserId(userId);
         fileCreatedAsyncEvent.setLanguage(language);
-        fileCreatedAsyncEvent.setFile(file);
+        fileCreatedAsyncEvent.setFileId(file.getId());
         fileCreatedAsyncEvent.setUnencryptedFile(unencryptedFile);
         ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
 
@@ -187,6 +218,7 @@ public class FileUtil {
      */
     public static void startProcessingFile(String fileId) {
         processingFileSet.add(fileId);
+        log.info("Processing started for file: " + fileId);
     }
 
     /**
@@ -196,6 +228,7 @@ public class FileUtil {
      */
     public static void endProcessingFile(String fileId) {
         processingFileSet.remove(fileId);
+        log.info("Processing ended for file: " + fileId);
     }
 
     /**

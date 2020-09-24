@@ -48,8 +48,11 @@ public class DialectUtil {
         sql = sql.replaceAll("(cached|memory) table", "table");
         sql = sql.replaceAll("datetime", "timestamp");
         sql = sql.replaceAll("longvarchar", "text");
-        sql = sql.replaceAll("bit not null", "bool not null");
+        sql = sql.replaceAll("bit default 1", "bool default true");
         sql = sql.replaceAll("bit default 0", "bool default false");
+        sql = sql.replaceAll("bit not null default 1", "bool not null default true");
+        sql = sql.replaceAll("bit not null default 0", "bool not null default false");
+        sql = sql.replaceAll("bit not null", "bool not null");
         return sql;
     }
 }

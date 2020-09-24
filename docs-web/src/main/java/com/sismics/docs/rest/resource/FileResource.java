@@ -66,6 +66,7 @@ public class FileResource extends BaseResource {
      * @apiName PutFile
      * @apiGroup File
      * @apiParam {String} id Document ID
+     * @apiParam {String} previousFileId ID of the file to replace by this new version
      * @apiParam {String} file File data
      * @apiSuccess {String} status Status OK
      * @apiSuccess {String} id File ID
@@ -88,6 +89,7 @@ public class FileResource extends BaseResource {
     @Consumes("multipart/form-data")
     public Response add(
             @FormDataParam("id") String documentId,
+            @FormDataParam("previousFileId") String previousFileId,
             @FormDataParam("file") FormDataBodyPart fileBodyPart) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -122,7 +124,7 @@ public class FileResource extends BaseResource {
         try {
             String name = fileBodyPart.getContentDisposition() != null ?
                     URLDecoder.decode(fileBodyPart.getContentDisposition().getFileName(), "UTF-8") : null;
-            String fileId = FileUtil.createFile(name, unencryptedFile, fileSize, documentDto == null ?
+            String fileId = FileUtil.createFile(name, previousFileId, unencryptedFile, fileSize, documentDto == null ?
                     null : documentDto.getLanguage(), principal.getId(), documentId);
 
             // Always return OK
@@ -200,7 +202,7 @@ public class FileResource extends BaseResource {
             FileUpdatedAsyncEvent fileUpdatedAsyncEvent = new FileUpdatedAsyncEvent();
             fileUpdatedAsyncEvent.setUserId(principal.getId());
             fileUpdatedAsyncEvent.setLanguage(documentDto.getLanguage());
-            fileUpdatedAsyncEvent.setFile(file);
+            fileUpdatedAsyncEvent.setFileId(file.getId());
             fileUpdatedAsyncEvent.setUnencryptedFile(unencryptedFile);
             ThreadLocalContext.get().addAsyncEvent(fileUpdatedAsyncEvent);
             
@@ -288,7 +290,7 @@ public class FileResource extends BaseResource {
         DocumentDao documentDao = new DocumentDao();
         FileDao fileDao = new FileDao();
         File file = fileDao.getFile(id);
-        if (file == null) {
+        if (file == null || file.getDocumentId() == null) {
             throw new NotFoundException();
         }
         DocumentDto documentDto = documentDao.getDocument(file.getDocumentId(), PermType.WRITE, getTargetIdList(null));
@@ -308,7 +310,7 @@ public class FileResource extends BaseResource {
             FileUpdatedAsyncEvent event = new FileUpdatedAsyncEvent();
             event.setUserId(principal.getId());
             event.setLanguage(documentDto.getLanguage());
-            event.setFile(file);
+            event.setFileId(file.getId());
             event.setUnencryptedFile(unencryptedFile);
             ThreadLocalContext.get().addAsyncEvent(event);
         } catch (Exception e) {
@@ -367,6 +369,12 @@ public class FileResource extends BaseResource {
                 file.setOrder(order);
             }
         }
+
+        // Raise a document updated event
+        DocumentUpdatedAsyncEvent event = new DocumentUpdatedAsyncEvent();
+        event.setUserId(principal.getId());
+        event.setDocumentId(documentId);
+        ThreadLocalContext.get().addAsyncEvent(event);
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -384,9 +392,10 @@ public class FileResource extends BaseResource {
      * @apiParam {String} share Share ID
      * @apiSuccess {Object[]} files List of files
      * @apiSuccess {String} files.id ID
-     * @apiSuccess {String} files.mimetype MIME type
-     * @apiSuccess {String} files.name File name
      * @apiSuccess {String} files.processing True if the file is currently processing
+     * @apiSuccess {String} files.name File name
+     * @apiSuccess {String} files.version Zero-based version number
+     * @apiSuccess {String} files.mimetype MIME type
      * @apiSuccess {String} files.document_id Document ID
      * @apiSuccess {String} files.create_date Create date (timestamp)
      * @apiSuccess {String} files.size File size (in bytes)
@@ -427,6 +436,7 @@ public class FileResource extends BaseResource {
                         .add("id", fileDb.getId())
                         .add("processing", FileUtil.isProcessingFile(fileDb.getId()))
                         .add("name", JsonUtil.nullable(fileDb.getName()))
+                        .add("version", fileDb.getVersion())
                         .add("mimetype", fileDb.getMimeType())
                         .add("document_id", JsonUtil.nullable(fileDb.getDocumentId()))
                         .add("create_date", fileDb.getCreateDate().getTime())
@@ -436,6 +446,57 @@ public class FileResource extends BaseResource {
             }
         }
         
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("files", files);
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * List all versions of a file.
+     *
+     * @api {get} /file/id/versions Get versions of a file
+     * @apiName GetFileVersions
+     * @apiGroup File
+     * @apiParam {String} id File ID
+     * @apiSuccess {Object[]} files List of files
+     * @apiSuccess {String} files.id ID
+     * @apiSuccess {String} files.name File name
+     * @apiSuccess {String} files.version Zero-based version number
+     * @apiSuccess {String} files.mimetype MIME type
+     * @apiSuccess {String} files.create_date Create date (timestamp)
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) NotFound File not found
+     * @apiPermission user
+     * @apiVersion 1.5.0
+     *
+     * @param id File ID
+     * @return Response
+     */
+    @GET
+    @Path("{id: [a-z0-9\\-]+}/versions")
+    public Response versions(@PathParam("id") String id) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get versions
+        File file = findFile(id, null);
+        FileDao fileDao = new FileDao();
+        List<File> fileList = Lists.newArrayList(file);
+        if (file.getVersionId() != null) {
+            fileList = fileDao.getByVersionId(file.getVersionId());
+        }
+
+        JsonArrayBuilder files = Json.createArrayBuilder();
+        for (File fileDb : fileList) {
+            files.add(Json.createObjectBuilder()
+                    .add("id", fileDb.getId())
+                    .add("name", JsonUtil.nullable(fileDb.getName()))
+                    .add("version", fileDb.getVersion())
+                    .add("mimetype", fileDb.getMimeType())
+                    .add("create_date", fileDb.getCreateDate().getTime()));
+        }
+
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("files", files);
         return Response.ok().entity(response.build()).build();
@@ -487,7 +548,7 @@ public class FileResource extends BaseResource {
         // Raise a new file deleted event
         FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
         fileDeletedAsyncEvent.setUserId(principal.getId());
-        fileDeletedAsyncEvent.setFile(file);
+        fileDeletedAsyncEvent.setFileId(file.getId());
         ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         
         if (file.getDocumentId() != null) {
@@ -547,7 +608,7 @@ public class FileResource extends BaseResource {
         if (size != null) {
             if (size.equals("content")) {
                 return Response.ok(Strings.nullToEmpty(file.getContent()))
-                        .header(HttpHeaders.CONTENT_TYPE, "text/plain")
+                        .header(HttpHeaders.CONTENT_TYPE, "text/plain; charset=utf-8")
                         .build();
             }
 

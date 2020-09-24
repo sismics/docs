@@ -198,7 +198,7 @@ public class VocabularyResource extends BaseResource {
     /**
      * Delete a vocabulary entry.
      *
-     * @api {delete} /vocabulary/:id Delete vocabulary entry
+     * @api {delete} /vocabulary/:id Delete a vocabulary entry
      * @apiName DeleteVocabularyId
      * @apiGroup Vocabulary
      * @apiParam {String} id Entry ID

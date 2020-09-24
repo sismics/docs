@@ -1,4 +1,4 @@
-The web client and Android application for **Sismics Docs** are only examples
+The web client and Android application for **Teedy** are only examples
 of what is possible with the provided REST API. Everything you see in those apps are
 accessible using the API.
 
@@ -6,8 +6,8 @@ This documentation is divided in two parts. The first will get you started on es
 steps like authentication and the second part is a full reference of every endpoints.
 
 ## API URL
-The base URL depends on your server. If your instance of Docs is accessible through
-`https://docs.mycompany.com`, then the base API URL is `https://docs.mycompany.com/api`.
+The base URL depends on your server. If your instance of Teedy is accessible through
+`https://teedy.mycompany.com`, then the base API URL is `https://teedy.mycompany.com/api`.
 
 ## Verbs and status codes
 The API uses restful verbs.

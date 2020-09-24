@@ -6,7 +6,7 @@
   <groupId>com.sismics.docs</groupId>
   <artifactId>docs-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.6-SNAPSHOT</version>
+  <version>1.9-SNAPSHOT</version>
 
   <name>Docs Parent</name>
 
@@ -22,10 +22,11 @@
     <org.apache.commons.commons-email.version>1.5</org.apache.commons.commons-email.version>
     <org.freemarker.freemarker.version>2.3.28</org.freemarker.freemarker.version>
     <commons-dbcp.version>1.4</commons-dbcp.version>
-    <com.google.guava.guava.version>26.0-jre</com.google.guava.guava.version>
+    <com.google.guava.guava.version>28.2-jre</com.google.guava.guava.version>
     <log4j.log4j.version>1.2.16</log4j.log4j.version>
     <org.slf4j.version>1.6.4</org.slf4j.version>
     <org.slf4j.jcl-over-slf4j.version>1.6.6</org.slf4j.jcl-over-slf4j.version>
+    <org.slf4j.jul-to-slf4j.version>1.6.6</org.slf4j.jul-to-slf4j.version>
     <junit.junit.version>4.12</junit.junit.version>
     <com.h2database.h2.version>1.4.197</com.h2database.h2.version>
     <org.glassfish.jersey.version>2.27</org.glassfish.jersey.version>
@@ -34,7 +35,7 @@
     <org.apache.lucene.version>7.5.0</org.apache.lucene.version>
     <org.imgscalr.imgscalr-lib.version>4.2</org.imgscalr.imgscalr-lib.version>
     <org.apache.pdfbox.pdfbox.version>2.0.12</org.apache.pdfbox.pdfbox.version>
-    <org.bouncycastle.bcprov-jdk15on.version>1.54</org.bouncycastle.bcprov-jdk15on.version>
+    <org.bouncycastle.bcprov-jdk15on.version>1.61</org.bouncycastle.bcprov-jdk15on.version>
     <joda-time.joda-time.version>2.10</joda-time.joda-time.version>
     <org.hibernate.hibernate.version>5.3.7.Final</org.hibernate.hibernate.version>
     <javax.servlet.javax.servlet-api.version>4.0.1</javax.servlet.javax.servlet-api.version>
@@ -49,17 +50,18 @@
     <com.sun.mail.javax.mail.version>1.6.2</com.sun.mail.javax.mail.version>
     <org.jsoup.jsoup.version>1.11.3</org.jsoup.jsoup.version>
     <com.squareup.okhttp3.okhttp.version>3.11.0</com.squareup.okhttp3.okhttp.version>
+    <org.apache.directory.api.api-all.version>1.0.0</org.apache.directory.api.api-all.version>
 
-    <org.eclipse.jetty.jetty-server.version>9.4.12.v20180830</org.eclipse.jetty.jetty-server.version>
-    <org.eclipse.jetty.jetty-webapp.version>9.4.12.v20180830</org.eclipse.jetty.jetty-webapp.version>
-    <org.eclipse.jetty.jetty-servlet.version>9.4.12.v20180830</org.eclipse.jetty.jetty-servlet.version>
+    <org.eclipse.jetty.jetty-server.version>9.4.17.v20190418</org.eclipse.jetty.jetty-server.version>
+    <org.eclipse.jetty.jetty-webapp.version>9.4.17.v20190418</org.eclipse.jetty.jetty-webapp.version>
+    <org.eclipse.jetty.jetty-servlet.version>9.4.17.v20190418</org.eclipse.jetty.jetty-servlet.version>
     
     <!-- Plugins version -->
     <org.apache.maven.plugins.maven-antrun-plugin.version>1.8</org.apache.maven.plugins.maven-antrun-plugin.version>
     <org.apache.maven.plugins.maven-jar-plugin.version>3.1.0</org.apache.maven.plugins.maven-jar-plugin.version>
     <org.apache.maven.plugins.maven-war-plugin.version>3.2.2</org.apache.maven.plugins.maven-war-plugin.version>
     <org.apache.maven.plugins.maven-surefire-plugin.version>2.22.1</org.apache.maven.plugins.maven-surefire-plugin.version>
-    <org.eclipse.jetty.jetty-maven-plugin.version>9.4.12.v20180830</org.eclipse.jetty.jetty-maven-plugin.version>
+    <org.eclipse.jetty.jetty-maven-plugin.version>9.4.17.v20190418</org.eclipse.jetty.jetty-maven-plugin.version>
   </properties>
   
   <scm>
@@ -240,7 +242,13 @@
         <artifactId>jcl-over-slf4j</artifactId>
         <version>${org.slf4j.jcl-over-slf4j.version}</version>
       </dependency>
-      
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jul-to-slf4j</artifactId>
+        <version>${org.slf4j.jul-to-slf4j.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -450,6 +458,12 @@
         <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
         <version>${org.postgresql.postgresql.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.directory.api</groupId>
+        <artifactId>api-all</artifactId>
+        <version>${org.apache.directory.api.api-all.version}</version>
       </dependency>
 
       <!-- Servlet listener to register SPI ImageIO plugins -->

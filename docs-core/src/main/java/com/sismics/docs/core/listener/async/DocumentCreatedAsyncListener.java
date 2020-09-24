@@ -3,9 +3,11 @@ package com.sismics.docs.core.listener.async;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.dao.ContributorDao;
+import com.sismics.docs.core.dao.DocumentDao;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Contributor;
+import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.util.TransactionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,15 +36,22 @@ public class DocumentCreatedAsyncListener {
         }
 
         TransactionUtil.handle(() -> {
+            // Fetch a fresh document
+            Document document = new DocumentDao().getById(event.getDocumentId());
+            if (document == null) {
+                // The document has been deleted since
+                return;
+            }
+
             // Add the first contributor (the creator of the document)
             ContributorDao contributorDao = new ContributorDao();
             Contributor contributor = new Contributor();
-            contributor.setDocumentId(event.getDocument().getId());
+            contributor.setDocumentId(event.getDocumentId());
             contributor.setUserId(event.getUserId());
             contributorDao.create(contributor);
 
             // Update index
-            AppContext.getInstance().getIndexingHandler().createDocument(event.getDocument());
+            AppContext.getInstance().getIndexingHandler().createDocument(document);
         });
     }
 }
