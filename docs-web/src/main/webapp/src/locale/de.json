@@ -556,7 +556,7 @@
     "VALIDATED": "Validiert"
   },
   "validation": {
-    "required": "Erfordert",
+    "required": "Erforderlich",
     "too_short": "Zu kurz",
     "too_long": "Zu lang",
     "email": "Muss eine gültige E-Mailadresse sein",
