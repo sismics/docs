@@ -34,6 +34,29 @@ angular.module('yaru22.angular-timeago').config(["timeAgoSettings", function(tim
 
 'use strict';
 
+angular.module('yaru22.angular-timeago').config(function(timeAgoSettings) {
+  timeAgoSettings.strings['el'] = {
+    prefixAgo: null,
+    prefixFromNow: null,
+    suffixAgo: 'πριν',
+    suffixFromNow: 'από τώρα',
+    seconds: 'λιγότερο από ένα λεπτό',
+    minute: 'περίπου ένα λεπτό',
+    minutes: '%d λεπτά',
+    hour: 'περίπου μια ώρα',
+    hours: 'περίπου %d ώρες',
+    day: 'μια μέρα',
+    days: '%d μέρες',
+    month: 'περίπου ένα μήνα',
+    months: '%d μήνες',
+    year: 'περίπου ένα χρόνο',
+    years: '%d χρόνια',
+    numbers: []
+  };
+});
+
+'use strict';
+
 angular.module('yaru22.angular-timeago').config(["timeAgoSettings", function(timeAgoSettings) {
 
   /**
