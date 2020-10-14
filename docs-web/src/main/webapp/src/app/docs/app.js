@@ -429,12 +429,13 @@ angular.module('docs',
       prefix: 'locale/',
       suffix: '.json?@build.date@'
     })
-    .registerAvailableLanguageKeys(['en', 'es', 'fr', 'de', 'el', 'ru', 'zh_CN', 'zh_TW'], {
+    .registerAvailableLanguageKeys(['en', 'es', 'fr', 'de', 'el', 'ru', 'pl', 'zh_CN', 'zh_TW'], {
       'ru_*': 'ru',
       'en_*': 'en',
       'es_*': 'es',
       'fr_*': 'fr',
       'de_*': 'de',
+	  'pl_*': 'pl',
       '*': 'en'
     })
     .fallbackLanguage('en');
