@@ -277,7 +277,7 @@
     "menu_groups": "Gruppi",
     "menu_vocabularies": "Vocabolari",
     "menu_configuration": "Configurazioni",
-    "menu_inbox": "Scansione in ingresso",
+    "menu_inbox": "Scansione posta in arrivo",
     "menu_ldap": "Autenticazione LDAP",
     "menu_metadata": "Metadati personalizzati",
     "menu_monitoring": "Monitoraggio",
@@ -434,118 +434,118 @@
       "type": "Tipo del metadato"
     },
     "inbox": {
-      "title": "Inbox scanning",
-      "message": "By enabling this feature, the system will scan the specified inbox every minute for <strong>unread</strong> emails and automatically import them.<br/>After importing an email, it will be marked as read.<br/>Configuration settings for <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
-      "enabled": "Enable inbox scanning",
-      "hostname": "IMAP hostname",
-      "port": "IMAP port (143 or 993)",
-      "username": "IMAP username",
-      "password": "IMAP password",
-      "tag": "Tag added to imported documents",
-      "test": "Test the parameters",
-      "last_sync": "Last synchronization: {{ data.date | date: 'medium' }}, {{ data.count }} message{{ data.count > 1 ? 's' : '' }} imported",
-      "test_success": "The connection to the inbox is successful ({{ count }} <strong>unread</strong> message{{ count > 1 ? 's' : '' }})",
-      "test_fail": "An error occurred while connecting to the inbox, please check the parameters",
-      "saved": "IMAP configuration saved successfully",
-      "autoTagsEnabled": "Automatically add tags from subject line marked with #",
-      "deleteImported": "Delete message from mailbox after import"
+      "title": "Scansione posta in ingresso",
+      "message": "Abilitando questa funzionalità, il sistema scansionerà la casella specifica ogni minuto per trovare email <strong>non lette</strong> ed importarle automaticamente.<br/>Dopo aver importato una email, verrà segnata come letta.<br/>Impostazioni di configurazione per <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
+      "enabled": "Abilita scansione posta in ingresso",
+      "hostname": "Hostname IMAP",
+      "port": "Porta IMAP (143 o 993)",
+      "username": "Nome utente IMAP",
+      "password": "Password IMAP",
+      "tag": "Tag aggiunti a documenti importati",
+      "test": "Testa i parametri",
+      "last_sync": "Ultima sincronizzazione: {{ data.date | date: 'medium' }}, {{ data.count }} messaggi{{ data.count > 1 ? '' : 'o' }} importat{{ data.count > 1 ? 'i' : 'o' }}",
+      "test_success": "Connessione alla casella di posta effettuata con successo ({{ count }} messaggi{{ data.count > 1 ? '' : 'o' }} <strong> non lett{{ data.count > 1 ? 'i' : 'o' }}</strong>)",
+      "test_fail": "Si è verificato un errore durante la connessione alla casella di posta, per favore controlla i parametri",
+      "saved": "Configurazione IMAP salvata con successo",
+      "autoTagsEnabled": "Aggiungi automaticamente tag da oggetti segnati con #",
+      "deleteImported": "Cancella i messaggi dalla casella postale dopo l'importazione"
     },
     "monitoring": {
-      "background_tasks": "Background tasks",
-      "queued_tasks": "There is currently {{ count }} queued tasks.",
-      "queued_tasks_explain": "File processing, thumbnail creation, index update, optical character recognition are background tasks. A large amount of unprocessed tasks will result in incomplete search results.",
-      "server_logs": "Server logs",
-      "log_date": "Date",
+      "background_tasks": "Task di background",
+      "queued_tasks": "Al momento ci sono {{ count }} task accodati.",
+      "queued_tasks_explain": "Processamento file, creazione minuature, aggiornamento indici, riconoscimento ottico dei caratteri sono tutti task di background. Un grande numero di task non processati risulterà in una ricerca dai risultati incompleti.",
+      "server_logs": "Log del server",
+      "log_date": "Data",
       "log_tag": "Tag",
-      "log_message": "Message",
-      "indexing": "Indexing",
-      "indexing_info": "If you notice discrepancies in the search results, you can try to do a full reindexing. Search results will be incomplete until this operation is done.",
-      "start_reindexing": "Start full reindexing",
-      "reindexing_started": "Re-indexing started, please wait until there is no more background tasks."
+      "log_message": "Messaggio",
+      "indexing": "Indicizzazione",
+      "indexing_info": "Se noti discrepanze nei risultati di ricerca, puoi provare ad eseguire una reindicizzazione completa. I risultati di ricerca saranno incompleti finché quest'operazione non sarà conclusa.",
+      "start_reindexing": "Inizia reindicizzazione completa",
+      "reindexing_started": "Reindicizzazione avviata, si prega di attendere finché tutti i task di background non saranno completati."
     },
     "session": {
-      "title": "Opened sessions",
-      "created_date": "Created date",
-      "last_connection_date": "Last connection date",
-      "user_agent": "From",
-      "current": "Current",
-      "current_session": "This is the current session",
-      "clear_message": "All other devices connected to this account will be disconnected",
-      "clear": "Clear all other sessions"
+      "title": "Sessioni aperte",
+      "created_date": "Data di creazione",
+      "last_connection_date": "Data dell'ultima connessione",
+      "user_agent": "Da",
+      "current": "Corrente",
+      "current_session": "Questa è la sessione corrente",
+      "clear_message": "Tutti gli altri dispositivi connessi a questo profilo verranno disconnessi",
+      "clear": "Elimina tutte le altre sessioni"
     },
     "vocabulary": {
-      "title": "Vocabulary entries",
-      "choose_vocabulary": "Choose a vocabulary to edit",
-      "type": "Type",
-      "coverage": "Coverage",
-      "rights": "Rights",
-      "value": "Value",
-      "order": "Order",
-      "new_entry": "New entry"
+      "title": "Voci del vocabolario",
+      "choose_vocabulary": "Scegli un vocabolario da modificare",
+      "type": "Tipo",
+      "coverage": "Copertura",
+      "rights": "Diritti",
+      "value": "Valore",
+      "order": "Ordine",
+      "new_entry": "Nuova voce"
     },
     "fileimporter": {
-      "title": "Bulk file importer",
-      "advanced_users": "For advanced users!",
-      "need_intro": "If you need to:",
-      "need_1": "Import a directory of files at once",
-      "need_2": "Scan a directory for new files and import them",
-      "line_1": "Go to <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> and download the file importer tool for your system.",
-      "line_2": "Follow the <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">instructions here</a> to use this tool.",
-      "line_3": "Your files will be imported in documents according to the file importer configuration.",
-      "download": "Download",
-      "instructions": "Instructions"
+      "title": "Importazione massiva dei file",
+      "advanced_users": "Per utenti avanzati!",
+      "need_intro": "Se hai bisogno di:",
+      "need_1": "Importare una cartella di file in un colpo solo",
+      "need_2": "Scansionare una cartella alla ricerca di nuovi file ed importarli",
+      "line_1": "Visita <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> e scarica lo strumento di importazione file adatto al tuo sistema.",
+      "line_2": "Segui le <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">istruzioni</a> per usare questo strumento.",
+      "line_3": "I tuoi file verranno importati tra i documenti secondo le configurazioni dello strumento di importazione.",
+      "download": "Scarica",
+      "instructions": "Istruzioni"
     }
   },
   "feedback": {
-    "title": "Give us a feedback",
-    "message": "Any suggestion or question about Teedy? We listen to you!",
-    "sent_title": "Feedback sent",
-    "sent_message": "Thank you for your feedback! It will help us make Teedy even better."
+    "title": "Lascia un feedback",
+    "message": "Hai qualche suggerimento o domanda su Teedy? Ti ascoltiamo!",
+    "sent_title": "Feedback inviato",
+    "sent_message": "Grazie per il feedback! Ci aiuterà a migliorare Teedy sempre di più."
   },
   "import": {
-    "title": "Importing",
-    "error_quota": "Quota limit reached, contact your administrator to increase your quota",
-    "error_general": "An error occurred while trying to import your file, please make sure it is a valid EML file"
+    "title": "Importazione",
+    "error_quota": "Quota limite raggiunta, contatta l'amministratore per incrementare la quota",
+    "error_general": "Si è verificato un errore cercando di importare il file, per favore assicurati che si tratti di un file EML valido"
   },
   "app_share": {
-    "main": "Ask a shared document link to access it",
+    "main": "Richiedi un link al documento condiviso per accedergli",
     "403": {
-      "title": "Not authorized",
-      "message": "The document you are trying to view is not shared anymore"
+      "title": "Non autorizzato",
+      "message": "Il documento che stai cercando di vedere non è più condiviso"
     }
   },
   "directive": {
     "acledit": {
-      "acl_target": "For",
-      "acl_permission": "Permission",
-      "add_permission": "Add a permission",
-      "search_user_group": "Search a user or group"
+      "acl_target": "Per",
+      "acl_permission": "Permesso",
+      "add_permission": "Aggiungi un permesso",
+      "search_user_group": "Cerca un utente o un gruppo"
     },
     "auditlog": {
-      "log_created": "created",
-      "log_updated": "updated",
-      "log_deleted": "deleted",
+      "log_created": "creato",
+      "log_updated": "aggiornato",
+      "log_deleted": "cancellato",
       "Acl": "ACL",
-      "Comment": "Comment",
-      "Document": "Document",
+      "Comment": "Commento",
+      "Document": "Documento",
       "File": "File",
-      "Group": "Group",
-      "Route": "Workflow",
-      "RouteModel": "Workflow model",
+      "Group": "Gruppo",
+      "Route": "Flusso di lavoro",
+      "RouteModel": "Modello del flusso di lavoro",
       "Tag": "Tag",
-      "User": "User",
+      "User": "Utente",
       "Webhook": "Webhook"
     },
     "selectrelation": {
-      "typeahead": "Type a document title"
+      "typeahead": "Inserisci il titolo di un documento"
     },
     "selecttag": {
-      "typeahead": "Type a tag"
+      "typeahead": "Inserisci un tag"
     },
     "datepicker": {
-      "current": "Today",
-      "clear": "Clear",
-      "close": "Done"
+      "current": "Oggi",
+      "clear": "Cancella",
+      "close": "Chiudi"
     }
   },
   "filter": {
@@ -555,83 +555,83 @@
     }
   },
   "acl": {
-    "READ": "Can read",
-    "READWRITE": "Can write",
-    "WRITE": "Can write",
-    "USER": "User",
-    "GROUP": "Group",
-    "SHARE": "Shared"
+    "READ": "Può leggere",
+    "READWRITE": "Può scrivere",
+    "WRITE": "Può scrivere",
+    "USER": "Utente",
+    "GROUP": "Gruppo",
+    "SHARE": "Condiviso"
   },
   "workflow_type": {
-    "VALIDATE": "Validation",
-    "APPROVE": "Approbation"
+    "VALIDATE": "Validazione",
+    "APPROVE": "Approvazione"
   },
   "workflow_transition": {
-    "APPROVED": "Approved",
-    "REJECTED": "Rejected",
-    "VALIDATED": "Validated"
+    "APPROVED": "Approvato",
+    "REJECTED": "Respinto",
+    "VALIDATED": "Validato"
   },
   "validation": {
-    "required": "Required",
-    "too_short": "Too short",
-    "too_long": "Too long",
-    "email": "Must be a valid e-mail",
-    "password_confirm": "Password and password confirmation must match",
-    "number": "Number required",
-    "no_space": "Spaces and colons are not allowed",
-    "alphanumeric": "Only letters and numbers are allowed"
+    "required": "Obbligatorio",
+    "too_short": "Troppo corto",
+    "too_long": "Troppo lungo",
+    "email": "Dev'essere un'e-mail valida",
+    "password_confirm": "Le due password devono coincidere",
+    "number": "Numero richiesto",
+    "no_space": "Gli spazi e i due punti non sono ammessi",
+    "alphanumeric": "Sono ammesse solo lettere e numeri"
   },
   "action_type": {
-    "ADD_TAG": "Add a tag",
-    "REMOVE_TAG": "Remove a tag",
-    "PROCESS_FILES": "Process files"
+    "ADD_TAG": "Aggiungi un tag",
+    "REMOVE_TAG": "Rimuovi un tag",
+    "PROCESS_FILES": "Processa file"
   },
   "pagination": {
-    "previous": "Previous",
-    "next": "Next",
-    "first": "First",
-    "last": "Last"
+    "previous": "Precedente",
+    "next": "Successiva",
+    "first": "Prima",
+    "last": "Ultima"
   },
   "onboarding": {
     "step1": {
-      "title": "First time?",
-      "description": "If it's your first time on Teedy, click the Next button, otherwise feel free to close me."
+      "title": "Prima volta?",
+      "description": "Se è la tua prima volta su Teedy, premi il pulsante Successiva, altrimenti sentiti libero di chiudermi."
     },
     "step2": {
-      "title": "Documents",
-      "description": "Teedy is organized in documents and each document contains multiple files."
+      "title": "Documenti",
+      "description": "Teedy è organizzato in documenti e ogni documento contiene più file."
     },
     "step3": {
-      "title": "Files",
-      "description": "You can add files after creating a document or before using this Quick upload area."
+      "title": "File",
+      "description": "Puoi aggiungere dei file dopo aver creato un documento oppure prima utilizzando questa zona di caricamento veloce."
     },
     "step4": {
-      "title": "Search",
-      "description": "This is the main way to find your documents back. There is also an advanced search with the magnifier button."
+      "title": "Ricerca",
+      "description": "Questo è il modo principale di cercare i tuoi documenti. È anche presente una ricerca avanzata tramite il pulsante con la lente d'ingrandimento."
     },
     "step5": {
-      "title": "Tags",
-      "description": "Documents can be organized in tags (which are like super-folders). Create them here."
+      "title": "Tag",
+      "description": "I documenti possono essere organizzati in tag (che sono come delle cartelle). Puoi crearli qua."
     }
   },
-  "yes": "Yes",
+  "yes": "Sì",
   "no": "No",
   "ok": "OK",
-  "cancel": "Cancel",
-  "share": "Share",
-  "unshare": "Unshare",
-  "close": "Close",
-  "add": "Add",
-  "open": "Open",
-  "see": "See",
-  "save": "Save",
-  "export": "Export",
-  "edit": "Edit",
-  "delete": "Delete",
-  "rename": "Rename",
-  "download": "Download",
-  "loading": "Loading...",
-  "send": "Send",
-  "enabled": "Enabled",
-  "disabled": "Disabled"
+  "cancel": "Annulla",
+  "share": "Condividi",
+  "unshare": "Elimina condivisione",
+  "close": "Chiudi",
+  "add": "Aggiungi",
+  "open": "Apri",
+  "see": "Vedi",
+  "save": "Salva",
+  "export": "Esporta",
+  "edit": "Modifica",
+  "delete": "Cancella",
+  "rename": "Rinomina",
+  "download": "Scarica",
+  "loading": "Caricamento...",
+  "send": "Invia",
+  "enabled": "Abilitato",
+  "disabled": "Disabilitato"
 }
