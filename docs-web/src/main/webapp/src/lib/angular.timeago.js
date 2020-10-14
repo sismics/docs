@@ -34,7 +34,7 @@ angular.module('yaru22.angular-timeago').config(["timeAgoSettings", function(tim
 
 'use strict';
 
-angular.module('yaru22.angular-timeago').config(function(timeAgoSettings) {
+angular.module('yaru22.angular-timeago').config(["timeAgoSettings", function(timeAgoSettings) {
   timeAgoSettings.strings['el'] = {
     prefixAgo: null,
     prefixFromNow: null,
@@ -53,7 +53,7 @@ angular.module('yaru22.angular-timeago').config(function(timeAgoSettings) {
     years: '%d χρόνια',
     numbers: []
   };
-});
+}]);
 
 'use strict';
 
