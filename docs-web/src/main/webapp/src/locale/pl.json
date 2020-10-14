@@ -85,7 +85,7 @@
     "page_size_30": "30 na stronę",
     "upgrade_quota": "Aby zwiększyć twój limit, zapytaj swojego administratora",
     "quota": "{{ current | number: 0 }}MB ({{ percent | number: 1 }}%) z dostępnych {{ total | number: 0 }}MB",
-    "count": "{{ count }} dokument{{ count > 1 ? 'ów' : '' }} found",
+    "count": "{{ count }} dokument{{ count > 1 ? 'ów' : '' }} znaleziony",
     "last_updated": "Ostatnio zmieniony {{ date | timeAgo: dateFormat }}",
     "view": {
       "delete_comment_title": "Usuń komentarz",
