@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Validation -->
+    <string name="validate_error_email">Nieprawidłowy email</string>
+    <string name="validate_error_length_min">Za krótki (min. %d)</string>
+    <string name="validate_error_length_max">Za długi (max. %d)</string>
+    <string name="validate_error_required">Wymagany</string>
+    <string name="validate_error_alphanumeric">Tylko litery i cyfry</string>
+
+    <!-- App -->
+    <string name="app_name" translatable="false">Teedy</string>
+    <string name="drawer_open">Otwórz szufladę nawigacji</string>
+    <string name="drawer_close">Zamknij szufladę nawigacji</string>
+    <string name="login_explain"><![CDATA[Aby rozpocząć, musisz pobrać i zainstalować serwer Teedy na <a href="https://github.com/sismics/docs">github.com/sismics/docs</a> i poniżej wprowadzić adres]]></string>
+    <string name="server">Serwer</string>
+    <string name="username">Użytkownik</string>
+    <string name="password">Hasło</string>
+    <string name="login">Zaloguj</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Anuluj</string>
+    <string name="login_fail_title">Błąd logowania</string>
+    <string name="login_fail">Nieprawidłowa nazwa użytkownika lub hasło</string>
+    <string name="network_error_title">Błąd sieci</string>
+    <string name="network_error">Błąd sieci, sprawdź połączenie z interneterm oraz adres URL serwera</string>
+    <string name="invalid_url_title">Nieprawidłowy adres URL</string>
+    <string name="invalid_url">Sprawdź adres URL serwera i spróbuj ponownie</string>
+    <string name="crash_toast_text">Wystąpiła awaria, wysłano raport w celu rozwiązania tego problemu</string>
+    <string name="created_date">Data utworzenia</string>
+    <string name="download_file">Pobierz bieżący plik</string>
+    <string name="download_document">Pobierz</string>
+    <string name="action_search">Znadź dokumenty</string>
+    <string name="all_documents">Wszystkie dokumenty</string>
+    <string name="shared_documents">Udostępnione dokumenty</string>
+    <string name="all_tags">Wszystkie etykiety</string>
+    <string name="no_tags">Brak etykiet</string>
+    <string name="error_loading_tags">Błąd ładowania etykiet</string>
+    <string name="no_documents">Brak dokumentów</string>
+    <string name="error_loading_documents">Błąd ładowania dokumentów</string>
+    <string name="no_files">Brak plików</string>
+    <string name="error_loading_files">Błąd ładowania plików</string>
+    <string name="new_document">Nowy dokument</string>
+    <string name="share">Udostępnij</string>
+    <string name="close">Zamknij</string>
+    <string name="add">Dodaj</string>
+    <string name="add_share_hint">Nazwa udostępnienia (opcjonalnie)</string>
+    <string name="document_not_shared">Ten dokument nie jest obecnie udostępniony</string>
+    <string name="delete_share">Usuń udostępnienie</string>
+    <string name="send_share">Wyślij link udostępnienia</string>
+    <string name="error_loading_shares">Błąd ładowania udostępnień</string>
+    <string name="error_adding_share">Błąd dodawania udostępnienia</string>
+    <string name="share_default_name">Udostępnij link</string>
+    <string name="error_deleting_share">Błąd usuwania udostępnienia</string>
+    <string name="send_share_to">Wyślij link udostępnienia do</string>
+    <string name="upload_file">dodaj plik</string>
+    <string name="upload_from">Przeslij plik z</string>
+    <string name="settings">ustawienia</string>
+    <string name="logout">Wyloguj</string>
+    <string name="version">Wersja</string>
+    <string name="build">Kompilacja</string>
+    <string name="pref_advanced_category">Ustawienia zaawansowane</string>
+    <string name="pref_about_category">O programie</string>
+    <string name="pref_github">GitHub</string>
+    <string name="pref_issue">Zgłoś błąd</string>
+    <string name="pref_clear_cache_title">Wyczyść cache</string>
+    <string name="pref_clear_cache_summary">Wyczyść podręczne pliki</string>
+    <string name="pref_clear_cache_success">Cache wyczyszczony</string>
+    <string name="pref_clear_history_title">Wyczyść historię wyszukiwania</string>
+    <string name="pref_clear_history_summary">Opróżnij ostatnie sugestie wyszukiwania</string>
+    <string name="pref_clear_history_success">Historia wyszukiwania wyczyszczona</string>
+    <string name="pref_cache_size">Rozmiar cache</string>
+    <string name="language_french" translatable="false">Francuski</string>
+    <string name="language_english" translatable="false">Angielski</string>
+    <string name="language_german" translatable="false">Niemiecki</string>
+    <string name="language_polish" translatable="false">Polski</string>
+    <string name="save">Zapisz</string>
+    <string name="edit_document">Edytuj</string>
+    <string name="error_editing_document">Błąd sieci, spróbuj ponownie</string>
+    <string name="please_wait">Proszę czekać</string>
+    <string name="document_editing_message">Wysyłam twoje dane</string>
+    <string name="delete_document">Usuń</string>
+    <string name="delete_document_title">Usuń dokument</string>
+    <string name="delete_document_message">Naprawdę chcesz usunąć dokument i powiązane z nim pliki?</string>
+    <string name="document_delete_failure">Błąd sieci w czasie usuwania tego dokumentu</string>
+    <string name="document_deleting_message">Usuwanie dokumentu</string>
+    <string name="delete_file_title">Usuń plik</string>
+    <string name="delete_file_message">Naprawdę chcesz usunąć ten plik?</string>
+    <string name="file_delete_failure">Błąd sieci w czasie usuwania bieżącego pliku</string>
+    <string name="file_deleting_message">Usuwanie pliku</string>
+    <string name="error_reading_file">Błąd podczas odczytu pliku</string>
+    <string name="upload_notification_title">Teedy</string>
+    <string name="upload_notification_message">Przesyłanie nowego pliku do dokumentu</string>
+    <string name="upload_notification_error">Błąd przsyłania nowego pliku</string>
+    <string name="delete_file">Usuń bieżący plik</string>
+    <string name="advanced_search">Zaawansowane wyszukiwanie</string>
+    <string name="search">Znajdź</string>
+    <string name="add_tags">Dodaj eytkiety</string>
+    <string name="creation_date">Data utworzenia</string>
+    <string name="description">Opis</string>
+    <string name="title">Tytuł</string>
+    <string name="simple_search">Proste wyszukiwanie</string>
+    <string name="fulltext_search">Wyszukiwanie pełnotekstowe</string>
+    <string name="creator">Autor</string>
+    <string name="after_date">Po dacie</string>
+    <string name="before_date">Przed datą</string>
+    <string name="search_tags">Znajdź etykiety</string>
+    <string name="all_languages">Wszystkie języki</string>
+    <string name="toggle_informations">Przełącz informacje</string>
+    <string name="who_can_access">Kto ma dostęp</string>
+    <string name="comments">Komentarze</string>
+    <string name="no_comments">Brak komentarzy</string>
+    <string name="error_loading_comments">Błąd ładowania komentarzy</string>
+    <string name="send">Wyślij</string>
+    <string name="add_comment">Dodaj komentarz</string>
+    <string name="comment_add_failure">Błąd dodawania komentarza</string>
+    <string name="adding_comment">Dodawanie komentarza</string>
+    <string name="comment_delete">Usuń komentarz</string>
+    <string name="deleting_comment">Usuwanie komentarza</string>
+    <string name="error_deleting_comment">Błąd usuwania komentarza</string>
+    <string name="export_pdf">PDF</string>
+    <string name="download">Pobierz</string>
+    <string name="margin">Margines</string>
+    <string name="fit_image_to_page">Dostosuj obraz do strony</string>
+    <string name="export_comments">Eksport komentarzy</string>
+    <string name="export_metadata">Eksport metadanych</string>
+    <string name="mm">mm</string>
+    <string name="download_file_title">Eksport plików Teedy</string>
+    <string name="download_document_title">Eksport dokumentu Teedy</string>
+    <string name="download_pdf_title">Eksport Teedy jako PDF</string>
+    <string name="latest_activity">Ostatnie aktywności</string>
+    <string name="activity">Aktywności</string>
+    <string name="email">E-mail</string>
+    <string name="storage_quota">Limit magazynu</string>
+    <string name="storage_display">%1$d/%2$d MB</string>
+    <string name="validation_code">Kod weryfikujący</string>
+    <string name="shared">Udostępnienie</string>
+    <string name="language">Język</string>
+    <string name="coverage">Zakres</string>
+    <string name="type">Rodzaj</string>
+    <string name="source">Źródło</string>
+    <string name="format">Format</string>
+    <string name="publisher">Udostępniający</string>
+    <string name="identifier">Identifikator</string>
+    <string name="subject">temat</string>
+    <string name="rights">Prawa</string>
+    <string name="contributors">Współtwórcy</string>
+    <string name="relations">Powiązania</string>
+
+    <!-- Audit log -->
+    <string name="auditlog_Acl">ACL</string>
+    <string name="auditlog_Comment">Komentarz</string>
+    <string name="auditlog_Document">Dokument</string>
+    <string name="auditlog_File">Plik</string>
+    <string name="auditlog_Group">Grupa</string>
+    <string name="auditlog_Route">Przepływ</string>
+    <string name="auditlog_RouteModel">Model przepływu</string>
+    <string name="auditlog_Tag">Etykieta</string>
+    <string name="auditlog_User">Użytkownik</string>
+    <string name="auditlog_Webhook">Webhook</string>
+    <string name="auditlog_created">utworzony</string>
+    <string name="auditlog_updated">zaktualizowany</string>
+    <string name="auditlog_deleted">usunięty</string>
+
+</resources>

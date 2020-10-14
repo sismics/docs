@@ -1,0 +1,10 @@
+email.template.password_recovery.subject=Proszę zresetować swoje hasło
+email.template.password_recovery.hello=Witaj {0}.
+email.template.password_recovery.instruction1=Otrzymaliśmy żądanie zresetowania twojego hasła.<br/>Jeśli to nie ty potrzebujesz pomocy, moóżesz zignorować ten email.
+email.template.password_recovery.instruction2=Aby zresetować swoje hasło, proszę naciśnij link poniżej:
+email.template.password_recovery.click_here=Naciśnij, aby zresetować swoje hasło
+email.template.route_step_validate.subject=Dokument potrzebuje twojej uwagi
+email.template.route_step_validate.hello=Witaj {0}.
+email.template.route_step_validate.instruction1=Został Ci przypisany etap przepływu i wymaga Twojej uwagi.
+email.template.route_step_validate.instruction2=Aby wyświetlić dokument i zweryfikować przepływ pracy, kliknij poniższy link:
+email.no_html.error=Twój klient poczty e-mail nie obsługuje wiadomości HTML
