@@ -366,7 +366,7 @@ public class UserResource extends BaseResource {
         AuthenticationToken authenticationToken = new AuthenticationToken()
             .setUserId(user.getId())
             .setLongLasted(longLasted)
-            .setIp(ip)
+            .setIp(StringUtils.abbreviate(ip, 45))
             .setUserAgent(StringUtils.abbreviate(request.getHeader("user-agent"), 1000));
         String token = authenticationTokenDao.create(authenticationToken);
         
