@@ -311,7 +311,7 @@ angular.module('yaru22.angular-timeago').config(["timeAgoSettings", function(tim
 'use strict';
 
 angular.module('yaru22.angular-timeago').config(["timeAgoSettings", function(timeAgoSettings) {
-  timeAgoSettings.strings['it_IT'] = {
+  timeAgoSettings.strings['it'] = {
     prefixAgo: null,
     prefixFromNow: null,
     suffixAgo: 'fa',
