@@ -312,6 +312,7 @@ public class AppResource extends BaseResource {
      * @apiSuccess {String} port IMAP port
      * @apiSuccess {String} username IMAP username
      * @apiSuccess {String} password IMAP password
+     * @apiSuccess {String} folder IMAP folder
      * @apiSuccess {String} tag Tag for created documents
      * @apiError (client) ForbiddenError Access denied
      * @apiPermission admin
@@ -335,6 +336,7 @@ public class AppResource extends BaseResource {
         Config portConfig = configDao.getById(ConfigType.INBOX_PORT);
         Config usernameConfig = configDao.getById(ConfigType.INBOX_USERNAME);
         Config passwordConfig = configDao.getById(ConfigType.INBOX_PASSWORD);
+        Config folderConfig = configDao.getById(ConfigType.INBOX_FOLDER);
         Config tagConfig = configDao.getById(ConfigType.INBOX_TAG);
         JsonObjectBuilder response = Json.createObjectBuilder();
 
@@ -360,6 +362,11 @@ public class AppResource extends BaseResource {
             response.addNull("password");
         } else {
             response.add("password", passwordConfig.getValue());
+        }
+        if (folderConfig == null) {
+            response.addNull("folder");
+        } else {
+            response.add("folder", folderConfig.getValue());
         }
         if (tagConfig == null) {
             response.addNull("tag");
@@ -393,6 +400,7 @@ public class AppResource extends BaseResource {
      * @apiParam {Integer} port IMAP port
      * @apiParam {String} username IMAP username
      * @apiParam {String} password IMAP password
+     * @apiParam {String} folder IMAP folder
      * @apiParam {String} tag Tag for created documents
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) ValidationError Validation error
@@ -404,6 +412,7 @@ public class AppResource extends BaseResource {
      * @param portStr IMAP port
      * @param username IMAP username
      * @param password IMAP password
+     * @param folder IMAP folder
      * @param tag Tag for created documents
      * @return Response
      */
@@ -416,6 +425,7 @@ public class AppResource extends BaseResource {
                                 @FormParam("port") String portStr,
                                 @FormParam("username") String username,
                                 @FormParam("password") String password,
+                                @FormParam("folder") String folder,
                                 @FormParam("tag") String tag) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -442,6 +452,9 @@ public class AppResource extends BaseResource {
         }
         if (!Strings.isNullOrEmpty(password)) {
             configDao.update(ConfigType.INBOX_PASSWORD, password);
+        }
+        if (!Strings.isNullOrEmpty(folder)) {
+            configDao.update(ConfigType.INBOX_FOLDER, folder);
         }
         if (!Strings.isNullOrEmpty(tag)) {
             configDao.update(ConfigType.INBOX_TAG, tag);

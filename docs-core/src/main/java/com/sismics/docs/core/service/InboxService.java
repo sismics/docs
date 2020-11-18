@@ -97,7 +97,7 @@ public class InboxService extends AbstractScheduledService {
             } catch (FolderClosedException e) {
                 // Ignore this, we will just continue importing on the next cycle
             } catch (Exception e) {
-                log.error("Error synching the inbox", e);
+                log.error("Error syncing the inbox", e);
                 lastSyncError = e.getMessage();
             } finally {
                 try {
@@ -181,7 +181,7 @@ public class InboxService extends AbstractScheduledService {
         store.connect(ConfigUtil.getConfigStringValue(ConfigType.INBOX_USERNAME),
                 ConfigUtil.getConfigStringValue(ConfigType.INBOX_PASSWORD));
 
-        Folder inbox = store.getFolder("INBOX");
+        Folder inbox = store.getFolder(ConfigUtil.getConfigStringValue(ConfigType.INBOX_FOLDER));
         inbox.open(Folder.READ_WRITE);
         return inbox;
     }

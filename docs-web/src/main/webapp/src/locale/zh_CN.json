@@ -369,6 +369,7 @@
       "port": "IMAP端口（143或993）",
       "username": "IMAP用户名",
       "password": "IMAP密码",
+      "folder": "IMAP 件夹中",
       "tag": "标签添加到导入的文档",
       "test": "测试参数",
       "last_sync": "上次同步：{{ data.date | date }}，{{ data.count }}消息导入",

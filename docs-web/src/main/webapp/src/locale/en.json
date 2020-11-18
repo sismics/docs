@@ -441,6 +441,7 @@
       "port": "IMAP port (143 or 993)",
       "username": "IMAP username",
       "password": "IMAP password",
+      "folder": "IMAP folder",
       "tag": "Tag added to imported documents",
       "test": "Test the parameters",
       "last_sync": "Last synchronization: {{ data.date | date: 'medium' }}, {{ data.count }} message{{ data.count > 1 ? 's' : '' }} imported",
