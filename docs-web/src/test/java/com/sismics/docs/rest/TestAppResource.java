@@ -243,6 +243,7 @@ public class TestAppResource extends BaseJerseyTest {
         Assert.assertEquals(993, json.getJsonNumber("port").intValue());
         Assert.assertEquals("", json.getString("username"));
         Assert.assertEquals("", json.getString("password"));
+        Assert.assertEquals("INBOX", json.getString("folder"));
         Assert.assertEquals("", json.getString("tag"));
         JsonObject lastSync = json.getJsonObject("last_sync");
         Assert.assertTrue(lastSync.isNull("date"));
@@ -260,6 +261,7 @@ public class TestAppResource extends BaseJerseyTest {
                         .param("port", "9755")
                         .param("username", "test@sismics.com")
                         .param("password", "12345678")
+                        .param("folder", "INBOX")
                         .param("tag", tagInboxId)
                 ), JsonObject.class);
 
@@ -272,6 +274,7 @@ public class TestAppResource extends BaseJerseyTest {
         Assert.assertEquals(9755, json.getInt("port"));
         Assert.assertEquals("test@sismics.com", json.getString("username"));
         Assert.assertEquals("12345678", json.getString("password"));
+        Assert.assertEquals("INBOX", json.getString("folder"));
         Assert.assertEquals(tagInboxId, json.getString("tag"));
 
         ServerSetup serverSetupSmtp = new ServerSetup(9754, null, ServerSetup.PROTOCOL_SMTP);

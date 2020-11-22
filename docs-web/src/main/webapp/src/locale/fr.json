@@ -430,6 +430,7 @@
       "port": "Port IMAP (143 ou 993)",
       "username": "Nom d'utilisateur IMAP",
       "password": "Mot de passe IMAP",
+      "folder": "Dossier IMAP",
       "tag": "Tag ajouté aux documents importés",
       "test": "Tester les paramètres",
       "last_sync": "Dernière synchronisation : {{ data.date | date: 'medium' }}, {{ data.count }} message{{ data.count> 1 ? 's' : '' }} importé{{ data.count> 1 ? 's' : '' }}",

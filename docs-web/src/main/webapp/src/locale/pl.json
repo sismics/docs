@@ -441,6 +441,7 @@
       "port": "Port IMAP (143 or 993)",
       "username": "Użytkownik IMAP",
       "password": "Hasło IMAP",
+      "folder": "Folderze IMAP",
       "tag": "Etykieta dodawana do za zaimportowanych dokumentów",
       "test": "Przetestuj połączenie",
       "last_sync": "Ostatnia synchronizacja: {{ data.date | date: 'medium' }}, {{ data.count }} zaimportowano {{ data.count > 1 ? 's' : '' }} dokumentów",

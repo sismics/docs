@@ -441,6 +441,7 @@
       "port": "Porta IMAP (143 o 993)",
       "username": "Nome utente IMAP",
       "password": "Password IMAP",
+      "folder": "Cartella IMAP",
       "tag": "Tag aggiunti a documenti importati",
       "test": "Testa i parametri",
       "last_sync": "Ultima sincronizzazione: {{ data.date | date: 'medium' }}, {{ data.count }} messaggi{{ data.count > 1 ? '' : 'o' }} importat{{ data.count > 1 ? 'i' : 'o' }}",
