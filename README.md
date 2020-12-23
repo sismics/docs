@@ -69,7 +69,7 @@ The data directory is `/data`. Don't forget to mount a volume on it.
 
 To build external URL, the server is expecting a `DOCS_BASE_URL` environment variable (for example https://teedy.mycompany.com)
 
-### Environment Variables
+### Available environment variables
 
 - General
   
@@ -111,7 +111,7 @@ To build external URL, the server is expecting a `DOCS_BASE_URL` environment var
 
 ### Examples
 
-In the following examples some passwords are exposed in clear text. This was done in order to keep the examples simple. We strongly encourage you to use variables with an `.env` file or other means to securely store your passwords.
+In the following examples some passwords are exposed in cleartext. This was done in order to keep the examples simple. We strongly encourage you to use variables with an `.env` file or other means to securely store your passwords.
 
 #### Using the internal db
 
@@ -153,7 +153,7 @@ services:
       DOCS_BASE_URL: "https://docs.example.com"
       # Set the admin email
       DOCS_ADMIN_EMAIL_INIT: "admin@example.com"
-     # Set the admin password (in this example: "superSecure")
+      # Set the admin password (in this example: "superSecure")
       DOCS_ADMIN_PASSWORD_INIT: "$$2a$$05$$PcMNUbJvsk7QHFSfEIDaIOjk1VI9/E7IPjTKx.jkjPxkx2EOKSoPS"
       # Setup the database connection. "teedy-db" is the hostname
       # and "teedy" is the name of the database the application
