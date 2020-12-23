@@ -101,7 +101,7 @@ To build external URL, the server is expecting a `DOCS_BASE_URL` environment var
 
 - E-Mail
   
-  - `DOCS_SMTP_HOSTNAME` -> Hostanem of the SMTP-Server to be used by Teedy.
+  - `DOCS_SMTP_HOSTNAME` -> Hostname of the SMTP-Server to be used by Teedy.
   
   - `DOCS_SMTP_PORT` -> The port which should be used.
   
