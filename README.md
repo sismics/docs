@@ -82,8 +82,6 @@ To build external URL, the server is expecting a `DOCS_BASE_URL` environment var
   - `DOCS_ADMIN_EMAIL_INIT` -> Defines the e-mail-address the admin user should have upon initialization.
   
   - `DOCS_ADMIN_PASSWORD_INIT` -> Defines the password the admin user should have upon initialization.  Needs to be a bcrypt hash.  **Be aware that `$` within the hash have to be escaped with a second `$`.**
-    
-    - Also the old `$2a$` version prefix of bcrypt has to be user in order for the application to work properly.
 
 - Database
   
