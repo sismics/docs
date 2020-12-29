@@ -1,5 +1,6 @@
 package com.sismics.docs.core.dao;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.google.common.base.Joiner;
 import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.dao.criteria.UserCriteria;
@@ -12,7 +13,6 @@ import com.sismics.docs.core.util.jpa.QueryUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
 import org.joda.time.DateTime;
-import org.mindrot.jbcrypt.BCrypt;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -39,7 +39,8 @@ public class UserDao {
         q.setParameter("username", username);
         try {
             User user = (User) q.getSingleResult();
-            if (!BCrypt.checkpw(password, user.getPassword()) || user.getDisableDate() != null) {
+            BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword());
+            if (!result.verified || user.getDisableDate() != null) {
                 return null;
             }
             return user;
@@ -277,7 +278,7 @@ public class UserDao {
      * @return Hashed password
      */
     private String hashPassword(String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
+        return BCrypt.withDefaults().hashToString(10, password.toCharArray());
     }
     
     /**
