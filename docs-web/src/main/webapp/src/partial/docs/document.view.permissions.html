@@ -22,7 +22,7 @@
     <tr ng-repeat="(id, acl) in inheritedAcls">
       <td>
         <a href="#/tag/{{ acl[0].source_id }}">
-          <span class="fas fa-tags"></span>&nbsp;
+          <span class="fas fa-tags" ng-style="{ 'color': acl[0].source_color }"></span>&nbsp;
           {{ acl[0].source_name }}
         </a>
       </td>
