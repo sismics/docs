@@ -104,6 +104,7 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String="READ","WRITE"} inherited_acls.perm Permission
      * @apiSuccess {String} inherited_acls.source_id Source ID
      * @apiSuccess {String} inherited_acls.source_name Source name
+     * @apiSuccess {String} inherited_acls.source_color The color of the Source
      * @apiSuccess {String} inherited_acls.id ID
      * @apiSuccess {String} inherited_acls.name Target name
      * @apiSuccess {String="USER","GROUP","SHARE"} inherited_acls.type Target type
@@ -196,6 +197,7 @@ public class DocumentResource extends BaseResource {
                             .add("perm", aclDto.getPerm().name())
                             .add("source_id", tagDto.getId())
                             .add("source_name", tagDto.getName())
+                            .add("source_color", tagDto.getColor())
                             .add("id", aclDto.getTargetId())
                             .add("name", JsonUtil.nullable(aclDto.getTargetName()))
                             .add("type", aclDto.getTargetType()));
