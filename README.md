@@ -72,46 +72,33 @@ To build external URL, the server is expecting a `DOCS_BASE_URL` environment var
 ### Available environment variables
 
 - General
-  
-  - `DOCS_BASE_URL` -> The base url used by the application. Generated url's will be using this as base.
-  
-  - `DOCS_GLOBAL_QUOTA` -> Defines the default quota applying to all users.
+  - `DOCS_BASE_URL`: The base url used by the application. Generated url's will be using this as base.
+  - `DOCS_GLOBAL_QUOTA`: Defines the default quota applying to all users.
 
 - Admin
-  
-  - `DOCS_ADMIN_EMAIL_INIT` -> Defines the e-mail-address the admin user should have upon initialization.
-  
-  - `DOCS_ADMIN_PASSWORD_INIT` -> Defines the password the admin user should have upon initialization.  Needs to be a bcrypt hash.  **Be aware that `$` within the hash have to be escaped with a second `$`.**
+  - `DOCS_ADMIN_EMAIL_INIT`: Defines the e-mail-address the admin user should have upon initialization.
+  - `DOCS_ADMIN_PASSWORD_INIT`: Defines the password the admin user should have upon initialization.  Needs to be a bcrypt hash.  **Be aware that `$` within the hash have to be escaped with a second `$`.**
 
 - Database
-  
-  - `DATABASE_URL` -> The jdbc connection string to be used by `hibernate`.
-  
-  - `DATABASE_USER` -> The user which should be used for the database connection.
-  
-  - `DATABASE_PASSWORD` -> The password to be used for the database connection.
+  - `DATABASE_URL`: The jdbc connection string to be used by `hibernate`.
+  - `DATABASE_USER`: The user which should be used for the database connection.
+  - `DATABASE_PASSWORD`: The password to be used for the database connection.
 
 - Language
-  
-  - `DOCS_DEFAULT_LANGUAGE` -> The language which will be used as default. Currently supported values are:
-    
+  - `DOCS_DEFAULT_LANGUAGE`: The language which will be used as default. Currently supported values are:
     - `eng`, `fra`, `ita`, `deu`, `spa`, `por`, `pol`, `rus`, `ukr`, `ara`, `hin`, `chi_sim`, `chi_tra`, `jpn`, `tha`, `kor`, `nld`, `tur`, `heb`, `hun`, `fin`, `swe`, `lav`, `dan`
 
 - E-Mail
-  
-  - `DOCS_SMTP_HOSTNAME` -> Hostname of the SMTP-Server to be used by Teedy.
-  
-  - `DOCS_SMTP_PORT` -> The port which should be used.
-  
-  - `DOCS_SMTP_USERNAME` -> The username to be used.
-  
-  - `DOCS_SMTP_PASSWORD` -> The password to be used.
+  - `DOCS_SMTP_HOSTNAME`: Hostname of the SMTP-Server to be used by Teedy.
+  - `DOCS_SMTP_PORT`: The port which should be used.
+  - `DOCS_SMTP_USERNAME`: The username to be used.
+  - `DOCS_SMTP_PASSWORD`: The password to be used.
 
 ### Examples
 
 In the following examples some passwords are exposed in cleartext. This was done in order to keep the examples simple. We strongly encourage you to use variables with an `.env` file or other means to securely store your passwords.
 
-#### Using the internal db
+#### Using the internal database
 
 ```yaml
 version: '3'
@@ -134,7 +121,7 @@ services:
       - ./docs/data:/data
 ```
 
-#### Using postgres
+#### Using PostgreSQL
 
 ```yaml
 version: '3'
