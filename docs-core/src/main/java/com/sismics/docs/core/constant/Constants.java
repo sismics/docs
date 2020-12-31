@@ -26,6 +26,11 @@ public class Constants {
     public static final String DEFAULT_ADMIN_EMAIL = "admin@localhost";
 
     /**
+     * Bcrypt default work factor
+     */
+    public static final int DEFAULT_BCRYPT_WORK = 10;
+
+    /**
      * Guest user ID.
      */
     public static final String GUEST_USER_ID = "guest";
@@ -72,6 +77,11 @@ public class Constants {
      * Initial admin password environment variable.
      */
     public static final String ADMIN_EMAIL_INIT_ENV = "DOCS_ADMIN_EMAIL_INIT";
+
+    /**
+     * Work factor to be used by Bcrypt
+     */
+    public static final String BCRYPT_WORK_ENV = "DOCS_BCRYPT_WORK";
 
     /**
      * Expiration time of the password recovery in hours.

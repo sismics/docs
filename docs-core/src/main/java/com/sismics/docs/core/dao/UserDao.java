@@ -3,6 +3,7 @@ package com.sismics.docs.core.dao;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.google.common.base.Joiner;
 import com.sismics.docs.core.constant.AuditLogType;
+import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.criteria.UserCriteria;
 import com.sismics.docs.core.dao.dto.UserDto;
 import com.sismics.docs.core.model.jpa.User;
@@ -278,7 +279,22 @@ public class UserDao {
      * @return Hashed password
      */
     private String hashPassword(String password) {
-        return BCrypt.withDefaults().hashToString(10, password.toCharArray());
+        int bcryptWork = Constants.DEFAULT_BCRYPT_WORK;
+        String envBcryptWork = System.getenv(Constants.BCRYPT_WORK_ENV);
+        if (envBcryptWork != null) {
+            try {
+                int envBcryptWorkInt = Integer.parseInt(envBcryptWork);
+                if (envBcryptWorkInt >= 4 && envBcryptWorkInt <= 31) {
+                   bcryptWork = envBcryptWorkInt;
+                } else {
+                    //ToDo: Log warning? (out of scope)
+                }
+            } catch (NumberFormatException e) {
+                //ToDo: Log warning? (no number)
+            }
+        }
+        System.out.println(bcryptWork);
+        return BCrypt.withDefaults().hashToString(bcryptWork, password.toCharArray());
     }
     
     /**

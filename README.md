@@ -74,6 +74,7 @@ To build external URL, the server is expecting a `DOCS_BASE_URL` environment var
 - General
   - `DOCS_BASE_URL`: The base url used by the application. Generated url's will be using this as base.
   - `DOCS_GLOBAL_QUOTA`: Defines the default quota applying to all users.
+  - `DOCS_BCRYPT_WORK`: Defines the work factor which is used for password hashing. The default is `10`. This value may be `4...31` including `4` and `31`. The specified value will be used for all new users and users changing their password. Be aware that setting this factor to high can heavily impact login and user creation performance.
 
 - Admin
   - `DOCS_ADMIN_EMAIL_INIT`: Defines the e-mail-address the admin user should have upon initialization.
