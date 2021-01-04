@@ -1,7 +1,11 @@
 package com.sismics.docs.core.dao;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.google.common.base.Joiner;
+import at.favre.lib.crypto.bcrypt.BCrypt;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.criteria.UserCriteria;
@@ -13,7 +17,6 @@ import com.sismics.docs.core.util.jpa.QueryParam;
 import com.sismics.docs.core.util.jpa.QueryUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
-import org.joda.time.DateTime;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -27,6 +30,11 @@ import java.util.*;
  * @author jtremeaux
  */
 public class UserDao {
+    /**
+     * Logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(UserDao.class);
+
     /**
      * Authenticates an user.
      * 
@@ -285,15 +293,14 @@ public class UserDao {
             try {
                 int envBcryptWorkInt = Integer.parseInt(envBcryptWork);
                 if (envBcryptWorkInt >= 4 && envBcryptWorkInt <= 31) {
-                   bcryptWork = envBcryptWorkInt;
+                    bcryptWork = envBcryptWorkInt;
                 } else {
-                    //ToDo: Log warning? (out of scope)
+                    log.warn(Constants.BCRYPT_WORK_ENV + " needs to be in range 4...31. Falling back to " + Constants.DEFAULT_BCRYPT_WORK + ".");
                 }
             } catch (NumberFormatException e) {
-                //ToDo: Log warning? (no number)
+                log.warn(Constants.BCRYPT_WORK_ENV + " needs to be a number in range 4...31. Falling back to " + Constants.DEFAULT_BCRYPT_WORK + ".");
             }
         }
-        System.out.println(bcryptWork);
         return BCrypt.withDefaults().hashToString(bcryptWork, password.toCharArray());
     }
     
