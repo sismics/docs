@@ -427,6 +427,7 @@
       "port": "IMAP Port (143 oder 993)",
       "username": "IMAP Benutzername",
       "password": "IMAP Passwort",
+      "folder": "IMAP Ordner",
       "tag": "Folgenden Tag zu importierten Dokumenten hinzufügen",
       "test": "Konfiguration testen",
       "last_sync": "Letzte Synchronisation: {{ data.date | date: 'medium' }}, {{ data.count }} E-Mail(s){{ data.count > 1 ? 's' : '' }} importiert",
@@ -556,7 +557,7 @@
     "VALIDATED": "Validiert"
   },
   "validation": {
-    "required": "Erfordert",
+    "required": "Erforderlich",
     "too_short": "Zu kurz",
     "too_long": "Zu lang",
     "email": "Muss eine gültige E-Mailadresse sein",

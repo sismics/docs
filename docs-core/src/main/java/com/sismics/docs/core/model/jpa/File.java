@@ -49,7 +49,6 @@ public class File implements Loggable {
     /**
      * OCR-ized content.
      */
-    @Lob
     @Column(name = "FIL_CONTENT_C")
     private String content;
     

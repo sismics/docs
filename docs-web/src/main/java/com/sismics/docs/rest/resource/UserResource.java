@@ -366,7 +366,7 @@ public class UserResource extends BaseResource {
         AuthenticationToken authenticationToken = new AuthenticationToken()
             .setUserId(user.getId())
             .setLongLasted(longLasted)
-            .setIp(ip)
+            .setIp(StringUtils.abbreviate(ip, 45))
             .setUserAgent(StringUtils.abbreviate(request.getHeader("user-agent"), 1000));
         String token = authenticationTokenDao.create(authenticationToken);
         
@@ -482,7 +482,7 @@ public class UserResource extends BaseResource {
         for (File file : fileList) {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
-            fileDeletedAsyncEvent.setFile(file);
+            fileDeletedAsyncEvent.setFileId(file.getId());
             ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
         
@@ -564,7 +564,7 @@ public class UserResource extends BaseResource {
         for (File file : fileList) {
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
-            fileDeletedAsyncEvent.setFile(file);
+            fileDeletedAsyncEvent.setFileId(file.getId());
             ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
         

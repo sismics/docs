@@ -244,6 +244,15 @@ angular.module('docs',
         }
       }
     })
+    .state('settings.ldap', {
+      url: '/ldap',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.ldap.html',
+          controller: 'SettingsLdap'
+        }
+      }
+    })
     .state('document', {
       url: '/document',
       abstract: true,
@@ -420,12 +429,15 @@ angular.module('docs',
       prefix: 'locale/',
       suffix: '.json?@build.date@'
     })
-    .registerAvailableLanguageKeys(['en', 'es', 'fr', 'de', 'ru', 'zh_CN', 'zh_TW'], {
-      'ru_*': 'ru',
+    .registerAvailableLanguageKeys(['en', 'es', 'fr', 'de', 'el', 'ru', 'it', 'pl', 'zh_CN', 'zh_TW'], {
       'en_*': 'en',
       'es_*': 'es',
       'fr_*': 'fr',
       'de_*': 'de',
+	    'el_*': 'el',
+      'ru_*': 'ru',
+      'it_*': 'it',
+	    'pl_*': 'pl',
       '*': 'en'
     })
     .fallbackLanguage('en');
@@ -524,7 +536,11 @@ angular.module('docs',
     { key: 'nld', label: 'Nederlands' },
     { key: 'tur', label: 'Türkçe' },
     { key: 'heb', label: 'עברית' },
-    { key: 'hun', label: 'Magyar' }
+    { key: 'hun', label: 'Magyar' },
+    { key: 'fin', label: 'Suomi' },
+    { key: 'swe', label: 'Svenska' },
+    { key: 'lav', label: 'Latviešu' },
+    { key: 'dan', label: 'Dansk' }
   ];
 })
 /**

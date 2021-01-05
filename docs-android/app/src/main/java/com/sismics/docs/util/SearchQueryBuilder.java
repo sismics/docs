@@ -39,7 +39,9 @@ public class SearchQueryBuilder {
      */
     public SearchQueryBuilder simpleSearch(String simpleSearch) {
         if (isValid(simpleSearch)) {
-            query.append(SEARCH_SEPARATOR).append(simpleSearch);
+            query.append(SEARCH_SEPARATOR)
+                    .append("simple:")
+                    .append(simpleSearch);
         }
         return this;
     }

@@ -1,0 +1,11 @@
+importer:
+  daemon: true
+  path: import
+  tag: 'env1'
+  addtags: 'env2'
+  lang: 'env3'
+  baseUrl: 'env4'
+  username: 'env5'
+  password: 'env6'
+  copyFolder: 'env7'
+  fileFilter: 'env8'

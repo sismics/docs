@@ -99,11 +99,16 @@ public class EmailUtil {
             }
 
             // Port
+            int port = ConfigUtil.getConfigIntegerValue(ConfigType.SMTP_PORT);
             String envPort = System.getenv(Constants.SMTP_PORT_ENV);
-            if (envPort == null) {
-                email.setSmtpPort(ConfigUtil.getConfigIntegerValue(ConfigType.SMTP_PORT));
-            } else {
-                email.setSmtpPort(Integer.valueOf(envPort));
+            if (envPort != null) {
+                port = Integer.valueOf(envPort);
+            }
+            email.setSmtpPort(port);
+            if (port == 465) {
+                email.setSSLOnConnect(true);
+            } else if (port == 587) {
+                email.setStartTLSRequired(true);
             }
 
             // Username and password

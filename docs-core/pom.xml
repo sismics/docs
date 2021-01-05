@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.sismics.docs</groupId>
     <artifactId>docs-parent</artifactId>
-    <version>1.8</version>
+    <version>1.9-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
   
@@ -91,10 +91,11 @@
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
-    
+
     <dependency>
-      <groupId>org.mindrot</groupId>
-      <artifactId>jbcrypt</artifactId>
+      <groupId>at.favre.lib</groupId>
+      <artifactId>bcrypt</artifactId>
+      <version>0.9.0</version>
     </dependency>
     
     <dependency>
@@ -131,7 +132,12 @@
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>okhttp</artifactId>
     </dependency>
-    
+
+    <dependency>
+      <groupId>org.apache.directory.api</groupId>
+      <artifactId>api-all</artifactId>
+    </dependency>
+
     <!-- Only there to read old index and rebuild them -->
     <dependency>
       <groupId>org.apache.lucene</groupId>

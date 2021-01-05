@@ -104,6 +104,7 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String="READ","WRITE"} inherited_acls.perm Permission
      * @apiSuccess {String} inherited_acls.source_id Source ID
      * @apiSuccess {String} inherited_acls.source_name Source name
+     * @apiSuccess {String} inherited_acls.source_color The color of the Source
      * @apiSuccess {String} inherited_acls.id ID
      * @apiSuccess {String} inherited_acls.name Target name
      * @apiSuccess {String="USER","GROUP","SHARE"} inherited_acls.type Target type
@@ -196,6 +197,7 @@ public class DocumentResource extends BaseResource {
                             .add("perm", aclDto.getPerm().name())
                             .add("source_id", tagDto.getId())
                             .add("source_name", tagDto.getName())
+                            .add("source_color", tagDto.getColor())
                             .add("id", aclDto.getTargetId())
                             .add("name", JsonUtil.nullable(aclDto.getTargetName()))
                             .add("type", aclDto.getTargetType()));
@@ -455,8 +457,8 @@ public class DocumentResource extends BaseResource {
         for (String criteria : criteriaList) {
             String[] params = criteria.split(":");
             if (params.length != 2 || Strings.isNullOrEmpty(params[0]) || Strings.isNullOrEmpty(params[1])) {
-                // This is not a special criteria
-                query.add(criteria);
+                // This is not a special criteria, do a fulltext search on it
+                fullQuery.add(criteria);
                 continue;
             }
 
@@ -588,12 +590,16 @@ public class DocumentResource extends BaseResource {
                     // New shared state criteria
                     documentCriteria.setActiveRoute(params[1].equals("me"));
                     break;
+                case "simple":
+                    // New simple search criteria
+                    query.add(params[1]);
+                    break;
                 case "full":
-                    // New full content search criteria
+                    // New fulltext search criteria
                     fullQuery.add(params[1]);
                     break;
                 default:
-                    query.add(criteria);
+                    fullQuery.add(criteria);
                     break;
             }
         }
@@ -727,7 +733,7 @@ public class DocumentResource extends BaseResource {
         // Raise a document created event
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
         documentCreatedAsyncEvent.setUserId(principal.getId());
-        documentCreatedAsyncEvent.setDocument(document);
+        documentCreatedAsyncEvent.setDocumentId(document.getId());
         ThreadLocalContext.get().addAsyncEvent(documentCreatedAsyncEvent);
 
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -944,7 +950,7 @@ public class DocumentResource extends BaseResource {
         // Raise a document created event
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
         documentCreatedAsyncEvent.setUserId(principal.getId());
-        documentCreatedAsyncEvent.setDocument(document);
+        documentCreatedAsyncEvent.setDocumentId(document.getId());
         ThreadLocalContext.get().addAsyncEvent(documentCreatedAsyncEvent);
 
         // Add files to the document
@@ -1013,7 +1019,7 @@ public class DocumentResource extends BaseResource {
             // Raise file deleted event
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
-            fileDeletedAsyncEvent.setFile(file);
+            fileDeletedAsyncEvent.setFileId(file.getId());
             ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
 

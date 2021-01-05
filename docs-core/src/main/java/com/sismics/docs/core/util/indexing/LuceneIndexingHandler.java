@@ -277,7 +277,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
             criteriaList.add("d.DOC_ID_C in :documentIdList");
             parameterMap.put("documentIdList", documentSearchMap.keySet());
 
-            suggestSearchTerms(criteria.getSearch(), suggestionList);
+            suggestSearchTerms(criteria.getFullSearch(), suggestionList);
         }
         if (criteria.getCreateDateMin() != null) {
             criteriaList.add("d.DOC_CREATEDATE_D >= :createDateMin");

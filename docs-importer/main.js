@@ -1,6 +1,7 @@
 'use strict';
 
 const recursive = require('recursive-readdir');
+const minimatch = require("minimatch");
 const ora = require('ora');
 const inquirer = require('inquirer');
 const preferences = require('preferences');
@@ -10,6 +11,7 @@ const _ = require('underscore');
 const request = require('request').defaults({
   jar: true
 });
+const qs = require('querystring');
 
 // Load preferences
 const prefs = new preferences('com.sismics.docs.importer',{
@@ -22,7 +24,7 @@ const prefs = new preferences('com.sismics.docs.importer',{
 });
 
 // Welcome message
-console.log('Teedy Importer 1.0.0, https://teedy.io' +
+console.log('Teedy Importer 1.8, https://teedy.io' +
   '\n\n' +
   'This program let you import files from your system to Teedy' +
   '\n');
@@ -141,10 +143,29 @@ const askPath = () => {
 
         recursive(answers.path, function (error, files) {
           spinner.succeed(files.length + ' files in this directory');
-          askTag();
+          askFileFilter();
         });
       });
     });
+  });
+};
+
+// Ask for the file filter
+const askFileFilter = () => {
+  console.log('');
+
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'fileFilter',
+      message: 'What pattern do you want to use to match files? (eg. *.+(pdf|txt|jpg))',
+      default: prefs.importer.fileFilter || "*"
+    }
+  ]).then(answers => {
+    // Save fileFilter
+    prefs.importer.fileFilter = answers.fileFilter;
+
+    askTag();
   });
 };
 
@@ -176,7 +197,7 @@ const askTag = () => {
       {
         type: 'list',
         name: 'tag',
-        message: 'Which tag to add on imported documents?',
+        message: 'Which tag to add to all imported documents?',
         default: defaultTagName,
         choices: [ 'No tag' ].concat(_.pluck(tags, 'name'))
       }
@@ -184,8 +205,106 @@ const askTag = () => {
       // Save tag
       prefs.importer.tag = answers.tag === 'No tag' ?
         '' : _.findWhere(tags, { name: answers.tag }).id;
-      askDaemon();
+      askAddTag();
     });
+  });
+};
+
+
+const askAddTag = () => {
+  console.log('');
+
+  inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'addtags',
+      message: 'Do you want to add tags from the filename given with # ?',
+      default: prefs.importer.addtags === true
+    }
+  ]).then(answers => {
+    // Save daemon
+    prefs.importer.addtags = answers.addtags;
+
+    // Save all preferences in case the program is sig-killed
+    askLang();
+  });
+}
+
+
+const askLang = () => {
+  console.log('');
+
+  // Load tags
+  const spinner = ora({
+    text: 'Loading default language',
+    spinner: 'flips'
+  }).start();
+
+  request.get({
+    url: prefs.importer.baseUrl + '/api/app',
+  }, function (error, response, body) {
+    if (error || !response || response.statusCode !== 200) {
+      spinner.fail('Connection to Teedy failed: ' + error);
+      askLang();
+      return;
+    }
+    spinner.succeed('Language loaded');
+    const defaultLang = prefs.importer.lang ? prefs.importer.lang : JSON.parse(body).default_language;
+
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'lang',
+        message: 'Which should be the default language of the document?',
+        default: defaultLang
+      }
+    ]).then(answers => {
+      // Save tag
+      prefs.importer.lang = answers.lang
+      askCopyFolder();
+    });
+  });
+};
+
+const askCopyFolder = () => {
+  console.log('');
+
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'copyFolder',
+      message: 'Enter a path to copy files before they are deleted or leave empty to disable. The path must end with a \'/\' on MacOS and Linux or with a \'\\\' on Windows. Entering \'undefined\' will disable this again after setting the folder.',
+      default: prefs.importer.copyFolder
+    }
+  ]).then(answers => {
+    // Save path
+    prefs.importer.copyFolder = answers.copyFolder=='undefined' ? '' : answers.copyFolder;
+
+    if (prefs.importer.copyFolder) {
+    // Test path
+    const spinner = ora({
+      text: 'Checking copy folder path',
+      spinner: 'flips'
+    }).start();
+    fs.lstat(answers.copyFolder, (error, stats) => {
+      if (error || !stats.isDirectory()) {
+        spinner.fail('Please enter a valid directory path');
+        askCopyFolder();
+        return;
+      }
+
+      fs.access(answers.copyFolder, fs.W_OK | fs.R_OK, (error) => {
+        if (error) {
+          spinner.fail('This directory is not writable');
+          askCopyFolder();
+          return;
+        }
+        spinner.succeed('Copy folder set!');
+        askDaemon();              
+      });
+    });
+  }
+  else {askDaemon();}
   });
 };
 
@@ -245,6 +364,8 @@ const start = () => {
 // Import the files
 const importFiles = (remove, filesImported) => {
   recursive(prefs.importer.path, function (error, files) {
+
+    files = files.filter(minimatch.filter(prefs.importer.fileFilter ?? "*", {matchBase: true}));
     if (files.length === 0) {
       filesImported();
       return;
@@ -270,37 +391,94 @@ const importFile = (file, remove, resolve) => {
     spinner: 'flips'
   }).start();
 
-  request.put({
-    url: prefs.importer.baseUrl + '/api/document',
-    form: {
-      title: file.replace(/^.*[\\\/]/, ''),
-      language: 'eng',
-      tags: prefs.importer.tag === '' ? undefined : prefs.importer.tag
-    }
-  }, function (error, response, body) {
+  // Remove path of file
+  let filename = file.replace(/^.*[\\\/]/, '');
+
+  // Get Tags given as hashtags from filename
+  let taglist = filename.match(/#[^\s:#]+/mg);
+  taglist = taglist ? taglist.map(s => s.substr(1)) : [];
+  
+  // Get available tags and UUIDs from server
+  request.get({
+      url: prefs.importer.baseUrl + '/api/tag/list',
+    }, function (error, response, body) {
     if (error || !response || response.statusCode !== 200) {
-      spinner.fail('Upload failed for ' + file + ': ' + error);
-      resolve();
+      spinner.fail('Error loading tags');
       return;
     }
+    
+    let tagsarray = {};
+    for (let l of JSON.parse(body).tags) {
+      tagsarray[l.name] = l.id;
+    }
 
-    request.put({
-      url: prefs.importer.baseUrl + '/api/file',
-      formData: {
-        id: JSON.parse(body).id,
-        file: fs.createReadStream(file)
+    // Intersect tags from filename with existing tags on server
+    let foundtags = [];
+    for (let j of taglist) {
+      // If the tag is last in the filename it could include a file extension and would not be recognized
+      if (j.includes('.') && !tagsarray.hasOwnProperty(j) && !foundtags.includes(tagsarray[j])) {
+        while (j.includes('.') && !tagsarray.hasOwnProperty(j)) {
+          j = j.replace(/\.[^.]*$/,'');
+        }
       }
-    }, function (error, response) {
+      if (tagsarray.hasOwnProperty(j) && !foundtags.includes(tagsarray[j])) {
+        foundtags.push(tagsarray[j]);
+        filename = filename.split('#'+j).join('');
+      }
+    }
+    if (prefs.importer.tag !== '' && !foundtags.includes(prefs.importer.tag)){
+      foundtags.push(prefs.importer.tag);
+    }
+    
+    let data = {}
+    if (prefs.importer.addtags) {
+      data = {
+        title: prefs.importer.addtags ? filename : file.replace(/^.*[\\\/]/, '').substring(0, 100),
+        language: prefs.importer.lang || 'eng',
+        tags: foundtags 
+      }
+    }
+    else {
+      data = {
+        title: prefs.importer.addtags ? filename : file.replace(/^.*[\\\/]/, '').substring(0, 100),
+        language: prefs.importer.lang || 'eng',
+        tags: prefs.importer.tag === '' ? undefined : prefs.importer.tag
+      }
+    }
+    // Create document
+    request.put({
+      url: prefs.importer.baseUrl + '/api/document',
+      form: qs.stringify(data)
+    }, function (error, response, body) {
       if (error || !response || response.statusCode !== 200) {
         spinner.fail('Upload failed for ' + file + ': ' + error);
         resolve();
         return;
       }
-      spinner.succeed('Upload successful for ' + file);
-      if (remove) {
-        fs.unlinkSync(file);
-      }
-      resolve();
+      
+      // Upload file
+      request.put({
+        url: prefs.importer.baseUrl + '/api/file',
+        formData: {
+          id: JSON.parse(body).id,
+          file: fs.createReadStream(file)
+        }
+      }, function (error, response) {
+        if (error || !response || response.statusCode !== 200) {
+          spinner.fail('Upload failed for ' + file + ': ' + error);
+          resolve();
+          return;
+        }
+        spinner.succeed('Upload successful for ' + file);
+        if (remove) {
+          if (prefs.importer.copyFolder) {
+            fs.copyFileSync(file, prefs.importer.copyFolder + file.replace(/^.*[\\\/]/, ''));
+            fs.unlinkSync(file);
+          }
+          else {fs.unlinkSync(file);}
+        }
+        resolve();
+      });
     });
   });
 };
@@ -312,7 +490,12 @@ if (argv.hasOwnProperty('d')) {
     'Username: ' + prefs.importer.username + '\n' +
     'Password: ***********\n' +
     'Tag: ' + prefs.importer.tag + '\n' +
-    'Daemon mode: ' + prefs.importer.daemon);
+    'Add tags given #: ' + prefs.importer.addtags + '\n' +
+    'Language: ' + prefs.importer.lang + '\n' +
+    'Daemon mode: ' + prefs.importer.daemon + '\n' +
+    'Copy folder: ' + prefs.importer.copyFolder + '\n' +
+    'File filter: ' + prefs.importer.fileFilter
+    );
   start();
 } else {
   askBaseUrl();

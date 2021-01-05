@@ -5,6 +5,7 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import org.junit.Assert;
 
 import javax.json.JsonObject;
 import javax.ws.rs.client.Entity;
@@ -113,7 +114,8 @@ public class ClientUtil {
                         .param("username", username)
                         .param("password", password)
                         .param("remember", remember.toString())));
-        
+        Assert.assertEquals(200, response.getStatus());
+
         return getAuthenticationCookie(response);
     }
 

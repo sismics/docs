@@ -72,6 +72,7 @@
     <string name="language_french" translatable="false">Français</string>
     <string name="language_english" translatable="false">English</string>
     <string name="language_german" translatable="false">Deutsch</string>
+    <string name="language_polish" translatable="false">Polski</string>
     <string name="save">Save</string>
     <string name="edit_document">Edit</string>
     <string name="error_editing_document">Network error, please try again</string>
