@@ -17,6 +17,7 @@ import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.util.stream.Stream;
 
 /**
  * Encryption utilities.
@@ -28,6 +29,9 @@ public class EncryptionUtil {
      * Salt.
      */
     private static final String SALT = "LEpxZmm2SMu2PeKzPNrar2rhVAS6LrrgvXKeL9uyXC4vgKHg";
+
+    private static final String LEGACY_CIPHER_SPEC = "AES/CTR/NOPADDING";
+    public static final String DEFAULT_CIPHER_SPEC = LEGACY_CIPHER_SPEC;
     
     static {
         // Initialize Bouncy Castle provider
@@ -57,8 +61,8 @@ public class EncryptionUtil {
      * @return Encrypted stream
      * @throws Exception  e
      */
-    public static InputStream decryptInputStream(InputStream is, String privateKey) throws Exception {
-        return new CipherInputStream(is, getCipher(privateKey, Cipher.DECRYPT_MODE));
+    public static InputStream decryptInputStream(InputStream is, String privateKey, String cipherSpec) throws Exception {
+        return new CipherInputStream(is, getCipher(privateKey, Cipher.DECRYPT_MODE, cipherSpec));
     }
 
     /**
@@ -69,7 +73,7 @@ public class EncryptionUtil {
      * @return Decrypted temporary file
      * @throws Exception e
      */
-    public static Path decryptFile(Path file, String privateKey) throws Exception {
+    public static Path decryptFile(Path file, String privateKey, String cipherSpec) throws Exception {
         if (privateKey == null) {
             // For unit testing
             return file;
@@ -77,7 +81,7 @@ public class EncryptionUtil {
 
         Path tmpFile = AppContext.getInstance().getFileService().createTemporaryFile();
         try (InputStream is = Files.newInputStream(file)) {
-            Files.copy(new CipherInputStream(is, getCipher(privateKey, Cipher.DECRYPT_MODE)), tmpFile, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(new CipherInputStream(is, getCipher(privateKey, Cipher.DECRYPT_MODE, cipherSpec)), tmpFile, StandardCopyOption.REPLACE_EXISTING);
         }
         return tmpFile;
     }
@@ -89,11 +93,25 @@ public class EncryptionUtil {
      * @return Encryption cipher
      * @throws Exception e
      */
-    public static Cipher getEncryptionCipher(String privateKey) throws Exception {
+    public static Cipher getEncryptionCipher(String privateKey, String cipherSpec) throws Exception {
         if (Strings.isNullOrEmpty(privateKey)) {
             throw new IllegalArgumentException("The private key is null or empty");
         }
-        return getCipher(privateKey, Cipher.ENCRYPT_MODE);
+        return getCipher(privateKey, Cipher.ENCRYPT_MODE, cipherSpec);
+    }
+
+    public static String getEncryptionCipherSpec() {
+        return System.getProperty("teedy.cipher", DEFAULT_CIPHER_SPEC);
+    }
+
+    public static String getDecryptionCipherSpec(Path specFile) throws Exception {
+	String cipherSpec = LEGACY_CIPHER_SPEC;
+	if (Files.exists(specFile)) {
+            try (Stream<String> lines = Files.lines(specFile)) {
+                cipherSpec = lines.findFirst().orElse(cipherSpec);
+            }
+        }
+        return cipherSpec;
     }
     
     /**
@@ -104,11 +122,13 @@ public class EncryptionUtil {
      * @return Cipher
      * @throws Exception e
      */
-    private static Cipher getCipher(String privateKey, int mode) throws Exception {
+    private static Cipher getCipher(String privateKey, int mode, String cipherSpec) throws Exception {
         PBEKeySpec keySpec = new PBEKeySpec(privateKey.toCharArray(), SALT.getBytes(), 2000, 256);
         SecretKeyFactory skf = SecretKeyFactory.getInstance("PBEWITHSHA256AND256BITAES-CBC-BC");
         SecretKey desKey = skf.generateSecret(keySpec);
-        Cipher cipher = Cipher.getInstance("AES/CTR/NOPADDING");
+        Cipher cipher = "NULL".equals(cipherSpec) // the NULL cipher may be disabled, but we want it to be usable for Teedy
+		? new javax.crypto.NullCipher()
+		: Cipher.getInstance(cipherSpec);
         cipher.init(mode, desKey);
         return cipher;
     }

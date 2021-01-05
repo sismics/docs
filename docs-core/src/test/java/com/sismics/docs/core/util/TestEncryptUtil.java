@@ -25,12 +25,12 @@ public class TestEncryptUtil {
     @Test
     public void encryptStreamTest() throws Exception {
         try {
-            EncryptionUtil.getEncryptionCipher("");
+            EncryptionUtil.getEncryptionCipher("", EncryptionUtil.DEFAULT_CIPHER_SPEC);
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // NOP
         }
-        Cipher cipher = EncryptionUtil.getEncryptionCipher("OnceUponATime");
+        Cipher cipher = EncryptionUtil.getEncryptionCipher("OnceUponATime", EncryptionUtil.DEFAULT_CIPHER_SPEC);
         InputStream inputStream = new CipherInputStream(this.getClass().getResourceAsStream("/file/udhr.pdf"), cipher);
         byte[] encryptedData = ByteStreams.toByteArray(inputStream);
         byte[] assertData = ByteStreams.toByteArray(this.getClass().getResourceAsStream("/file/udhr_encrypted.pdf"));
@@ -41,7 +41,7 @@ public class TestEncryptUtil {
     @Test
     public void decryptStreamTest() throws Exception {
         InputStream inputStream = EncryptionUtil.decryptInputStream(
-                this.getClass().getResourceAsStream("/file/udhr_encrypted.pdf"), "OnceUponATime");
+                this.getClass().getResourceAsStream("/file/udhr_encrypted.pdf"), "OnceUponATime", EncryptionUtil.DEFAULT_CIPHER_SPEC);
         byte[] encryptedData = ByteStreams.toByteArray(inputStream);
         byte[] assertData = ByteStreams.toByteArray(this.getClass().getResourceAsStream("/file/udhr.pdf"));
         

@@ -41,7 +41,8 @@ public class ProcessFilesAction implements Action {
 
                 // Decrypt the file
                 Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
-                Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey());
+                String cipherSpec = EncryptionUtil.getDecryptionCipherSpec(FileUtil.getSpecFile(storedFile));
+                Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey(), cipherSpec);
 
                 // Start the asynchronous processing
                 FileUtil.startProcessingFile(file.getId());

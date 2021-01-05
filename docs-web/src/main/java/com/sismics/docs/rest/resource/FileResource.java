@@ -197,7 +197,8 @@ public class FileResource extends BaseResource {
         // Raise a new file updated event and document updated event (it wasn't sent during file creation)
         try {
             java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
-            java.nio.file.Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey());
+            String cipherSpec = EncryptionUtil.getDecryptionCipherSpec(FileUtil.getSpecFile(storedFile));
+            java.nio.file.Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey(), cipherSpec);
             FileUtil.startProcessingFile(id);
             FileUpdatedAsyncEvent fileUpdatedAsyncEvent = new FileUpdatedAsyncEvent();
             fileUpdatedAsyncEvent.setUserId(principal.getId());
@@ -305,7 +306,8 @@ public class FileResource extends BaseResource {
         // Start the processing asynchronously
         try {
             java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
-            java.nio.file.Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey());
+            String cipherSpec = EncryptionUtil.getDecryptionCipherSpec(FileUtil.getSpecFile(storedFile));
+            java.nio.file.Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, user.getPrivateKey(), cipherSpec);
             FileUtil.startProcessingFile(id);
             FileUpdatedAsyncEvent event = new FileUpdatedAsyncEvent();
             event.setUserId(principal.getId());
@@ -638,9 +640,11 @@ public class FileResource extends BaseResource {
         
         // Write the decrypted file to the output
         try {
+            java.nio.file.Path specFile = FileUtil.getSpecFile(DirectoryUtil.getStorageDirectory().resolve(fileId));
+            String cipherSpec = EncryptionUtil.getDecryptionCipherSpec(specFile);
             InputStream fileInputStream = Files.newInputStream(storedFile);
             final InputStream responseInputStream = decrypt ?
-                    EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey()) : fileInputStream;
+                    EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey(), cipherSpec) : fileInputStream;
                     
             stream = outputStream -> {
                 try {
@@ -715,22 +719,23 @@ public class FileResource extends BaseResource {
             try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
                 // Add each file to the ZIP stream
                 int index = 0;
-                for (File file : fileList) {
+                for (File file : fileList) try {
                     java.nio.file.Path storedfile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+                    String cipherSpec = EncryptionUtil.getDecryptionCipherSpec(FileUtil.getSpecFile(storedfile));
                     InputStream fileInputStream = Files.newInputStream(storedfile);
 
                     // Add the decrypted file to the ZIP stream
                     // Files are encrypted by the creator of them
                     User user = userDao.getById(file.getUserId());
-                    try (InputStream decryptedStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey())) {
+                    try (InputStream decryptedStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey(), cipherSpec)) {
                         ZipEntry zipEntry = new ZipEntry(index + "-" + file.getFullName(Integer.toString(index)));
                         zipOutputStream.putNextEntry(zipEntry);
                         ByteStreams.copy(decryptedStream, zipOutputStream);
                         zipOutputStream.closeEntry();
-                    } catch (Exception e) {
-                        throw new WebApplicationException(e);
                     }
                     index++;
+                } catch (Exception e) {
+                    throw new WebApplicationException(e);
                 }
             }
             outputStream.close();
