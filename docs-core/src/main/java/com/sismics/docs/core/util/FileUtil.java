@@ -86,11 +86,15 @@ public class FileUtil {
      */
     public static void delete(File file) throws IOException {
         Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+        Path specFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + CIPHER_SPEC_SUFFIX);
         Path webFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_web");
         Path thumbnailFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_thumb");
         
         if (Files.exists(storedFile)) {
             Files.delete(storedFile);
+        }
+        if (Files.exists(specFile)) {
+            Files.delete(specFile);
         }
         if (Files.exists(webFile)) {
             Files.delete(webFile);
