@@ -132,7 +132,9 @@ public class DocumentResource extends BaseResource {
     public Response get(
             @PathParam("id") String documentId,
             @QueryParam("share") String shareId) {
-        authenticate();
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
         
         DocumentDao documentDao = new DocumentDao();
         DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
@@ -278,7 +280,9 @@ public class DocumentResource extends BaseResource {
             final @QueryParam("comments") Boolean comments,
             final @QueryParam("fitimagetopage") Boolean fitImageToPage,
             @QueryParam("margin") String marginStr) {
-        authenticate();
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
         
         // Validate input
         final int margin = ValidationUtil.validateInteger(marginStr, "margin");

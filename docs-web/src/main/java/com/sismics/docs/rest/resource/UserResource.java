@@ -1076,8 +1076,6 @@ public class UserResource extends BaseResource {
     @Path("password_lost")
     @Produces(MediaType.APPLICATION_JSON)
     public Response passwordLost(@FormParam("username") String username) {
-        authenticate();
-
         // Validate input data
         ValidationUtil.validateStringNotBlank("username", username);
 
@@ -1131,8 +1129,6 @@ public class UserResource extends BaseResource {
     public Response passwordReset(
             @FormParam("key") String passwordResetKey,
             @FormParam("password") String password) {
-        authenticate();
-
         // Validate input data
         ValidationUtil.validateRequired("key", passwordResetKey);
         password = ValidationUtil.validateLength(password, "password", 8, 50, true);

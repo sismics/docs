@@ -417,7 +417,7 @@ public class FileResource extends BaseResource {
         boolean authenticated = authenticate();
         
         // Check document visibility
-        if (documentId != null) {
+        if (documentId == null) {
             AclDao aclDao = new AclDao();
             if (!aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(shareId))) {
                 throw new NotFoundException();
@@ -591,7 +591,9 @@ public class FileResource extends BaseResource {
             @PathParam("id") final String fileId,
             @QueryParam("share") String shareId,
             @QueryParam("size") String size) {
-        authenticate();
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
         
         if (size != null && !Lists.newArrayList("web", "thumb", "content").contains(size)) {
             throw new ClientException("SizeError", "Size must be web, thumb or content");
@@ -696,7 +698,9 @@ public class FileResource extends BaseResource {
     public Response zip(
             @QueryParam("id") String documentId,
             @QueryParam("share") String shareId) {
-        authenticate();
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
         
         // Get the document
         DocumentDao documentDao = new DocumentDao();

@@ -154,7 +154,9 @@ public class CommentResource extends BaseResource {
     @Path("{documentId: [a-z0-9\\-]+}")
     public Response get(@PathParam("documentId") String documentId,
             @QueryParam("share") String shareId) {
-        authenticate();
+        if (!authenticate() || principal.isGuest()) {
+            throw new ForbiddenClientException();
+        }
         
         // Read access on doc gives access to read comments 
         AclDao aclDao = new AclDao();
