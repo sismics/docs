@@ -58,9 +58,9 @@ public class GroupResource extends BaseResource {
     @PUT
     public Response add(@FormParam("parent") String parentName,
             @FormParam("name") String name) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         
         // Validate input
@@ -119,9 +119,9 @@ public class GroupResource extends BaseResource {
     public Response update(@PathParam("groupName") String groupName,
             @FormParam("parent") String parentName,
             @FormParam("name") String name) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         
         // Validate input
@@ -188,9 +188,9 @@ public class GroupResource extends BaseResource {
     @DELETE
     @Path("{groupName: [a-zA-Z0-9_]+}")
     public Response delete(@PathParam("groupName") String groupName) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         
         // Get the group
@@ -247,9 +247,9 @@ public class GroupResource extends BaseResource {
     @Path("{groupName: [a-zA-Z0-9_]+}")
     public Response addMember(@PathParam("groupName") String groupName,
             @FormParam("username") String username) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         
         // Validate input
@@ -316,9 +316,9 @@ public class GroupResource extends BaseResource {
     @Path("{groupName: [a-zA-Z0-9_]+}/{username: [a-zA-Z0-9_]+}")
     public Response removeMember(@PathParam("groupName") String groupName,
             @PathParam("username") String username) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         
         // Validate input
@@ -371,9 +371,8 @@ public class GroupResource extends BaseResource {
     public Response list(
             @QueryParam("sort_column") Integer sortColumn,
             @QueryParam("asc") Boolean asc) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         JsonArrayBuilder groups = Json.createArrayBuilder();
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
@@ -412,9 +411,8 @@ public class GroupResource extends BaseResource {
     @GET
     @Path("{groupName: [a-zA-Z0-9_]+}")
     public Response get(@PathParam("groupName") String groupName) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Get the group
         GroupDao groupDao = new GroupDao();

@@ -67,9 +67,8 @@ public class AclResource extends BaseResource {
             @FormParam("perm") String permStr,
             @FormParam("target") String targetName,
             @FormParam("type") String typeStr) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Validate input
         ValidationUtil.validateRequired(sourceId, "source");
@@ -147,9 +146,8 @@ public class AclResource extends BaseResource {
             @PathParam("sourceId") String sourceId,
             @PathParam("perm") String permStr,
             @PathParam("targetId") String targetId) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Validate input
         ValidationUtil.validateRequired(sourceId, "source");
@@ -215,9 +213,8 @@ public class AclResource extends BaseResource {
     @GET
     @Path("target/search")
     public Response targetList(@QueryParam("search") String search) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Validate input
         search = ValidationUtil.validateLength(search, "search", 1, 50, false);

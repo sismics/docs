@@ -112,9 +112,9 @@ public class ThemeResource extends BaseResource {
     public Response theme(@FormParam("color") String color,
               @FormParam("name") String name,
               @FormParam("css") String css) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Validate input data
@@ -170,9 +170,9 @@ public class ThemeResource extends BaseResource {
     @Consumes("multipart/form-data")
     public Response images(@PathParam("type") String type,
             @FormDataParam("image") FormDataBodyPart imageBodyPart) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         if (imageBodyPart == null) {
             throw new ClientException("NoImageProvided", "An image is required");

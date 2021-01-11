@@ -55,9 +55,8 @@ public class AuditLogResource extends BaseResource {
      */
     @GET
     public Response list(@QueryParam("document") String documentId) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // On a document or a user?
         PaginatedList<AuditLogDto> paginatedList = PaginatedLists.create(20, 0);

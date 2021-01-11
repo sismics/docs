@@ -49,9 +49,8 @@ public class CommentResource extends BaseResource {
     @PUT
     public Response add(@FormParam("id") String documentId,
             @FormParam("content") String content) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Validate input data
         ValidationUtil.validateRequired(documentId, "id");
@@ -100,9 +99,8 @@ public class CommentResource extends BaseResource {
     @DELETE
     @Path("{id: [a-z0-9\\-]+}")
     public Response delete(@PathParam("id") String id) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Get the comment
         CommentDao commentDao = new CommentDao();
@@ -154,7 +152,9 @@ public class CommentResource extends BaseResource {
     @Path("{documentId: [a-z0-9\\-]+}")
     public Response get(@PathParam("documentId") String documentId,
             @QueryParam("share") String shareId) {
-        if (!authenticate() || principal.isGuest()) {
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+        if (principal.isGuest()) {
             throw new ForbiddenClientException();
         }
         

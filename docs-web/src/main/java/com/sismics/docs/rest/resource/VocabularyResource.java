@@ -42,9 +42,8 @@ public class VocabularyResource extends BaseResource {
     @GET
     @Path("{name: [a-z0-9\\-]+}")
     public Response get(@PathParam("name") String name) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Assemble results
         VocabularyDao vocabularyDao = new VocabularyDao();
@@ -91,9 +90,9 @@ public class VocabularyResource extends BaseResource {
     public Response add(@FormParam("name") String name,
             @FormParam("value") String value,
             @FormParam("order") String orderStr) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         
         // Validate input data
@@ -151,9 +150,9 @@ public class VocabularyResource extends BaseResource {
             @FormParam("name") String name,
             @FormParam("value") String value,
             @FormParam("order") String orderStr) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         
         // Validate input data
@@ -214,9 +213,9 @@ public class VocabularyResource extends BaseResource {
     @DELETE
     @Path("{id: [a-z0-9\\-]+}")
     public Response delete(@PathParam("id") String id) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         
         // Get the vocabulary

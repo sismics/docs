@@ -52,9 +52,8 @@ public class TagResource extends BaseResource {
     @GET
     @Path("/list")
     public Response list() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         TagDao tagDao = new TagDao();
         List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)), new SortCriteria(1, true));
@@ -111,9 +110,8 @@ public class TagResource extends BaseResource {
     @GET
     @Path("{id: [a-z0-9\\-]+}")
     public Response get(@PathParam("id") String id) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         TagDao tagDao = new TagDao();
         List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)).setId(id), null);
@@ -170,9 +168,8 @@ public class TagResource extends BaseResource {
             @FormParam("name") String name,
             @FormParam("color") String color,
             @FormParam("parent") String parentId) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 36, false);
@@ -252,9 +249,8 @@ public class TagResource extends BaseResource {
             @FormParam("name") String name,
             @FormParam("color") String color,
             @FormParam("parent") String parentId) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 36, true);
@@ -324,9 +320,8 @@ public class TagResource extends BaseResource {
     @Path("{id: [a-z0-9\\-]+}")
     public Response delete(
             @PathParam("id") String id) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Get the tag
         AclDao aclDao = new AclDao();

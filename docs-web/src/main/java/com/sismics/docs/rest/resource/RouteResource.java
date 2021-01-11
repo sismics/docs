@@ -53,9 +53,8 @@ public class RouteResource extends BaseResource {
     @Path("start")
     public Response start(@FormParam("routeModelId") String routeModelId,
                           @FormParam("documentId") String documentId) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Get the document
         AclDao aclDao = new AclDao();
@@ -151,9 +150,8 @@ public class RouteResource extends BaseResource {
     public Response validate(@FormParam("documentId") String documentId,
                              @FormParam("transition") String transitionStr,
                              @FormParam("comment") String comment) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Get the document
         AclDao aclDao = new AclDao();
@@ -253,9 +251,8 @@ public class RouteResource extends BaseResource {
      */
     @GET
     public Response get(@QueryParam("documentId") String documentId) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         DocumentDao documentDao = new DocumentDao();
         DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(null));
@@ -306,9 +303,8 @@ public class RouteResource extends BaseResource {
      */
     @DELETE
     public Response delete(@QueryParam("documentId") String documentId) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Get the document
         AclDao aclDao = new AclDao();

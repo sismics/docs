@@ -55,9 +55,8 @@ public class ShareResource extends BaseResource {
     public Response add(
             @FormParam("id") String documentId,
             @FormParam("name") String name) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Validate input data
         ValidationUtil.validateRequired(documentId, "id");
@@ -119,9 +118,8 @@ public class ShareResource extends BaseResource {
     @Path("{id: [a-z0-9\\-]+}")
     public Response delete(
             @PathParam("id") String id) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Check that the user can share the linked document
         AclDao aclDao = new AclDao();

@@ -24,9 +24,11 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.ValidationUtil;
+import com.sismics.security.IPrincipal;
 import com.sismics.security.UserPrincipal;
 import com.sismics.util.JsonUtil;
 import com.sismics.util.context.ThreadLocalContext;
+import com.sismics.util.filter.SecurityFilter;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 import com.sismics.util.totp.GoogleAuthenticator;
 import com.sismics.util.totp.GoogleAuthenticatorKey;
@@ -40,6 +42,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -81,9 +84,9 @@ public class UserResource extends BaseResource {
         @FormParam("password") String password,
         @FormParam("email") String email,
         @FormParam("storage_quota") String storageQuotaStr) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         
         // Validate the input data
@@ -143,9 +146,8 @@ public class UserResource extends BaseResource {
     public Response update(
         @FormParam("password") String password,
         @FormParam("email") String email) {
-        if (!authenticate() || principal.isGuest()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Validate the input data
         password = ValidationUtil.validateLength(password, "password", 8, 50, true);
@@ -202,9 +204,9 @@ public class UserResource extends BaseResource {
         @FormParam("email") String email,
         @FormParam("storage_quota") String storageQuotaStr,
         @FormParam("disabled") Boolean disabled) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         
         // Validate the input data
@@ -397,9 +399,8 @@ public class UserResource extends BaseResource {
     @POST
     @Path("logout")
     public Response logout() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Get the value of the session token
         String authToken = getAuthToken();
@@ -445,9 +446,8 @@ public class UserResource extends BaseResource {
      */
     @DELETE
     public Response delete() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Ensure that the admin or guest users are not deleted
         if (hasBaseFunction(BaseFunction.ADMIN) || principal.isGuest()) {
@@ -513,9 +513,9 @@ public class UserResource extends BaseResource {
     @DELETE
     @Path("{username: [a-zA-Z0-9_]+}")
     public Response delete(@PathParam("username") String username) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Cannot delete the guest user
@@ -593,9 +593,9 @@ public class UserResource extends BaseResource {
     @POST
     @Path("{username: [a-zA-Z0-9_]+}/disable_totp")
     public Response disableTotpUsername(@PathParam("username") String username) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Get the user
@@ -639,21 +639,15 @@ public class UserResource extends BaseResource {
     @GET
     public Response info() {
         JsonObjectBuilder response = Json.createObjectBuilder();
-        if (!authenticate()) {
-            response.add("anonymous", true);
+        this.principal = getPrincipal();
+        try{
+            authenticate(this.principal);
 
-            // Check if admin has the default password
-            UserDao userDao = new UserDao();
-            User adminUser = userDao.getById("admin");
-            if (adminUser != null && adminUser.getDeleteDate() == null) {
-                response.add("is_default_password", Constants.DEFAULT_ADMIN_PASSWORD.equals(adminUser.getPassword()));
-            }
-        } else {
             // Update the last connection date
             String authToken = getAuthToken();
             AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
             authenticationTokenDao.updateLastConnectionDate(authToken);
-            
+
             // Build the response
             response.add("anonymous", false);
             UserDao userDao = new UserDao();
@@ -662,7 +656,7 @@ public class UserResource extends BaseResource {
             List<GroupDto> groupDtoList = groupDao.findByCriteria(new GroupCriteria()
                     .setUserId(user.getId())
                     .setRecursive(true), null);
-            
+
             response.add("username", user.getUsername())
                     .add("email", user.getEmail())
                     .add("storage_quota", user.getStorageQuota())
@@ -675,16 +669,25 @@ public class UserResource extends BaseResource {
             for (String baseFunction : ((UserPrincipal) principal).getBaseFunctionSet()) {
                 baseFunctions.add(baseFunction);
             }
-            
+
             // Groups
             JsonArrayBuilder groups = Json.createArrayBuilder();
             for (GroupDto groupDto : groupDtoList) {
                 groups.add(groupDto.getName());
             }
-            
+
             response.add("base_functions", baseFunctions)
                     .add("groups", groups)
                     .add("is_default_password", hasBaseFunction(BaseFunction.ADMIN) && Constants.DEFAULT_ADMIN_PASSWORD.equals(user.getPassword()));
+        } catch (ForbiddenClientException e) {
+            response.add("anonymous", true);
+
+            // Check if admin has the default password
+            UserDao userDao = new UserDao();
+            User adminUser = userDao.getById("admin");
+            if (adminUser != null && adminUser.getDeleteDate() == null) {
+                response.add("is_default_password", Constants.DEFAULT_ADMIN_PASSWORD.equals(adminUser.getPassword()));
+            }
         }
         
         return Response.ok().entity(response.build()).build();
@@ -716,9 +719,8 @@ public class UserResource extends BaseResource {
     @Path("{username: [a-zA-Z0-9_]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response view(@PathParam("username") String username) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         UserDao userDao = new UserDao();
         User user = userDao.getActiveByUsername(username);
@@ -780,9 +782,8 @@ public class UserResource extends BaseResource {
             @QueryParam("sort_column") Integer sortColumn,
             @QueryParam("asc") Boolean asc,
             @QueryParam("group") String groupName) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         JsonArrayBuilder users = Json.createArrayBuilder();
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
@@ -838,9 +839,8 @@ public class UserResource extends BaseResource {
     @GET
     @Path("session")
     public Response session() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Get the value of the session token
         String authToken = getAuthToken();
@@ -885,9 +885,8 @@ public class UserResource extends BaseResource {
     @DELETE
     @Path("session")
     public Response deleteSession() {
-        if (!authenticate() || principal.isGuest()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Get the value of the session token
         String authToken = getAuthToken();
@@ -919,9 +918,8 @@ public class UserResource extends BaseResource {
     @POST
     @Path("onboarded")
     public Response onboarded() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Save it
         UserDao userDao = new UserDao();
@@ -953,7 +951,9 @@ public class UserResource extends BaseResource {
     @POST
     @Path("enable_totp")
     public Response enableTotp() {
-        if (!authenticate() || principal.isGuest()) {
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+        if (this.principal.isGuest()) {
             throw new ForbiddenClientException();
         }
         
@@ -990,7 +990,9 @@ public class UserResource extends BaseResource {
     @POST
     @Path("test_totp")
     public Response testTotp(@FormParam("code") String validationCodeStr) {
-        if (!authenticate() || principal.isGuest()) {
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+        if (this.principal.isGuest()) {
             throw new ForbiddenClientException();
         }
 
@@ -1032,7 +1034,9 @@ public class UserResource extends BaseResource {
     @POST
     @Path("disable_totp")
     public Response disableTotp(@FormParam("password") String password) {
-        if (!authenticate() || principal.isGuest()) {
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+        if (this.principal.isGuest()) {
             throw new ForbiddenClientException();
         }
         
@@ -1129,6 +1133,9 @@ public class UserResource extends BaseResource {
     public Response passwordReset(
             @FormParam("key") String passwordResetKey,
             @FormParam("password") String password) {
+        //Get the principal if logged in user
+        this.principal = getPrincipal();
+
         // Validate input data
         ValidationUtil.validateRequired("key", passwordResetKey);
         password = ValidationUtil.validateLength(password, "password", 8, 50, true);

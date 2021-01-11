@@ -42,9 +42,9 @@ public class WebhookResource extends BaseResource {
      */
     @GET
     public Response list(@QueryParam("document") String documentId) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         WebhookDao webhookDao = new WebhookDao();
@@ -83,9 +83,9 @@ public class WebhookResource extends BaseResource {
     @PUT
     public Response add(@FormParam("event") String eventStr,
                         @FormParam("url") String url) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Validate input
@@ -122,9 +122,9 @@ public class WebhookResource extends BaseResource {
     @DELETE
     @Path("{id: [a-z0-9\\-]+}")
     public Response delete(@PathParam("id") String id) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Get the webhook

@@ -132,9 +132,8 @@ public class DocumentResource extends BaseResource {
     public Response get(
             @PathParam("id") String documentId,
             @QueryParam("share") String shareId) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         DocumentDao documentDao = new DocumentDao();
         DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
@@ -280,9 +279,8 @@ public class DocumentResource extends BaseResource {
             final @QueryParam("comments") Boolean comments,
             final @QueryParam("fitimagetopage") Boolean fitImageToPage,
             @QueryParam("margin") String marginStr) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Validate input
         final int margin = ValidationUtil.validateInteger(marginStr, "margin");
@@ -370,9 +368,8 @@ public class DocumentResource extends BaseResource {
             @QueryParam("sort_column") Integer sortColumn,
             @QueryParam("asc") Boolean asc,
             @QueryParam("search") String search) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         JsonObjectBuilder response = Json.createObjectBuilder();
         JsonArrayBuilder documents = Json.createArrayBuilder();
@@ -677,9 +674,8 @@ public class DocumentResource extends BaseResource {
             @FormParam("metadata_value") List<String> metadataValueList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Validate input data
         title = ValidationUtil.validateLength(title, "title", 1, 100, false);
@@ -799,9 +795,8 @@ public class DocumentResource extends BaseResource {
             @FormParam("metadata_value") List<String> metadataValueList,
             @FormParam("language") String language,
             @FormParam("create_date") String createDateStr) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Validate input data
         title = ValidationUtil.validateLength(title, "title", 1, 100, false);
@@ -900,9 +895,8 @@ public class DocumentResource extends BaseResource {
     @Path("eml")
     @Consumes("multipart/form-data")
     public Response importEml(@FormDataParam("file") FormDataBodyPart fileBodyPart) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Validate input data
         ValidationUtil.validateRequired(fileBodyPart, "file");
@@ -994,9 +988,8 @@ public class DocumentResource extends BaseResource {
     @Path("{id: [a-z0-9\\-]+}")
     public Response delete(
             @PathParam("id") String id) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Get the document
         DocumentDao documentDao = new DocumentDao();

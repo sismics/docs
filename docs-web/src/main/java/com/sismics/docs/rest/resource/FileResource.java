@@ -91,9 +91,8 @@ public class FileResource extends BaseResource {
             @FormDataParam("id") String documentId,
             @FormDataParam("previousFileId") String previousFileId,
             @FormDataParam("file") FormDataBodyPart fileBodyPart) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Validate input data
         ValidationUtil.validateRequired(fileBodyPart, "file");
@@ -164,9 +163,8 @@ public class FileResource extends BaseResource {
     public Response attach(
             @PathParam("id") String id,
             @FormParam("id") String documentId) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Validate input data
         ValidationUtil.validateRequired(documentId, "documentId");
@@ -241,9 +239,8 @@ public class FileResource extends BaseResource {
     @Path("{id: [a-z0-9\\-]+}")
     public Response update(@PathParam("id") String id,
                            @FormParam("name") String name) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Get the file
         File file = findFile(id, null);
@@ -282,9 +279,8 @@ public class FileResource extends BaseResource {
     @POST
     @Path("{id: [a-z0-9\\-]+}/process")
     public Response process(@PathParam("id") String id) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Get the document and the file
         DocumentDao documentDao = new DocumentDao();
@@ -347,9 +343,8 @@ public class FileResource extends BaseResource {
     public Response reorder(
             @FormParam("id") String documentId,
             @FormParam("order") List<String> idList) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Validate input data
         ValidationUtil.validateRequired(documentId, "id");
@@ -414,16 +409,16 @@ public class FileResource extends BaseResource {
     public Response list(
             @QueryParam("id") String documentId,
             @QueryParam("share") String shareId) {
-        boolean authenticated = authenticate();
+        this.principal = getPrincipal();
         
         // Check document visibility
-        if (documentId == null) {
+        if (documentId != null) {
             AclDao aclDao = new AclDao();
             if (!aclDao.checkPermission(documentId, PermType.READ, getTargetIdList(shareId))) {
                 throw new NotFoundException();
             }
-        } else if (!authenticated) {
-            throw new ForbiddenClientException();
+        } else {
+            authenticate(this.principal);
         }
         
         FileDao fileDao = new FileDao();
@@ -475,9 +470,8 @@ public class FileResource extends BaseResource {
     @GET
     @Path("{id: [a-z0-9\\-]+}/versions")
     public Response versions(@PathParam("id") String id) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Get versions
         File file = findFile(id, null);
@@ -523,9 +517,8 @@ public class FileResource extends BaseResource {
     @Path("{id: [a-z0-9\\-]+}")
     public Response delete(
             @PathParam("id") String id) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Get the file
         File file = findFile(id, null);
@@ -591,9 +584,8 @@ public class FileResource extends BaseResource {
             @PathParam("id") final String fileId,
             @QueryParam("share") String shareId,
             @QueryParam("size") String size) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         if (size != null && !Lists.newArrayList("web", "thumb", "content").contains(size)) {
             throw new ClientException("SizeError", "Size must be web, thumb or content");
@@ -698,9 +690,8 @@ public class FileResource extends BaseResource {
     public Response zip(
             @QueryParam("id") String documentId,
             @QueryParam("share") String shareId) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
         
         // Get the document
         DocumentDao documentDao = new DocumentDao();

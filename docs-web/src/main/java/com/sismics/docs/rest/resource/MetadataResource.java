@@ -46,9 +46,8 @@ public class MetadataResource extends BaseResource {
     public Response list(
             @QueryParam("sort_column") Integer sortColumn,
             @QueryParam("asc") Boolean asc) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         JsonArrayBuilder metadata = Json.createArrayBuilder();
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
@@ -90,9 +89,9 @@ public class MetadataResource extends BaseResource {
     @PUT
     public Response add(@FormParam("name") String name,
                         @FormParam("type") String typeStr) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Validate input data
@@ -139,9 +138,9 @@ public class MetadataResource extends BaseResource {
     @Path("{id: [a-z0-9\\-]+}")
     public Response update(@PathParam("id") String id,
                            @FormParam("name") String name) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Validate input data
@@ -185,9 +184,9 @@ public class MetadataResource extends BaseResource {
     @DELETE
     @Path("{id: [a-z0-9\\-]+}")
     public Response delete(@PathParam("id") String id) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         // Get the metadata

@@ -3,6 +3,7 @@ package com.sismics.docs.rest.resource;
 import com.google.common.collect.Lists;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ForbiddenClientException;
+import com.sismics.security.AnonymousPrincipal;
 import com.sismics.security.IPrincipal;
 import com.sismics.security.UserPrincipal;
 import com.sismics.util.filter.SecurityFilter;
@@ -61,18 +62,33 @@ public abstract class BaseResource {
     protected IPrincipal principal;
 
     /**
-     * This method is used to check if the user is authenticated.
-     * 
-     * @return True if the user is authenticated and not anonymous
+     * This method is used to get the principal of the current
+     * user.
+     *
+     * @return The principal of the logged in user or an anonymous
+     * principal.
      */
-    protected boolean authenticate() {
+    protected IPrincipal getPrincipal() {
         Principal principal = (Principal) request.getAttribute(SecurityFilter.PRINCIPAL_ATTRIBUTE);
         if (principal instanceof IPrincipal) {
-            this.principal = (IPrincipal) principal;
-            return !this.principal.isAnonymous();
-        } else {
-            return false;
+            IPrincipal iPrincipal = (IPrincipal) principal;
+            if(!iPrincipal.isAnonymous()) {
+                return iPrincipal;
+            }
         }
+        return new AnonymousPrincipal();
+    }
+
+    /**
+     * This method is used to check if the user is authenticated.
+     *
+     * @throws ForbiddenClientException if the user is not authenticated.
+     */
+    protected static void authenticate(IPrincipal principal) throws ForbiddenClientException {
+        if(!principal.isAnonymous()){
+            return;
+        }
+        throw new ForbiddenClientException();
     }
     
     /**

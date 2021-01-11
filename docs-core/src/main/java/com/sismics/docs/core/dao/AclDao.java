@@ -125,6 +125,9 @@ public class AclDao {
      * @return True if the document is accessible
      */
     public boolean checkPermission(String sourceId, PermType perm, List<String> targetIdList) {
+        if(targetIdList.isEmpty()) {
+            return false;
+        }
         if (SecurityUtil.skipAclCheck(targetIdList)) {
             return true;
         }

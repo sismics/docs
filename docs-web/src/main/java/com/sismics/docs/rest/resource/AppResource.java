@@ -130,9 +130,9 @@ public class AppResource extends BaseResource {
     @POST
     @Path("guest_login")
     public Response guestLogin(@FormParam("enabled") Boolean enabled) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         ConfigDao configDao = new ConfigDao();
@@ -158,9 +158,9 @@ public class AppResource extends BaseResource {
     @POST
     @Path("config")
     public Response config(@FormParam("default_language") String defaultLanguage) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         ValidationUtil.validateRequired(defaultLanguage, "default_language");
         if (!Constants.SUPPORTED_LANGUAGES.contains(defaultLanguage)) {
@@ -193,9 +193,9 @@ public class AppResource extends BaseResource {
     @GET
     @Path("config_smtp")
     public Response getConfigSmtp() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         ConfigDao configDao = new ConfigDao();
@@ -272,9 +272,9 @@ public class AppResource extends BaseResource {
                                @FormParam("username") String username,
                                @FormParam("password") String password,
                                @FormParam("from") String from) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         if (!Strings.isNullOrEmpty(portStr)) {
             ValidationUtil.validateInteger(portStr, "port");
@@ -323,9 +323,9 @@ public class AppResource extends BaseResource {
     @GET
     @Path("config_inbox")
     public Response getConfigInbox() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         ConfigDao configDao = new ConfigDao();
@@ -427,9 +427,9 @@ public class AppResource extends BaseResource {
                                 @FormParam("password") String password,
                                 @FormParam("folder") String folder,
                                 @FormParam("tag") String tag) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         ValidationUtil.validateRequired(enabled, "enabled");
         if (!Strings.isNullOrEmpty(portStr)) {
@@ -479,9 +479,9 @@ public class AppResource extends BaseResource {
     @POST
     @Path("test_inbox")
     public Response testInbox() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         return Response.ok().entity(Json.createObjectBuilder()
@@ -526,9 +526,8 @@ public class AppResource extends BaseResource {
             @QueryParam("message") String message,
             @QueryParam("limit") Integer limit,
             @QueryParam("offset") Integer offset) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
 
         // Get the memory appender
         org.apache.log4j.Logger logger = org.apache.log4j.Logger.getRootLogger();
@@ -579,9 +578,9 @@ public class AppResource extends BaseResource {
     @POST
     @Path("batch/reindex")
     public Response batchReindex() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         
         RebuildIndexAsyncEvent rebuildIndexAsyncEvent = new RebuildIndexAsyncEvent();
@@ -610,9 +609,9 @@ public class AppResource extends BaseResource {
     @POST
     @Path("batch/clean_storage")
     public Response batchCleanStorage() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
         
         // Get all files
@@ -735,9 +734,9 @@ public class AppResource extends BaseResource {
     @GET
     @Path("config_ldap")
     public Response getConfigLdap() {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         ConfigDao configDao = new ConfigDao();
@@ -805,9 +804,9 @@ public class AppResource extends BaseResource {
                                @FormParam("filter") String filter,
                                @FormParam("default_email") String defaultEmail,
                                @FormParam("default_storage") String defaultStorageStr) {
-        if (!authenticate()) {
-            throw new ForbiddenClientException();
-        }
+        this.principal = getPrincipal();
+        authenticate(this.principal);
+
         checkBaseFunction(BaseFunction.ADMIN);
 
         ConfigDao configDao = new ConfigDao();
