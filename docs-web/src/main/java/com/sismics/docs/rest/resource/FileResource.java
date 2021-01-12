@@ -585,7 +585,6 @@ public class FileResource extends BaseResource {
             @QueryParam("share") String shareId,
             @QueryParam("size") String size) {
         this.principal = getPrincipal();
-        authenticate(this.principal);
         
         if (size != null && !Lists.newArrayList("web", "thumb", "content").contains(size)) {
             throw new ClientException("SizeError", "Size must be web, thumb or content");
@@ -691,7 +690,6 @@ public class FileResource extends BaseResource {
             @QueryParam("id") String documentId,
             @QueryParam("share") String shareId) {
         this.principal = getPrincipal();
-        authenticate(this.principal);
         
         // Get the document
         DocumentDao documentDao = new DocumentDao();

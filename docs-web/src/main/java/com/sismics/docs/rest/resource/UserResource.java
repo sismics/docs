@@ -887,6 +887,9 @@ public class UserResource extends BaseResource {
     public Response deleteSession() {
         this.principal = getPrincipal();
         authenticate(this.principal);
+        if (this.principal.isGuest()) {
+            throw new ForbiddenClientException();
+        }
 
         // Get the value of the session token
         String authToken = getAuthToken();
