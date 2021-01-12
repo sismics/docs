@@ -133,7 +133,6 @@ public class DocumentResource extends BaseResource {
             @PathParam("id") String documentId,
             @QueryParam("share") String shareId) {
         this.principal = getPrincipal();
-        authenticate(this.principal);
         
         DocumentDao documentDao = new DocumentDao();
         DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));

@@ -1136,7 +1136,6 @@ public class UserResource extends BaseResource {
     public Response passwordReset(
             @FormParam("key") String passwordResetKey,
             @FormParam("password") String password) {
-        //Get the principal if logged in user
         this.principal = getPrincipal();
 
         // Validate input data
