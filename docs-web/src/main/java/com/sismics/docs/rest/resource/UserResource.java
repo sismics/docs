@@ -148,6 +148,9 @@ public class UserResource extends BaseResource {
         @FormParam("email") String email) {
         this.principal = getPrincipal();
         authenticate(this.principal);
+        if (this.principal.isGuest()) {
+            throw new ForbiddenClientException();
+        }
         
         // Validate the input data
         password = ValidationUtil.validateLength(password, "password", 8, 50, true);
