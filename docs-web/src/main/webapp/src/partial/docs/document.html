@@ -211,6 +211,8 @@
         </button>
       </div>
 
+      <div class="clearfix"></div>
+
       <!-- Current folder -->
       <table class="row table table-hover table-navigation" ng-show="navigationEnabled">
         <tr ng-repeat="tag in tags | filter: navigatedFilter: navigatedComparator | orderBy: '+name'" ng-click="navigateToTag(tag)">
@@ -287,9 +289,9 @@
                 <img class="img-responsive" ng-if="document.file_id" ng-src="../api/file/{{ document.file_id }}/data?size=thumb" />
               </a>
 
-              <div class="file-info">
+              <div class="file-info hidden-md">
                 <div></div>
-                <div class="v-align file-name text-center">
+                <div class="v-align file-name text-center" title="{{document.title}}">
                   {{ document.title }} ({{ document.file_count }})
                   <span class="fas fa-share" ng-if="document.shared" uib-tooltip="{{ 'document.shared' | translate }}"></span>
                   <span class="fas fa-random" ng-if="document.active_route" uib-tooltip="{{ document.current_step_name }}"></span>
