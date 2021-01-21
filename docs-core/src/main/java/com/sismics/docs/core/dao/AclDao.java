@@ -128,6 +128,9 @@ public class AclDao {
         if (SecurityUtil.skipAclCheck(targetIdList)) {
             return true;
         }
+        if (targetIdList.isEmpty()) {
+            return false;
+        }
 
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         StringBuilder sb = new StringBuilder("select a.ACL_ID_C from T_ACL a ");
