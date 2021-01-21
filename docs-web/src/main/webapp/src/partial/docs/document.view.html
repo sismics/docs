@@ -50,7 +50,7 @@
     </h1>
 
 	  <p ng-show="document.writable">
-	    <button class="btn btn-sm btn-info" ng-click="share()">
+	    <button class="btn btn-sm btn-info" ng-click="share()" ng-show="userInfo.username != 'guest'">
         <span class="fas fa-share"></span> {{ 'share' | translate }}
       </button>
 

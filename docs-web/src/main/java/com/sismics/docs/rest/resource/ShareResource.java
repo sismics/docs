@@ -55,7 +55,7 @@ public class ShareResource extends BaseResource {
     public Response add(
             @FormParam("id") String documentId,
             @FormParam("name") String name) {
-        if (!authenticate()) {
+        if (!authenticate() || principal.isGuest()) {
             throw new ForbiddenClientException();
         }
 
@@ -119,7 +119,7 @@ public class ShareResource extends BaseResource {
     @Path("{id: [a-z0-9\\-]+}")
     public Response delete(
             @PathParam("id") String id) {
-        if (!authenticate()) {
+        if (!authenticate() || principal.isGuest()) {
             throw new ForbiddenClientException();
         }
 

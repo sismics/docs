@@ -28,9 +28,10 @@ angular.module('docs').controller('Login', function(Restangular, $scope, $rootSc
       });
 
       if($stateParams.redirectState !== undefined && $stateParams.redirectParams !== undefined) {
-        $state.go($stateParams.redirectState, JSON.parse($stateParams.redirectParams)).catch(function(){
-          $state.go('document.default');
-        });
+        $state.go($stateParams.redirectState, JSON.parse($stateParams.redirectParams))
+          .catch(function() {
+            $state.go('document.default');
+          });
       } else {
         $state.go('document.default');
       }
