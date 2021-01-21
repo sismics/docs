@@ -540,7 +540,8 @@ angular.module('docs',
     { key: 'fin', label: 'Suomi' },
     { key: 'swe', label: 'Svenska' },
     { key: 'lav', label: 'Latviešu' },
-    { key: 'dan', label: 'Dansk' }
+    { key: 'dan', label: 'Dansk' },
+    { key: 'nor', label: 'Norsk' }
   ];
 })
 /**
