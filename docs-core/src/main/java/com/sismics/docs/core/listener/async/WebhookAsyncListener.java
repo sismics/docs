@@ -86,7 +86,7 @@ public class WebhookAsyncListener {
             }
         });
 
-        RequestBody body = RequestBody.create(JSON, "{\"event\": \"" + event.name() + "\", \"id\": \"" + id + "\"}");
+        RequestBody body = RequestBody.create("{\"event\": \"" + event.name() + "\", \"id\": \"" + id + "\"}", JSON);
 
         for (String webhookUrl : webhookUrlList) {
             Request request = new Request.Builder()

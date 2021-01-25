@@ -63,7 +63,7 @@ A preconfigured Docker image is available, including OCR and media conversion to
 **The default admin password is "admin". Don't forget to change it before going to production.**
 
 - Master branch, can be unstable. Not recommended for production use: `sismics/docs:latest`
-- Latest stable version: `sismics/docs:v1.8`
+- Latest stable version: `sismics/docs:v1.9`
 
 The data directory is `/data`. Don't forget to mount a volume on it.
 
@@ -106,7 +106,7 @@ version: '3'
 services:
 # Teedy Application
   teedy-server:
-    image: sismics/docs:v1.8
+    image: sismics/docs:v1.9
     restart: unless-stopped
     ports:
       # Map internal port to host
@@ -129,7 +129,7 @@ version: '3'
 services:
 # Teedy Application
   teedy-server:
-    image: sismics/docs:v1.8
+    image: sismics/docs:v1.9
     restart: unless-stopped
     ports:
       # Map internal port to host
@@ -185,7 +185,7 @@ Manual installation
 
 #### Requirements
 
-- Java 8 with the [Java Cryptography Extension](http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html)
+- Java 11
 - Tesseract 3 or 4 for OCR
 - ffmpeg for video thumbnails
 - mediainfo for video metadata extraction
@@ -199,7 +199,7 @@ The latest release is downloadable here: <https://github.com/sismics/docs/releas
 How to build Teedy from the sources
 ----------------------------------
 
-Prerequisites: JDK 8 with JCE, Maven 3, NPM, Grunt, Tesseract 3 or 4
+Prerequisites: JDK 11, Maven 3, NPM, Grunt, Tesseract 3 or 4
 
 Teedy is organized in several Maven modules:
 

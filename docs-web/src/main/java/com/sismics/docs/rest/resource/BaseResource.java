@@ -8,8 +8,10 @@ import com.sismics.security.UserPrincipal;
 import com.sismics.util.filter.SecurityFilter;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import java.security.Principal;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +21,7 @@ import java.util.Set;
  * 
  * @author jtremeaux
  */
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 public abstract class BaseResource {
     /**
      * @apiDefine admin Admin

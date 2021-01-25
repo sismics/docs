@@ -8,7 +8,6 @@ import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.util.ClasspathScanner;
-import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.directory.api.ldap.model.cursor.EntryCursor;
 import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.Entry;
@@ -71,10 +70,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         config.setCredentials(ConfigUtil.getConfigStringValue(ConfigType.LDAP_ADMIN_PASSWORD));
 
         DefaultLdapConnectionFactory factory = new DefaultLdapConnectionFactory(config);
-        GenericObjectPool.Config poolConfig = new GenericObjectPool.Config();
-        poolConfig.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_GROW;
-        poolConfig.maxWait = 500;
-        pool = new LdapConnectionPool(new ValidatingPoolableLdapConnectionFactory(factory), poolConfig);
+        pool = new LdapConnectionPool(new ValidatingPoolableLdapConnectionFactory(factory), null);
     }
 
     @Override
@@ -114,7 +110,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
             if (mailAttribute == null || mailAttribute.get() == null) {
                 user.setEmail(ConfigUtil.getConfigStringValue(ConfigType.LDAP_DEFAULT_EMAIL));
             } else {
-                Value<?> value = mailAttribute.get();
+                Value value = mailAttribute.get();
                 user.setEmail(value.getString());
             }
             user.setStorageQuota(ConfigUtil.getConfigLongValue(ConfigType.LDAP_DEFAULT_STORAGE));

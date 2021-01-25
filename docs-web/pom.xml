@@ -209,54 +209,6 @@
       </build>
     </profile>
     
-    <!-- Stress profile -->
-    <profile>
-      <id>stress</id>
-      <activation>
-        <property>
-          <name>env</name>
-          <value>stress</value>
-        </property>
-      </activation>
-      
-      <build>
-        <resources>
-          <resource>
-            <directory>src/stress/resources</directory>
-            <filtering>false</filtering>
-            <excludes>
-              <exclude>**/config.properties</exclude>
-            </excludes>
-          </resource>
-          <resource>
-            <directory>src/stress/resources</directory>
-            <filtering>true</filtering>
-            <includes>
-              <include>**/config.properties</include>
-            </includes>
-          </resource>
-        </resources>
-
-        <plugins>
-          <plugin>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-maven-plugin</artifactId>
-            <configuration>
-              <systemProperties>
-                <systemProperty>
-                  <name>application.mode</name>
-                  <value>dev</value>
-                </systemProperty>
-              </systemProperties>
-              <webApp>
-                <contextPath>/docs-web</contextPath>
-              </webApp>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    
     <!-- Production profile -->
     <profile>
       <id>prod</id>

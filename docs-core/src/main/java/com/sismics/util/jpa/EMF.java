@@ -2,7 +2,6 @@ package com.sismics.util.jpa;
 
 import com.sismics.docs.core.util.DirectoryUtil;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Environment;
 import org.hibernate.internal.util.config.ConfigurationHelper;
 import org.hibernate.service.ServiceRegistry;
 import org.slf4j.Logger;
@@ -34,7 +33,6 @@ public final class EMF {
         try {
             properties = getEntityManagerProperties();
 
-            Environment.verifyProperties(properties);
             ConfigurationHelper.resolvePlaceHolders(properties);
             ServiceRegistry reg = new StandardServiceRegistryBuilder().applySettings(properties).build();
 

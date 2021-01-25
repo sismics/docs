@@ -37,9 +37,9 @@ import org.apache.lucene.search.spell.LuceneDictionary;
 import org.apache.lucene.search.suggest.Lookup;
 import org.apache.lucene.search.suggest.analyzing.FuzzySuggester;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.store.NoLockFactory;
 import org.apache.lucene.store.RAMDirectory;
-import org.apache.lucene.store.SimpleFSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,7 +116,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
         } else if (luceneStorage.equals("FILE")) {
             Path luceneDirectory = DirectoryUtil.getLuceneDirectory();
             log.info("Using file Lucene storage: {}", luceneDirectory);
-            directory = new SimpleFSDirectory(luceneDirectory, NoLockFactory.INSTANCE);
+            directory = new NIOFSDirectory(luceneDirectory, NoLockFactory.INSTANCE);
         }
 
         // Create an index writer

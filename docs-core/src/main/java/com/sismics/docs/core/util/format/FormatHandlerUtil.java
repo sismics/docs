@@ -3,6 +3,7 @@ package com.sismics.docs.core.util.format;
 import com.google.common.collect.Lists;
 import com.sismics.util.ClasspathScanner;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -26,12 +27,12 @@ public class FormatHandlerUtil {
     public static FormatHandler find(String mimeType) {
         try {
             for (Class<? extends FormatHandler> formatHandlerClass : FORMAT_HANDLERS) {
-                FormatHandler formatHandler = formatHandlerClass.newInstance();
+                FormatHandler formatHandler = formatHandlerClass.getDeclaredConstructor().newInstance();
                 if (formatHandler.accept(mimeType)) {
                     return formatHandler;
                 }
             }
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (Exception e) {
             return null;
         }
 

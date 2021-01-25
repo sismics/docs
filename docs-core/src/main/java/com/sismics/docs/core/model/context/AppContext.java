@@ -80,7 +80,7 @@ public class AppContext {
             List<Class<? extends IndexingHandler>> indexingHandlerList = Lists.newArrayList(
                     new ClasspathScanner<IndexingHandler>().findClasses(IndexingHandler.class, "com.sismics.docs.core.util.indexing"));
             for (Class<? extends IndexingHandler> handlerClass : indexingHandlerList) {
-                IndexingHandler handler = handlerClass.newInstance();
+                IndexingHandler handler = handlerClass.getDeclaredConstructor().newInstance();
                 if (handler.accept()) {
                     indexingHandler = handler;
                     break;
