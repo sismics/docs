@@ -24,7 +24,7 @@ const prefs = new preferences('com.sismics.docs.importer',{
 });
 
 // Welcome message
-console.log('Teedy Importer 1.8, https://teedy.io' +
+console.log('Teedy Importer 1.9, https://teedy.io' +
   '\n\n' +
   'This program let you import files from your system to Teedy' +
   '\n');
@@ -365,7 +365,7 @@ const start = () => {
 const importFiles = (remove, filesImported) => {
   recursive(prefs.importer.path, function (error, files) {
 
-    files = files.filter(minimatch.filter(prefs.importer.fileFilter ?? "*", {matchBase: true}));
+    files = files.filter(minimatch.filter(prefs.importer.fileFilter || '*', { matchBase: true }));
     if (files.length === 0) {
       filesImported();
       return;
