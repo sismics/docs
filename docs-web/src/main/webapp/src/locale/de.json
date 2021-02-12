@@ -158,7 +158,7 @@
       "title_placeholder": "Titel des Dokuments",
       "description_placeholder": "Zusammenfassung, Inhaltsverzeichnis oder Freitext",
       "new_files": "neue Dateien",
-      "orphan_files": "+ {{ count }} Datei{{ count > 1 ? 's' : '' }}",
+      "orphan_files": "+ {{ count }} Datei{{ count > 1 ? 'en' : '' }}",
       "additional_metadata": "Weitere Metadaten",
       "subject_placeholder": "Schlüsselwörter, abstrakte Sätze oder Klassifizierungscodes",
       "identifier_placeholder": "Eindeutiger Identifikator",
