@@ -186,7 +186,7 @@ Manual installation
 #### Requirements
 
 - Java 11
-- Tesseract 3 or 4 for OCR
+- Tesseract 4 for OCR
 - ffmpeg for video thumbnails
 - mediainfo for video metadata extraction
 - A webapp server like [Jetty](http://eclipse.org/jetty/) or [Tomcat](http://tomcat.apache.org/)
@@ -199,7 +199,7 @@ The latest release is downloadable here: <https://github.com/sismics/docs/releas
 How to build Teedy from the sources
 ----------------------------------
 
-Prerequisites: JDK 11, Maven 3, NPM, Grunt, Tesseract 3 or 4
+Prerequisites: JDK 11, Maven 3, NPM, Grunt, Tesseract 4
 
 Teedy is organized in several Maven modules:
 
