@@ -399,7 +399,7 @@
       "logo": "Logo (quadratische Größe)",
       "background_image": "Hintergrundbild",
       "uploading_image": "Bild hochladen...",
-      "title_smtp": "SMTP Email Einstellungen <small>für das Zürucksetzen des Passworts</small>",
+      "title_smtp": "SMTP Email Einstellungen <small>für das Zurücksetzen des Passworts</small>",
       "smtp_hostname": "SMTP Server",
       "smtp_port": "SMTP Port",
       "smtp_from": "Absender E-Mail",
