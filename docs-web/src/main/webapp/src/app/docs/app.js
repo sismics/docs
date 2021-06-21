@@ -541,7 +541,8 @@ angular.module('docs',
     { key: 'swe', label: 'Svenska' },
     { key: 'lav', label: 'Latviešu' },
     { key: 'dan', label: 'Dansk' },
-    { key: 'nor', label: 'Norsk' }
+    { key: 'nor', label: 'Norsk' },
+    { key: 'vie', label: 'Tiếng Việt' }
   ];
 })
 /**
