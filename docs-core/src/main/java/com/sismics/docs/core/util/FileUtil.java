@@ -38,6 +38,8 @@ import java.util.*;
  * @author bgamard
  */
 public class FileUtil {
+    public static final String CIPHER_SPEC_SUFFIX = "_cipher";
+
     /**
      * Logger.
      */
@@ -47,6 +49,10 @@ public class FileUtil {
      * File ID of files currently being processed.
      */
     private static Set<String> processingFileSet = Collections.synchronizedSet(new HashSet<>());
+
+    public static Path getSpecFile(Path file) {
+        return file.resolveSibling(file.getFileName().toString() + CIPHER_SPEC_SUFFIX);
+    }
     
     /**
      * Optical character recognition on an image.
@@ -87,11 +93,15 @@ public class FileUtil {
      */
     public static void delete(String fileId) throws IOException {
         Path storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId);
+        Path specFile = DirectoryUtil.getStorageDirectory().resolve(fileId + CIPHER_SPEC_SUFFIX);
         Path webFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_web");
         Path thumbnailFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_thumb");
         
         if (Files.exists(storedFile)) {
             Files.delete(storedFile);
+        }
+        if (Files.exists(specFile)) {
+            Files.delete(specFile);
         }
         if (Files.exists(webFile)) {
             Files.delete(webFile);
@@ -182,8 +192,11 @@ public class FileUtil {
         String fileId = fileDao.create(file, userId);
 
         // Save the file
-        Cipher cipher = EncryptionUtil.getEncryptionCipher(user.getPrivateKey());
         Path path = DirectoryUtil.getStorageDirectory().resolve(file.getId());
+        String cipherSpec = EncryptionUtil.getEncryptionCipherSpec();
+        // try to get cipher first. in case it does not exist, the exception would be thrown before writing any file
+        Cipher cipher = EncryptionUtil.getEncryptionCipher(user.getPrivateKey(), cipherSpec);
+        Files.write(getSpecFile(path), (cipherSpec + "\n").getBytes("UTF-8"));
         try (InputStream inputStream = Files.newInputStream(unencryptedFile)) {
             Files.copy(new CipherInputStream(inputStream, cipher), path);
         }

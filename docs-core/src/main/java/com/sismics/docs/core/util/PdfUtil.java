@@ -106,7 +106,8 @@ public class PdfUtil {
                 Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
 
                 // Decrypt the file to a temporary file
-                Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, file.getPrivateKey());
+                String cipherSpec = EncryptionUtil.getDecryptionCipherSpec(FileUtil.getSpecFile(storedFile));
+                Path unencryptedFile = EncryptionUtil.decryptFile(storedFile, file.getPrivateKey(), cipherSpec);
                 FormatHandler formatHandler = FormatHandlerUtil.find(file.getMimeType());
                 if (formatHandler != null) {
                     formatHandler.appendToPdf(unencryptedFile, doc, fitImageToPage, margin, memUsageSettings, closer);
