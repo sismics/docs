@@ -598,6 +598,10 @@ public class DocumentResource extends BaseResource {
                     // New fulltext search criteria
                     fullQuery.add(params[1]);
                     break;
+                case "title":
+                    // New title criteria
+                    documentCriteria.setTitle(params[1]);
+                    break;
                 default:
                     fullQuery.add(criteria);
                     break;

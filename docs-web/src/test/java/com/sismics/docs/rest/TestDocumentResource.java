@@ -143,7 +143,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         json = target().path("/document").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document3Token)
                 .put(Entity.form(new Form()
-                        .param("title", "My super title document 3")
+                        .param("title", "My_super_title_document_3")
                         .param("description", "My super description for document 3")
                         .param("language", "eng")
                         .param("create_date", Long.toString(create3Date))), JsonObject.class);
@@ -217,6 +217,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(1, searchDocuments("mime:image/png", document1Token));
         Assert.assertEquals(0, searchDocuments("mime:empty/void", document1Token));
         Assert.assertEquals(1, searchDocuments("after:2010 before:2040-08 tag:super shared:yes lang:eng simple:title simple:description full:uranium", document1Token));
+        Assert.assertEquals(1, searchDocuments("title:My_super_title_document_3", document3Token));
 
         // Search documents (nothing)
         Assert.assertEquals(0, searchDocuments("random", document1Token));
@@ -228,6 +229,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(0, searchDocuments("before:2040-05-38", document1Token));
         Assert.assertEquals(0, searchDocuments("tag:Nop", document1Token));
         Assert.assertEquals(0, searchDocuments("lang:fra", document1Token));
+        Assert.assertEquals(0, searchDocuments("title:Unknown title", document3Token));
 
         // Get document 1
         json = target().path("/document/" + document1Id).request()
