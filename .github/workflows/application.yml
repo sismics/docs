@@ -1,0 +1,28 @@
+---
+name: Build and test application
+on:
+  - push
+  - pull_request
+jobs:
+  build_test:
+    runs-on: ubuntu-20.04
+    env:
+      REPO: sismics/docs
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -y -q install ffmpeg mediainfo tesseract-ocr tesseract-ocr-fra tesseract-ocr-ita tesseract-ocr-kor tesseract-ocr-rus tesseract-ocr-ukr tesseract-ocr-spa tesseract-ocr-ara tesseract-ocr-hin tesseract-ocr-deu tesseract-ocr-pol tesseract-ocr-jpn tesseract-ocr-por tesseract-ocr-tha tesseract-ocr-jpn tesseract-ocr-chi-sim tesseract-ocr-chi-tra tesseract-ocr-nld tesseract-ocr-tur tesseract-ocr-heb tesseract-ocr-hun tesseract-ocr-fin tesseract-ocr-swe tesseract-ocr-lav tesseract-ocr-dan tesseract-ocr-nor
+          sudo apt-get -y -q install haveged && sudo service haveged start
+      - name: Build teedy
+        run: mvn -Pprod -DskipTests clean install
+      - name: Build docker image and upload
+        run: |
+          export TAG=`if [ "${GITHUB_REF##*/}" == "master" ]; then echo "latest"; else echo ${GITHUB_REF##*/} ; fi`
+          docker build -f Dockerfile -t $REPO:$GITHUB_SHA .
+          docker tag $REPO:$GITHUB_SHA $REPO:$TAG
+          docker tag $REPO:$GITHUB_SHA $REPO:actions-$GITHUB_RUN_NUMBER
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u Cornelicorn --password-stdin
+          docker push -a $REPO
+

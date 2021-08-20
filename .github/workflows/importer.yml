@@ -1,0 +1,21 @@
+---
+name: Build importer
+on:
+  - push
+  - pull_request
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    env:
+      REPO: sismics/docs-importer
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build docker image and upload
+        run: |
+          cd docs-importer
+          export TAG=`if [ "${GITHUB_REF##*/}" == "master" ]; then echo "latest"; else echo ${GITHUB_REF##*/} ; fi`
+          docker build -f Dockerfile -t $REPO:$GITHUB_SHA .
+          docker tag $REPO:$GITHUB_SHA $REPO:$TAG
+          docker tag $REPO:$GITHUB_SHA $REPO:actions-$GITHUB_RUN_NUMBER
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u Cornelicorn --password-stdin
+          docker push -a $REPO
