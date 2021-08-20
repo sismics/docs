@@ -21,7 +21,6 @@ import java.util.Set;
  * 
  * @author jtremeaux
  */
-@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 public abstract class BaseResource {
     /**
      * @apiDefine admin Admin
