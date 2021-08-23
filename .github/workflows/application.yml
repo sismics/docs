@@ -6,8 +6,6 @@ on:
 jobs:
   build_test:
     runs-on: ubuntu-20.04
-    env:
-      REPO: sismics/docs
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
@@ -19,10 +17,12 @@ jobs:
         run: mvn -Pprod -DskipTests clean install
       - name: Build docker image and upload
         run: |
+          export DOCKER_USER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          export REPO="ghcr.io/${DOCKER_USER}/docs"
           export TAG=`if [ "${GITHUB_REF##*/}" == "master" ]; then echo "latest"; else echo ${GITHUB_REF##*/} ; fi`
           docker build -f Dockerfile -t $REPO:$GITHUB_SHA .
           docker tag $REPO:$GITHUB_SHA $REPO:$TAG
           docker tag $REPO:$GITHUB_SHA $REPO:actions-$GITHUB_RUN_NUMBER
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u Cornelicorn --password-stdin
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $DOCKER_USER --password-stdin
           docker push -a $REPO
 
