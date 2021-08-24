@@ -32,24 +32,24 @@
     "nav_documents": "Dokumente",
     "nav_tags": "Tags",
     "nav_users_groups": "Benutzer & Gruppen",
-    "error_info": "{{ count }} neuer Fehler{{ count > 1 ? 's' : '' }}",
+    "error_info": "{{ count }} {{ count > 1 ? 'neue' : 'neuer' }} Fehler",
     "logged_as": "Eingeloggt als {{ username }}",
     "nav_settings": "Einstellungen",
     "logout": "Logout",
-    "global_quota_warning": "<strong>Warnung!</strong> Der frei zur Verfügung stehende, maximale Speicherplatz ist fast erreicht bei {{ current | number: 0 }}MB ({{ percent | number: 1 }}%) verwendet {{ total | number: 0 }}MB"
+    "global_quota_warning": "<strong>Warnung!</strong> Der verfügbare Speicherplatz beträgt {{ total | number: 0 }}\u00A0MB, davon sind {{ current | number: 0 }}\u00A0MB ({{ percent | number: 1 }}\u00A0%) bereits verwendet"
   },
   "document": {
-    "navigation_up": "Eine Stufe höher",
+    "navigation_up": "Eine Ebene höher",
     "toggle_navigation": "Navigation ein-/ausblenden",
     "display_mode_list": "Dokumente in Liste anzeigen",
     "display_mode_grid": "Dokumente im Raster anzeigen",
     "search_simple": "Einfache Suche",
-    "search_fulltext": "Volltext Suche",
+    "search_fulltext": "Volltextsuche",
     "search_creator": "Urheber",
     "search_language": "Sprache",
     "search_before_date": "Vor diesem Datum",
     "search_after_date": "Nach diesem Datum",
-    "search_before_update_date": "Bearbeitet bevor diesem Datum",
+    "search_before_update_date": "Bearbeitet vor diesem Datum",
     "search_after_update_date": "Bearbeitet nach diesem Datum",
     "search_tags": "Tags",
     "search_shared": "Nur freigegebene Dokumente",
@@ -83,9 +83,9 @@
     "page_size_10": "10 pro Seite",
     "page_size_20": "20 pro Seite",
     "page_size_30": "30 pro Seite",
-    "upgrade_quota": "Fragen Sie Ihren Administrator, um Ihr Speicherplatz zu erweitern.",
-    "quota": "{{ current | number: 0 }}MB ({{ percent | number: 1 }}%) verwendet von {{ total | number: 0 }}MB",
-    "count": "{{ count }} Dokument{{ count > 1 ? 'e' : '' }} gefunden",
+    "upgrade_quota": "Fragen Sie Ihren Administrator, um Ihren Speicherplatz zu erweitern.",
+    "quota": "{{ current | number: 0 }}\u00A0MB ({{ percent | number: 1 }}\u00A0%) verwendet von {{ total | number: 0 }}\u00A0MB",
+    "count": "{{ count }} {{ count > 1 ? 'Dokumente' : 'Dokument' }} gefunden",
     "last_updated": "Zuletzt bearbeitet {{ date | timeAgo: dateFormat }}",
     "view": {
       "delete_comment_title": "Kommentar löschen",
@@ -104,7 +104,7 @@
       "add_comment": "Fügen sie einen Kommentar hinzu",
       "error_loading_comments": "Fehler beim Laden eines Kommentars",
       "workflow_current": "Aktueller Workflow-Status",
-      "workflow_comment": "Fügen Sie einen Workflow Kommentar hinzu",
+      "workflow_comment": "Fügen Sie einen Workflow-Kommentar hinzu",
       "workflow_validated_title": "Workflow-Schritt validiert",
       "workflow_validated_message": "Der Workflow-Schritt wurde erfolgreich validiert.",
       "display_mode_list": "Dateien in Liste anzeigen",
@@ -113,13 +113,13 @@
         "content": "Inhalt",
         "delete_file_title": "Datei löschen",
         "delete_file_message": "Wollen Sie diese Datei wirklich löschen?",
-        "upload_pending": "Ausstehend...",
-        "upload_progress": "Hochladen...",
+        "upload_pending": "Ausstehend\u2026",
+        "upload_progress": "Hochladen\u2026",
         "upload_error": "Fehler beim Hochladen",
         "upload_error_quota": "Maximaler Speicherplatz erreicht",
-        "drop_zone": "Drag & Drop Dateien hierherziehen, um diese hochzuladen",
+        "drop_zone": "Legen Sie Dateien hier ab, um sie hochzuladen",
         "add_files": "Dateien hinzufügen",
-        "file_processing_indicator": "Diese Datei wird gerade bearbeitet. Die Suche wird nicht verfügbar sein, bevor der Vorgang abgeschlossen ist.",
+        "file_processing_indicator": "Diese Datei wird gerade verarbeitet. Die Suche ist erst verfügbar, wenn diese Verarbeitung abgeschlossen ist.",
         "reprocess_file": "Diese Datei erneut verarbeiten",
         "upload_new_version": "Neue Version hochladen",
         "open_versions": "Versionshistorie anzeigen"
@@ -158,27 +158,27 @@
       "title_placeholder": "Titel des Dokuments",
       "description_placeholder": "Zusammenfassung, Inhaltsverzeichnis oder Freitext",
       "new_files": "neue Dateien",
-      "orphan_files": "+ {{ count }} Datei{{ count > 1 ? 'en' : '' }}",
+      "orphan_files": "+ {{ count }} {{ count > 1 ? 'Dateien' : 'Datei' }}",
       "additional_metadata": "Weitere Metadaten",
       "subject_placeholder": "Schlüsselwörter, abstrakte Sätze oder Klassifizierungscodes",
       "identifier_placeholder": "Eindeutiger Identifikator",
       "publisher_placeholder": "Name der Person, Organisation oder Abteilung, von der aus das Dokument veröffentlicht wurde.",
       "format_placeholder": "MIME-Typ oder physisches Format des Dokuments",
       "source_placeholder": "Ressource, aus der das Dokument stammt",
-      "uploading_files": "Dateien hochladen..."
+      "uploading_files": "Dateien hochladen\u2026"
     },
     "default": {
-      "upload_pending": "Ausstehend...",
-      "upload_progress": "Lädt hoch...",
+      "upload_pending": "Ausstehend\u2026",
+      "upload_progress": "Lädt hoch\u2026",
       "upload_error": "Fehler beim Hochladen",
       "upload_error_quota": "Maximaler Speicherplatz erreicht",
       "quick_upload": "Schnelles Hochladen",
-      "drop_zone": "Drag & Drop Dateien hierherziehen, um diese hochzuladen",
+      "drop_zone": "Legen Sie Dateien hier ab, um sie hochzuladen",
       "add_files": "Dateien hinzufügen",
       "add_new_document": "Neues Dokument hinzufügen",
       "latest_activity": "Letzte Aktivitäten",
       "footer_sismics": "Programmiert mit <span class=\"fas fa-heart\"></span> von <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
-      "api_documentation": "API Dokumentation",
+      "api_documentation": "API-Dokumentation",
       "feedback": "Geben Sie uns Ihr Feedback",
       "workflow_document_list": "Mir zugeordnete Dokumente",
       "select_all": "Alle auswählen",
@@ -186,8 +186,8 @@
     },
     "pdf": {
       "export_title": "Export als PDF",
-      "export_metadata": "Export Metadaten",
-      "export_comments": "Export Kommentare",
+      "export_metadata": "Metadaten exportieren",
+      "export_comments": "Kommentare exportieren",
       "fit_to_page": "Bild an Seite anpassen",
       "margin": "Rand",
       "millimeter": "mm"
@@ -200,17 +200,17 @@
   },
   "file": {
     "view": {
-      "previous": "Vorheriges",
-      "next": "Nächstes",
+      "previous": "Vorherige",
+      "next": "Nächste",
       "not_found": "Datei nicht gefunden"
     },
     "edit": {
       "title": "Datei bearbeiten",
-      "name": "Dateinamen"
+      "name": "Dateiname"
     },
     "versions": {
       "title": "Versionshistorie",
-      "filename": "Datiename",
+      "filename": "Dateiname",
       "mimetype": "Typ",
       "create_date": "Erstellungsdatum",
       "version": "Version"
@@ -223,17 +223,17 @@
       "title": "Tags",
       "message_1": "<strong>Tags</strong> sind Kategorien, die den Dokumenten zugeordnet sind.",
       "message_2": "Ein Dokument kann mit mehreren Tags versehen werden und ein Tag kann auf mehrere Dokumente angewendet werden.",
-      "message_3": "Unter Verwendung der <span class=\"glyphicon glyphicon-pencil\"></span> Schaltfläche können Sie die Berechtigungen für ein Tag bearbeiten.",
+      "message_3": "Mit der <span class=\"glyphicon glyphicon-pencil\"></span>-Schaltfläche können Sie die Berechtigungen für ein Tag bearbeiten.",
       "message_4": "Wenn ein Tag von einem anderen Benutzer oder einer anderen Gruppe gelesen werden kann, können die zugehörigen Dokumente auch von diesen Personen gelesen werden.",
-      "message_5": "Kennzeichnen Sie z.B. Ihre Firmendokumente mit einem Tag <span class=\"label label-info\">MyCompany</span> und fügen Sie die Berechtigung <strong>Can read</strong> zu einer Gruppe hinzu <span class=\"btn btn-default\">employees</span>"
+      "message_5": "Kennzeichnen Sie z.\u00A0B. Ihre Firmendokumente mit einem Tag <span class=\"label label-info\">MyCompany</span> und fügen Sie die Berechtigung <strong>Kann lesen</strong> zu einer Gruppe <span class=\"btn btn-default\">Mitarbeiter</span> hinzu"
     },
     "edit": {
       "delete_tag_title": "Tag löschen",
-      "delete_tag_message": "Wollen Sie diesen Tag wirklich löschen?",
+      "delete_tag_message": "Wollen Sie dieses Tag wirklich löschen?",
       "name": "Name",
       "color": "Farbe",
       "parent": "Übergeordnet",
-      "info": "Berechtigungen für dieses Tag werden auch auf Dokumente angewendet, die mit einem Tag versehen sind <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>",
+      "info": "Berechtigungen für dieses Tag werden auch auf Dokumente angewendet, die mit einem Tag <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span> versehen sind",
       "circular_reference_title": "Zirkuläre Referenz",
       "circular_reference_message": "Die Hierarchie der übergeordneten Tags bildet eine Schleife. Bitte wählen Sie ein anderes übergeordnetes Tag."
     }
@@ -250,7 +250,7 @@
     "profile": {
       "groups": "Gruppen",
       "quota_used": "Benutzter Speicherplatz",
-      "percent_used": "{{ percent | number: 0 }}% genutzt",
+      "percent_used": "{{ percent | number: 0 }}\u00A0% genutzt",
       "related_links": "Weiterführende Links",
       "document_created": "Dokumente erstellt von {{ username }}",
       "edit_user": "Benutzer {{ username }} bearbeiten"
@@ -258,8 +258,8 @@
   },
   "usergroup": {
     "search_groups": "In Gruppen suchen",
-    "search_users": "In Benutzer suchen",
-    "you": "Eigenes Benutzerkonto!",
+    "search_users": "In Benutzern suchen",
+    "you": "Das sind Sie!",
     "default": {
       "title": "Benutzer und Gruppen",
       "message": "Hier können Sie Informationen über Benutzer und Gruppen einsehen."
@@ -270,15 +270,15 @@
     "menu_user_account": "Benutzerkonto",
     "menu_two_factor_auth": "Zwei-Faktor-Authentifizierung",
     "menu_opened_sessions": "Geöffnete Sitzungen",
-    "menu_file_importer": "Massen Datei Importer",
-    "menu_general_settings": "Generelle Einstellungen",
+    "menu_file_importer": "Massen-Datei-Importer",
+    "menu_general_settings": "Allgemeine Einstellungen",
     "menu_workflow": "Workflows",
     "menu_users": "Benutzerverwaltung",
     "menu_groups": "Gruppenverwaltung",
     "menu_vocabularies": "Vokabulareinträge",
     "menu_configuration": "Einstellungen",
     "menu_inbox": "Posteingang durchsuchen",
-    "menu_metadata": "Benutzerdefinierte Metadaten",	
+    "menu_metadata": "Benutzerdefinierte Metadaten",
     "menu_monitoring": "Überwachung",
     "user": {
       "title": "Benutzerverwaltung",
@@ -290,13 +290,13 @@
         "delete_user_title": "Benutzer löschen",
         "delete_user_message": "Möchten Sie diesen Benutzer wirklich löschen? Alle zugehörigen Dokumente, Dateien und Tags werden gelöscht",
         "user_used_title": "Benutzer in Verwendung",
-        "user_used_message": "Dieser Benutzer wird im Workflow \"{{ name }}\" benutzt",		
+        "user_used_message": "Dieser Benutzer wird im Workflow \"{{ name }}\" benutzt",
         "edit_user_failed_title": "Dieser Benutzer existiert bereits",
         "edit_user_failed_message": "Dieser Benutzername wurde bereits von einem anderen Benutzer gewählt",
-        "edit_user_title": "Bearbeiten \"{{ username }}\"",
+        "edit_user_title": "Benutzer \"{{ username }}\" bearbeiten",
         "add_user_title": "Neuen Benutzer hinzufügen",
         "username": "Benutzername",
-        "email": "E-mail",
+        "email": "E-Mail",
         "groups": "Gruppen",
         "storage_quota": "Speicherkontingent",
         "storage_quota_placeholder": "Speicherkontingent (in MB)",
@@ -304,8 +304,8 @@
         "password_confirm": "Passwort (bestätigen)",
         "disabled": "Deaktivierter Benutzer",
         "password_reset_btn": "Senden Sie eine E-Mail zum Zurücksetzen des Kennworts an diesen Benutzer",
-        "password_lost_sent_title": "Passwort zurücksetzen Email gesendet",
-        "password_lost_sent_message": "Passwort zurücksetzen Email an <strong>{{ username }}</strong> gesendet.",
+        "password_lost_sent_title": "Passwort-zurücksetzen-E-Mail gesendet",
+        "password_lost_sent_message": "Passwort-zurücksetzen-E-Mail an <strong>{{ username }}</strong> gesendet.",
         "disable_totp_btn": "Zwei-Faktor-Authentifizierung für diesen Benutzer deaktivieren",
         "disable_totp_title": "Zwei-Faktor-Authentifizierung deaktivieren",
         "disable_totp_message": "Sind Sie sicher, dass sie die Zwei-Faktor-Authentifizierung für den Benutzer deaktivieren möchten?"
@@ -319,7 +319,7 @@
       "edit": {
         "delete_workflow_title": "Workflow löschen",
         "delete_workflow_message": "Möchten Sie diesen Workflow wirklich löschen? Derzeit ausgeführte Workflows werden nicht gelöscht",
-        "edit_workflow_title": "Bearbeiten \"{{ name }}\"",
+        "edit_workflow_title": "Workflow \"{{ name }}\" bearbeiten",
         "add_workflow_title": "Neuen Workflow hinzufügen",
         "name": "Name",
         "name_placeholder": "Name des Bearbeitungschritts oder der Beschreibung",
@@ -328,8 +328,8 @@
         "type_approve": "Genehmigen",
         "type_validate": "Bestätigen",
         "target": "Zugewiesen an",
-        "target_help": "<strong>Zulassen:</strong> Überprüfen und fortsetzen des Workflows <br/><strong>Genehmigen:</strong> Übernehmen oder lehnen Sie die Überprüfung ab",
-        "add_step": "Workflow Schritt hinzufügen",
+        "target_help": "<strong>Zulassen:</strong> Überprüfen und fortsetzen des Workflows<br/><strong>Genehmigen:</strong> Übernehmen oder lehnen Sie die Überprüfung ab",
+        "add_step": "Workflow-Schritt hinzufügen",
         "actions": "Was passiert danach?",
         "remove_action": "Aktion entfernen",
         "acl_info": "Nur hier definierte Benutzer und Gruppen können diesen Workflow für ein Dokument starten"
@@ -339,18 +339,18 @@
       "enable_totp": "Zwei-Faktor-Authentifizierung aktivieren",
       "enable_totp_message": "Stellen Sie sicher, dass Sie eine TOTP-kompatible Anwendung auf Ihrem Telefon haben, die bereit ist, ein neues Konto hinzuzufügen.",
       "title": "Zwei-Faktor-Authentifizierung",
-      "message_1": "Die Zwei-Faktor-Authentifizierung ermöglicht Ihnen eine weitere Absicherung Ihres {{ appName }} Benutzerkontos. Bevor Sie diese Funktion aktivieren, stellen Sie sicher, dass Sie eine TOTP-kompatible Anwendung auf Ihrem Telefon haben:",
+      "message_1": "Die Zwei-Faktor-Authentifizierung ermöglicht Ihnen eine weitere Absicherung Ihres {{ appName }}-Benutzerkontos. Bevor Sie diese Funktion aktivieren, stellen Sie sicher, dass Sie eine TOTP-kompatible Anwendung auf Ihrem Telefon haben:",
       "message_google_authenticator": "Für Android, iOS, und Blackberry: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>",
       "message_duo_mobile": "Für Android und iOS: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
       "message_authenticator": "Für Windows Phone: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">Authenticator</a>",
-      "message_2": "Diese Anwendungen generieren automatisch einen Validierungscode, der sich nach einer gewissen Zeitspanne ändert. Sie müssen diesen Validierungscode jedes Mal eingeben, wenn Sie sich bei {{ appName }} anmelden. </strong>.",
+      "message_2": "Diese Anwendungen generieren automatisch einen Validierungscode, der sich nach einer gewissen Zeitspanne ändert. Sie müssen diesen Validierungscode jedes Mal eingeben, wenn Sie sich bei {{ appName }} anmelden</strong>.",
       "secret_key": "Ihr geheimer Schlüssel lautet: <strong>{{ secret }}</strong>",
-      "secret_key_warning": "Konfigurieren Sie Ihre TOTP-App jetzt mit diesem geheimen Schlüssel auf Ihrem Telefon. Sie können später nicht mehr darauf zugreifen.",
-      "totp_enabled_message": "Die Zwei-Faktor-Authentifizierung ist in Ihrem Konto aktiviert.<br/>Bei jeder Anmeldung auf <strong>{{ appName }}</strong>, werden Sie in Ihrer konfigurierten Telefon-App nach einem Bestätigungscode gefragt.<br/>Wenn Sie Ihr Telefon verlieren, können Sie sich nicht in Ihrem Konto anmelden, aber aktive Sitzungen ermöglichen es Ihnen, einen geheimen Schlüssel neu zu generieren.",
+      "secret_key_warning": "Konfigurieren Sie Ihre TOTP-App jetzt mit diesem geheimen Schlüssel auf Ihrem Telefon. Sie können später nicht mehr auf diesen Schlüssel zugreifen.",
+      "totp_enabled_message": "Die Zwei-Faktor-Authentifizierung ist in Ihrem Konto aktiviert.<br/>Bei jeder Anmeldung auf <strong>{{ appName }}</strong> werden Sie in Ihrer konfigurierten Telefon-App nach einem Bestätigungscode gefragt.<br/>Wenn Sie Ihr Telefon verlieren, können Sie sich nicht in Ihrem Konto anmelden, aber aktive Sitzungen ermöglichen es Ihnen, einen geheimen Schlüssel neu zu generieren.",
       "disable_totp": {
         "disable_totp": "Deaktivieren der Zwei-Faktor-Authentifizierung",
         "message": "Ihr Konto wird nicht mehr durch die Zwei-Faktor-Authentifizierung geschützt.",
-        "confirm_password": "Bestätigen Sie ihr Passwort",
+        "confirm_password": "Bestätigen Sie Ihr Passwort",
         "submit": "Deaktivieren der Zwei-Faktor-Authentifizierung"
       },
       "test_totp": "Bitte geben Sie den auf Ihrem Telefon angezeigten Validierungscode ein:",
@@ -365,13 +365,13 @@
         "delete_group_title": "Gruppe löschen",
         "delete_group_message": "Wollen Sie diese Gruppe wirklich löschen?",
         "edit_group_failed_title": "Gruppe existiert bereits",
-        "edit_group_failed_message": "Dieser Gruppenname wird bereits von einer anderen Gruppe übernommen",
+        "edit_group_failed_message": "Dieser Gruppenname wird bereits von einer anderen Gruppe verwendet",
         "group_used_title": "Gruppe in Verwendung",
-        "group_used_message": "Diese Gruppe wird im Workflow \"{{ name }}\" verwendet",	
-        "edit_group_title": "Bearbeiten \"{{ name }}\"",
+        "group_used_message": "Diese Gruppe wird im Workflow \"{{ name }}\" verwendet",
+        "edit_group_title": "Gruppe \"{{ name }}\" bearbeiten",
         "add_group_title": "Neue Gruppe hinzufügen",
         "name": "Name",
-        "parent_group": "Übergruppe",
+        "parent_group": "Übergeordnete Gruppe",
         "search_group": "Gruppe suchen",
         "members": "Mitglieder",
         "new_member": "Neue Mitglieder",
@@ -386,7 +386,7 @@
     },
     "config": {
       "title_guest_access": "Gastzugang",
-      "message_guest_access": "Der Gastzugang ist ein Modus, in dem jeder auf {{appName}} ohne Kennwort zugreifen kann. <br/> Wie ein normaler Benutzer kann der Gastbenutzer nur auf seine Dokumente und diejenigen zugreifen, auf die er über Berechtigungen zugreifen kann.<br/>",
+      "message_guest_access": "Der Gastzugang ist ein Modus, in dem jeder auf {{appName}} ohne Kennwort zugreifen kann.<br/>Wie ein normaler Benutzer kann der Gastbenutzer nur auf seine Dokumente und diejenigen zugreifen, auf die er über Berechtigungen zugreifen kann.<br/>",
       "enable_guest_access": "Gastzugang aktivieren",
       "disable_guest_access": "Gastzugang deaktivieren",
       "title_theme": "Aussehen anpassen",
@@ -399,13 +399,13 @@
       "logo": "Logo (quadratische Größe)",
       "background_image": "Hintergrundbild",
       "uploading_image": "Bild hochladen...",
-      "title_smtp": "SMTP Email Einstellungen <small>für das Zurücksetzen des Passworts</small>",
-      "smtp_hostname": "SMTP Server",
-      "smtp_port": "SMTP Port",
-      "smtp_from": "Absender E-Mail",
-      "smtp_username": "SMTP Benutzername",
-      "smtp_password": "SMTP Passwort",
-      "smtp_updated": "SMTP Konfiguration erfolgreich aktualisiert",
+      "title_smtp": "SMTP-E-Mail-Einstellungen <small>für das Zurücksetzen des Passworts</small>",
+      "smtp_hostname": "SMTP-Server",
+      "smtp_port": "SMTP-Port",
+      "smtp_from": "Absender-E-Mail",
+      "smtp_username": "SMTP-Benutzername",
+      "smtp_password": "SMTP-Passwort",
+      "smtp_updated": "SMTP-Konfiguration erfolgreich aktualisiert",
       "webhooks": "Webhooks",
       "webhooks_explain": "Webhooks werden aufgerufen, wenn das angegebene Ereignis eintritt. Die angegebene URL wird mit einer JSON-Payload gepostet, die den Ereignisnamen und die ID der betreffenden Ressource enthält.",
       "webhook_event": "Ereignisse",
@@ -416,35 +416,35 @@
     "metadata": {
       "title": "Konfiguration benutzerdefinierter Metadaten",
       "message": "Hier können Sie Ihren Dokumenten benutzerdefinierte Metadaten wie eine interne Kennung oder ein Ablaufdatum hinzufügen. Bitte beachten Sie, dass der Metadatentyp nach der Erstellung nicht mehr geändert werden kann.",
-      "name": "Metadatensatz Name",
-      "type": "Metadatensatz Typ"
-    },	
+      "name": "Metadatensatz-Name",
+      "type": "Metadatensatz-Typ"
+    },
     "inbox": {
       "title": "Posteingang durchsuchen",
       "message": "Wenn Sie diese Funktion aktivieren, durchsucht das System den angegebenen Posteingang jede Minute nach <strong>ungelesenen</strong> E-Mails und importiert diese automatisch.<br/>Nach dem Import einer E-Mail wird diese als gelesen markiert.<br/>Folgen Sie den Links zu Konfigurationseinstellungen für <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
       "enabled": "Durchsuchen des Posteingangs aktivieren",
-      "hostname": "IMAP Server",
-      "port": "IMAP Port (143 oder 993)",
-      "username": "IMAP Benutzername",
-      "password": "IMAP Passwort",
-      "folder": "IMAP Ordner",
-      "tag": "Folgenden Tag zu importierten Dokumenten hinzufügen",
+      "hostname": "IMAP-Server",
+      "port": "IMAP-Port (143 oder 993)",
+      "username": "IMAP-Benutzername",
+      "password": "IMAP-Passwort",
+      "folder": "IMAP-Ordner",
+      "tag": "Folgendes Tag zu importierten Dokumenten hinzufügen",
       "test": "Konfiguration testen",
-      "last_sync": "Letzte Synchronisation: {{ data.date | date: 'medium' }}, {{ data.count }} E-Mail(s){{ data.count > 1 ? 's' : '' }} importiert",
-      "test_success": "Die Verbindung zum Posteingang war erfolgreich ({{ count }} <strong>unread</strong> message{{ count > 1 ? 's' : '' }})",
+      "last_sync": "Letzte Synchronisation: {{ data.date | date: 'medium' }}, {{ data.count }} {{ data.count > 1 ? 'E-Mails' : 'E-Mail' }} importiert",
+      "test_success": "Die Verbindung zum Posteingang war erfolgreich ({{ count }} <strong>ungelesene</strong> {{ count > 1 ? 'Nachrichten' : 'Nachricht' }})",
       "test_fail": "Beim Verbinden mit dem Posteingang ist ein Fehler aufgetreten, bitte überprüfen Sie die Einstellungen",
-      "saved": "IMAP Konfiguration erfolgreich gespeichert"
+      "saved": "IMAP-Konfiguration erfolgreich gespeichert"
     },
     "monitoring": {
       "background_tasks": "Hintergrundaufgaben",
-      "queued_tasks": "Es gibt derzeit {{ count }} anstehende Tasks.",
+      "queued_tasks": "Es gibt derzeit {{ count }} {{ count > 1 ? 'anstehende Aufgaben' : 'anstehende Aufgabe' }}.",
       "queued_tasks_explain": "Dateiverarbeitung, Thumbnail-Erstellung, Index-Update, optische Zeichenerkennung sind Hintergrundaufgaben. Eine große Anzahl unbearbeiteter Aufgaben führt zu unvollständigen Suchergebnissen.",
-      "server_logs": "Server Logs",
+      "server_logs": "Server-Logs",
       "log_date": "Datum",
       "log_tag": "Tag",
       "log_message": "Nachricht",
       "indexing": "Indexierung",
-      "indexing_info": "Wenn Sie Unstimmigkeiten in den Suchergebnissen feststellen, können Sie versuchen, eine vollständige Neuindizierung durchzuführen. Die Suchergebnisse sind bis zum Abschluss dieser Operation unvollständig.",
+      "indexing_info": "Wenn Sie Unstimmigkeiten in den Suchergebnissen feststellen, können Sie versuchen, eine vollständige Neuindizierung durchzuführen. Die Suchergebnisse sind bis zum Abschluss dieser Aufgabe unvollständig.",
       "start_reindexing": "Vollständige Neuindizierung starten",
       "reindexing_started": "Neuindizierung wurde gestartet, bitte warten Sie, bis es keine Hintergrundaufgaben mehr gibt."
     },
@@ -469,14 +469,14 @@
       "new_entry": "Neuer Eintrag"
     },
     "fileimporter": {
-      "title": "Massen Datei Importer",
+      "title": "Massen-Datei-Importer",
       "advanced_users": "Für fortgeschrittene Benutzer!",
       "need_intro": "Wenn Sie:",
       "need_1": "Ganze Verzeichnisse von Dateien auf einmal importieren möchten",
       "need_2": "Ein Verzeichnis nach neuen Dateien durchsuchen lassen und gefunden Dateien importieren lassen möchten",
       "line_1": "Gehen Sie zu <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> und laden Sie das Datei-Importer-Tool für Ihr System herunter.",
       "line_2": "Folgen Sie den <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">Anweisungen</a>, um das Import-Tool zu nutzen.",
-      "line_3": "Ihre Dateien werden in <a href=\"#/document\">Modus 'Schnelles Hochladen'</a> importiert. Danach können Sie die Dateien weiterbearbeiten und Dokumenten zuordnen oder Dokumente erstellen.",
+      "line_3": "Ihre Dateien werden im <a href=\"#/document\">Modus 'Schnelles Hochladen'</a> importiert. Danach können Sie die Dateien weiterbearbeiten und Dokumenten zuordnen oder Dokumente erstellen.",
       "download": "Herunterladen",
       "instructions": "Anweisungen"
     }
@@ -522,14 +522,14 @@
       "Webhook": "Webhook"
     },
     "selectrelation": {
-      "typeahead": "Tippen Sie einen Dokumentnamen ein"
+      "typeahead": "Geben Sie einen Dokumentnamen ein"
     },
     "selecttag": {
-      "typeahead": "Tippen Sie einen Tagnamen ein"
+      "typeahead": "Geben Sie einen Tagnamen ein"
     },
     "datepicker": {
       "current": "Heute",
-      "clear": "Bereinigen",
+      "clear": "Leeren",
       "close": "Erledigt"
     }
   },
@@ -579,7 +579,7 @@
   "onboarding": {
     "step1": {
       "title": "Das erste Mal?",
-      "description": "Wenn Sie Teedy zum ersten Mal nutzen, klicken Sie auf die Schaltfläche Weiter. Andernfalls können Sie mich schließen."
+      "description": "Wenn Sie Teedy zum ersten Mal nutzen, klicken Sie auf die Schaltfläche \"Weiter\". Andernfalls können Sie diese Box schließen."
     },
     "step2": {
       "title": "Dokumente",
@@ -599,12 +599,12 @@
     }
   },
   "yes": "Ja",
-  "no": "Nein",  
+  "no": "Nein",
   "ok": "OK",
   "cancel": "Abbrechen",
   "share": "Teilen",
   "unshare": "Nicht mehr teilen",
-  "close": "Schliessen",
+  "close": "Schließen",
   "add": "Hinzufügen",
   "open": "Öffnen",
   "see": "Ansehen",
@@ -613,8 +613,8 @@
   "edit": "Bearbeiten",
   "delete": "Löschen",
   "rename": "Umbenennen",
-  "download": "Herunterladen",  
-  "loading": "Lädt...",
+  "download": "Herunterladen",
+  "loading": "Lädt\u2026",
   "send": "Absenden",
   "enabled": "Aktiviert",
   "disabled": "Deaktiviert"
