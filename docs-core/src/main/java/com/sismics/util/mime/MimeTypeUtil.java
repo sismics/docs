@@ -5,7 +5,6 @@ import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,9 +42,8 @@ public class MimeTypeUtil {
      * @param headerBytes File header (first bytes)
      * @param name File name
      * @return MIME type
-     * @throws UnsupportedEncodingException e
      */
-    public static String guessMimeType(byte[] headerBytes, String name) throws UnsupportedEncodingException {
+    public static String guessMimeType(byte[] headerBytes, String name) {
         String header = new String(headerBytes, StandardCharsets.US_ASCII);
 
         // Detect by header bytes
