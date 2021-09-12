@@ -6,6 +6,7 @@ import org.apache.commons.compress.utils.IOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
@@ -45,7 +46,7 @@ public class MimeTypeUtil {
      * @throws UnsupportedEncodingException e
      */
     public static String guessMimeType(byte[] headerBytes, String name) throws UnsupportedEncodingException {
-        String header = new String(headerBytes, "US-ASCII");
+        String header = new String(headerBytes, StandardCharsets.US_ASCII);
 
         // Detect by header bytes
         if (header.startsWith("PK")) {
