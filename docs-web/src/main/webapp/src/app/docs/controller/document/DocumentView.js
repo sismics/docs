@@ -164,4 +164,13 @@ angular.module('docs').controller('DocumentView', function ($scope, $rootScope, 
       }
     });
   };
+
+  /**
+   * Count routes.
+   */
+  // Load route models
+  Restangular.one('routemodel').get().then(function(data) {
+    $scope.routeCount = data.routemodels.length;
+  });
+
 });

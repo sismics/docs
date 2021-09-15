@@ -76,7 +76,7 @@
             <span class="fas fa-file"></span> {{ 'document.view.content' | translate }}
           </a>
         </li>
-        <li ng-class="{ active: $state.current.name == 'document.view.workflow' }">
+        <li ng-class="{ active: $state.current.name == 'document.view.workflow' }" ng-show="routeCount > 0">
           <a href="#/document/view/{{ document.id }}/workflow">
             <span class="fas fa-random"></span> {{ 'document.view.workflow' | translate }}
           </a>
