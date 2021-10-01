@@ -21,6 +21,7 @@ import com.sismics.docs.core.util.FileUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
+import com.sismics.rest.util.RestUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.HttpUtil;
 import com.sismics.util.JsonUtil;
@@ -425,29 +426,15 @@ public class FileResource extends BaseResource {
         } else if (!authenticated) {
             throw new ForbiddenClientException();
         }
-        
-        FileDao fileDao = new FileDao();
-        List<File> fileList = fileDao.getByDocumentId(principal.getId(), documentId);
 
+        FileDao fileDao = new FileDao();
         JsonArrayBuilder files = Json.createArrayBuilder();
-        for (File fileDb : fileList) {
-            try {
-                files.add(Json.createObjectBuilder()
-                        .add("id", fileDb.getId())
-                        .add("processing", FileUtil.isProcessingFile(fileDb.getId()))
-                        .add("name", JsonUtil.nullable(fileDb.getName()))
-                        .add("version", fileDb.getVersion())
-                        .add("mimetype", fileDb.getMimeType())
-                        .add("document_id", JsonUtil.nullable(fileDb.getDocumentId()))
-                        .add("create_date", fileDb.getCreateDate().getTime())
-                        .add("size", Files.size(DirectoryUtil.getStorageDirectory().resolve(fileDb.getId()))));
-            } catch (IOException e) {
-                throw new ServerException("FileError", "Unable to get the size of " + fileDb.getId(), e);
-            }
+        for (File fileDb : fileDao.getByDocumentId(principal.getId(), documentId)) {
+            files.add(RestUtil.fileToJsonObjectBuilder(fileDb));
         }
-        
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("files", files);
+
         return Response.ok().entity(response.build()).build();
     }
 

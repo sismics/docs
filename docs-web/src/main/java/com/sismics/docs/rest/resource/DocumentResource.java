@@ -26,12 +26,13 @@ import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
-import com.sismics.rest.util.AclUtil;
+import com.sismics.rest.util.RestUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.EmailUtil;
 import com.sismics.util.JsonUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeType;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -73,6 +74,7 @@ public class DocumentResource extends BaseResource {
      * @apiGroup Document
      * @apiParam {String} id Document ID
      * @apiParam {String} share Share ID
+     * @apiParam {Booleans} files if If true includes files information
      * @apiSuccess {String} id ID
      * @apiSuccess {String} title Title
      * @apiSuccess {String} description Description
@@ -119,6 +121,12 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String} route_step.name Route step name
      * @apiSuccess {String="APPROVE", "VALIDATE"} route_step.type Route step type
      * @apiSuccess {Boolean} route_step.transitionable True if the route step is actionable by the current user
+     * @apiSuccess {Object[]} files List of files
+     * @apiSuccess {String} files.id ID
+     * @apiSuccess {String} files.name File name
+     * @apiSuccess {String} files.version Zero-based version number
+     * @apiSuccess {String} files.mimetype MIME type
+     * @apiSuccess {String} files.create_date Create date (timestamp)
      * @apiError (client) NotFound Document not found
      * @apiPermission none
      * @apiVersion 1.5.0
@@ -131,7 +139,8 @@ public class DocumentResource extends BaseResource {
     @Path("{id: [a-z0-9\\-]+}")
     public Response get(
             @PathParam("id") String documentId,
-            @QueryParam("share") String shareId) {
+            @QueryParam("share") String shareId,
+            @QueryParam("files") Boolean files) {
         authenticate();
         
         DocumentDao documentDao = new DocumentDao();
@@ -184,7 +193,7 @@ public class DocumentResource extends BaseResource {
         document.add("creator", documentDto.getCreator());
 
         // Add ACL
-        AclUtil.addAcls(document, documentId, getTargetIdList(shareId));
+        RestUtil.addAcls(document, documentId, getTargetIdList(shareId));
 
         // Add computed ACL
         if (tagDtoList != null) {
@@ -239,6 +248,19 @@ public class DocumentResource extends BaseResource {
 
         // Add custom metadata
         MetadataUtil.addMetadata(document, documentId);
+
+        // Add files
+        if (Boolean.TRUE == files) {
+            FileDao fileDao = new FileDao();
+            List<File> fileList = fileDao.getByDocumentsIds(Collections.singleton(documentId));
+
+            JsonArrayBuilder filesArrayBuilder = Json.createArrayBuilder();
+            for (File fileDb : fileList) {
+                filesArrayBuilder.add(RestUtil.fileToJsonObjectBuilder(fileDb));
+            }
+
+            document.add("files", filesArrayBuilder);
+        }
 
         return Response.ok().entity(document.build()).build();
     }
@@ -327,6 +349,7 @@ public class DocumentResource extends BaseResource {
      * @apiParam {Number} sort_column Column index to sort on
      * @apiParam {Boolean} asc If true, sort in ascending order
      * @apiParam {String} search Search query
+     * @apiParam {Booleans} files if If true includes files information
      * @apiSuccess {Number} total Total number of documents
      * @apiSuccess {Object[]} documents List of documents
      * @apiSuccess {String} documents.id ID
@@ -345,6 +368,12 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String} documents.tags.id ID
      * @apiSuccess {String} documents.tags.name Name
      * @apiSuccess {String} documents.tags.color Color
+     * @apiSuccess {Object[]} documents.files List of files
+     * @apiSuccess {String} documents.files.id ID
+     * @apiSuccess {String} documents.files.name File name
+     * @apiSuccess {String} documents.files.version Zero-based version number
+     * @apiSuccess {String} documents.files.mimetype MIME type
+     * @apiSuccess {String} documents.files.create_date Create date (timestamp)
      * @apiSuccess {String[]} suggestions List of search suggestions
      * @apiError (client) ForbiddenError Access denied
      * @apiError (server) SearchError Error searching in documents
@@ -356,6 +385,7 @@ public class DocumentResource extends BaseResource {
      * @param sortColumn Sort column
      * @param asc Sorting
      * @param search Search query
+     * @param files Files list
      * @return Response
      */
     @GET
@@ -365,7 +395,8 @@ public class DocumentResource extends BaseResource {
             @QueryParam("offset") Integer offset,
             @QueryParam("sort_column") Integer sortColumn,
             @QueryParam("asc") Boolean asc,
-            @QueryParam("search") String search) {
+            @QueryParam("search") String search,
+            @QueryParam("files") Boolean files) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -385,6 +416,14 @@ public class DocumentResource extends BaseResource {
             throw new ServerException("SearchError", "Error searching in documents", e);
         }
 
+        // Find the files of the documents
+        List<File> filesList = null;
+        if (Boolean.TRUE == files) {
+            Iterable<String> documentsIds = CollectionUtils.collect(paginatedList.getResultList(), DocumentDto::getId);
+            FileDao fileDao = new FileDao();
+            filesList = fileDao.getByDocumentsIds(documentsIds);
+        }
+
         for (DocumentDto documentDto : paginatedList.getResultList()) {
             // Get tags accessible by the current user on this document
             List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria()
@@ -397,8 +436,8 @@ public class DocumentResource extends BaseResource {
                         .add("name", tagDto.getName())
                         .add("color", tagDto.getColor()));
             }
-            
-            documents.add(Json.createObjectBuilder()
+
+            JsonObjectBuilder documentObjectBuilder = Json.createObjectBuilder()
                     .add("id", documentDto.getId())
                     .add("highlight", JsonUtil.nullable(documentDto.getHighlight()))
                     .add("file_id", JsonUtil.nullable(documentDto.getFileId()))
@@ -411,7 +450,17 @@ public class DocumentResource extends BaseResource {
                     .add("active_route", documentDto.isActiveRoute())
                     .add("current_step_name", JsonUtil.nullable(documentDto.getCurrentStepName()))
                     .add("file_count", documentDto.getFileCount())
-                    .add("tags", tags));
+                    .add("tags", tags);
+            if (Boolean.TRUE == files) {
+                JsonArrayBuilder filesArrayBuilder = Json.createArrayBuilder();
+                // Find files matching the document
+                Collection<File> filesOfDocument = CollectionUtils.select(filesList, file -> file.getDocumentId().equals(documentDto.getId()));
+                for (File fileDb : filesOfDocument) {
+                    filesArrayBuilder.add(RestUtil.fileToJsonObjectBuilder(fileDb));
+                }
+                documentObjectBuilder.add("files", filesArrayBuilder);
+            }
+            documents.add(documentObjectBuilder);
         }
 
         JsonArrayBuilder suggestions = Json.createArrayBuilder();

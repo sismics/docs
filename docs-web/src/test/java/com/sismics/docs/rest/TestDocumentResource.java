@@ -264,7 +264,8 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(document2Id, relations.getJsonObject(0).getString("id"));
         Assert.assertFalse(relations.getJsonObject(0).getBoolean("source"));
         Assert.assertEquals("My super title document 2", relations.getJsonObject(0).getString("title"));
-        
+        Assert.assertFalse(json.containsKey("files"));
+
         // Get document 2
         json = target().path("/document/" + document2Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
@@ -275,7 +276,8 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(document1Id, relations.getJsonObject(0).getString("id"));
         Assert.assertTrue(relations.getJsonObject(0).getBoolean("source"));
         Assert.assertEquals("My super title document 1", relations.getJsonObject(0).getString("title"));
-        
+        Assert.assertFalse(json.containsKey("files"));
+
         // Create a tag
         json = target().path("/tag").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
@@ -330,7 +332,26 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         documents = json.getJsonArray("documents");
         Assert.assertEquals(1, documents.size());
-        
+        Assert.assertEquals(document1Id, documents.getJsonObject(0).getString("id"));
+        Assert.assertFalse(documents.getJsonObject(0).containsKey("files"));
+
+        // Search documents by query with files
+        json = target().path("/document/list")
+                .queryParam("files", true)
+                .queryParam("search", "new")
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .get(JsonObject.class);
+        documents = json.getJsonArray("documents");
+        Assert.assertEquals(1, documents.size());
+        Assert.assertEquals(1, documents.size());
+        Assert.assertEquals(document1Id, documents.getJsonObject(0).getString("id"));
+        JsonArray files = documents.getJsonObject(0).getJsonArray("files");
+        Assert.assertEquals(1, files.size());
+        Assert.assertEquals(file1Id, files.getJsonObject(0).getString("id"));
+        Assert.assertEquals("Einstein-Roosevelt-letter.png", files.getJsonObject(0).getString("name"));
+        Assert.assertEquals("image/png", files.getJsonObject(0).getString("mimetype"));
+
         // Get document 1
         json = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
@@ -353,7 +374,20 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals("document1", contributors.getJsonObject(0).getString("username"));
         relations = json.getJsonArray("relations");
         Assert.assertEquals(0, relations.size());
-        
+        Assert.assertFalse(json.containsKey("files"));
+
+        // Get document 1 with its files
+        json = target().path("/document/" + document1Id)
+                .queryParam("files", true)
+                .request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .get(JsonObject.class);
+        files = json.getJsonArray("files");
+        Assert.assertEquals(1, files.size());
+        Assert.assertEquals(file1Id, files.getJsonObject(0).getString("id"));
+        Assert.assertEquals("Einstein-Roosevelt-letter.png", files.getJsonObject(0).getString("name"));
+        Assert.assertEquals("image/png", files.getJsonObject(0).getString("mimetype"));
+
         // Get document 2
         json = target().path("/document/" + document1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
