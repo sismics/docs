@@ -295,6 +295,10 @@ public class LuceneIndexingHandler implements IndexingHandler {
             criteriaList.add("d.DOC_UPDATEDATE_D <= :updateDateMax");
             parameterMap.put("updateDateMax", criteria.getUpdateDateMax());
         }
+        if (criteria.getTitle() != null) {
+            criteriaList.add("d.DOC_TITLE_C = :title");
+            parameterMap.put("title", criteria.getTitle());
+        }
         if (criteria.getTagIdList() != null && !criteria.getTagIdList().isEmpty()) {
             int index = 0;
             for (List<String> tagIdList : criteria.getTagIdList()) {

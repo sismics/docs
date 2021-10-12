@@ -52,7 +52,7 @@ public class DocumentCriteria {
     private List<List<String>> tagIdList;
     
     /**
-     * Tag IDs to excluded.
+     * Tag IDs to exclude.
      * The first and second level list will be excluded.
      */
     private List<List<String>> excludedTagIdList;
@@ -81,7 +81,12 @@ public class DocumentCriteria {
      * MIME type of a file.
      */
     private String mimeType;
-    
+
+    /**
+     * The title.
+     */
+    private String title;
+
     public List<String> getTargetIdList() {
         return targetIdList;
     }
@@ -193,5 +198,13 @@ public class DocumentCriteria {
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
