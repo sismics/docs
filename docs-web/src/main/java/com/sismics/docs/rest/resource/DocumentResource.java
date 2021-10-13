@@ -74,7 +74,7 @@ public class DocumentResource extends BaseResource {
      * @apiGroup Document
      * @apiParam {String} id Document ID
      * @apiParam {String} share Share ID
-     * @apiParam {Booleans} files if If true includes files information
+     * @apiParam {Booleans} files If true includes files information
      * @apiSuccess {String} id ID
      * @apiSuccess {String} title Title
      * @apiSuccess {String} description Description
