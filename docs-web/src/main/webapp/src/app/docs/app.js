@@ -424,7 +424,7 @@ angular.module('docs',
 
   // Configuring Angular Translate
   $translateProvider
-    .useSanitizeValueStrategy(null)
+    .useSanitizeValueStrategy('escapeParameters')
     .useStaticFilesLoader({
       prefix: 'locale/',
       suffix: '.json?@build.date@'
