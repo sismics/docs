@@ -462,6 +462,9 @@ angular.module('docs',
   // Configuring $http to act like jQuery.ajax
   $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
   $httpProvider.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+  $httpProvider.defaults.headers.delete = {
+    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+  };
   $httpProvider.defaults.transformRequest = [function(data) {
     var param = function(obj) {
       var query = '';
