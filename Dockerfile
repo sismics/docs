@@ -1,4 +1,4 @@
-FROM sismics/ubuntu-jetty:9.4.12-2
+FROM sismics/ubuntu-jetty:9.4.36
 LABEL maintainer="b.gamard@sismics.com"
 
 RUN apt-get update && \
