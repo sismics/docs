@@ -1,8 +1,10 @@
 package com.sismics.docs.rest.resource;
 
 import javax.json.JsonObject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -23,6 +25,7 @@ public class ThirdPartyWebhookResource extends BaseResource {
      * @return Response
      */
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response webhook(JsonObject request) {
         lastPayload = request;
         return Response.ok().build();
