@@ -62,7 +62,7 @@ A preconfigured Docker image is available, including OCR and media conversion to
 **The default admin password is "admin". Don't forget to change it before going to production.**
 
 - Master branch, can be unstable. Not recommended for production use: `sismics/docs:latest`
-- Latest stable version: `sismics/docs:v1.9`
+- Latest stable version: `sismics/docs:v1.10`
 
 The data directory is `/data`. Don't forget to mount a volume on it.
 
@@ -105,7 +105,7 @@ version: '3'
 services:
 # Teedy Application
   teedy-server:
-    image: sismics/docs:v1.9
+    image: sismics/docs:v1.10
     restart: unless-stopped
     ports:
       # Map internal port to host
@@ -128,7 +128,7 @@ version: '3'
 services:
 # Teedy Application
   teedy-server:
-    image: sismics/docs:v1.9
+    image: sismics/docs:v1.10
     restart: unless-stopped
     ports:
       # Map internal port to host

@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.sismics.docs</groupId>
     <artifactId>docs-parent</artifactId>
-    <version>1.10-SNAPSHOT</version>
+    <version>1.10</version>
     <relativePath>..</relativePath>
   </parent>
   
