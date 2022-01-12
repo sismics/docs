@@ -18,7 +18,7 @@ jobs:
           distribution: "temurin"
           cache: maven
       - name: Build with Maven
-        run: mvn -Pprod -DskipTests clean install
+        run: mvn -Pprod clean install
       - name: Upload war artifact
         uses: actions/upload-artifact@v2
         with:
@@ -51,4 +51,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/docs:latest
+          tags: sismics/docs:latest
