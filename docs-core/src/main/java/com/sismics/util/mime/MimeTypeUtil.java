@@ -27,7 +27,8 @@ public class MimeTypeUtil {
      * @throws IOException e
      */
     public static String guessMimeType(Path file, String name) throws IOException {
-        String mimeType = URLConnection.getFileNameMap().getContentTypeFor(name);
+        String mimeType = name == null ?
+                null : URLConnection.getFileNameMap().getContentTypeFor(name);
         if (mimeType == null) {
             try (InputStream is = Files.newInputStream(file)) {
                 final byte[] headerBytes = new byte[64];

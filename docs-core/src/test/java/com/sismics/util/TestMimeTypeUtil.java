@@ -27,5 +27,8 @@ public class TestMimeTypeUtil {
         // Detect PPTX files
         path = Paths.get(ClassLoader.getSystemResource("file/apache.pptx").toURI());
         Assert.assertEquals(MimeType.OFFICE_PRESENTATION, MimeTypeUtil.guessMimeType(path, "apache.pptx"));
+
+        // Detect TXT files
+        Assert.assertEquals(MimeType.TEXT_PLAIN, MimeTypeUtil.guessMimeType(path, "file.txt"));
     }
 }
