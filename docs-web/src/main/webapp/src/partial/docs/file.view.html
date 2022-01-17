@@ -41,8 +41,8 @@
        img-error="error = true"
        ng-show="!error && canDisplayPreview()" />
 
-  <!-- Video player -->
-  <a href class="video-overlay" ng-if="!error && file.mimetype.substring(0, 6) == 'video/'"
+  <!-- Media player -->
+  <a href class="video-overlay" ng-if="!error && (file.mimetype.substring(0, 6) == 'video/' || file.mimetype.substring(0, 6) == 'audio/')"
      ng-init="videoPlayer = false" ng-click="videoPlayer = true">
     <span class="fas fa-play-circle" ng-if="!videoPlayer"></span>
     <video ng-if="videoPlayer" autoplay="autoplay" loop="loop"

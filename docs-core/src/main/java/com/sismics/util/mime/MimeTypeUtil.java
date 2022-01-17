@@ -5,7 +5,8 @@ import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
@@ -26,11 +27,13 @@ public class MimeTypeUtil {
      * @throws IOException e
      */
     public static String guessMimeType(Path file, String name) throws IOException {
-        String mimeType;
-        try (InputStream is = Files.newInputStream(file)) {
-            byte[] headerBytes = new byte[64];
-            is.read(headerBytes);
-            mimeType = guessMimeType(headerBytes, name);
+        String mimeType = URLConnection.getFileNameMap().getContentTypeFor(name);
+        if (mimeType == null) {
+            try (InputStream is = Files.newInputStream(file)) {
+                final byte[] headerBytes = new byte[64];
+                is.read(headerBytes);
+                mimeType = guessMimeType(headerBytes, name);
+            }
         }
 
         return guessOpenDocumentFormat(mimeType, file);
@@ -42,10 +45,9 @@ public class MimeTypeUtil {
      * @param headerBytes File header (first bytes)
      * @param name File name
      * @return MIME type
-     * @throws UnsupportedEncodingException e
      */
-    public static String guessMimeType(byte[] headerBytes, String name) throws UnsupportedEncodingException {
-        String header = new String(headerBytes, "US-ASCII");
+    public static String guessMimeType(byte[] headerBytes, String name) {
+        String header = new String(headerBytes, StandardCharsets.US_ASCII);
 
         // Detect by header bytes
         if (header.startsWith("PK")) {
