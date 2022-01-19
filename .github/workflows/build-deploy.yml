@@ -3,6 +3,7 @@ name: Maven CI/CD
 on:
   push:
     branches: [master]
+    tags: [v*]
   workflow_dispatch:
 
 jobs:
@@ -33,24 +34,49 @@ jobs:
     needs: [build_and_publish]
 
     steps:
-      - name: Checkout
+      - 
+        name: Checkout
         uses: actions/checkout@v2
-      - name: Download war artifact
+      - 
+        name: Download war artifact
         uses: actions/download-artifact@v2
         with:
           name: docs-web-ci.war
           path: docs-web/target
-      - name: Setup up Docker Buildx
+      - 
+        name: Setup up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      - name: Login to DockerHub
+      - 
+        name: Login to DockerHub
+        if: github.event_name != "pull_request"
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push
+      - 
+        name: Populate Docker metadata
+        id: metadata
+        uses: docker/metadata-action@v3
+        with:
+          images: sismics/docs
+          tags: |
+            type=ref,event=push
+            type=ref,event=tag
+          labels: |
+            org.opencontainers.image.title = Sismics Teedy
+            org.opencontainers.image.description = Sismics Teedy  is an open source, lightweight document management system for individuals and businesses.
+            org.opencontainers.image.created = ${{ github.event_created_at }}
+            org.opencontainers.image.author = Sismics
+            org.opencontainers.image.url = https://teedy.info/
+            org.opencontainers.image.vendor = Sismics
+            org.opencontainers.image.license = GPL v2
+            org.opencontainers.image.version = ${{ github.event_head_commit.id }}
+      - 
+        name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           context: .
-          push: true
-          tags: sismics/docs:latest
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
