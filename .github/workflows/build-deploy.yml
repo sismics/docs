@@ -60,7 +60,6 @@ jobs:
         with:
           images: sismics/docs
           tags: |
-            type=ref,event=push
             type=ref,event=tag
           labels: |
             org.opencontainers.image.title = Teedy
