@@ -59,8 +59,11 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: sismics/docs
+          flavor: |
+            latest=false
           tags: |
             type=ref,event=tag
+            type=raw,value=latest,enable=${{ github.ref_type != 'tag' }}
           labels: |
             org.opencontainers.image.title = Teedy
             org.opencontainers.image.description = Teedy is an open source, lightweight document management system for individuals and businesses.
