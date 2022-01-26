@@ -7,6 +7,7 @@ RUN apt-get update && \
     mediainfo \
     tesseract-ocr \
     tesseract-ocr-ara \
+    tesseract-ocr-ces \
     tesseract-ocr-chi-sim \
     tesseract-ocr-chi-tra \
     tesseract-ocr-dan \
