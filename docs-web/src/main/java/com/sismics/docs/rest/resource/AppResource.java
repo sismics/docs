@@ -508,7 +508,7 @@ public class AppResource extends BaseResource {
      * @apiSuccess {String} logs.message Message
      * @apiError (client) ForbiddenError Access denied
      * @apiError (server) ServerError MEMORY appender not configured
-     * @apiPermission user
+     * @apiPermission admin
      * @apiVersion 1.5.0
      *
      * @param minLevel Filter on logging level
@@ -529,6 +529,7 @@ public class AppResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
+        checkBaseFunction(BaseFunction.ADMIN);
 
         // Get the memory appender
         org.apache.log4j.Logger logger = org.apache.log4j.Logger.getRootLogger();
