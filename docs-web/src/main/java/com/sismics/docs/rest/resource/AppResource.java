@@ -205,28 +205,28 @@ public class AppResource extends BaseResource {
         Config passwordConfig = configDao.getById(ConfigType.SMTP_PASSWORD);
         Config fromConfig = configDao.getById(ConfigType.SMTP_FROM);
         JsonObjectBuilder response = Json.createObjectBuilder();
-        if (System.getenv(Constants.SMTP_HOSTNAME_ENV) == null) {
+        if (Strings.isNullOrEmpty(System.getenv(Constants.SMTP_HOSTNAME_ENV))) {
             if (hostnameConfig == null) {
                 response.addNull("hostname");
             } else {
                 response.add("hostname", hostnameConfig.getValue());
             }
         }
-        if (System.getenv(Constants.SMTP_PORT_ENV) == null) {
+        if (Strings.isNullOrEmpty(System.getenv(Constants.SMTP_PORT_ENV))) {
             if (portConfig == null) {
                 response.addNull("port");
             } else {
                 response.add("port", Integer.valueOf(portConfig.getValue()));
             }
         }
-        if (System.getenv(Constants.SMTP_USERNAME_ENV) == null) {
+        if (Strings.isNullOrEmpty(System.getenv(Constants.SMTP_USERNAME_ENV))) {
             if (usernameConfig == null) {
                 response.addNull("username");
             } else {
                 response.add("username", usernameConfig.getValue());
             }
         }
-        if (System.getenv(Constants.SMTP_PASSWORD_ENV) == null) {
+        if (Strings.isNullOrEmpty(System.getenv(Constants.SMTP_PASSWORD_ENV))) {
             if (passwordConfig == null) {
                 response.addNull("password");
             } else {

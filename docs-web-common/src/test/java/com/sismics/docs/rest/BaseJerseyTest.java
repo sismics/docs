@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Base class of integration tests with Jersey.
@@ -56,7 +57,7 @@ public abstract class BaseJerseyTest extends JerseyTest {
     @Override
     protected Application configure() {
         String travisEnv = System.getenv("TRAVIS");
-        if (travisEnv == null || !travisEnv.equals("true")) {
+        if (!Objects.equals(travisEnv, "true")) {
             // Travis doesn't like big logs
             enable(TestProperties.LOG_TRAFFIC);
             enable(TestProperties.DUMP_ENTITY);

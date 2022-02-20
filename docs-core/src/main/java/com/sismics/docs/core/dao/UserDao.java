@@ -1,6 +1,7 @@
 package com.sismics.docs.core.dao;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -289,7 +290,7 @@ public class UserDao {
     private String hashPassword(String password) {
         int bcryptWork = Constants.DEFAULT_BCRYPT_WORK;
         String envBcryptWork = System.getenv(Constants.BCRYPT_WORK_ENV);
-        if (envBcryptWork != null) {
+        if (!Strings.isNullOrEmpty(envBcryptWork)) {
             try {
                 int envBcryptWorkInt = Integer.parseInt(envBcryptWork);
                 if (envBcryptWorkInt >= 4 && envBcryptWorkInt <= 31) {
