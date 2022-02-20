@@ -1,5 +1,6 @@
 package com.sismics.docs.core.model.context;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
@@ -106,7 +107,7 @@ public class AppContext {
 
         // Change the admin password if needed
         String envAdminPassword = System.getenv(Constants.ADMIN_PASSWORD_INIT_ENV);
-        if (envAdminPassword != null) {
+        if (!Strings.isNullOrEmpty(envAdminPassword)) {
             UserDao userDao = new UserDao();
             User adminUser = userDao.getById("admin");
             if (Constants.DEFAULT_ADMIN_PASSWORD.equals(adminUser.getPassword())) {
@@ -117,7 +118,7 @@ public class AppContext {
 
         // Change the admin email if needed
         String envAdminEmail = System.getenv(Constants.ADMIN_EMAIL_INIT_ENV);
-        if (envAdminEmail != null) {
+        if (!Strings.isNullOrEmpty(envAdminEmail)) {
             UserDao userDao = new UserDao();
             User adminUser = userDao.getById("admin");
             if (Constants.DEFAULT_ADMIN_EMAIL.equals(adminUser.getEmail())) {

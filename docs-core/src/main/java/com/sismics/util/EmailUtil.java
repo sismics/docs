@@ -92,7 +92,7 @@ public class EmailUtil {
 
             // Hostname
             String envHostname = System.getenv(Constants.SMTP_HOSTNAME_ENV);
-            if (envHostname == null) {
+            if (Strings.isNullOrEmpty(envHostname)) {
                 email.setHostName(ConfigUtil.getConfigStringValue(ConfigType.SMTP_HOSTNAME));
             } else {
                 email.setHostName(envHostname);
@@ -101,7 +101,7 @@ public class EmailUtil {
             // Port
             int port = ConfigUtil.getConfigIntegerValue(ConfigType.SMTP_PORT);
             String envPort = System.getenv(Constants.SMTP_PORT_ENV);
-            if (envPort != null) {
+            if (!Strings.isNullOrEmpty(envPort)) {
                 port = Integer.valueOf(envPort);
             }
             email.setSmtpPort(port);
@@ -114,7 +114,7 @@ public class EmailUtil {
             // Username and password
             String envUsername = System.getenv(Constants.SMTP_USERNAME_ENV);
             String envPassword = System.getenv(Constants.SMTP_PASSWORD_ENV);
-            if (envUsername == null || envPassword == null) {
+            if (Strings.isNullOrEmpty(envUsername) || Strings.isNullOrEmpty(envPassword)) {
                 Config usernameConfig = configDao.getById(ConfigType.SMTP_USERNAME);
                 Config passwordConfig = configDao.getById(ConfigType.SMTP_PASSWORD);
                 if (usernameConfig != null && passwordConfig != null) {

@@ -1,5 +1,6 @@
 package com.sismics.util.jpa;
 
+import com.google.common.base.Strings;
 import com.sismics.docs.core.util.DirectoryUtil;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.internal.util.config.ConfigurationHelper;
@@ -83,7 +84,7 @@ public final class EMF {
         Map<Object, Object> props = new HashMap<>();
         Path dbDirectory = DirectoryUtil.getDbDirectory();
         String dbFile = dbDirectory.resolve("docs").toAbsolutePath().toString();
-        if (databaseUrl == null) {
+        if (Strings.isNullOrEmpty(databaseUrl)) {
             props.put("hibernate.connection.driver_class", "org.h2.Driver");
             props.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
             props.put("hibernate.connection.url", "jdbc:h2:file:" + dbFile + ";CACHE_SIZE=65536;LOCK_TIMEOUT=10000");
