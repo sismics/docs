@@ -8,6 +8,7 @@ import com.sismics.util.context.ThreadLocalContext;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -179,11 +180,10 @@ public class FileDao {
      * @param documentId Document ID
      * @return List of files
      */
-    @SuppressWarnings("unchecked")
     public List<File> getByDocumentId(String userId, String documentId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         if (documentId == null) {
-            Query q = em.createQuery("select f from File f where f.documentId is null and f.deleteDate is null and f.latestVersion = true and f.userId = :userId order by f.createDate asc");
+            TypedQuery<File> q = em.createQuery("select f from File f where f.documentId is null and f.deleteDate is null and f.latestVersion = true and f.userId = :userId order by f.createDate asc", File.class);
             q.setParameter("userId", userId);
             return q.getResultList();
         } else {
@@ -197,10 +197,9 @@ public class FileDao {
      * @param documentIds Documents IDs
      * @return List of files
      */
-    @SuppressWarnings("unchecked")
     public List<File> getByDocumentsIds(Iterable<String> documentIds) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select f from File f where f.documentId in :documentIds and f.latestVersion = true and f.deleteDate is null order by f.order asc");
+        TypedQuery<File> q = em.createQuery("select f from File f where f.documentId in :documentIds and f.latestVersion = true and f.deleteDate is null order by f.order asc", File.class);
         q.setParameter("documentIds", documentIds);
         return q.getResultList();
     }

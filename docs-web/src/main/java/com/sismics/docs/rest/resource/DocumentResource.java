@@ -349,7 +349,7 @@ public class DocumentResource extends BaseResource {
      * @apiParam {Number} sort_column Column index to sort on
      * @apiParam {Boolean} asc If true, sort in ascending order
      * @apiParam {String} search Search query
-     * @apiParam {Booleans} files if If true includes files information
+     * @apiParam {Booleans} files If true includes files information
      * @apiSuccess {Number} total Total number of documents
      * @apiSuccess {Object[]} documents List of documents
      * @apiSuccess {String} documents.id ID
