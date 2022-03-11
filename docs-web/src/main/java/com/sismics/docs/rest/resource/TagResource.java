@@ -12,7 +12,7 @@ import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
-import com.sismics.rest.util.RestUtil;
+import com.sismics.rest.util.AclUtil;
 import com.sismics.rest.util.ValidationUtil;
 import org.apache.commons.lang.StringUtils;
 
@@ -138,7 +138,7 @@ public class TagResource extends BaseResource {
         }
 
         // Add ACL
-        RestUtil.addAcls(tag, id, getTargetIdList(null));
+        AclUtil.addAcls(tag, id, getTargetIdList(null));
 
         return Response.ok().entity(tag.build()).build();
     }

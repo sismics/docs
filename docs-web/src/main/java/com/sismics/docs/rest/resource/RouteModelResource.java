@@ -17,7 +17,7 @@ import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.docs.rest.constant.BaseFunction;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
-import com.sismics.rest.util.RestUtil;
+import com.sismics.rest.util.AclUtil;
 import com.sismics.rest.util.ValidationUtil;
 
 import javax.json.*;
@@ -390,7 +390,7 @@ public class RouteModelResource extends BaseResource {
                 .add("steps", routeModel.getSteps());
 
         // Add ACL
-        RestUtil.addAcls(response, id, getTargetIdList(null));
+        AclUtil.addAcls(response, id, getTargetIdList(null));
 
         return Response.ok().entity(response.build()).build();
     }

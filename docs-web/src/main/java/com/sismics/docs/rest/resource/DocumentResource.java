@@ -26,6 +26,7 @@ import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
+import com.sismics.rest.util.AclUtil;
 import com.sismics.rest.util.RestUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.EmailUtil;
@@ -193,7 +194,7 @@ public class DocumentResource extends BaseResource {
         document.add("creator", documentDto.getCreator());
 
         // Add ACL
-        RestUtil.addAcls(document, documentId, getTargetIdList(shareId));
+        AclUtil.addAcls(document, documentId, getTargetIdList(shareId));
 
         // Add computed ACL
         if (tagDtoList != null) {
