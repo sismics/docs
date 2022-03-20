@@ -8,6 +8,8 @@ import com.sismics.util.context.ThreadLocalContext;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -172,22 +174,33 @@ public class FileDao {
     }
     
     /**
-     * Get files by document ID or all orphan files of an user.
+     * Get files by document ID or all orphan files of a user.
      * 
      * @param userId User ID
      * @param documentId Document ID
      * @return List of files
      */
-    @SuppressWarnings("unchecked")
     public List<File> getByDocumentId(String userId, String documentId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         if (documentId == null) {
-            Query q = em.createQuery("select f from File f where f.documentId is null and f.deleteDate is null and f.latestVersion = true and f.userId = :userId order by f.createDate asc");
+            TypedQuery<File> q = em.createQuery("select f from File f where f.documentId is null and f.deleteDate is null and f.latestVersion = true and f.userId = :userId order by f.createDate asc", File.class);
             q.setParameter("userId", userId);
             return q.getResultList();
+        } else {
+            return getByDocumentsIds(Collections.singleton(documentId));
         }
-        Query q = em.createQuery("select f from File f where f.documentId = :documentId and f.latestVersion = true and f.deleteDate is null order by f.order asc");
-        q.setParameter("documentId", documentId);
+    }
+
+    /**
+     * Get files by documents IDs.
+     *
+     * @param documentIds Documents IDs
+     * @return List of files
+     */
+    public List<File> getByDocumentsIds(Iterable<String> documentIds) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        TypedQuery<File> q = em.createQuery("select f from File f where f.documentId in :documentIds and f.latestVersion = true and f.deleteDate is null order by f.order asc", File.class);
+        q.setParameter("documentIds", documentIds);
         return q.getResultList();
     }
 
