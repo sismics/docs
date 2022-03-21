@@ -11,6 +11,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 
 import java.awt.image.BufferedImage;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -33,7 +34,7 @@ public class TextPlainFormatHandler implements FormatHandler {
         PdfWriter.getInstance(output, pdfOutputStream);
 
         output.open();
-        String content = new String(Files.readAllBytes(file), Charsets.UTF_8);
+        String content = Files.readString(file, StandardCharsets.UTF_8);
         Font font = FontFactory.getFont("LiberationMono-Regular");
         Paragraph paragraph = new Paragraph(content, font);
         paragraph.setAlignment(Element.ALIGN_LEFT);
@@ -46,7 +47,7 @@ public class TextPlainFormatHandler implements FormatHandler {
 
     @Override
     public String extractContent(String language, Path file) throws Exception {
-        return new String(Files.readAllBytes(file), "UTF-8");
+        return Files.readString(file, StandardCharsets.UTF_8);
     }
 
     @Override

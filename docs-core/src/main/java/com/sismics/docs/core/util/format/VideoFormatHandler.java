@@ -1,6 +1,5 @@
 package com.sismics.docs.core.util.format;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closer;
@@ -13,6 +12,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -65,7 +65,7 @@ public class VideoFormatHandler implements FormatHandler {
 
         // Consume the data as a string
         try (InputStream is = process.getInputStream()) {
-            return new String(ByteStreams.toByteArray(is), Charsets.UTF_8);
+            return new String(ByteStreams.toByteArray(is), StandardCharsets.UTF_8);
         } catch (Exception e) {
             return null;
         }

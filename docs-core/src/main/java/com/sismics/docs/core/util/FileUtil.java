@@ -1,6 +1,5 @@
 package com.sismics.docs.core.util;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.CharStreams;
@@ -28,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -76,7 +76,7 @@ public class FileUtil {
 
         // Consume the data as text
         try (InputStream is = process.getInputStream()) {
-            return CharStreams.toString(new InputStreamReader(is, Charsets.UTF_8));
+            return CharStreams.toString(new InputStreamReader(is, StandardCharsets.UTF_8));
         }
     }
 

@@ -1,6 +1,5 @@
 package com.sismics.util;
 
-import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 
 import javax.imageio.IIOImage;
@@ -13,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
 /**
@@ -80,7 +80,7 @@ public class ImageUtil {
         }
 
         return Hashing.md5().hashString(
-                email.trim().toLowerCase(), Charsets.UTF_8)
+                email.trim().toLowerCase(), StandardCharsets.UTF_8)
                 .toString();
     }
 
