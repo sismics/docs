@@ -34,6 +34,16 @@ import java.util.Objects;
  * @author jtremeaux
  */
 public abstract class BaseJerseyTest extends JerseyTest {
+    protected static final String FILE_APACHE_PPTX = "file/apache.pptx";
+    protected static final String FILE_DOCUMENT_DOCX = "file/document.docx";
+    protected static final String FILE_DOCUMENT_ODT = "file/document.odt";
+    protected static final String FILE_DOCUMENT_TXT = "file/document.txt";
+    protected static final String FILE_EINSTEIN_ROOSEVELT_LETTER_PNG = "file/Einstein-Roosevelt-letter.png";
+    protected static final String FILE_PIA_00452_JPG = "file/PIA00452.jpg";
+    protected static final String FILE_VIDEO_WEBM = "file/video.webm";
+    protected static final String FILE_WIKIPEDIA_PDF = "file/wikipedia.pdf";
+    protected static final String FILE_WIKIPEDIA_ZIP = "file/wikipedia.zip";
+
     /**
      * Test HTTP server.
      */

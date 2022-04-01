@@ -24,6 +24,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 
+import static org.junit.Assert.fail;
+
 /**
  * Exhaustive test of the file resource.
  * 
@@ -53,37 +55,12 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a file
-        String file1Id;
-        try (InputStream is = Resources.getResource("file/PIA00452.jpg").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "PIA00452.jpg");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
-                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file1Id = json.getString("id");
-                Assert.assertNotNull(file1Id);
-                Assert.assertEquals(163510L, json.getJsonNumber("size").longValue());
-            }
-        }
+        String file1Id = clientUtil.addFileToDocument(FILE_PIA_00452_JPG,
+                file1Token, document1Id);
         
         // Add a file
-        String file2Id;
-        try (InputStream is = Resources.getResource("file/PIA00452.jpg").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "PIA00452.jpg");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
-                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file2Id = json.getString("id");
-                Assert.assertNotNull(file2Id);
-            }
-        }
+        String file2Id = clientUtil.addFileToDocument(FILE_PIA_00452_JPG,
+                file1Token, document1Id);
         
         // Get the file data
         Response response = target().path("/file/" + file1Id + "/data").request()
@@ -317,21 +294,8 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
 
         // Add a file
-        String file1Id;
-        try (InputStream is = Resources.getResource("file/wikipedia.zip").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "wikipedia.zip");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file2Token)
-                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file1Id = json.getString("id");
-                Assert.assertNotNull(file1Id);
-                Assert.assertEquals(525069L, json.getJsonNumber("size").longValue());
-            }
-        }
+        clientUtil.addFileToDocument(FILE_WIKIPEDIA_ZIP,
+                file2Token, document1Id);
     }
 
     /**
@@ -346,20 +310,8 @@ public class TestFileResource extends BaseJerseyTest {
         String file3Token = clientUtil.login("file3");
         
         // Add a file
-        String file1Id;
-        try (InputStream is = Resources.getResource("file/PIA00452.jpg").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "PIA00452.jpg");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                JsonObject json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file3Token)
-                        .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file1Id = json.getString("id");
-                Assert.assertNotNull(file1Id);
-            }
-        }
+        String file1Id = clientUtil.addFileToDocument(FILE_PIA_00452_JPG,
+                file3Token, null);
 
         // Get all orphan files
         JsonObject json = target().path("/file/list").request()
@@ -414,20 +366,8 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(1, files.size());
         
         // Add a file
-        String file2Id;
-        try (InputStream is0 = Resources.getResource("file/PIA00452.jpg").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is0, "PIA00452.jpg");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                json = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file3Token)
-                        .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file2Id = json.getString("id");
-                Assert.assertNotNull(file2Id);
-            }
-        }
+        String file2Id = clientUtil.addFileToDocument(FILE_PIA_00452_JPG,
+                file3Token, null);
         
         // Deletes a file
         json = target().path("/file/" + file2Id).request()
@@ -448,21 +388,8 @@ public class TestFileResource extends BaseJerseyTest {
         String fileQuotaToken = clientUtil.login("file_quota");
         
         // Add a file (292641 bytes large)
-        String file1Id;
-        try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                JsonObject json = target()
-                    .register(MultiPartFeature.class)
-                    .path("/file").request()
-                    .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
-                    .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
-                            MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                file1Id = json.getString("id");
-                Assert.assertNotNull(file1Id);
-            }
-        }
-        
+        String file1Id = clientUtil.addFileToDocument(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG, fileQuotaToken, null);
+
         // Check current quota
         JsonObject json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
@@ -470,17 +397,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(292641L, json.getJsonNumber("storage_current").longValue());
         
         // Add a file (292641 bytes large)
-        try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                target()
-                    .register(MultiPartFeature.class)
-                    .path("/file").request()
-                    .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
-                    .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
-                            MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-            }
-        }
+        clientUtil.addFileToDocument(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG, fileQuotaToken, null);
         
         // Check current quota
         json = target().path("/user").request()
@@ -489,17 +406,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(585282L, json.getJsonNumber("storage_current").longValue());
         
         // Add a file (292641 bytes large)
-        try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                target()
-                    .register(MultiPartFeature.class)
-                    .path("/file").request()
-                    .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
-                    .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
-                            MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-            }
-        }
+        clientUtil.addFileToDocument(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG, fileQuotaToken, null);
         
         // Check current quota
         json = target().path("/user").request()
@@ -508,17 +415,10 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(877923L, json.getJsonNumber("storage_current").longValue());
         
         // Add a file (292641 bytes large)
-        try (InputStream is = Resources.getResource("file/Einstein-Roosevelt-letter.png").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "Einstein-Roosevelt-letter.png");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                Response response = target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
-                        .put(Entity.entity(multiPart.bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE));
-                Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-            }
+        try {
+            clientUtil.addFileToDocument(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG, fileQuotaToken, null);
+            fail();
+        } catch (javax.ws.rs.BadRequestException ignored) {
         }
         
         // Deletes a file
@@ -545,17 +445,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
 
         // Add a file to this document (163510 bytes large)
-        try (InputStream is = Resources.getResource("file/PIA00452.jpg").openStream()) {
-            StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, "PIA00452.jpg");
-            try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                target()
-                        .register(MultiPartFeature.class)
-                        .path("/file").request()
-                        .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
-                        .put(Entity.entity(multiPart.field("id", document1Id).bodyPart(streamDataBodyPart),
-                                MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-            }
-        }
+        clientUtil.addFileToDocument(FILE_PIA_00452_JPG, fileQuotaToken, document1Id);
 
         // Check current quota
         json = target().path("/user").request()

@@ -96,8 +96,8 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document2Id);
         
         // Add a file
-        String file1Id = clientUtil.addFileToDocument("file/Einstein-Roosevelt-letter.png",
-                "Einstein-Roosevelt-letter.png", document1Token, document1Id);
+        String file1Id = clientUtil.addFileToDocument(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG,
+                document1Token, document1Id);
 
         // Share this document
         target().path("/share").request()
@@ -151,8 +151,8 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document3Id);
         
         // Add a file
-        clientUtil.addFileToDocument("file/Einstein-Roosevelt-letter.png",
-                "Einstein-Roosevelt-letter.png", document3Token, document3Id);
+        clientUtil.addFileToDocument(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG,
+                document3Token, document3Id);
 
         // List all documents from document3
         json = target().path("/document/list")
@@ -456,7 +456,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a PDF file
-        String file1Id = clientUtil.addFileToDocument("file/document.odt", "document.odt", documentOdtToken, document1Id);
+        String file1Id = clientUtil.addFileToDocument(FILE_DOCUMENT_ODT, documentOdtToken, document1Id);
 
         // Search documents by query in full content
         json = target().path("/document/list")
@@ -516,7 +516,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a PDF file
-        String file1Id = clientUtil.addFileToDocument("file/document.docx", "document.docx", documentDocxToken, document1Id);
+        String file1Id = clientUtil.addFileToDocument(FILE_DOCUMENT_DOCX, documentDocxToken, document1Id);
 
         // Search documents by query in full content
         json = target().path("/document/list")
@@ -576,7 +576,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
         
         // Add a PDF file
-        String file1Id = clientUtil.addFileToDocument("file/wikipedia.pdf", "wikipedia.pdf", documentPdfToken, document1Id);
+        String file1Id = clientUtil.addFileToDocument(FILE_WIKIPEDIA_PDF, documentPdfToken, document1Id);
 
         // Search documents by query in full content
         json = target().path("/document/list")
@@ -636,7 +636,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
 
         // Add a plain text file
-        String file1Id = clientUtil.addFileToDocument("file/document.txt", "document.txt", documentPlainToken, document1Id);
+        String file1Id = clientUtil.addFileToDocument(FILE_DOCUMENT_TXT, documentPlainToken, document1Id);
 
         // Search documents by query in full content
         json = target().path("/document/list")
@@ -706,7 +706,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
 
         // Add a video file
-        String file1Id = clientUtil.addFileToDocument("file/video.webm", "video.webm", documentVideoToken, document1Id);
+        String file1Id = clientUtil.addFileToDocument(FILE_VIDEO_WEBM, documentVideoToken, document1Id);
 
         // Search documents by query in full content
         json = target().path("/document/list")
@@ -766,7 +766,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertNotNull(document1Id);
 
         // Add a PPTX file
-        String file1Id = clientUtil.addFileToDocument("file/apache.pptx", "apache.pptx", documentPptxToken, document1Id);
+        String file1Id = clientUtil.addFileToDocument(FILE_APACHE_PPTX, documentPptxToken, document1Id);
 
         // Search documents by query in full content
         json = target().path("/document/list")

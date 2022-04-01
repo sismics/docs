@@ -793,9 +793,6 @@ public class FileResource extends BaseResource {
     private List<File> findFiles(List<String> filesIds) {
         FileDao fileDao = new FileDao();
         List<File> files = fileDao.getFiles(filesIds);
-        if (files.isEmpty()) {
-            throw new NotFoundException();
-        }
         for (File file : files) {
             checkFileAccessible(null, file);
         }
