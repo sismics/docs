@@ -22,6 +22,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 
 /**
  * REST client utilities.
@@ -160,6 +161,25 @@ public class ClientUtil {
             }
         }
         return authToken;
+    }
+
+    /**
+     * Create a document
+     *
+     * @param token Authentication token
+     * @return Document ID
+     */
+    public String createDocument(String token) {
+        JsonObject json = this.resource.path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, token)
+                .put(Entity.form(new Form()
+                        .param("title", "Document Title")
+                        .param("description", "Document description")
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(new Date().getTime()))), JsonObject.class);
+        String documentId = json.getString("id");
+        Assert.assertNotNull(documentId);
+        return documentId;
     }
 
     /**

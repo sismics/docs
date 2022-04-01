@@ -44,15 +44,7 @@ public class TestFileResource extends BaseJerseyTest {
         String file1Token = clientUtil.login("file1");
         
         // Create a document
-        long create1Date = new Date().getTime();
-        JsonObject json = target().path("/document").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
-                .put(Entity.form(new Form()
-                        .param("title", "File test document 1")
-                        .param("language", "eng")
-                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
-        String document1Id = json.getString("id");
-        Assert.assertNotNull(document1Id);
+        String document1Id = clientUtil.createDocument(file1Token);
         
         // Add a file
         String file1Id = clientUtil.addFileToDocument(FILE_PIA_00452_JPG,
@@ -108,7 +100,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(MimeType.DEFAULT, MimeTypeUtil.guessMimeType(storedFile, null));
 
         // Get all files from a document
-        json = target().path("/file/list")
+        JsonObject json = target().path("/file/list")
                 .queryParam("id", document1Id)
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file1Token)
@@ -341,24 +333,18 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
         Assert.assertEquals(163510, fileBytes.length);
         
-        // Create a document
-        json = target().path("/document").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file3Token)
-                .put(Entity.form(new Form()
-                        .param("title", "File test document 1")
-                        .param("language", "eng")), JsonObject.class);
-        String document1Id = json.getString("id");
-        Assert.assertNotNull(document1Id);
+        // Create another document
+        String document2Id = clientUtil.createDocument(file3Token);
         
         // Attach a file to a document
         target().path("/file/" + file1Id + "/attach").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file3Token)
                 .post(Entity.form(new Form()
-                        .param("id", document1Id)), JsonObject.class);
+                        .param("id", document2Id)), JsonObject.class);
         
         // Get all files from a document
         json = target().path("/file/list")
-                .queryParam("id", document1Id)
+                .queryParam("id", document2Id)
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, file3Token)
                 .get(JsonObject.class);

@@ -444,22 +444,13 @@ public class TestDocumentResource extends BaseJerseyTest {
         String documentOdtToken = clientUtil.login("document_odt");
 
         // Create a document
-        long create1Date = new Date().getTime();
-        JsonObject json = target().path("/document").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentOdtToken)
-                .put(Entity.form(new Form()
-                        .param("title", "My super title document 1")
-                        .param("description", "My super description for document 1")
-                        .param("language", "eng")
-                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
-        String document1Id = json.getString("id");
-        Assert.assertNotNull(document1Id);
+        String document1Id = clientUtil.createDocument(documentOdtToken);
         
         // Add a PDF file
         String file1Id = clientUtil.addFileToDocument(FILE_DOCUMENT_ODT, documentOdtToken, document1Id);
 
         // Search documents by query in full content
-        json = target().path("/document/list")
+        JsonObject json = target().path("/document/list")
                 .queryParam("search", "full:ipsum")
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentOdtToken)
@@ -504,22 +495,13 @@ public class TestDocumentResource extends BaseJerseyTest {
         String documentDocxToken = clientUtil.login("document_docx");
 
         // Create a document
-        long create1Date = new Date().getTime();
-        JsonObject json = target().path("/document").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentDocxToken)
-                .put(Entity.form(new Form()
-                        .param("title", "My super title document 1")
-                        .param("description", "My super description for document 1")
-                        .param("language", "eng")
-                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
-        String document1Id = json.getString("id");
-        Assert.assertNotNull(document1Id);
+        String document1Id = clientUtil.createDocument(documentDocxToken);
         
         // Add a PDF file
         String file1Id = clientUtil.addFileToDocument(FILE_DOCUMENT_DOCX, documentDocxToken, document1Id);
 
         // Search documents by query in full content
-        json = target().path("/document/list")
+        JsonObject json = target().path("/document/list")
                 .queryParam("search", "full:dolor")
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentDocxToken)
@@ -564,22 +546,13 @@ public class TestDocumentResource extends BaseJerseyTest {
         String documentPdfToken = clientUtil.login("document_pdf");
 
         // Create a document
-        long create1Date = new Date().getTime();
-        JsonObject json = target().path("/document").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPdfToken)
-                .put(Entity.form(new Form()
-                        .param("title", "My super title document 1")
-                        .param("description", "My super description for document 1")
-                        .param("language", "eng")
-                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
-        String document1Id = json.getString("id");
-        Assert.assertNotNull(document1Id);
+        String document1Id = clientUtil.createDocument(documentPdfToken);
         
         // Add a PDF file
         String file1Id = clientUtil.addFileToDocument(FILE_WIKIPEDIA_PDF, documentPdfToken, document1Id);
 
         // Search documents by query in full content
-        json = target().path("/document/list")
+        JsonObject json = target().path("/document/list")
                 .queryParam("search", "full:vrandecic")
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPdfToken)
@@ -624,22 +597,13 @@ public class TestDocumentResource extends BaseJerseyTest {
         String documentPlainToken = clientUtil.login("document_plain");
 
         // Create a document
-        long create1Date = new Date().getTime();
-        JsonObject json = target().path("/document").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
-                .put(Entity.form(new Form()
-                        .param("title", "My super title document 1")
-                        .param("description", "My super description for document 1")
-                        .param("language", "eng")
-                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
-        String document1Id = json.getString("id");
-        Assert.assertNotNull(document1Id);
+        String document1Id = clientUtil.createDocument(documentPlainToken);
 
         // Add a plain text file
         String file1Id = clientUtil.addFileToDocument(FILE_DOCUMENT_TXT, documentPlainToken, document1Id);
 
         // Search documents by query in full content
-        json = target().path("/document/list")
+        JsonObject json = target().path("/document/list")
                 .queryParam("search", "full:love")
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPlainToken)
@@ -694,22 +658,13 @@ public class TestDocumentResource extends BaseJerseyTest {
         String documentVideoToken = clientUtil.login("document_video");
 
         // Create a document
-        long create1Date = new Date().getTime();
-        JsonObject json = target().path("/document").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentVideoToken)
-                .put(Entity.form(new Form()
-                        .param("title", "My super title document 1")
-                        .param("description", "My super description for document 1")
-                        .param("language", "eng")
-                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
-        String document1Id = json.getString("id");
-        Assert.assertNotNull(document1Id);
+        String document1Id = clientUtil.createDocument(documentVideoToken);
 
         // Add a video file
         String file1Id = clientUtil.addFileToDocument(FILE_VIDEO_WEBM, documentVideoToken, document1Id);
 
         // Search documents by query in full content
-        json = target().path("/document/list")
+        JsonObject json = target().path("/document/list")
                 .queryParam("search", "full:vp9")
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentVideoToken)
@@ -754,22 +709,13 @@ public class TestDocumentResource extends BaseJerseyTest {
         String documentPptxToken = clientUtil.login("document_pptx");
 
         // Create a document
-        long create1Date = new Date().getTime();
-        JsonObject json = target().path("/document").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPptxToken)
-                .put(Entity.form(new Form()
-                        .param("title", "My super title document 1")
-                        .param("description", "My super description for document 1")
-                        .param("language", "eng")
-                        .param("create_date", Long.toString(create1Date))), JsonObject.class);
-        String document1Id = json.getString("id");
-        Assert.assertNotNull(document1Id);
+        String document1Id = clientUtil.createDocument(documentPptxToken);
 
         // Add a PPTX file
         String file1Id = clientUtil.addFileToDocument(FILE_APACHE_PPTX, documentPptxToken, document1Id);
 
         // Search documents by query in full content
-        json = target().path("/document/list")
+        JsonObject json = target().path("/document/list")
                 .queryParam("search", "full:scaling")
                 .request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, documentPptxToken)
