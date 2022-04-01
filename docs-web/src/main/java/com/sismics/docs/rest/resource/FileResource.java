@@ -248,7 +248,7 @@ public class FileResource extends BaseResource {
         }
 
         // Get the file
-        File file = findFile(id, null);
+        File file = findFile(id, null, true);
 
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 200, false);
@@ -468,7 +468,7 @@ public class FileResource extends BaseResource {
         }
 
         // Get versions
-        File file = findFile(id, null);
+        File file = findFile(id, null, true);
         FileDao fileDao = new FileDao();
         List<File> fileList = Lists.newArrayList(file);
         if (file.getVersionId() != null) {
@@ -516,7 +516,7 @@ public class FileResource extends BaseResource {
         }
 
         // Get the file
-        File file = findFile(id, null);
+        File file = findFile(id, null, true);
 
         // Delete the file
         FileDao fileDao = new FileDao();
@@ -586,7 +586,7 @@ public class FileResource extends BaseResource {
         }
 
         // Get the file
-        File file = findFile(fileId, shareId);
+        File file = findFile(fileId, shareId, false);
 
         // Get the stored file
         UserDao userDao = new UserDao();
@@ -773,13 +773,13 @@ public class FileResource extends BaseResource {
      * @param shareId Share ID
      * @return File
      */
-    private File findFile(String fileId, String shareId) {
+    private File findFile(String fileId, String shareId, boolean jsonResponse) {
         FileDao fileDao = new FileDao();
         File file = fileDao.getFile(fileId);
         if (file == null) {
             throw new NotFoundException();
         }
-        checkFileAccessible(shareId, file);
+        checkFileAccessible(shareId, file, jsonResponse);
         return file;
     }
 
@@ -794,7 +794,7 @@ public class FileResource extends BaseResource {
         FileDao fileDao = new FileDao();
         List<File> files = fileDao.getFiles(filesIds);
         for (File file : files) {
-            checkFileAccessible(null, file);
+            checkFileAccessible(null, file, false);
         }
         return files;
     }
@@ -804,18 +804,28 @@ public class FileResource extends BaseResource {
      * @param shareId Share ID
      * @param file
      */
-    private void checkFileAccessible(String shareId, File file) {
+    private void checkFileAccessible(String shareId, File file, boolean jsonResponse) {
         if (file.getDocumentId() == null) {
             // It's an orphan file
             if (!file.getUserId().equals(principal.getId())) {
                 // But not ours
-                throw new ForbiddenClientException();
+                if (jsonResponse) {
+                    throw new ForbiddenClientException();
+                } else {
+                    // Can't throw a ForbiddenClientException if the response is not a JSON 
+                    throw new ForbiddenException();
+                }
             }
         } else {
             // Check document accessibility
             AclDao aclDao = new AclDao();
             if (!aclDao.checkPermission(file.getDocumentId(), PermType.READ, getTargetIdList(shareId))) {
-                throw new ForbiddenClientException();
+                if (jsonResponse) {
+                    throw new ForbiddenClientException();
+                } else {
+                    // Can't throw a ForbiddenClientException if the response is not a JSON
+                    throw new ForbiddenException();
+                }
             }
         }
     }
