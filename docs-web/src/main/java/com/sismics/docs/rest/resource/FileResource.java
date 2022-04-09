@@ -786,7 +786,7 @@ public class FileResource extends BaseResource {
 
 
     /**
-     * Find a list of giles with access rights checking.
+     * Find a list of files with access rights checking.
      *
      * @param filesIds Files IDs
      * @return List<File>
