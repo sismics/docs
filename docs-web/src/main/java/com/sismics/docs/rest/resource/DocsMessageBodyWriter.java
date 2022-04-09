@@ -16,7 +16,7 @@ import java.lang.reflect.Type;
 
 /**
  * When a JSON-based exception is thrown but a JSON response is not expected,
- * Set the media type as plain text. 
+ * set the media type of the response as plain text. 
  */
 @Provider
 @Produces(MediaType.APPLICATION_OCTET_STREAM)
