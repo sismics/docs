@@ -248,7 +248,7 @@ public class FileResource extends BaseResource {
         }
 
         // Get the file
-        File file = findFile(id, null, true);
+        File file = findFile(id, null);
 
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 200, false);
@@ -468,7 +468,7 @@ public class FileResource extends BaseResource {
         }
 
         // Get versions
-        File file = findFile(id, null, true);
+        File file = findFile(id, null);
         FileDao fileDao = new FileDao();
         List<File> fileList = Lists.newArrayList(file);
         if (file.getVersionId() != null) {
@@ -516,7 +516,7 @@ public class FileResource extends BaseResource {
         }
 
         // Get the file
-        File file = findFile(id, null, true);
+        File file = findFile(id, null);
 
         // Delete the file
         FileDao fileDao = new FileDao();
@@ -575,6 +575,7 @@ public class FileResource extends BaseResource {
      */
     @GET
     @Path("{id: [a-z0-9\\-]+}/data")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response data(
             @PathParam("id") final String fileId,
             @QueryParam("share") String shareId,
@@ -586,7 +587,7 @@ public class FileResource extends BaseResource {
         }
 
         // Get the file
-        File file = findFile(fileId, shareId, false);
+        File file = findFile(fileId, shareId);
 
         // Get the stored file
         UserDao userDao = new UserDao();
@@ -681,7 +682,7 @@ public class FileResource extends BaseResource {
      */
     @GET
     @Path("zip")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Produces({MediaType.APPLICATION_OCTET_STREAM, MediaType.TEXT_PLAIN})
     public Response zip(
             @QueryParam("id") String documentId,
             @QueryParam("share") String shareId) {
@@ -698,7 +699,7 @@ public class FileResource extends BaseResource {
         FileDao fileDao = new FileDao();
         final List<File> fileList = fileDao.getByDocumentId(principal.getId(), documentId);
         String zipFileName = documentDto.getTitle().replaceAll("\\W+", "_");
-        return sentZippedFiles(zipFileName, fileList);
+        return sendZippedFiles(zipFileName, fileList);
     }
 
     /**
@@ -719,18 +720,18 @@ public class FileResource extends BaseResource {
      */
     @POST
     @Path("zip")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Produces({MediaType.APPLICATION_OCTET_STREAM, MediaType.TEXT_PLAIN})
     public Response zip(
             @FormParam("files") List<String> filesIdsList) {
         authenticate();
         List<File> fileList = findFiles(filesIdsList);
-        return sentZippedFiles("files", fileList);
+        return sendZippedFiles("files", fileList);
     }
 
     /**
      * Sent the content of a list of files.
      */
-    private Response sentZippedFiles(String zipFileName, List<File> fileList) {
+    private Response sendZippedFiles(String zipFileName, List<File> fileList) {
         final UserDao userDao = new UserDao();
 
         // Create the ZIP stream
@@ -773,13 +774,13 @@ public class FileResource extends BaseResource {
      * @param shareId Share ID
      * @return File
      */
-    private File findFile(String fileId, String shareId, boolean jsonResponse) {
+    private File findFile(String fileId, String shareId) {
         FileDao fileDao = new FileDao();
         File file = fileDao.getFile(fileId);
         if (file == null) {
             throw new NotFoundException();
         }
-        checkFileAccessible(shareId, file, jsonResponse);
+        checkFileAccessible(shareId, file);
         return file;
     }
 
@@ -794,7 +795,7 @@ public class FileResource extends BaseResource {
         FileDao fileDao = new FileDao();
         List<File> files = fileDao.getFiles(filesIds);
         for (File file : files) {
-            checkFileAccessible(null, file, false);
+            checkFileAccessible(null, file);
         }
         return files;
     }
@@ -804,28 +805,18 @@ public class FileResource extends BaseResource {
      * @param shareId Share ID
      * @param file
      */
-    private void checkFileAccessible(String shareId, File file, boolean jsonResponse) {
+    private void checkFileAccessible(String shareId, File file) {
         if (file.getDocumentId() == null) {
             // It's an orphan file
             if (!file.getUserId().equals(principal.getId())) {
                 // But not ours
-                if (jsonResponse) {
-                    throw new ForbiddenClientException();
-                } else {
-                    // Can't throw a ForbiddenClientException if the response is not a JSON 
-                    throw new ForbiddenException();
-                }
+                throw new ForbiddenClientException();
             }
         } else {
             // Check document accessibility
             AclDao aclDao = new AclDao();
             if (!aclDao.checkPermission(file.getDocumentId(), PermType.READ, getTargetIdList(shareId))) {
-                if (jsonResponse) {
-                    throw new ForbiddenClientException();
-                } else {
-                    // Can't throw a ForbiddenClientException if the response is not a JSON
-                    throw new ForbiddenException();
-                }
+                throw new ForbiddenClientException();
             }
         }
     }
