@@ -68,21 +68,32 @@ public class FileDao {
         q.setParameter("userId", userId);
         return q.getResultList();
     }
+
+    /**
+     * Returns a list of active files.
+     *
+     * @param ids Files IDs
+     * @return List of files
+     */
+    public List<File> getFiles(List<String> ids) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        TypedQuery<File> q = em.createQuery("select f from File f where f.id in :ids and f.deleteDate is null", File.class);
+        q.setParameter("ids", ids);
+        return q.getResultList();
+    }
     
     /**
-     * Returns an active file.
+     * Returns an active file or null.
      * 
      * @param id File ID
      * @return File
      */
     public File getFile(String id) {
-        EntityManager em = ThreadLocalContext.get().getEntityManager();
-        TypedQuery<File> q = em.createQuery("select f from File f where f.id = :id and f.deleteDate is null", File.class);
-        q.setParameter("id", id);
-        try {
-            return q.getSingleResult();
-        } catch (NoResultException e) {
+        List<File> files = getFiles(List.of(id));
+        if (files.isEmpty()) {
             return null;
+        } else {
+            return files.get(0);
         }
     }
     

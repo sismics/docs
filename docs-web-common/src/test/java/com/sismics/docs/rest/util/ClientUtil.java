@@ -3,6 +3,7 @@ package com.sismics.docs.rest.util;
 import com.google.common.io.Resources;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import org.junit.Assert;
@@ -16,6 +17,12 @@ import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
 
 /**
  * REST client utilities.
@@ -157,26 +164,57 @@ public class ClientUtil {
     }
 
     /**
+     * Create a document
+     *
+     * @param token Authentication token
+     * @return Document ID
+     */
+    public String createDocument(String token) {
+        JsonObject json = this.resource.path("/document").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, token)
+                .put(Entity.form(new Form()
+                        .param("title", "Document Title")
+                        .param("description", "Document description")
+                        .param("language", "eng")
+                        .param("create_date", Long.toString(new Date().getTime()))), JsonObject.class);
+        String documentId = json.getString("id");
+        Assert.assertNotNull(documentId);
+        return documentId;
+    }
+
+    /**
      * Add a file to a document.
      *
      * @param file File path
-     * @param filename Filename
      * @param token Authentication token
      * @param documentId Document ID
      * @return File ID
      * @throws IOException e
+     * @throws URISyntaxException e
      */
-    public String addFileToDocument(String file, String filename, String token, String documentId) throws IOException {
-        try (InputStream is = Resources.getResource(file).openStream()) {
+    public String addFileToDocument(String file, String token, String documentId) throws IOException, URISyntaxException {
+        URL fileResource = Resources.getResource(file);
+        Path filePath = Paths.get(fileResource.toURI());
+        String filename = filePath.getFileName().toString();
+        try (InputStream is = fileResource.openStream()) {
             StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart("file", is, filename);
             try (FormDataMultiPart multiPart = new FormDataMultiPart()) {
-                JsonObject json = resource
+                MultiPart formContent;
+                if (documentId != null) {
+                    formContent = multiPart.field("id", documentId).bodyPart(streamDataBodyPart);
+                } else {
+                    formContent = multiPart.bodyPart(streamDataBodyPart);
+                }
+                JsonObject json = this.resource
                         .register(MultiPartFeature.class)
                         .path("/file").request()
                         .cookie(TokenBasedSecurityFilter.COOKIE_NAME, token)
-                        .put(Entity.entity(multiPart.field("id", documentId).bodyPart(streamDataBodyPart),
+                        .put(Entity.entity(formContent,
                                 MediaType.MULTIPART_FORM_DATA_TYPE), JsonObject.class);
-                return json.getString("id");
+                String fileId = json.getString("id");
+                Assert.assertNotNull(fileId);
+                Assert.assertEquals(Files.size(filePath), json.getJsonNumber("size").longValue());
+                return fileId;
             }
         }
     }

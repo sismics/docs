@@ -10,6 +10,7 @@ import com.sismics.util.context.ThreadLocalContext;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -50,10 +51,9 @@ public class DocumentDao {
      * @param limit Limit
      * @return List of documents
      */
-    @SuppressWarnings("unchecked")
     public List<Document> findAll(int offset, int limit) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select d from Document d where d.deleteDate is null");
+        TypedQuery<Document> q = em.createQuery("select d from Document d where d.deleteDate is null", Document.class);
         q.setFirstResult(offset);
         q.setMaxResults(limit);
         return q.getResultList();
@@ -65,10 +65,9 @@ public class DocumentDao {
      * @param userId User ID
      * @return List of documents
      */
-    @SuppressWarnings("unchecked")
     public List<Document> findByUserId(String userId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select d from Document d where d.userId = :userId and d.deleteDate is null");
+        TypedQuery<Document> q = em.createQuery("select d from Document d where d.userId = :userId and d.deleteDate is null", Document.class);
         q.setParameter("userId", userId);
         return q.getResultList();
     }
@@ -138,16 +137,16 @@ public class DocumentDao {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
             
         // Get the document
-        Query q = em.createQuery("select d from Document d where d.id = :id and d.deleteDate is null");
-        q.setParameter("id", id);
-        Document documentDb = (Document) q.getSingleResult();
+        TypedQuery<Document> dq = em.createQuery("select d from Document d where d.id = :id and d.deleteDate is null", Document.class);
+        dq.setParameter("id", id);
+        Document documentDb = dq.getSingleResult();
         
         // Delete the document
         Date dateNow = new Date();
         documentDb.setDeleteDate(dateNow);
 
         // Delete linked data
-        q = em.createQuery("update File f set f.deleteDate = :dateNow where f.documentId = :documentId and f.deleteDate is null");
+        Query q = em.createQuery("update File f set f.deleteDate = :dateNow where f.documentId = :documentId and f.deleteDate is null");
         q.setParameter("documentId", id);
         q.setParameter("dateNow", dateNow);
         q.executeUpdate();
@@ -179,10 +178,10 @@ public class DocumentDao {
      */
     public Document getById(String id) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        Query q = em.createQuery("select d from Document d where d.id = :id and d.deleteDate is null");
+        TypedQuery<Document> q = em.createQuery("select d from Document d where d.id = :id and d.deleteDate is null", Document.class);
         q.setParameter("id", id);
         try {
-            return (Document) q.getSingleResult();
+            return q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -199,9 +198,9 @@ public class DocumentDao {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
 
         // Get the document
-        Query q = em.createQuery("select d from Document d where d.id = :id and d.deleteDate is null");
+        TypedQuery<Document> q = em.createQuery("select d from Document d where d.id = :id and d.deleteDate is null", Document.class);
         q.setParameter("id", document.getId());
-        Document documentDb = (Document) q.getSingleResult();
+        Document documentDb = q.getSingleResult();
 
         // Update the document
         documentDb.setTitle(document.getTitle());
@@ -237,7 +236,6 @@ public class DocumentDao {
         query.setParameter("fileId", document.getFileId());
         query.setParameter("id", document.getId());
         query.executeUpdate();
-
     }
 
     /**
