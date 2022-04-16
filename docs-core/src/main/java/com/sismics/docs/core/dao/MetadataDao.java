@@ -123,10 +123,8 @@ public class MetadataDao {
 
         criteriaList.add("m.MET_DELETEDATE_D is null");
 
-        if (!criteriaList.isEmpty()) {
-            sb.append(" where ");
-            sb.append(Joiner.on(" and ").join(criteriaList));
-        }
+        sb.append(" where ");
+        sb.append(Joiner.on(" and ").join(criteriaList));
 
         // Perform the search
         QueryParam queryParam = QueryUtil.getSortedQueryParam(new QueryParam(sb.toString(), parameterMap), sortCriteria);

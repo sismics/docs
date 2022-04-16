@@ -10,7 +10,7 @@ The base URL depends on your server. If your instance of Teedy is accessible thr
 `https://teedy.mycompany.com`, then the base API URL is `https://teedy.mycompany.com/api`.
 
 ## Verbs and status codes
-The API uses restful verbs.
+The API uses RESTful verbs.
 
 | Verb | Description |
 |---|---|
@@ -47,3 +47,42 @@ A call to this API with a given `auth_token` cookie will make it unusable for ot
 ```
 curl -i -X POST -H "Cookie: auth_token=64085630-2ae6-415c-9a92-4b22c107eaa4" https://docs.mycompany.com/api/user/logout
 ```
+
+## Document search syntax
+
+The `/api/document/list` endpoint use a String `search` parameter.
+
+This parameter is split in segments using the space character (the other whitespace characters are not considered).
+
+If a segment contains exactly one colon (`:`), it will used as a field criteria (see bellow).
+In other cases (zero or more than one colon), the segment will be used as a search criteria for all fields including the document's files content.
+
+### Search fields
+
+If a search `VALUE` is considered invalid, the search result will be empty.
+
+* Content
+  * `full:VALUE`: `VALUE` is used as search criteria for all fields, including the document's files content
+  * `simple:VALUE`: `VALUE` is used as a search criteria for all fields except the document's files content
+* Date
+  * `after:VALUE`: the document must have been created after or at the `VALUE` moment, accepted format are `yyyy`, `yyyy-MM` and `yyyy-MM-dd`
+  * `at:VALUE`: the document must have been created at the `VALUE` moment, accepted format are `yyyy`, `yyyy-MM` and `yyyy-MM-dd` (for `yyyy` it must be the same year, for `yyyy-MM` the same month, for `yyyy-MM-dd` the same day)
+  * `before:VALUE`: the document must have been created before or at the `VALUE` moment, accepted format are `yyyy`, `yyyy-MM` and `yyyy-MM-dd`
+  * `uafter:VALUE`: the document must have been last updated after or at the `VALUE` moment, accepted format are `yyyy`, `yyyy-MM` and `yyyy-MM-dd`
+  * `at:VALUE`: the document must have been updated at the `VALUE` moment, accepted format are `yyyy`, `yyyy-MM` and `yyyy-MM-dd` (for `yyyy` it must be the same year, for `yyyy-MM` the same month, for `yyyy-MM-dd` the same day)
+  * `ubefore:VALUE`: the document must have been updated before or at the `VALUE` moment, accepted format are `yyyy`, `yyyy-MM` and `yyyy-MM-dd`
+* Language
+  * `lang:VALUE`: the document must be of the specified language (example: `en`)
+* Mime
+  * `mime:VALUE`: the document must be of the specified mime type (example: `image/png`)
+* Shared
+  * `shared:VALUE`: if `VALUE` is `yes`the document must be shared, for other `VALUE`s the criteria is ignored
+* Tags
+  * `tag:VALUE`: the document must contain a tag or a child of a tag that starts with `VALUE`, case is ignored
+  * `!tag:VALUE`: the document must not contain a tag or a child of a tag that starts with `VALUE`, case is ignored
+* Title
+  * `title:VALUE`: the title of the document must be `VALUE`
+* User
+  * `by:VALUE`: the document creator's username must be `VALUE` with an exact match, the user must not be deleted
+* Workflow
+  * `workflow:VALUE`: if `VALUE` is `me` the document must have an active route, for other `VALUE`s the criteria is ignored

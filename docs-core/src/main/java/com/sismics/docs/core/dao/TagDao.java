@@ -199,10 +199,8 @@ public class TagDao {
 
         criteriaList.add("t.TAG_DELETEDATE_D is null");
 
-        if (!criteriaList.isEmpty()) {
-            sb.append(" where ");
-            sb.append(Joiner.on(" and ").join(criteriaList));
-        }
+        sb.append(" where ");
+        sb.append(Joiner.on(" and ").join(criteriaList));
 
         // Perform the search
         QueryParam queryParam = QueryUtil.getSortedQueryParam(new QueryParam(sb.toString(), parameterMap), sortCriteria);
