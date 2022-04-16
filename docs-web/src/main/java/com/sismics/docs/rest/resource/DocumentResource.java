@@ -527,7 +527,7 @@ public class DocumentResource extends BaseResource {
                     // New tag criteria
                     List<TagDto> tagDtoList = TagUtil.findByName(paramValue, allTagDtoList);
                     if (tagDtoList.isEmpty()) {
-                        // No tag found, the request must returns nothing
+                        // No tag found, the request must return nothing
                         documentCriteria.getTagIdList().add(Lists.newArrayList(UUID.randomUUID().toString()));
                     } else {
                         List<String> tagIdList = Lists.newArrayList();
