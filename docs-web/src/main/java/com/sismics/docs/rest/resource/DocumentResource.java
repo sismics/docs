@@ -67,6 +67,21 @@ import java.util.*;
  */
 @Path("/document")
 public class DocumentResource extends BaseResource {
+
+    protected static final DateTimeParser YEAR_PARSER = DateTimeFormat.forPattern("yyyy").getParser();
+    protected static final DateTimeParser MONTH_PARSER = DateTimeFormat.forPattern("yyyy-MM").getParser();
+    protected static final DateTimeParser DAY_PARSER = DateTimeFormat.forPattern("yyyy-MM-dd").getParser();
+    
+    private static final DateTimeFormatter DAY_FORMATTER = new DateTimeFormatter(null, DAY_PARSER);
+    private static final DateTimeFormatter MONTH_FORMATTER = new DateTimeFormatter(null, MONTH_PARSER);
+    private static final DateTimeFormatter YEAR_FORMATTER = new DateTimeFormatter(null, YEAR_PARSER);
+
+    private static final DateTimeParser[] DATE_PARSERS = new DateTimeParser[]{
+            YEAR_PARSER,
+            MONTH_PARSER,
+            DAY_PARSER};
+    private static final DateTimeFormatter DATE_FORMATTER = new DateTimeFormatterBuilder().append( null, DATE_PARSERS).toFormatter();
+
     /**
      * Returns a document.
      *
@@ -349,7 +364,7 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String} offset Start at this index
      * @apiParam {Number} sort_column Column index to sort on
      * @apiParam {Boolean} asc If true, sort in ascending order
-     * @apiParam {String} search Search query
+     * @apiParam {String} search Search query (see "Document search syntax" on the top of the page for explanations)
      * @apiParam {Booleans} files If true includes files information
      * @apiSuccess {Number} total Total number of documents
      * @apiSuccess {Object[]} documents List of documents
@@ -492,16 +507,8 @@ public class DocumentResource extends BaseResource {
         TagDao tagDao = new TagDao();
         List<TagDto> allTagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)), null);
         UserDao userDao = new UserDao();
-        DateTimeParser[] parsers = {
-                DateTimeFormat.forPattern("yyyy").getParser(),
-                DateTimeFormat.forPattern("yyyy-MM").getParser(),
-                DateTimeFormat.forPattern("yyyy-MM-dd").getParser() };
-        DateTimeFormatter yearFormatter = new DateTimeFormatter(null, parsers[0]);
-        DateTimeFormatter monthFormatter = new DateTimeFormatter(null, parsers[1]);
-        DateTimeFormatter dayFormatter = new DateTimeFormatter(null, parsers[2]);
-        DateTimeFormatter formatter = new DateTimeFormatterBuilder().append( null, parsers ).toFormatter();
 
-        String[] criteriaList = search.split("  *");
+        String[] criteriaList = search.split(" +");
         List<String> query = new ArrayList<>();
         List<String> fullQuery = new ArrayList<>();
         for (String criteria : criteriaList) {
@@ -511,20 +518,16 @@ public class DocumentResource extends BaseResource {
                 fullQuery.add(criteria);
                 continue;
             }
+            String paramName = params[0];
+            String paramValue = params[1];
 
-            switch (params[0]) {
+            switch (paramName) {
                 case "tag":
                 case "!tag":
                     // New tag criteria
-                    List<TagDto> tagDtoList = TagUtil.findByName(params[1], allTagDtoList);
-                    if (documentCriteria.getTagIdList() == null) {
-                        documentCriteria.setTagIdList(new ArrayList<>());
-                    }
-                    if (documentCriteria.getExcludedTagIdList() == null) {
-                        documentCriteria.setExcludedTagIdList(new ArrayList<>());
-                    }
+                    List<TagDto> tagDtoList = TagUtil.findByName(paramValue, allTagDtoList);
                     if (tagDtoList.isEmpty()) {
-                        // No tag found, the request must returns nothing
+                        // No tag found, the request must return nothing
                         documentCriteria.getTagIdList().add(Lists.newArrayList(UUID.randomUUID().toString()));
                     } else {
                         List<String> tagIdList = Lists.newArrayList();
@@ -535,7 +538,7 @@ public class DocumentResource extends BaseResource {
                                 tagIdList.add(childrenTagDto.getId());
                             }
                         }
-                        if (params[0].startsWith("!")) {
+                        if (paramName.startsWith("!")) {
                             documentCriteria.getExcludedTagIdList().add(tagIdList);
                         } else {
                             documentCriteria.getTagIdList().add(tagIdList);
@@ -548,9 +551,9 @@ public class DocumentResource extends BaseResource {
                 case "ubefore":
                     // New date span criteria
                     try {
-                        boolean isUpdated = params[0].startsWith("u");
-                        DateTime date = formatter.parseDateTime(params[1]);
-                        if (params[0].endsWith("before")) {
+                        boolean isUpdated = paramName.startsWith("u");
+                        DateTime date = DATE_FORMATTER.parseDateTime(paramValue);
+                        if (paramName.endsWith("before")) {
                             if (isUpdated) documentCriteria.setUpdateDateMax(date.toDate());
                             else documentCriteria.setCreateDateMax(date.toDate());
                         } else {
@@ -566,11 +569,11 @@ public class DocumentResource extends BaseResource {
                 case "uat":
                 case "at":
                     // New specific date criteria
+                    boolean isUpdated = params[0].startsWith("u");
                     try {
-                        boolean isUpdated = params[0].startsWith("u");
-                        switch (params[1].length()) {
+                        switch (paramValue.length()) {
                             case 10: {
-                                DateTime date = dayFormatter.parseDateTime(params[1]);
+                                DateTime date = DATE_FORMATTER.parseDateTime(params[1]);
                                 if (isUpdated) {
                                     documentCriteria.setUpdateDateMin(date.toDate());
                                     documentCriteria.setUpdateDateMax(date.plusDays(1).minusSeconds(1).toDate());
@@ -581,7 +584,7 @@ public class DocumentResource extends BaseResource {
                                 break;
                             }
                             case 7: {
-                                DateTime date = monthFormatter.parseDateTime(params[1]);
+                                DateTime date = MONTH_FORMATTER.parseDateTime(params[1]);
                                 if (isUpdated) {
                                     documentCriteria.setUpdateDateMin(date.toDate());
                                     documentCriteria.setUpdateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
@@ -592,7 +595,7 @@ public class DocumentResource extends BaseResource {
                                 break;
                             }
                             case 4: {
-                                DateTime date = yearFormatter.parseDateTime(params[1]);
+                                DateTime date = YEAR_FORMATTER.parseDateTime(params[1]);
                                 if (isUpdated) {
                                     documentCriteria.setUpdateDateMin(date.toDate());
                                     documentCriteria.setUpdateDateMax(date.plusYears(1).minusSeconds(1).toDate());
@@ -601,6 +604,10 @@ public class DocumentResource extends BaseResource {
                                     documentCriteria.setCreateDateMax(date.plusYears(1).minusSeconds(1).toDate());
                                 }
                                 break;
+                            } default: {
+                                // Invalid format, returns no documents
+                                documentCriteria.setCreateDateMin(new Date(0));
+                                documentCriteria.setCreateDateMax(new Date(0));
                             }
                         }
                     } catch (IllegalArgumentException e) {
@@ -611,25 +618,26 @@ public class DocumentResource extends BaseResource {
                     break;
                 case "shared":
                     // New shared state criteria
-                    documentCriteria.setShared(params[1].equals("yes"));
+                    documentCriteria.setShared(paramValue.equals("yes"));
                     break;
                 case "lang":
                     // New language criteria
-                    if (Constants.SUPPORTED_LANGUAGES.contains(params[1])) {
-                        documentCriteria.setLanguage(params[1]);
+                    if (Constants.SUPPORTED_LANGUAGES.contains(paramValue)) {
+                        documentCriteria.setLanguage(paramValue);
                     } else {
+                        // Unsupported language, returns no documents
                         documentCriteria.setLanguage(UUID.randomUUID().toString());
                     }
                     break;
                 case "mime":
                     // New mime type criteria
-                    documentCriteria.setMimeType(params[1]);
+                    documentCriteria.setMimeType(paramValue);
                     break;
                 case "by":
                     // New creator criteria
-                    User user = userDao.getActiveByUsername(params[1]);
+                    User user = userDao.getActiveByUsername(paramValue);
                     if (user == null) {
-                        // This user doesn't exists, return nothing
+                        // This user doesn't exist, return nothing
                         documentCriteria.setCreatorId(UUID.randomUUID().toString());
                     } else {
                         // This user exists, search its documents
@@ -638,19 +646,19 @@ public class DocumentResource extends BaseResource {
                     break;
                 case "workflow":
                     // New shared state criteria
-                    documentCriteria.setActiveRoute(params[1].equals("me"));
+                    documentCriteria.setActiveRoute(paramValue.equals("me"));
                     break;
                 case "simple":
                     // New simple search criteria
-                    query.add(params[1]);
+                    query.add(paramValue);
                     break;
                 case "full":
                     // New fulltext search criteria
-                    fullQuery.add(params[1]);
+                    fullQuery.add(paramValue);
                     break;
                 case "title":
                     // New title criteria
-                    documentCriteria.setTitle(params[1]);
+                    documentCriteria.setTitle(paramValue);
                     break;
                 default:
                     fullQuery.add(criteria);

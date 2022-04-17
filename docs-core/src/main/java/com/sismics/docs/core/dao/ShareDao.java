@@ -19,7 +19,6 @@ public class ShareDao {
      * 
      * @param share Share
      * @return New ID
-     * @throws Exception
      */
     public String create(Share share) {
         // Create the UUID

@@ -14,8 +14,7 @@ Teedy is an open source, lightweight document management system for individuals 
 
 ![New!](https://teedy.io/img/laptop-demo.png?20180301)
 
-Demo
-----
+# Demo
 
 A demo is available at [demo.teedy.io](https://demo.teedy.io)
 
@@ -23,8 +22,7 @@ A demo is available at [demo.teedy.io](https://demo.teedy.io)
 - "admin" login with "admin" password
 - "demo" login with "password" password 
 
-Features
---------
+# Features
 
 - Responsive user interface
 - Optical character recognition
@@ -54,8 +52,7 @@ Features
 - [Bulk files importer](https://github.com/sismics/docs/tree/master/docs-importer) (single or scan mode)
 - Tested to one million documents
 
-Install with Docker
--------------------
+# Install with Docker
 
 A preconfigured Docker image is available, including OCR and media conversion tools, listening on port 8080. The database is an embedded H2 database but PostgreSQL is also supported for more performance.
 
@@ -68,7 +65,7 @@ The data directory is `/data`. Don't forget to mount a volume on it.
 
 To build external URL, the server is expecting a `DOCS_BASE_URL` environment variable (for example https://teedy.mycompany.com)
 
-### Available environment variables
+## Available environment variables
 
 - General
   - `DOCS_BASE_URL`: The base url used by the application. Generated url's will be using this as base.
@@ -94,11 +91,11 @@ To build external URL, the server is expecting a `DOCS_BASE_URL` environment var
   - `DOCS_SMTP_USERNAME`: The username to be used.
   - `DOCS_SMTP_PASSWORD`: The password to be used.
 
-### Examples
+## Examples
 
 In the following examples some passwords are exposed in cleartext. This was done in order to keep the examples simple. We strongly encourage you to use variables with an `.env` file or other means to securely store your passwords.
 
-#### Using the internal database
+### Using the internal database
 
 ```yaml
 version: '3'
@@ -121,7 +118,7 @@ services:
       - ./docs/data:/data
 ```
 
-#### Using PostgreSQL
+### Using PostgreSQL
 
 ```yaml
 version: '3'
@@ -179,10 +176,9 @@ networks:
     driver: bridge
 ```
 
-Manual installation
--------------------
+# Manual installation
 
-#### Requirements
+## Requirements
 
 - Java 11
 - Tesseract 4 for OCR
@@ -190,13 +186,12 @@ Manual installation
 - mediainfo for video metadata extraction
 - A webapp server like [Jetty](http://eclipse.org/jetty/) or [Tomcat](http://tomcat.apache.org/)
 
-#### Download
+## Download
 
 The latest release is downloadable here: <https://github.com/sismics/docs/releases> in WAR format. 
 **The default admin password is "admin". Don't forget to change it before going to production.**
 
-How to build Teedy from the sources
-----------------------------------
+## How to build Teedy from the sources
 
 Prerequisites: JDK 11, Maven 3, NPM, Grunt, Tesseract 4
 
@@ -209,35 +204,39 @@ Teedy is organized in several Maven modules:
 First off, clone the repository: `git clone git://github.com/sismics/docs.git`
 or download the sources from GitHub.
 
-#### Launch the build
+### Launch the build
 
 From the root directory:
 
-    mvn clean -DskipTests install
+```console
+mvn clean -DskipTests install
+```
 
-#### Run a stand-alone version
-
-From the `docs-web` directory:
-
-    mvn jetty:run
-
-#### Build a .war to deploy to your servlet container
+### Run a stand-alone version
 
 From the `docs-web` directory:
 
-    mvn -Pprod -DskipTests clean install
+```console
+mvn jetty:run
+```
+
+### Build a .war to deploy to your servlet container
+
+From the `docs-web` directory:
+
+```console
+mvn -Pprod -DskipTests clean install
+```
 
 You will get your deployable WAR in the `docs-web/target` directory.
 
-Contributing
-------------
+# Contributing
 
 All contributions are more than welcomed. Contributions may close an issue, fix a bug (reported or not reported), improve the existing code, add new feature, and so on.
 
 The `master` branch is the default and base branch for the project. It is used for development and all Pull Requests should go there.
 
-License
--------
+# License
 
 Teedy is released under the terms of the GPL license. See `COPYING` for more
 information or see <http://opensource.org/licenses/GPL-2.0>.

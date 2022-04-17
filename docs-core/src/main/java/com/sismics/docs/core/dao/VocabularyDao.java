@@ -20,7 +20,6 @@ public class VocabularyDao {
      * 
      * @param vocabulary Vocabulary
      * @return New ID
-     * @throws Exception
      */
     public String create(Vocabulary vocabulary) {
         // Create the UUID

@@ -1,5 +1,6 @@
 package com.sismics.docs.core.dao.criteria;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,13 +50,13 @@ public class DocumentCriteria {
      * Tag IDs.
      * The first level list will be AND'ed and the second level list will be OR'ed.
      */
-    private List<List<String>> tagIdList;
+    private List<List<String>> tagIdList = new ArrayList<>();
     
     /**
      * Tag IDs to exclude.
      * The first and second level list will be excluded.
      */
-    private List<List<String>> excludedTagIdList;
+    private List<List<String>> excludedTagIdList = new ArrayList<>();
 
     /**
      * Shared status.
@@ -131,17 +132,8 @@ public class DocumentCriteria {
         return tagIdList;
     }
 
-    public void setTagIdList(List<List<String>> tagIdList) {
-        this.tagIdList = tagIdList;
-    }
-
     public List<List<String>> getExcludedTagIdList() {
         return excludedTagIdList;
-    }
-
-    public DocumentCriteria setExcludedTagIdList(List<List<String>> excludedTagIdList) {
-        this.excludedTagIdList = excludedTagIdList;
-        return this;
     }
 
     public Boolean getShared() {
@@ -167,11 +159,7 @@ public class DocumentCriteria {
     public void setCreatorId(String creatorId) {
         this.creatorId = creatorId;
     }
-
-    public Boolean getActiveRoute() {
-        return activeRoute;
-    }
-
+ 
     public Date getUpdateDateMin() {
         return updateDateMin;
     }
@@ -186,6 +174,10 @@ public class DocumentCriteria {
 
     public void setUpdateDateMax(Date updateDateMax) {
         this.updateDateMax = updateDateMax;
+    }
+
+    public Boolean getActiveRoute() {
+        return activeRoute;
     }
 
     public void setActiveRoute(Boolean activeRoute) {
