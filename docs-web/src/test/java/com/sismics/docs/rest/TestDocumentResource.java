@@ -400,7 +400,13 @@ public class TestDocumentResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
                 .delete(JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
-        
+
+        // Deletes a non-existing document
+        response = target().path("/document/69b79238-84bb-4263-a32f-9cbdf8c92188").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, document1Token)
+                .delete();
+        Assert.assertEquals(Status.NOT_FOUND, Status.fromStatusCode(response.getStatus()));
+
         // Check that the associated files are deleted from FS
         java.io.File storedFile = DirectoryUtil.getStorageDirectory().resolve(file1Id).toFile();
         java.io.File webFile = DirectoryUtil.getStorageDirectory().resolve(file1Id + "_web").toFile();
