@@ -85,7 +85,7 @@ public class InboxService extends AbstractScheduledService {
             lastSyncDate = new Date();
             lastSyncMessageCount = 0;
             try {
-                HashMap<String, String> tagsNameToId = getAllTags();
+                Map<String, String> tagsNameToId = getAllTags();
 
                 inbox = openInbox();
                 Message[] messages = inbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
@@ -192,7 +192,7 @@ public class InboxService extends AbstractScheduledService {
      * @param message Message
      * @throws Exception e
      */
-    private void importMessage(Message message, HashMap<String, String> tags) throws Exception {
+    private void importMessage(Message message, Map<String, String> tags) throws Exception {
         log.info("Importing message: " + message.getSubject());
 
         // Parse the mail
@@ -273,16 +273,16 @@ public class InboxService extends AbstractScheduledService {
     /**
      * Fetches a HashMap with all tag names as keys and their respective ids as values.
      *
-     * @return HashMap with all tags or null if not enabled
+     * @return Map with all tags or null if not enabled
      */
-    private HashMap<String, String> getAllTags() {
+    private Map<String, String> getAllTags() {
         if (!ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_AUTOMATIC_TAGS)) {
             return null;
         }
         TagDao tagDao = new TagDao();
         List<TagDto> tags = tagDao.findByCriteria(new TagCriteria().setTargetIdList(null), new SortCriteria(1, true));
 
-        HashMap<String, String> tagsNameToId = new HashMap<>();
+        Map<String, String> tagsNameToId = new HashMap<>();
         for (TagDto tagDto : tags) {
             tagsNameToId.put(tagDto.getName(), tagDto.getId());
         }

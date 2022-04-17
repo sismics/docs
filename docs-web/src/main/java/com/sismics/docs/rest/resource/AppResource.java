@@ -396,6 +396,8 @@ public class AppResource extends BaseResource {
      * @apiName PostAppConfigInbox
      * @apiGroup App
      * @apiParam {Boolean} enabled True if the inbox scanning is enabled
+     * @apiParam {Boolean} autoTagsEnabled If true automatically add tags to document (prefixed by #)
+     * @apiParam {Boolean} deleteImported If true delete message from mailbox after import
      * @apiParam {String} hostname IMAP hostname
      * @apiParam {Integer} port IMAP port
      * @apiParam {String} username IMAP username
@@ -432,6 +434,8 @@ public class AppResource extends BaseResource {
         }
         checkBaseFunction(BaseFunction.ADMIN);
         ValidationUtil.validateRequired(enabled, "enabled");
+        ValidationUtil.validateRequired(autoTagsEnabled, "autoTagsEnabled");
+        ValidationUtil.validateRequired(deleteImported, "deleteImported");
         if (!Strings.isNullOrEmpty(portStr)) {
             ValidationUtil.validateInteger(portStr, "port");
         }
