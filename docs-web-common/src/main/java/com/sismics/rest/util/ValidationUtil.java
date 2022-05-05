@@ -21,6 +21,8 @@ public class ValidationUtil {
     
     private static Pattern ALPHANUMERIC_PATTERN = Pattern.compile("[a-zA-Z0-9_]+");
     
+    private static Pattern USERNAME_PATTERN = Pattern.compile("[a-zA-Z0-9_@\\.]+");
+    
     /**
      * Checks that the argument is not null.
      * 
@@ -149,6 +151,12 @@ public class ValidationUtil {
     public static void validateAlphanumeric(String s, String name) throws ClientException {
         if (!ALPHANUMERIC_PATTERN.matcher(s).matches()) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} must have only alphanumeric or underscore characters", name));
+        }
+    }
+    
+    public static void validateUsernamepattern(String s, String name) throws ClientException {
+        if (!USERNAME_PATTERN.matcher(s).matches()) {
+            throw new ClientException("ValidationError", MessageFormat.format("{0} must have only alphanumeric, underscore characters or @ and .", name));
         }
     }
     
