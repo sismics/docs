@@ -88,7 +88,7 @@ public class UserResource extends BaseResource {
         
         // Validate the input data
         username = ValidationUtil.validateLength(username, "username", 3, 50);
-        ValidationUtil.validateAlphanumeric(username, "username");
+        ValidationUtil.validateUsernamepattern(username, "username");
         password = ValidationUtil.validateLength(password, "password", 8, 50);
         email = ValidationUtil.validateLength(email, "email", 1, 100);
         Long storageQuota = ValidationUtil.validateLong(storageQuotaStr, "storage_quota");
@@ -195,7 +195,7 @@ public class UserResource extends BaseResource {
      * @return Response
      */
     @POST
-    @Path("{username: [a-zA-Z0-9_]+}")
+    @Path("{username: [a-zA-Z0-9_@\\.]+}")
     public Response update(
         @PathParam("username") String username,
         @FormParam("password") String password,
@@ -511,7 +511,7 @@ public class UserResource extends BaseResource {
      * @return Response
      */
     @DELETE
-    @Path("{username: [a-zA-Z0-9_]+}")
+    @Path("{username: [a-zA-Z0-9_@\\.]+}")
     public Response delete(@PathParam("username") String username) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -591,7 +591,7 @@ public class UserResource extends BaseResource {
      * @return Response
      */
     @POST
-    @Path("{username: [a-zA-Z0-9_]+}/disable_totp")
+    @Path("{username: [a-zA-Z0-9_@\\.]+}/disable_totp")
     public Response disableTotpUsername(@PathParam("username") String username) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -713,7 +713,7 @@ public class UserResource extends BaseResource {
      * @return Response
      */
     @GET
-    @Path("{username: [a-zA-Z0-9_]+}")
+    @Path("{username: [a-zA-Z0-9_@\\.]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response view(@PathParam("username") String username) {
         if (!authenticate()) {

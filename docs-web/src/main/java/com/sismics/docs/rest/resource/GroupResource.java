@@ -313,7 +313,7 @@ public class GroupResource extends BaseResource {
      * @return Response
      */
     @DELETE
-    @Path("{groupName: [a-zA-Z0-9_]+}/{username: [a-zA-Z0-9_]+}")
+    @Path("{groupName: [a-zA-Z0-9_]+}/{username: [a-zA-Z0-9_@\\.]+}")
     public Response removeMember(@PathParam("groupName") String groupName,
             @PathParam("username") String username) {
         if (!authenticate()) {
