@@ -154,7 +154,7 @@ public class ValidationUtil {
         }
     }
     
-    public static void validateUsernamepattern(String s, String name) throws ClientException {
+    public static void validateUsername(String s, String name) throws ClientException {
         if (!USERNAME_PATTERN.matcher(s).matches()) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} must have only alphanumeric, underscore characters or @ and .", name));
         }

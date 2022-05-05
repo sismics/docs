@@ -88,7 +88,7 @@ public class UserResource extends BaseResource {
         
         // Validate the input data
         username = ValidationUtil.validateLength(username, "username", 3, 50);
-        ValidationUtil.validateUsernamepattern(username, "username");
+        ValidationUtil.validateUsername(username, "username");
         password = ValidationUtil.validateLength(password, "password", 8, 50);
         email = ValidationUtil.validateLength(email, "email", 1, 100);
         Long storageQuota = ValidationUtil.validateLong(storageQuotaStr, "storage_quota");
