@@ -4,8 +4,6 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.Resources;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
-import com.sismics.util.mime.MimeType;
-import com.sismics.util.mime.MimeTypeUtil;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
@@ -472,7 +470,6 @@ public class TestDocumentResource extends BaseJerseyTest {
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
-        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
 
         // Export a document in PDF format
         response = target().path("/document/" + document1Id + "/pdf")
@@ -523,7 +520,6 @@ public class TestDocumentResource extends BaseJerseyTest {
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
-        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
 
         // Export a document in PDF format
         response = target().path("/document/" + document1Id + "/pdf")
@@ -574,7 +570,6 @@ public class TestDocumentResource extends BaseJerseyTest {
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
-        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
 
         // Export a document in PDF format
         response = target().path("/document/" + document1Id + "/pdf")
@@ -625,7 +620,6 @@ public class TestDocumentResource extends BaseJerseyTest {
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
-        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
 
         // Get the content data
         response = target().path("/file/" + file1Id + "/data")
@@ -686,7 +680,6 @@ public class TestDocumentResource extends BaseJerseyTest {
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
-        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
 
         // Export a document in PDF format
         response = target().path("/document/" + document1Id + "/pdf")
@@ -737,7 +730,6 @@ public class TestDocumentResource extends BaseJerseyTest {
         InputStream is = (InputStream) response.getEntity();
         byte[] fileBytes = ByteStreams.toByteArray(is);
         Assert.assertTrue(fileBytes.length > 0); // Images rendered from PDF differ in size from OS to OS due to font issues
-        Assert.assertEquals(MimeType.IMAGE_JPEG, MimeTypeUtil.guessMimeType(fileBytes, null));
 
         // Export a document in PDF format
         response = target().path("/document/" + document1Id + "/pdf")
