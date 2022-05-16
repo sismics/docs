@@ -113,10 +113,12 @@ public class FileResource extends BaseResource {
         }
         
         // Keep unencrypted data temporary on disk
+        String name = fileBodyPart.getContentDisposition() != null ?
+                URLDecoder.decode(fileBodyPart.getContentDisposition().getFileName(), StandardCharsets.UTF_8) : null;
         java.nio.file.Path unencryptedFile;
         long fileSize;
         try {
-            unencryptedFile = AppContext.getInstance().getFileService().createTemporaryFile();
+            unencryptedFile = AppContext.getInstance().getFileService().createTemporaryFile(name);
             Files.copy(fileBodyPart.getValueAs(InputStream.class), unencryptedFile, StandardCopyOption.REPLACE_EXISTING);
             fileSize = Files.size(unencryptedFile);
         } catch (IOException e) {
@@ -124,8 +126,6 @@ public class FileResource extends BaseResource {
         }
 
         try {
-            String name = fileBodyPart.getContentDisposition() != null ?
-                    URLDecoder.decode(fileBodyPart.getContentDisposition().getFileName(), StandardCharsets.UTF_8) : null;
             String fileId = FileUtil.createFile(name, previousFileId, unencryptedFile, fileSize, documentDto == null ?
                     null : documentDto.getLanguage(), principal.getId(), documentId);
 

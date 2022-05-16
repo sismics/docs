@@ -69,13 +69,18 @@ public class FileService extends AbstractScheduledService {
         return Scheduler.newFixedDelaySchedule(0, 5, TimeUnit.SECONDS);
     }
 
+    public Path createTemporaryFile() throws IOException {
+        return createTemporaryFile(null);
+    }
+
     /**
      * Create a temporary file.
      *
+     * @param name Wanted file name
      * @return New temporary file
      */
-    public Path createTemporaryFile() throws IOException {
-        Path path = Files.createTempFile("sismics_docs", null);
+    public Path createTemporaryFile(String name) throws IOException {
+        Path path = Files.createTempFile("sismics_docs", name);
         referenceSet.add(new TemporaryPathReference(path, referenceQueue));
         return path;
     }
