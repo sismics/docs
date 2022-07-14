@@ -12,9 +12,9 @@
     "login_failed_message": "Username or password invalid",
     "password_lost_btn": "Password lost?",
     "password_lost_sent_title": "Password reset email sent",
-    "password_lost_sent_message": "An email has been sent to <strong>{{ username }}</strong> to reset your password",
-    "password_lost_error_title": "Password reset error",
-    "password_lost_error_message": "Unable to send a password reset email, please contact your administrator for a manual reset"
+    "password_lost_sent_message": "If your username is registered with us, you will receive an email shortly with a reset link",
+    "password_lost_error_title": "Password reset email sent",
+    "password_lost_error_message": "If your username is registered with us, you will receive an email shortly with a reset link"
   },
   "passwordlost": {
     "title": "Password lost",
