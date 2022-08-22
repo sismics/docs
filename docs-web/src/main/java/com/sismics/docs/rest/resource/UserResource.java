@@ -1076,31 +1076,35 @@ public class UserResource extends BaseResource {
     @Path("password_lost")
     @Produces(MediaType.APPLICATION_JSON)
     public Response passwordLost(@FormParam("username") String username) {
-        authenticate();
+        try {
+            authenticate();
 
-        // Validate input data
-        ValidationUtil.validateStringNotBlank("username", username);
+            // Validate input data
+            ValidationUtil.validateStringNotBlank("username", username);
 
-        // Check for user existence
-        UserDao userDao = new UserDao();
-        List<UserDto> userDtoList = userDao.findByCriteria(new UserCriteria().setUserName(username), null);
-        if (userDtoList.isEmpty()) {
-            throw new ClientException("UserNotFound", "User not found: " + username);
+            // Check for user existence
+            UserDao userDao = new UserDao();
+            List<UserDto> userDtoList = userDao.findByCriteria(new UserCriteria().setUserName(username), null);
+            if (userDtoList.isEmpty()) {
+                throw new ClientException("UserNotFound", "User not found: " + username);
+            }
+            UserDto user = userDtoList.get(0);
+
+            // Create the password recovery key
+            PasswordRecoveryDao passwordRecoveryDao = new PasswordRecoveryDao();
+            PasswordRecovery passwordRecovery = new PasswordRecovery();
+            passwordRecovery.setUsername(user.getUsername());
+            passwordRecoveryDao.create(passwordRecovery);
+
+            // Fire a password lost event
+            PasswordLostEvent passwordLostEvent = new PasswordLostEvent();
+            passwordLostEvent.setUser(user);
+            passwordLostEvent.setPasswordRecovery(passwordRecovery);
+            AppContext.getInstance().getMailEventBus().post(passwordLostEvent);
+
+        } catch (ClientException clientException) {
+            //Prevent propagating exception to rest. Already logged in exception.
         }
-        UserDto user = userDtoList.get(0);
-
-        // Create the password recovery key
-        PasswordRecoveryDao passwordRecoveryDao = new PasswordRecoveryDao();
-        PasswordRecovery passwordRecovery = new PasswordRecovery();
-        passwordRecovery.setUsername(user.getUsername());
-        passwordRecoveryDao.create(passwordRecovery);
-
-        // Fire a password lost event
-        PasswordLostEvent passwordLostEvent = new PasswordLostEvent();
-        passwordLostEvent.setUser(user);
-        passwordLostEvent.setPasswordRecovery(passwordRecovery);
-        AppContext.getInstance().getMailEventBus().post(passwordLostEvent);
-
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
