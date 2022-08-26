@@ -1081,11 +1081,16 @@ public class UserResource extends BaseResource {
         // Validate input data
         ValidationUtil.validateStringNotBlank("username", username);
 
+        // Prepare response
+        Response response = Response.ok().entity(Json.createObjectBuilder()
+                .add("status", "ok")
+                .build()).build();
+
         // Check for user existence
         UserDao userDao = new UserDao();
         List<UserDto> userDtoList = userDao.findByCriteria(new UserCriteria().setUserName(username), null);
         if (userDtoList.isEmpty()) {
-            throw new ClientException("UserNotFound", "User not found: " + username);
+            return response;
         }
         UserDto user = userDtoList.get(0);
 
@@ -1102,9 +1107,7 @@ public class UserResource extends BaseResource {
         AppContext.getInstance().getMailEventBus().post(passwordLostEvent);
 
         // Always return OK
-        JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("status", "ok");
-        return Response.ok().entity(response.build()).build();
+        return response;
     }
 
     /**

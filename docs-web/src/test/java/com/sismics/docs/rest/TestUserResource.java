@@ -439,13 +439,11 @@ public class TestUserResource extends BaseJerseyTest {
         // Create absent_minded who lost his password
         clientUtil.createUser("absent_minded");
 
-        // User no_such_user try to recovery its password: invalid user
-        Response response = target().path("/user/password_lost").request()
+        // User no_such_user try to recovery its password: silently do nothing to avoid leaking users
+        JsonObject json = target().path("/user/password_lost").request()
                 .post(Entity.form(new Form()
-                        .param("username", "no_such_user")));
-        Assert.assertEquals(Response.Status.BAD_REQUEST, Response.Status.fromStatusCode(response.getStatus()));
-        JsonObject json = response.readEntity(JsonObject.class);
-        Assert.assertEquals("UserNotFound", json.getString("type"));
+                        .param("username", "no_such_user")), JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
 
         // User absent_minded try to recovery its password: OK
         json = target().path("/user/password_lost").request()
@@ -461,7 +459,7 @@ public class TestUserResource extends BaseJerseyTest {
         String key = keyMatcher.group(1).replaceAll("=", "");
 
         // User absent_minded resets its password: invalid key
-        response = target().path("/user/password_reset").request()
+        Response response = target().path("/user/password_reset").request()
                 .post(Entity.form(new Form()
                         .param("key", "no_such_key")
                         .param("password", "87654321")));
