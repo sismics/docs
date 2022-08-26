@@ -1064,7 +1064,6 @@ public class UserResource extends BaseResource {
      * @apiGroup User
      * @apiParam {String} username Username
      * @apiSuccess {String} status Status OK
-     * @apiError (client) UserNotFound The user is not found
      * @apiError (client) ValidationError Validation error
      * @apiPermission none
      * @apiVersion 1.5.0
