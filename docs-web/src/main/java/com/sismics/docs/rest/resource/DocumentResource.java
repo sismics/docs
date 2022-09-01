@@ -59,6 +59,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Document REST resources.
@@ -1110,7 +1111,13 @@ public class DocumentResource extends BaseResource {
      * @param tagList Tag ID list
      */
     private void updateTagList(String documentId, List<String> tagList) {
+        List<String> filtered = Collections.emptyList();
         if (tagList != null) {
+            filtered = tagList.stream()
+                    .filter(s -> s != null && !s.isBlank())
+                    .collect(Collectors.toList());
+        }
+        if (filtered.size() > 0) {
             TagDao tagDao = new TagDao();
             Set<String> tagSet = new HashSet<>();
             Set<String> tagIdSet = new HashSet<>();
