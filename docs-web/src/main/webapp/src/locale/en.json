@@ -25,7 +25,7 @@
     "message": "Please enter a new password",
     "submit": "Change my password",
     "error_title": "Error changing your password",
-    "error_message": "Your password recovery request is expired, please ask a new one on the login page"
+    "error_message": "Your password recovery request is expired, please ask for a new one on the login page"
   },
   "index": {
     "toggle_navigation": "Toggle navigation",
@@ -360,7 +360,7 @@
       "message_2": "Those applications automatically generate a validation code that changes after a certain period of time.<br/>You will be required to enter this validation code each time you login on <strong>{{ appName }}</strong>.",
       "secret_key": "Your secret key is: <strong>{{ secret }}</strong>",
       "secret_key_warning": "Configure your TOTP app on your phone with this secret key now, you will not be able to access it later.",
-      "totp_enabled_message": "Two-factor authentication is enabled on your account.<br/>Each time you login on <strong>{{ appName }}</strong>, you will be asked a validation code from your configured phone app.<br/>If you lose your phone, you will not be able to login into your account but active sessions will allow you to regenerate a secrey key.",
+      "totp_enabled_message": "Two-factor authentication is enabled on your account.<br/>Each time you login on <strong>{{ appName }}</strong>, you will be asked for a validation code from your configured phone app.<br/>If you lose your phone, you will not be able to login into your account but active sessions will allow you to regenerate a secrey key.",
       "disable_totp": {
         "disable_totp": "Disable two-factor authentication",
         "message": "Your account will not be protected by the two-factor authentication anymore.",
@@ -509,7 +509,7 @@
     "error_general": "An error occurred while trying to import your file, please make sure it is a valid EML file"
   },
   "app_share": {
-    "main": "Ask a shared document link to access it",
+    "main": "Ask for a shared document link to access it",
     "403": {
       "title": "Not authorized",
       "message": "The document you are trying to view is not shared anymore"
