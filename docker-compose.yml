@@ -1,0 +1,18 @@
+version: '3'
+services:
+# Teedy Application
+  teedy-server:
+    image: sismics/docs:v1.10
+    restart: unless-stopped
+    ports:
+      # Map internal port to host
+      - 8080:8080
+    environment:
+      # Base url to be used
+      DOCS_BASE_URL: "https://docs.example.com"
+      # Set the admin email
+      DOCS_ADMIN_EMAIL_INIT: "admin@example.com"
+      # Set the admin password (in this example: "superSecure")
+      DOCS_ADMIN_PASSWORD_INIT: "$$2a$$05$$PcMNUbJvsk7QHFSfEIDaIOjk1VI9/E7IPjTKx.jkjPxkx2EOKSoPS"
+    volumes:
+      - ./docs/data:/data
