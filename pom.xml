@@ -52,16 +52,16 @@
     <com.squareup.okhttp3.okhttp.version>4.9.0</com.squareup.okhttp3.okhttp.version>
     <org.apache.directory.api.api-all.version>2.0.1</org.apache.directory.api.api-all.version>
 
-    <org.eclipse.jetty.jetty-server.version>9.4.36.v20210114</org.eclipse.jetty.jetty-server.version>
-    <org.eclipse.jetty.jetty-webapp.version>9.4.36.v20210114</org.eclipse.jetty.jetty-webapp.version>
-    <org.eclipse.jetty.jetty-servlet.version>9.4.36.v20210114</org.eclipse.jetty.jetty-servlet.version>
+    <org.eclipse.jetty.jetty-server.version>9.4.51.v20230217</org.eclipse.jetty.jetty-server.version>
+    <org.eclipse.jetty.jetty-webapp.version>9.4.51.v20230217</org.eclipse.jetty.jetty-webapp.version>
+    <org.eclipse.jetty.jetty-servlet.version>9.4.51.v20230217</org.eclipse.jetty.jetty-servlet.version>
     
     <!-- Plugins version -->
     <org.apache.maven.plugins.maven-antrun-plugin.version>3.0.0</org.apache.maven.plugins.maven-antrun-plugin.version>
     <org.apache.maven.plugins.maven-jar-plugin.version>3.2.0</org.apache.maven.plugins.maven-jar-plugin.version>
     <org.apache.maven.plugins.maven-war-plugin.version>3.3.1</org.apache.maven.plugins.maven-war-plugin.version>
     <org.apache.maven.plugins.maven-surefire-plugin.version>3.0.0-M5</org.apache.maven.plugins.maven-surefire-plugin.version>
-    <org.eclipse.jetty.jetty-maven-plugin.version>9.4.36.v20210114</org.eclipse.jetty.jetty-maven-plugin.version>
+    <org.eclipse.jetty.jetty-maven-plugin.version>9.4.51.v20230217</org.eclipse.jetty.jetty-maven-plugin.version>
   </properties>
   
   <scm>
