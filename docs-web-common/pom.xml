@@ -34,8 +34,8 @@
       
     <!-- Other external dependencies -->
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
     </dependency>
     
     <dependency>
@@ -54,16 +54,11 @@
     </dependency>
   
     <dependency>
-      <groupId>commons-dbcp</groupId>
-      <artifactId>commons-dbcp</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-  
+
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>

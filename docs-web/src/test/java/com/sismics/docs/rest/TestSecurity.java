@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response.Status;
 import com.sismics.util.filter.HeaderBasedSecurityFilter;
 import org.junit.Assert;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import com.sismics.util.filter.TokenBasedSecurityFilter;

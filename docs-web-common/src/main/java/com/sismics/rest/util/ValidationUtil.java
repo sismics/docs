@@ -2,7 +2,7 @@ package com.sismics.rest.util;
 
 import com.google.common.base.Strings;
 import com.sismics.rest.exception.ClientException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
 import java.text.MessageFormat;
