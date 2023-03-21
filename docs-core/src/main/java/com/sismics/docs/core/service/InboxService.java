@@ -18,7 +18,7 @@ import com.sismics.docs.core.util.TransactionUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.EmailUtil;
 import com.sismics.util.context.ThreadLocalContext;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

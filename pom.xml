@@ -16,51 +16,49 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Dependencies version (external) -->
-    <org.apache.commons.commons-compress.version>1.18</org.apache.commons.commons-compress.version>
-    <commons-lang.commons-lang.version>2.6</commons-lang.commons-lang.version>
-    <commons-io.commons-io.version>2.6</commons-io.commons-io.version>
+    <org.apache.commons.commons-compress.version>1.22</org.apache.commons.commons-compress.version>
+    <org.apache.commons.commons-lang3.version>3.12.0</org.apache.commons.commons-lang3.version>
+    <commons-io.commons-io.version>2.11.0</commons-io.commons-io.version>
     <org.apache.commons.commons-email.version>1.5</org.apache.commons.commons-email.version>
-    <org.freemarker.freemarker.version>2.3.30</org.freemarker.freemarker.version>
-    <commons-dbcp.version>1.4</commons-dbcp.version>
-    <com.google.guava.guava.version>30.1-jre</com.google.guava.guava.version>
+    <org.freemarker.freemarker.version>2.3.32</org.freemarker.freemarker.version>
+    <com.google.guava.guava.version>31.1-jre</com.google.guava.guava.version>
     <log4j.log4j.version>1.2.17</log4j.log4j.version>
     <org.slf4j.version>1.7.30</org.slf4j.version>
     <org.slf4j.jcl-over-slf4j.version>1.7.30</org.slf4j.jcl-over-slf4j.version>
     <org.slf4j.jul-to-slf4j.version>1.7.30</org.slf4j.jul-to-slf4j.version>
-    <junit.junit.version>4.13.1</junit.junit.version>
-    <com.h2database.h2.version>1.4.199</com.h2database.h2.version>
-    <org.glassfish.jersey.version>2.33</org.glassfish.jersey.version>
+    <junit.junit.version>4.13.2</junit.junit.version>
+    <com.h2database.h2.version>1.4.200</com.h2database.h2.version>
+    <org.glassfish.jersey.version>2.39</org.glassfish.jersey.version>
     <org.glassfish.javax.json.version>1.1.4</org.glassfish.javax.json.version>
-    <at.favre.lib.bcrypt.version>0.9.0</at.favre.lib.bcrypt.version>
+    <at.favre.lib.bcrypt.version>0.10.2</at.favre.lib.bcrypt.version>
     <org.apache.lucene.version>8.7.0</org.apache.lucene.version>
     <org.imgscalr.imgscalr-lib.version>4.2</org.imgscalr.imgscalr-lib.version>
-    <org.apache.pdfbox.pdfbox.version>2.0.22</org.apache.pdfbox.pdfbox.version>
-    <org.bouncycastle.bcprov-jdk15on.version>1.68</org.bouncycastle.bcprov-jdk15on.version>
-    <joda-time.joda-time.version>2.10.9</joda-time.joda-time.version>
-    <org.hibernate.hibernate.version>5.4.27.Final</org.hibernate.hibernate.version>
-    <javax.servlet.javax.servlet-api.version>4.0.1</javax.servlet.javax.servlet-api.version>
-    <fr.opensagres.xdocreport.version>2.0.2</fr.opensagres.xdocreport.version>
-    <net.java.dev.jna.jna.version>5.6.0</net.java.dev.jna.jna.version>
-    <com.twelvemonkeys.imageio.version>3.6.2</com.twelvemonkeys.imageio.version>
+    <org.apache.pdfbox.pdfbox.version>2.0.27</org.apache.pdfbox.pdfbox.version>
+    <org.bouncycastle.bcprov-jdk15on.version>1.70</org.bouncycastle.bcprov-jdk15on.version>
+    <joda-time.joda-time.version>2.12.2</joda-time.joda-time.version>
+    <org.hibernate.hibernate.version>5.6.15.Final</org.hibernate.hibernate.version>
+    <javax.servlet.javax.servlet-api.version>3.1.0</javax.servlet.javax.servlet-api.version>
+    <fr.opensagres.xdocreport.version>2.0.4</fr.opensagres.xdocreport.version>
+    <net.java.dev.jna.jna.version>5.13.0</net.java.dev.jna.jna.version>
+    <com.twelvemonkeys.imageio.version>3.9.4</com.twelvemonkeys.imageio.version>
     <com.levigo.jbig2.levigo-jbig2-imageio.version>2.0</com.levigo.jbig2.levigo-jbig2-imageio.version>
     <com.github.jai-imageio.jai-imageio-jpeg2000.version>1.4.0</com.github.jai-imageio.jai-imageio-jpeg2000.version>
-    <org.postgresql.postgresql.version>42.2.18</org.postgresql.postgresql.version>
+    <org.postgresql.postgresql.version>42.6.0</org.postgresql.postgresql.version>
     <org.subethamail.subethasmtp-wiser.version>1.2</org.subethamail.subethasmtp-wiser.version>
-    <com.icegreen.greenmail.version>1.5.8</com.icegreen.greenmail.version>
-    <com.sun.mail.javax.mail.version>1.6.2</com.sun.mail.javax.mail.version>
-    <org.jsoup.jsoup.version>1.13.1</org.jsoup.jsoup.version>
-    <com.squareup.okhttp3.okhttp.version>4.9.0</com.squareup.okhttp3.okhttp.version>
-    <org.apache.directory.api.api-all.version>2.0.1</org.apache.directory.api.api-all.version>
+    <com.icegreen.greenmail.version>1.6.14</com.icegreen.greenmail.version>
+    <org.jsoup.jsoup.version>1.15.4</org.jsoup.jsoup.version>
+    <com.squareup.okhttp3.okhttp.version>4.10.0</com.squareup.okhttp3.okhttp.version>
+    <org.apache.directory.api.api-all.version>2.1.2</org.apache.directory.api.api-all.version>
 
     <org.eclipse.jetty.jetty-server.version>9.4.51.v20230217</org.eclipse.jetty.jetty-server.version>
     <org.eclipse.jetty.jetty-webapp.version>9.4.51.v20230217</org.eclipse.jetty.jetty-webapp.version>
     <org.eclipse.jetty.jetty-servlet.version>9.4.51.v20230217</org.eclipse.jetty.jetty-servlet.version>
     
     <!-- Plugins version -->
-    <org.apache.maven.plugins.maven-antrun-plugin.version>3.0.0</org.apache.maven.plugins.maven-antrun-plugin.version>
-    <org.apache.maven.plugins.maven-jar-plugin.version>3.2.0</org.apache.maven.plugins.maven-jar-plugin.version>
-    <org.apache.maven.plugins.maven-war-plugin.version>3.3.1</org.apache.maven.plugins.maven-war-plugin.version>
-    <org.apache.maven.plugins.maven-surefire-plugin.version>3.0.0-M5</org.apache.maven.plugins.maven-surefire-plugin.version>
+    <org.apache.maven.plugins.maven-antrun-plugin.version>3.1.0</org.apache.maven.plugins.maven-antrun-plugin.version>
+    <org.apache.maven.plugins.maven-jar-plugin.version>3.3.0</org.apache.maven.plugins.maven-jar-plugin.version>
+    <org.apache.maven.plugins.maven-war-plugin.version>3.3.2</org.apache.maven.plugins.maven-war-plugin.version>
+    <org.apache.maven.plugins.maven-surefire-plugin.version>3.0.0</org.apache.maven.plugins.maven-surefire-plugin.version>
     <org.eclipse.jetty.jetty-maven-plugin.version>9.4.51.v20230217</org.eclipse.jetty.jetty-maven-plugin.version>
   </properties>
   
@@ -176,7 +174,7 @@
         <artifactId>javax.servlet-api</artifactId>
         <version>${javax.servlet.javax.servlet-api.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
@@ -184,9 +182,9 @@
       </dependency>
             
       <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.commons-lang.version}</version>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${org.apache.commons.commons-lang3.version}</version>
       </dependency>
 
       <dependency>
@@ -347,12 +345,6 @@
       </dependency>
       
       <dependency>
-        <groupId>commons-dbcp</groupId>
-        <artifactId>commons-dbcp</artifactId>
-        <version>${commons-dbcp.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.freemarker</groupId>
         <artifactId>freemarker</artifactId>
         <version>${org.freemarker.freemarker.version}</version>
@@ -446,12 +438,6 @@
         <groupId>com.icegreen</groupId>
         <artifactId>greenmail</artifactId>
         <version>${com.icegreen.greenmail.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.sun.mail</groupId>
-        <artifactId>javax.mail</artifactId>
-        <version>${com.sun.mail.javax.mail.version}</version>
       </dependency>
 
       <dependency>
