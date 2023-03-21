@@ -754,6 +754,7 @@ public class AppResource extends BaseResource {
             response.add("enabled", true)
                     .add("host", ConfigUtil.getConfigStringValue(ConfigType.LDAP_HOST))
                     .add("port", ConfigUtil.getConfigIntegerValue(ConfigType.LDAP_PORT))
+                    .add("usessl", ConfigUtil.getConfigBooleanValue(ConfigType.LDAP_USESSL))
                     .add("admin_dn", ConfigUtil.getConfigStringValue(ConfigType.LDAP_ADMIN_DN))
                     .add("admin_password", ConfigUtil.getConfigStringValue(ConfigType.LDAP_ADMIN_PASSWORD))
                     .add("base_dn", ConfigUtil.getConfigStringValue(ConfigType.LDAP_BASE_DN))
@@ -777,6 +778,7 @@ public class AppResource extends BaseResource {
      * @apiParam {Boolean} enabled LDAP authentication enabled
      * @apiParam {String} host LDAP server host
      * @apiParam {Integer} port LDAP server port
+     * @apiParam {Boolean} use SSL (ldaps)
      * @apiParam {String} admin_dn Admin DN
      * @apiParam {String} admin_password Admin password
      * @apiParam {String} base_dn Base DN
@@ -791,6 +793,7 @@ public class AppResource extends BaseResource {
      * @param enabled LDAP authentication enabled
      * @param host LDAP server host
      * @param portStr LDAP server port
+     * @param usessl LDAP use SSL (ldaps)
      * @param adminDn Admin DN
      * @param adminPassword Admin password
      * @param baseDn Base DN
@@ -804,6 +807,7 @@ public class AppResource extends BaseResource {
     public Response configLdap(@FormParam("enabled") Boolean enabled,
                                @FormParam("host") String host,
                                @FormParam("port") String portStr,
+                               @FormParam("usessl") Boolean usessl,
                                @FormParam("admin_dn") String adminDn,
                                @FormParam("admin_password") String adminPassword,
                                @FormParam("base_dn") String baseDn,
@@ -833,6 +837,7 @@ public class AppResource extends BaseResource {
             configDao.update(ConfigType.LDAP_ENABLED, Boolean.TRUE.toString());
             configDao.update(ConfigType.LDAP_HOST, host);
             configDao.update(ConfigType.LDAP_PORT, portStr);
+            configDao.update(ConfigType.LDAP_USESSL, usessl.toString());
             configDao.update(ConfigType.LDAP_ADMIN_DN, adminDn);
             configDao.update(ConfigType.LDAP_ADMIN_PASSWORD, adminPassword);
             configDao.update(ConfigType.LDAP_BASE_DN, baseDn);

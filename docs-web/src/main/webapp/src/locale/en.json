@@ -286,6 +286,7 @@
       "enabled": "Enable LDAP authentication",
       "host": "LDAP hostname",
       "port": "LDAP port (389 by default)",
+      "usessl": "Enable SSL (ldaps)",
       "admin_dn": "Admin DN",
       "admin_password": "Admin password",
       "base_dn": "Base search DN",

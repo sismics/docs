@@ -278,8 +278,23 @@
     "menu_vocabularies": "Vokabulareinträge",
     "menu_configuration": "Einstellungen",
     "menu_inbox": "Posteingang durchsuchen",
+    "menu_ldap": "LDAP Authentifizierung",
     "menu_metadata": "Benutzerdefinierte Metadaten",
     "menu_monitoring": "Überwachung",
+    "ldap": {
+      "title": "LDAP Authentifizierung",
+      "enabled": "LDAP Authentifizierung aktivieren",
+      "host": "LDAP Hostname",
+      "port": "LDAP Port (standardmäßig 389)",
+      "usessl": "Aktiviere SSL (ldaps)",
+      "admin_dn": "Admin DN",
+      "admin_password": "Admin Passwort",
+      "base_dn": "Basis-Such-DN",
+      "filter": "Suchfilter (muss USERNAME enthalten, zum Beispiel \"(uid=USERNAME)\")",
+      "default_email": "Standard-E-Mail für LDAP-Benutzer",
+      "default_storage": "Standard Quota für LDAP-Benutzer",
+      "saved": "LDAP-Konfiguration erfolgreich gespeichert"
+    },
     "user": {
       "title": "Benutzerverwaltung",
       "add_user": "Benutzer hinzufügen",
