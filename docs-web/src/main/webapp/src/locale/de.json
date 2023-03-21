@@ -278,7 +278,7 @@
     "menu_vocabularies": "Vokabulareinträge",
     "menu_configuration": "Einstellungen",
     "menu_inbox": "Posteingang durchsuchen",
-	"menu_ldap": "LDAP Authentifizierung",
+    "menu_ldap": "LDAP Authentifizierung",
     "menu_metadata": "Benutzerdefinierte Metadaten",
     "menu_monitoring": "Überwachung",
     "ldap": {
