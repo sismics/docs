@@ -21,6 +21,13 @@
     </div>
   </div>
 
+  <div ng-if="ldap.enabled" class="form-group" ng-class="{ 'has-error': !form.usessl.$valid && form.$dirty }">
+    <label class="col-sm-2 control-label" for="ldapUseSsl">{{ 'settings.ldap.usessl' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="usessl" type="checkbox" id="ldapUseSsl" ng-model="ldap.usessl" />
+    </div>
+  </div>
+
   <div ng-if="ldap.enabled" class="form-group" ng-class="{ 'has-error': !form.adminDn.$valid && form.$dirty }">
     <label class="col-sm-2 control-label" for="ldapAdminDn">{{ 'settings.ldap.admin_dn' | translate }}</label>
     <div class="col-sm-7">
