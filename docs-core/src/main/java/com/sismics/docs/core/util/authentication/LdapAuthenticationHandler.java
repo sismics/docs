@@ -66,6 +66,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
         LdapConnectionConfig config = new LdapConnectionConfig();
         config.setLdapHost(ConfigUtil.getConfigStringValue(ConfigType.LDAP_HOST));
         config.setLdapPort(ConfigUtil.getConfigIntegerValue(ConfigType.LDAP_PORT));
+        config.setUseSsl(ConfigUtil.getConfigBooleanValue(ConfigType.LDAP_USESSL));
         config.setName(ConfigUtil.getConfigStringValue(ConfigType.LDAP_ADMIN_DN));
         config.setCredentials(ConfigUtil.getConfigStringValue(ConfigType.LDAP_ADMIN_PASSWORD));
 
