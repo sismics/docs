@@ -18,9 +18,9 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
 
-import javax.json.*;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
+import jakarta.json.*;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
 import java.io.StringReader;
 import java.util.List;
 

@@ -10,9 +10,9 @@ import com.sismics.docs.core.dao.dto.MetadataDto;
 import com.sismics.docs.core.model.jpa.DocumentMetadata;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;

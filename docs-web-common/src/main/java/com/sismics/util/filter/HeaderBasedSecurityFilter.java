@@ -4,8 +4,8 @@ import com.google.common.base.Strings;
 import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.model.jpa.User;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * A header-based security filter that authenticates an user using the "X-Authenticated-User" request header as the user ID.

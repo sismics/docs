@@ -4,8 +4,8 @@ import com.sismics.docs.core.dao.dto.RelationDto;
 import com.sismics.docs.core.model.jpa.Relation;
 import com.sismics.util.context.ThreadLocalContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.*;
 
 /**

@@ -1,6 +1,6 @@
 package com.sismics.docs.core.util.jpa;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 import java.util.List;
 
 /**

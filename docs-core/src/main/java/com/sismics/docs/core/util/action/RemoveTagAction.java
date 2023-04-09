@@ -6,7 +6,7 @@ import com.sismics.docs.core.dao.criteria.TagCriteria;
 import com.sismics.docs.core.dao.dto.DocumentDto;
 import com.sismics.docs.core.dao.dto.TagDto;
 
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 import java.util.List;
 import java.util.Set;
 

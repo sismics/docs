@@ -5,8 +5,8 @@ import com.sismics.util.jpa.EMF;
 import org.junit.After;
 import org.junit.Before;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 
 /**
  * Base class of tests with a transactional context.

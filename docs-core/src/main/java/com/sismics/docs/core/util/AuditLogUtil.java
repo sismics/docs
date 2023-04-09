@@ -6,7 +6,7 @@ import com.sismics.docs.core.model.jpa.AuditLog;
 import com.sismics.docs.core.model.jpa.Loggable;
 import com.sismics.util.context.ThreadLocalContext;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 /**
  * Audit log utilities.

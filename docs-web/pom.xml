@@ -6,7 +6,7 @@
     <groupId>com.sismics.docs</groupId>
     <artifactId>docs-parent</artifactId>
     <version>1.12-SNAPSHOT</version>
-    <relativePath>..</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   
   <modelVersion>4.0.0</modelVersion>
@@ -79,8 +79,9 @@
     </dependency>
     
     <dependency>
-      <groupId>com.twelvemonkeys.servlet</groupId>
-      <artifactId>servlet</artifactId>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     
     <!-- Test dependencies -->

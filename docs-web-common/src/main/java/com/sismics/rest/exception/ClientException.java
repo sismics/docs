@@ -1,12 +1,11 @@
 package com.sismics.rest.exception;
 
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.json.Json;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.json.Json;
 
 /**
  * Jersey exception encapsulating an error from the client (BAD_REQUEST).
@@ -43,7 +42,7 @@ public class ClientException extends WebApplicationException {
      * @param message Human readable error message
      */
     public ClientException(String type, String message) {
-        super(Response.status(Status.BAD_REQUEST).entity(Json.createObjectBuilder()
+        super(Response.status(Response.Status.BAD_REQUEST).entity(Json.createObjectBuilder()
             .add("type", type)
             .add("message", message).build()).build());
     }

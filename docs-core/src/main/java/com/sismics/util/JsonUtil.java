@@ -1,7 +1,7 @@
 package com.sismics.util;
 
-import javax.json.Json;
-import javax.json.JsonValue;
+import jakarta.json.Json;
+import jakarta.json.JsonValue;
 
 /**
  * JSON utilities.
