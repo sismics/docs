@@ -32,9 +32,16 @@ RUN apt-get update && \
     tesseract-ocr-tur \
     tesseract-ocr-ukr \
     tesseract-ocr-vie && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    mkdir /app && \
+    cd /app && \
+    java -jar /opt/jetty/start.jar --add-modules=server,http,webapp,deploy
 
-ADD docs.xml /opt/jetty/webapps/docs.xml
-ADD docs-web/target/docs-web-*.war /opt/jetty/webapps/docs.war
+ADD docs.xml /app/webapps/docs.xml
+ADD docs-web/target/docs-web-*.war /app/webapps/docs.war
 
 ENV JAVA_OPTIONS -Xmx1g
+
+WORKDIR /app
+CMD ["java", "-jar", "/opt/jetty/start.jar"]
+
