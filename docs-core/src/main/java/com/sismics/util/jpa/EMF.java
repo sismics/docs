@@ -101,12 +101,9 @@ public final class EMF {
         props.put("hibernate.format_sql", "false");
         props.put("hibernate.max_fetch_depth", "5");
         props.put("hibernate.cache.use_second_level_cache", "false");
-        props.put("hibernate.c3p0.min_size", "1");
-        props.put("hibernate.c3p0.max_size", "10");
-        props.put("hibernate.c3p0.timeout", "5000");
-        props.put("hibernate.c3p0.max_statements", "0");
-        props.put("hibernate.c3p0.acquire_increment", "1");
-        props.put("hibernate.c3p0.idle_test_period", "10");
+        props.put("hibernate.connection.initial_pool_size", "1");
+        props.put("hibernate.connection.pool_size", "10");
+        props.put("hibernate.connection.pool_validation_interval", "5");
         return props;
     }
     

@@ -21,16 +21,6 @@
       <artifactId>hibernate-core-jakarta</artifactId>
     </dependency>
     
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-c3p0</artifactId>
-    </dependency>
-    
     <!-- Other external dependencies -->
     <dependency>
       <groupId>joda-time</groupId>

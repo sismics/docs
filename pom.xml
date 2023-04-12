@@ -333,18 +333,6 @@
       </dependency>
       
       <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-entitymanager</artifactId>
-        <version>${org.hibernate.hibernate.version}</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-c3p0</artifactId>
-        <version>${org.hibernate.hibernate.version}</version>
-      </dependency>
-      
-      <dependency>
         <groupId>org.freemarker</groupId>
         <artifactId>freemarker</artifactId>
         <version>${org.freemarker.freemarker.version}</version>
