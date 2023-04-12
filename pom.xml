@@ -22,10 +22,11 @@
     <org.apache.commons.commons-email.version>1.5</org.apache.commons.commons-email.version>
     <org.freemarker.freemarker.version>2.3.32</org.freemarker.freemarker.version>
     <com.google.guava.guava.version>31.1-jre</com.google.guava.guava.version>
-    <log4j.log4j.version>1.2.17</log4j.log4j.version>
-    <org.slf4j.version>1.7.30</org.slf4j.version>
-    <org.slf4j.jcl-over-slf4j.version>1.7.30</org.slf4j.jcl-over-slf4j.version>
-    <org.slf4j.jul-to-slf4j.version>1.7.30</org.slf4j.jul-to-slf4j.version>
+    <org.slf4j.version>2.0.7</org.slf4j.version>
+    <org.slf4j.jcl-over-slf4j.version>2.0.7</org.slf4j.jcl-over-slf4j.version>
+    <org.slf4j.jul-to-slf4j.version>2.0.7</org.slf4j.jul-to-slf4j.version>
+    <org.apache.logging.log4j.log4j-to-slf4j.version>2.20.0</org.apache.logging.log4j.log4j-to-slf4j.version>
+    <ch.qos.logback.logback-classic.version>1.4.6</ch.qos.logback.logback-classic.version>
     <junit.junit.version>4.13.2</junit.junit.version>
     <com.h2database.h2.version>1.4.199</com.h2database.h2.version>
     <jakarta.json.jakarta.json-api.version>2.1.1</jakarta.json.jakarta.json-api.version>
@@ -218,18 +219,6 @@
       </dependency>
 
       <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>${log4j.log4j.version}</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>${org.slf4j.version}</version>
-      </dependency>
-      
-      <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>${org.slf4j.version}</version>
@@ -245,6 +234,18 @@
         <groupId>org.slf4j</groupId>
         <artifactId>jul-to-slf4j</artifactId>
         <version>${org.slf4j.jul-to-slf4j.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-to-slf4j</artifactId>
+        <version>${org.apache.logging.log4j.log4j-to-slf4j.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${ch.qos.logback.logback-classic.version}</version>
       </dependency>
 
       <dependency>

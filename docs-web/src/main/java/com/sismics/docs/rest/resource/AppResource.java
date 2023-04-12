@@ -1,5 +1,6 @@
 package com.sismics.docs.rest.resource;
 
+import ch.qos.logback.classic.Level;
 import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
@@ -23,9 +24,9 @@ import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.JsonUtil;
 import com.sismics.util.context.ThreadLocalContext;
-import com.sismics.util.log4j.LogCriteria;
-import com.sismics.util.log4j.LogEntry;
-import com.sismics.util.log4j.MemoryAppender;
+import com.sismics.util.logback.LogCriteria;
+import com.sismics.util.logback.LogEntry;
+import com.sismics.util.logback.MemoryAppender;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObjectBuilder;
@@ -34,8 +35,6 @@ import jakarta.persistence.Query;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Appender;
-import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -539,14 +538,6 @@ public class AppResource extends BaseResource {
         }
         checkBaseFunction(BaseFunction.ADMIN);
 
-        // Get the memory appender
-        org.apache.log4j.Logger logger = org.apache.log4j.Logger.getRootLogger();
-        Appender appender = logger.getAppender("MEMORY");
-        if (!(appender instanceof MemoryAppender)) {
-            throw new ServerException("ServerError", "MEMORY appender not configured");
-        }
-        MemoryAppender memoryAppender = (MemoryAppender) appender;
-        
         // Find the logs
         LogCriteria logCriteria = new LogCriteria()
                 .setMinLevel(Level.toLevel(StringUtils.stripToNull(minLevel)))
@@ -554,7 +545,7 @@ public class AppResource extends BaseResource {
                 .setMessage(StringUtils.stripToNull(message));
         
         PaginatedList<LogEntry> paginatedList = PaginatedLists.create(limit, offset);
-        memoryAppender.find(logCriteria, paginatedList);
+        MemoryAppender.find(logCriteria, paginatedList);
         JsonArrayBuilder logs = Json.createArrayBuilder();
         for (LogEntry logEntry : paginatedList.getResultList()) {
             logs.add(Json.createObjectBuilder()

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date [%t] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="MEMORY" class="com.sismics.util.logback.MemoryAppender">
+        <size>1000</size>
+    </appender>
+    <logger name="org.apache.directory" level="ERROR"/>
+    <logger name="com.sismics" level="INFO"/>
+    <logger name="org.hibernate" level="ERROR"/>
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="MEMORY"/>
+    </root>
+</configuration>

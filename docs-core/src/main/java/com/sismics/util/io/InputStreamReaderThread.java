@@ -1,7 +1,8 @@
 package com.sismics.util.io;
 
 import com.google.common.io.Closer;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.io.InputStreamReader;
  */
 public class InputStreamReaderThread extends Thread {
 
-    private static final Logger logger = Logger.getLogger(InputStreamReaderThread.class);
+    private static final Logger logger = LoggerFactory.getLogger(InputStreamReaderThread.class);
 
     private InputStream is;
 

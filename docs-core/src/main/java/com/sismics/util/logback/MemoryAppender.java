@@ -1,25 +1,22 @@
-package com.sismics.util.log4j;
+package com.sismics.util.logback;
 
-import java.util.Iterator;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.AppenderBase;
+import com.google.common.collect.Lists;
+import com.sismics.docs.core.util.jpa.PaginatedList;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Level;
-import org.apache.log4j.helpers.LogLog;
-import org.apache.log4j.spi.LoggingEvent;
-
-import com.google.common.collect.Lists;
-import com.sismics.docs.core.util.jpa.PaginatedList;
-
 /**
- * Memory appender for Log4J.
+ * Memory appender for Logback.
  *
  * @author jtremeaux
  */
-public class MemoryAppender extends AppenderSkeleton {
+public class MemoryAppender extends AppenderBase<ILoggingEvent> {
 
     /**
      * Maximum size of the queue.
@@ -29,34 +26,18 @@ public class MemoryAppender extends AppenderSkeleton {
     /**
      * Queue of log entries.
      */
-    private final Queue<LogEntry> logQueue = new ConcurrentLinkedQueue<LogEntry>();
+    private static final Queue<LogEntry> logQueue = new ConcurrentLinkedQueue<>();
 
     @Override
-    public boolean requiresLayout() {
-        return false;
-    }
-
-    @Override
-    public synchronized void close() {
-        if (closed) {
-            return;
-        }
-        closed = true;
-    }
-
-    @Override
-    public synchronized void append(LoggingEvent event) {
+    protected void append(ILoggingEvent event) {
         while (logQueue.size() > size) {
             logQueue.remove();
         }
-        if (closed) {
-            LogLog.warn("This appender is already closed, cannot append event.");
-            return;
-        }
-        
+
+
         String loggerName = getLoggerName(event);
 
-        LogEntry logEntry = new LogEntry(System.currentTimeMillis(), event.getLevel(), loggerName, event.getMessage().toString());
+        LogEntry logEntry = new LogEntry(System.currentTimeMillis(), event.getLevel(), loggerName, event.getMessage());
         logQueue.add(logEntry);
     }
 
@@ -66,7 +47,7 @@ public class MemoryAppender extends AppenderSkeleton {
      * @param event Event
      * @return Class name
      */
-    private String getLoggerName(LoggingEvent event) {
+    private String getLoggerName(ILoggingEvent event) {
         int index = event.getLoggerName().lastIndexOf('.');
 
         return (index > -1) ?
@@ -75,12 +56,12 @@ public class MemoryAppender extends AppenderSkeleton {
     }
 
     /**
-     * Getter of logList.
+     * Getter of size.
      *
-     * @return logList
+     * @return size
      */
-    public Queue<LogEntry> getLogList() {
-        return logQueue;
+    public int getSize() {
+        return size;
     }
 
     /**
@@ -98,15 +79,14 @@ public class MemoryAppender extends AppenderSkeleton {
      * @param criteria Search criteria
      * @param list Paginated list (modified by side effect)
      */
-    public void find(LogCriteria criteria, PaginatedList<LogEntry> list) {
+    public static void find(LogCriteria criteria, PaginatedList<LogEntry> list) {
         List<LogEntry> logEntryList = new LinkedList<LogEntry>();
         final Level minLevel = criteria.getMinLevel();
         final String tag = criteria.getTag();
         final String message = criteria.getMessage();
         int resultCount = 0;
-        for (Iterator<LogEntry> it = logQueue.iterator(); it.hasNext();) {
-            LogEntry logEntry = it.next();
-            if ((minLevel == null ||  Integer.compare(logEntry.getLevel().toInt(), minLevel.toInt()) >= 0) &&
+        for (LogEntry logEntry : logQueue) {
+            if ((minLevel == null || logEntry.getLevel().toInt() >= minLevel.toInt()) &&
                     (tag == null || logEntry.getTag().toLowerCase().equals(tag)) &&
                     (message == null || logEntry.getMessage().toLowerCase().contains(message))) {
                 logEntryList.add(logEntry);

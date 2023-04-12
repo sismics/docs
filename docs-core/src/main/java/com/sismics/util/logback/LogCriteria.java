@@ -1,7 +1,7 @@
-package com.sismics.util.log4j;
+package com.sismics.util.logback;
 
+import ch.qos.logback.classic.Level;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Level;
 
 /**
  * Log search criteria.

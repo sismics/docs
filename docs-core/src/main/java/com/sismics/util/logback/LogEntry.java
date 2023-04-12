@@ -1,6 +1,7 @@
-package com.sismics.util.log4j;
+package com.sismics.util.logback;
 
-import org.apache.log4j.Level;
+
+import ch.qos.logback.classic.Level;
 
 /**
  * Log entry.
