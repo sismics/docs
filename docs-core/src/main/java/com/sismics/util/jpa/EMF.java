@@ -85,6 +85,7 @@ public final class EMF {
         Path dbDirectory = DirectoryUtil.getDbDirectory();
         String dbFile = dbDirectory.resolve("docs").toAbsolutePath().toString();
         if (Strings.isNullOrEmpty(databaseUrl)) {
+            log.warn("Using an embedded H2 database. Only suitable for testing purpose, not for production!");
             props.put("hibernate.connection.driver_class", "org.h2.Driver");
             props.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
             props.put("hibernate.connection.url", "jdbc:h2:file:" + dbFile + ";CACHE_SIZE=65536;LOCK_TIMEOUT=10000");

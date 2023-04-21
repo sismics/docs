@@ -55,7 +55,7 @@ A demo is available at [demo.teedy.io](https://demo.teedy.io)
 
 # Install with Docker
 
-A preconfigured Docker image is available, including OCR and media conversion tools, listening on port 8080. If no PostgreSQL config is provided, the database is an embedded H2 database. The H2 embedded database should only be used for testing. For production usage use the provided postgreSQL configuration (check the docker-compose example)
+A preconfigured Docker image is available, including OCR and media conversion tools, listening on port 8080. If no PostgreSQL config is provided, the database is an embedded H2 database. The H2 embedded database should only be used for testing. For production usage use the provided PostgreSQL configuration (check the Docker Compose example)
 
 **The default admin password is "admin". Don't forget to change it before going to production.**
 
