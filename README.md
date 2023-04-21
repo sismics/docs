@@ -55,7 +55,7 @@ A demo is available at [demo.teedy.io](https://demo.teedy.io)
 
 # Install with Docker
 
-A preconfigured Docker image is available, including OCR and media conversion tools, listening on port 8080. The database is an embedded H2 database but PostgreSQL is also supported for more performance.
+A preconfigured Docker image is available, including OCR and media conversion tools, listening on port 8080. If no PostgreSQL config is provided, the database is an embedded H2 database. The H2 embedded database should only be used for testing. For production usage use the provided postgreSQL configuration (check the docker-compose example)
 
 **The default admin password is "admin". Don't forget to change it before going to production.**
 
@@ -96,30 +96,8 @@ To build external URL, the server is expecting a `DOCS_BASE_URL` environment var
 
 In the following examples some passwords are exposed in cleartext. This was done in order to keep the examples simple. We strongly encourage you to use variables with an `.env` file or other means to securely store your passwords.
 
-### Using the internal database
 
-```yaml
-version: '3'
-services:
-# Teedy Application
-  teedy-server:
-    image: sismics/docs:v1.11
-    restart: unless-stopped
-    ports:
-      # Map internal port to host
-      - 8080:8080
-    environment:
-      # Base url to be used
-      DOCS_BASE_URL: "https://docs.example.com"
-      # Set the admin email
-      DOCS_ADMIN_EMAIL_INIT: "admin@example.com"
-      # Set the admin password (in this example: "superSecure")
-      DOCS_ADMIN_PASSWORD_INIT: "$$2a$$05$$PcMNUbJvsk7QHFSfEIDaIOjk1VI9/E7IPjTKx.jkjPxkx2EOKSoPS"
-    volumes:
-      - ./docs/data:/data
-```
-
-### Using PostgreSQL
+### Default, using PostgreSQL
 
 ```yaml
 version: '3'
@@ -175,6 +153,29 @@ networks:
     internal: true
   internet:
     driver: bridge
+```
+
+### Using the internal database (only for testing)
+
+```yaml
+version: '3'
+services:
+# Teedy Application
+  teedy-server:
+    image: sismics/docs:v1.11
+    restart: unless-stopped
+    ports:
+      # Map internal port to host
+      - 8080:8080
+    environment:
+      # Base url to be used
+      DOCS_BASE_URL: "https://docs.example.com"
+      # Set the admin email
+      DOCS_ADMIN_EMAIL_INIT: "admin@example.com"
+      # Set the admin password (in this example: "superSecure")
+      DOCS_ADMIN_PASSWORD_INIT: "$$2a$$05$$PcMNUbJvsk7QHFSfEIDaIOjk1VI9/E7IPjTKx.jkjPxkx2EOKSoPS"
+    volumes:
+      - ./docs/data:/data
 ```
 
 # Manual installation
