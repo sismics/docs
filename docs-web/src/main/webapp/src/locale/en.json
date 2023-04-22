@@ -440,6 +440,7 @@
       "enabled": "Enable inbox scanning",
       "hostname": "IMAP hostname",
       "port": "IMAP port (143 or 993)",
+      "starttls": "Enable STARTTLS",
       "username": "IMAP username",
       "password": "IMAP password",
       "folder": "IMAP folder",

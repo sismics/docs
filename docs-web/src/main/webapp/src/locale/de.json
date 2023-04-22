@@ -440,6 +440,7 @@
       "enabled": "Durchsuchen des Posteingangs aktivieren",
       "hostname": "IMAP-Server",
       "port": "IMAP-Port (143 oder 993)",
+      "starttls": "Verwende STARTTLS",
       "username": "IMAP-Benutzername",
       "password": "IMAP-Passwort",
       "folder": "IMAP-Ordner",
