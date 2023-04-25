@@ -440,6 +440,7 @@
       "enabled": "Durchsuchen des Posteingangs aktivieren",
       "hostname": "IMAP-Server",
       "port": "IMAP-Port (143 oder 993)",
+      "starttls": "Verwende STARTTLS",
       "username": "IMAP-Benutzername",
       "password": "IMAP-Passwort",
       "folder": "IMAP-Ordner",
@@ -449,6 +450,8 @@
       "test_success": "Die Verbindung zum Posteingang war erfolgreich ({{ count }} <strong>ungelesene</strong> {{ count > 1 ? 'Nachrichten' : 'Nachricht' }})",
       "test_fail": "Beim Verbinden mit dem Posteingang ist ein Fehler aufgetreten, bitte überprüfen Sie die Einstellungen",
       "saved": "IMAP-Konfiguration erfolgreich gespeichert"
+      "autoTagsEnabled": "Automatisches Hinzufügen von Tags aus der mit # markierten Betreffzeile",
+      "deleteImported": "Importierte Nachrichten aus Mailbox löschen"
     },
     "monitoring": {
       "background_tasks": "Hintergrundaufgaben",

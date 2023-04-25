@@ -46,6 +46,13 @@
   </div>
 
   <div class="form-group">
+    <label class="col-sm-2 control-label" for="inboxStarttls">{{ 'settings.inbox.starttls' | translate }}</label>
+    <div class="col-sm-7">
+      <input name="starttls" type="checkbox" id="inboxStarttls" ng-model="inbox.starttls" />
+    </div>
+  </div>
+
+  <div class="form-group">
     <label class="col-sm-2 control-label" for="inboxUsername">{{ 'settings.inbox.username' | translate }}</label>
     <div class="col-sm-7">
       <input name="username" type="text" class="form-control" id="inboxUsername" ng-model="inbox.username" />

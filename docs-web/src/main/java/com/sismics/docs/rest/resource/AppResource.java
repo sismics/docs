@@ -334,6 +334,7 @@ public class AppResource extends BaseResource {
         Boolean deleteImported = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_DELETE_IMPORTED);
         Config hostnameConfig = configDao.getById(ConfigType.INBOX_HOSTNAME);
         Config portConfig = configDao.getById(ConfigType.INBOX_PORT);
+        Boolean starttls = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_STARTTLS);
         Config usernameConfig = configDao.getById(ConfigType.INBOX_USERNAME);
         Config passwordConfig = configDao.getById(ConfigType.INBOX_PASSWORD);
         Config folderConfig = configDao.getById(ConfigType.INBOX_FOLDER);
@@ -353,6 +354,7 @@ public class AppResource extends BaseResource {
         } else {
             response.add("port", Integer.valueOf(portConfig.getValue()));
         }
+        response.add("starttls", starttls);
         if (usernameConfig == null) {
             response.addNull("username");
         } else {
@@ -425,6 +427,7 @@ public class AppResource extends BaseResource {
                                 @FormParam("deleteImported") Boolean deleteImported,
                                 @FormParam("hostname") String hostname,
                                 @FormParam("port") String portStr,
+                                @FormParam("starttls") Boolean starttls,
                                 @FormParam("username") String username,
                                 @FormParam("password") String password,
                                 @FormParam("folder") String folder,
@@ -439,6 +442,7 @@ public class AppResource extends BaseResource {
         if (!Strings.isNullOrEmpty(portStr)) {
             ValidationUtil.validateInteger(portStr, "port");
         }
+        ValidationUtil.validateRequired(starttls, "starttls");
 
         // Just update the changed configuration
         ConfigDao configDao = new ConfigDao();
@@ -451,6 +455,7 @@ public class AppResource extends BaseResource {
         if (!Strings.isNullOrEmpty(portStr)) {
             configDao.update(ConfigType.INBOX_PORT, portStr);
         }
+        configDao.update(ConfigType.INBOX_STARTTLS, starttls.toString());
         if (!Strings.isNullOrEmpty(username)) {
             configDao.update(ConfigType.INBOX_USERNAME, username);
         }

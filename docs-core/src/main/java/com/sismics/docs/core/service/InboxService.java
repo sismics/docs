@@ -159,6 +159,7 @@ public class InboxService extends AbstractScheduledService {
         String port = ConfigUtil.getConfigStringValue(ConfigType.INBOX_PORT);
         properties.put("mail.imap.host", ConfigUtil.getConfigStringValue(ConfigType.INBOX_HOSTNAME));
         properties.put("mail.imap.port", port);
+        properties.setProperty("mail.imap.starttls.enable", ConfigUtil.getConfigStringValue(ConfigType.INBOX_STARTTLS).toString());
         boolean isSsl = "993".equals(port);
         properties.put("mail.imap.ssl.enable", String.valueOf(isSsl));
         properties.setProperty("mail.imap.socketFactory.class",
