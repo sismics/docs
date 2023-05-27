@@ -76,6 +76,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
 
     @Override
     public User authenticate(String username, String password) {
+        reset();
         init();
         if (pool == null) {
             return null;
