@@ -143,6 +143,11 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String} files.version Zero-based version number
      * @apiSuccess {String} files.mimetype MIME type
      * @apiSuccess {String} files.create_date Create date (timestamp)
+     * @apiSuccess {Object[]} metadata List of metadata
+     * @apiSuccess {String} metadata.id ID
+     * @apiSuccess {String} metadata.name Name
+     * @apiSuccess {String="STRING","INTEGER","FLOAT","DATE","BOOLEAN"} metadata.type Type
+     * @apiSuccess {Object} metadata.value Value
      * @apiError (client) NotFound Document not found
      * @apiPermission none
      * @apiVersion 1.5.0
