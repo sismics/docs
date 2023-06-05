@@ -279,12 +279,14 @@
     "menu_configuration": "Configuration",
     "menu_inbox": "Scanning de boîte de réception",
     "menu_ldap": "Authentification LDAP",
+    "menu_metadata": "Métadonnées spécifiques",
     "menu_monitoring": "Monitoring",
     "ldap": {
       "title": "Authentification LDAP",
       "enabled": "Activer l'authentication LDAP",
       "host": "Hôte LDAP",
       "port": "Port LDAP (389 par défaut)",
+      "usessl": "Activer SSL (ldaps)",
       "admin_dn": "DN administrateur",
       "admin_password": "Mot de passe administrateur",
       "base_dn": "DN de recherche",
@@ -302,6 +304,8 @@
       "edit": {
         "delete_user_title": "Supprimer un utilisateur",
         "delete_user_message": "Etes-vous sûr de vouloir supprimer cet utilisateur ? Tous les documents, fichiers et tags associés seront supprimés",
+        "user_used_title": "Utilisateur utilisé",
+        "user_used_message": "Cet utilisateur est utilisée dans le workflow \"{{ name }}\"",
         "edit_user_failed_title": "Cet utilisateur existe déjà",
         "edit_user_failed_message": "Ce nom d'utilisateur est déjà pris par un autre utilisateur",
         "edit_user_title": "Modifier \"{{ username }}\"",
@@ -377,6 +381,8 @@
         "delete_group_message": "Etes-vous sûr de vouloir supprimer ce groupe ?",
         "edit_group_failed_title": "Ce groupe existe déjà",
         "edit_group_failed_message": "Ce nom de groupe est déjà pris par un autre groupe",
+        "group_used_title": "Groupe utilisé",
+        "group_used_message": "Ce groupé est utilisé dans le workflow \"{{ name }}\"",
         "edit_group_title": "Modifier \"{{ name }}\"",
         "add_group_title": "Ajouter un groupe",
         "name": "Nom",
@@ -422,12 +428,19 @@
       "webhook_create_date": "Date de création",
       "webhook_add": "Ajouter un webhook"
     },
+    "metadata": {
+      "title": "Configuration des métadonnées spécifiques",
+      "message": "Vous pouvez ajouter ici des métadonnées spécifiques à vos documents, comme un identifiant interne ou une date d'expiration. Veuillez notez que le type d'une métadonnée ne peut être modifié après sa création.",
+      "name": "Nom de métadonnée",
+      "type": "Type de métadonnée"
+    },
     "inbox": {
       "title": "Scanning de boîte de réception",
       "message": "En activant cette fonctionnalité, le système scanne périodiquement la boîte de réception spécifiée pour rechercher de nouveaux messages et les importer automatiquement.<br/>Après l'importation d'un email, celui-ci sera marqué comme lu.<br/>Paramétrage pour <a href=\"https://support.google.com/mail/answer/7126229?hl=fr\" target=\"_blank\">Gmail</a>, <a href = \"https: // support. office.com/fr-fr/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040 \"target =\" _ blank \">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
       "enabled": "Activer le scan de boîte de réception",
       "hostname": "Nom d'hôte IMAP",
       "port": "Port IMAP (143 ou 993)",
+      "starttls": "Activer STARTTLS",
       "username": "Nom d'utilisateur IMAP",
       "password": "Mot de passe IMAP",
       "folder": "Dossier IMAP",
@@ -436,7 +449,9 @@
       "last_sync": "Dernière synchronisation : {{ data.date | date: 'medium' }}, {{ data.count }} message{{ data.count> 1 ? 's' : '' }} importé{{ data.count> 1 ? 's' : '' }}",
       "test_success": "La connexion à la boîte de réception est réussie ({{ count }} message{{ count> 1 ? 's' : '' }}) non lus",
       "test_fail": "Une erreur est survenue lors de la connexion à la boîte de réception, veuillez vérifier les paramètres",
-      "saved": "Configuration IMAP sauvegardée avec succès"
+      "saved": "Configuration IMAP sauvegardée avec succès",
+      "autoTagsEnabled": "Ajouter automatiquement les tags des titres marqués par #",
+      "deleteImported": "Supprimer les messages de la boîte de réception après leur importation"
     },
     "monitoring": {
       "background_tasks": "Tâches d'arrière-plan",
