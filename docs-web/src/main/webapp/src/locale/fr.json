@@ -451,7 +451,7 @@
       "test_fail": "Une erreur est survenue lors de la connexion à la boîte de réception, veuillez vérifier les paramètres",
       "saved": "Configuration IMAP sauvegardée avec succès",
       "autoTagsEnabled": "Ajouter automatiquement les tags des titres marqués par #",
-      "deleteImported": "Supprimer les message de la boîte de réception après leur importation"
+      "deleteImported": "Supprimer les messages de la boîte de réception après leur importation"
     },
     "monitoring": {
       "background_tasks": "Tâches d'arrière-plan",
