@@ -77,10 +77,10 @@ If a search `VALUE` is considered invalid, the search result will be empty.
   * `mime:VALUE`: the document must be of the specified mime type (example: `image/png`)
 * Shared
   * `shared:VALUE`: if `VALUE` is `yes`the document must be shared, for other `VALUE`s the criteria is ignored
-* Tags
+* Tags: several `tags` or `!tag:` can be specified and the document must match all filters
   * `tag:VALUE`: the document must contain a tag or a child of a tag that starts with `VALUE`, case is ignored
   * `!tag:VALUE`: the document must not contain a tag or a child of a tag that starts with `VALUE`, case is ignored
-* Title
+* Titles: several `title` can be specified, and the document must match any of the titles
   * `title:VALUE`: the title of the document must be `VALUE`
 * User
   * `by:VALUE`: the document creator's username must be `VALUE` with an exact match, the user must not be deleted
