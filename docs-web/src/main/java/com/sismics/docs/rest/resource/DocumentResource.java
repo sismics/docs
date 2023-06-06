@@ -495,8 +495,16 @@ public class DocumentResource extends BaseResource {
         
         return Response.ok().entity(response.build()).build();
     }
-    
+
     /**
+     * Returns all documents.
+     *
+     * @api {post} /document/list Get documents
+     * @apiDescription Get documents exposed as a POST endpoint to allow longer search parameters, see the GET endpoint for the API info
+     * @apiName PostDocumentList
+     * @apiGroup Document
+     * @apiVersion 1.12.0
+     *
      * @param limit      Page limit
      * @param offset     Page offset
      * @param sortColumn Sort column
@@ -504,9 +512,6 @@ public class DocumentResource extends BaseResource {
      * @param search     Search query
      * @param files      Files list
      * @return Response
-     * @api {post} /document/:id Get a document but as a POST endpoint to allow longer search parameters, see "Get a document" documentation for the API info
-     * @apiName GetDocumentPost
-     * @apiGroup Document
      */
     @POST
     @Path("list")
