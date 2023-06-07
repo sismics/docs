@@ -497,14 +497,14 @@ public class DocumentResource extends BaseResource {
                         .add("color", tagDto.getColor()));
             }
 
-            long filesCount;
+            Long filesCount;
             Collection<File> filesOfDocument = null;
             if (Boolean.TRUE == files) {
                 // Find files matching the document
                 filesOfDocument = CollectionUtils.select(filesList, file -> file.getDocumentId().equals(documentDto.getId()));
-                filesCount = filesOfDocument.size();
+                filesCount = (long) filesOfDocument.size();
             } else {
-                filesCount = filesCountByDocument.get(documentDto.getId());
+                filesCount = filesCountByDocument.getOrDefault(documentDto.getId(), 0L);
             }
 
             JsonObjectBuilder documentObjectBuilder = Json.createObjectBuilder()
