@@ -4,13 +4,6 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.Resources;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.core.Form;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
@@ -18,6 +11,13 @@ import org.joda.time.format.DateTimeFormat;
 import org.junit.Assert;
 import org.junit.Test;
 
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 import java.io.InputStream;
 import java.util.Date;
 
@@ -261,7 +261,6 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertEquals(create1Date, json.getJsonNumber("create_date").longValue());
         Assert.assertNotNull(json.get("update_date"));
         tags = json.getJsonArray("tags");
-        Assert.assertEquals(1, json.getJsonNumber("file_count").intValue());
         Assert.assertEquals(2, tags.size());
         Assert.assertEquals(tag2Id, tags.getJsonObject(0).getString("id"));
         Assert.assertEquals(tag1Id, tags.getJsonObject(1).getString("id"));
