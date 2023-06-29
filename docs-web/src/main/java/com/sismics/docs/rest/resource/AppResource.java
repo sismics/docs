@@ -14,7 +14,6 @@ import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.service.InboxService;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.util.DirectoryUtil;
-import com.sismics.docs.core.util.authentication.LdapAuthenticationHandler;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.rest.constant.BaseFunction;
@@ -27,12 +26,6 @@ import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.log4j.LogCriteria;
 import com.sismics.util.log4j.LogEntry;
 import com.sismics.util.log4j.MemoryAppender;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Appender;
-import org.apache.log4j.Level;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObjectBuilder;
@@ -40,6 +33,12 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Appender;
+import org.apache.log4j.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -853,9 +852,6 @@ public class AppResource extends BaseResource {
             // LDAP disabled
             configDao.update(ConfigType.LDAP_ENABLED, Boolean.FALSE.toString());
         }
-
-        // Reset the LDAP pool to reconnect with the new configuration
-        LdapAuthenticationHandler.reset();
 
         return Response.ok().build();
     }
