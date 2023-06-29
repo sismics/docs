@@ -84,9 +84,9 @@ public class DocumentCriteria {
     private String mimeType;
 
     /**
-     * The title.
+     * Titles to include.
      */
-    private String title;
+    private List<String> titleList = new ArrayList<>();
 
     public List<String> getTargetIdList() {
         return targetIdList;
@@ -192,11 +192,7 @@ public class DocumentCriteria {
         this.mimeType = mimeType;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+    public List<String> getTitleList() {
+        return titleList;
     }
 }

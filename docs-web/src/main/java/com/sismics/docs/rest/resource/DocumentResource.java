@@ -143,6 +143,11 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String} files.version Zero-based version number
      * @apiSuccess {String} files.mimetype MIME type
      * @apiSuccess {String} files.create_date Create date (timestamp)
+     * @apiSuccess {Object[]} metadata List of metadata
+     * @apiSuccess {String} metadata.id ID
+     * @apiSuccess {String} metadata.name Name
+     * @apiSuccess {String="STRING","INTEGER","FLOAT","DATE","BOOLEAN"} metadata.type Type
+     * @apiSuccess {Object} metadata.value Value
      * @apiError (client) NotFound Document not found
      * @apiPermission none
      * @apiVersion 1.5.0
@@ -490,7 +495,36 @@ public class DocumentResource extends BaseResource {
         
         return Response.ok().entity(response.build()).build();
     }
-    
+
+    /**
+     * Returns all documents.
+     *
+     * @api {post} /document/list Get documents
+     * @apiDescription Get documents exposed as a POST endpoint to allow longer search parameters, see the GET endpoint for the API info
+     * @apiName PostDocumentList
+     * @apiGroup Document
+     * @apiVersion 1.12.0
+     *
+     * @param limit      Page limit
+     * @param offset     Page offset
+     * @param sortColumn Sort column
+     * @param asc        Sorting
+     * @param search     Search query
+     * @param files      Files list
+     * @return Response
+     */
+    @POST
+    @Path("list")
+    public Response listPost(
+            @FormParam("limit") Integer limit,
+            @FormParam("offset") Integer offset,
+            @FormParam("sort_column") Integer sortColumn,
+            @FormParam("asc") Boolean asc,
+            @FormParam("search") String search,
+            @FormParam("files") Boolean files) {
+        return list(limit, offset, sortColumn, asc, search, files);
+    }
+
     /**
      * Parse a query according to the specified syntax, eg.:
      * tag:assurance tag:other before:2012 after:2011-09 shared:yes lang:fra thing
@@ -658,7 +692,7 @@ public class DocumentResource extends BaseResource {
                     break;
                 case "title":
                     // New title criteria
-                    documentCriteria.setTitle(paramValue);
+                    documentCriteria.getTitleList().add(paramValue);
                     break;
                 default:
                     fullQuery.add(criteria);
