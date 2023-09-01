@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Service that retrieve file size when they are not in the database.
+ * Service that retrieve files sizes when they are not in the database.
  */
 public class FileSizeService extends AbstractScheduledService {
     /**
@@ -69,7 +69,6 @@ public class FileSizeService extends AbstractScheduledService {
             return;
         }
 
-        file.getUserId();
         long fileSize = FileUtil.getFileSize(file.getId(), user);
         if(fileSize != -1){
             FileDao fileDao = new FileDao();

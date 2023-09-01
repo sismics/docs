@@ -260,7 +260,6 @@ public class FileUtil {
             IOUtils.copy(countingInputStream, NullOutputStream.NULL_OUTPUT_STREAM);
             return countingInputStream.getByteCount();
         } catch (Exception e) {
-            // Do nothing in this case
             return -1;
         }
     }
