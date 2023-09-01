@@ -206,6 +206,7 @@ public class File implements Loggable {
 
     public File setLatestVersion(boolean latestVersion) {
         this.latestVersion = latestVersion;
+        return this;
     }
 
     /**

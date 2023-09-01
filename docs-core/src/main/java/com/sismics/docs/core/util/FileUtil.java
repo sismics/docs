@@ -16,6 +16,9 @@ import com.sismics.util.Scalr;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.io.InputStreamReaderThread;
 import com.sismics.util.mime.MimeTypeUtil;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.CountingInputStream;
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -240,5 +243,25 @@ public class FileUtil {
      */
     public static boolean isProcessingFile(String fileId) {
         return processingFileSet.contains(fileId);
+    }
+
+    /**
+     * Get the size of a file on disk
+     * @param fileId the file id
+     * @param user the file owner
+     * @return the size or -1 if something went wrong
+     */
+    public static long getFileSize(String fileId, User user) {
+        Path storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId);
+        try (InputStream fileInputStream = Files.newInputStream(storedFile);
+             InputStream inputStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey());
+             CountingInputStream countingInputStream = new CountingInputStream(inputStream);
+        ) {
+            IOUtils.copy(countingInputStream, NullOutputStream.NULL_OUTPUT_STREAM);
+            return countingInputStream.getByteCount();
+        } catch (Exception e) {
+            // Do nothing in this case
+            return -1;
+        }
     }
 }
