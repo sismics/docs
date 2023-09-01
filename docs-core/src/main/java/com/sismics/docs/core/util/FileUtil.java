@@ -46,7 +46,7 @@ public class FileUtil {
     /**
      * File ID of files currently being processed.
      */
-    private static Set<String> processingFileSet = Collections.synchronizedSet(new HashSet<>());
+    private static final Set<String> processingFileSet = Collections.synchronizedSet(new HashSet<>());
     
     /**
      * Optical character recognition on an image.
@@ -149,6 +149,7 @@ public class FileUtil {
         file.setName(StringUtils.abbreviate(name, 200));
         file.setMimeType(mimeType);
         file.setUserId(userId);
+        file.setSize(fileSize);
 
         // Get files of this document
         FileDao fileDao = new FileDao();

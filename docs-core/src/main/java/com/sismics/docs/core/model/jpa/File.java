@@ -89,6 +89,12 @@ public class File implements Loggable {
     private boolean latestVersion;
 
     /**
+     * Can be -1 is the size has not been stored in the database
+     */
+    @Column(name = "FIL_SIZE_N", nullable = false)
+    private Long size;
+
+    /**
      * Private key to decrypt the file.
      * Not saved to database, of course.
      */
@@ -115,9 +121,8 @@ public class File implements Loggable {
         return name;
     }
 
-    public File setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
     }
 
     public String getMimeType() {
@@ -201,6 +206,17 @@ public class File implements Loggable {
 
     public File setLatestVersion(boolean latestVersion) {
         this.latestVersion = latestVersion;
+    }
+
+    /**
+     * Can return -1 if the file size is not stored in the database
+     */
+    public Long getSize() {
+        return size;
+    }
+
+    public File setSize(Long size) {
+        this.size = size;
         return this;
     }
 
