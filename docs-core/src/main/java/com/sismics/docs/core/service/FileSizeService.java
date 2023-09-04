@@ -10,15 +10,7 @@ import com.sismics.docs.core.util.TransactionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.lang.ref.PhantomReference;
-import java.lang.ref.ReferenceQueue;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -62,7 +54,7 @@ public class FileSizeService extends AbstractScheduledService {
         }
     }
 
-    private void processFile(File file) {
+    void processFile(File file) {
         UserDao userDao = new UserDao();
         User user = userDao.getById(file.getUserId());
         if(user == null) {
@@ -70,8 +62,9 @@ public class FileSizeService extends AbstractScheduledService {
         }
 
         long fileSize = FileUtil.getFileSize(file.getId(), user);
-        if(fileSize != -1){
+        if(fileSize != File.UNKNOWN_SIZE){
             FileDao fileDao = new FileDao();
+            file.setSize(fileSize);
             fileDao.update(file);
         }
     }

@@ -160,6 +160,7 @@ public class FileDao {
         fileDb.setMimeType(file.getMimeType());
         fileDb.setVersionId(file.getVersionId());
         fileDb.setLatestVersion(file.isLatestVersion());
+        fileDb.setSize(file.getSize());
 
         return file;
     }

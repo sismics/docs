@@ -1,5 +1,6 @@
 package com.sismics.docs;
 
+import com.sismics.BaseTest;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.jpa.EMF;
 import org.junit.After;
@@ -13,7 +14,7 @@ import jakarta.persistence.EntityTransaction;
  *
  * @author jtremeaux 
  */
-public abstract class BaseTransactionalTest {
+public abstract class BaseTransactionalTest extends BaseTest {
     @Before
     public void setUp() throws Exception {
         // Initialize the entity manager
