@@ -27,6 +27,7 @@ public class RestUtil {
      */
     public static JsonObjectBuilder fileToJsonObjectBuilder(File fileDb) {
         try {
+            long fileSize = fileDb.getSize().equals(-1L) ? Files.size(DirectoryUtil.getStorageDirectory().resolve(fileDb.getId())) : fileDb.getSize();
             return Json.createObjectBuilder()
                     .add("id", fileDb.getId())
                     .add("processing", FileUtil.isProcessingFile(fileDb.getId()))
@@ -35,7 +36,7 @@ public class RestUtil {
                     .add("mimetype", fileDb.getMimeType())
                     .add("document_id", JsonUtil.nullable(fileDb.getDocumentId()))
                     .add("create_date", fileDb.getCreateDate().getTime())
-                    .add("size", (fileDb.getSize().equals(-1L)) ? Files.size(DirectoryUtil.getStorageDirectory().resolve(fileDb.getId())) : fileDb.getSize());
+                    .add("size", fileSize);
         } catch (IOException e) {
             throw new ServerException("FileError", "Unable to get the size of " + fileDb.getId(), e);
         }

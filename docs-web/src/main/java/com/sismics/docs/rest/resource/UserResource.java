@@ -470,7 +470,7 @@ public class UserResource extends BaseResource {
         UserDao userDao = new UserDao();
         userDao.delete(principal.getName(), principal.getId());
         
-        sendEvents(documentList, fileList);
+        sendDeletionEvents(documentList, fileList);
 
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -538,7 +538,7 @@ public class UserResource extends BaseResource {
         // Delete the user
         userDao.delete(user.getUsername(), principal.getId());
 
-        sendEvents(documentList, fileList);
+        sendDeletionEvents(documentList, fileList);
 
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
@@ -1151,7 +1151,12 @@ public class UserResource extends BaseResource {
         return null;
     }
 
-    private void sendEvents(List<Document> documentList, List<File> fileList) {
+    /**
+     * Send the events about documents and files being deleted.
+     * @param documentList A document list
+     * @param fileList A file list
+     */
+    private void sendDeletionEvents(List<Document> documentList, List<File> fileList) {
         // Raise deleted events for documents
         for (Document document : documentList) {
             DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();

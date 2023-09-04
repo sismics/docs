@@ -89,7 +89,7 @@ public class File implements Loggable {
     private boolean latestVersion;
 
     /**
-     * Can be -1 is the size has not been stored in the database
+     * Can be -1 if the size has not been stored in the database when the file has been uploaded
      */
     @Column(name = "FIL_SIZE_N", nullable = false)
     private Long size;
@@ -121,8 +121,9 @@ public class File implements Loggable {
         return name;
     }
 
-    public void setName(String name) {
+    public File setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getMimeType() {

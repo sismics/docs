@@ -246,12 +246,14 @@ public class FileUtil {
     }
 
     /**
-     * Get the size of a file on disk
+     * Get the size of a file on disk.
      * @param fileId the file id
      * @param user the file owner
      * @return the size or -1 if something went wrong
      */
     public static long getFileSize(String fileId, User user) {
+        // To get the size we copy the decrypted content into a null output stream
+        // and count the copied byte size.
         Path storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId);
         try (InputStream fileInputStream = Files.newInputStream(storedFile);
              InputStream inputStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey());

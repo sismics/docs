@@ -49,12 +49,12 @@ public class FileSizeService extends AbstractScheduledService {
             TransactionUtil.handle(() -> {
                 FileDao fileDao = new FileDao();
                 List<File> files = fileDao.getFilesWithoutSize(100);
-                if(files.isEmpty()) {
-                    shutDown();
-                    return;
-                }
                 for(File file : files) {
                     processFile(file);
+                }
+                if(files.size() < 100) {
+                    log.info("No more file to process");
+                    shutDown();
                 }
             });
         } catch (Throwable e) {
