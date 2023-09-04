@@ -105,7 +105,7 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals("PIA00452.jpg", files.getJsonObject(0).getString("name"));
         Assert.assertEquals("image/jpeg", files.getJsonObject(0).getString("mimetype"));
         Assert.assertEquals(0, files.getJsonObject(0).getInt("version"));
-        Assert.assertEquals(163510L, files.getJsonObject(0).getJsonNumber("size").longValue());
+        Assert.assertEquals(FILE_PIA_00452_JPG_SIZE, files.getJsonObject(0).getJsonNumber("size").longValue());
         Assert.assertEquals(file2Id, files.getJsonObject(1).getString("id"));
         Assert.assertEquals("PIA00452.jpg", files.getJsonObject(1).getString("name"));
         Assert.assertEquals(0, files.getJsonObject(1).getInt("version"));
@@ -370,7 +370,7 @@ public class TestFileResource extends BaseJerseyTest {
                 .get();
         is = (InputStream) response.getEntity();
         fileBytes = ByteStreams.toByteArray(is);
-        Assert.assertEquals(163510, fileBytes.length);
+        Assert.assertEquals(FILE_PIA_00452_JPG_SIZE, fileBytes.length);
         
         // Create another document
         String document2Id = clientUtil.createDocument(fileOrphanToken);
@@ -418,7 +418,7 @@ public class TestFileResource extends BaseJerseyTest {
         JsonObject json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
-        Assert.assertEquals(292641L, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE, json.getJsonNumber("storage_current").longValue());
         
         // Add a file (292641 bytes large)
         clientUtil.addFileToDocument(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG, fileQuotaToken, null);
@@ -427,7 +427,7 @@ public class TestFileResource extends BaseJerseyTest {
         json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
-        Assert.assertEquals(585282L, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 2, json.getJsonNumber("storage_current").longValue());
         
         // Add a file (292641 bytes large)
         clientUtil.addFileToDocument(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG, fileQuotaToken, null);
@@ -436,7 +436,7 @@ public class TestFileResource extends BaseJerseyTest {
         json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
-        Assert.assertEquals(877923L, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 3, json.getJsonNumber("storage_current").longValue());
         
         // Add a file (292641 bytes large)
         try {
@@ -455,7 +455,7 @@ public class TestFileResource extends BaseJerseyTest {
         json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
-        Assert.assertEquals(585282L, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 2, json.getJsonNumber("storage_current").longValue());
 
         // Create a document
         long create1Date = new Date().getTime();
@@ -475,7 +475,7 @@ public class TestFileResource extends BaseJerseyTest {
         json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
-        Assert.assertEquals(748792, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 2 + FILE_PIA_00452_JPG_SIZE, json.getJsonNumber("storage_current").longValue());
 
         // Deletes the document
         json = target().path("/document/" + document1Id).request()
@@ -487,6 +487,6 @@ public class TestFileResource extends BaseJerseyTest {
         json = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .get(JsonObject.class);
-        Assert.assertEquals(585282L, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 2, json.getJsonNumber("storage_current").longValue());
     }
 }
