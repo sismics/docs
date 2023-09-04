@@ -226,7 +226,7 @@ public class FileDao {
         return q.getResultList();
     }
 
-    public List<File> getFilesWithoutSize(int limit) {
+    public List<File> getFilesWithUnknownSize(int limit) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         TypedQuery<File> q = em.createQuery("select f from File f where f.size = :size and f.deleteDate is null order by f.order asc", File.class);
         q.setParameter("size", File.UNKNOWN_SIZE);

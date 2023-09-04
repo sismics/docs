@@ -40,7 +40,7 @@ public class FileSizeService extends AbstractScheduledService {
         try {
             TransactionUtil.handle(() -> {
                 FileDao fileDao = new FileDao();
-                List<File> files = fileDao.getFilesWithoutSize(100);
+                List<File> files = fileDao.getFilesWithUnknownSize(100);
                 for(File file : files) {
                     processFile(file);
                 }
