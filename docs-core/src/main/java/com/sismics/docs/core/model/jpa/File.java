@@ -88,8 +88,10 @@ public class File implements Loggable {
     @Column(name = "FIL_LATESTVERSION_B", nullable = false)
     private boolean latestVersion;
 
+    public static final Long UNKNOWN_SIZE = -1L;
+
     /**
-     * Can be -1 if the size has not been stored in the database when the file has been uploaded
+     * Can be UNKNOWN_SIZE if the size has not been stored in the database when the file has been uploaded
      */
     @Column(name = "FIL_SIZE_N", nullable = false)
     private Long size;

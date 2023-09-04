@@ -27,7 +27,7 @@ public class RestUtil {
      */
     public static JsonObjectBuilder fileToJsonObjectBuilder(File fileDb) {
         try {
-            long fileSize = fileDb.getSize().equals(-1L) ? Files.size(DirectoryUtil.getStorageDirectory().resolve(fileDb.getId())) : fileDb.getSize();
+            long fileSize = fileDb.getSize().equals(File.UNKNOWN_SIZE) ? Files.size(DirectoryUtil.getStorageDirectory().resolve(fileDb.getId())) : fileDb.getSize();
             return Json.createObjectBuilder()
                     .add("id", fileDb.getId())
                     .add("processing", FileUtil.isProcessingFile(fileDb.getId()))

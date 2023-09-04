@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.event.FileDeletedAsyncEvent;
 import com.sismics.docs.core.model.context.AppContext;
+import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.FileUtil;
 import com.sismics.docs.core.util.TransactionUtil;
@@ -41,12 +42,12 @@ public class FileDeletedAsyncListener {
             if (user != null) {
                 Long fileSize = event.getFileSize();
 
-                if (fileSize == -1) {
+                if (fileSize.equals(File.UNKNOWN_SIZE)) {
                     // The file size was not in the database, in this case we need to get from the unencrypted size.
                     fileSize = FileUtil.getFileSize(event.getFileId(), user);
                 }
 
-                if (fileSize != -1) {
+                if (! fileSize.equals(File.UNKNOWN_SIZE)) {
                     user.setStorageCurrent(user.getStorageCurrent() - fileSize);
                     userDao.updateQuota(user);
                 }
