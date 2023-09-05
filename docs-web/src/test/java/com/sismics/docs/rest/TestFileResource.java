@@ -415,28 +415,19 @@ public class TestFileResource extends BaseJerseyTest {
         String file1Id = clientUtil.addFileToDocument(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG, fileQuotaToken, null);
 
         // Check current quota
-        JsonObject json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
-                .get(JsonObject.class);
-        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE, getUserQuota(fileQuotaToken));
         
         // Add a file (292641 bytes large)
         clientUtil.addFileToDocument(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG, fileQuotaToken, null);
         
         // Check current quota
-        json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
-                .get(JsonObject.class);
-        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 2, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 2, getUserQuota(fileQuotaToken));
         
         // Add a file (292641 bytes large)
         clientUtil.addFileToDocument(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG, fileQuotaToken, null);
         
         // Check current quota
-        json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
-                .get(JsonObject.class);
-        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 3, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 3, getUserQuota(fileQuotaToken));
         
         // Add a file (292641 bytes large)
         try {
@@ -446,16 +437,13 @@ public class TestFileResource extends BaseJerseyTest {
         }
         
         // Deletes a file
-        json = target().path("/file/" + file1Id).request()
+        JsonObject json = target().path("/file/" + file1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
                 .delete(JsonObject.class);
         Assert.assertEquals("ok", json.getString("status"));
         
         // Check current quota
-        json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
-                .get(JsonObject.class);
-        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 2, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 2, getUserQuota(fileQuotaToken));
 
         // Create a document
         long create1Date = new Date().getTime();
@@ -472,10 +460,7 @@ public class TestFileResource extends BaseJerseyTest {
         clientUtil.addFileToDocument(FILE_PIA_00452_JPG, fileQuotaToken, document1Id);
 
         // Check current quota
-        json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
-                .get(JsonObject.class);
-        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 2 + FILE_PIA_00452_JPG_SIZE, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 2 + FILE_PIA_00452_JPG_SIZE, getUserQuota(fileQuotaToken));
 
         // Deletes the document
         json = target().path("/document/" + document1Id).request()
@@ -484,9 +469,12 @@ public class TestFileResource extends BaseJerseyTest {
         Assert.assertEquals("ok", json.getString("status"));
 
         // Check current quota
-        json = target().path("/user").request()
-                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, fileQuotaToken)
-                .get(JsonObject.class);
-        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 2, json.getJsonNumber("storage_current").longValue());
+        Assert.assertEquals(FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE * 2, getUserQuota(fileQuotaToken));
+    }
+
+    private long getUserQuota(String userToken) {
+        return target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, userToken)
+                .get(JsonObject.class).getJsonNumber("storage_current").longValue();
     }
 }
