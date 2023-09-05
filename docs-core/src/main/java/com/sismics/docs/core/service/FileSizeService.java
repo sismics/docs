@@ -34,17 +34,19 @@ public class FileSizeService extends AbstractScheduledService {
     protected void shutDown() {
         log.info("File size service shutting down");
     }
+
+    private static final int BATCH_SIZE = 30;
     
     @Override
     protected void runOneIteration() {
         try {
             TransactionUtil.handle(() -> {
                 FileDao fileDao = new FileDao();
-                List<File> files = fileDao.getFilesWithUnknownSize(100);
+                List<File> files = fileDao.getFilesWithUnknownSize(BATCH_SIZE);
                 for(File file : files) {
                     processFile(file);
                 }
-                if(files.size() < 100) {
+                if(files.size() < BATCH_SIZE) {
                     log.info("No more file to process");
                     shutDown();
                 }

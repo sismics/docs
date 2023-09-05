@@ -1,6 +1,5 @@
 package com.sismics.docs.core.service;
 
-import com.sismics.BaseTest;
 import com.sismics.docs.BaseTransactionalTest;
 import com.sismics.docs.core.dao.FileDao;
 import com.sismics.docs.core.dao.UserDao;
@@ -8,7 +7,6 @@ import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.util.DirectoryUtil;
 import com.sismics.docs.core.util.EncryptionUtil;
-import com.sismics.docs.core.util.TransactionUtil;
 import com.sismics.util.mime.MimeType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,7 +15,6 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
