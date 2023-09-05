@@ -13,6 +13,8 @@ public abstract class BaseTest {
 
     protected static final String FILE_JPG = "apollo_portrait.jpg";
 
+    protected static final Long FILE_JPG_SIZE = 7_907L;
+
     protected static final String FILE_JPG2 = "apollo_landscape.jpg";
 
     protected static final String FILE_MP4 = "video.mp4";
