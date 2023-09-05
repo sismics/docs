@@ -42,7 +42,6 @@ public abstract class BaseJerseyTest extends JerseyTest {
     protected static final String FILE_DOCUMENT_ODT = "file/document.odt";
     protected static final String FILE_DOCUMENT_TXT = "file/document.txt";
     protected static final String FILE_EINSTEIN_ROOSEVELT_LETTER_PNG = "file/Einstein-Roosevelt-letter.png";
-
     protected static final long FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE = 292641L;
     protected static final String FILE_PIA_00452_JPG = "file/PIA00452.jpg";
     protected static final long FILE_PIA_00452_JPG_SIZE = 163510L;
