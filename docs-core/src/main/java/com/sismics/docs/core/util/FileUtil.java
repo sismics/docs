@@ -247,8 +247,9 @@ public class FileUtil {
 
     /**
      * Get the size of a file on disk.
+     *
      * @param fileId the file id
-     * @param user the file owner
+     * @param user   the file owner
      * @return the size or -1 if something went wrong
      */
     public static long getFileSize(String fileId, User user) {
@@ -262,6 +263,7 @@ public class FileUtil {
             IOUtils.copy(countingInputStream, NullOutputStream.NULL_OUTPUT_STREAM);
             return countingInputStream.getByteCount();
         } catch (Exception e) {
+            log.debug("Can't find size of file " + fileId, e);
             return -1;
         }
     }
