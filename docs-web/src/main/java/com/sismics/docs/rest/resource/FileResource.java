@@ -442,7 +442,7 @@ public class FileResource extends BaseResource {
     /**
      * List all versions of a file.
      *
-     * @api {get} /file/id/versions Get versions of a file
+     * @api {get} /file/:id/versions Get versions of a file
      * @apiName GetFileVersions
      * @apiGroup File
      * @apiParam {String} id File ID
