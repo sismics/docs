@@ -47,8 +47,8 @@ public class FileSizeService extends AbstractScheduledService {
                     processFile(file);
                 }
                 if(files.size() < BATCH_SIZE) {
-                    log.info("No more file to process");
-                    shutDown();
+                    log.info("No more file to process, stopping the service");
+                    stopAsync();
                 }
             });
         } catch (Throwable e) {

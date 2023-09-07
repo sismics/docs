@@ -256,6 +256,10 @@ public class FileUtil {
         // To get the size we copy the decrypted content into a null output stream
         // and count the copied byte size.
         Path storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId);
+        if (! Files.exists(storedFile)) {
+            log.debug("File does not exist " + fileId);
+            return File.UNKNOWN_SIZE;
+        }
         try (InputStream fileInputStream = Files.newInputStream(storedFile);
              InputStream inputStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey());
              CountingInputStream countingInputStream = new CountingInputStream(inputStream);
@@ -264,7 +268,7 @@ public class FileUtil {
             return countingInputStream.getByteCount();
         } catch (Exception e) {
             log.debug("Can't find size of file " + fileId, e);
-            return -1;
+            return File.UNKNOWN_SIZE;
         }
     }
 }
