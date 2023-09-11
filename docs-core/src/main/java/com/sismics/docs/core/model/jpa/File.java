@@ -91,7 +91,7 @@ public class File implements Loggable {
     public static final Long UNKNOWN_SIZE = -1L;
 
     /**
-     * Can be UNKNOWN_SIZE if the size has not been stored in the database when the file has been uploaded
+     * Can be {@link File#UNKNOWN_SIZE} if the size has not been stored in the database when the file has been uploaded
      */
     @Column(name = "FIL_SIZE_N", nullable = false)
     private Long size;
@@ -213,7 +213,7 @@ public class File implements Loggable {
     }
 
     /**
-     * Can return -1 if the file size is not stored in the database
+     * Can return {@link File#UNKNOWN_SIZE} if the file size is not stored in the database.
      */
     public Long getSize() {
         return size;
