@@ -429,7 +429,7 @@ angular.module('docs',
       prefix: 'locale/',
       suffix: '.json?@build.date@'
     })
-    .registerAvailableLanguageKeys(['en', 'es', 'pt', 'fr', 'de', 'el', 'ru', 'it', 'pl', 'zh_CN', 'zh_TW'], {
+    .registerAvailableLanguageKeys(['en', 'es', 'pt', 'fr', 'de', 'el', 'ru', 'it', 'pl', 'zh_CN', 'zh_TW', 'sq_AL'], {
       'en_*': 'en',
       'es_*': 'es',
       'pt_*': 'pt',
@@ -547,7 +547,8 @@ angular.module('docs',
     { key: 'dan', label: 'Dansk' },
     { key: 'nor', label: 'Norsk' },
     { key: 'vie', label: 'Tiếng Việt' },
-    { key: 'ces', label: 'Czech' }
+    { key: 'ces', label: 'Czech' },
+    { key: 'sqi', label: 'Shqip' }
   ];
 })
 /**

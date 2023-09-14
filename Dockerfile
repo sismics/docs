@@ -31,7 +31,8 @@ RUN apt-get update && \
     tesseract-ocr-tha \
     tesseract-ocr-tur \
     tesseract-ocr-ukr \
-    tesseract-ocr-vie && \
+    tesseract-ocr-vie \
+    tesseract-ocr-sqi && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     mkdir /app && \
     cd /app && \
