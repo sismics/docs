@@ -470,22 +470,8 @@ public class UserResource extends BaseResource {
         UserDao userDao = new UserDao();
         userDao.delete(principal.getName(), principal.getId());
         
-        // Raise deleted events for documents
-        for (Document document : documentList) {
-            DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
-            documentDeletedAsyncEvent.setUserId(principal.getId());
-            documentDeletedAsyncEvent.setDocumentId(document.getId());
-            ThreadLocalContext.get().addAsyncEvent(documentDeletedAsyncEvent);
-        }
-        
-        // Raise deleted events for files (don't bother sending document updated event)
-        for (File file : fileList) {
-            FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
-            fileDeletedAsyncEvent.setUserId(principal.getId());
-            fileDeletedAsyncEvent.setFileId(file.getId());
-            ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
-        }
-        
+        sendDeletionEvents(documentList, fileList);
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
@@ -551,23 +537,9 @@ public class UserResource extends BaseResource {
         
         // Delete the user
         userDao.delete(user.getUsername(), principal.getId());
-        
-        // Raise deleted events for documents
-        for (Document document : documentList) {
-            DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
-            documentDeletedAsyncEvent.setUserId(principal.getId());
-            documentDeletedAsyncEvent.setDocumentId(document.getId());
-            ThreadLocalContext.get().addAsyncEvent(documentDeletedAsyncEvent);
-        }
-        
-        // Raise deleted events for files (don't bother sending document updated event)
-        for (File file : fileList) {
-            FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
-            fileDeletedAsyncEvent.setUserId(principal.getId());
-            fileDeletedAsyncEvent.setFileId(file.getId());
-            ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
-        }
-        
+
+        sendDeletionEvents(documentList, fileList);
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
@@ -1178,4 +1150,29 @@ public class UserResource extends BaseResource {
         }
         return null;
     }
+
+    /**
+     * Send the events about documents and files being deleted.
+     * @param documentList A document list
+     * @param fileList A file list
+     */
+    private void sendDeletionEvents(List<Document> documentList, List<File> fileList) {
+        // Raise deleted events for documents
+        for (Document document : documentList) {
+            DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
+            documentDeletedAsyncEvent.setUserId(principal.getId());
+            documentDeletedAsyncEvent.setDocumentId(document.getId());
+            ThreadLocalContext.get().addAsyncEvent(documentDeletedAsyncEvent);
+        }
+
+        // Raise deleted events for files (don't bother sending document updated event)
+        for (File file : fileList) {
+            FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
+            fileDeletedAsyncEvent.setUserId(principal.getId());
+            fileDeletedAsyncEvent.setFileId(file.getId());
+            fileDeletedAsyncEvent.setFileSize(file.getSize());
+            ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
+        }
+    }
+
 }

@@ -3,7 +3,6 @@ package com.sismics.docs.core.util.format;
 import com.google.common.collect.Lists;
 import com.sismics.util.ClasspathScanner;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**

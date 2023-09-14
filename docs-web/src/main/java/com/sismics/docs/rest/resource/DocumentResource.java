@@ -19,7 +19,12 @@ import com.sismics.docs.core.model.context.AppContext;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.model.jpa.User;
-import com.sismics.docs.core.util.*;
+import com.sismics.docs.core.util.ConfigUtil;
+import com.sismics.docs.core.util.DocumentUtil;
+import com.sismics.docs.core.util.FileUtil;
+import com.sismics.docs.core.util.MetadataUtil;
+import com.sismics.docs.core.util.PdfUtil;
+import com.sismics.docs.core.util.TagUtil;
 import com.sismics.docs.core.util.jpa.PaginatedList;
 import com.sismics.docs.core.util.jpa.PaginatedLists;
 import com.sismics.docs.core.util.jpa.SortCriteria;
@@ -1102,28 +1107,14 @@ public class DocumentResource extends BaseResource {
         // Delete the document
         documentDao.delete(id, principal.getId());
 
-        long totalSize = 0L;
         for (File file : fileList) {
-            // Store the file size to update the quota
-            java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
-            try {
-                totalSize += Files.size(storedFile);
-            } catch (IOException e) {
-                // The file doesn't exists on disk, which is weird, but not fatal
-            }
-
             // Raise file deleted event
             FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
             fileDeletedAsyncEvent.setUserId(principal.getId());
             fileDeletedAsyncEvent.setFileId(file.getId());
+            fileDeletedAsyncEvent.setFileSize(file.getSize());
             ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         }
-
-        // Update the user quota
-        UserDao userDao = new UserDao();
-        User user = userDao.getById(principal.getId());
-        user.setStorageCurrent(user.getStorageCurrent() - totalSize);
-        userDao.updateQuota(user);
 
         // Raise a document deleted event
         DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();

@@ -2,6 +2,7 @@ package com.sismics.docs.core.util;
 
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
+import com.sismics.BaseTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ import java.io.InputStream;
  * 
  * @author bgamard
  */
-public class TestEncryptUtil {
+public class TestEncryptUtil extends BaseTest {
     @Test
     public void generatePrivateKeyTest() {
         String key = EncryptionUtil.generatePrivateKey();
@@ -31,9 +32,9 @@ public class TestEncryptUtil {
             // NOP
         }
         Cipher cipher = EncryptionUtil.getEncryptionCipher("OnceUponATime");
-        InputStream inputStream = new CipherInputStream(this.getClass().getResourceAsStream("/file/udhr.pdf"), cipher);
+        InputStream inputStream = new CipherInputStream(getSystemResourceAsStream(FILE_PDF), cipher);
         byte[] encryptedData = ByteStreams.toByteArray(inputStream);
-        byte[] assertData = ByteStreams.toByteArray(this.getClass().getResourceAsStream("/file/udhr_encrypted.pdf"));
+        byte[] assertData = ByteStreams.toByteArray(getSystemResourceAsStream(FILE_PDF_ENCRYPTED));
 
         Assert.assertEquals(encryptedData.length, assertData.length);
     }
@@ -41,9 +42,9 @@ public class TestEncryptUtil {
     @Test
     public void decryptStreamTest() throws Exception {
         InputStream inputStream = EncryptionUtil.decryptInputStream(
-                this.getClass().getResourceAsStream("/file/udhr_encrypted.pdf"), "OnceUponATime");
+                getSystemResourceAsStream(FILE_PDF_ENCRYPTED), "OnceUponATime");
         byte[] encryptedData = ByteStreams.toByteArray(inputStream);
-        byte[] assertData = ByteStreams.toByteArray(this.getClass().getResourceAsStream("/file/udhr.pdf"));
+        byte[] assertData = ByteStreams.toByteArray(getSystemResourceAsStream(FILE_PDF));
         
         Assert.assertEquals(encryptedData.length, assertData.length);
     }
