@@ -13,6 +13,8 @@ public class FileDeletedAsyncEvent extends UserEvent {
      */
     private String fileId;
 
+    private Long fileSize;
+
     public String getFileId() {
         return fileId;
     }
@@ -21,10 +23,19 @@ public class FileDeletedAsyncEvent extends UserEvent {
         this.fileId = fileId;
     }
 
+    public Long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
             .add("fileId", fileId)
+            .add("fileSize", fileSize)
             .toString();
     }
 }

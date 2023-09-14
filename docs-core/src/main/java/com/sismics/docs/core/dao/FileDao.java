@@ -163,6 +163,7 @@ public class FileDao {
         fileDb.setMimeType(file.getMimeType());
         fileDb.setVersionId(file.getVersionId());
         fileDb.setLatestVersion(file.isLatestVersion());
+        fileDb.setSize(file.getSize());
 
         return file;
     }
@@ -243,6 +244,14 @@ public class FileDao {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
         TypedQuery<File> q = em.createQuery("select f from File f where f.versionId = :versionId and f.deleteDate is null order by f.order asc", File.class);
         q.setParameter("versionId", versionId);
+        return q.getResultList();
+    }
+
+    public List<File> getFilesWithUnknownSize(int limit) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        TypedQuery<File> q = em.createQuery("select f from File f where f.size = :size and f.deleteDate is null order by f.order asc", File.class);
+        q.setParameter("size", File.UNKNOWN_SIZE);
+        q.setMaxResults(limit);
         return q.getResultList();
     }
 }

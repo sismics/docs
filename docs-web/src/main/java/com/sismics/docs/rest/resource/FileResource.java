@@ -442,7 +442,7 @@ public class FileResource extends BaseResource {
     /**
      * List all versions of a file.
      *
-     * @api {get} /file/id/versions Get versions of a file
+     * @api {get} /file/:id/versions Get versions of a file
      * @apiName GetFileVersions
      * @apiGroup File
      * @apiParam {String} id File ID
@@ -522,21 +522,11 @@ public class FileResource extends BaseResource {
         FileDao fileDao = new FileDao();
         fileDao.delete(file.getId(), principal.getId());
         
-        // Update the user quota
-        UserDao userDao = new UserDao();
-        User user = userDao.getById(principal.getId());
-        java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
-        try {
-            user.setStorageCurrent(user.getStorageCurrent() - Files.size(storedFile));
-            userDao.updateQuota(user);
-        } catch (IOException e) {
-            // The file doesn't exists on disk, which is weird, but not fatal
-        }
-        
         // Raise a new file deleted event
         FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
         fileDeletedAsyncEvent.setUserId(principal.getId());
         fileDeletedAsyncEvent.setFileId(file.getId());
+        fileDeletedAsyncEvent.setFileSize(file.getSize());
         ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         
         if (file.getDocumentId() != null) {

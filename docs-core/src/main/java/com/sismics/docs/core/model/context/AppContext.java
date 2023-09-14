@@ -9,6 +9,7 @@ import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.listener.async.*;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.service.FileService;
+import com.sismics.docs.core.service.FileSizeService;
 import com.sismics.docs.core.service.InboxService;
 import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.docs.core.util.indexing.IndexingHandler;
@@ -66,6 +67,11 @@ public class AppContext {
     private FileService fileService;
 
     /**
+     * File size service.
+     */
+    private FileSizeService fileSizeService;
+
+    /**
      * Asynchronous executors.
      */
     private List<ThreadPoolExecutor> asyncExecutorList;
@@ -101,6 +107,11 @@ public class AppContext {
         inboxService = new InboxService();
         inboxService.startAsync();
         inboxService.awaitRunning();
+
+        // Start file size service
+        fileSizeService = new FileSizeService();
+        fileSizeService.startAsync();
+        fileSizeService.awaitRunning();
 
         // Register fonts
         PdfUtil.registerFonts();
@@ -236,6 +247,10 @@ public class AppContext {
 
         if (fileService != null) {
             fileService.stopAsync();
+        }
+
+        if (fileSizeService != null) {
+            fileSizeService.stopAsync();
         }
 
         instance = null;

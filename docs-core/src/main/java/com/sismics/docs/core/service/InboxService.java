@@ -1,14 +1,11 @@
 package com.sismics.docs.core.service;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.dao.TagDao;
 import com.sismics.docs.core.dao.criteria.TagCriteria;
 import com.sismics.docs.core.dao.dto.TagDto;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
-import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.docs.core.model.jpa.Document;
 import com.sismics.docs.core.model.jpa.Tag;
 import com.sismics.docs.core.util.ConfigUtil;

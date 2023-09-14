@@ -1,0 +1,640 @@
+{
+  "login": {
+    "username": "Emri i përdoruesit",
+    "password": "Fjalëkalimi",
+    "validation_code_required": "Kërkohet një kod verifikimi",
+    "validation_code_title": "Ju keni aktivizuar vërtetimin me dy faktorë në llogarinë tuaj. ",
+    "validation_code": "Kodi i verifikimit",
+    "remember_me": "Më kujto mua",
+    "submit": "Hyni",
+    "login_as_guest": "Identifikohu si i ftuar",
+    "login_failed_title": "Identifikimi dështoi",
+    "login_failed_message": "Emri i përdoruesit ose fjalëkalimi është i pavlefshëm",
+    "password_lost_btn": "Fjalëkalimi i humbur?",
+    "password_lost_sent_title": "Email për rivendosjen e fjalëkalimit u dërgua",
+    "password_lost_sent_message": "Një email është dërguar në <strong>{{ username }}</strong> për të rivendosur fjalëkalimin tuaj",
+    "password_lost_error_title": "Gabim i rivendosjes së fjalëkalimit",
+    "password_lost_error_message": "Nuk mund të dërgohet një email për rivendosjen e fjalëkalimit, ju lutemi kontaktoni administratorin tuaj për një rivendosje manuale"
+  },
+  "passwordlost": {
+    "title": "Fjalëkalimi ka humbur",
+    "message": "Ju lutemi shkruani emrin tuaj të përdoruesit për të marrë një lidhje të rivendosjes së fjalëkalimit. ",
+    "submit": "Rivendos fjalëkalimin tim"
+  },
+  "passwordreset": {
+    "message": "Ju lutemi shkruani një fjalëkalim të ri",
+    "submit": "Ndrysho fjalëkalimin tim",
+    "error_title": "Gabim gjatë ndryshimit të fjalëkalimit tuaj",
+    "error_message": "Kërkesa juaj për rikuperimin e fjalëkalimit ka skaduar, ju lutemi kërkoni një të re në faqen e hyrjes"
+  },
+  "index": {
+    "toggle_navigation": "Ndrysho navigimin",
+    "nav_documents": "Dokumentet",
+    "nav_tags": "Etiketa",
+    "nav_users_groups": "Përdoruesit",
+    "error_info": "{{ count }} gabim i ri{{ count > 1 ? 's' : '' }}",
+    "logged_as": "I identifikuar si {{ username }}",
+    "nav_settings": "Cilësimet",
+    "logout": "Shkyç",
+    "global_quota_warning": "<strong>Paralajmërim!</strong> Kuota globale pothuajse arriti në {{ current | number: 0 }}MB ({{ percent | number: 1 }}%) përdoret në {{ total | number: 0 }}MB"
+  },
+  "document": {
+    "navigation_up": "Ngjitu një nivel",
+    "toggle_navigation": "Ndrysho navigimin e dosjeve",
+    "display_mode_list": "Shfaq dokumentet në listë",
+    "display_mode_grid": "Shfaq dokumentet në rrjet",
+    "search_simple": "Kërkim i thjeshtë",
+    "search_fulltext": "Kërkimi i tekstit të plotë",
+    "search_creator": "Krijuesi",
+    "search_language": "Gjuhe",
+    "search_before_date": "Krijuar para kësaj date",
+    "search_after_date": "Krijuar pas kësaj date",
+    "search_before_update_date": "Përditësuar përpara kësaj date",
+    "search_after_update_date": "Përditësuar pas kësaj date",
+    "search_tags": "Etiketa",
+    "search_shared": "Vetëm dokumente të përbashkëta",
+    "search_workflow": "Rrjedha e punës më është caktuar",
+    "search_clear": "Qartë",
+    "any_language": "Çdo gjuhë",
+    "add_document": "Shto një dokument",
+    "import_eml": "Importo nga një email (format EML)",
+    "tags": "Etiketa",
+    "no_tags": "Nuk ka etiketa",
+    "no_documents": "Asnjë dokument në bazën e të dhënave",
+    "search": "Kërko",
+    "search_empty": "Nuk ka ndeshje për <strong>\"{{ search }}\"</strong>",
+    "shared": "Të përbashkëta",
+    "current_step_name": "Hapi aktual",
+    "title": "Titulli",
+    "description": "Përshkrim",
+    "contributors": "Kontribuesit",
+    "language": "Gjuhe",
+    "creation_date": "Data e krijimit",
+    "subject": "Subjekti",
+    "identifier": "Identifikues",
+    "publisher": "Botues",
+    "format": "Formati",
+    "source": "Burimi",
+    "type": "Lloji",
+    "coverage": "Mbulimi",
+    "rights": "Të drejtat",
+    "relations": "Marrëdhëniet",
+    "page_size": "Madhësia e faqes",
+    "page_size_10": "10 për faqe",
+    "page_size_20": "20 për faqe",
+    "page_size_30": "30 për faqe",
+    "upgrade_quota": "Për të përmirësuar kuotën tuaj, pyesni administratorin tuaj",
+    "quota": "{{ current | number: 0 }}MB ({{ percent | number: 1 }}%) përdoret në {{ total | number: 0 }}MB",
+    "count": "{{ count }} dokument{{ count > 1 ? 's' : '' }} gjetur",
+    "last_updated": "Përditësimi i fundit {{ date | timeAgo: dateFormat }}",
+    "view": {
+      "delete_comment_title": "Fshi komentin",
+      "delete_comment_message": "Dëshiron vërtet ta fshish këtë koment?",
+      "delete_document_title": "Fshi dokumentin",
+      "delete_document_message": "Dëshiron vërtet ta fshish këtë dokument?",
+      "shared_document_title": "Dokument i përbashkët",
+      "shared_document_message": "Ju mund ta ndani këtë dokument duke dhënë këtë lidhje. <br/><input class=\"form-control share-link\" type=\"text\" readonly=\"readonly\" value=\"{{ link }}\" onclick=\"this.select(); document.execCommand('copy');\" />",
+      "not_found": "Dokumenti nuk u gjet",
+      "forbidden": "Qasja është e ndaluar",
+      "download_files": "Shkarko skedarët",
+      "export_pdf": "Eksporto në PDF",
+      "by_creator": "nga",
+      "comments": "Komentet",
+      "no_comments": "Ende nuk ka komente për këtë dokument",
+      "add_comment": "Shto një koment",
+      "error_loading_comments": "Gabim gjatë ngarkimit të komenteve",
+      "workflow_current": "Hapi aktual i rrjedhës së punës",
+      "workflow_comment": "Shto një koment të rrjedhës së punës",
+      "workflow_validated_title": "Hapi i rrjedhës së punës u vërtetua",
+      "workflow_validated_message": "Hapi i rrjedhës së punës është vërtetuar me sukses.",
+      "content": {
+        "content": "përmbajtja",
+        "delete_file_title": "Fshi skedarin",
+        "delete_file_message": "Dëshiron vërtet ta fshish këtë skedar?",
+        "upload_pending": "Në pritje...",
+        "upload_progress": "Po ngarkohet...",
+        "upload_error": "Gabim ngarkimi",
+        "upload_error_quota": "Kuota u arrit",
+        "drop_zone": "Zvarrit",
+        "add_files": "Shtoni skedarë",
+        "file_processing_indicator": "Ky skedar është duke u përpunuar. ",
+        "reprocess_file": "Ripërpunoni këtë skedar",
+        "upload_new_version": "Ngarko një version të ri",
+        "open_versions": "Shfaq historikun e versionit",
+        "display_mode_list": "Shfaq skedarët në listë",
+        "display_mode_grid": "Shfaq skedarët në rrjet"
+      },
+      "workflow": {
+        "workflow": "Rrjedha e punës",
+        "message": "Verifikoni ose vërtetoni dokumentet tuaja me njerëzit e organizatës suaj duke përdorur rrjedhat e punës.",
+        "workflow_start_label": "Cilin rrjedhë pune të filloni?",
+        "add_more_workflow": "Shto më shumë flukse pune",
+        "start_workflow_submit": "Filloni rrjedhën e punës",
+        "full_name": "<strong>{{ name }}</strong> filloi më {{ create_date | date }}",
+        "cancel_workflow": "Anuloni rrjedhën aktuale të punës",
+        "cancel_workflow_title": "Anuloni rrjedhën e punës",
+        "cancel_workflow_message": "Dëshiron vërtet të anulosh rrjedhën aktuale të punës?",
+        "no_workflow": "Nuk mund të filloni asnjë rrjedhë pune në këtë dokument."
+      },
+      "permissions": {
+        "permissions": "Lejet",
+        "message": "Lejet mund të aplikohen drejtpërdrejt në këtë dokument, ose mund të vijnë nga <a href=\"#/tag\">etiketa</a>.",
+        "title": "Lejet për këtë dokument",
+        "inherited_tags": "Lejet e trashëguara nga etiketat",
+        "acl_source": "Nga",
+        "acl_target": "Për",
+        "acl_permission": "Leja"
+      },
+      "activity": {
+        "activity": "Aktiviteti",
+        "message": "Çdo veprim në këtë dokument regjistrohet këtu."
+      }
+    },
+    "edit": {
+      "document_edited_with_errors": "Dokumenti u redaktua me sukses, por disa skedarë nuk mund të ngarkohen",
+      "document_added_with_errors": "Dokumenti u shtua me sukses, por disa skedarë nuk mund të ngarkohen",
+      "quota_reached": "Kuota u arrit",
+      "primary_metadata": "Meta të dhënat primare",
+      "title_placeholder": "Një emër i dhënë burimit",
+      "description_placeholder": "Një llogari e burimit",
+      "new_files": "Skedarë të rinj",
+      "orphan_files": "{{ count }} dosje{{ count > 1 ? 's' : '' }}",
+      "additional_metadata": "Meta të dhëna shtesë",
+      "subject_placeholder": "Tema e burimit",
+      "identifier_placeholder": "Një referencë e paqartë për burimin brenda një konteksti të caktuar",
+      "publisher_placeholder": "Një subjekt përgjegjës për vënien në dispozicion të burimit",
+      "format_placeholder": "Formati i skedarit, mediumi fizik ose dimensionet e burimit",
+      "source_placeholder": "Një burim i lidhur nga i cili rrjedh burimi i përshkruar",
+      "uploading_files": "Skedarët po ngarkohen..."
+    },
+    "default": {
+      "upload_pending": "Në pritje...",
+      "upload_progress": "Po ngarkohet...",
+      "upload_error": "Gabim ngarkimi",
+      "upload_error_quota": "Kuota u arrit",
+      "quick_upload": "Ngarkimi i shpejtë",
+      "drop_zone": "Zvarrit",
+      "add_files": "Shtoni skedarë",
+      "add_new_document": "Shto në dokument të ri",
+      "latest_activity": "Aktiviteti i fundit",
+      "footer_sismics": "E punuar me <span class=\"fas fa-heart\"></span> nga <a href=\"https://www.sismics.com\" target=\"_blank\">Sizmike</a>",
+      "api_documentation": "Dokumentacioni API",
+      "feedback": "Na jepni një koment",
+      "workflow_document_list": "Dokumentet e caktuara për ju",
+      "select_all": "Selektoj të gjitha",
+      "select_none": "Zgjidh asnjë"
+    },
+    "pdf": {
+      "export_title": "Eksporto në PDF",
+      "export_metadata": "Eksporto të dhëna meta",
+      "export_comments": "Eksporto komente",
+      "fit_to_page": "Përshtat imazhin në faqe",
+      "margin": "Marzhi",
+      "millimeter": "mm"
+    },
+    "share": {
+      "title": "Ndani dokumentin",
+      "message": "Emërtoni ndarjen nëse dëshironi të ndani disa herë të njëjtin dokument.",
+      "submit": "Shpërndaje"
+    }
+  },
+  "file": {
+    "view": {
+      "previous": "E mëparshme",
+      "next": "Tjetra",
+      "not_found": "Skedari nuk u gjet"
+    },
+    "edit": {
+      "title": "Redakto skedarin",
+      "name": "Emri i skedarit"
+    },
+    "versions": {
+      "title": "Historia e versionit",
+      "filename": "Emri i skedarit",
+      "mimetype": "Lloji",
+      "create_date": "Data e krijimit",
+      "version": "Version"
+    }
+  },
+  "tag": {
+    "new_tag": "Etiketë e re",
+    "search": "Kërko",
+    "default": {
+      "title": "Etiketa",
+      "message_1": "<strong>Etiketa</strong> janë etiketa të lidhura me dokumentet.",
+      "message_2": "Një dokument mund të etiketohet me etiketa të shumta dhe një etiketë mund të aplikohet në dokumente të shumta.",
+      "message_3": "Duke perdorur <span class=\"fas fa-pencil-alt\"></span> butonin, ju mund të modifikoni lejet në një etiketë.",
+      "message_4": "Nëse një etiketë mund të lexohet nga një përdorues ose grup tjetër, dokumentet shoqëruese mund të lexohen gjithashtu nga ata njerëz.",
+      "message_5": "Për shembull, etiketoni dokumentet e kompanisë suaj me një etiketë <span class=\"label label-info\">Kompania ime</span> dhe shtoni lejen <strong>Mund të lexojë</strong> në një grup <span class=\"btn btn-default\">punonjësit</span>"
+    },
+    "edit": {
+      "delete_tag_title": "Fshi etiketën",
+      "delete_tag_message": "Dëshiron vërtet ta fshish këtë etiketë?",
+      "name": "Emri",
+      "color": "Ngjyrë",
+      "parent": "Prindi",
+      "info": "Lejet për këtë etiketë do të zbatohen gjithashtu për dokumentet e etiketuara <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>",
+      "circular_reference_title": "Referencë rrethore",
+      "circular_reference_message": "Hierarkia e etiketave prind krijon një lak, ju lutemi zgjidhni një prind tjetër."
+    }
+  },
+  "group": {
+    "profile": {
+      "members": "Anëtarët",
+      "no_members": "Asnjë anëtar",
+      "related_links": "Lidhje të ngjashme",
+      "edit_group": "Redakto {{ name }} grup"
+    }
+  },
+  "user": {
+    "profile": {
+      "groups": "Grupet",
+      "quota_used": "Kuota e përdorur",
+      "percent_used": "{{ percent | number: 0 }}% e përdorur",
+      "related_links": "Lidhje të ngjashme",
+      "document_created": "Dokumentet e krijuara nga {{ username }}",
+      "edit_user": "Redakto {{ username }} përdorues"
+    }
+  },
+  "usergroup": {
+    "search_groups": "Kërkoni në grupe",
+    "search_users": "Kërkoni në përdoruesit",
+    "you": "je ti!",
+    "default": {
+      "title": "Përdoruesit",
+      "message": "Këtu mund të shikoni informacione rreth përdoruesve dhe grupeve."
+    }
+  },
+  "settings": {
+    "menu_personal_settings": "Cilësimet personale",
+    "menu_user_account": "Llogaria e përdoruesit",
+    "menu_two_factor_auth": "Autentifikimi me dy faktorë",
+    "menu_opened_sessions": "Seancat e hapura",
+    "menu_file_importer": "Importuesi i skedarëve në masë",
+    "menu_general_settings": "Cilësimet e përgjithshme",
+    "menu_workflow": "Rrjedha e punës",
+    "menu_users": "Përdoruesit",
+    "menu_groups": "Grupet",
+    "menu_vocabularies": "Fjalorët",
+    "menu_configuration": "Konfigurimi",
+    "menu_inbox": "Skanimi i kutisë hyrëse",
+    "menu_ldap": "Autentifikimi LDAP",
+    "menu_metadata": "Meta të dhëna të personalizuara",
+    "menu_monitoring": "Monitorimi",
+    "ldap": {
+      "title": "Autentifikimi LDAP",
+      "enabled": "Aktivizo vërtetimin LDAP",
+      "host": "Emri i hostit LDAP",
+      "port": "Porta LDAP (389 si parazgjedhje)",
+      "usessl": "Aktivizo SSL (ldaps)",
+      "admin_dn": "Admin DN",
+      "admin_password": "Fjalëkalimi i administratorit",
+      "base_dn": "Kërkimi bazë DN",
+      "filter": "Filtri i kërkimit (duhet të përmbajë USERNAME, p.sh. \"(uid=USERNAME)\")",
+      "default_email": "Email-i i parazgjedhur për përdoruesin LDAP",
+      "default_storage": "Hapësira ruajtëse e paracaktuar për përdoruesin LDAP",
+      "saved": "Konfigurimi LDAP u ruajt me sukses"
+    },
+    "user": {
+      "title": "Menaxhimi i përdoruesve",
+      "add_user": "Shto një përdorues",
+      "username": "Emri i përdoruesit",
+      "create_date": "Krijo datë",
+      "totp_enabled": "Për këtë llogari është aktivizuar vërtetimi me dy faktorë",
+      "edit": {
+        "delete_user_title": "Fshi përdoruesin",
+        "delete_user_message": "Dëshiron vërtet ta fshish këtë përdorues? ",
+        "user_used_title": "Përdoruesi në përdorim",
+        "user_used_message": "Ky përdorues përdoret në rrjedhën e punës \"{{ name }}\"",
+        "edit_user_failed_title": "Përdoruesi ekziston tashmë",
+        "edit_user_failed_message": "Ky emër përdoruesi është marrë tashmë nga një përdorues tjetër",
+        "edit_user_title": "Redakto \"{{ username }}\"",
+        "add_user_title": "Shto një përdorues",
+        "username": "Emri i përdoruesit",
+        "email": "E-mail",
+        "groups": "Grupet",
+        "storage_quota": "Kuota e ruajtjes",
+        "storage_quota_placeholder": "Kuota e hapësirës ruajtëse (në MB)",
+        "password": "Fjalëkalimi",
+        "password_confirm": "Fjalëkalimi (konfirmo)",
+        "disabled": "Përdorues me aftësi të kufizuara",
+        "password_reset_btn": "Dërgoni një email për rivendosjen e fjalëkalimit te ky përdorues",
+        "password_lost_sent_title": "Email për rivendosjen e fjalëkalimit u dërgua",
+        "password_lost_sent_message": "Është dërguar një email për rivendosjen e fjalëkalimit <strong>{{ username }}</strong>",
+        "disable_totp_btn": "Çaktivizo vërtetimin me dy faktorë për këtë përdorues",
+        "disable_totp_title": "Çaktivizo vërtetimin me dy faktorë",
+        "disable_totp_message": "Jeni i sigurt që dëshironi të çaktivizoni vërtetimin me dy faktorë për këtë përdorues?"
+      }
+    },
+    "workflow": {
+      "title": "Konfigurimi i rrjedhës së punës",
+      "add_workflow": "Shto një rrjedhë pune",
+      "name": "Emri",
+      "create_date": "Krijo datë",
+      "edit": {
+        "delete_workflow_title": "Fshi fluksin e punës",
+        "delete_workflow_message": "Dëshiron vërtet ta fshish këtë rrjedhë pune? ",
+        "edit_workflow_title": "Redakto \"{{ name }}\"",
+        "add_workflow_title": "Shto një rrjedhë pune",
+        "name": "Emri",
+        "name_placeholder": "Emri ose përshkrimi i hapit",
+        "drag_help": "Zvarrit dhe lësho për të rirenditur hapin",
+        "type": "Lloji i hapit",
+        "type_approve": "Mirato",
+        "type_validate": "Vërtetoni",
+        "target": "Caktuar për",
+        "target_help": "<strong>Mirato:</strong> Pranoni ose refuzoni rishikimin<br/><strong>Vërteto:</strong> Rishikoni dhe vazhdoni rrjedhën e punës",
+        "add_step": "Shto një hap të rrjedhës së punës",
+        "actions": "Çfarë ndodh më pas?",
+        "remove_action": "Hiq veprimin",
+        "acl_info": "Vetëm përdoruesit dhe grupet e përcaktuara këtu do të mund të fillojnë këtë rrjedhë pune në një dokument"
+      }
+    },
+    "security": {
+      "enable_totp": "Aktivizo vërtetimin me dy faktorë",
+      "enable_totp_message": "Sigurohuni që të keni një aplikacion të përputhshëm me TOTP në telefonin tuaj gati për të shtuar një llogari të re",
+      "title": "Autentifikimi me dy faktorë",
+      "message_1": "Autentifikimi me dy faktorë ju lejon të shtoni një shtresë sigurie në tuaj <strong>{{ appName }}</strong> llogari.<br/>Përpara se të aktivizoni këtë veçori, sigurohuni që të keni një aplikacion të pajtueshëm me TOTP në telefonin tuaj:",
+      "message_google_authenticator": "Për Android, iOS dhe Blackberry: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>",
+      "message_duo_mobile": "Për Android dhe iOS: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
+      "message_authenticator": "Për Windows Phone: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">Vërtetuesi</a>",
+      "message_2": "Këto aplikacione gjenerojnë automatikisht një kod verifikimi që ndryshon pas një periudhe të caktuar kohe.<br/>Do t'ju kërkohet të vendosni këtë kod verifikimi sa herë që identifikoheni <strong>{{ appName }}</strong>.",
+      "secret_key": "Çelësi juaj sekret është: <strong>{{ secret }}</strong>",
+      "secret_key_warning": "Konfiguro aplikacionin tënd TOTP në telefonin tënd me këtë çelës sekret tani, nuk do të mund ta qasesh më vonë.",
+      "totp_enabled_message": "Autentifikimi me dy faktorë është aktivizuar në llogarinë tuaj.<br/>Sa herë që identifikoheni <strong>{{ appName }}</strong>, do t'ju kërkohet një kod verifikimi nga aplikacioni i telefonit tuaj të konfiguruar.<br/>Nëse e humbni telefonin, nuk do të jeni në gjendje të identifikoheni në llogarinë tuaj, por seancat aktive do t'ju lejojnë të rigjeneroni një çelës sekret.",
+      "disable_totp": {
+        "disable_totp": "Çaktivizo vërtetimin me dy faktorë",
+        "message": "Llogaria juaj nuk do të mbrohet më nga vërtetimi me dy faktorë.",
+        "confirm_password": "Konfirmoni fjalëkalimin tuaj",
+        "submit": "Çaktivizo vërtetimin me dy faktorë"
+      },
+      "test_totp": "Ju lutemi shkruani kodin e vërtetimit të shfaqur në telefonin tuaj:",
+      "test_code_success": "Kodi i verifikimit në rregull",
+      "test_code_fail": "Ky kod nuk është i vlefshëm, ju lutemi kontrolloni dy herë nëse telefoni juaj është i konfiguruar siç duhet ose çaktivizoni vërtetimin me dy faktorë"
+    },
+    "group": {
+      "title": "Menaxhimi i grupeve",
+      "add_group": "Shto një grup",
+      "name": "Emri",
+      "edit": {
+        "delete_group_title": "Fshi grupin",
+        "delete_group_message": "Dëshiron vërtet ta fshish këtë grup?",
+        "edit_group_failed_title": "Grupi tashmë ekziston",
+        "edit_group_failed_message": "Ky emër grupi është marrë tashmë nga një grup tjetër",
+        "group_used_title": "Grupi në përdorim",
+        "group_used_message": "Ky grup përdoret në rrjedhën e punës \"{{ name }}\"",
+        "edit_group_title": "Redakto \"{{ name }}\"",
+        "add_group_title": "Shto një grup",
+        "name": "Emri",
+        "parent_group": "Grupi i prindërve",
+        "search_group": "Kërkoni një grup",
+        "members": "Anëtarët",
+        "new_member": "Anëtar i ri",
+        "search_user": "Kërkoni një përdorues"
+      }
+    },
+    "account": {
+      "title": "Llogaria e përdoruesit",
+      "password": "Fjalëkalimi",
+      "password_confirm": "Fjalëkalimi (konfirmo)",
+      "updated": "Llogaria u përditësua me sukses"
+    },
+    "config": {
+      "title_guest_access": "Qasja e mysafirëve",
+      "message_guest_access": "Qasja e mysafirëve është një mënyrë ku çdokush mund të hyjë {{ appName }} pa fjalëkalim.<br/>Ashtu si një përdorues normal, përdoruesi mysafir mund të qaset vetëm në dokumentet e tij dhe ato të aksesueshme përmes lejeve.<br/>",
+      "enable_guest_access": "Aktivizo qasjen e vizitorëve",
+      "disable_guest_access": "Çaktivizo qasjen e vizitorëve",
+      "title_theme": "Personalizimi i temës",
+      "title_general": "Konfigurimi i përgjithshëm",
+      "default_language": "Gjuha e parazgjedhur për dokumentet e reja",
+      "application_name": "Emri i aplikacionit",
+      "main_color": "Ngjyra kryesore",
+      "custom_css": "CSS e personalizuar",
+      "custom_css_placeholder": "CSS e personalizuar për t'u shtuar pas fletës kryesore të stilit",
+      "logo": "Logo (madhësia katrore)",
+      "background_image": "Imazhi i sfondit",
+      "uploading_image": "Po ngarkon imazhin...",
+      "title_smtp": "Konfigurimi i emailit",
+      "smtp_hostname": "Emri i hostit SMTP",
+      "smtp_port": "Porta SMTP",
+      "smtp_from": "E-mail i dërguesit",
+      "smtp_username": "Emri i përdoruesit SMTP",
+      "smtp_password": "Fjalëkalimi SMTP",
+      "smtp_updated": "Konfigurimi SMTP u përditësua me sukses",
+      "webhooks": "Uebhooks",
+      "webhooks_explain": "Webhooks do të thirren kur të ndodhë ngjarja e specifikuar. ",
+      "webhook_event": "Ngjarja",
+      "webhook_url": "URL",
+      "webhook_create_date": "Krijo datë",
+      "webhook_add": "Shto një uebhook"
+    },
+    "metadata": {
+      "title": "Konfigurimi i personalizuar i meta të dhënave",
+      "message": "Këtu mund të shtoni meta të dhëna të personalizuara në dokumentet tuaja si një identifikues i brendshëm ose një datë skadimi. ",
+      "name": "Emri i meta të dhënave",
+      "type": "Lloji i meta të dhënave"
+    },
+    "inbox": {
+      "title": "Skanimi i kutisë hyrëse",
+      "message": "Duke aktivizuar këtë veçori, sistemi do të skanojë kutinë hyrëse të specifikuar çdo minutë <strong>i palexuar</strong> emailet dhe i importoni automatikisht.<br/>Pas importimit të një emaili, ai do të shënohet si i lexuar.<br/>Cilësimet e konfigurimit për <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
+      "enabled": "Aktivizo skanimin e kutisë hyrëse",
+      "hostname": "Emri i hostit IMAP",
+      "port": "Porta IMAP (143 ose 993)",
+      "starttls": "Aktivizo STARTTLS",
+      "username": "Emri i përdoruesit IMAP",
+      "password": "Fjalëkalimi IMAP",
+      "folder": "Dosja IMAP",
+      "tag": "Etiketa u shtua në dokumentet e importuara",
+      "test": "Testoni parametrat",
+      "last_sync": "Sinkronizimi i fundit: {{ data.date | date: 'medium' }}, {{ data.count }} mesazh{{ data.count > 1 ? 's' : '' }} të importuara",
+      "test_success": "Lidhja me kutinë hyrëse është e suksesshme ({{ count }} <strong>i palexuar</strong> mesazh{{ count > 1 ? 's' : '' }})",
+      "test_fail": "Ndodhi një gabim gjatë lidhjes me kutinë hyrëse, ju lutemi kontrolloni parametrat",
+      "saved": "Konfigurimi IMAP u ruajt me sukses",
+      "autoTagsEnabled": "Shtoni automatikisht etiketat nga rreshti i subjektit të shënuar me",
+      "deleteImported": "Fshi mesazhin nga kutia postare pas importimit"
+    },
+    "monitoring": {
+      "background_tasks": "Detyrat e sfondit",
+      "queued_tasks": "Aktualisht ka {{ count }} detyrat në radhë.",
+      "queued_tasks_explain": "Përpunimi i skedarëve, krijimi i miniaturave, përditësimi i indeksit, njohja optike e karaktereve janë detyra në sfond. ",
+      "server_logs": "Regjistrat e serverit",
+      "log_date": "Data",
+      "log_tag": "Etiketë",
+      "log_message": "Mesazh",
+      "indexing": "Indeksimi",
+      "indexing_info": "Nëse vëreni mospërputhje në rezultatet e kërkimit, mund të provoni të bëni një riindeksim të plotë. ",
+      "start_reindexing": "Filloni riindeksimin e plotë",
+      "reindexing_started": "Ri-indeksimi filloi, ju lutemi prisni derisa të mos ketë më detyra në sfond."
+    },
+    "session": {
+      "title": "Seancat e hapura",
+      "created_date": "Data e krijimit",
+      "last_connection_date": "Data e fundit e lidhjes",
+      "user_agent": "Nga",
+      "current": "Aktuale",
+      "current_session": "Ky është sesioni aktual",
+      "clear_message": "Të gjitha pajisjet e tjera të lidhura me këtë llogari do të shkëputen",
+      "clear": "Pastro të gjitha seancat e tjera"
+    },
+    "vocabulary": {
+      "title": "Shënimet e fjalorit",
+      "choose_vocabulary": "Zgjidhni një fjalor për të redaktuar",
+      "type": "Lloji",
+      "coverage": "Mbulimi",
+      "rights": "Të drejtat",
+      "value": "Vlera",
+      "order": "Rendit",
+      "new_entry": "Hyrje e re"
+    },
+    "fileimporter": {
+      "title": "Importuesi i skedarëve në masë",
+      "advanced_users": "Për përdoruesit e avancuar!",
+      "need_intro": "Nëse ju duhet:",
+      "need_1": "Importoni një direktori skedarësh menjëherë",
+      "need_2": "Skanoni një drejtori për skedarë të rinj dhe importojini ato",
+      "line_1": "Shkoni në <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> dhe shkarkoni mjetin e importuesit të skedarëve për sistemin tuaj.",
+      "line_2": "Ndiq <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">udhëzime këtu</a> për të përdorur këtë mjet.",
+      "line_3": "Skedarët tuaj do të importohen në dokumente sipas konfigurimit të importuesit të skedarëve.",
+      "download": "Shkarko",
+      "instructions": "Udhëzimet"
+    }
+  },
+  "feedback": {
+    "title": "Na jepni një koment",
+    "message": "Ndonjë sugjerim apo pyetje në lidhje me Teedy? ",
+    "sent_title": "Komentet u dërguan",
+    "sent_message": "Faleminderit për komentin tuaj! "
+  },
+  "import": {
+    "title": "Importimi",
+    "error_quota": "U arrit kufiri i kuotës, kontaktoni administratorin tuaj për të rritur kuotën tuaj",
+    "error_general": "Ndodhi një gabim gjatë përpjekjes për të importuar skedarin tuaj, ju lutemi sigurohuni që ai është një skedar i vlefshëm EML"
+  },
+  "app_share": {
+    "403": {
+      "title": "I pa autorizuar",
+      "message": "Dokumenti që po përpiqeni të shikoni nuk ndahet më"
+    },
+    "main": "Kërkoni një lidhje të përbashkët të dokumentit për të hyrë në të"
+  },
+  "directive": {
+    "acledit": {
+      "acl_target": "Për",
+      "acl_permission": "Leja",
+      "add_permission": "Shto një leje",
+      "search_user_group": "Kërkoni një përdorues ose grup"
+    },
+    "auditlog": {
+      "log_created": "krijuar",
+      "log_updated": "përditësuar",
+      "log_deleted": "fshihet",
+      "Acl": "ACL",
+      "Comment": "Komentoni",
+      "Document": "Dokumenti",
+      "File": "Skedari",
+      "Group": "Grupi",
+      "Route": "Rrjedha e punës",
+      "RouteModel": "Modeli i rrjedhës së punës",
+      "Tag": "Etiketë",
+      "User": "Përdoruesi",
+      "Webhook": "Uebhook"
+    },
+    "selectrelation": {
+      "typeahead": "Shkruani një titull dokumenti"
+    },
+    "selecttag": {
+      "typeahead": "Shkruani një etiketë"
+    },
+    "datepicker": {
+      "current": "Sot",
+      "clear": "Qartë",
+      "close": "U krye"
+    }
+  },
+  "filter": {
+    "filesize": {
+      "mb": "MB",
+      "kb": "kB"
+    }
+  },
+  "acl": {
+    "READ": "Mund të lexojë",
+    "READWRITE": "Mund të shkruajë",
+    "WRITE": "Mund të shkruajë",
+    "USER": "Përdoruesi",
+    "GROUP": "Grupi",
+    "SHARE": "Të përbashkëta"
+  },
+  "workflow_type": {
+    "VALIDATE": "Vleresimi",
+    "APPROVE": "Miratimi"
+  },
+  "workflow_transition": {
+    "APPROVED": "Miratuar",
+    "REJECTED": "Refuzuar",
+    "VALIDATED": "E vërtetuar"
+  },
+  "validation": {
+    "required": "E detyrueshme",
+    "too_short": "Shumë e shkurtër",
+    "too_long": "Shume gjate",
+    "email": "Duhet të jetë një e-mail i vlefshëm",
+    "password_confirm": "Fjalëkalimi dhe konfirmimi i fjalëkalimit duhet të përputhen",
+    "number": "Numri i kërkuar",
+    "no_space": "Hapësirat dhe dy pikat nuk lejohen",
+    "alphanumeric": "Lejohen vetëm shkronja dhe numra"
+  },
+  "action_type": {
+    "ADD_TAG": "Shto një etiketë",
+    "REMOVE_TAG": "Hiq një etiketë",
+    "PROCESS_FILES": "Përpunoni skedarët"
+  },
+  "pagination": {
+    "previous": "E mëparshme",
+    "next": "Tjetra",
+    "first": "Së pari",
+    "last": "E fundit"
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Hera e parë?",
+      "description": "Nëse është hera juaj e parë në Teedy, klikoni butonin Next, përndryshe mos ngurroni të më mbyllni."
+    },
+    "step2": {
+      "title": "Dokumentet",
+      "description": "Teedy është i organizuar në dokumente dhe çdo dokument përmban skedarë të shumtë."
+    },
+    "step3": {
+      "title": "Skedarët",
+      "description": "Mund të shtoni skedarë pas krijimit të një dokumenti ose përpara se të përdorni këtë zonë të ngarkimit të shpejtë."
+    },
+    "step4": {
+      "title": "Kërko",
+      "description": "Kjo është mënyra kryesore për të gjetur përsëri dokumentet tuaja. "
+    },
+    "step5": {
+      "title": "Etiketa",
+      "description": "Dokumentet mund të organizohen në etiketa (të cilat janë si super-dosje). "
+    }
+  },
+  "yes": "po",
+  "no": "Nr",
+  "ok": "Në rregull",
+  "cancel": "Anulo",
+  "share": "Shpërndaje",
+  "unshare": "Shpërndaje",
+  "close": "Mbylle",
+  "add": "Shtoni",
+  "open": "Hapur",
+  "see": "Shiko",
+  "save": "Ruaj",
+  "export": "Eksporto",
+  "edit": "Redakto",
+  "delete": "Fshije",
+  "rename": "Riemërto",
+  "download": "Shkarko",
+  "loading": "Po ngarkohet...",
+  "send": "Dërgo",
+  "enabled": "Aktivizuar",
+  "disabled": "I paaftë"
+}

@@ -2,6 +2,7 @@ package com.sismics.docs.core.util;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
+import com.sismics.BaseTest;
 import com.sismics.docs.core.dao.dto.DocumentDto;
 import com.sismics.docs.core.model.jpa.File;
 import com.sismics.docs.core.util.format.*;
@@ -23,11 +24,11 @@ import java.util.Date;
  * 
  * @author bgamard
  */
-public class TestFileUtil {
+public class TestFileUtil extends BaseTest {
     @Test
     public void extractContentOpenDocumentTextTest() throws Exception {
-        Path path = Paths.get(ClassLoader.getSystemResource("file/document.odt").toURI());
-        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, "document.odt"));
+        Path path = Paths.get(getResource(FILE_ODT).toURI());
+        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, FILE_ODT));
         Assert.assertNotNull(formatHandler);
         Assert.assertTrue(formatHandler instanceof OdtFormatHandler);
         String content = formatHandler.extractContent("eng", path);
@@ -36,8 +37,8 @@ public class TestFileUtil {
     
     @Test
     public void extractContentOfficeDocumentTest() throws Exception {
-        Path path = Paths.get(ClassLoader.getSystemResource("file/document.docx").toURI());
-        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, "document.docx"));
+        Path path = Paths.get(getResource(FILE_DOCX).toURI());
+        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, FILE_DOCX));
         Assert.assertNotNull(formatHandler);
         Assert.assertTrue(formatHandler instanceof DocxFormatHandler);
         String content = formatHandler.extractContent("eng", path);
@@ -46,8 +47,8 @@ public class TestFileUtil {
 
     @Test
     public void extractContentPowerpointTest() throws Exception {
-        Path path = Paths.get(ClassLoader.getSystemResource("file/apache.pptx").toURI());
-        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, "apache.pptx"));
+        Path path = Paths.get(getResource(FILE_PPTX).toURI());
+        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, FILE_PPTX));
         Assert.assertNotNull(formatHandler);
         Assert.assertTrue(formatHandler instanceof PptxFormatHandler);
         String content = formatHandler.extractContent("eng", path);
@@ -56,8 +57,8 @@ public class TestFileUtil {
 
     @Test
     public void extractContentPdf() throws Exception {
-        Path path = Paths.get(ClassLoader.getSystemResource("file/udhr.pdf").toURI());
-        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, "udhr.pdf"));
+        Path path = Paths.get(getResource(FILE_PDF).toURI());
+        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, FILE_PDF));
         Assert.assertNotNull(formatHandler);
         Assert.assertTrue(formatHandler instanceof PdfFormatHandler);
         String content = formatHandler.extractContent("eng", path);
@@ -66,8 +67,8 @@ public class TestFileUtil {
 
     @Test
     public void extractContentScannedPdf() throws Exception {
-        Path path = Paths.get(ClassLoader.getSystemResource("file/scanned.pdf").toURI());
-        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, "scanned.pdf"));
+        Path path = Paths.get(getResource("scanned.pdf").toURI());
+        FormatHandler formatHandler = FormatHandlerUtil.find(MimeTypeUtil.guessMimeType(path, FILE_PDF_SCANNED));
         Assert.assertNotNull(formatHandler);
         Assert.assertTrue(formatHandler instanceof PdfFormatHandler);
         String content = formatHandler.extractContent("eng", path);
@@ -76,12 +77,12 @@ public class TestFileUtil {
 
     @Test
     public void convertToPdfTest() throws Exception {
-        try (InputStream inputStream0 = Resources.getResource("file/apollo_landscape.jpg").openStream();
-                InputStream inputStream1 = Resources.getResource("file/apollo_portrait.jpg").openStream();
-                InputStream inputStream2 = Resources.getResource("file/udhr_encrypted.pdf").openStream();
-                InputStream inputStream3 = Resources.getResource("file/document.docx").openStream();
-                InputStream inputStream4 = Resources.getResource("file/document.odt").openStream();
-                InputStream inputStream5 = Resources.getResource("file/apache.pptx").openStream()) {
+        try (InputStream inputStream0 = getSystemResourceAsStream(FILE_JPG2);
+                InputStream inputStream1 = getSystemResourceAsStream(FILE_JPG);
+                InputStream inputStream2 = getSystemResourceAsStream(FILE_PDF_ENCRYPTED);
+                InputStream inputStream3 = getSystemResourceAsStream(FILE_DOCX);
+                InputStream inputStream4 = getSystemResourceAsStream(FILE_ODT);
+                InputStream inputStream5 = getSystemResourceAsStream(FILE_PPTX)) {
             // Document
             DocumentDto documentDto = new DocumentDto();
             documentDto.setTitle("My super document 1");

@@ -1,6 +1,5 @@
 package com.sismics.docs.core.util.format;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Closer;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfWriter;
