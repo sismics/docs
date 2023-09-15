@@ -365,35 +365,35 @@ public class DocumentResource extends BaseResource {
     }
     
     /**
-     * Returns all documents.
+     * Returns all documents, if a parameter is considered invalid, the search result will be empty.
      *
      * @api {get} /document/list Get documents
      * @apiName GetDocumentList
      * @apiGroup Document
      *
-     * @apiParam {String} limit Total number of documents to return
-     * @apiParam {String} offset Start at this index
-     * @apiParam {Number} sort_column Column index to sort on
-     * @apiParam {Boolean} asc If true, sort in ascending order
-     * @apiParam {String} search Search query (see "Document search syntax" on the top of the page for explanations)
-     * @apiParam {Boolean} files If true includes files information
+     * @apiParam {String} [limit] Total number of documents to return (default is 10)
+     * @apiParam {String} [offset] Start at this index (default is 0)
+     * @apiParam {Number} [sort_column] Column index to sort on
+     * @apiParam {Boolean} [asc] If true, sort in ascending order
+     * @apiParam {String} [search] Search query (see "Document search syntax" on the top of the page for explanations) when the input is entered by a human.
+     * @apiParam {Boolean} [files] If true includes files information
      *
-     * @apiParam {String} search[after] The document must have been created after or at the value moment, accepted format are {@code yyyy}, {@code yyyy-MM} and {@code yyyy-MM-dd}
-     * @apiParam {String} search[at] The document must have been created at the moment, accepted format are {@code yyyy}, {@code yyyy-MM} and {@code yyyy-MM-dd} (for {@code yyyy} it must be the same year, for {@code yyyy-MM} the same month, for {@code yyyy-MM}-dd the same day)
-     * @apiParam {String} search[before] The document must have been created before or at the value moment, accepted format are {@code yyyy}, {@code yyyy-MM} and {@code yyyy-MM-dd}
-     * @apiParam {String} search[by] The document must have been created by the specified creator's username with an exact match, the user must not be deleted
-     * @apiParam {String} search[full] Used as a search criteria for all fields including the document's files content.
-     * @apiParam {String} search[lang] The document must be of the specified language (example: {@code en})
-     * @apiParam {String} search[mime] The document must be of the specified mime type (example: {@code image/png})
-     * @apiParam {String} search[simple] Used as a search criteria for all fields except the document's files content.
-     * @apiParam {Boolean} search[shared] If true the document must be shared, else it is ignored
-     * @apiParam {String} search[tag] The document must contain a tag or a child of a tag that starts with the value, case is ignored
-     * @apiParam {String} search[!tag] The document must not contain a tag or a child of a tag that starts with the value, case is ignored
-     * @apiParam {String} search[title] The document's title must be value
-     * @apiParam {String} search[uafter] The document must have been updated after or at the value moment, accepted format are {@code yyyy}, {@code yyyy-MM} and {@code yyyy-MM-dd}
-     * @apiParam {String} search[uat] The document must have been updated at the moment, accepted format are {@code yyyy}, {@code yyyy-MM} and {@code yyyy-MM-dd} (for {@code yyyy} it must be the same year, for {@code yyyy-MM} the same month, for {@code yyyy-MM}-dd the same day)
-     * @apiParam {String} search[ubefore] The document must have been updated before or at the value moment, accepted format are {@code yyyy}, {@code yyyy-MM} and {@code yyyy-MM-dd}
-     * @apiParam {String} search[workflow] If the value is {@code me} the document must have an active route, for other values the criteria is ignored
+     * @apiParam {String} [search[after]] The document must have been created after or at the value moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code>
+     * @apiParam {String} [search[at]] The document must have been created at the moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code> (for <code>yyyy</code> it must be the same year, for <code>yyyy-MM</code> the same month, for <code>yyyy-MM-dd</code> the same day)
+     * @apiParam {String} [search[before]] The document must have been created before or at the value moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code>
+     * @apiParam {String} [search[by]] The document must have been created by the specified creator's username with an exact match, the user must not be deleted
+     * @apiParam {String} [search[full]] Used as a search criteria for all fields including the document's files content.
+     * @apiParam {String} [search[lang]] The document must be of the specified language (example: <code>en</code>)
+     * @apiParam {String} [search[mime]] The document must be of the specified mime type (example: <code>image/png</code>)
+     * @apiParam {String} [search[simple]] Used as a search criteria for all fields except the document's files content
+     * @apiParam {Boolean} [search[shared]] If <code>true</code> the document must be shared, else it is ignored
+     * @apiParam {String} [search[tag]] The document must contain a tag or a child of a tag that starts with the value, case is ignored
+     * @apiParam {String} [search[!tag]] The document must not contain a tag or a child of a tag that starts with the value, case is ignored
+     * @apiParam {String} [search[title]] The document's title must be the value
+     * @apiParam {String} [search[uafter]] The document must have been updated after or at the value moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code>
+     * @apiParam {String} [search[uat]] The document must have been updated at the moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code> (for <code>yyyy</code> it must be the same year, for <code>yyyy-MM</code> the same month, for <code>yyyy-MM-dd</code> the same day)
+     * @apiParam {String} [search[ubefore]] The document must have been updated before or at the value moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code>
+     * @apiParam {String} [search[workflow]] If the value is <code>me</code> the document must have an active route, for other values the criteria is ignored
      *
      * @apiSuccess {Number} total Total number of documents
      * @apiSuccess {Object[]} documents List of documents
