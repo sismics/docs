@@ -378,6 +378,9 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String} search Search query (see "Document search syntax" on the top of the page for explanations)
      * @apiParam {Boolean} files If true includes files information
      *
+     * @apiParam {String} search[after] The document must have been created after or at the value moment, accepted format are {@code yyyy}, {@code yyyy-MM} and {@code yyyy-MM-dd}
+     * @apiParam {String} search[at] The document must have been created at the moment, accepted format are {@code yyyy}, {@code yyyy-MM} and {@code yyyy-MM-dd} (for {@code yyyy} it must be the same year, for {@code yyyy-MM} the same month, for {@code yyyy-MM}-dd the same day)
+     * @apiParam {String} search[before] The document must have been created before or at the value moment, accepted format are {@code yyyy}, {@code yyyy-MM} and {@code yyyy-MM-dd}
      * @apiParam {String} search[by] The document must have been created by the specified creator's username with an exact match, the user must not be deleted
      * @apiParam {String} search[full] Used as a search criteria for all fields including the document's files content.
      * @apiParam {String} search[lang] The document must be of the specified language (example: {@code en})
@@ -386,7 +389,10 @@ public class DocumentResource extends BaseResource {
      * @apiParam {Boolean} search[shared] If true the document must be shared, else it is ignored
      * @apiParam {String} search[tag] The document must contain a tag or a child of a tag that starts with the value, case is ignored
      * @apiParam {String} search[!tag] The document must not contain a tag or a child of a tag that starts with the value, case is ignored
-     * @apiParam {String} search[title] The document must be value
+     * @apiParam {String} search[title] The document's title must be value
+     * @apiParam {String} search[uafter] The document must have been updated after or at the value moment, accepted format are {@code yyyy}, {@code yyyy-MM} and {@code yyyy-MM-dd}
+     * @apiParam {String} search[uat] The document must have been updated at the moment, accepted format are {@code yyyy}, {@code yyyy-MM} and {@code yyyy-MM-dd} (for {@code yyyy} it must be the same year, for {@code yyyy-MM} the same month, for {@code yyyy-MM}-dd the same day)
+     * @apiParam {String} search[ubefore] The document must have been updated before or at the value moment, accepted format are {@code yyyy}, {@code yyyy-MM} and {@code yyyy-MM-dd}
      * @apiParam {String} search[workflow] If the value is {@code me} the document must have an active route, for other values the criteria is ignored
      *
      * @apiSuccess {Number} total Total number of documents
@@ -438,6 +444,9 @@ public class DocumentResource extends BaseResource {
             @QueryParam("search") String search,
             @QueryParam("files") Boolean files,
 
+            @QueryParam("search[after]") String searchCreatedAfter,
+            @QueryParam("search[at]") String searchCreatedAt,
+            @QueryParam("search[before]") String searchCreatedBefore,
             @QueryParam("search[by]") String searchBy,
             @QueryParam("search[full]") String searchFull,
             @QueryParam("search[lang]") String searchLang,
@@ -447,6 +456,9 @@ public class DocumentResource extends BaseResource {
             @QueryParam("search[tag]") String searchTag,
             @QueryParam("search[!tag]") String searchTagNot,
             @QueryParam("search[title]") String searchTitle,
+            @QueryParam("search[uafter]") String searchUpdatedAfter,
+            @QueryParam("search[uat]") String searchUpdatedAt,
+            @QueryParam("search[ubefore]") String searchUpdatedBefore,
             @QueryParam("search[searchWorkflow]") String searchWorkflow
             ) {
         if (!authenticate()) {
@@ -467,6 +479,9 @@ public class DocumentResource extends BaseResource {
         addHttpSearchParams(
                 documentCriteria,
                 searchBy,
+                searchCreatedAfter,
+                searchCreatedAt,
+                searchCreatedBefore,
                 searchFull,
                 searchLang,
                 searchMime,
@@ -475,6 +490,9 @@ public class DocumentResource extends BaseResource {
                 searchTag,
                 searchTagNot,
                 searchTitle,
+                searchUpdatedAfter,
+                searchUpdatedAt,
+                searchUpdatedBefore,
                 searchWorkflow,
                 allTagDtoList);
 
@@ -547,6 +565,9 @@ public class DocumentResource extends BaseResource {
     private void addHttpSearchParams(
             DocumentCriteria documentCriteria,
             String searchBy,
+            String searchCreatedAfter,
+            String searchCreatedAt,
+            String searchCreatedBefore,
             String searchFull,
             String searchLang,
             String searchMime,
@@ -555,6 +576,9 @@ public class DocumentResource extends BaseResource {
             String searchTag,
             String searchTagNot,
             String searchTitle,
+            String searchUpdatedAfter,
+            String searchUpdatedAt,
+            String searchUpdatedBefore,
             String searchWorkflow,
             List<TagDto> allTagDtoList
     ) {
@@ -563,6 +587,15 @@ public class DocumentResource extends BaseResource {
 
         if(searchBy != null) {
             parseByCriteria(documentCriteria, searchBy);
+        }
+        if(searchCreatedAfter != null) {
+            parseDateCriteria(documentCriteria, searchCreatedAfter, false, false);
+        }
+        if(searchCreatedAt != null) {
+            parseDateAtCriteria(documentCriteria, searchCreatedAt, false);
+        }
+        if(searchCreatedBefore != null) {
+            parseDateCriteria(documentCriteria, searchCreatedBefore, false, true);
         }
         if(searchFull != null) {
             fullQuery.add(searchFull);
@@ -588,14 +621,21 @@ public class DocumentResource extends BaseResource {
         if(searchTagNot != null) {
             parseTagCriteria(documentCriteria, searchTag, allTagDtoList, false);
         }
+        if(searchUpdatedAfter != null) {
+            parseDateCriteria(documentCriteria, searchUpdatedAfter, true, false);
+        }
+        if(searchUpdatedAt != null) {
+            parseDateAtCriteria(documentCriteria, searchUpdatedAt, true);
+        }
+        if(searchUpdatedBefore != null) {
+            parseDateCriteria(documentCriteria, searchUpdatedBefore, true, true);
+        }
         if(("me".equals(searchWorkflow))) {
             documentCriteria.setActiveRoute(true);
         }
-
         if (! simpleQuery.isEmpty()) {
             documentCriteria.setSimpleSearch(Joiner.on(" ").join(simpleQuery));
         }
-
         if (fullQuery.isEmpty()) {
             documentCriteria.setFullSearch(Joiner.on(" ").join(fullQuery));
         }
@@ -627,6 +667,9 @@ public class DocumentResource extends BaseResource {
             @FormParam("asc") Boolean asc,
             @FormParam("search") String search,
             @FormParam("files") Boolean files,
+            @FormParam("search[after]") String searchCreatedAfter,
+            @FormParam("search[at]") String searchCreatedAt,
+            @FormParam("search[before]") String searchCreatedBefore,
             @FormParam("search[by]") String searchBy,
             @FormParam("search[full]") String searchFull,
             @FormParam("search[lang]") String searchLang,
@@ -636,6 +679,9 @@ public class DocumentResource extends BaseResource {
             @FormParam("search[tag]") String searchTag,
             @FormParam("search[!tag]") String searchTagNot,
             @FormParam("search[title]") String searchTitle,
+            @FormParam("search[uafter]") String searchUpdatedAfter,
+            @FormParam("search[uat]") String searchUpdatedAt,
+            @FormParam("search[ubefore]") String searchUpdatedBefore,
             @FormParam("search[searchWorkflow]") String searchWorkflow
             ) {
         return list(
@@ -646,6 +692,9 @@ public class DocumentResource extends BaseResource {
                 search,
                 files,
                 searchBy,
+                searchCreatedAfter,
+                searchCreatedAt,
+                searchCreatedBefore,
                 searchFull,
                 searchLang,
                 searchMime,
@@ -654,6 +703,9 @@ public class DocumentResource extends BaseResource {
                 searchTag,
                 searchTagNot,
                 searchTitle,
+                searchUpdatedAfter,
+                searchUpdatedAt,
+                searchUpdatedBefore,
                 searchWorkflow
                 );
     }
@@ -696,71 +748,12 @@ public class DocumentResource extends BaseResource {
                 case "uafter":
                 case "ubefore":
                     // New date span criteria
-                    try {
-                        boolean isUpdated = paramName.startsWith("u");
-                        DateTime date = DATE_FORMATTER.parseDateTime(paramValue);
-                        if (paramName.endsWith("before")) {
-                            if (isUpdated) documentCriteria.setUpdateDateMax(date.toDate());
-                            else documentCriteria.setCreateDateMax(date.toDate());
-                        } else {
-                            if (isUpdated) documentCriteria.setUpdateDateMin(date.toDate());
-                            else  documentCriteria.setCreateDateMin(date.toDate());
-                        }
-                    } catch (IllegalArgumentException e) {
-                        // Invalid date, returns no documents
-                        documentCriteria.setCreateDateMin(new Date(0));
-                        documentCriteria.setCreateDateMax(new Date(0));
-                    }
+                    parseDateCriteria(documentCriteria, paramValue, paramName.startsWith("u"), paramName.endsWith("before"));
                     break;
                 case "uat":
                 case "at":
                     // New specific date criteria
-                    boolean isUpdated = params[0].startsWith("u");
-                    try {
-                        switch (paramValue.length()) {
-                            case 10: {
-                                DateTime date = DATE_FORMATTER.parseDateTime(params[1]);
-                                if (isUpdated) {
-                                    documentCriteria.setUpdateDateMin(date.toDate());
-                                    documentCriteria.setUpdateDateMax(date.plusDays(1).minusSeconds(1).toDate());
-                                } else {
-                                    documentCriteria.setCreateDateMin(date.toDate());
-                                    documentCriteria.setCreateDateMax(date.plusDays(1).minusSeconds(1).toDate());
-                                }
-                                break;
-                            }
-                            case 7: {
-                                DateTime date = MONTH_FORMATTER.parseDateTime(params[1]);
-                                if (isUpdated) {
-                                    documentCriteria.setUpdateDateMin(date.toDate());
-                                    documentCriteria.setUpdateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
-                                } else {
-                                    documentCriteria.setCreateDateMin(date.toDate());
-                                    documentCriteria.setCreateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
-                                }
-                                break;
-                            }
-                            case 4: {
-                                DateTime date = YEAR_FORMATTER.parseDateTime(params[1]);
-                                if (isUpdated) {
-                                    documentCriteria.setUpdateDateMin(date.toDate());
-                                    documentCriteria.setUpdateDateMax(date.plusYears(1).minusSeconds(1).toDate());
-                                } else {
-                                    documentCriteria.setCreateDateMin(date.toDate());
-                                    documentCriteria.setCreateDateMax(date.plusYears(1).minusSeconds(1).toDate());
-                                }
-                                break;
-                            } default: {
-                                // Invalid format, returns no documents
-                                documentCriteria.setCreateDateMin(new Date(0));
-                                documentCriteria.setCreateDateMax(new Date(0));
-                            }
-                        }
-                    } catch (IllegalArgumentException e) {
-                        // Invalid date, returns no documents
-                        documentCriteria.setCreateDateMin(new Date(0));
-                        documentCriteria.setCreateDateMax(new Date(0));
-                    }
+                    parseDateAtCriteria(documentCriteria, paramValue, params[0].startsWith("u"));
                     break;
                 case "shared":
                     // New shared state criteria
@@ -804,7 +797,72 @@ public class DocumentResource extends BaseResource {
         return documentCriteria;
     }
 
-    private static void parseTagCriteria(DocumentCriteria documentCriteria, String value, List<TagDto> allTagDtoList, boolean exclusion) {
+    private void parseDateCriteria(DocumentCriteria documentCriteria, String value, boolean isUpdated, boolean isBefore) {
+        try {
+            DateTime date = DATE_FORMATTER.parseDateTime(value);
+            if (isBefore) {
+                if (isUpdated) documentCriteria.setUpdateDateMax(date.toDate());
+                else documentCriteria.setCreateDateMax(date.toDate());
+            } else {
+                if (isUpdated) documentCriteria.setUpdateDateMin(date.toDate());
+                else  documentCriteria.setCreateDateMin(date.toDate());
+            }
+        } catch (IllegalArgumentException e) {
+            // Invalid date, returns no documents
+            documentCriteria.setCreateDateMin(new Date(0));
+            documentCriteria.setCreateDateMax(new Date(0));
+        }
+    }
+
+    private void parseDateAtCriteria(DocumentCriteria documentCriteria, String value, boolean isUpdated) {
+        try {
+            switch (value.length()) {
+                case 10: {
+                    DateTime date = DATE_FORMATTER.parseDateTime(value);
+                    if (isUpdated) {
+                        documentCriteria.setUpdateDateMin(date.toDate());
+                        documentCriteria.setUpdateDateMax(date.plusDays(1).minusSeconds(1).toDate());
+                    } else {
+                        documentCriteria.setCreateDateMin(date.toDate());
+                        documentCriteria.setCreateDateMax(date.plusDays(1).minusSeconds(1).toDate());
+                    }
+                    break;
+                }
+                case 7: {
+                    DateTime date = MONTH_FORMATTER.parseDateTime(value);
+                    if (isUpdated) {
+                        documentCriteria.setUpdateDateMin(date.toDate());
+                        documentCriteria.setUpdateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
+                    } else {
+                        documentCriteria.setCreateDateMin(date.toDate());
+                        documentCriteria.setCreateDateMax(date.plusMonths(1).minusSeconds(1).toDate());
+                    }
+                    break;
+                }
+                case 4: {
+                    DateTime date = YEAR_FORMATTER.parseDateTime(value);
+                    if (isUpdated) {
+                        documentCriteria.setUpdateDateMin(date.toDate());
+                        documentCriteria.setUpdateDateMax(date.plusYears(1).minusSeconds(1).toDate());
+                    } else {
+                        documentCriteria.setCreateDateMin(date.toDate());
+                        documentCriteria.setCreateDateMax(date.plusYears(1).minusSeconds(1).toDate());
+                    }
+                    break;
+                } default: {
+                    // Invalid format, returns no documents
+                    documentCriteria.setCreateDateMin(new Date(0));
+                    documentCriteria.setCreateDateMax(new Date(0));
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            // Invalid date, returns no documents
+            documentCriteria.setCreateDateMin(new Date(0));
+            documentCriteria.setCreateDateMax(new Date(0));
+        }
+    }
+
+    private void parseTagCriteria(DocumentCriteria documentCriteria, String value, List<TagDto> allTagDtoList, boolean exclusion) {
         List<TagDto> tagDtoList = TagUtil.findByName(value, allTagDtoList);
         if (tagDtoList.isEmpty()) {
             // No tag found, the request must return nothing
@@ -826,7 +884,7 @@ public class DocumentResource extends BaseResource {
         }
     }
 
-    private static void parseLangCriteria(DocumentCriteria documentCriteria, String value) {
+    private void parseLangCriteria(DocumentCriteria documentCriteria, String value) {
         // New language criteria
         if (Constants.SUPPORTED_LANGUAGES.contains(value)) {
             documentCriteria.setLanguage(value);
@@ -836,7 +894,7 @@ public class DocumentResource extends BaseResource {
         }
     }
 
-    private static void parseByCriteria(DocumentCriteria documentCriteria, String value) {
+    private void parseByCriteria(DocumentCriteria documentCriteria, String value) {
         User user = new UserDao().getActiveByUsername(value);
         if (user == null) {
             // This user doesn't exist, return nothing
