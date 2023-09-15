@@ -370,12 +370,25 @@ public class DocumentResource extends BaseResource {
      * @api {get} /document/list Get documents
      * @apiName GetDocumentList
      * @apiGroup Document
+     *
      * @apiParam {String} limit Total number of documents to return
      * @apiParam {String} offset Start at this index
      * @apiParam {Number} sort_column Column index to sort on
      * @apiParam {Boolean} asc If true, sort in ascending order
      * @apiParam {String} search Search query (see "Document search syntax" on the top of the page for explanations)
-     * @apiParam {Booleans} files If true includes files information
+     * @apiParam {Boolean} files If true includes files information
+     *
+     * @apiParam {String} search[by] The document must have been created by the specified creator's username with an exact match, the user must not be deleted
+     * @apiParam {String} search[full] Used as a search criteria for all fields including the document's files content.
+     * @apiParam {String} search[lang] The document must be of the specified language (example: {@code en})
+     * @apiParam {String} search[mime] The document must be of the specified mime type (example: {@code image/png})
+     * @apiParam {String} search[simple] Used as a search criteria for all fields except the document's files content.
+     * @apiParam {Boolean} search[shared] If true the document must be shared, else it is ignored
+     * @apiParam {String} search[tag] The document must contain a tag or a child of a tag that starts with the value, case is ignored
+     * @apiParam {String} search[!tag] The document must not contain a tag or a child of a tag that starts with the value, case is ignored
+     * @apiParam {String} search[title] The document must be value
+     * @apiParam {String} search[workflow] If the value is {@code me} the document must have an active route, for other values the criteria is ignored
+     *
      * @apiSuccess {Number} total Total number of documents
      * @apiSuccess {Object[]} documents List of documents
      * @apiSuccess {String} documents.id ID
@@ -401,6 +414,7 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String} documents.files.mimetype MIME type
      * @apiSuccess {String} documents.files.create_date Create date (timestamp)
      * @apiSuccess {String[]} suggestions List of search suggestions
+     *
      * @apiError (client) ForbiddenError Access denied
      * @apiError (server) SearchError Error searching in documents
      * @apiPermission user
@@ -422,7 +436,19 @@ public class DocumentResource extends BaseResource {
             @QueryParam("sort_column") Integer sortColumn,
             @QueryParam("asc") Boolean asc,
             @QueryParam("search") String search,
-            @QueryParam("files") Boolean files) {
+            @QueryParam("files") Boolean files,
+
+            @QueryParam("search[by]") String searchBy,
+            @QueryParam("search[full]") String searchFull,
+            @QueryParam("search[lang]") String searchLang,
+            @QueryParam("search[mime]") String searchMime,
+            @QueryParam("search[shared]") Boolean searchShared,
+            @QueryParam("search[simple]") String searchSimple,
+            @QueryParam("search[tag]") String searchTag,
+            @QueryParam("search[!tag]") String searchTagNot,
+            @QueryParam("search[title]") String searchTitle,
+            @QueryParam("search[searchWorkflow]") String searchWorkflow
+            ) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
@@ -434,7 +460,24 @@ public class DocumentResource extends BaseResource {
         PaginatedList<DocumentDto> paginatedList = PaginatedLists.create(limit, offset);
         List<String> suggestionList = Lists.newArrayList();
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
-        DocumentCriteria documentCriteria = parseSearchQuery(search);
+
+        List<TagDto> allTagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)), null);
+
+        DocumentCriteria documentCriteria = parseSearchQuery(search, allTagDtoList);
+        addHttpSearchParams(
+                documentCriteria,
+                searchBy,
+                searchFull,
+                searchLang,
+                searchMime,
+                searchShared,
+                searchSimple,
+                searchTag,
+                searchTagNot,
+                searchTitle,
+                searchWorkflow,
+                allTagDtoList);
+
         documentCriteria.setTargetIdList(getTargetIdList(null));
         try {
             AppContext.getInstance().getIndexingHandler().findByCriteria(paginatedList, suggestionList, documentCriteria, sortCriteria);
@@ -501,6 +544,63 @@ public class DocumentResource extends BaseResource {
         return Response.ok().entity(response.build()).build();
     }
 
+    private void addHttpSearchParams(
+            DocumentCriteria documentCriteria,
+            String searchBy,
+            String searchFull,
+            String searchLang,
+            String searchMime,
+            Boolean searchShared,
+            String searchSimple,
+            String searchTag,
+            String searchTagNot,
+            String searchTitle,
+            String searchWorkflow,
+            List<TagDto> allTagDtoList
+    ) {
+        List<String> simpleQuery = new ArrayList<>();
+        List<String> fullQuery = new ArrayList<>();
+
+        if(searchBy != null) {
+            parseByCriteria(documentCriteria, searchBy);
+        }
+        if(searchFull != null) {
+            fullQuery.add(searchFull);
+        }
+        if(searchLang != null) {
+            parseLangCriteria(documentCriteria, searchLang);
+        }
+        if(searchMime != null) {
+            documentCriteria.setMimeType(searchMime);
+        }
+        if((searchShared != null) && (searchShared)) {
+            documentCriteria.setShared(searchShared);
+        }
+        if(searchSimple != null) {
+            simpleQuery.add(searchSimple);
+        }
+        if(searchTitle != null) {
+            documentCriteria.getTitleList().add(searchTitle);
+        }
+        if(searchTag != null) {
+            parseTagCriteria(documentCriteria, searchTag, allTagDtoList, false);
+        }
+        if(searchTagNot != null) {
+            parseTagCriteria(documentCriteria, searchTag, allTagDtoList, false);
+        }
+        if(("me".equals(searchWorkflow))) {
+            documentCriteria.setActiveRoute(true);
+        }
+
+        if (! simpleQuery.isEmpty()) {
+            documentCriteria.setSimpleSearch(Joiner.on(" ").join(simpleQuery));
+        }
+
+        if (fullQuery.isEmpty()) {
+            documentCriteria.setFullSearch(Joiner.on(" ").join(fullQuery));
+        }
+    }
+
     /**
      * Returns all documents.
      *
@@ -526,8 +626,36 @@ public class DocumentResource extends BaseResource {
             @FormParam("sort_column") Integer sortColumn,
             @FormParam("asc") Boolean asc,
             @FormParam("search") String search,
-            @FormParam("files") Boolean files) {
-        return list(limit, offset, sortColumn, asc, search, files);
+            @FormParam("files") Boolean files,
+            @FormParam("search[by]") String searchBy,
+            @FormParam("search[full]") String searchFull,
+            @FormParam("search[lang]") String searchLang,
+            @FormParam("search[mime]") String searchMime,
+            @FormParam("search[shared]") Boolean searchShared,
+            @FormParam("search[simple]") String searchSimple,
+            @FormParam("search[tag]") String searchTag,
+            @FormParam("search[!tag]") String searchTagNot,
+            @FormParam("search[title]") String searchTitle,
+            @FormParam("search[searchWorkflow]") String searchWorkflow
+            ) {
+        return list(
+                limit,
+                offset,
+                sortColumn,
+                asc,
+                search,
+                files,
+                searchBy,
+                searchFull,
+                searchLang,
+                searchMime,
+                searchShared,
+                searchSimple,
+                searchTag,
+                searchTagNot,
+                searchTitle,
+                searchWorkflow
+                );
     }
 
     /**
@@ -535,20 +663,17 @@ public class DocumentResource extends BaseResource {
      * tag:assurance tag:other before:2012 after:2011-09 shared:yes lang:fra thing
      *
      * @param search Search query
+     * @param allTagDtoList List of tags
      * @return DocumentCriteria
      */
-    private DocumentCriteria parseSearchQuery(String search) {
+    private DocumentCriteria parseSearchQuery(String search, List<TagDto> allTagDtoList) {
         DocumentCriteria documentCriteria = new DocumentCriteria();
         if (Strings.isNullOrEmpty(search)) {
             return documentCriteria;
         }
 
-        TagDao tagDao = new TagDao();
-        List<TagDto> allTagDtoList = tagDao.findByCriteria(new TagCriteria().setTargetIdList(getTargetIdList(null)), null);
-        UserDao userDao = new UserDao();
-
         String[] criteriaList = search.split(" +");
-        List<String> query = new ArrayList<>();
+        List<String> simpleQuery = new ArrayList<>();
         List<String> fullQuery = new ArrayList<>();
         for (String criteria : criteriaList) {
             String[] params = criteria.split(":");
@@ -564,25 +689,7 @@ public class DocumentResource extends BaseResource {
                 case "tag":
                 case "!tag":
                     // New tag criteria
-                    List<TagDto> tagDtoList = TagUtil.findByName(paramValue, allTagDtoList);
-                    if (tagDtoList.isEmpty()) {
-                        // No tag found, the request must return nothing
-                        documentCriteria.getTagIdList().add(Lists.newArrayList(UUID.randomUUID().toString()));
-                    } else {
-                        List<String> tagIdList = Lists.newArrayList();
-                        for (TagDto tagDto : tagDtoList) {
-                            tagIdList.add(tagDto.getId());
-                            List<TagDto> childrenTagDtoList = TagUtil.findChildren(tagDto, allTagDtoList);
-                            for (TagDto childrenTagDto : childrenTagDtoList) {
-                                tagIdList.add(childrenTagDto.getId());
-                            }
-                        }
-                        if (paramName.startsWith("!")) {
-                            documentCriteria.getExcludedTagIdList().add(tagIdList);
-                        } else {
-                            documentCriteria.getTagIdList().add(tagIdList);
-                        }
-                    }
+                    parseTagCriteria(documentCriteria, paramValue, allTagDtoList, paramName.startsWith("!"));
                     break;
                 case "after":
                 case "before":
@@ -660,13 +767,7 @@ public class DocumentResource extends BaseResource {
                     documentCriteria.setShared(paramValue.equals("yes"));
                     break;
                 case "lang":
-                    // New language criteria
-                    if (Constants.SUPPORTED_LANGUAGES.contains(paramValue)) {
-                        documentCriteria.setLanguage(paramValue);
-                    } else {
-                        // Unsupported language, returns no documents
-                        documentCriteria.setLanguage(UUID.randomUUID().toString());
-                    }
+                    parseLangCriteria(documentCriteria, paramValue);
                     break;
                 case "mime":
                     // New mime type criteria
@@ -674,14 +775,7 @@ public class DocumentResource extends BaseResource {
                     break;
                 case "by":
                     // New creator criteria
-                    User user = userDao.getActiveByUsername(paramValue);
-                    if (user == null) {
-                        // This user doesn't exist, return nothing
-                        documentCriteria.setCreatorId(UUID.randomUUID().toString());
-                    } else {
-                        // This user exists, search its documents
-                        documentCriteria.setCreatorId(user.getId());
-                    }
+                    parseByCriteria(documentCriteria, paramValue);
                     break;
                 case "workflow":
                     // New shared state criteria
@@ -689,7 +783,7 @@ public class DocumentResource extends BaseResource {
                     break;
                 case "simple":
                     // New simple search criteria
-                    query.add(paramValue);
+                    simpleQuery.add(paramValue);
                     break;
                 case "full":
                     // New fulltext search criteria
@@ -705,9 +799,52 @@ public class DocumentResource extends BaseResource {
             }
         }
 
-        documentCriteria.setSearch(Joiner.on(" ").join(query));
+        documentCriteria.setSimpleSearch(Joiner.on(" ").join(simpleQuery));
         documentCriteria.setFullSearch(Joiner.on(" ").join(fullQuery));
         return documentCriteria;
+    }
+
+    private static void parseTagCriteria(DocumentCriteria documentCriteria, String value, List<TagDto> allTagDtoList, boolean exclusion) {
+        List<TagDto> tagDtoList = TagUtil.findByName(value, allTagDtoList);
+        if (tagDtoList.isEmpty()) {
+            // No tag found, the request must return nothing
+            documentCriteria.getTagIdList().add(Lists.newArrayList(UUID.randomUUID().toString()));
+        } else {
+            List<String> tagIdList = Lists.newArrayList();
+            for (TagDto tagDto : tagDtoList) {
+                tagIdList.add(tagDto.getId());
+                List<TagDto> childrenTagDtoList = TagUtil.findChildren(tagDto, allTagDtoList);
+                for (TagDto childrenTagDto : childrenTagDtoList) {
+                    tagIdList.add(childrenTagDto.getId());
+                }
+            }
+            if (exclusion) {
+                documentCriteria.getExcludedTagIdList().add(tagIdList);
+            } else {
+                documentCriteria.getTagIdList().add(tagIdList);
+            }
+        }
+    }
+
+    private static void parseLangCriteria(DocumentCriteria documentCriteria, String value) {
+        // New language criteria
+        if (Constants.SUPPORTED_LANGUAGES.contains(value)) {
+            documentCriteria.setLanguage(value);
+        } else {
+            // Unsupported language, returns no documents
+            documentCriteria.setLanguage(UUID.randomUUID().toString());
+        }
+    }
+
+    private static void parseByCriteria(DocumentCriteria documentCriteria, String value) {
+        User user = new UserDao().getActiveByUsername(value);
+        if (user == null) {
+            // This user doesn't exist, return nothing
+            documentCriteria.setCreatorId(UUID.randomUUID().toString());
+        } else {
+            // This user exists, search its documents
+            documentCriteria.setCreatorId(user.getId());
+        }
     }
 
     /**

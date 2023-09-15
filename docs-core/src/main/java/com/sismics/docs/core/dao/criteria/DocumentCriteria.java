@@ -19,7 +19,7 @@ public class DocumentCriteria {
     /**
      * Search query.
      */
-    private String search;
+    private String simpleSearch;
     
     /**
      * Full content search query.
@@ -96,12 +96,12 @@ public class DocumentCriteria {
         this.targetIdList = targetIdList;
     }
 
-    public String getSearch() {
-        return search;
+    public String getSimpleSearch() {
+        return simpleSearch;
     }
 
-    public void setSearch(String search) {
-        this.search = search;
+    public void setSimpleSearch(String search) {
+        this.simpleSearch = search;
     }
 
     public String getFullSearch() {
