@@ -390,7 +390,7 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String} [search[simple]] Used as a search criteria for all fields except the document's files content
      * @apiParam {Boolean} [search[shared]] If <code>true</code> the document must be shared, else it is ignored
      * @apiParam {String} [search[tag]] The document must contain a tag or a child of a tag that starts with the value, case is ignored, several comma-separated values can be specified and the document must match all tag filters
-     * @apiParam {String} [search[!tag]] The document must not contain a tag or a child of a tag that starts with the value, case is ignored, several comma-separated values can be specified and the document must match all tag filters
+     * @apiParam {String} [search[nottag]] The document must not contain a tag or a child of a tag that starts with the value, case is ignored, several comma-separated values can be specified and the document must match all tag filters
      * @apiParam {String} [search[title]] The document's title must be the value, several comma-separated values can be specified and the document must match any of the titles
      * @apiParam {String} [search[uafter]] The document must have been updated after or at the value moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code>
      * @apiParam {String} [search[uat]] The document must have been updated at the moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code> (for <code>yyyy</code> it must be the same year, for <code>yyyy-MM</code> the same month, for <code>yyyy-MM-dd</code> the same day)
@@ -456,12 +456,12 @@ public class DocumentResource extends BaseResource {
             @QueryParam("search[shared]") Boolean searchShared,
             @QueryParam("search[simple]") String searchSimple,
             @QueryParam("search[tag]") String searchTag,
-            @QueryParam("search[!tag]") String searchTagNot,
+            @QueryParam("search[nottag]") String searchTagNot,
             @QueryParam("search[title]") String searchTitle,
             @QueryParam("search[uafter]") String searchUpdatedAfter,
             @QueryParam("search[uat]") String searchUpdatedAt,
             @QueryParam("search[ubefore]") String searchUpdatedBefore,
-            @QueryParam("search[searchWorkflow]") String searchWorkflow
+            @QueryParam("search[searchworkflow]") String searchWorkflow
             ) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -683,12 +683,12 @@ public class DocumentResource extends BaseResource {
             @FormParam("search[shared]") Boolean searchShared,
             @FormParam("search[simple]") String searchSimple,
             @FormParam("search[tag]") String searchTag,
-            @FormParam("search[!tag]") String searchTagNot,
+            @FormParam("search[nottag]") String searchTagNot,
             @FormParam("search[title]") String searchTitle,
             @FormParam("search[uafter]") String searchUpdatedAfter,
             @FormParam("search[uat]") String searchUpdatedAt,
             @FormParam("search[ubefore]") String searchUpdatedBefore,
-            @FormParam("search[searchWorkflow]") String searchWorkflow
+            @FormParam("search[searchworkflow]") String searchWorkflow
             ) {
         return list(
                 limit,
