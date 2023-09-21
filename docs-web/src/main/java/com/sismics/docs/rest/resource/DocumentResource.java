@@ -382,7 +382,7 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String} [search[at]] The document must have been created at the moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code> (for <code>yyyy</code> it must be the same year, for <code>yyyy-MM</code> the same month, for <code>yyyy-MM-dd</code> the same day)
      * @apiParam {String} [search[before]] The document must have been created before or at the value moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code>
      * @apiParam {String} [search[by]] The document must have been created by the specified creator's username with an exact match, the user must not be deleted
-     * @apiParam {String} [search[full]] Used as a search criteria for all fields including the document's files content.
+     * @apiParam {String} [search[full]] Used as a search criteria for all fields including the document's files content
      * @apiParam {String} [search[lang]] The document must be of the specified language (example: <code>en</code>)
      * @apiParam {String} [search[mime]] The document must be of the specified mime type (example: <code>image/png</code>)
      * @apiParam {String} [search[simple]] Used as a search criteria for all fields except the document's files content
