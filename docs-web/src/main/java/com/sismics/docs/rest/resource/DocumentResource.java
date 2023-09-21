@@ -87,6 +87,8 @@ public class DocumentResource extends BaseResource {
             DAY_PARSER};
     private static final DateTimeFormatter DATE_FORMATTER = new DateTimeFormatterBuilder().append( null, DATE_PARSERS).toFormatter();
 
+    private static final String PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR = ",";
+
     /**
      * Returns a document.
      *
@@ -387,9 +389,9 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String} [search[mime]] The document must be of the specified mime type (example: <code>image/png</code>)
      * @apiParam {String} [search[simple]] Used as a search criteria for all fields except the document's files content
      * @apiParam {Boolean} [search[shared]] If <code>true</code> the document must be shared, else it is ignored
-     * @apiParam {String} [search[tag]] The document must contain a tag or a child of a tag that starts with the value, case is ignored
-     * @apiParam {String} [search[!tag]] The document must not contain a tag or a child of a tag that starts with the value, case is ignored
-     * @apiParam {String} [search[title]] The document's title must be the value
+     * @apiParam {String} [search[tag]] The document must contain a tag or a child of a tag that starts with the value, case is ignored, several comma-separated values can be specified and the document must match all tag filters
+     * @apiParam {String} [search[!tag]] The document must not contain a tag or a child of a tag that starts with the value, case is ignored, several comma-separated values can be specified and the document must match all tag filters
+     * @apiParam {String} [search[title]] The document's title must be the value, several comma-separated values can be specified and the document must match any of the titles
      * @apiParam {String} [search[uafter]] The document must have been updated after or at the value moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code>
      * @apiParam {String} [search[uat]] The document must have been updated at the moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code> (for <code>yyyy</code> it must be the same year, for <code>yyyy-MM</code> the same month, for <code>yyyy-MM-dd</code> the same day)
      * @apiParam {String} [search[ubefore]] The document must have been updated before or at the value moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code>
@@ -613,13 +615,17 @@ public class DocumentResource extends BaseResource {
             simpleQuery.add(searchSimple);
         }
         if(searchTitle != null) {
-            documentCriteria.getTitleList().add(searchTitle);
+            documentCriteria.getTitleList().addAll(Arrays.asList(searchTitle.split(PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR)));
         }
         if(searchTag != null) {
-            parseTagCriteria(documentCriteria, searchTag, allTagDtoList, false);
+            for(String tag : searchTag.split(PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR)) {
+                parseTagCriteria(documentCriteria, tag, allTagDtoList, false);
+            }
         }
         if(searchTagNot != null) {
-            parseTagCriteria(documentCriteria, searchTag, allTagDtoList, false);
+            for(String tag : searchTagNot.split(PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR)) {
+                parseTagCriteria(documentCriteria, tag, allTagDtoList, true);
+            }
         }
         if(searchUpdatedAfter != null) {
             parseDateCriteria(documentCriteria, searchUpdatedAfter, true, false);
