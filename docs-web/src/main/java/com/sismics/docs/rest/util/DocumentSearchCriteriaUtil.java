@@ -30,14 +30,14 @@ public class DocumentSearchCriteriaUtil {
             YEAR_PARSER,
             MONTH_PARSER,
             DAY_PARSER};
-    private static final DateTimeFormatter DATE_FORMATTER = new DateTimeFormatterBuilder().append( null, DATE_PARSERS).toFormatter();
+    private static final DateTimeFormatter DAY_FORMATTER = new DateTimeFormatterBuilder().append(null, DATE_PARSERS).toFormatter();
     private static final String PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR = ",";
 
     /**
      * Parse a query according to the specified syntax, eg.:
      * tag:assurance tag:other before:2012 after:2011-09 shared:yes lang:fra thing
      *
-     * @param search Search query
+     * @param search        Search query
      * @param allTagDtoList List of tags
      * @return DocumentCriteria
      */
@@ -120,15 +120,127 @@ public class DocumentSearchCriteriaUtil {
         return documentCriteria;
     }
 
+
+    /**
+     * Fill the document criteria with various possible parameters
+     *
+     * @param documentCriteria    structure to be filled
+     * @param searchBy            author
+     * @param searchCreatedAfter  creation moment after
+     * @param searchCreatedAt     creation moment at
+     * @param searchCreatedBefore creation moment before
+     * @param searchFull          full search
+     * @param searchLang          lang
+     * @param searchMime          mime type
+     * @param searchShared        share state
+     * @param searchSimple        search in
+     * @param searchTag           tags or parent tags
+     * @param searchNotTag        tags or parent tags to ignore
+     * @param searchTitle         title
+     * @param searchUpdatedAfter  update moment after
+     * @param searchUpdatedAt     update moment at
+     * @param searchUpdatedBefore update moment before
+     * @param searchWorkflow      exiting workflow
+     * @param allTagDtoList       list of existing tags
+     */
+    public static void addHttpSearchParams(
+            DocumentCriteria documentCriteria,
+            String searchBy,
+            String searchCreatedAfter,
+            String searchCreatedAt,
+            String searchCreatedBefore,
+            String searchFull,
+            String searchLang,
+            String searchMime,
+            Boolean searchShared,
+            String searchSimple,
+            String searchTag,
+            String searchNotTag,
+            String searchTitle,
+            String searchUpdatedAfter,
+            String searchUpdatedAt,
+            String searchUpdatedBefore,
+            String searchWorkflow,
+            List<TagDto> allTagDtoList
+    ) {
+        List<String> simpleQuery = new ArrayList<>();
+        List<String> fullQuery = new ArrayList<>();
+
+        if (searchBy != null) {
+            parseByCriteria(documentCriteria, searchBy);
+        }
+        if (searchCreatedAfter != null) {
+            parseDateCriteria(documentCriteria, searchCreatedAfter, false, false);
+        }
+        if (searchCreatedAt != null) {
+            parseDateAtCriteria(documentCriteria, searchCreatedAt, false);
+        }
+        if (searchCreatedBefore != null) {
+            parseDateCriteria(documentCriteria, searchCreatedBefore, false, true);
+        }
+        if (searchFull != null) {
+            fullQuery.add(searchFull);
+        }
+        if (searchLang != null) {
+            parseLangCriteria(documentCriteria, searchLang);
+        }
+        if (searchMime != null) {
+            documentCriteria.setMimeType(searchMime);
+        }
+        if ((searchShared != null) && (searchShared)) {
+            documentCriteria.setShared(searchShared);
+        }
+        if (searchSimple != null) {
+            simpleQuery.add(searchSimple);
+        }
+        if (searchTitle != null) {
+            documentCriteria.getTitleList().addAll(Arrays.asList(searchTitle.split(PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR)));
+        }
+        if (searchTag != null) {
+            for (String tag : searchTag.split(PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR)) {
+                parseTagCriteria(documentCriteria, tag, allTagDtoList, false);
+            }
+        }
+        if (searchNotTag != null) {
+            for (String tag : searchNotTag.split(PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR)) {
+                parseTagCriteria(documentCriteria, tag, allTagDtoList, true);
+            }
+        }
+        if (searchUpdatedAfter != null) {
+            parseDateCriteria(documentCriteria, searchUpdatedAfter, true, false);
+        }
+        if (searchUpdatedAt != null) {
+            parseDateAtCriteria(documentCriteria, searchUpdatedAt, true);
+        }
+        if (searchUpdatedBefore != null) {
+            parseDateCriteria(documentCriteria, searchUpdatedBefore, true, true);
+        }
+        if (("me".equals(searchWorkflow))) {
+            documentCriteria.setActiveRoute(true);
+        }
+        if (!simpleQuery.isEmpty()) {
+            documentCriteria.setSimpleSearch(Joiner.on(" ").join(simpleQuery));
+        }
+        if (fullQuery.isEmpty()) {
+            documentCriteria.setFullSearch(Joiner.on(" ").join(fullQuery));
+        }
+    }
+
     private static void parseDateCriteria(DocumentCriteria documentCriteria, String value, boolean isUpdated, boolean isBefore) {
         try {
-            DateTime date = DATE_FORMATTER.parseDateTime(value);
+            DateTime date = DAY_FORMATTER.parseDateTime(value);
             if (isBefore) {
-                if (isUpdated) documentCriteria.setUpdateDateMax(date.toDate());
-                else documentCriteria.setCreateDateMax(date.toDate());
+                if (isUpdated) {
+                    documentCriteria.setUpdateDateMax(date.toDate());
+                } else {
+                    documentCriteria.setCreateDateMax(date.toDate());
+                }
             } else {
-                if (isUpdated) documentCriteria.setUpdateDateMin(date.toDate());
-                else  documentCriteria.setCreateDateMin(date.toDate());
+                if (isUpdated) {
+                    documentCriteria.setUpdateDateMin(date.toDate());
+                } else {
+                    documentCriteria.setCreateDateMin(date.toDate());
+                }
             }
         } catch (IllegalArgumentException e) {
             // Invalid date, returns no documents
@@ -141,7 +253,7 @@ public class DocumentSearchCriteriaUtil {
         try {
             switch (value.length()) {
                 case 10: {
-                    DateTime date = DATE_FORMATTER.parseDateTime(value);
+                    DateTime date = DAY_FORMATTER.parseDateTime(value);
                     if (isUpdated) {
                         documentCriteria.setUpdateDateMin(date.toDate());
                         documentCriteria.setUpdateDateMax(date.plusDays(1).minusSeconds(1).toDate());
@@ -172,7 +284,8 @@ public class DocumentSearchCriteriaUtil {
                         documentCriteria.setCreateDateMax(date.plusYears(1).minusSeconds(1).toDate());
                     }
                     break;
-                } default: {
+                }
+                default: {
                     // Invalid format, returns no documents
                     documentCriteria.setCreateDateMin(new Date(0));
                     documentCriteria.setCreateDateMax(new Date(0));
@@ -225,89 +338,6 @@ public class DocumentSearchCriteriaUtil {
         } else {
             // This user exists, search its documents
             documentCriteria.setCreatorId(user.getId());
-        }
-    }
-
-    public static void addHttpSearchParams(
-            DocumentCriteria documentCriteria,
-            String searchBy,
-            String searchCreatedAfter,
-            String searchCreatedAt,
-            String searchCreatedBefore,
-            String searchFull,
-            String searchLang,
-            String searchMime,
-            Boolean searchShared,
-            String searchSimple,
-            String searchTag,
-            String searchTagNot,
-            String searchTitle,
-            String searchUpdatedAfter,
-            String searchUpdatedAt,
-            String searchUpdatedBefore,
-            String searchWorkflow,
-            List<TagDto> allTagDtoList
-    ) {
-        List<String> simpleQuery = new ArrayList<>();
-        List<String> fullQuery = new ArrayList<>();
-
-        if(searchBy != null) {
-            parseByCriteria(documentCriteria, searchBy);
-        }
-        if(searchCreatedAfter != null) {
-            parseDateCriteria(documentCriteria, searchCreatedAfter, false, false);
-        }
-        if(searchCreatedAt != null) {
-            parseDateAtCriteria(documentCriteria, searchCreatedAt, false);
-        }
-        if(searchCreatedBefore != null) {
-            parseDateCriteria(documentCriteria, searchCreatedBefore, false, true);
-        }
-        if(searchFull != null) {
-            fullQuery.add(searchFull);
-        }
-        if(searchLang != null) {
-            parseLangCriteria(documentCriteria, searchLang);
-        }
-        if(searchMime != null) {
-            documentCriteria.setMimeType(searchMime);
-        }
-        if((searchShared != null) && (searchShared)) {
-            documentCriteria.setShared(searchShared);
-        }
-        if(searchSimple != null) {
-            simpleQuery.add(searchSimple);
-        }
-        if(searchTitle != null) {
-            documentCriteria.getTitleList().addAll(Arrays.asList(searchTitle.split(PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR)));
-        }
-        if(searchTag != null) {
-            for(String tag : searchTag.split(PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR)) {
-                parseTagCriteria(documentCriteria, tag, allTagDtoList, false);
-            }
-        }
-        if(searchTagNot != null) {
-            for(String tag : searchTagNot.split(PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR)) {
-                parseTagCriteria(documentCriteria, tag, allTagDtoList, true);
-            }
-        }
-        if(searchUpdatedAfter != null) {
-            parseDateCriteria(documentCriteria, searchUpdatedAfter, true, false);
-        }
-        if(searchUpdatedAt != null) {
-            parseDateAtCriteria(documentCriteria, searchUpdatedAt, true);
-        }
-        if(searchUpdatedBefore != null) {
-            parseDateCriteria(documentCriteria, searchUpdatedBefore, true, true);
-        }
-        if(("me".equals(searchWorkflow))) {
-            documentCriteria.setActiveRoute(true);
-        }
-        if (! simpleQuery.isEmpty()) {
-            documentCriteria.setSimpleSearch(Joiner.on(" ").join(simpleQuery));
-        }
-        if (fullQuery.isEmpty()) {
-            documentCriteria.setFullSearch(Joiner.on(" ").join(fullQuery));
         }
     }
 }
