@@ -96,6 +96,7 @@ public class DocumentResource extends BaseResource {
      * @apiSuccess {String} coverage Coverage
      * @apiSuccess {String} rights Rights
      * @apiSuccess {String} creator Username of the creator
+     * @apiSuccess {String} file_id Main file ID
      * @apiSuccess {Boolean} writable True if the document is writable by the current user
      * @apiSuccess {Object[]} acls List of ACL
      * @apiSuccess {String} acls.id ID
@@ -153,16 +154,18 @@ public class DocumentResource extends BaseResource {
         if (documentDto == null) {
             throw new NotFoundException();
         }
-            
-        JsonObjectBuilder document = Json.createObjectBuilder()
-                .add("id", documentDto.getId())
-                .add("title", documentDto.getTitle())
-                .add("description", JsonUtil.nullable(documentDto.getDescription()))
-                .add("create_date", documentDto.getCreateTimestamp())
-                .add("update_date", documentDto.getUpdateTimestamp())
-                .add("language", documentDto.getLanguage())
-                .add("shared", documentDto.getShared())
-                .add("file_count", documentDto.getFileCount());
+
+        JsonObjectBuilder document = createDocumentObjectBuilder(documentDto)
+                .add("creator", documentDto.getCreator())
+                .add("coverage", JsonUtil.nullable(documentDto.getCoverage()))
+                .add("file_count", documentDto.getFileCount())
+                .add("format", JsonUtil.nullable(documentDto.getFormat()))
+                .add("identifier", JsonUtil.nullable(documentDto.getIdentifier()))
+                .add("publisher", JsonUtil.nullable(documentDto.getPublisher()))
+                .add("rights", JsonUtil.nullable(documentDto.getRights()))
+                .add("source", JsonUtil.nullable(documentDto.getSource()))
+                .add("subject", JsonUtil.nullable(documentDto.getSubject()))
+                .add("type", JsonUtil.nullable(documentDto.getType()));
 
         List<TagDto> tagDtoList = null;
         if (principal.isAnonymous()) {
@@ -176,26 +179,8 @@ public class DocumentResource extends BaseResource {
                             .setTargetIdList(getTargetIdList(null)) // No tags for shares
                             .setDocumentId(documentId),
                     new SortCriteria(1, true));
-            JsonArrayBuilder tags = Json.createArrayBuilder();
-            for (TagDto tagDto : tagDtoList) {
-                tags.add(Json.createObjectBuilder()
-                        .add("id", tagDto.getId())
-                        .add("name", tagDto.getName())
-                        .add("color", tagDto.getColor()));
-            }
-            document.add("tags", tags);
+            document.add("tags", createTagsArrayBuilder(tagDtoList));
         }
-        
-        // Below is specific to GET /document/id
-        document.add("subject", JsonUtil.nullable(documentDto.getSubject()));
-        document.add("identifier", JsonUtil.nullable(documentDto.getIdentifier()));
-        document.add("publisher", JsonUtil.nullable(documentDto.getPublisher()));
-        document.add("format", JsonUtil.nullable(documentDto.getFormat()));
-        document.add("source", JsonUtil.nullable(documentDto.getSource()));
-        document.add("type", JsonUtil.nullable(documentDto.getType()));
-        document.add("coverage", JsonUtil.nullable(documentDto.getCoverage()));
-        document.add("rights", JsonUtil.nullable(documentDto.getRights()));
-        document.add("creator", documentDto.getCreator());
 
         // Add ACL
         AclUtil.addAcls(document, documentId, getTargetIdList(shareId));
@@ -495,28 +480,14 @@ public class DocumentResource extends BaseResource {
             List<TagDto> tagDtoList = tagDao.findByCriteria(new TagCriteria()
                     .setTargetIdList(getTargetIdList(null))
                     .setDocumentId(documentDto.getId()), new SortCriteria(1, true));
-            JsonArrayBuilder tags = Json.createArrayBuilder();
-            for (TagDto tagDto : tagDtoList) {
-                tags.add(Json.createObjectBuilder()
-                        .add("id", tagDto.getId())
-                        .add("name", tagDto.getName())
-                        .add("color", tagDto.getColor()));
-            }
 
-            JsonObjectBuilder documentObjectBuilder = Json.createObjectBuilder()
-                    .add("id", documentDto.getId())
-                    .add("highlight", JsonUtil.nullable(documentDto.getHighlight()))
-                    .add("file_id", JsonUtil.nullable(documentDto.getFileId()))
-                    .add("title", documentDto.getTitle())
-                    .add("description", JsonUtil.nullable(documentDto.getDescription()))
-                    .add("create_date", documentDto.getCreateTimestamp())
-                    .add("update_date", documentDto.getUpdateTimestamp())
-                    .add("language", documentDto.getLanguage())
-                    .add("shared", documentDto.getShared())
+            JsonObjectBuilder documentObjectBuilder = createDocumentObjectBuilder(documentDto)
                     .add("active_route", documentDto.isActiveRoute())
                     .add("current_step_name", JsonUtil.nullable(documentDto.getCurrentStepName()))
+                    .add("highlight", JsonUtil.nullable(documentDto.getHighlight()))
                     .add("file_count", documentDto.getFileCount())
-                    .add("tags", tags);
+                    .add("tags", createTagsArrayBuilder(tagDtoList));
+
             if (Boolean.TRUE == files) {
                 JsonArrayBuilder filesArrayBuilder = Json.createArrayBuilder();
                 // Find files matching the document
@@ -1073,5 +1044,28 @@ public class DocumentResource extends BaseResource {
             }
             relationDao.updateRelationList(documentId, documentIdSet);
         }
+    }
+
+    private JsonObjectBuilder createDocumentObjectBuilder(DocumentDto documentDto) {
+        return Json.createObjectBuilder()
+                .add("create_date", documentDto.getCreateTimestamp())
+                .add("description", JsonUtil.nullable(documentDto.getDescription()))
+                .add("file_id", JsonUtil.nullable(documentDto.getFileId()))
+                .add("id", documentDto.getId())
+                .add("language", documentDto.getLanguage())
+                .add("shared", documentDto.getShared())
+                .add("title", documentDto.getTitle())
+                .add("update_date", documentDto.getUpdateTimestamp());
+    }
+
+    private static JsonArrayBuilder createTagsArrayBuilder(List<TagDto> tagDtoList) {
+        JsonArrayBuilder tags = Json.createArrayBuilder();
+        for (TagDto tagDto : tagDtoList) {
+            tags.add(Json.createObjectBuilder()
+                    .add("id", tagDto.getId())
+                    .add("name", tagDto.getName())
+                    .add("color", tagDto.getColor()));
+        }
+        return tags;
     }
 }

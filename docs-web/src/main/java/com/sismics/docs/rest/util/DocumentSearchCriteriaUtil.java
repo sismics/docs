@@ -63,50 +63,40 @@ public class DocumentSearchCriteriaUtil {
             switch (paramName) {
                 case "tag":
                 case "!tag":
-                    // New tag criteria
                     parseTagCriteria(documentCriteria, paramValue, allTagDtoList, paramName.startsWith("!"));
                     break;
                 case "after":
                 case "before":
                 case "uafter":
                 case "ubefore":
-                    // New date span criteria
                     parseDateCriteria(documentCriteria, paramValue, paramName.startsWith("u"), paramName.endsWith("before"));
                     break;
                 case "uat":
                 case "at":
-                    // New specific date criteria
                     parseDateAtCriteria(documentCriteria, paramValue, params[0].startsWith("u"));
                     break;
                 case "shared":
-                    // New shared state criteria
                     documentCriteria.setShared(paramValue.equals("yes"));
                     break;
                 case "lang":
                     parseLangCriteria(documentCriteria, paramValue);
                     break;
                 case "mime":
-                    // New mime type criteria
                     documentCriteria.setMimeType(paramValue);
                     break;
                 case "by":
-                    // New creator criteria
                     parseByCriteria(documentCriteria, paramValue);
                     break;
                 case "workflow":
-                    // New shared state criteria
                     documentCriteria.setActiveRoute(paramValue.equals("me"));
                     break;
                 case "simple":
-                    // New simple search criteria
                     simpleQuery.add(paramValue);
                     break;
                 case "full":
-                    // New fulltext search criteria
                     fullQuery.add(paramValue);
                     break;
                 case "title":
-                    // New title criteria
                     documentCriteria.getTitleList().add(paramValue);
                     break;
                 default:
