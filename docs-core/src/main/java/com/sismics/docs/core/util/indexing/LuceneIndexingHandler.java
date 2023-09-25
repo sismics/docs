@@ -413,24 +413,24 @@ public class LuceneIndexingHandler implements IndexingHandler {
      */
     private Map<String, String> search(String simpleSearchQuery, String fullSearchQuery) throws Exception {
         // The fulltext query searches in all fields
-        simpleSearchQuery = simpleSearchQuery + " " + fullSearchQuery;
+        String searchQuery = simpleSearchQuery + " " + fullSearchQuery;
 
         // Build search query
         Analyzer analyzer = new StandardAnalyzer();
 
         // Search on documents and files
         BooleanQuery query = new BooleanQuery.Builder()
-                .add(buildQueryParser(analyzer, "title").parse(simpleSearchQuery), BooleanClause.Occur.SHOULD)
-                .add(buildQueryParser(analyzer, "description").parse(simpleSearchQuery), BooleanClause.Occur.SHOULD)
-                .add(buildQueryParser(analyzer, "subject").parse(simpleSearchQuery), BooleanClause.Occur.SHOULD)
-                .add(buildQueryParser(analyzer, "identifier").parse(simpleSearchQuery), BooleanClause.Occur.SHOULD)
-                .add(buildQueryParser(analyzer, "publisher").parse(simpleSearchQuery), BooleanClause.Occur.SHOULD)
-                .add(buildQueryParser(analyzer, "format").parse(simpleSearchQuery), BooleanClause.Occur.SHOULD)
-                .add(buildQueryParser(analyzer, "source").parse(simpleSearchQuery), BooleanClause.Occur.SHOULD)
-                .add(buildQueryParser(analyzer, "type").parse(simpleSearchQuery), BooleanClause.Occur.SHOULD)
-                .add(buildQueryParser(analyzer, "coverage").parse(simpleSearchQuery), BooleanClause.Occur.SHOULD)
-                .add(buildQueryParser(analyzer, "rights").parse(simpleSearchQuery), BooleanClause.Occur.SHOULD)
-                .add(buildQueryParser(analyzer, "filename").parse(simpleSearchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "title").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "description").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "subject").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "identifier").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "publisher").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "format").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "source").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "type").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "coverage").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "rights").parse(searchQuery), BooleanClause.Occur.SHOULD)
+                .add(buildQueryParser(analyzer, "filename").parse(searchQuery), BooleanClause.Occur.SHOULD)
                 .add(buildQueryParser(analyzer, "content").parse(fullSearchQuery), BooleanClause.Occur.SHOULD)
                 .build();
 
