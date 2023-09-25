@@ -734,7 +734,7 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String[]} [relations] List of related documents ID
      * @apiParam {String[]} [metadata_id] List of metadata ID
      * @apiParam {String[]} [metadata_value] List of metadata values
-     * @apiParam {String} language Language
+     * @apiParam {String} [language] Language
      * @apiParam {Number} [create_date] Create date (timestamp)
      * @apiSuccess {String} id Document ID
      * @apiError (client) ForbiddenError Access denied or document not writable
