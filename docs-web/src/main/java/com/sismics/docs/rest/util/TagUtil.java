@@ -1,8 +1,9 @@
-package com.sismics.docs.core.util;
+package com.sismics.docs.rest.util;
 
 import com.sismics.docs.core.dao.dto.TagDto;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,10 +40,10 @@ public class TagUtil {
      * @return List of filtered tags
      */
     public static List<TagDto> findByName(String name, List<TagDto> allTagDtoList) {
-        List<TagDto> tagDtoList = new ArrayList<>();
         if (name.isEmpty()) {
-            return tagDtoList;
+            return Collections.emptyList();
         }
+        List<TagDto> tagDtoList = new ArrayList<>();
         name = name.toLowerCase();
         for (TagDto tagDto : allTagDtoList) {
             if (tagDto.getName().toLowerCase().startsWith(name)) {
