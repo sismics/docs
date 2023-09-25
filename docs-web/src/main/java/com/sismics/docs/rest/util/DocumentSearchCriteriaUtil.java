@@ -22,17 +22,19 @@ import java.util.UUID;
 
 public class DocumentSearchCriteriaUtil {
     private static final DateTimeParser YEAR_PARSER = DateTimeFormat.forPattern("yyyy").getParser();
-    private static final DateTimeFormatter YEAR_FORMATTER = new DateTimeFormatter(null, YEAR_PARSER);
     private static final DateTimeParser MONTH_PARSER = DateTimeFormat.forPattern("yyyy-MM").getParser();
-    private static final DateTimeFormatter MONTH_FORMATTER = new DateTimeFormatter(null, MONTH_PARSER);
     private static final DateTimeParser DAY_PARSER = DateTimeFormat.forPattern("yyyy-MM-dd").getParser();
     private static final DateTimeParser[] DATE_PARSERS = new DateTimeParser[]{
             YEAR_PARSER,
             MONTH_PARSER,
             DAY_PARSER};
-    private static final DateTimeFormatter DAY_FORMATTER = new DateTimeFormatterBuilder().append(null, DATE_PARSERS).toFormatter();
+
+    private static final DateTimeFormatter YEAR_FORMATTER = new DateTimeFormatter(null, YEAR_PARSER);
+    private static final DateTimeFormatter MONTH_FORMATTER = new DateTimeFormatter(null, MONTH_PARSER);
+    private static final DateTimeFormatter DATES_FORMATTER = new DateTimeFormatterBuilder().append(null, DATE_PARSERS).toFormatter();
+
     private static final String PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR = ",";
-    public static final String WORKFLOW_ME = "me";
+    private static final String WORKFLOW_ME = "me";
 
     /**
      * Parse a query according to the specified syntax, eg.:
@@ -210,7 +212,7 @@ public class DocumentSearchCriteriaUtil {
 
     private static void parseDateCriteria(DocumentCriteria documentCriteria, String value, boolean isUpdated, boolean isBefore) {
         try {
-            DateTime date = DAY_FORMATTER.parseDateTime(value);
+            DateTime date = DATES_FORMATTER.parseDateTime(value);
             if (isBefore) {
                 if (isUpdated) {
                     documentCriteria.setUpdateDateMax(date.toDate());
@@ -235,7 +237,7 @@ public class DocumentSearchCriteriaUtil {
         try {
             switch (value.length()) {
                 case 10: {
-                    DateTime date = DAY_FORMATTER.parseDateTime(value);
+                    DateTime date = DATES_FORMATTER.parseDateTime(value);
                     if (isUpdated) {
                         documentCriteria.setUpdateDateMin(date.toDate());
                         documentCriteria.setUpdateDateMax(date.plusDays(1).minusSeconds(1).toDate());
