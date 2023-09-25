@@ -32,6 +32,7 @@ public class DocumentSearchCriteriaUtil {
             DAY_PARSER};
     private static final DateTimeFormatter DAY_FORMATTER = new DateTimeFormatterBuilder().append(null, DATE_PARSERS).toFormatter();
     private static final String PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR = ",";
+    public static final String WORKFLOW_ME = "me";
 
     /**
      * Parse a query according to the specified syntax, eg.:
@@ -88,7 +89,7 @@ public class DocumentSearchCriteriaUtil {
                     parseByCriteria(documentCriteria, paramValue);
                     break;
                 case "workflow":
-                    documentCriteria.setActiveRoute(paramValue.equals("me"));
+                    documentCriteria.setActiveRoute(paramValue.equals(WORKFLOW_ME));
                     break;
                 case "simple":
                     simpleQuery.add(paramValue);
@@ -153,9 +154,6 @@ public class DocumentSearchCriteriaUtil {
             String searchWorkflow,
             List<TagDto> allTagDtoList
     ) {
-        List<String> simpleQuery = new ArrayList<>();
-        List<String> fullQuery = new ArrayList<>();
-
         if (searchBy != null) {
             parseByCriteria(documentCriteria, searchBy);
         }
@@ -169,7 +167,7 @@ public class DocumentSearchCriteriaUtil {
             parseDateCriteria(documentCriteria, searchCreatedBefore, false, true);
         }
         if (searchFull != null) {
-            fullQuery.add(searchFull);
+            documentCriteria.setFullSearch(Joiner.on(" ").join(searchFull.split(PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR)));
         }
         if (searchLang != null) {
             parseLangCriteria(documentCriteria, searchLang);
@@ -177,11 +175,11 @@ public class DocumentSearchCriteriaUtil {
         if (searchMime != null) {
             documentCriteria.setMimeType(searchMime);
         }
-        if ((searchShared != null) && (searchShared)) {
-            documentCriteria.setShared(searchShared);
+        if ((searchShared != null) && searchShared) {
+            documentCriteria.setShared(true);
         }
         if (searchSimple != null) {
-            simpleQuery.add(searchSimple);
+            documentCriteria.setSimpleSearch(Joiner.on(" ").join(searchSimple.split(PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR)));
         }
         if (searchTitle != null) {
             documentCriteria.getTitleList().addAll(Arrays.asList(searchTitle.split(PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR)));
@@ -205,14 +203,8 @@ public class DocumentSearchCriteriaUtil {
         if (searchUpdatedBefore != null) {
             parseDateCriteria(documentCriteria, searchUpdatedBefore, true, true);
         }
-        if (("me".equals(searchWorkflow))) {
+        if ((WORKFLOW_ME.equals(searchWorkflow))) {
             documentCriteria.setActiveRoute(true);
-        }
-        if (!simpleQuery.isEmpty()) {
-            documentCriteria.setSimpleSearch(Joiner.on(" ").join(simpleQuery));
-        }
-        if (fullQuery.isEmpty()) {
-            documentCriteria.setFullSearch(Joiner.on(" ").join(fullQuery));
         }
     }
 
