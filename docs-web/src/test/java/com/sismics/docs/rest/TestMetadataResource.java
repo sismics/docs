@@ -22,7 +22,7 @@ public class TestMetadataResource extends BaseJerseyTest {
     @Test
     public void testMetadataResource() {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
 
         // Get all metadata with admin
         JsonObject json = target().path("/metadata")

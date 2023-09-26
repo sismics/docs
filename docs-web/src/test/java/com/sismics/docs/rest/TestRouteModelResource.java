@@ -22,7 +22,7 @@ public class TestRouteModelResource extends BaseJerseyTest {
     @Test
     public void testRouteModelResource() {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
 
         // Login routeModel1
         clientUtil.createUser("routeModel1");

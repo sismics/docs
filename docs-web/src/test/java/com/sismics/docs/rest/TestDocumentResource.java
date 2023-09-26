@@ -820,7 +820,7 @@ public class TestDocumentResource extends BaseJerseyTest {
     @Test
     public void testCustomMetadata() {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
 
         // Login metadata1
         clientUtil.createUser("metadata1");

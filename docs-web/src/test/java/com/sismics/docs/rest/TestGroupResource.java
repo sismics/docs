@@ -25,7 +25,7 @@ public class TestGroupResource extends BaseJerseyTest {
     @Test
     public void testGroupResource() {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
         
         // Create group hierarchy
         clientUtil.createGroup("g1");

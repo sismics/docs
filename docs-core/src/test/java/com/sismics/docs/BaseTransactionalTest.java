@@ -30,7 +30,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  */
 public abstract class BaseTransactionalTest extends BaseTest {
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         // Initialize the entity manager
         EntityManager em = EMF.get().createEntityManager();
         ThreadLocalContext context = ThreadLocalContext.get();
@@ -40,7 +40,8 @@ public abstract class BaseTransactionalTest extends BaseTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
+        ThreadLocalContext.get().getEntityManager().getTransaction().rollback();
     }
 
     protected User createUser(String userName) throws Exception {

@@ -26,7 +26,7 @@ public class TestVocabularyResource extends BaseJerseyTest {
         String vocabulary1Token = clientUtil.login("vocabulary1");
         
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
         
         // Get coverage vocabularies entries
         JsonObject json = target().path("/vocabulary/coverage").request()
