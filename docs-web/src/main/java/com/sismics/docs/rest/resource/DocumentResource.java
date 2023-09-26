@@ -264,7 +264,6 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String} id Document ID
      * @apiParam {String} share Share ID
      * @apiParam {Boolean} metadata If true, export metadata
-     * @apiParam {Boolean} comments If true, export comments
      * @apiParam {Boolean} fitimagetopage If true, fit the images to pages
      * @apiParam {Number} margin Margin around the pages, in millimeter
      * @apiSuccess {String} pdf The whole response is the PDF file
@@ -276,7 +275,6 @@ public class DocumentResource extends BaseResource {
      * @param documentId Document ID
      * @param shareId Share ID
      * @param metadata Export metadata
-     * @param comments Export comments
      * @param fitImageToPage Fit images to page
      * @param marginStr Margins
      * @return Response
@@ -287,7 +285,6 @@ public class DocumentResource extends BaseResource {
             @PathParam("id") String documentId,
             @QueryParam("share") String shareId,
             final @QueryParam("metadata") Boolean metadata,
-            final @QueryParam("comments") Boolean comments,
             final @QueryParam("fitimagetopage") Boolean fitImageToPage,
             @QueryParam("margin") String marginStr) {
         authenticate();
