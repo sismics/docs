@@ -363,12 +363,12 @@ public class DocumentResource extends BaseResource {
      * @apiName GetDocumentList
      * @apiGroup Document
      *
-     * @apiParam {String} [limit] Total number of documents to return (default is 10)
-     * @apiParam {String} [offset] Start at this index (default is 0)
+     * @apiParam {String} [limit] Total number of documents to return (default is <code>10</code>)
+     * @apiParam {String} [offset] Start at this index (default is <code>0</code>)
      * @apiParam {Number} [sort_column] Column index to sort on
-     * @apiParam {Boolean} [asc] If true, sort in ascending order
+     * @apiParam {Boolean} [asc] If <code>true</code> sorts in ascending order
      * @apiParam {String} [search] Search query (see "Document search syntax" on the top of the page for explanations) when the input is entered by a human.
-     * @apiParam {Boolean} [files] If true includes files information
+     * @apiParam {Boolean} [files] If <code>true</code> includes files information
      *
      * @apiParam {String} [search[after]] The document must have been created after or at the value moment, accepted format is <code>yyyy-MM-dd</code>
      * @apiParam {String} [search[before]] The document must have been created before or at the value moment, accepted format is <code>yyyy-MM-dd</code>
