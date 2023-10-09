@@ -81,6 +81,7 @@ To build external URL, the server is expecting a `DOCS_BASE_URL` environment var
   - `DATABASE_URL`: The jdbc connection string to be used by `hibernate`.
   - `DATABASE_USER`: The user which should be used for the database connection.
   - `DATABASE_PASSWORD`: The password to be used for the database connection.
+  - `DATABASE_POOL_SIZE`: The pool size to be used for the database connection.
 
 - Language
   - `DOCS_DEFAULT_LANGUAGE`: The language which will be used as default. Currently supported values are:
@@ -122,6 +123,7 @@ services:
       DATABASE_URL: "jdbc:postgresql://teedy-db:5432/teedy"
       DATABASE_USER: "teedy_db_user"
       DATABASE_PASSWORD: "teedy_db_password"
+      DATABASE_POOL_SIZE: "10"
     volumes:
       - ./docs/data:/data
     networks:
