@@ -35,7 +35,7 @@
     <org.apache.pdfbox.pdfbox.version>2.0.27</org.apache.pdfbox.pdfbox.version>
     <org.bouncycastle.bcprov-jdk15on.version>1.70</org.bouncycastle.bcprov-jdk15on.version>
     <joda-time.joda-time.version>2.12.2</joda-time.joda-time.version>
-    <org.hibernate.hibernate.version>5.6.15.Final</org.hibernate.hibernate.version>
+    <org.hibernate.hibernate.version>6.3.1.Final</org.hibernate.hibernate.version>
     <fr.opensagres.xdocreport.version>2.0.4</fr.opensagres.xdocreport.version>
     <net.java.dev.jna.jna.version>5.13.0</net.java.dev.jna.jna.version>
     <com.twelvemonkeys.imageio.version>3.9.4</com.twelvemonkeys.imageio.version>
@@ -327,8 +327,8 @@
       </dependency>
 
       <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core-jakarta</artifactId>
+        <groupId>org.hibernate.orm</groupId>
+        <artifactId>hibernate-core</artifactId>
         <version>${org.hibernate.hibernate.version}</version>
       </dependency>
       
