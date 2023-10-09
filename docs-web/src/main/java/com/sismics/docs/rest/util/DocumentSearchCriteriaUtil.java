@@ -31,6 +31,7 @@ public class DocumentSearchCriteriaUtil {
 
     private static final DateTimeFormatter YEAR_FORMATTER = new DateTimeFormatter(null, YEAR_PARSER);
     private static final DateTimeFormatter MONTH_FORMATTER = new DateTimeFormatter(null, MONTH_PARSER);
+    private static final DateTimeFormatter DAY_FORMATTER = new DateTimeFormatter(null, DAY_PARSER);
     private static final DateTimeFormatter DATES_FORMATTER = new DateTimeFormatterBuilder().append(null, DATE_PARSERS).toFormatter();
 
     private static final String PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR = ",";
@@ -72,7 +73,7 @@ public class DocumentSearchCriteriaUtil {
                 case "before":
                 case "uafter":
                 case "ubefore":
-                    parseDateCriteria(documentCriteria, paramValue, paramName.startsWith("u"), paramName.endsWith("before"));
+                    parseDateCriteria(documentCriteria, paramValue, DATES_FORMATTER, paramName.startsWith("u"), paramName.endsWith("before"));
                     break;
                 case "uat":
                 case "at":
@@ -156,10 +157,10 @@ public class DocumentSearchCriteriaUtil {
             parseByCriteria(documentCriteria, searchBy);
         }
         if (searchCreatedAfter != null) {
-            parseDateCriteria(documentCriteria, searchCreatedAfter, false, false);
+            parseDateCriteria(documentCriteria, searchCreatedAfter, DAY_FORMATTER, false, false);
         }
         if (searchCreatedBefore != null) {
-            parseDateCriteria(documentCriteria, searchCreatedBefore, false, true);
+            parseDateCriteria(documentCriteria, searchCreatedBefore, DAY_FORMATTER, false, true);
         }
         if (searchFull != null) {
             documentCriteria.setFullSearch(Joiner.on(" ").join(searchFull.split(PARAMETER_WITH_MULTIPLE_VALUES_SEPARATOR)));
@@ -190,19 +191,19 @@ public class DocumentSearchCriteriaUtil {
             }
         }
         if (searchUpdatedAfter != null) {
-            parseDateCriteria(documentCriteria, searchUpdatedAfter, true, false);
+            parseDateCriteria(documentCriteria, searchUpdatedAfter, DAY_FORMATTER, true, false);
         }
         if (searchUpdatedBefore != null) {
-            parseDateCriteria(documentCriteria, searchUpdatedBefore, true, true);
+            parseDateCriteria(documentCriteria, searchUpdatedBefore, DAY_FORMATTER, true, true);
         }
         if ((WORKFLOW_ME.equals(searchWorkflow))) {
             documentCriteria.setActiveRoute(true);
         }
     }
 
-    private static void parseDateCriteria(DocumentCriteria documentCriteria, String value, boolean isUpdated, boolean isBefore) {
+    private static void parseDateCriteria(DocumentCriteria documentCriteria, String value, DateTimeFormatter formatter, boolean isUpdated, boolean isBefore) {
         try {
-            DateTime date = DATES_FORMATTER.parseDateTime(value);
+            DateTime date = formatter.parseDateTime(value);
             if (isBefore) {
                 if (isUpdated) {
                     documentCriteria.setUpdateDateMax(date.toDate());

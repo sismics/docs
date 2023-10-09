@@ -73,48 +73,6 @@ public class TestDocumentSearchCriteriaUtil extends BaseTransactionalTest {
         DocumentSearchCriteriaUtil.addHttpSearchParams(
                 documentCriteria,
                 null,
-                "2022",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        Assert.assertEquals(documentCriteria.getCreateDateMin(), new DateTime(2022, 1, 1, 0, 0, 0).toDate());
-
-        documentCriteria = new DocumentCriteria();
-        DocumentSearchCriteriaUtil.addHttpSearchParams(
-                documentCriteria,
-                null,
-                "2022-03",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        Assert.assertEquals(documentCriteria.getCreateDateMin(), new DateTime(2022, 3, 1, 0, 0, 0).toDate());
-
-        documentCriteria = new DocumentCriteria();
-        DocumentSearchCriteriaUtil.addHttpSearchParams(
-                documentCriteria,
-                null,
                 "2022-03-27",
                 null,
                 null,
@@ -136,48 +94,6 @@ public class TestDocumentSearchCriteriaUtil extends BaseTransactionalTest {
     @Test
     public void testHttpParamsCreatedBefore() {
         DocumentCriteria documentCriteria = new DocumentCriteria();
-        DocumentSearchCriteriaUtil.addHttpSearchParams(
-                documentCriteria,
-                null,
-                null,
-                "2022",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        Assert.assertEquals(documentCriteria.getCreateDateMax(), new DateTime(2022, 1, 1, 0, 0, 0).toDate());
-
-        documentCriteria = new DocumentCriteria();
-        DocumentSearchCriteriaUtil.addHttpSearchParams(
-                documentCriteria,
-                null,
-                null,
-                "2022-03",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        Assert.assertEquals(documentCriteria.getCreateDateMax(), new DateTime(2022, 3, 1, 0, 0, 0).toDate());
-
-        documentCriteria = new DocumentCriteria();
         DocumentSearchCriteriaUtil.addHttpSearchParams(
                 documentCriteria,
                 null,
@@ -517,48 +433,6 @@ public class TestDocumentSearchCriteriaUtil extends BaseTransactionalTest {
                 null,
                 null,
                 null,
-                "2022",
-                null,
-                null,
-                null
-        );
-        Assert.assertEquals(documentCriteria.getUpdateDateMin(), new DateTime(2022, 1, 1, 0, 0, 0).toDate());
-
-        documentCriteria = new DocumentCriteria();
-        DocumentSearchCriteriaUtil.addHttpSearchParams(
-                documentCriteria,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "2022-03",
-                null,
-                null,
-                null
-        );
-        Assert.assertEquals(documentCriteria.getUpdateDateMin(), new DateTime(2022, 3, 1, 0, 0, 0).toDate());
-
-        documentCriteria = new DocumentCriteria();
-        DocumentSearchCriteriaUtil.addHttpSearchParams(
-                documentCriteria,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
                 "2022-03-27",
                 null,
                 null,
@@ -570,48 +444,6 @@ public class TestDocumentSearchCriteriaUtil extends BaseTransactionalTest {
     @Test
     public void testHttpParamsUpdatedBefore()  {
         DocumentCriteria documentCriteria = new DocumentCriteria();
-        DocumentSearchCriteriaUtil.addHttpSearchParams(
-                documentCriteria,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "2022",
-                null,
-                null
-        );
-        Assert.assertEquals(documentCriteria.getUpdateDateMax(), new DateTime(2022, 1, 1, 0, 0, 0).toDate());
-
-        documentCriteria = new DocumentCriteria();
-        DocumentSearchCriteriaUtil.addHttpSearchParams(
-                documentCriteria,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "2022-03",
-                null,
-                null
-        );
-        Assert.assertEquals(documentCriteria.getUpdateDateMax(), new DateTime(2022, 3, 1, 0, 0, 0).toDate());
-
-        documentCriteria = new DocumentCriteria();
         DocumentSearchCriteriaUtil.addHttpSearchParams(
                 documentCriteria,
                 null,
