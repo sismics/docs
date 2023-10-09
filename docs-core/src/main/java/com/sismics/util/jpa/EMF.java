@@ -26,7 +26,7 @@ import java.util.Properties;
 public final class EMF {
     private static final Logger log = LoggerFactory.getLogger(EMF.class);
 
-    private static Map<Object, Object> properties;
+    private static Properties properties;
 
     private static EntityManagerFactory emfInstance;
 
@@ -59,7 +59,7 @@ public final class EMF {
         }
     }
     
-    private static Map<Object, Object> getEntityManagerProperties() {
+    private static Properties getEntityManagerProperties() {
         // Use properties file if exists
         try {
             URL hibernatePropertiesUrl = EMF.class.getResource("/hibernate.properties");
@@ -81,7 +81,7 @@ public final class EMF {
         String databasePassword = System.getenv("DATABASE_PASSWORD");
 
         log.info("Configuring EntityManager from environment parameters");
-        Map<Object, Object> props = new HashMap<>();
+        Properties props = new Properties();
         Path dbDirectory = DirectoryUtil.getDbDirectory();
         String dbFile = dbDirectory.resolve("docs").toAbsolutePath().toString();
         if (Strings.isNullOrEmpty(databaseUrl)) {
@@ -92,7 +92,7 @@ public final class EMF {
             props.put("hibernate.connection.username", "sa");
         } else {
             props.put("hibernate.connection.driver_class", "org.postgresql.Driver");
-            props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQL94Dialect");
+            props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
             props.put("hibernate.connection.url", databaseUrl);
             props.put("hibernate.connection.username", databaseUsername);
             props.put("hibernate.connection.password", databasePassword);
