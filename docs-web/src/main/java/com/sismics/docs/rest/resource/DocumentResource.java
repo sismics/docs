@@ -5,10 +5,22 @@ import com.sismics.docs.core.constant.AclType;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.constant.PermType;
-import com.sismics.docs.core.dao.*;
+import com.sismics.docs.core.dao.AclDao;
+import com.sismics.docs.core.dao.ContributorDao;
+import com.sismics.docs.core.dao.DocumentDao;
+import com.sismics.docs.core.dao.FileDao;
+import com.sismics.docs.core.dao.RelationDao;
+import com.sismics.docs.core.dao.RouteStepDao;
+import com.sismics.docs.core.dao.TagDao;
+import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.dao.criteria.DocumentCriteria;
 import com.sismics.docs.core.dao.criteria.TagCriteria;
-import com.sismics.docs.core.dao.dto.*;
+import com.sismics.docs.core.dao.dto.AclDto;
+import com.sismics.docs.core.dao.dto.ContributorDto;
+import com.sismics.docs.core.dao.dto.DocumentDto;
+import com.sismics.docs.core.dao.dto.RelationDto;
+import com.sismics.docs.core.dao.dto.RouteStepDto;
+import com.sismics.docs.core.dao.dto.TagDto;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
 import com.sismics.docs.core.event.DocumentDeletedAsyncEvent;
 import com.sismics.docs.core.event.DocumentUpdatedAsyncEvent;
@@ -36,31 +48,50 @@ import com.sismics.util.EmailUtil;
 import com.sismics.util.JsonUtil;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.mime.MimeType;
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HEAD;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.StreamingOutput;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonObjectBuilder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
-import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Document REST resources.
- * 
+ *
  * @author bgamard
  */
 @Path("/document")
@@ -148,7 +179,7 @@ public class DocumentResource extends BaseResource {
             @QueryParam("share") String shareId,
             @QueryParam("files") Boolean files) {
         authenticate();
-        
+
         DocumentDao documentDao = new DocumentDao();
         DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
         if (documentDto == null) {
@@ -204,7 +235,7 @@ public class DocumentResource extends BaseResource {
             }
             document.add("inherited_acls", aclList);
         }
-        
+
         // Add contributors
         ContributorDao contributorDao = new ContributorDao();
         List<ContributorDto> contributorDtoList = contributorDao.getByDocumentId(documentId);
@@ -215,7 +246,7 @@ public class DocumentResource extends BaseResource {
                     .add("email", contributorDto.getEmail()));
         }
         document.add("contributors", contributorList);
-        
+
         // Add relations
         RelationDao relationDao = new RelationDao();
         List<RelationDto> relationDtoList = relationDao.getByDocumentId(documentId);
@@ -254,7 +285,7 @@ public class DocumentResource extends BaseResource {
 
         return Response.ok().entity(document.build()).build();
     }
-    
+
     /**
      * Export a document to PDF.
      *
@@ -288,17 +319,17 @@ public class DocumentResource extends BaseResource {
             final @QueryParam("fitimagetopage") Boolean fitImageToPage,
             @QueryParam("margin") String marginStr) {
         authenticate();
-        
+
         // Validate input
         final int margin = ValidationUtil.validateInteger(marginStr, "margin");
-        
+
         // Get document and check read permission
         DocumentDao documentDao = new DocumentDao();
         final DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
         if (documentDto == null) {
             throw new NotFoundException();
         }
-        
+
         // Get files
         FileDao fileDao = new FileDao();
         UserDao userDao = new UserDao();
@@ -309,7 +340,7 @@ public class DocumentResource extends BaseResource {
             User user = userDao.getById(file.getUserId());
             file.setPrivateKey(user.getPrivateKey());
         }
-        
+
         // Convert to PDF
         StreamingOutput stream = outputStream -> {
             try {
@@ -324,7 +355,7 @@ public class DocumentResource extends BaseResource {
                 .header("Content-Disposition", "inline; filename=\"" + documentDto.getTitle() + ".pdf\"")
                 .build();
     }
-    
+
     /**
      * Returns all documents, if a parameter is considered invalid, the search result will be empty.
      *
@@ -421,14 +452,14 @@ public class DocumentResource extends BaseResource {
             @QueryParam("search[uat]") String searchUpdatedAt,
             @QueryParam("search[ubefore]") String searchUpdatedBefore,
             @QueryParam("search[searchworkflow]") String searchWorkflow
-            ) {
+    ) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         JsonObjectBuilder response = Json.createObjectBuilder();
         JsonArrayBuilder documents = Json.createArrayBuilder();
-        
+
         TagDao tagDao = new TagDao();
         PaginatedList<DocumentDto> paginatedList = PaginatedLists.create(limit, offset);
         List<String> suggestionList = Lists.newArrayList();
@@ -465,11 +496,14 @@ public class DocumentResource extends BaseResource {
         }
 
         // Find the files of the documents
+        Iterable<String> documentsIds = CollectionUtils.collect(paginatedList.getResultList(), DocumentDto::getId);
+        FileDao fileDao = new FileDao();
         List<File> filesList = null;
+        Map<String, Long> filesCountByDocument = null;
         if (Boolean.TRUE == files) {
-            Iterable<String> documentsIds = CollectionUtils.collect(paginatedList.getResultList(), DocumentDto::getId);
-            FileDao fileDao = new FileDao();
             filesList = fileDao.getByDocumentsIds(documentsIds);
+        } else {
+            filesCountByDocument = fileDao.countByDocumentsIds(documentsIds);
         }
 
         for (DocumentDto documentDto : paginatedList.getResultList()) {
@@ -478,17 +512,25 @@ public class DocumentResource extends BaseResource {
                     .setTargetIdList(getTargetIdList(null))
                     .setDocumentId(documentDto.getId()), new SortCriteria(1, true));
 
+            Long filesCount;
+            Collection<File> filesOfDocument = null;
+            if (Boolean.TRUE == files) {
+                // Find files matching the document
+                filesOfDocument = CollectionUtils.select(filesList, file -> file.getDocumentId().equals(documentDto.getId()));
+                filesCount = (long) filesOfDocument.size();
+            } else {
+                filesCount = filesCountByDocument.getOrDefault(documentDto.getId(), 0L);
+            }
+
             JsonObjectBuilder documentObjectBuilder = createDocumentObjectBuilder(documentDto)
                     .add("active_route", documentDto.isActiveRoute())
                     .add("current_step_name", JsonUtil.nullable(documentDto.getCurrentStepName()))
                     .add("highlight", JsonUtil.nullable(documentDto.getHighlight()))
-                    .add("file_count", documentDto.getFileCount())
+                    .add("file_count", filesCount)
                     .add("tags", createTagsArrayBuilder(tagDtoList));
 
             if (Boolean.TRUE == files) {
                 JsonArrayBuilder filesArrayBuilder = Json.createArrayBuilder();
-                // Find files matching the document
-                Collection<File> filesOfDocument = CollectionUtils.select(filesList, file -> file.getDocumentId().equals(documentDto.getId()));
                 for (File fileDb : filesOfDocument) {
                     filesArrayBuilder.add(RestUtil.fileToJsonObjectBuilder(fileDb));
                 }
@@ -505,7 +547,7 @@ public class DocumentResource extends BaseResource {
         response.add("total", paginatedList.getResultCount())
                 .add("documents", documents)
                 .add("suggestions", suggestions);
-        
+
         return Response.ok().entity(response.build()).build();
     }
 
@@ -551,7 +593,7 @@ public class DocumentResource extends BaseResource {
             @FormParam("search[uat]") String searchUpdatedAt,
             @FormParam("search[ubefore]") String searchUpdatedBefore,
             @FormParam("search[searchworkflow]") String searchWorkflow
-            ) {
+    ) {
         return list(
                 limit,
                 offset,
@@ -575,7 +617,7 @@ public class DocumentResource extends BaseResource {
                 searchUpdatedAt,
                 searchUpdatedBefore,
                 searchWorkflow
-                );
+        );
     }
 
     /**
@@ -645,7 +687,7 @@ public class DocumentResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Validate input data
         title = ValidationUtil.validateLength(title, "title", 1, 100, false);
         language = ValidationUtil.validateLength(language, "language", 3, 7, false);
@@ -709,7 +751,7 @@ public class DocumentResource extends BaseResource {
                 .add("id", document.getId());
         return Response.ok().entity(response.build()).build();
     }
-    
+
     /**
      * Updates the document.
      *
@@ -767,7 +809,7 @@ public class DocumentResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Validate input data
         title = ValidationUtil.validateLength(title, "title", 1, 100, false);
         language = ValidationUtil.validateLength(language, "language", 3, 7, false);
@@ -784,20 +826,20 @@ public class DocumentResource extends BaseResource {
         if (language != null && !Constants.SUPPORTED_LANGUAGES.contains(language)) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} is not a supported language", language));
         }
-        
+
         // Check write permission
         AclDao aclDao = new AclDao();
         if (!aclDao.checkPermission(id, PermType.WRITE, getTargetIdList(null))) {
             throw new ForbiddenClientException();
         }
-        
+
         // Get the document
         DocumentDao documentDao = new DocumentDao();
         Document document = documentDao.getById(id);
         if (document == null) {
             throw new NotFoundException();
         }
-        
+
         // Update the document
         document.setTitle(title);
         document.setDescription(description);
@@ -815,12 +857,12 @@ public class DocumentResource extends BaseResource {
         } else {
             document.setCreateDate(createDate);
         }
-        
+
         documentDao.update(document, principal.getId());
-        
+
         // Update tags
         updateTagList(id, tagList);
-        
+
         // Update relations
         updateRelationList(id, relationList);
 
@@ -836,7 +878,7 @@ public class DocumentResource extends BaseResource {
         documentUpdatedAsyncEvent.setUserId(principal.getId());
         documentUpdatedAsyncEvent.setDocumentId(id);
         ThreadLocalContext.get().addAsyncEvent(documentUpdatedAsyncEvent);
-        
+
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("id", id);
         return Response.ok().entity(response.build()).build();
@@ -971,7 +1013,7 @@ public class DocumentResource extends BaseResource {
             throw new NotFoundException();
         }
         List<File> fileList = fileDao.getByDocumentId(principal.getId(), id);
-        
+
         // Delete the document
         documentDao.delete(id, principal.getId());
 
@@ -989,7 +1031,7 @@ public class DocumentResource extends BaseResource {
         documentDeletedAsyncEvent.setUserId(principal.getId());
         documentDeletedAsyncEvent.setDocumentId(id);
         ThreadLocalContext.get().addAsyncEvent(documentDeletedAsyncEvent);
-        
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");

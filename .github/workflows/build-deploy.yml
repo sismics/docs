@@ -19,7 +19,7 @@ jobs:
           distribution: "temurin"
           cache: maven
       - name: Install test dependencies
-        run: sudo apt-get -y -q --no-install-recommends install ffmpeg mediainfo tesseract-ocr tesseract-ocr-deu
+        run: sudo apt-get update && sudo apt-get -y -q --no-install-recommends install ffmpeg mediainfo tesseract-ocr tesseract-ocr-deu
       - name: Build with Maven
         run: mvn -Pprod clean install
       - name: Upload war artifact
