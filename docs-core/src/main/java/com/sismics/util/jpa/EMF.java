@@ -79,6 +79,10 @@ public final class EMF {
         String databaseUrl = System.getenv("DATABASE_URL");
         String databaseUsername = System.getenv("DATABASE_USER");
         String databasePassword = System.getenv("DATABASE_PASSWORD");
+        String databasePoolSize = System.getenv("DATABASE_POOL_SIZE");
+        if(databasePoolSize == null) {
+            databasePoolSize = "10";
+        }
 
         log.info("Configuring EntityManager from environment parameters");
         Properties props = new Properties();
@@ -103,7 +107,7 @@ public final class EMF {
         props.put("hibernate.max_fetch_depth", "5");
         props.put("hibernate.cache.use_second_level_cache", "false");
         props.put("hibernate.connection.initial_pool_size", "1");
-        props.put("hibernate.connection.pool_size", "10");
+        props.put("hibernate.connection.pool_size", databasePoolSize);
         props.put("hibernate.connection.pool_validation_interval", "5");
         return props;
     }
