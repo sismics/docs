@@ -120,7 +120,6 @@ public class DocumentSearchCriteriaUtil {
      * @param documentCriteria    structure to be filled
      * @param searchBy            author
      * @param searchCreatedAfter  creation moment after
-     * @param searchCreatedAt     creation moment at
      * @param searchCreatedBefore creation moment before
      * @param searchFull          full search
      * @param searchLang          lang
@@ -131,7 +130,6 @@ public class DocumentSearchCriteriaUtil {
      * @param searchNotTag        tags or parent tags to ignore
      * @param searchTitle         title
      * @param searchUpdatedAfter  update moment after
-     * @param searchUpdatedAt     update moment at
      * @param searchUpdatedBefore update moment before
      * @param searchWorkflow      exiting workflow
      * @param allTagDtoList       list of existing tags
@@ -140,7 +138,6 @@ public class DocumentSearchCriteriaUtil {
             DocumentCriteria documentCriteria,
             String searchBy,
             String searchCreatedAfter,
-            String searchCreatedAt,
             String searchCreatedBefore,
             String searchFull,
             String searchLang,
@@ -151,7 +148,6 @@ public class DocumentSearchCriteriaUtil {
             String searchNotTag,
             String searchTitle,
             String searchUpdatedAfter,
-            String searchUpdatedAt,
             String searchUpdatedBefore,
             String searchWorkflow,
             List<TagDto> allTagDtoList
@@ -161,9 +157,6 @@ public class DocumentSearchCriteriaUtil {
         }
         if (searchCreatedAfter != null) {
             parseDateCriteria(documentCriteria, searchCreatedAfter, false, false);
-        }
-        if (searchCreatedAt != null) {
-            parseDateAtCriteria(documentCriteria, searchCreatedAt, false);
         }
         if (searchCreatedBefore != null) {
             parseDateCriteria(documentCriteria, searchCreatedBefore, false, true);
@@ -198,9 +191,6 @@ public class DocumentSearchCriteriaUtil {
         }
         if (searchUpdatedAfter != null) {
             parseDateCriteria(documentCriteria, searchUpdatedAfter, true, false);
-        }
-        if (searchUpdatedAt != null) {
-            parseDateAtCriteria(documentCriteria, searchUpdatedAt, true);
         }
         if (searchUpdatedBefore != null) {
             parseDateCriteria(documentCriteria, searchUpdatedBefore, true, true);

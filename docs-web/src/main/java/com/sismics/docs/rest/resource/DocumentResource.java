@@ -370,9 +370,8 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String} [search] Search query (see "Document search syntax" on the top of the page for explanations) when the input is entered by a human.
      * @apiParam {Boolean} [files] If true includes files information
      *
-     * @apiParam {String} [search[after]] The document must have been created after or at the value moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code>
-     * @apiParam {String} [search[at]] The document must have been created at the moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code> (for <code>yyyy</code> it must be the same year, for <code>yyyy-MM</code> the same month, for <code>yyyy-MM-dd</code> the same day)
-     * @apiParam {String} [search[before]] The document must have been created before or at the value moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code>
+     * @apiParam {String} [search[after]] The document must have been created after or at the value moment, accepted format is <code>yyyy-MM-dd</code>
+     * @apiParam {String} [search[before]] The document must have been created before or at the value moment, accepted format is <code>yyyy-MM-dd</code>
      * @apiParam {String} [search[by]] The document must have been created by the specified creator's username with an exact match, the user must not be deleted
      * @apiParam {String} [search[full]] Used as a search criteria for all fields including the document's files content, several comma-separated values can be specified and the document must match any of them
      * @apiParam {String} [search[lang]] The document must be of the specified language (example: <code>en</code>)
@@ -382,9 +381,8 @@ public class DocumentResource extends BaseResource {
      * @apiParam {String} [search[tag]] The document must contain a tag or a child of a tag that starts with the value, case is ignored, several comma-separated values can be specified and the document must match all tag filters
      * @apiParam {String} [search[nottag]] The document must not contain a tag or a child of a tag that starts with the value, case is ignored, several comma-separated values can be specified and the document must match all tag filters
      * @apiParam {String} [search[title]] The document's title must be the value, several comma-separated values can be specified and the document must match any of the titles
-     * @apiParam {String} [search[uafter]] The document must have been updated after or at the value moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code>
-     * @apiParam {String} [search[uat]] The document must have been updated at the moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code> (for <code>yyyy</code> it must be the same year, for <code>yyyy-MM</code> the same month, for <code>yyyy-MM-dd</code> the same day)
-     * @apiParam {String} [search[ubefore]] The document must have been updated before or at the value moment, accepted format are <code>yyyy</code>, <code>yyyy-MM</code> and <code>yyyy-MM-dd</code>
+     * @apiParam {String} [search[uafter]] The document must have been updated after or at the value moment, accepted format is <code>yyyy-MM-dd</code>
+     * @apiParam {String} [search[ubefore]] The document must have been updated before or at the value moment, accepted format is <code>yyyy-MM-dd</code>
      * @apiParam {String} [search[workflow]] If the value is <code>me</code> the document must have an active route, for other values the criteria is ignored
      *
      * @apiSuccess {Number} total Total number of documents
@@ -437,7 +435,6 @@ public class DocumentResource extends BaseResource {
             @QueryParam("files") Boolean files,
 
             @QueryParam("search[after]") String searchCreatedAfter,
-            @QueryParam("search[at]") String searchCreatedAt,
             @QueryParam("search[before]") String searchCreatedBefore,
             @QueryParam("search[by]") String searchBy,
             @QueryParam("search[full]") String searchFull,
@@ -449,7 +446,6 @@ public class DocumentResource extends BaseResource {
             @QueryParam("search[nottag]") String searchTagNot,
             @QueryParam("search[title]") String searchTitle,
             @QueryParam("search[uafter]") String searchUpdatedAfter,
-            @QueryParam("search[uat]") String searchUpdatedAt,
             @QueryParam("search[ubefore]") String searchUpdatedBefore,
             @QueryParam("search[searchworkflow]") String searchWorkflow
     ) {
@@ -472,7 +468,6 @@ public class DocumentResource extends BaseResource {
                 documentCriteria,
                 searchBy,
                 searchCreatedAfter,
-                searchCreatedAt,
                 searchCreatedBefore,
                 searchFull,
                 searchLang,
@@ -483,7 +478,6 @@ public class DocumentResource extends BaseResource {
                 searchTagNot,
                 searchTitle,
                 searchUpdatedAfter,
-                searchUpdatedAt,
                 searchUpdatedBefore,
                 searchWorkflow,
                 allTagDtoList);
@@ -578,7 +572,6 @@ public class DocumentResource extends BaseResource {
             @FormParam("search") String search,
             @FormParam("files") Boolean files,
             @FormParam("search[after]") String searchCreatedAfter,
-            @FormParam("search[at]") String searchCreatedAt,
             @FormParam("search[before]") String searchCreatedBefore,
             @FormParam("search[by]") String searchBy,
             @FormParam("search[full]") String searchFull,
@@ -590,7 +583,6 @@ public class DocumentResource extends BaseResource {
             @FormParam("search[nottag]") String searchTagNot,
             @FormParam("search[title]") String searchTitle,
             @FormParam("search[uafter]") String searchUpdatedAfter,
-            @FormParam("search[uat]") String searchUpdatedAt,
             @FormParam("search[ubefore]") String searchUpdatedBefore,
             @FormParam("search[searchworkflow]") String searchWorkflow
     ) {
@@ -603,7 +595,6 @@ public class DocumentResource extends BaseResource {
                 files,
                 searchBy,
                 searchCreatedAfter,
-                searchCreatedAt,
                 searchCreatedBefore,
                 searchFull,
                 searchLang,
@@ -614,7 +605,6 @@ public class DocumentResource extends BaseResource {
                 searchTagNot,
                 searchTitle,
                 searchUpdatedAfter,
-                searchUpdatedAt,
                 searchUpdatedBefore,
                 searchWorkflow
         );
