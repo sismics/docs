@@ -68,7 +68,7 @@ public class PaginatedLists {
     }
 
     /**
-     * Executes a query and returns the data of the currunt page.
+     * Executes a query and returns the data of the current page.
      * 
      * @param paginatedList Paginated list object containing parameters, and into which results are added by side effects
      * @param queryParam Query parameters
