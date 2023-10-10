@@ -82,18 +82,6 @@ public class PaginatedLists {
         q.setMaxResults(paginatedList.getLimit());
         return q.getResultList();
     }
-    
-    /**
-     * Executes a paginated request with 2 native queries (one to count the number of results, and one to return the page).
-     * 
-     * @param paginatedList Paginated list object containing parameters, and into which results are added by side effects
-     * @param queryParam Query parameters
-     * @return List of results
-     */
-    public static <E> List<Object[]> executePaginatedQuery(PaginatedList<E> paginatedList, QueryParam queryParam) {
-        executeCountQuery(paginatedList, queryParam);
-        return executeResultQuery(paginatedList, queryParam);
-    }
 
     /**
      * Executes a paginated request with 2 native queries (one to count the number of results, and one to return the page).
