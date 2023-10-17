@@ -17,11 +17,11 @@ import com.sismics.util.css.Selector;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import javax.json.*;
-import javax.ws.rs.*;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
+import jakarta.json.*;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

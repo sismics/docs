@@ -1,6 +1,5 @@
 package com.sismics.docs.core.util;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.CharStreams;
@@ -17,7 +16,12 @@ import com.sismics.util.Scalr;
 import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.io.InputStreamReaderThread;
 import com.sismics.util.mime.MimeTypeUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.CountingInputStream;
+import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -26,6 +30,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -37,9 +42,14 @@ import java.util.*;
  */
 public class FileUtil {
     /**
+     * Logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(FileUtil.class);
+
+    /**
      * File ID of files currently being processed.
      */
-    private static Set<String> processingFileSet = Collections.synchronizedSet(new HashSet<>());
+    private static final Set<String> processingFileSet = Collections.synchronizedSet(new HashSet<>());
     
     /**
      * Optical character recognition on an image.
@@ -69,19 +79,19 @@ public class FileUtil {
 
         // Consume the data as text
         try (InputStream is = process.getInputStream()) {
-            return CharStreams.toString(new InputStreamReader(is, Charsets.UTF_8));
+            return CharStreams.toString(new InputStreamReader(is, StandardCharsets.UTF_8));
         }
     }
 
     /**
      * Remove a file from the storage filesystem.
      * 
-     * @param file File to delete
+     * @param fileId ID of file to delete
      */
-    public static void delete(File file) throws IOException {
-        Path storedFile = DirectoryUtil.getStorageDirectory().resolve(file.getId());
-        Path webFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_web");
-        Path thumbnailFile = DirectoryUtil.getStorageDirectory().resolve(file.getId() + "_thumb");
+    public static void delete(String fileId) throws IOException {
+        Path storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId);
+        Path webFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_web");
+        Path thumbnailFile = DirectoryUtil.getStorageDirectory().resolve(fileId + "_thumb");
         
         if (Files.exists(storedFile)) {
             Files.delete(storedFile);
@@ -126,7 +136,7 @@ public class FileUtil {
         // Validate global quota
         String globalStorageQuotaStr = System.getenv(Constants.GLOBAL_QUOTA_ENV);
         if (!Strings.isNullOrEmpty(globalStorageQuotaStr)) {
-            long globalStorageQuota = Long.valueOf(globalStorageQuotaStr);
+            long globalStorageQuota = Long.parseLong(globalStorageQuotaStr);
             long globalStorageCurrent = userDao.getGlobalStorageCurrent();
             if (globalStorageCurrent + fileSize > globalStorageQuota) {
                 throw new IOException("QuotaReached");
@@ -142,6 +152,7 @@ public class FileUtil {
         file.setName(StringUtils.abbreviate(name, 200));
         file.setMimeType(mimeType);
         file.setUserId(userId);
+        file.setSize(fileSize);
 
         // Get files of this document
         FileDao fileDao = new FileDao();
@@ -190,7 +201,7 @@ public class FileUtil {
         FileCreatedAsyncEvent fileCreatedAsyncEvent = new FileCreatedAsyncEvent();
         fileCreatedAsyncEvent.setUserId(userId);
         fileCreatedAsyncEvent.setLanguage(language);
-        fileCreatedAsyncEvent.setFile(file);
+        fileCreatedAsyncEvent.setFileId(file.getId());
         fileCreatedAsyncEvent.setUnencryptedFile(unencryptedFile);
         ThreadLocalContext.get().addAsyncEvent(fileCreatedAsyncEvent);
 
@@ -211,6 +222,7 @@ public class FileUtil {
      */
     public static void startProcessingFile(String fileId) {
         processingFileSet.add(fileId);
+        log.info("Processing started for file: " + fileId);
     }
 
     /**
@@ -220,6 +232,7 @@ public class FileUtil {
      */
     public static void endProcessingFile(String fileId) {
         processingFileSet.remove(fileId);
+        log.info("Processing ended for file: " + fileId);
     }
 
     /**
@@ -230,5 +243,32 @@ public class FileUtil {
      */
     public static boolean isProcessingFile(String fileId) {
         return processingFileSet.contains(fileId);
+    }
+
+    /**
+     * Get the size of a file on disk.
+     *
+     * @param fileId the file id
+     * @param user   the file owner
+     * @return the size or -1 if something went wrong
+     */
+    public static long getFileSize(String fileId, User user) {
+        // To get the size we copy the decrypted content into a null output stream
+        // and count the copied byte size.
+        Path storedFile = DirectoryUtil.getStorageDirectory().resolve(fileId);
+        if (! Files.exists(storedFile)) {
+            log.debug("File does not exist " + fileId);
+            return File.UNKNOWN_SIZE;
+        }
+        try (InputStream fileInputStream = Files.newInputStream(storedFile);
+             InputStream inputStream = EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey());
+             CountingInputStream countingInputStream = new CountingInputStream(inputStream);
+        ) {
+            IOUtils.copy(countingInputStream, NullOutputStream.NULL_OUTPUT_STREAM);
+            return countingInputStream.getByteCount();
+        } catch (Exception e) {
+            log.debug("Can't find size of file " + fileId, e);
+            return File.UNKNOWN_SIZE;
+        }
     }
 }

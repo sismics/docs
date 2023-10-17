@@ -2,7 +2,7 @@ package com.sismics.rest.util;
 
 import com.google.common.base.Strings;
 import com.sismics.rest.exception.ClientException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
 import java.text.MessageFormat;
@@ -20,6 +20,8 @@ public class ValidationUtil {
     private static Pattern HTTP_URL_PATTERN = Pattern.compile("https?://.+");
     
     private static Pattern ALPHANUMERIC_PATTERN = Pattern.compile("[a-zA-Z0-9_]+");
+    
+    private static Pattern USERNAME_PATTERN = Pattern.compile("[a-zA-Z0-9_@\\.]+");
     
     /**
      * Checks that the argument is not null.
@@ -111,7 +113,18 @@ public class ValidationUtil {
     public static void validateHexColor(String s, String name, boolean nullable) throws ClientException {
         ValidationUtil.validateLength(s, name, 7, 7, nullable);
     }
-    
+
+    /**
+     * Validate a tag name.
+     *
+     * @param name Name of the tag
+     */
+    public static void validateTagName(String name) throws ClientException {
+        if (name.contains(" ") || name.contains(":")) {
+            throw new ClientException("IllegalTagName", "Spaces and colons are not allowed in tag name");
+        }
+    }
+
     /**
      * Validates that the provided string matches an URL with HTTP or HTTPS scheme.
      * 
@@ -138,6 +151,12 @@ public class ValidationUtil {
     public static void validateAlphanumeric(String s, String name) throws ClientException {
         if (!ALPHANUMERIC_PATTERN.matcher(s).matches()) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} must have only alphanumeric or underscore characters", name));
+        }
+    }
+    
+    public static void validateUsername(String s, String name) throws ClientException {
+        if (!USERNAME_PATTERN.matcher(s).matches()) {
+            throw new ClientException("ValidationError", MessageFormat.format("{0} must have only alphanumeric, underscore characters or @ and .", name));
         }
     }
     

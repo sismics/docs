@@ -3,13 +3,18 @@
 /**
  * Navigation controller.
  */
-angular.module('docs').controller('Navigation', function($scope, $state, $rootScope, User) {
+angular.module('docs').controller('Navigation', function($scope, $state, $stateParams, $rootScope, User) {
   User.userInfo().then(function(data) {
     $rootScope.userInfo = data;
     if (data.anonymous) {
-      $state.go('login', {}, {
-        location: 'replace'
-      });
+      if($state.current.name !== 'login') {
+        $state.go('login', {
+          redirectState: $state.current.name,
+          redirectParams: JSON.stringify($stateParams),
+        }, {
+          location: 'replace'
+        });
+      }
     }
   });
 

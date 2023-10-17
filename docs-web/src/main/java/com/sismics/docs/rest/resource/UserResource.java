@@ -30,16 +30,16 @@ import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 import com.sismics.util.totp.GoogleAuthenticator;
 import com.sismics.util.totp.GoogleAuthenticatorKey;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.servlet.http.Cookie;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
-import javax.ws.rs.core.Response;
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.servlet.http.Cookie;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.NewCookie;
+import jakarta.ws.rs.core.Response;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -88,7 +88,7 @@ public class UserResource extends BaseResource {
         
         // Validate the input data
         username = ValidationUtil.validateLength(username, "username", 3, 50);
-        ValidationUtil.validateAlphanumeric(username, "username");
+        ValidationUtil.validateUsername(username, "username");
         password = ValidationUtil.validateLength(password, "password", 8, 50);
         email = ValidationUtil.validateLength(email, "email", 1, 100);
         Long storageQuota = ValidationUtil.validateLong(storageQuotaStr, "storage_quota");
@@ -195,7 +195,7 @@ public class UserResource extends BaseResource {
      * @return Response
      */
     @POST
-    @Path("{username: [a-zA-Z0-9_]+}")
+    @Path("{username: [a-zA-Z0-9_@\\.]+}")
     public Response update(
         @PathParam("username") String username,
         @FormParam("password") String password,
@@ -366,7 +366,7 @@ public class UserResource extends BaseResource {
         AuthenticationToken authenticationToken = new AuthenticationToken()
             .setUserId(user.getId())
             .setLongLasted(longLasted)
-            .setIp(ip)
+            .setIp(StringUtils.abbreviate(ip, 45))
             .setUserAgent(StringUtils.abbreviate(request.getHeader("user-agent"), 1000));
         String token = authenticationTokenDao.create(authenticationToken);
         
@@ -470,22 +470,8 @@ public class UserResource extends BaseResource {
         UserDao userDao = new UserDao();
         userDao.delete(principal.getName(), principal.getId());
         
-        // Raise deleted events for documents
-        for (Document document : documentList) {
-            DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
-            documentDeletedAsyncEvent.setUserId(principal.getId());
-            documentDeletedAsyncEvent.setDocumentId(document.getId());
-            ThreadLocalContext.get().addAsyncEvent(documentDeletedAsyncEvent);
-        }
-        
-        // Raise deleted events for files (don't bother sending document updated event)
-        for (File file : fileList) {
-            FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
-            fileDeletedAsyncEvent.setUserId(principal.getId());
-            fileDeletedAsyncEvent.setFile(file);
-            ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
-        }
-        
+        sendDeletionEvents(documentList, fileList);
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
@@ -511,7 +497,7 @@ public class UserResource extends BaseResource {
      * @return Response
      */
     @DELETE
-    @Path("{username: [a-zA-Z0-9_]+}")
+    @Path("{username: [a-zA-Z0-9_@\\.]+}")
     public Response delete(@PathParam("username") String username) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -551,23 +537,9 @@ public class UserResource extends BaseResource {
         
         // Delete the user
         userDao.delete(user.getUsername(), principal.getId());
-        
-        // Raise deleted events for documents
-        for (Document document : documentList) {
-            DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
-            documentDeletedAsyncEvent.setUserId(principal.getId());
-            documentDeletedAsyncEvent.setDocumentId(document.getId());
-            ThreadLocalContext.get().addAsyncEvent(documentDeletedAsyncEvent);
-        }
-        
-        // Raise deleted events for files (don't bother sending document updated event)
-        for (File file : fileList) {
-            FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
-            fileDeletedAsyncEvent.setUserId(principal.getId());
-            fileDeletedAsyncEvent.setFile(file);
-            ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
-        }
-        
+
+        sendDeletionEvents(documentList, fileList);
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
@@ -591,7 +563,7 @@ public class UserResource extends BaseResource {
      * @return Response
      */
     @POST
-    @Path("{username: [a-zA-Z0-9_]+}/disable_totp")
+    @Path("{username: [a-zA-Z0-9_@\\.]+}/disable_totp")
     public Response disableTotpUsername(@PathParam("username") String username) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -713,7 +685,7 @@ public class UserResource extends BaseResource {
      * @return Response
      */
     @GET
-    @Path("{username: [a-zA-Z0-9_]+}")
+    @Path("{username: [a-zA-Z0-9_@\\.]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response view(@PathParam("username") String username) {
         if (!authenticate()) {
@@ -1064,7 +1036,6 @@ public class UserResource extends BaseResource {
      * @apiGroup User
      * @apiParam {String} username Username
      * @apiSuccess {String} status Status OK
-     * @apiError (client) UserNotFound The user is not found
      * @apiError (client) ValidationError Validation error
      * @apiPermission none
      * @apiVersion 1.5.0
@@ -1081,11 +1052,16 @@ public class UserResource extends BaseResource {
         // Validate input data
         ValidationUtil.validateStringNotBlank("username", username);
 
+        // Prepare response
+        Response response = Response.ok().entity(Json.createObjectBuilder()
+                .add("status", "ok")
+                .build()).build();
+
         // Check for user existence
         UserDao userDao = new UserDao();
         List<UserDto> userDtoList = userDao.findByCriteria(new UserCriteria().setUserName(username), null);
         if (userDtoList.isEmpty()) {
-            throw new ClientException("UserNotFound", "User not found: " + username);
+            return response;
         }
         UserDto user = userDtoList.get(0);
 
@@ -1102,9 +1078,7 @@ public class UserResource extends BaseResource {
         AppContext.getInstance().getMailEventBus().post(passwordLostEvent);
 
         // Always return OK
-        JsonObjectBuilder response = Json.createObjectBuilder()
-                .add("status", "ok");
-        return Response.ok().entity(response.build()).build();
+        return response;
     }
 
     /**
@@ -1176,4 +1150,29 @@ public class UserResource extends BaseResource {
         }
         return null;
     }
+
+    /**
+     * Send the events about documents and files being deleted.
+     * @param documentList A document list
+     * @param fileList A file list
+     */
+    private void sendDeletionEvents(List<Document> documentList, List<File> fileList) {
+        // Raise deleted events for documents
+        for (Document document : documentList) {
+            DocumentDeletedAsyncEvent documentDeletedAsyncEvent = new DocumentDeletedAsyncEvent();
+            documentDeletedAsyncEvent.setUserId(principal.getId());
+            documentDeletedAsyncEvent.setDocumentId(document.getId());
+            ThreadLocalContext.get().addAsyncEvent(documentDeletedAsyncEvent);
+        }
+
+        // Raise deleted events for files (don't bother sending document updated event)
+        for (File file : fileList) {
+            FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
+            fileDeletedAsyncEvent.setUserId(principal.getId());
+            fileDeletedAsyncEvent.setFileId(file.getId());
+            fileDeletedAsyncEvent.setFileSize(file.getSize());
+            ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
+        }
+    }
+
 }

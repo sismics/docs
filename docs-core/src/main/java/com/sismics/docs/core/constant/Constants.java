@@ -18,12 +18,17 @@ public class Constants {
     /**
      * Administrator's default password ("admin").
      */
-    public static final String DEFAULT_ADMIN_PASSWORD = "$2a$05$6Ny3TjrW3aVAL1or2SlcR.fhuDgPKp5jp.P9fBXwVNePgeLqb4i3C";
+    public static final String DEFAULT_ADMIN_PASSWORD = "$2y$10$xg0EEKVUehutDI1m6qQhVeFz7SMQMl1jQzjf2KkVsR2c7aV2vyyjK";
 
     /**
      * Administrator's default email.
      */
     public static final String DEFAULT_ADMIN_EMAIL = "admin@localhost";
+
+    /**
+     * Bcrypt default work factor
+     */
+    public static final int DEFAULT_BCRYPT_WORK = 10;
 
     /**
      * Guest user ID.
@@ -38,7 +43,7 @@ public class Constants {
     /**
      * Supported document languages.
      */
-    public static final List<String> SUPPORTED_LANGUAGES = Lists.newArrayList("eng", "fra", "ita", "deu", "spa", "por", "pol", "rus", "ukr", "ara", "hin", "chi_sim", "chi_tra", "jpn", "tha", "kor", "nld", "tur");
+    public static final List<String> SUPPORTED_LANGUAGES = Lists.newArrayList("eng", "fra", "ita", "deu", "spa", "por", "pol", "rus", "ukr", "ara", "hin", "chi_sim", "chi_tra", "jpn", "tha", "kor", "nld", "tur", "heb", "hun", "fin", "swe", "lav", "dan", "nor", "vie", "ces", "sqi");
 
     /**
      * Base URL environment variable.
@@ -72,6 +77,11 @@ public class Constants {
      * Initial admin password environment variable.
      */
     public static final String ADMIN_EMAIL_INIT_ENV = "DOCS_ADMIN_EMAIL_INIT";
+
+    /**
+     * Work factor to be used by Bcrypt
+     */
+    public static final String BCRYPT_WORK_ENV = "DOCS_BCRYPT_WORK";
 
     /**
      * Expiration time of the password recovery in hours.

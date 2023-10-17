@@ -416,6 +416,7 @@
       "port": "Puerto IMAP (143 o 993)",
       "username": "Usuario IMAP",
       "password": "Contraseña IMAP",
+      "folder": "Carpeta IMAP",
       "tag": "Etiqueta añadida a documentos importado",
       "test": "Comprobar parámetros",
       "last_sync": "Última sincronización: {{ data.date | date: 'medium' }}, {{ data.count }} mensaje{{ data.count > 1 ? 's' : '' }} importado{{ data.count > 1 ? 's' : '' }}",

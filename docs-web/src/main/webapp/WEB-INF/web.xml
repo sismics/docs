@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="docs"
-  xmlns="http://java.sun.com/xml/ns/javaee"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-  version="3.0"
-  metadata-complete="true"> 
+         xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0"
+         metadata-complete="true">
   <display-name>Teedy</display-name>
   
   <!-- Proper loader/unloader of ImageIO plugins -->
   <listener>
     <display-name>ImageIO service provider loader/unloader</display-name>
-    <listener-class>com.twelvemonkeys.servlet.image.IIOProviderContextListener</listener-class>
+    <listener-class>com.sismics.util.listener.IIOProviderContextListener</listener-class>
   </listener>
 
   <!-- This filter handles CORS -->
@@ -25,7 +25,7 @@
     <url-pattern>/api/*</url-pattern>
   </filter-mapping>
 
-  <!-- This filter is used to process a couple things in the request context -->
+  <!-- This filter is used to process a couple of things in the request context -->
   <filter>
     <filter-name>requestContextFilter</filter-name>
     <filter-class>com.sismics.util.filter.RequestContextFilter</filter-class>

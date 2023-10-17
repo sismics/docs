@@ -3,7 +3,7 @@
 /**
  * Document view controller.
  */
-angular.module('docs').controller('DocumentView', function ($scope, $state, $stateParams, $location, $dialog, $uibModal, Restangular, $translate) {
+angular.module('docs').controller('DocumentView', function ($scope, $rootScope, $state, $stateParams, $location, $dialog, $uibModal, Restangular, $translate) {
   // Load document data from server
   Restangular.one('document', $stateParams.id).get().then(function (data) {
     $scope.document = data;
@@ -111,9 +111,12 @@ angular.module('docs').controller('DocumentView', function ($scope, $state, $sta
     var title = $translate.instant('document.view.shared_document_title');
     var msg = $translate.instant('document.view.shared_document_message', { link: link });
     var btns = [
-      {result: 'unshare', label: $translate.instant('unshare'), cssClass: 'btn-danger'},
       {result: 'close', label: $translate.instant('close')}
     ];
+
+    if ($rootScope.userInfo.username !== 'guest') {
+      btns.unshift({result: 'unshare', label: $translate.instant('unshare'), cssClass: 'btn-danger'});
+    }
 
     $dialog.messageBox(title, msg, btns, function (result) {
       if (result === 'unshare') {

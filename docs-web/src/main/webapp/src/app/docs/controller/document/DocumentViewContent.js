@@ -5,6 +5,7 @@
  */
 angular.module('docs').controller('DocumentViewContent', function ($scope, $rootScope, $stateParams, Restangular, $dialog, $state, Upload, $translate, $uibModal) {
   $scope.displayMode = _.isUndefined(localStorage.fileDisplayMode) ? 'grid' : localStorage.fileDisplayMode;
+  $scope.openedFile = undefined;
 
   /**
    * Watch for display mode change.
@@ -45,7 +46,6 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
   $scope.loadFiles = function () {
     Restangular.one('file/list').get({ id: $stateParams.id }).then(function (data) {
       $scope.files = data.files;
-      // TODO Keep currently uploading files
     });
   };
   $scope.loadFiles();
@@ -55,7 +55,8 @@ angular.module('docs').controller('DocumentViewContent', function ($scope, $root
    */
   $scope.openFile = function (file, $event) {
     if ($($event.target).parents('.currently-dragging').length === 0) {
-      $state.go('document.view.content.file', {id: $stateParams.id, fileId: file.id})
+      $scope.openedFile = file;
+      $state.go('document.view.content.file', { id: $stateParams.id, fileId: file.id });
     }
   };
 

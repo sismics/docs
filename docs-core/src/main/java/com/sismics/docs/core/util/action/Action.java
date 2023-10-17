@@ -2,7 +2,7 @@ package com.sismics.docs.core.util.action;
 
 import com.sismics.docs.core.dao.dto.DocumentDto;
 
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 
 /**
  * Base action interface.

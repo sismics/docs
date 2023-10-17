@@ -4,10 +4,10 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Form;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Form;
 import java.util.Date;
 
 /**
@@ -99,7 +99,7 @@ public class TestAuditLogResource extends BaseJerseyTest {
         long update1Date = json.getJsonNumber("update_date").longValue();
 
         // Add a file to the document
-        clientUtil.addFileToDocument("file/wikipedia.pdf", "wikipedia.pdf", auditlog1Token, document1Id);
+        clientUtil.addFileToDocument(FILE_WIKIPEDIA_PDF, auditlog1Token, document1Id);
 
         // Get document 1
         json = target().path("/document/" + document1Id).request()

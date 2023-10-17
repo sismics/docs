@@ -5,8 +5,8 @@
   <parent>
     <groupId>com.sismics.docs</groupId>
     <artifactId>docs-parent</artifactId>
-    <version>1.6-SNAPSHOT</version>
-    <relativePath>..</relativePath>
+    <version>1.12-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   
   <modelVersion>4.0.0</modelVersion>
@@ -34,8 +34,8 @@
       
     <!-- Other external dependencies -->
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
     </dependency>
     
     <dependency>
@@ -54,19 +54,19 @@
     </dependency>
   
     <dependency>
-      <groupId>commons-dbcp</groupId>
-      <artifactId>commons-dbcp</artifactId>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-  
-    <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
     </dependency>
     
     <!-- Test dependencies -->

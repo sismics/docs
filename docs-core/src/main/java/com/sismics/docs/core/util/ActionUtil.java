@@ -9,7 +9,7 @@ import com.sismics.docs.core.util.action.RemoveTagAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 
 /**
  * Action utilities.

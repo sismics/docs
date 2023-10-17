@@ -4,12 +4,12 @@ import com.sismics.util.filter.TokenBasedSecurityFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 /**
  * Test the tag resource.
@@ -25,7 +25,23 @@ public class TestTagResource extends BaseJerseyTest {
         // Login tag1
         clientUtil.createUser("tag1");
         String tag1Token = clientUtil.login("tag1");
-        
+
+        // Create a tag with a wrong name
+        Response response = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .put(Entity.form(new Form()
+                        .param("name", "Tag:3")
+                        .param("color", "#ff0000")));
+        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+
+        // Create a tag with a wrong name
+        response = target().path("/tag").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
+                .put(Entity.form(new Form()
+                        .param("name", "Tag 3")
+                        .param("color", "#ff0000")));
+        Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
+
         // Create a tag
         JsonObject json = target().path("/tag").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
@@ -46,7 +62,7 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertNotNull(tag4Id);
 
         // Create a circular reference
-        Response response = target().path("/tag/" + tag3Id).request()
+        response = target().path("/tag/" + tag3Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, tag1Token)
                 .post(Entity.form(new Form()
                         .param("name", "Tag3")

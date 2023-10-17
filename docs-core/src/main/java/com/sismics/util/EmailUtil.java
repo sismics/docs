@@ -17,9 +17,9 @@ import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -87,29 +88,34 @@ public class EmailUtil {
         try {
             // Build email headers
             HtmlEmail email = new HtmlEmail();
-            email.setCharset("UTF-8");
+            email.setCharset(StandardCharsets.UTF_8.name());
             ConfigDao configDao = new ConfigDao();
 
             // Hostname
             String envHostname = System.getenv(Constants.SMTP_HOSTNAME_ENV);
-            if (envHostname == null) {
+            if (Strings.isNullOrEmpty(envHostname)) {
                 email.setHostName(ConfigUtil.getConfigStringValue(ConfigType.SMTP_HOSTNAME));
             } else {
                 email.setHostName(envHostname);
             }
 
             // Port
+            int port = ConfigUtil.getConfigIntegerValue(ConfigType.SMTP_PORT);
             String envPort = System.getenv(Constants.SMTP_PORT_ENV);
-            if (envPort == null) {
-                email.setSmtpPort(ConfigUtil.getConfigIntegerValue(ConfigType.SMTP_PORT));
-            } else {
-                email.setSmtpPort(Integer.valueOf(envPort));
+            if (!Strings.isNullOrEmpty(envPort)) {
+                port = Integer.valueOf(envPort);
+            }
+            email.setSmtpPort(port);
+            if (port == 465) {
+                email.setSSLOnConnect(true);
+            } else if (port == 587) {
+                email.setStartTLSRequired(true);
             }
 
             // Username and password
             String envUsername = System.getenv(Constants.SMTP_USERNAME_ENV);
             String envPassword = System.getenv(Constants.SMTP_PASSWORD_ENV);
-            if (envUsername == null || envPassword == null) {
+            if (Strings.isNullOrEmpty(envUsername) || Strings.isNullOrEmpty(envPassword)) {
                 Config usernameConfig = configDao.getById(ConfigType.SMTP_USERNAME);
                 Config passwordConfig = configDao.getById(ConfigType.SMTP_PASSWORD);
                 if (usernameConfig != null && passwordConfig != null) {

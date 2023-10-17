@@ -6,60 +6,60 @@
   <groupId>com.sismics.docs</groupId>
   <artifactId>docs-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.6-SNAPSHOT</version>
+  <version>1.12-SNAPSHOT</version>
 
   <name>Docs Parent</name>
 
   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Dependencies version (external) -->
-    <org.apache.commons.commons-compress.version>1.18</org.apache.commons.commons-compress.version>
-    <commons-lang.commons-lang.version>2.6</commons-lang.commons-lang.version>
-    <commons-io.commons-io.version>2.6</commons-io.commons-io.version>
+    <org.apache.commons.commons-compress.version>1.22</org.apache.commons.commons-compress.version>
+    <org.apache.commons.commons-lang3.version>3.12.0</org.apache.commons.commons-lang3.version>
+    <commons-io.commons-io.version>2.11.0</commons-io.commons-io.version>
     <org.apache.commons.commons-email.version>1.5</org.apache.commons.commons-email.version>
-    <org.freemarker.freemarker.version>2.3.28</org.freemarker.freemarker.version>
-    <commons-dbcp.version>1.4</commons-dbcp.version>
-    <com.google.guava.guava.version>26.0-jre</com.google.guava.guava.version>
-    <log4j.log4j.version>1.2.16</log4j.log4j.version>
-    <org.slf4j.version>1.6.4</org.slf4j.version>
-    <org.slf4j.jcl-over-slf4j.version>1.6.6</org.slf4j.jcl-over-slf4j.version>
-    <junit.junit.version>4.12</junit.junit.version>
-    <com.h2database.h2.version>1.4.197</com.h2database.h2.version>
-    <org.glassfish.jersey.version>2.27</org.glassfish.jersey.version>
-    <org.glassfish.javax.json.version>1.1.3</org.glassfish.javax.json.version>
-    <org.mindrot.jbcrypt>0.3m</org.mindrot.jbcrypt>
-    <org.apache.lucene.version>7.5.0</org.apache.lucene.version>
+    <org.freemarker.freemarker.version>2.3.32</org.freemarker.freemarker.version>
+    <com.google.guava.guava.version>31.1-jre</com.google.guava.guava.version>
+    <log4j.log4j.version>1.2.17</log4j.log4j.version>
+    <org.slf4j.version>1.7.30</org.slf4j.version>
+    <org.slf4j.jcl-over-slf4j.version>1.7.30</org.slf4j.jcl-over-slf4j.version>
+    <org.slf4j.jul-to-slf4j.version>1.7.30</org.slf4j.jul-to-slf4j.version>
+    <junit.junit.version>4.13.2</junit.junit.version>
+    <com.h2database.h2.version>1.4.199</com.h2database.h2.version>
+    <jakarta.json.jakarta.json-api.version>2.1.1</jakarta.json.jakarta.json-api.version>
+    <at.favre.lib.bcrypt.version>0.10.2</at.favre.lib.bcrypt.version>
+    <org.apache.lucene.version>8.7.0</org.apache.lucene.version>
     <org.imgscalr.imgscalr-lib.version>4.2</org.imgscalr.imgscalr-lib.version>
-    <org.apache.pdfbox.pdfbox.version>2.0.12</org.apache.pdfbox.pdfbox.version>
-    <org.bouncycastle.bcprov-jdk15on.version>1.61</org.bouncycastle.bcprov-jdk15on.version>
-    <joda-time.joda-time.version>2.10</joda-time.joda-time.version>
-    <org.hibernate.hibernate.version>5.3.7.Final</org.hibernate.hibernate.version>
-    <javax.servlet.javax.servlet-api.version>4.0.1</javax.servlet.javax.servlet-api.version>
-    <fr.opensagres.xdocreport.version>2.0.1</fr.opensagres.xdocreport.version>
-    <net.java.dev.jna.jna.version>4.2.1</net.java.dev.jna.jna.version>
-    <com.twelvemonkeys.imageio.version>3.3.2</com.twelvemonkeys.imageio.version>
-    <com.levigo.jbig2.levigo-jbig2-imageio.version>1.6.5</com.levigo.jbig2.levigo-jbig2-imageio.version>
-    <com.github.jai-imageio.jai-imageio-jpeg2000.version>1.3.0</com.github.jai-imageio.jai-imageio-jpeg2000.version>
-    <org.postgresql.postgresql.version>42.2.5</org.postgresql.postgresql.version>
+    <org.apache.pdfbox.pdfbox.version>2.0.27</org.apache.pdfbox.pdfbox.version>
+    <org.bouncycastle.bcprov-jdk15on.version>1.70</org.bouncycastle.bcprov-jdk15on.version>
+    <joda-time.joda-time.version>2.12.2</joda-time.joda-time.version>
+    <org.hibernate.hibernate.version>5.6.15.Final</org.hibernate.hibernate.version>
+    <fr.opensagres.xdocreport.version>2.0.4</fr.opensagres.xdocreport.version>
+    <net.java.dev.jna.jna.version>5.13.0</net.java.dev.jna.jna.version>
+    <com.twelvemonkeys.imageio.version>3.9.4</com.twelvemonkeys.imageio.version>
+    <com.levigo.jbig2.levigo-jbig2-imageio.version>2.0</com.levigo.jbig2.levigo-jbig2-imageio.version>
+    <com.github.jai-imageio.jai-imageio-jpeg2000.version>1.4.0</com.github.jai-imageio.jai-imageio-jpeg2000.version>
+    <org.postgresql.postgresql.version>42.6.0</org.postgresql.postgresql.version>
     <org.subethamail.subethasmtp-wiser.version>1.2</org.subethamail.subethasmtp-wiser.version>
-    <com.icegreen.greenmail.version>1.5.8</com.icegreen.greenmail.version>
-    <com.sun.mail.javax.mail.version>1.6.2</com.sun.mail.javax.mail.version>
-    <org.jsoup.jsoup.version>1.11.3</org.jsoup.jsoup.version>
-    <com.squareup.okhttp3.okhttp.version>3.11.0</com.squareup.okhttp3.okhttp.version>
+    <com.icegreen.greenmail.version>1.6.14</com.icegreen.greenmail.version>
+    <org.jsoup.jsoup.version>1.15.4</org.jsoup.jsoup.version>
+    <com.squareup.okhttp3.okhttp.version>4.10.0</com.squareup.okhttp3.okhttp.version>
+    <org.apache.directory.api.api-all.version>2.1.3</org.apache.directory.api.api-all.version>
 
-    <org.eclipse.jetty.jetty-server.version>9.4.17.v20190418</org.eclipse.jetty.jetty-server.version>
-    <org.eclipse.jetty.jetty-webapp.version>9.4.17.v20190418</org.eclipse.jetty.jetty-webapp.version>
-    <org.eclipse.jetty.jetty-servlet.version>9.4.17.v20190418</org.eclipse.jetty.jetty-servlet.version>
+    <org.glassfish.jersey.version>3.0.10</org.glassfish.jersey.version>
+    <jakarta.servlet.jakarta.servlet-api.version>5.0.0</jakarta.servlet.jakarta.servlet-api.version>
+    <org.eclipse.jetty.jetty-server.version>11.0.14</org.eclipse.jetty.jetty-server.version>
+    <org.eclipse.jetty.jetty-webapp.version>11.0.14</org.eclipse.jetty.jetty-webapp.version>
+    <org.eclipse.jetty.jetty-servlet.version>11.0.14</org.eclipse.jetty.jetty-servlet.version>
     
     <!-- Plugins version -->
-    <org.apache.maven.plugins.maven-antrun-plugin.version>1.8</org.apache.maven.plugins.maven-antrun-plugin.version>
-    <org.apache.maven.plugins.maven-jar-plugin.version>3.1.0</org.apache.maven.plugins.maven-jar-plugin.version>
-    <org.apache.maven.plugins.maven-war-plugin.version>3.2.2</org.apache.maven.plugins.maven-war-plugin.version>
-    <org.apache.maven.plugins.maven-surefire-plugin.version>2.22.1</org.apache.maven.plugins.maven-surefire-plugin.version>
-    <org.eclipse.jetty.jetty-maven-plugin.version>9.4.17.v20190418</org.eclipse.jetty.jetty-maven-plugin.version>
+    <org.apache.maven.plugins.maven-antrun-plugin.version>3.1.0</org.apache.maven.plugins.maven-antrun-plugin.version>
+    <org.apache.maven.plugins.maven-jar-plugin.version>3.3.0</org.apache.maven.plugins.maven-jar-plugin.version>
+    <org.apache.maven.plugins.maven-war-plugin.version>3.3.2</org.apache.maven.plugins.maven-war-plugin.version>
+    <org.apache.maven.plugins.maven-surefire-plugin.version>3.0.0</org.apache.maven.plugins.maven-surefire-plugin.version>
+    <org.eclipse.jetty.jetty-maven-plugin.version>11.0.14</org.eclipse.jetty.jetty-maven-plugin.version>
   </properties>
   
   <scm>
@@ -170,11 +170,11 @@
       </dependency>
 
       <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>${javax.servlet.javax.servlet-api.version}</version>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>${jakarta.servlet.jakarta.servlet-api.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
@@ -182,9 +182,9 @@
       </dependency>
             
       <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.commons-lang.version}</version>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${org.apache.commons.commons-lang3.version}</version>
       </dependency>
 
       <dependency>
@@ -240,7 +240,13 @@
         <artifactId>jcl-over-slf4j</artifactId>
         <version>${org.slf4j.jcl-over-slf4j.version}</version>
       </dependency>
-      
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jul-to-slf4j</artifactId>
+        <version>${org.slf4j.jul-to-slf4j.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -248,9 +254,9 @@
       </dependency>
 
       <dependency>
-        <groupId>org.mindrot</groupId>
-        <artifactId>jbcrypt</artifactId>
-        <version>${org.mindrot.jbcrypt}</version>
+        <groupId>at.favre.lib</groupId>
+        <artifactId>bcrypt</artifactId>
+        <version>${at.favre.lib.bcrypt.version}</version>
       </dependency>
 
       <dependency>
@@ -309,9 +315,9 @@
       </dependency>
 
       <dependency>
-        <groupId>org.glassfish</groupId>
-        <artifactId>javax.json</artifactId>
-        <version>${org.glassfish.javax.json.version}</version>
+        <groupId>jakarta.json</groupId>
+        <artifactId>jakarta.json-api</artifactId>
+        <version>${jakarta.json.jakarta.json-api.version}</version>
       </dependency>
 
       <dependency>
@@ -322,28 +328,10 @@
 
       <dependency>
         <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core</artifactId>
+        <artifactId>hibernate-core-jakarta</artifactId>
         <version>${org.hibernate.hibernate.version}</version>
       </dependency>
       
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-entitymanager</artifactId>
-        <version>${org.hibernate.hibernate.version}</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-c3p0</artifactId>
-        <version>${org.hibernate.hibernate.version}</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>commons-dbcp</groupId>
-        <artifactId>commons-dbcp</artifactId>
-        <version>${commons-dbcp.version}</version>
-      </dependency>
-
       <dependency>
         <groupId>org.freemarker</groupId>
         <artifactId>freemarker</artifactId>
@@ -441,24 +429,17 @@
       </dependency>
 
       <dependency>
-        <groupId>com.sun.mail</groupId>
-        <artifactId>javax.mail</artifactId>
-        <version>${com.sun.mail.javax.mail.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.postgresql</groupId>
         <artifactId>postgresql</artifactId>
         <version>${org.postgresql.postgresql.version}</version>
       </dependency>
 
-      <!-- Servlet listener to register SPI ImageIO plugins -->
       <dependency>
-        <groupId>com.twelvemonkeys.servlet</groupId>
-        <artifactId>servlet</artifactId>
-        <version>${com.twelvemonkeys.imageio.version}</version>
+        <groupId>org.apache.directory.api</groupId>
+        <artifactId>api-all</artifactId>
+        <version>${org.apache.directory.api.api-all.version}</version>
       </dependency>
-      
+
       <!-- ImageIO plugins -->
       <!-- JPEG -->
       <dependency>

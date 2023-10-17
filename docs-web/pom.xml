@@ -5,8 +5,8 @@
   <parent>
     <groupId>com.sismics.docs</groupId>
     <artifactId>docs-parent</artifactId>
-    <version>1.6-SNAPSHOT</version>
-    <relativePath>..</relativePath>
+    <version>1.12-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   
   <modelVersion>4.0.0</modelVersion>
@@ -26,25 +26,6 @@
       <artifactId>docs-web-common</artifactId>
     </dependency>
     
-    <!-- JDK 11 JAXB dependencies -->
-	<dependency>
-	  <groupId>javax.xml.bind</groupId>
-	  <artifactId>jaxb-api</artifactId>
-	  <version>2.3.0</version>
-	  </dependency>
-	  
-	<dependency>
-	  <groupId>com.sun.xml.bind</groupId>
-	  <artifactId>jaxb-core</artifactId>
-	  <version>2.3.0</version>
-	</dependency>
-	
-	<dependency>
-	  <groupId>com.sun.xml.bind</groupId>
-	  <artifactId>jaxb-impl</artifactId>
-	  <version>2.3.0</version>
-	</dependency>
-	
     <!-- Dependencies to Jersey -->
     <dependency>
       <groupId>org.glassfish.jersey.containers</groupId>
@@ -68,8 +49,8 @@
       
     <!-- Other external dependencies -->
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
     </dependency>
     
     <dependency>
@@ -88,17 +69,6 @@
     </dependency>
   
     <dependency>
-      <groupId>commons-dbcp</groupId>
-      <artifactId>commons-dbcp</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-  
-    <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
     </dependency>
@@ -109,8 +79,9 @@
     </dependency>
     
     <dependency>
-      <groupId>com.twelvemonkeys.servlet</groupId>
-      <artifactId>servlet</artifactId>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     
     <!-- Test dependencies -->
@@ -157,7 +128,7 @@
       <artifactId>greenmail</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
   </dependencies>
 
   <build>
@@ -222,54 +193,6 @@
             <configuration>
               <forkCount>1</forkCount>
               <reuseForks>false</reuseForks>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    
-    <!-- Stress profile -->
-    <profile>
-      <id>stress</id>
-      <activation>
-        <property>
-          <name>env</name>
-          <value>stress</value>
-        </property>
-      </activation>
-      
-      <build>
-        <resources>
-          <resource>
-            <directory>src/stress/resources</directory>
-            <filtering>false</filtering>
-            <excludes>
-              <exclude>**/config.properties</exclude>
-            </excludes>
-          </resource>
-          <resource>
-            <directory>src/stress/resources</directory>
-            <filtering>true</filtering>
-            <includes>
-              <include>**/config.properties</include>
-            </includes>
-          </resource>
-        </resources>
-
-        <plugins>
-          <plugin>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-maven-plugin</artifactId>
-            <configuration>
-              <systemProperties>
-                <systemProperty>
-                  <name>application.mode</name>
-                  <value>dev</value>
-                </systemProperty>
-              </systemProperties>
-              <webApp>
-                <contextPath>/docs-web</contextPath>
-              </webApp>
             </configuration>
           </plugin>
         </plugins>

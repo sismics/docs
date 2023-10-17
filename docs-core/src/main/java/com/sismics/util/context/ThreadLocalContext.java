@@ -3,7 +3,7 @@ package com.sismics.util.context;
 import com.google.common.collect.Lists;
 import com.sismics.docs.core.model.context.AppContext;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import java.util.Iterator;
 import java.util.List;
 

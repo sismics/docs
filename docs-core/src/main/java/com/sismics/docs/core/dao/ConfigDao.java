@@ -4,8 +4,8 @@ import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.model.jpa.Config;
 import com.sismics.util.context.ThreadLocalContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 
 /**
  * Configuration parameter DAO.

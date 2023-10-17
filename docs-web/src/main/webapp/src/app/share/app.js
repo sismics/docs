@@ -56,17 +56,21 @@ angular.module('share',
 
   // Configuring Angular Translate
   $translateProvider
-      .useSanitizeValueStrategy(null)
+      .useSanitizeValueStrategy('escapeParameters')
       .useStaticFilesLoader({
         prefix: 'locale/',
         suffix: '.json?@build.date@'
       })
-      .registerAvailableLanguageKeys(['en', 'es', 'fr', 'de', 'ru', 'zh_CN', 'zh_TW'], {
-        'ru_*': 'ru',
+      .registerAvailableLanguageKeys(['en', 'es', 'pt', 'fr', 'de', 'el', 'ru', 'it', 'pl', 'zh_CN', 'zh_TW', 'sq_AL'], {
         'en_*': 'en',
         'es_*': 'es',
+        'pt_*': 'pt',
         'fr_*': 'fr',
         'de_*': 'de',
+        'el_*': 'el',
+        'ru_*': 'ru',
+        'it_*': 'it',
+        'pl_*': 'pl',
         '*': 'en'
       })
       .fallbackLanguage('en');
@@ -85,6 +89,9 @@ angular.module('share',
   // Configuring $http to act like jQuery.ajax
   $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
   $httpProvider.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+  $httpProvider.defaults.headers.delete = {
+    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+  };
   $httpProvider.defaults.transformRequest = [function(data) {
     var param = function(obj) {
       var query = '';

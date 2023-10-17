@@ -1,14 +1,15 @@
 package com.sismics.docs.core.model.context;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.UserDao;
-import com.sismics.docs.core.event.RebuildIndexAsyncEvent;
 import com.sismics.docs.core.listener.async.*;
 import com.sismics.docs.core.model.jpa.User;
 import com.sismics.docs.core.service.FileService;
+import com.sismics.docs.core.service.FileSizeService;
 import com.sismics.docs.core.service.InboxService;
 import com.sismics.docs.core.util.PdfUtil;
 import com.sismics.docs.core.util.indexing.IndexingHandler;
@@ -66,6 +67,11 @@ public class AppContext {
     private FileService fileService;
 
     /**
+     * File size service.
+     */
+    private FileSizeService fileSizeService;
+
+    /**
      * Asynchronous executors.
      */
     private List<ThreadPoolExecutor> asyncExecutorList;
@@ -81,7 +87,7 @@ public class AppContext {
             List<Class<? extends IndexingHandler>> indexingHandlerList = Lists.newArrayList(
                     new ClasspathScanner<IndexingHandler>().findClasses(IndexingHandler.class, "com.sismics.docs.core.util.indexing"));
             for (Class<? extends IndexingHandler> handlerClass : indexingHandlerList) {
-                IndexingHandler handler = handlerClass.newInstance();
+                IndexingHandler handler = handlerClass.getDeclaredConstructor().newInstance();
                 if (handler.accept()) {
                     indexingHandler = handler;
                     break;
@@ -102,12 +108,17 @@ public class AppContext {
         inboxService.startAsync();
         inboxService.awaitRunning();
 
+        // Start file size service
+        fileSizeService = new FileSizeService();
+        fileSizeService.startAsync();
+        fileSizeService.awaitRunning();
+
         // Register fonts
         PdfUtil.registerFonts();
 
         // Change the admin password if needed
         String envAdminPassword = System.getenv(Constants.ADMIN_PASSWORD_INIT_ENV);
-        if (envAdminPassword != null) {
+        if (!Strings.isNullOrEmpty(envAdminPassword)) {
             UserDao userDao = new UserDao();
             User adminUser = userDao.getById("admin");
             if (Constants.DEFAULT_ADMIN_PASSWORD.equals(adminUser.getPassword())) {
@@ -118,7 +129,7 @@ public class AppContext {
 
         // Change the admin email if needed
         String envAdminEmail = System.getenv(Constants.ADMIN_EMAIL_INIT_ENV);
-        if (envAdminEmail != null) {
+        if (!Strings.isNullOrEmpty(envAdminEmail)) {
             UserDao userDao = new UserDao();
             User adminUser = userDao.getById("admin");
             if (Constants.DEFAULT_ADMIN_EMAIL.equals(adminUser.getEmail())) {
@@ -172,7 +183,8 @@ public class AppContext {
         if (EnvironmentUtil.isUnitTest()) {
             return new EventBus();
         } else {
-            ThreadPoolExecutor executor = new ThreadPoolExecutor(8, 8,
+            int threadCount = Math.max(Runtime.getRuntime().availableProcessors() / 2, 2);
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(threadCount, threadCount,
                     1L, TimeUnit.MINUTES,
                     new LinkedBlockingQueue<>());
             asyncExecutorList.add(executor);
@@ -235,6 +247,10 @@ public class AppContext {
 
         if (fileService != null) {
             fileService.stopAsync();
+        }
+
+        if (fileSizeService != null) {
+            fileSizeService.stopAsync();
         }
 
         instance = null;

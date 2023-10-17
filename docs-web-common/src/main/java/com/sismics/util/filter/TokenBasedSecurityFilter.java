@@ -5,8 +5,8 @@ import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.model.jpa.AuthenticationToken;
 import com.sismics.docs.core.model.jpa.User;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
 import java.util.Date;
 

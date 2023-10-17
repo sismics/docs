@@ -21,6 +21,7 @@ import com.sismics.docs.core.util.FileUtil;
 import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
+import com.sismics.rest.util.RestUtil;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.HttpUtil;
 import com.sismics.util.JsonUtil;
@@ -29,19 +30,20 @@ import com.sismics.util.mime.MimeType;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.*;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.StreamingOutput;
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -111,10 +113,12 @@ public class FileResource extends BaseResource {
         }
         
         // Keep unencrypted data temporary on disk
+        String name = fileBodyPart.getContentDisposition() != null ?
+                URLDecoder.decode(fileBodyPart.getContentDisposition().getFileName(), StandardCharsets.UTF_8) : null;
         java.nio.file.Path unencryptedFile;
         long fileSize;
         try {
-            unencryptedFile = AppContext.getInstance().getFileService().createTemporaryFile();
+            unencryptedFile = AppContext.getInstance().getFileService().createTemporaryFile(name);
             Files.copy(fileBodyPart.getValueAs(InputStream.class), unencryptedFile, StandardCopyOption.REPLACE_EXISTING);
             fileSize = Files.size(unencryptedFile);
         } catch (IOException e) {
@@ -122,8 +126,6 @@ public class FileResource extends BaseResource {
         }
 
         try {
-            String name = fileBodyPart.getContentDisposition() != null ?
-                    URLDecoder.decode(fileBodyPart.getContentDisposition().getFileName(), "UTF-8") : null;
             String fileId = FileUtil.createFile(name, previousFileId, unencryptedFile, fileSize, documentDto == null ?
                     null : documentDto.getLanguage(), principal.getId(), documentId);
 
@@ -202,7 +204,7 @@ public class FileResource extends BaseResource {
             FileUpdatedAsyncEvent fileUpdatedAsyncEvent = new FileUpdatedAsyncEvent();
             fileUpdatedAsyncEvent.setUserId(principal.getId());
             fileUpdatedAsyncEvent.setLanguage(documentDto.getLanguage());
-            fileUpdatedAsyncEvent.setFile(file);
+            fileUpdatedAsyncEvent.setFileId(file.getId());
             fileUpdatedAsyncEvent.setUnencryptedFile(unencryptedFile);
             ThreadLocalContext.get().addAsyncEvent(fileUpdatedAsyncEvent);
             
@@ -310,7 +312,7 @@ public class FileResource extends BaseResource {
             FileUpdatedAsyncEvent event = new FileUpdatedAsyncEvent();
             event.setUserId(principal.getId());
             event.setLanguage(documentDto.getLanguage());
-            event.setFile(file);
+            event.setFileId(file.getId());
             event.setUnencryptedFile(unencryptedFile);
             ThreadLocalContext.get().addAsyncEvent(event);
         } catch (Exception e) {
@@ -425,36 +427,22 @@ public class FileResource extends BaseResource {
         } else if (!authenticated) {
             throw new ForbiddenClientException();
         }
-        
-        FileDao fileDao = new FileDao();
-        List<File> fileList = fileDao.getByDocumentId(principal.getId(), documentId);
 
+        FileDao fileDao = new FileDao();
         JsonArrayBuilder files = Json.createArrayBuilder();
-        for (File fileDb : fileList) {
-            try {
-                files.add(Json.createObjectBuilder()
-                        .add("id", fileDb.getId())
-                        .add("processing", FileUtil.isProcessingFile(fileDb.getId()))
-                        .add("name", JsonUtil.nullable(fileDb.getName()))
-                        .add("version", fileDb.getVersion())
-                        .add("mimetype", fileDb.getMimeType())
-                        .add("document_id", JsonUtil.nullable(fileDb.getDocumentId()))
-                        .add("create_date", fileDb.getCreateDate().getTime())
-                        .add("size", Files.size(DirectoryUtil.getStorageDirectory().resolve(fileDb.getId()))));
-            } catch (IOException e) {
-                throw new ServerException("FileError", "Unable to get the size of " + fileDb.getId(), e);
-            }
+        for (File fileDb : fileDao.getByDocumentId(principal.getId(), documentId)) {
+            files.add(RestUtil.fileToJsonObjectBuilder(fileDb));
         }
-        
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("files", files);
+
         return Response.ok().entity(response.build()).build();
     }
 
     /**
      * List all versions of a file.
      *
-     * @api {get} /file/id/versions Get versions of a file
+     * @api {get} /file/:id/versions Get versions of a file
      * @apiName GetFileVersions
      * @apiGroup File
      * @apiParam {String} id File ID
@@ -534,21 +522,11 @@ public class FileResource extends BaseResource {
         FileDao fileDao = new FileDao();
         fileDao.delete(file.getId(), principal.getId());
         
-        // Update the user quota
-        UserDao userDao = new UserDao();
-        User user = userDao.getById(principal.getId());
-        java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
-        try {
-            user.setStorageCurrent(user.getStorageCurrent() - Files.size(storedFile));
-            userDao.updateQuota(user);
-        } catch (IOException e) {
-            // The file doesn't exists on disk, which is weird, but not fatal
-        }
-        
         // Raise a new file deleted event
         FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
         fileDeletedAsyncEvent.setUserId(principal.getId());
-        fileDeletedAsyncEvent.setFile(file);
+        fileDeletedAsyncEvent.setFileId(file.getId());
+        fileDeletedAsyncEvent.setFileSize(file.getSize());
         ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
         
         if (file.getDocumentId() != null) {
@@ -587,6 +565,7 @@ public class FileResource extends BaseResource {
      */
     @GET
     @Path("{id: [a-z0-9\\-]+}/data")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response data(
             @PathParam("id") final String fileId,
             @QueryParam("share") String shareId,
@@ -608,7 +587,7 @@ public class FileResource extends BaseResource {
         if (size != null) {
             if (size.equals("content")) {
                 return Response.ok(Strings.nullToEmpty(file.getContent()))
-                        .header(HttpHeaders.CONTENT_TYPE, "text/plain")
+                        .header(HttpHeaders.CONTENT_TYPE, "text/plain; charset=utf-8")
                         .build();
             }
 
@@ -676,23 +655,24 @@ public class FileResource extends BaseResource {
     /**
      * Returns all files from a document, zipped.
      *
-     * @api {get} /file/zip Get zipped files
+     * @api {get} /file/zip Returns all files from a document, zipped.
      * @apiName GetFileZip
      * @apiGroup File
      * @apiParam {String} id Document ID
      * @apiParam {String} share Share ID
      * @apiSuccess {Object} file The ZIP file is the whole response
-     * @apiError (client) NotFound Document not found
+     * @apiError (client) NotFoundException Document not found
      * @apiError (server) InternalServerError Error creating the ZIP file
      * @apiPermission none
      * @apiVersion 1.5.0
      *
      * @param documentId Document ID
+     * @param shareId Share ID
      * @return Response
      */
     @GET
     @Path("zip")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Produces({MediaType.APPLICATION_OCTET_STREAM, MediaType.TEXT_PLAIN})
     public Response zip(
             @QueryParam("id") String documentId,
             @QueryParam("share") String shareId) {
@@ -704,12 +684,46 @@ public class FileResource extends BaseResource {
         if (documentDto == null) {
             throw new NotFoundException();
         }
-        
-        // Get files and user associated with this document
+
+        // Get files associated with this document
         FileDao fileDao = new FileDao();
-        final UserDao userDao = new UserDao();
         final List<File> fileList = fileDao.getByDocumentId(principal.getId(), documentId);
-        
+        String zipFileName = documentDto.getTitle().replaceAll("\\W+", "_");
+        return sendZippedFiles(zipFileName, fileList);
+    }
+
+    /**
+     * Returns a list of files, zipped
+     *
+     * @api {post} /file/zip Returns a list of files, zipped
+     * @apiName GetFilesZip
+     * @apiGroup File
+     * @apiParam {String[]} files IDs
+     * @apiSuccess {Object} file The ZIP file is the whole response
+     * @apiError (client) NotFoundException Files not found
+     * @apiError (server) InternalServerError Error creating the ZIP file
+     * @apiPermission none
+     * @apiVersion 1.11.0
+     *
+     * @param filesIdsList Files IDs
+     * @return Response
+     */
+    @POST
+    @Path("zip")
+    @Produces({MediaType.APPLICATION_OCTET_STREAM, MediaType.TEXT_PLAIN})
+    public Response zip(
+            @FormParam("files") List<String> filesIdsList) {
+        authenticate();
+        List<File> fileList = findFiles(filesIdsList);
+        return sendZippedFiles("files", fileList);
+    }
+
+    /**
+     * Sent the content of a list of files.
+     */
+    private Response sendZippedFiles(String zipFileName, List<File> fileList) {
+        final UserDao userDao = new UserDao();
+
         // Create the ZIP stream
         StreamingOutput stream = outputStream -> {
             try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
@@ -739,7 +753,7 @@ public class FileResource extends BaseResource {
         // Write to the output
         return Response.ok(stream)
                 .header("Content-Type", "application/zip")
-                .header("Content-Disposition", "attachment; filename=\"" + documentDto.getTitle().replaceAll("\\W+", "_") + ".zip\"")
+                .header("Content-Disposition", "attachment; filename=\"" + zipFileName + ".zip\"")
                 .build();
     }
 
@@ -756,7 +770,32 @@ public class FileResource extends BaseResource {
         if (file == null) {
             throw new NotFoundException();
         }
+        checkFileAccessible(shareId, file);
+        return file;
+    }
 
+
+    /**
+     * Find a list of files with access rights checking.
+     *
+     * @param filesIds Files IDs
+     * @return List<File>
+     */
+    private List<File> findFiles(List<String> filesIds) {
+        FileDao fileDao = new FileDao();
+        List<File> files = fileDao.getFiles(filesIds);
+        for (File file : files) {
+            checkFileAccessible(null, file);
+        }
+        return files;
+    }
+
+    /**
+     * Check if a file is accessible to the current user
+     * @param shareId Share ID
+     * @param file
+     */
+    private void checkFileAccessible(String shareId, File file) {
         if (file.getDocumentId() == null) {
             // It's an orphan file
             if (!file.getUserId().equals(principal.getId())) {
@@ -770,6 +809,5 @@ public class FileResource extends BaseResource {
                 throw new ForbiddenClientException();
             }
         }
-        return file;
     }
 }

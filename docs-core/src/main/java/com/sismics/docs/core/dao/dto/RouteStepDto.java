@@ -3,8 +3,8 @@ package com.sismics.docs.core.dao.dto;
 import com.sismics.docs.core.constant.RouteStepType;
 import com.sismics.util.JsonUtil;
 
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
+import jakarta.json.Json;
+import jakarta.json.JsonObjectBuilder;
 
 /**
  * Route step DTO.

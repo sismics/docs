@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 import com.sismics.docs.core.constant.RouteStepTransition;
 import com.sismics.docs.core.constant.RouteStepType;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 /**

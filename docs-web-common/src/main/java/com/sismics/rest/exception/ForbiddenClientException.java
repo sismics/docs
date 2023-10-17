@@ -1,9 +1,9 @@
 package com.sismics.rest.exception;
 
-import javax.json.Json;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.json.Json;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 /**
  * Unauthorized access to the resource exception.

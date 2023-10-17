@@ -26,9 +26,18 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.*;
+import org.apache.lucene.index.CheckIndex;
+import org.apache.lucene.index.ConcurrentMergeScheduler;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.simple.SimpleQueryParser;
-import org.apache.lucene.search.*;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
@@ -37,18 +46,22 @@ import org.apache.lucene.search.spell.LuceneDictionary;
 import org.apache.lucene.search.suggest.Lookup;
 import org.apache.lucene.search.suggest.analyzing.FuzzySuggester;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.store.NoLockFactory;
 import org.apache.lucene.store.RAMDirectory;
-import org.apache.lucene.store.SimpleFSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Lucene indexing handler.
@@ -117,7 +130,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
         } else if (luceneStorage.equals("FILE")) {
             Path luceneDirectory = DirectoryUtil.getLuceneDirectory();
             log.info("Using file Lucene storage: {}", luceneDirectory);
-            directory = new SimpleFSDirectory(luceneDirectory, NoLockFactory.INSTANCE);
+            directory = new NIOFSDirectory(luceneDirectory, NoLockFactory.INSTANCE);
         }
 
         // Create an index writer
@@ -243,32 +256,27 @@ public class LuceneIndexingHandler implements IndexingHandler {
 
         StringBuilder sb = new StringBuilder("select distinct d.DOC_ID_C c0, d.DOC_TITLE_C c1, d.DOC_DESCRIPTION_C c2, d.DOC_CREATEDATE_D c3, d.DOC_LANGUAGE_C c4, d.DOC_IDFILE_C, ");
         sb.append(" s.count c5, ");
-        sb.append(" f.count c6, ");
         sb.append(" rs2.RTP_ID_C c7, rs2.RTP_NAME_C, d.DOC_UPDATEDATE_D c8 ");
         sb.append(" from T_DOCUMENT d ");
         sb.append(" left join (SELECT count(s.SHA_ID_C) count, ac.ACL_SOURCEID_C " +
                 "   FROM T_SHARE s, T_ACL ac " +
                 "   WHERE ac.ACL_TARGETID_C = s.SHA_ID_C AND ac.ACL_DELETEDATE_D IS NULL AND " +
-                "         s.SHA_DELETEDATE_D IS NULL group by ac.ACL_SOURCEID_C) s on s.ACL_SOURCEID_C = d.DOC_ID_C " +
-                "  left join (SELECT count(f.FIL_ID_C) count, f.FIL_IDDOC_C " +
-                "   FROM T_FILE f " +
-                "   WHERE f.FIL_DELETEDATE_D IS NULL group by f.FIL_IDDOC_C) f on f.FIL_IDDOC_C = d.DOC_ID_C ");
+                "         s.SHA_DELETEDATE_D IS NULL group by ac.ACL_SOURCEID_C) s on s.ACL_SOURCEID_C = d.DOC_ID_C ");
         sb.append(" left join (select rs.*, rs3.idDocument " +
                 "from T_ROUTE_STEP rs " +
                 "join (select r.RTE_IDDOCUMENT_C idDocument, rs.RTP_IDROUTE_C idRoute, min(rs.RTP_ORDER_N) minOrder from T_ROUTE_STEP rs join T_ROUTE r on r.RTE_ID_C = rs.RTP_IDROUTE_C and r.RTE_DELETEDATE_D is null where rs.RTP_DELETEDATE_D is null and rs.RTP_ENDDATE_D is null group by rs.RTP_IDROUTE_C, r.RTE_IDDOCUMENT_C) rs3 on rs.RTP_IDROUTE_C = rs3.idRoute and rs.RTP_ORDER_N = rs3.minOrder " +
                 "where rs.RTP_IDTARGET_C in (:targetIdList)) rs2 on rs2.idDocument = d.DOC_ID_C ");
 
         // Add search criterias
-        if (criteria.getTargetIdList() != null) {
-            if (!SecurityUtil.skipAclCheck(criteria.getTargetIdList())) {
-                // Read permission is enough for searching
-                sb.append(" left join T_ACL a on a.ACL_TARGETID_C in (:targetIdList) and a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_PERM_C = 'READ' and a.ACL_DELETEDATE_D is null ");
-                sb.append(" left join T_DOCUMENT_TAG dta on dta.DOT_IDDOCUMENT_C = d.DOC_ID_C and dta.DOT_DELETEDATE_D is null ");
-                sb.append(" left join T_ACL a2 on a2.ACL_TARGETID_C in (:targetIdList) and a2.ACL_SOURCEID_C = dta.DOT_IDTAG_C and a2.ACL_PERM_C = 'READ' and a2.ACL_DELETEDATE_D is null ");
-                criteriaList.add("(a.ACL_ID_C is not null or a2.ACL_ID_C is not null)");
-            }
-            parameterMap.put("targetIdList", criteria.getTargetIdList());
+        if (!SecurityUtil.skipAclCheck(criteria.getTargetIdList())) {
+            // Read permission is enough for searching
+            sb.append(" left join T_ACL a on a.ACL_TARGETID_C in (:targetIdList) and a.ACL_SOURCEID_C = d.DOC_ID_C and a.ACL_PERM_C = 'READ' and a.ACL_DELETEDATE_D is null ");
+            sb.append(" left join T_DOCUMENT_TAG dta on dta.DOT_IDDOCUMENT_C = d.DOC_ID_C and dta.DOT_DELETEDATE_D is null ");
+            sb.append(" left join T_ACL a2 on a2.ACL_TARGETID_C in (:targetIdList) and a2.ACL_SOURCEID_C = dta.DOT_IDTAG_C and a2.ACL_PERM_C = 'READ' and a2.ACL_DELETEDATE_D is null ");
+            criteriaList.add("(a.ACL_ID_C is not null or a2.ACL_ID_C is not null)");
         }
+        parameterMap.put("targetIdList", criteria.getTargetIdList());
+
         if (!Strings.isNullOrEmpty(criteria.getSearch()) || !Strings.isNullOrEmpty(criteria.getFullSearch())) {
             documentSearchMap = search(criteria.getSearch(), criteria.getFullSearch());
             if (documentSearchMap.isEmpty()) {
@@ -278,7 +286,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
             criteriaList.add("d.DOC_ID_C in :documentIdList");
             parameterMap.put("documentIdList", documentSearchMap.keySet());
 
-            suggestSearchTerms(criteria.getSearch(), suggestionList);
+            suggestSearchTerms(criteria.getFullSearch(), suggestionList);
         }
         if (criteria.getCreateDateMin() != null) {
             criteriaList.add("d.DOC_CREATEDATE_D >= :createDateMin");
@@ -296,7 +304,11 @@ public class LuceneIndexingHandler implements IndexingHandler {
             criteriaList.add("d.DOC_UPDATEDATE_D <= :updateDateMax");
             parameterMap.put("updateDateMax", criteria.getUpdateDateMax());
         }
-        if (criteria.getTagIdList() != null && !criteria.getTagIdList().isEmpty()) {
+        if (!criteria.getTitleList().isEmpty()) {
+            criteriaList.add("d.DOC_TITLE_C in :title");
+            parameterMap.put("title", criteria.getTitleList());
+        }
+        if (!criteria.getTagIdList().isEmpty()) {
             int index = 0;
             for (List<String> tagIdList : criteria.getTagIdList()) {
                 List<String> tagCriteriaList = Lists.newArrayList();
@@ -309,7 +321,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
                 criteriaList.add("(" + Joiner.on(" OR ").join(tagCriteriaList) + ")");
             }
         }
-        if (criteria.getExcludedTagIdList() != null && !criteria.getExcludedTagIdList().isEmpty()) {
+        if (!criteria.getExcludedTagIdList().isEmpty()) {
             int index = 0;
             for (List<String> tagIdList : criteria.getExcludedTagIdList()) {
                 List<String> tagCriteriaList = Lists.newArrayList();
@@ -325,6 +337,11 @@ public class LuceneIndexingHandler implements IndexingHandler {
         if (criteria.getShared() != null && criteria.getShared()) {
             criteriaList.add("s.count > 0");
         }
+        if (criteria.getMimeType() != null) {
+            sb.append("left join T_FILE f0 on f0.FIL_IDDOC_C = d.DOC_ID_C and f0.FIL_MIMETYPE_C = :mimeType and f0.FIL_DELETEDATE_D is null");
+            parameterMap.put("mimeType", criteria.getMimeType());
+            criteriaList.add("f0.FIL_ID_C is not null");
+        }
         if (criteria.getLanguage() != null) {
             criteriaList.add("d.DOC_LANGUAGE_C = :language");
             parameterMap.put("language", criteria.getLanguage());
@@ -339,10 +356,8 @@ public class LuceneIndexingHandler implements IndexingHandler {
 
         criteriaList.add("d.DOC_DELETEDATE_D is null");
 
-        if (!criteriaList.isEmpty()) {
-            sb.append(" where ");
-            sb.append(Joiner.on(" and ").join(criteriaList));
-        }
+        sb.append(" where ");
+        sb.append(Joiner.on(" and ").join(criteriaList));
 
         // Perform the search
         QueryParam queryParam = new QueryParam(sb.toString(), parameterMap);
@@ -361,8 +376,6 @@ public class LuceneIndexingHandler implements IndexingHandler {
             documentDto.setFileId((String) o[i++]);
             Number shareCount = (Number) o[i++];
             documentDto.setShared(shareCount != null && shareCount.intValue() > 0);
-            Number fileCount = (Number) o[i++];
-            documentDto.setFileCount(fileCount == null ? 0 : fileCount.intValue());
             documentDto.setActiveRoute(o[i++] != null);
             documentDto.setCurrentStepName((String) o[i++]);
             documentDto.setUpdateTimestamp(((Timestamp) o[i]).getTime());
@@ -390,7 +403,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
         LuceneDictionary dictionary = new LuceneDictionary(directoryReader, "title");
         suggester.build(dictionary);
         int lastIndex = search.lastIndexOf(' ');
-        String suggestQuery = search.substring(lastIndex < 0 ? 0 : lastIndex);
+        String suggestQuery = search.substring(Math.max(lastIndex, 0));
         List<Lookup.LookupResult> lookupResultList = suggester.lookup(suggestQuery, false, 10);
         for (Lookup.LookupResult lookupResult : lookupResultList) {
             suggestionList.add(lookupResult.key.toString());

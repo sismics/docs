@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.sismics.util.mime.MimeTypeUtil;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 /**
@@ -49,7 +49,6 @@ public class File implements Loggable {
     /**
      * OCR-ized content.
      */
-    @Lob
     @Column(name = "FIL_CONTENT_C")
     private String content;
     
@@ -88,6 +87,14 @@ public class File implements Loggable {
      */
     @Column(name = "FIL_LATESTVERSION_B", nullable = false)
     private boolean latestVersion;
+
+    public static final Long UNKNOWN_SIZE = -1L;
+
+    /**
+     * Can be {@link File#UNKNOWN_SIZE} if the size has not been stored in the database when the file has been uploaded
+     */
+    @Column(name = "FIL_SIZE_N", nullable = false)
+    private Long size;
 
     /**
      * Private key to decrypt the file.
@@ -202,6 +209,18 @@ public class File implements Loggable {
 
     public File setLatestVersion(boolean latestVersion) {
         this.latestVersion = latestVersion;
+        return this;
+    }
+
+    /**
+     * Can return {@link File#UNKNOWN_SIZE} if the file size is not stored in the database.
+     */
+    public Long getSize() {
+        return size;
+    }
+
+    public File setSize(Long size) {
+        this.size = size;
         return this;
     }
 

@@ -13,7 +13,7 @@ public class MimeType {
     public static final String IMAGE_GIF = "image/gif";
     
     public static final String APPLICATION_ZIP = "application/zip";
-    
+
     public static final String APPLICATION_PDF = "application/pdf";
     
     public static final String OPEN_DOCUMENT_TEXT = "application/vnd.oasis.opendocument.text";

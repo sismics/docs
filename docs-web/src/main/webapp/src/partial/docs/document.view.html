@@ -50,7 +50,7 @@
     </h1>
 
 	  <p ng-show="document.writable">
-	    <button class="btn btn-sm btn-info" ng-click="share()">
+	    <button class="btn btn-sm btn-info" ng-click="share()" ng-show="userInfo.username != 'guest'">
         <span class="fas fa-share"></span> {{ 'share' | translate }}
       </button>
 
@@ -63,7 +63,7 @@
 
 	  <ul class="list-inline">
 	    <li ng-repeat="tag in document.tags">
-        <span class="label label-info pointer" ng-click="setSearch('tag:' + tag.name)" ng-style="{ 'background': tag.color }">{{ tag.name }}</span>
+        <span class="label label-info pointer" ng-click="setSearch('tag:' + tag.name)" ng-style="{ 'background': tag.color }" invert-text-color="{{ tag.color }}">{{ tag.name }}</span>
       </li>
 	  </ul>
 	</div>
@@ -145,7 +145,7 @@
 
       <div ng-repeat="comment in comments" class="media" style="overflow: hidden">
         <div class="pull-left">
-          <img ng-src="http://www.gravatar.com/avatar/{{ comment.creator_gravatar }}?s=40&d=identicon" class="media-object" />
+          <img ng-src="https://www.gravatar.com/avatar/{{ comment.creator_gravatar }}?s=40&d=identicon" class="media-object" />
         </div>
         <div class="media-body">
           <strong>{{ comment.creator }}</strong>

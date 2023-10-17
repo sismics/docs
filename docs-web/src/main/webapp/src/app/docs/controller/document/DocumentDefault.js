@@ -13,7 +13,6 @@ angular.module('docs').controller('DocumentDefault', function ($scope, $rootScop
   $scope.loadFiles = function () {
     Restangular.one('file/list').get().then(function (data) {
       $scope.files = data.files;
-      // TODO Keep currently uploading files
     });
   };
   $scope.loadFiles();
@@ -121,7 +120,7 @@ angular.module('docs').controller('DocumentDefault', function ($scope, $rootScop
       }
 
       Restangular.withConfig(function (RestangularConfigurer) {
-        RestangularConfigurer.setBaseUrl('https://api.sismicsdocs.com');
+        RestangularConfigurer.setBaseUrl('https://api.teedy.io');
       }).one('api').post('feedback', {
         content: content
       }).then(function () {

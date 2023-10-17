@@ -6,9 +6,9 @@ import com.sismics.docs.core.model.jpa.Comment;
 import com.sismics.docs.core.util.AuditLogUtil;
 import com.sismics.util.context.ThreadLocalContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +27,6 @@ public class CommentDao {
      * @param comment Comment
      * @param userId User ID
      * @return New ID
-     * @throws Exception
      */
     public String create(Comment comment, String userId) {
         // Create the UUID
@@ -99,7 +98,7 @@ public class CommentDao {
         @SuppressWarnings("unchecked")
         List<Object[]> l = q.getResultList();
         
-        List<CommentDto> commentDtoList = new ArrayList<CommentDto>();
+        List<CommentDto> commentDtoList = new ArrayList<>();
         for (Object[] o : l) {
             int i = 0;
             CommentDto commentDto = new CommentDto();
@@ -107,7 +106,7 @@ public class CommentDao {
             commentDto.setContent((String) o[i++]);
             commentDto.setCreateTimestamp(((Timestamp) o[i++]).getTime());
             commentDto.setCreatorName((String) o[i++]);
-            commentDto.setCreatorEmail((String) o[i++]);
+            commentDto.setCreatorEmail((String) o[i]);
             commentDtoList.add(commentDto);
         }
         return commentDtoList;

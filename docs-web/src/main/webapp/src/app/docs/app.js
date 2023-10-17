@@ -145,6 +145,15 @@ angular.module('docs',
         }
       }
     })
+    .state('settings.metadata', {
+      url: '/metadata',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.metadata.html',
+          controller: 'SettingsMetadata'
+        }
+      }
+    })
     .state('settings.user', {
       url: '/user',
       views: {
@@ -232,6 +241,15 @@ angular.module('docs',
         'settings': {
           templateUrl: 'partial/docs/settings.vocabulary.html',
           controller: 'SettingsVocabulary'
+        }
+      }
+    })
+    .state('settings.ldap', {
+      url: '/ldap',
+      views: {
+        'settings': {
+          templateUrl: 'partial/docs/settings.ldap.html',
+          controller: 'SettingsLdap'
         }
       }
     })
@@ -338,7 +356,7 @@ angular.module('docs',
       }
     })
     .state('login', {
-      url: '/login',
+      url: '/login?redirectState&redirectParams',
       views: {
         'page': {
           templateUrl: 'partial/docs/login.html',
@@ -406,17 +424,21 @@ angular.module('docs',
 
   // Configuring Angular Translate
   $translateProvider
-    .useSanitizeValueStrategy(null)
+    .useSanitizeValueStrategy('escapeParameters')
     .useStaticFilesLoader({
       prefix: 'locale/',
       suffix: '.json?@build.date@'
     })
-    .registerAvailableLanguageKeys(['en', 'es', 'fr', 'de', 'ru', 'zh_CN', 'zh_TW'], {
-      'ru_*': 'ru',
+    .registerAvailableLanguageKeys(['en', 'es', 'pt', 'fr', 'de', 'el', 'ru', 'it', 'pl', 'zh_CN', 'zh_TW', 'sq_AL'], {
       'en_*': 'en',
       'es_*': 'es',
+      'pt_*': 'pt',
       'fr_*': 'fr',
       'de_*': 'de',
+	    'el_*': 'el',
+      'ru_*': 'ru',
+      'it_*': 'it',
+	    'pl_*': 'pl',
       '*': 'en'
     })
     .fallbackLanguage('en');
@@ -427,6 +449,9 @@ angular.module('docs',
   } else {
     // Or else determine the language based on the user's browser
     $translateProvider.determinePreferredLanguage();
+    if (!$translateProvider.use()) {
+      $translateProvider.use('en');
+    }
   }
 
   // Configuring Timago
@@ -438,6 +463,9 @@ angular.module('docs',
   // Configuring $http to act like jQuery.ajax
   $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
   $httpProvider.defaults.headers.put['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+  $httpProvider.defaults.headers.delete = {
+    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+  };
   $httpProvider.defaults.transformRequest = [function(data) {
     var param = function(obj) {
       var query = '';
@@ -510,7 +538,17 @@ angular.module('docs',
     { key: 'tha', label: 'ภาษาไทย' },
     { key: 'kor', label: '한국어' },
     { key: 'nld', label: 'Nederlands' },
-    { key: 'tur', label: 'Türkçe' }
+    { key: 'tur', label: 'Türkçe' },
+    { key: 'heb', label: 'עברית' },
+    { key: 'hun', label: 'Magyar' },
+    { key: 'fin', label: 'Suomi' },
+    { key: 'swe', label: 'Svenska' },
+    { key: 'lav', label: 'Latviešu' },
+    { key: 'dan', label: 'Dansk' },
+    { key: 'nor', label: 'Norsk' },
+    { key: 'vie', label: 'Tiếng Việt' },
+    { key: 'ces', label: 'Czech' },
+    { key: 'sqi', label: 'Shqip' }
   ];
 })
 /**

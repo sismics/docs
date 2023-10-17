@@ -173,7 +173,10 @@ angular.module('docs').controller('Document', function ($scope, $rootScope, $tim
   $scope.startSearch = function () {
     var search = '';
     if (!_.isEmpty($scope.advsearch.search_simple)) {
-      search += $scope.advsearch.search_simple + ' ';
+      var simplesearch = _.map($scope.advsearch.search_simple.split(/\s+/), function (simple) {
+        return 'simple:' + simple
+      });
+      search += simplesearch.join(' ') + ' ';
     }
     if (!_.isEmpty($scope.advsearch.search_fulltext)) {
       var fulltext = _.map($scope.advsearch.search_fulltext.split(/\s+/), function (full) {

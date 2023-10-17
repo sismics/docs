@@ -13,9 +13,9 @@ import com.sismics.docs.core.util.jpa.QueryUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
 import java.util.*;
 
 /**
@@ -199,10 +199,8 @@ public class TagDao {
 
         criteriaList.add("t.TAG_DELETEDATE_D is null");
 
-        if (!criteriaList.isEmpty()) {
-            sb.append(" where ");
-            sb.append(Joiner.on(" and ").join(criteriaList));
-        }
+        sb.append(" where ");
+        sb.append(Joiner.on(" and ").join(criteriaList));
 
         // Perform the search
         QueryParam queryParam = QueryUtil.getSortedQueryParam(new QueryParam(sb.toString(), parameterMap), sortCriteria);

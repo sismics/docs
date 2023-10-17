@@ -3,8 +3,8 @@ package com.sismics.docs.core.dao;
 import com.google.common.collect.Sets;
 import com.sismics.util.context.ThreadLocalContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.Set;
 
 /**

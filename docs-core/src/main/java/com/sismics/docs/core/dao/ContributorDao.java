@@ -4,8 +4,8 @@ import com.sismics.docs.core.dao.dto.ContributorDto;
 import com.sismics.docs.core.model.jpa.Contributor;
 import com.sismics.util.context.ThreadLocalContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -56,7 +56,7 @@ public class ContributorDao {
     @SuppressWarnings("unchecked")
     public List<ContributorDto> getByDocumentId(String documentId) {
         EntityManager em = ThreadLocalContext.get().getEntityManager();
-        StringBuilder sb = new StringBuilder("select u.USE_USERNAME_C, u.USE_EMAIL_C from T_CONTRIBUTOR c ");
+        StringBuilder sb = new StringBuilder("select distinct u.USE_USERNAME_C, u.USE_EMAIL_C from T_CONTRIBUTOR c ");
         sb.append(" join T_USER u on u.USE_ID_C = c.CTR_IDUSER_C ");
         sb.append(" where c.CTR_IDDOC_C = :documentId ");
         Query q = em.createNativeQuery(sb.toString());

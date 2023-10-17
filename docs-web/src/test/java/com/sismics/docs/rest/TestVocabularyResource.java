@@ -1,15 +1,14 @@
 package com.sismics.docs.rest;
 
-import javax.json.JsonObject;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
+import com.sismics.util.filter.TokenBasedSecurityFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.sismics.util.filter.TokenBasedSecurityFilter;
+import jakarta.json.JsonObject;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 /**
  * Exhaustive test of the vocabulary resource.
@@ -100,7 +99,7 @@ public class TestVocabularyResource extends BaseJerseyTest {
         Assert.assertEquals(1, entry.getJsonNumber("order").intValue());
         
         // Delete a vocabulary entry with admin
-        json = target().path("/vocabulary/" + vocabulary1Id).request()
+        target().path("/vocabulary/" + vocabulary1Id).request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .delete(JsonObject.class);
         

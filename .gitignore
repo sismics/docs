@@ -11,6 +11,11 @@
 *.iml
 node_modules
 import_test
-docs-importer-linux
-docs-importer-macos
-docs-importer-win.exe
+teedy-importer-linux
+teedy-importer-macos
+teedy-importer-win.exe
+docs/*
+!docs/.gitkeep
+
+#macos
+.DS_Store

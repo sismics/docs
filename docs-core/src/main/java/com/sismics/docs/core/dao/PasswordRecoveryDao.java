@@ -6,9 +6,9 @@ import com.sismics.util.context.ThreadLocalContext;
 import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
 import java.util.Date;
 import java.util.UUID;
 

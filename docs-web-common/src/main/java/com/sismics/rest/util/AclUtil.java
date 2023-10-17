@@ -6,9 +6,9 @@ import com.sismics.docs.core.dao.AclDao;
 import com.sismics.docs.core.dao.dto.AclDto;
 import com.sismics.util.JsonUtil;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
 import java.util.List;
 
 /**

@@ -1,7 +1,14 @@
 package com.sismics.docs.core.dao;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import at.favre.lib.crypto.bcrypt.BCrypt;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sismics.docs.core.constant.AuditLogType;
+import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.criteria.UserCriteria;
 import com.sismics.docs.core.dao.dto.UserDto;
 import com.sismics.docs.core.model.jpa.User;
@@ -11,12 +18,10 @@ import com.sismics.docs.core.util.jpa.QueryParam;
 import com.sismics.docs.core.util.jpa.QueryUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
-import org.joda.time.DateTime;
-import org.mindrot.jbcrypt.BCrypt;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -26,6 +31,11 @@ import java.util.*;
  * @author jtremeaux
  */
 public class UserDao {
+    /**
+     * Logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(UserDao.class);
+
     /**
      * Authenticates an user.
      * 
@@ -39,7 +49,8 @@ public class UserDao {
         q.setParameter("username", username);
         try {
             User user = (User) q.getSingleResult();
-            if (!BCrypt.checkpw(password, user.getPassword()) || user.getDisableDate() != null) {
+            BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword());
+            if (!result.verified || user.getDisableDate() != null) {
                 return null;
             }
             return user;
@@ -277,7 +288,21 @@ public class UserDao {
      * @return Hashed password
      */
     private String hashPassword(String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
+        int bcryptWork = Constants.DEFAULT_BCRYPT_WORK;
+        String envBcryptWork = System.getenv(Constants.BCRYPT_WORK_ENV);
+        if (!Strings.isNullOrEmpty(envBcryptWork)) {
+            try {
+                int envBcryptWorkInt = Integer.parseInt(envBcryptWork);
+                if (envBcryptWorkInt >= 4 && envBcryptWorkInt <= 31) {
+                    bcryptWork = envBcryptWorkInt;
+                } else {
+                    log.warn(Constants.BCRYPT_WORK_ENV + " needs to be in range 4...31. Falling back to " + Constants.DEFAULT_BCRYPT_WORK + ".");
+                }
+            } catch (NumberFormatException e) {
+                log.warn(Constants.BCRYPT_WORK_ENV + " needs to be a number in range 4...31. Falling back to " + Constants.DEFAULT_BCRYPT_WORK + ".");
+            }
+        }
+        return BCrypt.withDefaults().hashToString(bcryptWork, password.toCharArray());
     }
     
     /**

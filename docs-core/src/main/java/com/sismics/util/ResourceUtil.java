@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.jar.JarEntry;
@@ -53,7 +54,7 @@ public class ResourceUtil {
             
             // Extract the JAR path
             String jarPath = dirUrl.getPath().substring(5, dirUrl.getPath().indexOf("!"));
-            JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+            JarFile jar = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8));
             Set<String> fileSet = new HashSet<String>();
             
             try {

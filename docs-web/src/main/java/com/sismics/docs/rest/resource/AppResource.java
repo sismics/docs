@@ -26,19 +26,19 @@ import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.log4j.LogCriteria;
 import com.sismics.util.log4j.LogEntry;
 import com.sismics.util.log4j.MemoryAppender;
-import org.apache.commons.lang.StringUtils;
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -204,28 +204,28 @@ public class AppResource extends BaseResource {
         Config passwordConfig = configDao.getById(ConfigType.SMTP_PASSWORD);
         Config fromConfig = configDao.getById(ConfigType.SMTP_FROM);
         JsonObjectBuilder response = Json.createObjectBuilder();
-        if (System.getenv(Constants.SMTP_HOSTNAME_ENV) == null) {
+        if (Strings.isNullOrEmpty(System.getenv(Constants.SMTP_HOSTNAME_ENV))) {
             if (hostnameConfig == null) {
                 response.addNull("hostname");
             } else {
                 response.add("hostname", hostnameConfig.getValue());
             }
         }
-        if (System.getenv(Constants.SMTP_PORT_ENV) == null) {
+        if (Strings.isNullOrEmpty(System.getenv(Constants.SMTP_PORT_ENV))) {
             if (portConfig == null) {
                 response.addNull("port");
             } else {
                 response.add("port", Integer.valueOf(portConfig.getValue()));
             }
         }
-        if (System.getenv(Constants.SMTP_USERNAME_ENV) == null) {
+        if (Strings.isNullOrEmpty(System.getenv(Constants.SMTP_USERNAME_ENV))) {
             if (usernameConfig == null) {
                 response.addNull("username");
             } else {
                 response.add("username", usernameConfig.getValue());
             }
         }
-        if (System.getenv(Constants.SMTP_PASSWORD_ENV) == null) {
+        if (Strings.isNullOrEmpty(System.getenv(Constants.SMTP_PASSWORD_ENV))) {
             if (passwordConfig == null) {
                 response.addNull("password");
             } else {
@@ -311,6 +311,7 @@ public class AppResource extends BaseResource {
      * @apiSuccess {String} port IMAP port
      * @apiSuccess {String} username IMAP username
      * @apiSuccess {String} password IMAP password
+     * @apiSuccess {String} folder IMAP folder
      * @apiSuccess {String} tag Tag for created documents
      * @apiError (client) ForbiddenError Access denied
      * @apiPermission admin
@@ -328,14 +329,20 @@ public class AppResource extends BaseResource {
 
         ConfigDao configDao = new ConfigDao();
         Boolean enabled = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_ENABLED);
+        Boolean autoTags = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_AUTOMATIC_TAGS);
+        Boolean deleteImported = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_DELETE_IMPORTED);
         Config hostnameConfig = configDao.getById(ConfigType.INBOX_HOSTNAME);
         Config portConfig = configDao.getById(ConfigType.INBOX_PORT);
+        Boolean starttls = ConfigUtil.getConfigBooleanValue(ConfigType.INBOX_STARTTLS);
         Config usernameConfig = configDao.getById(ConfigType.INBOX_USERNAME);
         Config passwordConfig = configDao.getById(ConfigType.INBOX_PASSWORD);
+        Config folderConfig = configDao.getById(ConfigType.INBOX_FOLDER);
         Config tagConfig = configDao.getById(ConfigType.INBOX_TAG);
         JsonObjectBuilder response = Json.createObjectBuilder();
 
         response.add("enabled", enabled);
+        response.add("autoTagsEnabled", autoTags);
+        response.add("deleteImported", deleteImported);
         if (hostnameConfig == null) {
             response.addNull("hostname");
         } else {
@@ -346,6 +353,7 @@ public class AppResource extends BaseResource {
         } else {
             response.add("port", Integer.valueOf(portConfig.getValue()));
         }
+        response.add("starttls", starttls);
         if (usernameConfig == null) {
             response.addNull("username");
         } else {
@@ -355,6 +363,11 @@ public class AppResource extends BaseResource {
             response.addNull("password");
         } else {
             response.add("password", passwordConfig.getValue());
+        }
+        if (folderConfig == null) {
+            response.addNull("folder");
+        } else {
+            response.add("folder", folderConfig.getValue());
         }
         if (tagConfig == null) {
             response.addNull("tag");
@@ -384,10 +397,13 @@ public class AppResource extends BaseResource {
      * @apiName PostAppConfigInbox
      * @apiGroup App
      * @apiParam {Boolean} enabled True if the inbox scanning is enabled
+     * @apiParam {Boolean} autoTagsEnabled If true automatically add tags to document (prefixed by #)
+     * @apiParam {Boolean} deleteImported If true delete message from mailbox after import
      * @apiParam {String} hostname IMAP hostname
      * @apiParam {Integer} port IMAP port
      * @apiParam {String} username IMAP username
      * @apiParam {String} password IMAP password
+     * @apiParam {String} folder IMAP folder
      * @apiParam {String} tag Tag for created documents
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) ValidationError Validation error
@@ -399,40 +415,54 @@ public class AppResource extends BaseResource {
      * @param portStr IMAP port
      * @param username IMAP username
      * @param password IMAP password
+     * @param folder IMAP folder
      * @param tag Tag for created documents
      * @return Response
      */
     @POST
     @Path("config_inbox")
     public Response configInbox(@FormParam("enabled") Boolean enabled,
+                                @FormParam("autoTagsEnabled") Boolean autoTagsEnabled,
+                                @FormParam("deleteImported") Boolean deleteImported,
                                 @FormParam("hostname") String hostname,
                                 @FormParam("port") String portStr,
+                                @FormParam("starttls") Boolean starttls,
                                 @FormParam("username") String username,
                                 @FormParam("password") String password,
+                                @FormParam("folder") String folder,
                                 @FormParam("tag") String tag) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
         checkBaseFunction(BaseFunction.ADMIN);
         ValidationUtil.validateRequired(enabled, "enabled");
+        ValidationUtil.validateRequired(autoTagsEnabled, "autoTagsEnabled");
+        ValidationUtil.validateRequired(deleteImported, "deleteImported");
         if (!Strings.isNullOrEmpty(portStr)) {
             ValidationUtil.validateInteger(portStr, "port");
         }
+        ValidationUtil.validateRequired(starttls, "starttls");
 
         // Just update the changed configuration
         ConfigDao configDao = new ConfigDao();
         configDao.update(ConfigType.INBOX_ENABLED, enabled.toString());
+        configDao.update(ConfigType.INBOX_AUTOMATIC_TAGS, autoTagsEnabled.toString());
+        configDao.update(ConfigType.INBOX_DELETE_IMPORTED, deleteImported.toString());
         if (!Strings.isNullOrEmpty(hostname)) {
             configDao.update(ConfigType.INBOX_HOSTNAME, hostname);
         }
         if (!Strings.isNullOrEmpty(portStr)) {
             configDao.update(ConfigType.INBOX_PORT, portStr);
         }
+        configDao.update(ConfigType.INBOX_STARTTLS, starttls.toString());
         if (!Strings.isNullOrEmpty(username)) {
             configDao.update(ConfigType.INBOX_USERNAME, username);
         }
         if (!Strings.isNullOrEmpty(password)) {
             configDao.update(ConfigType.INBOX_PASSWORD, password);
+        }
+        if (!Strings.isNullOrEmpty(folder)) {
+            configDao.update(ConfigType.INBOX_FOLDER, folder);
         }
         if (!Strings.isNullOrEmpty(tag)) {
             configDao.update(ConfigType.INBOX_TAG, tag);
@@ -486,7 +516,7 @@ public class AppResource extends BaseResource {
      * @apiSuccess {String} logs.message Message
      * @apiError (client) ForbiddenError Access denied
      * @apiError (server) ServerError MEMORY appender not configured
-     * @apiPermission user
+     * @apiPermission admin
      * @apiVersion 1.5.0
      *
      * @param minLevel Filter on logging level
@@ -507,6 +537,7 @@ public class AppResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
+        checkBaseFunction(BaseFunction.ADMIN);
 
         // Get the memory appender
         org.apache.log4j.Logger logger = org.apache.log4j.Logger.getRootLogger();
@@ -643,49 +674,185 @@ public class AppResource extends BaseResource {
         log.info("Deleting {} orphan ACLs", q.executeUpdate());
         
         // Soft delete orphan comments
-        q = em.createNativeQuery("update T_COMMENT c set c.COM_DELETEDATE_D = :dateNow where c.COM_ID_C in (select c.COM_ID_C from T_COMMENT c left join T_DOCUMENT d on d.DOC_ID_C = c.COM_IDDOC_C and d.DOC_DELETEDATE_D is null where d.DOC_ID_C is null)");
+        q = em.createNativeQuery("update T_COMMENT set COM_DELETEDATE_D = :dateNow where COM_ID_C in (select c.COM_ID_C from T_COMMENT c left join T_DOCUMENT d on d.DOC_ID_C = c.COM_IDDOC_C and d.DOC_DELETEDATE_D is null where d.DOC_ID_C is null)");
         q.setParameter("dateNow", new Date());
         log.info("Deleting {} orphan comments", q.executeUpdate());
         
         // Soft delete orphan document tag links
-        q = em.createNativeQuery("update T_DOCUMENT_TAG dt set dt.DOT_DELETEDATE_D = :dateNow where dt.DOT_ID_C in (select dt.DOT_ID_C from T_DOCUMENT_TAG dt left join T_DOCUMENT d on dt.DOT_IDDOCUMENT_C = d.DOC_ID_C and d.DOC_DELETEDATE_D is null left join T_TAG t on t.TAG_ID_C = dt.DOT_IDTAG_C and t.TAG_DELETEDATE_D is null where d.DOC_ID_C is null or t.TAG_ID_C is null)");
+        q = em.createNativeQuery("update T_DOCUMENT_TAG set DOT_DELETEDATE_D = :dateNow where DOT_ID_C in (select dt.DOT_ID_C from T_DOCUMENT_TAG dt left join T_DOCUMENT d on dt.DOT_IDDOCUMENT_C = d.DOC_ID_C and d.DOC_DELETEDATE_D is null left join T_TAG t on t.TAG_ID_C = dt.DOT_IDTAG_C and t.TAG_DELETEDATE_D is null where d.DOC_ID_C is null or t.TAG_ID_C is null)");
         q.setParameter("dateNow", new Date());
         log.info("Deleting {} orphan document tag links", q.executeUpdate());
         
         // Soft delete orphan shares
-        q = em.createNativeQuery("update T_SHARE s set s.SHA_DELETEDATE_D = :dateNow where s.SHA_ID_C in (select s.SHA_ID_C from T_SHARE s left join T_ACL a on a.ACL_TARGETID_C = s.SHA_ID_C and a.ACL_DELETEDATE_D is null where a.ACL_ID_C is null)");
+        q = em.createNativeQuery("update T_SHARE set SHA_DELETEDATE_D = :dateNow where SHA_ID_C in (select s.SHA_ID_C from T_SHARE s left join T_ACL a on a.ACL_TARGETID_C = s.SHA_ID_C and a.ACL_DELETEDATE_D is null where a.ACL_ID_C is null)");
         q.setParameter("dateNow", new Date());
         log.info("Deleting {} orphan shares", q.executeUpdate());
         
         // Soft delete orphan tags
-        q = em.createNativeQuery("update T_TAG t set t.TAG_DELETEDATE_D = :dateNow where t.TAG_ID_C in (select t.TAG_ID_C from T_TAG t left join T_USER u on u.USE_ID_C = t.TAG_IDUSER_C and u.USE_DELETEDATE_D is null where u.USE_ID_C is null)");
+        q = em.createNativeQuery("update T_TAG set TAG_DELETEDATE_D = :dateNow where TAG_ID_C in (select t.TAG_ID_C from T_TAG t left join T_USER u on u.USE_ID_C = t.TAG_IDUSER_C and u.USE_DELETEDATE_D is null where u.USE_ID_C is null)");
         q.setParameter("dateNow", new Date());
         log.info("Deleting {} orphan tags", q.executeUpdate());
         
         // Soft delete orphan documents
-        q = em.createNativeQuery("update T_DOCUMENT d set d.DOC_DELETEDATE_D = :dateNow where d.DOC_ID_C in (select d.DOC_ID_C from T_DOCUMENT d left join T_USER u on u.USE_ID_C = d.DOC_IDUSER_C and u.USE_DELETEDATE_D is null where u.USE_ID_C is null)");
+        q = em.createNativeQuery("update T_DOCUMENT set DOC_DELETEDATE_D = :dateNow where DOC_ID_C in (select d.DOC_ID_C from T_DOCUMENT d left join T_USER u on u.USE_ID_C = d.DOC_IDUSER_C and u.USE_DELETEDATE_D is null where u.USE_ID_C is null)");
         q.setParameter("dateNow", new Date());
         log.info("Deleting {} orphan documents", q.executeUpdate());
         
         // Soft delete orphan files
-        q = em.createNativeQuery("update T_FILE f set f.FIL_DELETEDATE_D = :dateNow where f.FIL_ID_C in (select f.FIL_ID_C from T_FILE f left join T_USER u on u.USE_ID_C = f.FIL_IDUSER_C and u.USE_DELETEDATE_D is null where u.USE_ID_C is null)");
+        q = em.createNativeQuery("update T_FILE set FIL_DELETEDATE_D = :dateNow where FIL_ID_C in (select f.FIL_ID_C from T_FILE f left join T_USER u on u.USE_ID_C = f.FIL_IDUSER_C and u.USE_DELETEDATE_D is null where u.USE_ID_C is null)");
         q.setParameter("dateNow", new Date());
         log.info("Deleting {} orphan files", q.executeUpdate());
         
         // Hard delete softly deleted data
-        log.info("Deleting {} soft deleted document tag links", em.createQuery("delete DocumentTag dt where dt.deleteDate is not null").executeUpdate());
-        log.info("Deleting {} soft deleted ACLs", em.createQuery("delete Acl a where a.deleteDate is not null").executeUpdate());
-        log.info("Deleting {} soft deleted shares", em.createQuery("delete Share s where s.deleteDate is not null").executeUpdate());
-        log.info("Deleting {} soft deleted tags", em.createQuery("delete Tag t where t.deleteDate is not null").executeUpdate());
-        log.info("Deleting {} soft deleted comments", em.createQuery("delete Comment c where c.deleteDate is not null").executeUpdate());
-        log.info("Deleting {} soft deleted files", em.createQuery("delete File f where f.deleteDate is not null").executeUpdate());
-        log.info("Deleting {} soft deleted documents", em.createQuery("delete Document d where d.deleteDate is not null").executeUpdate());
-        log.info("Deleting {} soft deleted users", em.createQuery("delete User u where u.deleteDate is not null").executeUpdate());
-        log.info("Deleting {} soft deleted groups", em.createQuery("delete Group g where g.deleteDate is not null").executeUpdate());
+        log.info("Deleting {} soft deleted document tag links", em.createQuery("delete DocumentTag where deleteDate is not null").executeUpdate());
+        log.info("Deleting {} soft deleted ACLs", em.createQuery("delete Acl where deleteDate is not null").executeUpdate());
+        log.info("Deleting {} soft deleted shares", em.createQuery("delete Share where deleteDate is not null").executeUpdate());
+        log.info("Deleting {} soft deleted tags", em.createQuery("delete Tag where deleteDate is not null").executeUpdate());
+        log.info("Deleting {} soft deleted comments", em.createQuery("delete Comment where deleteDate is not null").executeUpdate());
+        log.info("Deleting {} soft deleted files", em.createQuery("delete File where deleteDate is not null").executeUpdate());
+        log.info("Deleting {} soft deleted documents", em.createQuery("delete Document where deleteDate is not null").executeUpdate());
+        log.info("Deleting {} soft deleted users", em.createQuery("delete User where deleteDate is not null").executeUpdate());
+        log.info("Deleting {} soft deleted groups", em.createQuery("delete Group where deleteDate is not null").executeUpdate());
         
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
         return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Get the LDAP authentication configuration.
+     *
+     * @api {get} /app/config_ldap Get the LDAP authentication configuration
+     * @apiName GetAppConfigLdap
+     * @apiGroup App
+     * @apiSuccess {Boolean} enabled LDAP authentication enabled
+     * @apiSuccess {String} host LDAP server host
+     * @apiSuccess {Integer} port LDAP server port
+     * @apiSuccess {String} admin_dn Admin DN
+     * @apiSuccess {String} admin_password Admin password
+     * @apiSuccess {String} base_dn Base DN
+     * @apiSuccess {String} filter LDAP filter
+     * @apiSuccess {String} default_email LDAP default email
+     * @apiSuccess {Integer} default_storage LDAP default storage
+     * @apiError (client) ForbiddenError Access denied
+     * @apiPermission admin
+     * @apiVersion 1.9.0
+     *
+     * @return Response
+     */
+    @GET
+    @Path("config_ldap")
+    public Response getConfigLdap() {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        ConfigDao configDao = new ConfigDao();
+        Config enabled = configDao.getById(ConfigType.LDAP_ENABLED);
+
+        JsonObjectBuilder response = Json.createObjectBuilder();
+        if (enabled != null && Boolean.parseBoolean(enabled.getValue())) {
+            // LDAP enabled
+            response.add("enabled", true)
+                    .add("host", ConfigUtil.getConfigStringValue(ConfigType.LDAP_HOST))
+                    .add("port", ConfigUtil.getConfigIntegerValue(ConfigType.LDAP_PORT))
+                    .add("usessl", ConfigUtil.getConfigBooleanValue(ConfigType.LDAP_USESSL))
+                    .add("admin_dn", ConfigUtil.getConfigStringValue(ConfigType.LDAP_ADMIN_DN))
+                    .add("admin_password", ConfigUtil.getConfigStringValue(ConfigType.LDAP_ADMIN_PASSWORD))
+                    .add("base_dn", ConfigUtil.getConfigStringValue(ConfigType.LDAP_BASE_DN))
+                    .add("filter", ConfigUtil.getConfigStringValue(ConfigType.LDAP_FILTER))
+                    .add("default_email", ConfigUtil.getConfigStringValue(ConfigType.LDAP_DEFAULT_EMAIL))
+                    .add("default_storage", ConfigUtil.getConfigLongValue(ConfigType.LDAP_DEFAULT_STORAGE));
+        } else {
+            // LDAP disabled
+            response.add("enabled", false);
+        }
+
+        return Response.ok().entity(response.build()).build();
+    }
+
+    /**
+     * Configure the LDAP authentication.
+     *
+     * @api {post} /app/config_ldap Configure the LDAP authentication
+     * @apiName PostAppConfigLdap
+     * @apiGroup App
+     * @apiParam {Boolean} enabled LDAP authentication enabled
+     * @apiParam {String} host LDAP server host
+     * @apiParam {Integer} port LDAP server port
+     * @apiParam {Boolean} use SSL (ldaps)
+     * @apiParam {String} admin_dn Admin DN
+     * @apiParam {String} admin_password Admin password
+     * @apiParam {String} base_dn Base DN
+     * @apiParam {String} filter LDAP filter
+     * @apiParam {String} default_email LDAP default email
+     * @apiParam {Integer} default_storage LDAP default storage
+     * @apiError (client) ForbiddenError Access denied
+     * @apiError (client) ValidationError Validation error
+     * @apiPermission admin
+     * @apiVersion 1.9.0
+     *
+     * @param enabled LDAP authentication enabled
+     * @param host LDAP server host
+     * @param portStr LDAP server port
+     * @param usessl LDAP use SSL (ldaps)
+     * @param adminDn Admin DN
+     * @param adminPassword Admin password
+     * @param baseDn Base DN
+     * @param filter LDAP filter
+     * @param defaultEmail LDAP default email
+     * @param defaultStorageStr LDAP default storage
+     * @return Response
+     */
+    @POST
+    @Path("config_ldap")
+    public Response configLdap(@FormParam("enabled") Boolean enabled,
+                               @FormParam("host") String host,
+                               @FormParam("port") String portStr,
+                               @FormParam("usessl") Boolean usessl,
+                               @FormParam("admin_dn") String adminDn,
+                               @FormParam("admin_password") String adminPassword,
+                               @FormParam("base_dn") String baseDn,
+                               @FormParam("filter") String filter,
+                               @FormParam("default_email") String defaultEmail,
+                               @FormParam("default_storage") String defaultStorageStr) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+
+        ConfigDao configDao = new ConfigDao();
+
+        if (enabled != null && enabled) {
+            // LDAP enabled, validate everything
+            ValidationUtil.validateLength(host, "host", 1, 250);
+            ValidationUtil.validateInteger(portStr, "port");
+            ValidationUtil.validateLength(adminDn, "admin_dn", 1, 250);
+            ValidationUtil.validateLength(adminPassword, "admin_password", 1, 250);
+            ValidationUtil.validateLength(baseDn, "base_dn", 1, 250);
+            ValidationUtil.validateLength(filter, "filter", 1, 250);
+            if (!filter.contains("USERNAME")) {
+                throw new ClientException("ValidationError", "'filter' must contains 'USERNAME'");
+            }
+            ValidationUtil.validateLength(defaultEmail, "default_email", 1, 250);
+            ValidationUtil.validateLong(defaultStorageStr, "default_storage");
+            configDao.update(ConfigType.LDAP_ENABLED, Boolean.TRUE.toString());
+            configDao.update(ConfigType.LDAP_HOST, host);
+            configDao.update(ConfigType.LDAP_PORT, portStr);
+            configDao.update(ConfigType.LDAP_USESSL, usessl.toString());
+            configDao.update(ConfigType.LDAP_ADMIN_DN, adminDn);
+            configDao.update(ConfigType.LDAP_ADMIN_PASSWORD, adminPassword);
+            configDao.update(ConfigType.LDAP_BASE_DN, baseDn);
+            configDao.update(ConfigType.LDAP_FILTER, filter);
+            configDao.update(ConfigType.LDAP_DEFAULT_EMAIL, defaultEmail);
+            configDao.update(ConfigType.LDAP_DEFAULT_STORAGE, defaultStorageStr);
+        } else {
+            // LDAP disabled
+            configDao.update(ConfigType.LDAP_ENABLED, Boolean.FALSE.toString());
+        }
+
+        return Response.ok().build();
     }
 }

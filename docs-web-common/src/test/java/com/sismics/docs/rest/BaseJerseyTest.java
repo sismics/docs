@@ -20,12 +20,16 @@ import org.subethamail.wiser.WiserMessage;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.UriBuilder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Base class of integration tests with Jersey.
@@ -33,6 +37,18 @@ import java.util.List;
  * @author jtremeaux
  */
 public abstract class BaseJerseyTest extends JerseyTest {
+    protected static final String FILE_APACHE_PPTX = "file/apache.pptx";
+    protected static final String FILE_DOCUMENT_DOCX = "file/document.docx";
+    protected static final String FILE_DOCUMENT_ODT = "file/document.odt";
+    protected static final String FILE_DOCUMENT_TXT = "file/document.txt";
+    protected static final String FILE_EINSTEIN_ROOSEVELT_LETTER_PNG = "file/Einstein-Roosevelt-letter.png";
+    protected static final long FILE_EINSTEIN_ROOSEVELT_LETTER_PNG_SIZE = 292641L;
+    protected static final String FILE_PIA_00452_JPG = "file/PIA00452.jpg";
+    protected static final long FILE_PIA_00452_JPG_SIZE = 163510L;
+    protected static final String FILE_VIDEO_WEBM = "file/video.webm";
+    protected static final String FILE_WIKIPEDIA_PDF = "file/wikipedia.pdf";
+    protected static final String FILE_WIKIPEDIA_ZIP = "file/wikipedia.zip";
+
     /**
      * Test HTTP server.
      */
@@ -56,7 +72,7 @@ public abstract class BaseJerseyTest extends JerseyTest {
     @Override
     protected Application configure() {
         String travisEnv = System.getenv("TRAVIS");
-        if (travisEnv == null || !travisEnv.equals("true")) {
+        if (!Objects.equals(travisEnv, "true")) {
             // Travis doesn't like big logs
             enable(TestProperties.LOG_TRAFFIC);
             enable(TestProperties.DUMP_ENTITY);
@@ -79,7 +95,7 @@ public abstract class BaseJerseyTest extends JerseyTest {
 
         httpServer = HttpServer.createSimpleServer(getClass().getResource("/").getFile(), "localhost", getPort());
         WebappContext context = new WebappContext("GrizzlyContext", "/docs");
-        context.addListener("com.twelvemonkeys.servlet.image.IIOProviderContextListener");
+        context.addListener("com.sismics.util.listener.IIOProviderContextListener");
         context.addFilter("requestContextFilter", RequestContextFilter.class)
                 .addMappingForUrlPatterns(null, "/*");
         context.addFilter("tokenBasedSecurityFilter", TokenBasedSecurityFilter.class)

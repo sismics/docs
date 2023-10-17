@@ -9,7 +9,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
+import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 
@@ -50,7 +50,7 @@ public class PptxFormatHandler implements FormatHandler {
     @Override
     public String extractContent(String language, Path file) throws Exception {
         XMLSlideShow pptx = loadPPtxFile(file);
-        return new XSLFPowerPointExtractor(pptx).getText();
+        return new SlideShowExtractor<>(pptx).getText();
     }
 
     @Override

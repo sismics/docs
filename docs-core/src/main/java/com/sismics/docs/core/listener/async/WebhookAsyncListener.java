@@ -36,7 +36,7 @@ public class WebhookAsyncListener {
     @Subscribe
     @AllowConcurrentEvents
     public void on(final DocumentCreatedAsyncEvent event) {
-        triggerWebhook(WebhookEvent.DOCUMENT_CREATED, event.getDocument().getId());
+        triggerWebhook(WebhookEvent.DOCUMENT_CREATED, event.getDocumentId());
     }
 
     @Subscribe
@@ -54,19 +54,19 @@ public class WebhookAsyncListener {
     @Subscribe
     @AllowConcurrentEvents
     public void on(final FileCreatedAsyncEvent event) {
-        triggerWebhook(WebhookEvent.FILE_CREATED, event.getFile().getId());
+        triggerWebhook(WebhookEvent.FILE_CREATED, event.getFileId());
     }
 
     @Subscribe
     @AllowConcurrentEvents
     public void on(final FileUpdatedAsyncEvent event) {
-        triggerWebhook(WebhookEvent.FILE_UPDATED, event.getFile().getId());
+        triggerWebhook(WebhookEvent.FILE_UPDATED, event.getFileId());
     }
 
     @Subscribe
     @AllowConcurrentEvents
     public void on(final FileDeletedAsyncEvent event) {
-        triggerWebhook(WebhookEvent.FILE_DELETED, event.getFile().getId());
+        triggerWebhook(WebhookEvent.FILE_DELETED, event.getFileId());
     }
 
     /**
@@ -86,7 +86,7 @@ public class WebhookAsyncListener {
             }
         });
 
-        RequestBody body = RequestBody.create(JSON, "{\"event\": \"" + event.name() + "\", \"id\": \"" + id + "\"}");
+        RequestBody body = RequestBody.create("{\"event\": \"" + event.name() + "\", \"id\": \"" + id + "\"}", JSON);
 
         for (String webhookUrl : webhookUrlList) {
             Request request = new Request.Builder()

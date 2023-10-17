@@ -20,7 +20,7 @@ public class AuthenticationUtil {
 
                     .map(clazz -> {
                 try {
-                    return clazz.newInstance();
+                    return clazz.getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

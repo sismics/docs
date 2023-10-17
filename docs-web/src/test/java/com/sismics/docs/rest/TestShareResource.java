@@ -2,13 +2,13 @@ package com.sismics.docs.rest;
 
 import java.io.InputStream;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;

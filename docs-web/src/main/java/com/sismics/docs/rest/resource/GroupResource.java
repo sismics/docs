@@ -21,11 +21,11 @@ import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.JsonUtil;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Set;
@@ -313,7 +313,7 @@ public class GroupResource extends BaseResource {
      * @return Response
      */
     @DELETE
-    @Path("{groupName: [a-zA-Z0-9_]+}/{username: [a-zA-Z0-9_]+}")
+    @Path("{groupName: [a-zA-Z0-9_]+}/{username: [a-zA-Z0-9_@\\.]+}")
     public Response removeMember(@PathParam("groupName") String groupName,
             @PathParam("username") String username) {
         if (!authenticate()) {

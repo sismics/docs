@@ -6,6 +6,7 @@ import com.sismics.util.mime.MimeType;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.slf4j.Logger;
@@ -60,7 +61,7 @@ public class PdfFormatHandler implements FormatHandler {
                 for (int pageIndex = 0; pageIndex < pdfDocument.getNumberOfPages(); pageIndex++) {
                     log.info("OCR page " + (pageIndex + 1) + "/" + pdfDocument.getNumberOfPages() + " of PDF file containing only images");
                     sb.append(" ");
-                    sb.append(FileUtil.ocrFile(language, renderer.renderImage(pageIndex)));
+                    sb.append(FileUtil.ocrFile(language, renderer.renderImageWithDPI(pageIndex, 300, ImageType.GRAY)));
                 }
                 return sb.toString();
             } catch (Exception e) {

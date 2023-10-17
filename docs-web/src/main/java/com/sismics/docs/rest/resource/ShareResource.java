@@ -15,10 +15,10 @@ import com.sismics.rest.util.ValidationUtil;
 import com.sismics.util.JsonUtil;
 import com.sismics.util.context.ThreadLocalContext;
 
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
+import jakarta.json.Json;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -55,7 +55,7 @@ public class ShareResource extends BaseResource {
     public Response add(
             @FormParam("id") String documentId,
             @FormParam("name") String name) {
-        if (!authenticate()) {
+        if (!authenticate() || principal.isGuest()) {
             throw new ForbiddenClientException();
         }
 
@@ -119,7 +119,7 @@ public class ShareResource extends BaseResource {
     @Path("{id: [a-z0-9\\-]+}")
     public Response delete(
             @PathParam("id") String id) {
-        if (!authenticate()) {
+        if (!authenticate() || principal.isGuest()) {
             throw new ForbiddenClientException();
         }
 

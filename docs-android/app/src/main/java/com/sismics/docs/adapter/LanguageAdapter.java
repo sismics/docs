@@ -34,6 +34,7 @@ public class LanguageAdapter extends BaseAdapter {
         languageList.add(new Language("fra", R.string.language_french, R.drawable.fra));
         languageList.add(new Language("eng", R.string.language_english, R.drawable.eng));
         languageList.add(new Language("deu", R.string.language_german, R.drawable.deu));
+        languageList.add(new Language("pol", R.string.language_polish, R.drawable.pol));
     }
 
     @Override

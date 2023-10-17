@@ -5,12 +5,12 @@ import com.sismics.util.totp.GoogleAuthenticator;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -439,13 +439,11 @@ public class TestUserResource extends BaseJerseyTest {
         // Create absent_minded who lost his password
         clientUtil.createUser("absent_minded");
 
-        // User no_such_user try to recovery its password: invalid user
-        Response response = target().path("/user/password_lost").request()
+        // User no_such_user try to recovery its password: silently do nothing to avoid leaking users
+        JsonObject json = target().path("/user/password_lost").request()
                 .post(Entity.form(new Form()
-                        .param("username", "no_such_user")));
-        Assert.assertEquals(Response.Status.BAD_REQUEST, Response.Status.fromStatusCode(response.getStatus()));
-        JsonObject json = response.readEntity(JsonObject.class);
-        Assert.assertEquals("UserNotFound", json.getString("type"));
+                        .param("username", "no_such_user")), JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
 
         // User absent_minded try to recovery its password: OK
         json = target().path("/user/password_lost").request()
@@ -461,7 +459,7 @@ public class TestUserResource extends BaseJerseyTest {
         String key = keyMatcher.group(1).replaceAll("=", "");
 
         // User absent_minded resets its password: invalid key
-        response = target().path("/user/password_reset").request()
+        Response response = target().path("/user/password_reset").request()
                 .post(Entity.form(new Form()
                         .param("key", "no_such_key")
                         .param("password", "87654321")));

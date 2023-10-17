@@ -13,7 +13,7 @@ import com.sismics.util.context.ThreadLocalContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class ProcessFilesAction implements Action {
                 FileUpdatedAsyncEvent event = new FileUpdatedAsyncEvent();
                 event.setUserId("admin");
                 event.setLanguage(documentDto.getLanguage());
-                event.setFile(file);
+                event.setFileId(file.getId());
                 event.setUnencryptedFile(unencryptedFile);
                 ThreadLocalContext.get().addAsyncEvent(event);
             }

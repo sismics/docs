@@ -1,0 +1,19 @@
+version: 1
+
+dn: o=TEST
+objectclass: domain
+objectclass: top
+objectclass: extensibleObject
+dc: TEST
+o: TEST
+
+dn: uid=ldap1,o=TEST
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: organizationalPerson
+cn: ldap1
+sn: LDAP 1
+uid: ldap1
+userPassword: secret
+mail: ldap1@teedy.io

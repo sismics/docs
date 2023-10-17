@@ -59,8 +59,17 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
     $scope.document = {
       tags: [],
       relations: [],
-      language: language
+      language: language,
+      metadata: []
     };
+
+    // Get custom metadata list
+    Restangular.one('metadata').get({
+      sort_column: 1,
+      asc: true
+    }).then(function(data) {
+      $scope.document.metadata = data.metadata;
+    });
 
     if ($scope.navigatedTag) {
       $scope.document.tags.push($scope.navigatedTag);
@@ -92,7 +101,21 @@ angular.module('docs').controller('DocumentEdit', function($rootScope, $scope, $
 
     // Extract ids from relations (only when our document is the source)
     document.relations = _.pluck(_.where(document.relations, { source: true }), 'id');
-    
+
+    // Extract custom metadata values
+    var metadata = _.reject(document.metadata, function (meta) {
+      return _.isUndefined(meta.value) || meta.value === '' || meta.value == null;
+    });
+    document.metadata_id =  _.pluck(metadata, 'id');
+    document.metadata_value =  _.pluck(metadata, 'value');
+    document.metadata_value = _.map(document.metadata_value, function (val) {
+      if (val instanceof Date) {
+        return val.getTime();
+      }
+      return val;
+    });
+
+    // Send to server
     if ($scope.isEdit()) {
       promise = Restangular.one('document', $stateParams.id).post('', document);
     } else {

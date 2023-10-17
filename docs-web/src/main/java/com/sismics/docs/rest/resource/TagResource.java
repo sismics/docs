@@ -14,13 +14,13 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.util.AclUtil;
 import com.sismics.rest.util.ValidationUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Set;
@@ -155,7 +155,7 @@ public class TagResource extends BaseResource {
      * @apiSuccess {String} id Tag ID
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) ValidationError Validation error
-     * @apiError (client) SpacesNotAllowed Spaces are not allowed in tag name
+     * @apiError (client) IllegalTagName Spaces and colons are not allowed in tag name
      * @apiError (client) ParentNotFound Parent not found
      * @apiPermission user
      * @apiVersion 1.5.0
@@ -177,12 +177,8 @@ public class TagResource extends BaseResource {
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 36, false);
         ValidationUtil.validateHexColor(color, "color", true);
-        
-        // Don't allow spaces
-        if (name.contains(" ")) {
-            throw new ClientException("SpacesNotAllowed", "Spaces are not allowed in tag name");
-        }
-        
+        ValidationUtil.validateTagName(name);
+
         // Check the parent
         if (StringUtils.isEmpty(parentId)) {
             parentId = null;
@@ -237,7 +233,7 @@ public class TagResource extends BaseResource {
      * @apiSuccess {String} id Tag ID
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) ValidationError Validation error
-     * @apiError (client) SpacesNotAllowed Spaces are not allowed in tag name
+     * @apiError (client) IllegalTagName Spaces and colons are not allowed in tag name
      * @apiError (client) ParentNotFound Parent not found
      * @apiError (client) CircularReference Circular reference in parent tag
      * @apiError (client) NotFound Tag not found
@@ -263,12 +259,8 @@ public class TagResource extends BaseResource {
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 36, true);
         ValidationUtil.validateHexColor(color, "color", true);
-        
-        // Don't allow spaces
-        if (name.contains(" ")) {
-            throw new ClientException("SpacesNotAllowed", "Spaces are not allowed in tag name");
-        }
-        
+        ValidationUtil.validateTagName(name);
+
         // Check permission
         AclDao aclDao = new AclDao();
         if (!aclDao.checkPermission(id, PermType.WRITE, getTargetIdList(null))) {

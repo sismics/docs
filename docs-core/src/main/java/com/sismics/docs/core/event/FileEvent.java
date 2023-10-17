@@ -1,7 +1,6 @@
 package com.sismics.docs.core.event;
 
 import com.google.common.base.MoreObjects;
-import com.sismics.docs.core.model.jpa.File;
 
 import java.nio.file.Path;
 
@@ -12,9 +11,9 @@ import java.nio.file.Path;
  */
 public abstract class FileEvent extends UserEvent {
     /**
-     * Created file.
+     * File ID.
      */
-    private File file;
+    private String fileId;
     
     /**
      * Language of the file.
@@ -25,15 +24,15 @@ public abstract class FileEvent extends UserEvent {
      * Unencrypted original file.
      */
     private Path unencryptedFile;
-    
-    public File getFile() {
-        return file;
+
+    public String getFileId() {
+        return fileId;
     }
 
-    public void setFile(File file) {
-        this.file = file;
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
     }
-    
+
     public String getLanguage() {
         return language;
     }
@@ -54,7 +53,7 @@ public abstract class FileEvent extends UserEvent {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-            .add("file", file)
+            .add("fileId", fileId)
             .add("language", language)
             .toString();
     }
