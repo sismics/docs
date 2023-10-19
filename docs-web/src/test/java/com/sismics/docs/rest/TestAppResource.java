@@ -28,7 +28,7 @@ public class TestAppResource extends BaseJerseyTest {
     @Test
     public void testAppResource() {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
         
         // Check the application info
         JsonObject json = target().path("/app").request()
@@ -86,7 +86,7 @@ public class TestAppResource extends BaseJerseyTest {
     @Test
     public void testLogResource() {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
         
         // Check the logs (page 1)
         JsonObject json = target().path("/app/log")
@@ -120,7 +120,7 @@ public class TestAppResource extends BaseJerseyTest {
     @Test
     public void testGuestLogin() {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
 
         // Try to login as guest
         Response response = target().path("/user/login").request()
@@ -185,7 +185,7 @@ public class TestAppResource extends BaseJerseyTest {
     @Test
     public void testSmtpConfiguration() {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
 
         // Get SMTP configuration
         JsonObject json = target().path("/app/config_smtp").request()
@@ -224,7 +224,7 @@ public class TestAppResource extends BaseJerseyTest {
     @Test
     public void testInbox() {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
 
         // Create a tag
         JsonObject json = target().path("/tag").request()
@@ -365,7 +365,7 @@ public class TestAppResource extends BaseJerseyTest {
 //        new LdifFileLoader(directoryService.getAdminSession(), new File(Resources.getResource("test.ldif").getFile()), null).execute();
 //
 //        // Login admin
-//        String adminToken = clientUtil.login("admin", "admin", false);
+//        String adminToken = adminToken();
 //
 //        // Get the LDAP configuration
 //        JsonObject json = target().path("/app/config_ldap").request()

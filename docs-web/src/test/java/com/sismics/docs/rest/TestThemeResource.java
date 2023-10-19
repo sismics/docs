@@ -27,7 +27,7 @@ public class TestThemeResource extends BaseJerseyTest {
     @Test
     public void testThemeResource() throws Exception {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
 
         // Get the stylesheet anonymously
         String stylesheet = target().path("/theme/stylesheet").request()

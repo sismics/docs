@@ -63,7 +63,11 @@ public abstract class BaseJerseyTest extends JerseyTest {
      * Test mail server.
      */
     private Wiser wiser;
-    
+
+    public String adminToken() {
+        return clientUtil.login("admin", "admin", false);
+    }
+
     @Override
     protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
         return new ExternalTestContainerFactory();

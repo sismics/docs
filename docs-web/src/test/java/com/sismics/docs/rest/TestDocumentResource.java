@@ -273,6 +273,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertFalse(relations.getJsonObject(0).getBoolean("source"));
         Assert.assertEquals("My super title document 2", relations.getJsonObject(0).getString("title"));
         Assert.assertFalse(json.containsKey("files"));
+        Assert.assertEquals(file1Id, json.getString("file_id"));
 
         // Get document 2
         json = target().path("/document/" + document2Id).request()
@@ -285,6 +286,7 @@ public class TestDocumentResource extends BaseJerseyTest {
         Assert.assertTrue(relations.getJsonObject(0).getBoolean("source"));
         Assert.assertEquals("My super title document 1", relations.getJsonObject(0).getString("title"));
         Assert.assertFalse(json.containsKey("files"));
+        Assert.assertEquals(file1Id, json.getString("file_id"));
 
         // Create a tag
         json = target().path("/tag").request()
@@ -818,7 +820,7 @@ public class TestDocumentResource extends BaseJerseyTest {
     @Test
     public void testCustomMetadata() {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
 
         // Login metadata1
         clientUtil.createUser("metadata1");

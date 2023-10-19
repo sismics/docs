@@ -67,8 +67,8 @@ public class FileResource extends BaseResource {
      * This resource accepts only multipart/form-data.
      * @apiName PutFile
      * @apiGroup File
-     * @apiParam {String} id Document ID
-     * @apiParam {String} previousFileId ID of the file to replace by this new version
+     * @apiParam {String} [id] Document ID
+     * @apiParam {String} [previousFileId] ID of the file to replace by this new version
      * @apiParam {String} file File data
      * @apiSuccess {String} status Status OK
      * @apiSuccess {String} id File ID
@@ -390,8 +390,8 @@ public class FileResource extends BaseResource {
      * @api {get} /file/list Get files
      * @apiName GetFileList
      * @apiGroup File
-     * @apiParam {String} id Document ID
-     * @apiParam {String} share Share ID
+     * @apiParam {String} [id] Document ID
+     * @apiParam {String} [share] Share ID
      * @apiSuccess {Object[]} files List of files
      * @apiSuccess {String} files.id ID
      * @apiSuccess {String} files.processing True if the file is currently processing
@@ -497,7 +497,6 @@ public class FileResource extends BaseResource {
      * @apiName DeleteFile
      * @apiGroup File
      * @apiParam {String} id File ID
-     * @apiParam {String} share Share ID
      * @apiSuccess {String} status Status OK
      * @apiError (client) ForbiddenError Access denied
      * @apiError (client) NotFound File or document not found

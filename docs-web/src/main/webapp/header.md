@@ -50,11 +50,11 @@ curl -i -X POST -H "Cookie: auth_token=64085630-2ae6-415c-9a92-4b22c107eaa4" htt
 
 ## Document search syntax
 
-The `/api/document/list` endpoint use a String `search` parameter.
+The `/api/document/list` endpoint use a String `search` parameter, useful when the query is entered by a human.
 
 This parameter is split in segments using the space character (the other whitespace characters are not considered).
 
-If a segment contains exactly one colon (`:`), it will used as a field criteria (see bellow).
+If a segment contains exactly one colon (`:`), it will be used as a field criteria (see bellow).
 In other cases (zero or more than one colon), the segment will be used as a search criteria for all fields including the document's files content.
 
 ### Search fields
@@ -69,7 +69,7 @@ If a search `VALUE` is considered invalid, the search result will be empty.
   * `at:VALUE`: the document must have been created at the `VALUE` moment, accepted format are `yyyy`, `yyyy-MM` and `yyyy-MM-dd` (for `yyyy` it must be the same year, for `yyyy-MM` the same month, for `yyyy-MM-dd` the same day)
   * `before:VALUE`: the document must have been created before or at the `VALUE` moment, accepted format are `yyyy`, `yyyy-MM` and `yyyy-MM-dd`
   * `uafter:VALUE`: the document must have been last updated after or at the `VALUE` moment, accepted format are `yyyy`, `yyyy-MM` and `yyyy-MM-dd`
-  * `at:VALUE`: the document must have been updated at the `VALUE` moment, accepted format are `yyyy`, `yyyy-MM` and `yyyy-MM-dd` (for `yyyy` it must be the same year, for `yyyy-MM` the same month, for `yyyy-MM-dd` the same day)
+  * `uat:VALUE`: the document must have been updated at the `VALUE` moment, accepted format are `yyyy`, `yyyy-MM` and `yyyy-MM-dd` (for `yyyy` it must be the same year, for `yyyy-MM` the same month, for `yyyy-MM-dd` the same day)
   * `ubefore:VALUE`: the document must have been updated before or at the `VALUE` moment, accepted format are `yyyy`, `yyyy-MM` and `yyyy-MM-dd`
 * Language
   * `lang:VALUE`: the document must be of the specified language (example: `en`)

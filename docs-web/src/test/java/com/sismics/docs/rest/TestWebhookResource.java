@@ -24,7 +24,7 @@ public class TestWebhookResource extends BaseJerseyTest {
     @Test
     public void testWebhookResource() {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
 
         // Login webhook1
         clientUtil.createUser("webhook1");
