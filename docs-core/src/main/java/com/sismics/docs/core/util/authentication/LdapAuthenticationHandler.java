@@ -62,6 +62,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
             if (ldapConnection == null) {
                 return null;
             }
+            ldapConnection.bind();
 
             EntryCursor cursor = ldapConnection.search(ConfigUtil.getConfigStringValue(ConfigType.LDAP_BASE_DN),
                     ConfigUtil.getConfigStringValue(ConfigType.LDAP_FILTER).replace("USERNAME", username), SearchScope.SUBTREE);
