@@ -182,7 +182,7 @@
               </systemProperties>
               <webApp>
                 <contextPath>/docs-web</contextPath>
-                <overrideDescriptor>src/dev/main/webapp/web-override.xml</overrideDescriptor>
+                <overrideDescriptor>${project.basedir}/src/dev/main/webapp/web-override.xml</overrideDescriptor>
               </webApp>
             </configuration>
           </plugin>
@@ -260,8 +260,8 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-war-plugin</artifactId>
             <configuration>
-              <warSourceDirectory>${basedir}/src/main/webapp/dist</warSourceDirectory>
-              <webXml>src\main\webapp\WEB-INF\web.xml</webXml>
+              <warSourceDirectory>${project.basedir}/src/main/webapp/dist</warSourceDirectory>
+              <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
             </configuration>
           </plugin>
         </plugins>
