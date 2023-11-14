@@ -75,7 +75,7 @@ public class TestUserResource extends BaseJerseyTest {
         response = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
-                        .param("username", "bob-")
+                        .param("username", "bob/")
                         .param("email", "bob@docs.com")
                         .param("password", "12345678")
                         .param("storage_quota", "10")));
