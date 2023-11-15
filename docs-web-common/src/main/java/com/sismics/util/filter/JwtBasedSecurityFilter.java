@@ -40,7 +40,7 @@ import static java.util.Optional.ofNullable;
 public class JwtBasedSecurityFilter extends SecurityFilter {
     private static final Logger log = LoggerFactory.getLogger(JwtBasedSecurityFilter.class);
     /**
-     * Name of the cookie used to store the authentication token.
+     * Name of the header used to store the authentication token.
      */
     public static final String HEADER_NAME = "Authorization";
 
@@ -82,18 +82,15 @@ public class JwtBasedSecurityFilter extends SecurityFilter {
             return Boolean.TRUE;
         } catch (CertificateException e) {
             //if CertificateException comes from buildJWTVerifier()
-            log.info("InValid TOKEN");
-            e.printStackTrace();
+            log.info("InValid TOKEN: " + e.getMessage());
             return Boolean.FALSE;
         } catch (JWTVerificationException e) {
             // if JWT Token in invalid
-            log.info("InValid TOKEN");
-            e.printStackTrace();
+            log.info("InValid TOKEN: " + e.getMessage() );
             return Boolean.FALSE;
         } catch (Exception e) {
             // If any other exception comes
-            log.info("InValid TOKEN, Exception Occurred");
-            e.printStackTrace();
+            log.info("InValid TOKEN, Exception Occurred: " + e.getMessage());
             return Boolean.FALSE;
         }
     }
