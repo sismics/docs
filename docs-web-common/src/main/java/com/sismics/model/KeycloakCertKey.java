@@ -1,4 +1,4 @@
-package com.sismics.feign.model;
+package com.sismics.model;
 
 import java.util.List;
 

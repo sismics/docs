@@ -3,20 +3,21 @@ package com.sismics.util.filter;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.impl.JWTParser;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
+
+import java.io.IOException;
+import java.io.Reader;
 import java.util.Base64;
+
+import com.google.gson.Gson;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.model.jpa.User;
-import com.sismics.feign.KeycloakClient;
-import feign.Feign;
-import feign.gson.GsonDecoder;
-import feign.gson.GsonEncoder;
-import feign.okhttp.OkHttpClient;
-import feign.slf4j.Slf4jLogger;
+import com.sismics.model.KeycloakCertKeys;
 import jakarta.servlet.http.HttpServletRequest;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,7 @@ import static java.util.Optional.ofNullable;
  */
 public class JwtBasedSecurityFilter extends SecurityFilter {
     private static final Logger log = LoggerFactory.getLogger(JwtBasedSecurityFilter.class);
+    private static final okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
     /**
      * Name of the header used to store the authentication token.
      */
@@ -100,25 +102,37 @@ public class JwtBasedSecurityFilter extends SecurityFilter {
     }
 
     private RSAPublicKey getPublicKey(DecodedJWT jwt) {
-        KeycloakClient client = Feign.builder()
-                .client(new OkHttpClient())
-                .encoder(new GsonEncoder())
-                .decoder(new GsonDecoder())
-                .logLevel(feign.Logger.Level.BASIC)
-                .logger(new Slf4jLogger(KeycloakClient.class))
-                .target(KeycloakClient.class, jwt.getIssuer());
-        String publicKey = client.getCert().getKeys().stream().filter(k -> Objects.equals(k.getKid(), jwt.getKeyId()))
-                .findFirst()
-                .map(k -> k.getX5c().get(0))
-                .orElse("");
-        try {
-            var decode = Base64.getDecoder().decode(publicKey);
-            var certificate = CertificateFactory.getInstance("X.509")
-                    .generateCertificate(new ByteArrayInputStream(decode));
-            return (RSAPublicKey)certificate.getPublicKey();
-        } catch (CertificateException ex) {
-            return null;
+        String jwtIssuer = jwt.getIssuer() + "/protocol/openid-connect/certs";
+        String publicKey = "";
+        RSAPublicKey rsaPublicKey = null;
+        Request request = new Request.Builder()
+                .url(jwtIssuer)
+                .get()
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            log.info("Successfully called the jwt issuer at: " + jwtIssuer + " - " + response.code());
+            assert response.body() != null;
+            if (response.isSuccessful()) {
+                try (Reader reader = response.body().charStream()) {
+                    Gson gson = new Gson();
+                    KeycloakCertKeys keys = gson.fromJson(reader, KeycloakCertKeys.class);
+                    publicKey = keys.getKeys().stream().filter(k -> Objects.equals(k.getKid(), jwt.getKeyId()))
+                            .findFirst()
+                            .map(k -> k.getX5c().get(0))
+                            .orElse("");
+                    log.info("Decoded public key - " + publicKey);
+                    var decode = Base64.getDecoder().decode(publicKey);
+                    var certificate = CertificateFactory.getInstance("X.509")
+                            .generateCertificate(new ByteArrayInputStream(decode));
+                    rsaPublicKey = (RSAPublicKey)certificate.getPublicKey();
+                }
+            }
+        } catch (IOException e) {
+            log.error("Error calling the jwt issuer at: " + jwtIssuer, e);
+        } catch (CertificateException e) {
+            log.error("Error in getting the certificate: ", e);
         }
+        return rsaPublicKey;
     }
 
     private JWTVerifier buildJWTVerifier(DecodedJWT jwt) throws CertificateException {
