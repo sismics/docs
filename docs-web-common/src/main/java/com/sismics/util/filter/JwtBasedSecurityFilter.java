@@ -61,7 +61,8 @@ public class JwtBasedSecurityFilter extends SecurityFilter {
                 user.setRoleId(Constants.DEFAULT_USER_ROLE);
                 user.setUsername(email);
                 user.setEmail(email);
-                user.setStorageQuota(10L);
+                user.setStorageQuota(Long.parseLong(ofNullable(System.getenv(Constants.GLOBAL_QUOTA_ENV))
+                        .orElse("1073741824")));
                 user.setPassword(UUID.randomUUID().toString());
                 try {
                     userDao.create(user, email);
@@ -102,15 +103,15 @@ public class JwtBasedSecurityFilter extends SecurityFilter {
     }
 
     private RSAPublicKey getPublicKey(DecodedJWT jwt) {
-        String jwtIssuer = jwt.getIssuer() + "/protocol/openid-connect/certs";
+        String jwtIssuerCerts = jwt.getIssuer() + "/protocol/openid-connect/certs";
         String publicKey = "";
         RSAPublicKey rsaPublicKey = null;
         Request request = new Request.Builder()
-                .url(jwtIssuer)
+                .url(jwtIssuerCerts)
                 .get()
                 .build();
         try (Response response = client.newCall(request).execute()) {
-            log.info("Successfully called the jwt issuer at: " + jwtIssuer + " - " + response.code());
+            log.info("Successfully called the jwt issuer at: " + jwtIssuerCerts + " - " + response.code());
             assert response.body() != null;
             if (response.isSuccessful()) {
                 try (Reader reader = response.body().charStream()) {
@@ -128,7 +129,7 @@ public class JwtBasedSecurityFilter extends SecurityFilter {
                 }
             }
         } catch (IOException e) {
-            log.error("Error calling the jwt issuer at: " + jwtIssuer, e);
+            log.error("Error calling the jwt issuer at: " + jwtIssuerCerts, e);
         } catch (CertificateException e) {
             log.error("Error in getting the certificate: ", e);
         }
