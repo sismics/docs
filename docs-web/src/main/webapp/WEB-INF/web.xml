@@ -45,6 +45,16 @@
   </filter>
 
   <filter>
+    <filter-name>jwtBasedSecurityFilter</filter-name>
+    <filter-class>com.sismics.util.filter.JwtBasedSecurityFilter</filter-class>
+    <async-supported>true</async-supported>
+    <init-param>
+      <param-name>enabled</param-name>
+      <param-value>false</param-value>
+    </init-param>
+  </filter>
+
+  <filter>
     <filter-name>headerBasedSecurityFilter</filter-name>
     <filter-class>com.sismics.util.filter.HeaderBasedSecurityFilter</filter-class>
     <async-supported>true</async-supported>
@@ -56,6 +66,11 @@
   
   <filter-mapping>
     <filter-name>tokenBasedSecurityFilter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>jwtBasedSecurityFilter</filter-name>
     <url-pattern>/api/*</url-pattern>
   </filter-mapping>
 
