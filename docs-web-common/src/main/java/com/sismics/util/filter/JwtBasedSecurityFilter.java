@@ -10,11 +10,13 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Base64;
 
-import com.google.gson.Gson;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.model.jpa.User;
-import com.sismics.model.KeycloakCertKeys;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import jakarta.servlet.http.HttpServletRequest;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -115,17 +117,21 @@ public class JwtBasedSecurityFilter extends SecurityFilter {
             assert response.body() != null;
             if (response.isSuccessful()) {
                 try (Reader reader = response.body().charStream()) {
-                    Gson gson = new Gson();
-                    KeycloakCertKeys keys = gson.fromJson(reader, KeycloakCertKeys.class);
-                    publicKey = keys.getKeys().stream().filter(k -> Objects.equals(k.getKid(), jwt.getKeyId()))
-                            .findFirst()
-                            .map(k -> k.getX5c().get(0))
-                            .orElse("");
-                    log.info("Decoded public key - " + publicKey);
-                    var decode = Base64.getDecoder().decode(publicKey);
-                    var certificate = CertificateFactory.getInstance("X.509")
-                            .generateCertificate(new ByteArrayInputStream(decode));
-                    rsaPublicKey = (RSAPublicKey)certificate.getPublicKey();
+                    try (JsonReader jsonReader = Json.createReader(reader)) {
+                        JsonObject jwks = jsonReader.readObject();
+                        JsonArray keys = jwks.getJsonArray("keys");
+                        publicKey = keys.stream().filter(key -> Objects.equals(key.asJsonObject().getString("kid"),
+                                        jwt.getKeyId()))
+                                .findFirst()
+                                .map(k -> k.asJsonObject().getJsonArray("x5c").getString(0))
+                                .orElse("");
+                        log.info("X5c is " + publicKey);
+                        var decode = Base64.getDecoder().decode(publicKey);
+                        log.info("Decoded public key - " + publicKey);
+                        var certificate = CertificateFactory.getInstance("X.509")
+                                .generateCertificate(new ByteArrayInputStream(decode));
+                        rsaPublicKey = (RSAPublicKey) certificate.getPublicKey();
+                    }
                 }
             }
         } catch (IOException e) {
