@@ -48,6 +48,10 @@
     <filter-name>jwtBasedSecurityFilter</filter-name>
     <filter-class>com.sismics.util.filter.JwtBasedSecurityFilter</filter-class>
     <async-supported>true</async-supported>
+    <init-param>
+      <param-name>enabled</param-name>
+      <param-value>false</param-value>
+    </init-param>
   </filter>
 
   <filter>

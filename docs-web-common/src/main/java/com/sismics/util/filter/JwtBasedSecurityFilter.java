@@ -17,6 +17,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
+import jakarta.servlet.FilterConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -47,9 +48,22 @@ public class JwtBasedSecurityFilter extends SecurityFilter {
      * Name of the header used to store the authentication token.
      */
     public static final String HEADER_NAME = "Authorization";
+    /**
+     * True if this authentication method is enabled.
+     */
+    private boolean enabled;
+
+    @Override
+    public void init(FilterConfig filterConfig) {
+        enabled = Boolean.parseBoolean(filterConfig.getInitParameter("enabled"))
+                || Boolean.parseBoolean(System.getProperty("docs.jwt_authentication"));
+    }
 
     @Override
     protected User authenticate(final HttpServletRequest request) {
+        if (!enabled) {
+            return null;
+        }
         log.info("Jwt authentication started");
         User user = null;
         String token = extractAuthToken(request).replace("Bearer ", "");
