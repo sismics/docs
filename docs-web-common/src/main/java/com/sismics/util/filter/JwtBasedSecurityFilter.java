@@ -125,9 +125,7 @@ public class JwtBasedSecurityFilter extends SecurityFilter {
                                 .findFirst()
                                 .map(k -> k.asJsonObject().getJsonArray("x5c").getString(0))
                                 .orElse("");
-                        log.info("X5c is " + publicKey);
                         var decode = Base64.getDecoder().decode(publicKey);
-                        log.info("Decoded public key - " + publicKey);
                         var certificate = CertificateFactory.getInstance("X.509")
                                 .generateCertificate(new ByteArrayInputStream(decode));
                         rsaPublicKey = (RSAPublicKey) certificate.getPublicKey();
