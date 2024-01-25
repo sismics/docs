@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+
+<Configure id="logging" class="org.eclipse.jetty.util.log.Log">
+</Configure>

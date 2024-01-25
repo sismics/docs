@@ -1,4 +1,47 @@
-FROM sismics/ubuntu-jetty:11.0.14
+FROM ubuntu:22.04
+
+# Run Debian in non interactive mode
+ENV DEBIAN_FRONTEND noninteractive
+
+# Install Sismics repository
+RUN apt-get update && apt-get install -y apt-transport-https ca-certificates software-properties-common curl gnupg tzdata
+RUN curl -fsSL https://www.sismics.com/pgp | apt-key add -
+# RUN add-apt-repository "deb [arch=amd64] https://nexus.sismics.com/repository/apt-bionic/ bionic main"
+
+# Configure settings
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+RUN ln -fs /usr/share/zoneinfo/Europe/Paris /etc/localtime
+RUN dpkg-reconfigure -f noninteractive tzdata
+COPY etc /etc
+RUN echo "for f in \`ls /etc/bashrc.d/*\`; do . \$f; done;" >> ~/.bashrc
+RUN apt-get -y -q install vim less procps unzip wget && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
+    apt-get -y -q install openjdk-11-jdk && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
+ENV JAVA_OPTS -Duser.timezone=Europe/Paris -Dfile.encoding=UTF-8 -Xmx1024m
+
+ENV JETTY_VERSION 11.0.14
+RUN wget -nv -O /tmp/jetty.tar.gz \
+    "https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-home/${JETTY_VERSION}/jetty-home-${JETTY_VERSION}.tar.gz" \
+    && tar xzf /tmp/jetty.tar.gz -C /opt \
+    && mv /opt/jetty* /opt/jetty \
+    && useradd jetty -U -s /bin/false \
+    && chown -R jetty:jetty /opt/jetty \
+    && mkdir /opt/jetty/webapps
+WORKDIR /opt/jetty
+RUN chmod +x bin/jetty.sh
+
+# Init configuration
+COPY opt /opt
+EXPOSE 8080
+ENV JETTY_HOME /opt/jetty
+ENV JAVA_OPTIONS -Xmx512m
+
 LABEL maintainer="b.gamard@sismics.com"
 
 RUN apt-get update && \
@@ -44,5 +87,8 @@ ADD docs-web/target/docs-web-*.war /app/webapps/docs.war
 ENV JAVA_OPTIONS -Xmx1g
 
 WORKDIR /app
-CMD ["java", "-jar", "/opt/jetty/start.jar"]
+# Set the default command to run when starting the container
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
+CMD ["/entrypoint.sh"]
