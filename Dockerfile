@@ -84,7 +84,4 @@ ENV JAVA_OPTIONS -Xmx1g
 
 WORKDIR /app
 # Set the default command to run when starting the container
-COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
-CMD ["/entrypoint.sh"]
+CMD ["java", "-jar", "/opt/jetty/start.jar"]
