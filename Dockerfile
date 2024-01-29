@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 RUN ln -fs /usr/share/zoneinfo/Europe/Paris /etc/localtime
-RUN apt-get update && apt-get -y -q install --reinstall tzdata && apt-get upgrade libgnutls30 -y -q
+RUN apt-get update && apt-get -y -q install --reinstall tzdata
 RUN dpkg-reconfigure -f noninteractive tzdata
 COPY docker/etc /etc
 RUN echo "for f in \`ls /etc/bashrc.d/*\`; do . \$f; done;" >> ~/.bashrc
