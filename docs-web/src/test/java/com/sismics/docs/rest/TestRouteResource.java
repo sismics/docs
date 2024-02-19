@@ -27,7 +27,7 @@ public class TestRouteResource extends BaseJerseyTest {
         String route1Token = clientUtil.login("route1");
 
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
 
         // Change SMTP configuration to target Wiser
         target().path("/app/config_smtp").request()
@@ -364,7 +364,7 @@ public class TestRouteResource extends BaseJerseyTest {
     @Test
     public void testTagActions() {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
 
         // Create an Approved tag
         JsonObject json = target().path("/tag").request()

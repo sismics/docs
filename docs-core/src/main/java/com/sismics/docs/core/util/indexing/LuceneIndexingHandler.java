@@ -276,9 +276,8 @@ public class LuceneIndexingHandler implements IndexingHandler {
             criteriaList.add("(a.ACL_ID_C is not null or a2.ACL_ID_C is not null)");
         }
         parameterMap.put("targetIdList", criteria.getTargetIdList());
-
-        if (!Strings.isNullOrEmpty(criteria.getSearch()) || !Strings.isNullOrEmpty(criteria.getFullSearch())) {
-            documentSearchMap = search(criteria.getSearch(), criteria.getFullSearch());
+        if (!Strings.isNullOrEmpty(criteria.getSimpleSearch()) || !Strings.isNullOrEmpty(criteria.getFullSearch())) {
+            documentSearchMap = search(criteria.getSimpleSearch(), criteria.getFullSearch());
             if (documentSearchMap.isEmpty()) {
                 // If the search doesn't find any document, the request should return nothing
                 documentSearchMap.put(UUID.randomUUID().toString(), null);
@@ -413,14 +412,14 @@ public class LuceneIndexingHandler implements IndexingHandler {
     /**
      * Fulltext search in files and documents.
      *
-     * @param searchQuery Search query on metadatas
+     * @param simpleSearchQuery Search query on metadatas
      * @param fullSearchQuery Search query on all fields
      * @return Map of document IDs as key and highlight as value
      * @throws Exception e
      */
-    private Map<String, String> search(String searchQuery, String fullSearchQuery) throws Exception {
+    private Map<String, String> search(String simpleSearchQuery, String fullSearchQuery) throws Exception {
         // The fulltext query searches in all fields
-        searchQuery = searchQuery + " " + fullSearchQuery;
+        String searchQuery = simpleSearchQuery + " " + fullSearchQuery;
 
         // Build search query
         Analyzer analyzer = new StandardAnalyzer();

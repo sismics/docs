@@ -26,7 +26,7 @@ import java.util.Properties;
 public final class EMF {
     private static final Logger log = LoggerFactory.getLogger(EMF.class);
 
-    private static Map<Object, Object> properties;
+    private static Properties properties;
 
     private static EntityManagerFactory emfInstance;
 
@@ -59,7 +59,7 @@ public final class EMF {
         }
     }
     
-    private static Map<Object, Object> getEntityManagerProperties() {
+    private static Properties getEntityManagerProperties() {
         // Use properties file if exists
         try {
             URL hibernatePropertiesUrl = EMF.class.getResource("/hibernate.properties");
@@ -79,9 +79,13 @@ public final class EMF {
         String databaseUrl = System.getenv("DATABASE_URL");
         String databaseUsername = System.getenv("DATABASE_USER");
         String databasePassword = System.getenv("DATABASE_PASSWORD");
+        String databasePoolSize = System.getenv("DATABASE_POOL_SIZE");
+        if(databasePoolSize == null) {
+            databasePoolSize = "10";
+        }
 
         log.info("Configuring EntityManager from environment parameters");
-        Map<Object, Object> props = new HashMap<>();
+        Properties props = new Properties();
         Path dbDirectory = DirectoryUtil.getDbDirectory();
         String dbFile = dbDirectory.resolve("docs").toAbsolutePath().toString();
         if (Strings.isNullOrEmpty(databaseUrl)) {
@@ -92,7 +96,7 @@ public final class EMF {
             props.put("hibernate.connection.username", "sa");
         } else {
             props.put("hibernate.connection.driver_class", "org.postgresql.Driver");
-            props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQL94Dialect");
+            props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
             props.put("hibernate.connection.url", databaseUrl);
             props.put("hibernate.connection.username", databaseUsername);
             props.put("hibernate.connection.password", databasePassword);
@@ -103,7 +107,7 @@ public final class EMF {
         props.put("hibernate.max_fetch_depth", "5");
         props.put("hibernate.cache.use_second_level_cache", "false");
         props.put("hibernate.connection.initial_pool_size", "1");
-        props.put("hibernate.connection.pool_size", "10");
+        props.put("hibernate.connection.pool_size", databasePoolSize);
         props.put("hibernate.connection.pool_validation_interval", "5");
         return props;
     }

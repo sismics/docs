@@ -37,7 +37,7 @@ public class TestUserResource extends BaseJerseyTest {
         clientUtil.createUser("alice");
 
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
         
         // List all users
         json = target().path("/user/list")
@@ -75,7 +75,7 @@ public class TestUserResource extends BaseJerseyTest {
         response = target().path("/user").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .put(Entity.form(new Form()
-                        .param("username", "bob-")
+                        .param("username", "bob/")
                         .param("email", "bob@docs.com")
                         .param("password", "12345678")
                         .param("storage_quota", "10")));
@@ -250,7 +250,7 @@ public class TestUserResource extends BaseJerseyTest {
         clientUtil.createUser("admin_user1");
 
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
 
         // Check admin information
         JsonObject json = target().path("/user").request()
@@ -336,7 +336,7 @@ public class TestUserResource extends BaseJerseyTest {
     @Test
     public void testTotp() {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
 
         // Create totp1 user
         clientUtil.createUser("totp1");
@@ -425,7 +425,7 @@ public class TestUserResource extends BaseJerseyTest {
     @Test
     public void testResetPassword() throws Exception {
         // Login admin
-        String adminToken = clientUtil.login("admin", "admin", false);
+        String adminToken = adminToken();
 
         // Change SMTP configuration to target Wiser
         target().path("/app/config_smtp").request()

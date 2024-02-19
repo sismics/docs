@@ -21,7 +21,7 @@ public class ValidationUtil {
     
     private static Pattern ALPHANUMERIC_PATTERN = Pattern.compile("[a-zA-Z0-9_]+");
     
-    private static Pattern USERNAME_PATTERN = Pattern.compile("[a-zA-Z0-9_@\\.]+");
+    private static Pattern USERNAME_PATTERN = Pattern.compile("[a-zA-Z0-9_@.-]+");
     
     /**
      * Checks that the argument is not null.
