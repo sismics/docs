@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <p ng-bind-html="document.description"></p>
+    <p class="well-sm" ng-bind-html="document.description"></p>
     <dl class="dl-horizontal">
       <dt ng-if="document.subject">{{ 'document.subject' | translate }}</dt>
       <dd ng-if="document.subject">{{ document.subject }}</dd>
@@ -63,18 +63,80 @@
           </span>
         </span>
       </dd>
+      <dt ng-if="false" ng-repeat-start="meta in document.metadata"></dt>
+      <dt ng-if="meta.value != null">{{ meta.name }}</dt>
+      <dd ng-if="meta.value != null && (meta.type == 'STRING' || meta.type == 'INTEGER' || meta.type == 'FLOAT')">{{ meta.value }}</dd>
+      <dd ng-if="meta.value != null && meta.type == 'DATE'">{{ meta.value | date: dateFormat }}</dd>
+      <dd ng-if="meta.value != null && meta.type == 'BOOLEAN'">{{ meta.value ? 'yes' : 'no' | translate }}</dd>
+      <dd ng-if="false" ng-repeat-end></dd>
     </dl>
 
+    <!-- Display mode (list or grid) -->
+    <div class="btn-group mt-10 mb-10 pull-right">
+          <span class="btn btn-default" ng-class="{ active: displayMode == 'list' }"
+                uib-tooltip="{{ 'document.view.content.display_mode_list' | translate }}"
+                tooltip-append-to-body="true"
+                ng-click="displayMode = 'list'">
+            <span class="fas fa-list"></span>
+          </span>
+      <span class="btn btn-default" ng-class="{ active: displayMode == 'grid' }"
+            uib-tooltip="{{ 'document.view.content.display_mode_grid' | translate }}"
+            tooltip-append-to-body="true"
+            ng-click="displayMode = 'grid'">
+            <span class="fas fa-th"></span>
+          </span>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <!-- List of files -->
     <div class="row" ng-show="files.length > 0">
-      <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 text-center" ng-repeat="file in files">
-        <div class="thumbnail">
-          <a ng-click="openFile(file)">
-            <img ng-src="../api/file/{{ file.id }}/data?size=thumb&share={{ $stateParams.shareId }}"
-                 uib-tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
-          </a>
+      <!-- Grid view -->
+      <div ng-show="displayMode == 'grid'">
+        <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 text-center" ng-repeat="file in files">
+          <div class="thumbnail">
+            <a class="file-thumbnail" ng-click="openFile(file)"
+               uib-tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top">
+              <img ng-src="../api/file/{{ file.id }}/data?size=thumb&share={{ $stateParams.shareId }}" />
+            </a>
+
+            <div class="file-info">
+              <div></div>
+              <div class="v-align file-name" ng-if="file.name" title="{{ file.name }} (v{{ file.version + 1 }}.0)">{{ file.name }}</div>
+              <div></div>
+            </div>
+          </div>
         </div>
       </div>
-     </div>
+
+      <!-- List view -->
+      <table ng-show="displayMode == 'list'" class="table table-hover table-files">
+        <thead>
+        <tr>
+          <th width="3%"></th>
+          <th>Filename</th>
+          <th>Type</th>
+          <th>Size</th>
+          <th width="10%">Version</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="file in files">
+          <td class="pointer" ng-click="openFile(file)">
+            <div class="thumbnail-list">
+              <img ng-src="../api/file/{{ file.id }}/data?size=thumb&share={{ $stateParams.shareId }}" />
+            </div>
+          </td>
+          <td class="pointer" ng-click="openFile(file)">
+            {{ file.name }}
+          </td>
+          <td>{{ file.mimetype }}</td>
+          <td>{{ file.size | filesize }}</td>
+          <td>v{{ file.version + 1 }}.0</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
 
     <div ui-view="file"></div>
   </div>

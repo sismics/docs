@@ -4,6 +4,15 @@
  * Share controller.
  */
 angular.module('share').controller('Share', function($scope, $state, $stateParams, Restangular, $uibModal) {
+  $scope.displayMode = _.isUndefined(localStorage.fileDisplayMode) ? 'grid' : localStorage.fileDisplayMode;
+
+  /**
+   * Watch for display mode change.
+   */
+  $scope.$watch('displayMode', function (next) {
+    localStorage.fileDisplayMode = next;
+  });
+
   // Load document
   Restangular.one('document', $stateParams.documentId).get({ share: $stateParams.shareId })
       .then(function (data) {

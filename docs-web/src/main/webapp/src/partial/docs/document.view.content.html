@@ -77,12 +77,13 @@
           <span class="fas fa-spin fa-circle-notch"></span>
         </div>
 
-        <a class="file-thumbnail" ng-click="openFile(file, $event)">
-          <img ng-src="../api/file/{{ file.id }}/data?size=thumb" uib-tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top" />
+        <a class="file-thumbnail" ng-click="openFile(file, $event)"
+           uib-tooltip="{{ file.mimetype }} | {{ file.size | filesize }}" tooltip-placement="top">
+          <img ng-src="../api/file/{{ file.id }}/data?size=thumb" />
         </a>
 
         <div class="file-info">
-          <div></div><!-- Actually useful -->
+          <div></div>
           <div class="v-align file-name" ng-if="file.name" title="{{ file.name }} (v{{ file.version + 1 }}.0)">{{ file.name }}</div>
           <div class="v-align" ng-show="document.writable">
             <div uib-dropdown>
