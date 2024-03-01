@@ -21,7 +21,7 @@ jobs:
       - name: Install test dependencies
         run: sudo apt-get update && sudo apt-get -y -q --no-install-recommends install ffmpeg mediainfo tesseract-ocr tesseract-ocr-deu
       - name: Build with Maven
-        run: mvn -Pprod clean install
+        run: mvn --batch-mode -Pprod clean install
       - name: Upload war artifact
         uses: actions/upload-artifact@v2
         with:

@@ -1,47 +1,21 @@
 FROM ubuntu:22.04
+LABEL maintainer="b.gamard@sismics.com"
 
 # Run Debian in non interactive mode
 ENV DEBIAN_FRONTEND noninteractive
 
-# Configure settings
+# Configure env
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
-RUN ln -fs /usr/share/zoneinfo/Europe/Paris /etc/localtime
-RUN apt-get update && apt-get -y -q install --reinstall tzdata
-RUN dpkg-reconfigure -f noninteractive tzdata
-COPY docker/etc /etc
-RUN echo "for f in \`ls /etc/bashrc.d/*\`; do . \$f; done;" >> ~/.bashrc
-RUN apt-get -y -q install vim less procps unzip wget && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && \
-    apt-get -y -q install openjdk-11-jdk && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
-ENV JAVA_OPTS -Duser.timezone=Europe/Paris -Dfile.encoding=UTF-8 -Xmx1024m
-
-ENV JETTY_VERSION 11.0.14
-RUN wget -nv -O /tmp/jetty.tar.gz \
-    "https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-home/${JETTY_VERSION}/jetty-home-${JETTY_VERSION}.tar.gz" \
-    && tar xzf /tmp/jetty.tar.gz -C /opt \
-    && mv /opt/jetty* /opt/jetty \
-    && useradd jetty -U -s /bin/false \
-    && chown -R jetty:jetty /opt/jetty \
-    && mkdir /opt/jetty/webapps
-WORKDIR /opt/jetty
-RUN chmod +x bin/jetty.sh
-
-# Init configuration
-COPY docker/opt /opt
-EXPOSE 8080
+ENV JAVA_OPTIONS -Dfile.encoding=UTF-8 -Xmx1g
+ENV JETTY_VERSION 11.0.20
 ENV JETTY_HOME /opt/jetty
-ENV JAVA_OPTIONS -Xmx512m
 
-LABEL maintainer="b.gamard@sismics.com"
-
+# Install packages
 RUN apt-get update && \
     apt-get -y -q --no-install-recommends install \
+    vim less procps unzip wget tzdata openjdk-11-jdk \
     ffmpeg \
     mediainfo \
     tesseract-ocr \
@@ -71,17 +45,31 @@ RUN apt-get update && \
     tesseract-ocr-tur \
     tesseract-ocr-ukr \
     tesseract-ocr-vie \
-    tesseract-ocr-sqi && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    mkdir /app && \
+    tesseract-ocr-sqi \
+    && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+RUN dpkg-reconfigure -f noninteractive tzdata
+
+# Install Jetty
+RUN wget -nv -O /tmp/jetty.tar.gz \
+    "https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-home/${JETTY_VERSION}/jetty-home-${JETTY_VERSION}.tar.gz" \
+    && tar xzf /tmp/jetty.tar.gz -C /opt \
+    && mv /opt/jetty* /opt/jetty \
+    && useradd jetty -U -s /bin/false \
+    && chown -R jetty:jetty /opt/jetty \
+    && mkdir /opt/jetty/webapps \
+    && chmod +x /opt/jetty/bin/jetty.sh
+
+EXPOSE 8080
+
+# Install app
+RUN mkdir /app && \
     cd /app && \
     java -jar /opt/jetty/start.jar --add-modules=server,http,webapp,deploy
 
 ADD docs.xml /app/webapps/docs.xml
 ADD docs-web/target/docs-web-*.war /app/webapps/docs.war
 
-ENV JAVA_OPTIONS -Xmx1g
-
 WORKDIR /app
-# Set the default command to run when starting the container
+
 CMD ["java", "-jar", "/opt/jetty/start.jar"]
