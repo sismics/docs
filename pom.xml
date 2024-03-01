@@ -51,16 +51,16 @@
 
     <org.glassfish.jersey.version>3.0.10</org.glassfish.jersey.version>
     <jakarta.servlet.jakarta.servlet-api.version>5.0.0</jakarta.servlet.jakarta.servlet-api.version>
-    <org.eclipse.jetty.jetty-server.version>11.0.14</org.eclipse.jetty.jetty-server.version>
-    <org.eclipse.jetty.jetty-webapp.version>11.0.14</org.eclipse.jetty.jetty-webapp.version>
-    <org.eclipse.jetty.jetty-servlet.version>11.0.14</org.eclipse.jetty.jetty-servlet.version>
+    <org.eclipse.jetty.jetty-server.version>11.0.20</org.eclipse.jetty.jetty-server.version>
+    <org.eclipse.jetty.jetty-webapp.version>11.0.20</org.eclipse.jetty.jetty-webapp.version>
+    <org.eclipse.jetty.jetty-servlet.version>11.0.20</org.eclipse.jetty.jetty-servlet.version>
 
     <!-- Plugins version -->
     <org.apache.maven.plugins.maven-antrun-plugin.version>3.1.0</org.apache.maven.plugins.maven-antrun-plugin.version>
     <org.apache.maven.plugins.maven-jar-plugin.version>3.3.0</org.apache.maven.plugins.maven-jar-plugin.version>
     <org.apache.maven.plugins.maven-war-plugin.version>3.3.2</org.apache.maven.plugins.maven-war-plugin.version>
     <org.apache.maven.plugins.maven-surefire-plugin.version>3.0.0</org.apache.maven.plugins.maven-surefire-plugin.version>
-    <org.eclipse.jetty.jetty-maven-plugin.version>11.0.14</org.eclipse.jetty.jetty-maven-plugin.version>
+    <org.eclipse.jetty.jetty-maven-plugin.version>11.0.20</org.eclipse.jetty.jetty-maven-plugin.version>
   </properties>
 
   <scm>
