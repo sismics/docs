@@ -182,6 +182,11 @@ services:
 
 # Manual installation
 
+## Self-Host
+Deploy a self-hosted version in one-click with [Dome](https://app.trydome.io/signup?package=teedy):
+
+[![Deploy to Dome](https://trydome.io/button.svg)](https://app.trydome.io/signup?package=teedy)
+
 ## Requirements
 
 - Java 11
