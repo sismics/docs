@@ -128,15 +128,6 @@ public class TestUserResource extends BaseJerseyTest {
         json = response.readEntity(JsonObject.class);
         Assert.assertEquals("AlreadyExistingUsername", json.getString("type"));
 
-        // Check if a username is free : OK
-        target().path("/user/check_username").queryParam("username", "carol").request().get(JsonObject.class);
-
-        // Check if a username is free : KO
-        response = target().path("/user/check_username").queryParam("username", "alice").request().get();
-        Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        json = response.readEntity(JsonObject.class);
-        Assert.assertEquals("ko", json.getString("status"));
-
         // Login alice with extra whitespaces
         response = target().path("/user/login").request()
                 .post(Entity.form(new Form()

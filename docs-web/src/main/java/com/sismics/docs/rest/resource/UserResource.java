@@ -30,8 +30,6 @@ import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
 import com.sismics.util.totp.GoogleAuthenticator;
 import com.sismics.util.totp.GoogleAuthenticatorKey;
-import org.apache.commons.lang3.StringUtils;
-
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObjectBuilder;
@@ -40,6 +38,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.Response;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -253,39 +253,6 @@ public class UserResource extends BaseResource {
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
-        return Response.ok().entity(response.build()).build();
-    }
-
-    /**
-     * Checks if a username is available.
-     * Search only on active accounts.
-     *
-     * @api {get} /user/check_username Check username availability
-     * @apiName GetUserCheckUsername
-     * @apiGroup User
-     * @apiParam {String} username Username
-     * @apiSuccess {String} status Status OK or KO
-     * @apiPermission none
-     * @apiVersion 1.5.0
-     *
-     * @param username Username to check
-     * @return Response
-     */
-    @GET
-    @Path("check_username")
-    public Response checkUsername(
-        @QueryParam("username") String username) {
-        UserDao userDao = new UserDao();
-        User user = userDao.getActiveByUsername(username);
-        
-        JsonObjectBuilder response = Json.createObjectBuilder();
-        if (user != null) {
-            response.add("status", "ko")
-                    .add("message", "Username already registered");
-        } else {
-            response.add("status", "ok");
-        }
-        
         return Response.ok().entity(response.build()).build();
     }
 
