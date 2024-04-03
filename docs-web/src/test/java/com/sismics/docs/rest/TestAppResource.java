@@ -266,6 +266,7 @@ public class TestAppResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()
                         .param("enabled", "true")
+                        .param("starttls", "false")
                         .param("autoTagsEnabled", "false")
                         .param("deleteImported", "false")
                         .param("hostname", "localhost")
