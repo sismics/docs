@@ -411,6 +411,12 @@ public class TestUserResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, totp1Token)
                 .get(JsonObject.class);
         Assert.assertFalse(json.getBoolean("totp_enabled"));
+
+        // Delete totp1
+        response = target().path("/user/totp1").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete();
+        Assert.assertEquals(200, response.getStatus());
     }
 
     @Test
