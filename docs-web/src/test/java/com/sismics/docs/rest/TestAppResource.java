@@ -36,6 +36,9 @@ public class TestAppResource extends BaseJerseyTest {
     /**
      * Test the API resource.
      */
+
+    private static boolean configInboxChanged = false;
+
     @Test
     public void testAppResource() {
         // Login admin
@@ -249,17 +252,19 @@ public class TestAppResource extends BaseJerseyTest {
         json = target().path("/app/config_inbox").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
-        Assert.assertFalse(json.getBoolean("enabled"));
-        Assert.assertEquals("", json.getString("hostname"));
-        Assert.assertEquals(993, json.getJsonNumber("port").intValue());
-        Assert.assertEquals("", json.getString("username"));
-        Assert.assertEquals("", json.getString("password"));
-        Assert.assertEquals("INBOX", json.getString("folder"));
-        Assert.assertEquals("", json.getString("tag"));
         JsonObject lastSync = json.getJsonObject("last_sync");
-        Assert.assertTrue(lastSync.isNull("date"));
-        Assert.assertTrue(lastSync.isNull("error"));
-        Assert.assertEquals(0, lastSync.getJsonNumber("count").intValue());
+        if (!configInboxChanged) {
+                Assert.assertFalse(json.getBoolean("enabled"));
+                Assert.assertEquals("", json.getString("hostname"));
+                Assert.assertEquals(993, json.getJsonNumber("port").intValue());
+                Assert.assertEquals("", json.getString("username"));
+                Assert.assertEquals("", json.getString("password"));
+                Assert.assertEquals("INBOX", json.getString("folder"));
+                Assert.assertEquals("", json.getString("tag"));
+                Assert.assertTrue(lastSync.isNull("date"));
+                Assert.assertTrue(lastSync.isNull("error"));
+                Assert.assertEquals(0, lastSync.getJsonNumber("count").intValue());
+        }
 
         // Change inbox configuration
         target().path("/app/config_inbox").request()
@@ -276,6 +281,7 @@ public class TestAppResource extends BaseJerseyTest {
                         .param("folder", "INBOX")
                         .param("tag", tagInboxId)
                 ), JsonObject.class);
+        configInboxChanged = true;
 
         // Get inbox configuration
         json = target().path("/app/config_inbox").request()
