@@ -230,6 +230,11 @@ public class TestUserResource extends BaseJerseyTest {
                         .param("username", "alice")
                         .param("password", "12345678")));
         Assert.assertEquals(Status.FORBIDDEN, Status.fromStatusCode(response.getStatus()));
+
+        // Delete user bob
+        target().path("/user").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, bobToken)
+                .delete();
     }
 
     /**
@@ -416,7 +421,7 @@ public class TestUserResource extends BaseJerseyTest {
         response = target().path("/user/totp1").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .delete();
-        Assert.assertEquals(200, response.getStatus());
+        Assert.assertEquals(Response.Status.OK, Response.Status.fromStatusCode(response.getStatus()));
     }
 
     @Test
@@ -489,5 +494,11 @@ public class TestUserResource extends BaseJerseyTest {
         Assert.assertEquals(Response.Status.BAD_REQUEST, Response.Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
         Assert.assertEquals("KeyNotFound", json.getString("type"));
+
+        // Delete absent_minded
+        response = target().path("/user/absent_minded").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete();
+        Assert.assertEquals(Response.Status.OK, Response.Status.fromStatusCode(response.getStatus()));
     }
 }

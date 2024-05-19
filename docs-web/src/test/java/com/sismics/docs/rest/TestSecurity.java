@@ -73,6 +73,12 @@ public class TestSecurity extends BaseJerseyTest {
 
         // User testsecurity logs out
         clientUtil.logout(testSecurityToken);
+
+        // Delete the user
+        String adminToken = adminToken();
+        target().path("/user/testsecurity").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete();
     }
 
     @Test
@@ -98,5 +104,11 @@ public class TestSecurity extends BaseJerseyTest {
                 .header(HeaderBasedSecurityFilter.AUTHENTICATED_USER_HEADER, "idontexist")
                 .get()
                 .getStatus());
+        
+        // Delete the user
+        String adminToken = adminToken();
+        target().path("/user/header_auth_test").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete();
     }
 }
