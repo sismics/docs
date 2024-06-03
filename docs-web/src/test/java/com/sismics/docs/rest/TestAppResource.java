@@ -37,7 +37,10 @@ public class TestAppResource extends BaseJerseyTest {
      * Test the API resource.
      */
 
+    // Record if config has been changed by previous test runs
     private static boolean configInboxChanged = false;
+    private static boolean configSmtpChanged = false;
+    private static boolean configLdapChanged = false;
 
     @Test
     public void testAppResource() {
@@ -191,6 +194,12 @@ public class TestAppResource extends BaseJerseyTest {
         target().path("/document/list").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, guestToken)
                 .get(JsonObject.class);
+        
+        // Disable guest login (clean up state)
+        target().path("/app/guest_login").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("enabled", "false")), JsonObject.class);
     }
 
     /**
@@ -205,11 +214,13 @@ public class TestAppResource extends BaseJerseyTest {
         JsonObject json = target().path("/app/config_smtp").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
-        Assert.assertTrue(json.isNull("hostname"));
-        Assert.assertTrue(json.isNull("port"));
-        Assert.assertTrue(json.isNull("username"));
-        Assert.assertTrue(json.isNull("password"));
-        Assert.assertTrue(json.isNull("from"));
+        if (!configSmtpChanged) {
+                Assert.assertTrue(json.isNull("hostname"));
+                Assert.assertTrue(json.isNull("port"));
+                Assert.assertTrue(json.isNull("username"));
+                Assert.assertTrue(json.isNull("password"));
+                Assert.assertTrue(json.isNull("from"));
+        }
 
         // Change SMTP configuration
         target().path("/app/config_smtp").request()
@@ -220,6 +231,7 @@ public class TestAppResource extends BaseJerseyTest {
                         .param("username", "sismics")
                         .param("from", "contact@sismics.com")
                 ), JsonObject.class);
+        configSmtpChanged = true;
 
         // Get SMTP configuration
         json = target().path("/app/config_smtp").request()
@@ -389,7 +401,9 @@ public class TestAppResource extends BaseJerseyTest {
         JsonObject json = target().path("/app/config_ldap").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .get(JsonObject.class);
-        Assert.assertFalse(json.getBoolean("enabled"));
+        if (!configLdapChanged) {
+                Assert.assertFalse(json.getBoolean("enabled"));
+        }
 
         // Change LDAP configuration
         target().path("/app/config_ldap").request()
@@ -406,6 +420,7 @@ public class TestAppResource extends BaseJerseyTest {
                         .param("default_email", "devnull@teedy.io")
                         .param("default_storage", "100000000")
                 ), JsonObject.class);
+        configLdapChanged = true;
 
         // Get the LDAP configuration
         json = target().path("/app/config_ldap").request()

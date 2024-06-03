@@ -188,5 +188,25 @@ public class TestGroupResource extends BaseJerseyTest {
         Assert.assertEquals(2, groups.size());
         Assert.assertTrue(groupList.contains("g11"));
         Assert.assertTrue(groupList.contains("g112"));
+
+        // Delete all remaining groups and users
+        target().path("/group/g11").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete(JsonObject.class);
+        target().path("/group/g12new").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete(JsonObject.class);
+        target().path("/group/g111").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete(JsonObject.class);
+        target().path("/group/g112").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete(JsonObject.class);
+        target().path("/user/group1").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete();
+        target().path("/user/admin2").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete();
     }
 }

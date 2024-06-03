@@ -230,5 +230,11 @@ public class TestTagResource extends BaseJerseyTest {
         Assert.assertEquals(1, tags.size());
         Assert.assertEquals("UpdatedName", tags.getJsonObject(0).getString("name"));
         Assert.assertNull(tags.getJsonObject(0).get("parent"));
+
+        // Deletes user tag1
+        String adminToken = adminToken();
+        target().path("/user/tag1").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete();
     }
 }

@@ -137,5 +137,10 @@ public class TestRouteModelResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         routeModels = json.getJsonArray("routemodels");
         Assert.assertEquals(1, routeModels.size());
+
+        // Deletes routeModel1 user
+        target().path("/user/routeModel1").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete();
     }
 }

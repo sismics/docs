@@ -127,5 +127,14 @@ public class TestShareResource extends BaseJerseyTest {
         Assert.assertEquals(Status.BAD_REQUEST, Status.fromStatusCode(response.getStatus()));
         json = response.readEntity(JsonObject.class);
         Assert.assertEquals("ShareNotFound", json.getString("type"));
+
+        // Deletes share1 and share 2
+        String adminToken = adminToken();
+        target().path("/user/share1").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete();
+        target().path("/user/share2").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete();
     }
 }

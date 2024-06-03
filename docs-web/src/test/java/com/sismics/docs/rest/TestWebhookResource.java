@@ -84,5 +84,10 @@ public class TestWebhookResource extends BaseJerseyTest {
                 .get(JsonObject.class);
         webhooks = json.getJsonArray("webhooks");
         Assert.assertEquals(0, webhooks.size());
+
+        // Deletes webhook1
+        target().path("/user/webhook1").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete();
     }
 }

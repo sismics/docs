@@ -118,6 +118,12 @@ public class TestAuditLogResource extends BaseJerseyTest {
         Assert.assertEquals(countByClass(logs, "Document"), 1);
         Assert.assertEquals(countByClass(logs, "Acl"), 2);
         Assert.assertEquals(countByClass(logs, "File"), 1);
+
+        // Delete auditlog1
+        String adminToken = adminToken();
+        target().path("/user/auditlog1").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .delete();
     }
     
     /**

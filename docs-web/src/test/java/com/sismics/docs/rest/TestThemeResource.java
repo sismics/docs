@@ -103,5 +103,13 @@ public class TestThemeResource extends BaseJerseyTest {
         // Get the background
         response = target().path("/theme/image/background").request().get();
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        // Reset the main color as admin
+        target().path("/theme").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("color", "#ffffff")
+                .param("name", "Teedy")
+                .param("css", "")), JsonObject.class);
     }
 }
