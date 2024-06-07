@@ -48,6 +48,7 @@ RUN apt-get update && \
     tesseract-ocr-sqi \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get upgrade libgnutls30 -y -q
 RUN dpkg-reconfigure -f noninteractive tzdata
 
 # Install Jetty
