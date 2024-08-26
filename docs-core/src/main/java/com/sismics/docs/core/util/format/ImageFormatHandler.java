@@ -3,6 +3,8 @@ package com.sismics.docs.core.util.format;
 import com.google.common.io.Closer;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.util.FileUtil;
+import com.sismics.docs.core.util.ConfigUtil;
+import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.util.mime.MimeType;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -22,7 +24,6 @@ import java.nio.file.Path;
 /**
  * Image format handler.
  *
- * @author bgamard
  */
 public class ImageFormatHandler implements FormatHandler {
     /**
@@ -45,7 +46,7 @@ public class ImageFormatHandler implements FormatHandler {
 
     @Override
     public String extractContent(String language, Path file) throws Exception {
-        if (language == null) {
+        if (language == null || !ConfigUtil.getConfigBooleanValue(ConfigType.OCR_ENABLED, true)) {
             return null;
         }
 

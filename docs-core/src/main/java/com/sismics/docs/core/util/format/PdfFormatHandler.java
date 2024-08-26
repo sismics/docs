@@ -2,6 +2,8 @@ package com.sismics.docs.core.util.format;
 
 import com.google.common.io.Closer;
 import com.sismics.docs.core.util.FileUtil;
+import com.sismics.docs.core.util.ConfigUtil;
+import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.util.mime.MimeType;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
@@ -53,7 +55,7 @@ public class PdfFormatHandler implements FormatHandler {
         }
 
         // No text content, try to OCR it
-        if (language != null && content != null && content.trim().isEmpty()) {
+        if (language != null && content != null && content.trim().isEmpty() && ConfigUtil.getConfigBooleanValue(ConfigType.OCR_ENABLED, true)) {
             StringBuilder sb = new StringBuilder();
             try (InputStream inputStream = Files.newInputStream(file);
                  PDDocument pdfDocument = PDDocument.load(inputStream)) {

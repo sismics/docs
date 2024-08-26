@@ -29,7 +29,7 @@ import org.junit.Test;
 
 /**
  * Test the app resource.
- * 
+ *
  * @author jtremeaux
  */
 public class TestAppResource extends BaseJerseyTest {
@@ -46,7 +46,7 @@ public class TestAppResource extends BaseJerseyTest {
     public void testAppResource() {
         // Login admin
         String adminToken = adminToken();
-        
+
         // Check the application info
         JsonObject json = target().path("/app").request()
                 .get(JsonObject.class);
@@ -58,6 +58,7 @@ public class TestAppResource extends BaseJerseyTest {
         Assert.assertTrue(totalMemory > 0 && totalMemory > freeMemory);
         Assert.assertEquals(0, json.getJsonNumber("queued_tasks").intValue());
         Assert.assertFalse(json.getBoolean("guest_login"));
+        Assert.assertFalse(json.getBoolean("ocr_enabled"));
         Assert.assertEquals("eng", json.getString("default_language"));
         Assert.assertTrue(json.containsKey("global_storage_current"));
         Assert.assertTrue(json.getJsonNumber("active_user_count").longValue() > 0);
@@ -67,13 +68,13 @@ public class TestAppResource extends BaseJerseyTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        
+
         // Clean storage
         response = target().path("/app/batch/clean_storage").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()));
         Assert.assertEquals(Status.OK, Status.fromStatusCode(response.getStatus()));
-        
+
         // Change the default language
         response = target().path("/app/config").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
@@ -104,7 +105,7 @@ public class TestAppResource extends BaseJerseyTest {
     public void testLogResource() {
         // Login admin
         String adminToken = adminToken();
-        
+
         // Check the logs (page 1)
         JsonObject json = target().path("/app/log")
                 .queryParam("level", "DEBUG")
@@ -116,7 +117,7 @@ public class TestAppResource extends BaseJerseyTest {
         Long date1 = logs.getJsonObject(0).getJsonNumber("date").longValue();
         Long date2 = logs.getJsonObject(9).getJsonNumber("date").longValue();
         Assert.assertTrue(date1 >= date2);
-        
+
         // Check the logs (page 2)
         json = target().path("/app/log")
                 .queryParam("offset",  "10")
@@ -194,12 +195,43 @@ public class TestAppResource extends BaseJerseyTest {
         target().path("/document/list").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, guestToken)
                 .get(JsonObject.class);
-        
+
         // Disable guest login (clean up state)
         target().path("/app/guest_login").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
                 .post(Entity.form(new Form()
                         .param("enabled", "false")), JsonObject.class);
+    }
+
+    /**
+     * Test the ocr setting
+     */
+    @Test
+    public void testOcrSetting() {
+        // Login admin
+        String adminToken = adminToken();
+
+        // Get OCR configuration
+        JsonObject json = target().path("/app/ocr").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        if (!configInboxChanged) {
+            Assert.assertFalse(json.getBoolean("enabled"));
+        }
+
+        // Change OCR configuration
+        target().path("/app/ocr").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .post(Entity.form(new Form()
+                        .param("enabled", "true")
+                ), JsonObject.class);
+        configInboxChanged = true;
+
+        // Get OCR configuration
+        json = target().path("/app/ocr").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminToken)
+                .get(JsonObject.class);
+        Assert.assertTrue(json.getBoolean("enabled"));
     }
 
     /**

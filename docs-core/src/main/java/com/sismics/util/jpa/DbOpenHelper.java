@@ -39,7 +39,7 @@ abstract class DbOpenHelper {
     private static final Logger log = LoggerFactory.getLogger(DbOpenHelper.class);
 
     private final JdbcConnectionAccess jdbcConnectionAccess;
-    
+
     private final List<Exception> exceptions = new ArrayList<>();
 
     private Formatter formatter;
@@ -99,7 +99,7 @@ abstract class DbOpenHelper {
                 onCreate();
                 oldVersion = 0;
             }
-            
+
             // Execute update script
             ResourceBundle configBundle = ConfigUtil.getConfigBundle();
             Integer currentVersion = Integer.parseInt(configBundle.getString("db.version"));
@@ -126,7 +126,7 @@ abstract class DbOpenHelper {
 
     /**
      * Execute all upgrade scripts in ascending order for a given version.
-     * 
+     *
      * @param version Version number
      * @throws Exception e
      */
@@ -136,7 +136,7 @@ abstract class DbOpenHelper {
             return name.matches("dbupdate-" + versionString + "-\\d+\\.sql");
         });
         Collections.sort(fileNameList);
-        
+
         for (String fileName : fileNameList) {
             if (log.isInfoEnabled()) {
                 log.info(MessageFormat.format("Executing script: {0}", fileName));
@@ -145,16 +145,16 @@ abstract class DbOpenHelper {
             executeScript(is);
         }
     }
-    
+
     /**
      * Execute a SQL script. All statements must be one line only.
-     * 
+     *
      * @param inputScript Script to execute
      * @throws IOException e
      */
     private void executeScript(InputStream inputScript) throws IOException {
         List<String> lines = CharStreams.readLines(new InputStreamReader(inputScript));
-        
+
         for (String sql : lines) {
             if (Strings.isNullOrEmpty(sql) || sql.startsWith("--")) {
                 continue;
@@ -178,13 +178,13 @@ abstract class DbOpenHelper {
     }
 
     public abstract void onCreate() throws Exception;
-    
+
     public abstract void onUpgrade(int oldVersion, int newVersion) throws Exception;
-    
+
     /**
-     * Returns a List of all Exceptions which occured during the export.
+     * Returns a List of all Exceptions which occurred during the export.
      *
-     * @return A List containig the Exceptions occured during the export
+     * @return A List containing the Exceptions occurred during the export
      */
     public List<?> getExceptions() {
         return exceptions;
@@ -192,7 +192,7 @@ abstract class DbOpenHelper {
 
     /**
      * Format the output SQL statements.
-     * 
+     *
      * @param format True to format
      */
     public void setFormat(boolean format) {

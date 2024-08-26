@@ -21,6 +21,15 @@ angular.module('docs').controller('SettingsConfig', function($scope, $rootScope,
     });
   };
 
+  // Enable/disable OCR
+  $scope.changeOcrEnabled = function (enabled) {
+    Restangular.one('app').post('ocr', {
+      enabled: enabled
+    }).then(function () {
+      $scope.app.ocr_enabled = enabled;
+    });
+  };
+
   // Fetch the current theme configuration
   Restangular.one('theme').get().then(function (data) {
     $scope.theme = data;
@@ -36,7 +45,7 @@ angular.module('docs').controller('SettingsConfig', function($scope, $rootScope,
       $rootScope.appName = $scope.theme.name;
     });
   };
-  
+
   // Send an image
   $scope.sendingImage = false;
   $scope.sendImage = function (type, image) {
