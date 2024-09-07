@@ -31,6 +31,17 @@
   </div>
 </form>
 
+<h2>
+  <span translate="settings.config.title_ocr"></span>
+  <span class="label" ng-class="{ 'label-success': app.ocr_enabled, 'label-danger': !app.ocr_enabled }">
+    {{ app.ocr_enabled ? 'enabled' : 'disabled' | translate }}
+</h2>
+<p translate="settings.config.message_ocr" translate-values="{ appName: appName }"></p>
+<div ng-if="app">
+  <button ng-if="!app.ocr_enabled" class="btn btn-primary" ng-click="changeOcrEnabled(true)">{{ 'settings.config.enable_ocr' | translate }}</button>
+  <button ng-if="app.ocr_enabled" class="btn btn-danger" ng-click="changeOcrEnabled(false)">{{ 'settings.config.disable_ocr' | translate }}</button>
+</div>
+
 <h2 translate="settings.config.title_theme"></h2>
 <form class="form-horizontal" name="editColorForm" novalidate>
   <div class="form-group">

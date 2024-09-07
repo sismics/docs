@@ -8,13 +8,12 @@ import java.util.ResourceBundle;
 
 /**
  * Configuration parameter utilities.
- * 
- * @author jtremeaux
+ *
  */
 public class ConfigUtil {
     /**
      * Returns the textual value of a configuration parameter.
-     * 
+     *
      * @param configType Type of the configuration parameter
      * @return Textual value of the configuration parameter
      * @throws IllegalStateException Configuration parameter undefined
@@ -30,7 +29,7 @@ public class ConfigUtil {
 
     /**
      * Returns the configuration resource bundle.
-     * 
+     *
      * @return Resource bundle
      */
     public static ResourceBundle getConfigBundle() {
@@ -39,14 +38,14 @@ public class ConfigUtil {
 
     /**
      * Returns the integer value of a configuration parameter.
-     * 
+     *
      * @param configType Type of the configuration parameter
      * @return Integer value of the configuration parameter
      * @throws IllegalStateException Configuration parameter undefined
      */
     public static int getConfigIntegerValue(ConfigType configType) {
         String value = getConfigStringValue(configType);
-        
+
         return Integer.parseInt(value);
     }
 
@@ -65,14 +64,28 @@ public class ConfigUtil {
 
     /**
      * Returns the boolean value of a configuration parameter.
-     * 
+     *
      * @param configType Type of the configuration parameter
      * @return Boolean value of the configuration parameter
      * @throws IllegalStateException Configuration parameter undefined
      */
     public static boolean getConfigBooleanValue(ConfigType configType) {
         String value = getConfigStringValue(configType);
-        
         return Boolean.parseBoolean(value);
+    }
+
+    /**
+     * Returns the boolean value of a configuration parameter with a default value.
+     *
+     * @param configType Type of the configuration parameter
+     * @param defaultValue Default value to return if the configuration parameter is undefined
+     * @return Boolean value of the configuration parameter
+     */
+    public static boolean getConfigBooleanValue(ConfigType configType, boolean defaultValue) {
+        try {
+            return getConfigBooleanValue(configType);
+        } catch (IllegalStateException e) {
+            return defaultValue;
+        }
     }
 }
