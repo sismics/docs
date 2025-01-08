@@ -39,6 +39,10 @@
     "global_quota_warning": "<strong>提醒！</ strong>儲存空間已經使用{{current | number: 0}} MB（{{percent | number: 1}}％）總計{{total | number: 0}} MB"
   },
   "document": {
+    "navigation_up": "往上一層",
+    "toggle_navigation": "切換資料夾導航",
+    "display_mode_list": "以清單顯示",
+    "display_mode_grid": "以縮圖顯示",
     "search_simple": "簡單搜尋",
     "search_fulltext": "全文檢索",
     "search_creator": "建立者",
@@ -56,7 +60,7 @@
     "search": "搜尋",
     "search_empty": "搜尋不到 <strong>\"{{ search }}\"</strong>",
     "shared": "分享",
-    "title": "標題",
+    "title": "文件名稱",
     "description": "簡介",
     "contributors": "貢獻者",
     "language": "語言",
@@ -99,14 +103,14 @@
       "workflow_validated_message": "工作流程確認成功。",
       "content": {
         "content": "內容",
-        "delete_file_title": "刪除文件",
-        "delete_file_message": "您是否確認刪除此文件?",
+        "delete_file_title": "刪除檔案",
+        "delete_file_message": "您是否確認刪除此檔案?",
         "upload_pending": "等待中...",
         "upload_progress": "上傳中...",
         "upload_error": "上傳失敗",
         "upload_error_quota": "超過上限",
-        "drop_zone": "將文件拖放至此處上傳",
-        "add_files": "新增文件"
+        "drop_zone": "將檔案拖放至此處上傳",
+        "add_files": "新增檔案"
       },
       "workflow": {
         "workflow": "工作流程",
