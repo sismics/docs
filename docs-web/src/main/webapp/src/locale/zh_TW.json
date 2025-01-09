@@ -1,15 +1,15 @@
 {
   "login": {
-    "username": "帳號名",
+    "username": "帳號",
     "password": "密碼",
     "validation_code_required": "請輸入驗證碼",
     "validation_code_title": "您的帳號已經啟用雙因身份驗證. 請輸入您手機app提供的驗證碼.",
     "validation_code": "驗證碼",
     "remember_me": "記住我",
-    "submit": "登錄",
-    "login_as_guest": "以訪客身份登錄",
-    "login_failed_title": "登錄失敗",
-    "login_failed_message": "帳號名或密碼不正確",
+    "submit": "登入",
+    "login_as_guest": "以訪客身份登入",
+    "login_failed_title": "登入失敗",
+    "login_failed_message": "帳號或密碼不正確",
     "password_lost_btn": "忘記密碼？",
     "password_lost_sent_title": "發送密碼重置郵件",
     "password_lost_sent_message": "一封電子郵件已經發送到<strong>{{username}}</ strong>以重置您的密碼",
@@ -18,48 +18,53 @@
   },
   "passwordlost": {
     "title": "忘記密碼",
-    "message": "請輸入您的帳號名以接收密碼重置連結。 如果您不記得您的帳號名，請聯繫您的管理員",
+    "message": "請輸入您的帳號以接收密碼重置連結。 如果您不記得您的帳號，請聯繫您的管理員",
     "submit": "重置我的密碼"
   },
   "passwordreset": {
-    "message": "請輸入一個新的密碼",
-    "submit": "更改我的密碼",
-    "error_title": "更改密碼出錯",
-    "error_message": "您的密碼恢復請求已超時，請在登錄頁面上提出新的請求"
+    "message": "請輸入新的密碼",
+    "submit": "變更我的密碼",
+    "error_title": "密碼變更錯誤",
+    "error_message": "您的密碼恢復請求已超時，請在登入頁面上提出新的請求"
   },
   "index": {
-    "toggle_navigation": "切換導航",
+    "toggle_navigation": "切換顯示方式",
     "nav_documents": "文件",
     "nav_tags": "標籤",
     "nav_users_groups": "帳號 & 群組",
     "error_info": "{{ count }} 新錯誤",
-    "logged_as": "以 {{ username }}登錄",
+    "logged_as": "以 {{ username }}登入",
     "nav_settings": "設置",
-    "logout": "退出",
+    "logout": "登出",
     "global_quota_warning": "<strong>提醒！</ strong>儲存空間已經使用{{current | number: 0}} MB（{{percent | number: 1}}％）總計{{total | number: 0}} MB"
   },
   "document": {
     "navigation_up": "往上一層",
-    "toggle_navigation": "切換資料夾導航",
+    "toggle_navigation": "切換資料夾顯示方式",
     "display_mode_list": "以清單顯示",
-    "display_mode_grid": "以縮圖顯示",
-    "search_simple": "簡單搜尋",
+    "display_mode_grid": "以網格顯示",
+    "search_simple": "簡易搜尋",
     "search_fulltext": "全文檢索",
     "search_creator": "建立者",
     "search_language": "語言",
     "search_before_date": "在該日期之前",
     "search_after_date": "在該日期之後",
+    "search_before_update_date": "在此日期之前更新",
+    "search_after_update_date": "在此日期之後更新",
     "search_tags": "標籤",
+    "search_shared": "僅共享文件",
+    "search_workflow": "分配給我的工作流程",
     "search_clear": "清除",
     "any_language": "任何語言",
     "add_document": "新增文件",
     "import_eml": "從電子郵件匯入（EML格式）",
     "tags": "標籤",
     "no_tags": "無標籤",
-    "no_documents": "資料庫中無此文件",
+    "no_documents": "没有文件",
     "search": "搜尋",
     "search_empty": "搜尋不到 <strong>\"{{ search }}\"</strong>",
     "shared": "分享",
+    "current_step_name": "Current step",
     "title": "文件名稱",
     "description": "簡介",
     "contributors": "貢獻者",
@@ -75,12 +80,13 @@
     "rights": "版權",
     "relations": "關聯",
     "page_size": "頁面大小",
-    "page_size_10": "10 每頁",
-    "page_size_20": "20 每頁",
-    "page_size_30": "20 每頁",
+    "page_size_10": "每頁10列",
+    "page_size_20": "每頁20列",
+    "page_size_30": "每頁30列",
     "upgrade_quota": "如需要擴充檔案容量, 請聯繫管理員",
     "quota": "{{ current | number: 0 }}MB ({{ current | number: 1 }}%) 已使用 {{ total | number: 0 }}MB",
     "count": "{{ count }} 文件找到",
+    "last_updated": "最後更新 {{ date | timeAgo: dateFormat }}",
     "view": {
       "delete_comment_title": "刪除留言",
       "delete_comment_message": "您是否確認刪除此留言?",
@@ -110,7 +116,13 @@
         "upload_error": "上傳失敗",
         "upload_error_quota": "超過上限",
         "drop_zone": "將檔案拖放至此處上傳",
-        "add_files": "新增檔案"
+        "add_files": "新增檔案",
+        "file_processing_indicator": "該文件正在處理中。在完成之前搜尋將不可用。",
+        "reprocess_file": "重新更新檔案",
+        "upload_new_version": "上傳新的版本",
+        "open_versions": "顯示歷史版本",
+        "display_mode_list": "檔案以列表方式顯示",
+        "display_mode_grid": "檔案以網格方式顯示"
       },
       "workflow": {
         "workflow": "工作流程",
@@ -121,7 +133,8 @@
         "full_name": "<strong>{{ name }}</strong>開始於{{ create_date | date }}",
         "cancel_workflow": "取消目前的工作流程",
         "cancel_workflow_title": "取消工作流程",
-        "cancel_workflow_message": "你真的想取消目前的工作流程嗎？"
+        "cancel_workflow_message": "你真的想取消目前的工作流程嗎？",
+        "no_workflow": "您無法對此文件啟動任何工作流程。"
       },
       "permissions": {
         "permissions": "權限",
@@ -140,7 +153,6 @@
     "edit": {
       "document_edited_with_errors": "文件編輯成功但部分文件沒能上傳",
       "document_added_with_errors": "文件成功新增但部分文件沒能上傳",
-      "document_added": "文件已新增成功 (包含 {{ count }} 文件)",
       "quota_reached": "達到上限",
       "primary_metadata": "主要後設資料",
       "title_placeholder": "資源的性質或類型",
@@ -167,7 +179,10 @@
       "latest_activity": "最新活動",
       "footer_sismics": "<span class=\"fas fa-heart\"></span> 由 <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a> 精心製作",
       "api_documentation": "API 存檔",
-      "feedback": "歡迎回饋意見"
+      "feedback": "歡迎回饋意見",
+      "workflow_document_list": "指派給您的文件",
+      "select_all": "全選",
+      "select_none": "不選"
     },
     "pdf": {
       "export_title": "以PDF形式匯出",
@@ -188,33 +203,45 @@
       "previous": "上一個",
       "next": "下一個",
       "not_found": "未找到文件"
+    },
+    "edit": {
+      "title": "編輯檔案",
+      "name": "檔案名稱"
+    },
+    "versions": {
+      "title": "版本歷史",
+      "filename": "檔名",
+      "mimetype": "類型",
+      "create_date": "建立日期",
+      "version": "版本"
     }
   },
   "tag": {
     "new_tag": "新增",
     "search": "搜尋",
-    "edit_tag": "更改標籤",
     "default": {
       "title": "標籤",
-      "message_1": "<strong>標籤</strong> 是和文件相關的標記.",
-      "message_2": "一個文件可以由多個標籤標記, 同時一個標籤可以運用於多個文件.",
-      "message_3": "使用該 <span class=\"fas fa-pencil-alt\"></span> 按鈕, 您可以編輯標籤的權限.",
-      "message_4": "如果一個標籤可以被另一個帳號或群組讀取, 相關的文件也可以被這些人閱讀.",
-      "message_5": "例如, 用一個標籤標記您公司的文件 <span class=\"label label-info\">我的公司</span> 並同時新增權限 <strong>可讀</strong> 給一個群組的 <span class=\"btn btn-default\">員工</span>"
+      "message_1": "<strong>標籤</strong>是用來連結文件的標記.",
+      "message_2": "文件可以對應多個標籤, 同時標籤也可以運用於多個文件.",
+      "message_3": "點選 <span class=\"fas fa-pencil-alt\"></span> 按鈕, 您可以設定標籤權限.",
+      "message_4": "如果標籤可以被帳號或群組讀取, 相關聯的文件也可以被這些人閱讀.",
+      "message_5": "例如, 用標籤標記您公司文件 <span class=\"label label-info\">我的公司</span> 並同時賦予 <strong>可讀</strong> 權限給群組\"<span class=\"btn btn-default\">員工</span>\""
     },
     "edit": {
       "delete_tag_title": "刪除標籤",
-      "delete_tag_message": "您是否確認刪除該標籤?",
+      "delete_tag_message": "是否刪除?",
       "name": "名稱",
       "color": "顏色",
       "parent": "上層",
-      "info": "此標記的權限也將應用於已標記的文件 <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>"
+      "info": "此標籤上的權限將套用至關聯的文件 <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>",
+      "circular_reference_title": "重複引用",
+      "circular_reference_message": "上層標籤的層次結構形成循環，請選擇另一個上層標籤。"
     }
   },
   "group": {
     "profile": {
       "members": "群組成員",
-      "no_members": "無群組成員",
+      "no_members": "沒有成員",
       "related_links": "相關連結",
       "edit_group": "編輯 {{ name }} 群組"
     }
@@ -240,18 +267,17 @@
   },
   "settings": {
     "menu_personal_settings": "個人設定",
-    "menu_user_account": "帳號帳號",
+    "menu_user_account": "帳號",
     "menu_two_factor_auth": "雙因身份驗證",
     "menu_opened_sessions": "已開啟之連線",
     "menu_file_importer": "匯入大量檔案",
     "menu_general_settings": "一般設定",
     "menu_workflow": "工作流程",
-    "menu_users": "帳號",
+    "menu_users": "使用者",
     "menu_groups": "群組",
     "menu_vocabularies": "詞彙",
     "menu_configuration": "設定",
-    "menu_inbox": "掃描收件匣",
-    "menu_server_logs": "伺服器日誌",
+    "menu_inbox": "收件匣",
     "menu_ldap": "LDAP 驗證",
     "menu_metadata": "自訂後置資料",
     "menu_monitoring": "監控",
@@ -259,7 +285,7 @@
       "title": "LDAP 驗證",
       "enabled": "啟用Ldap驗證",
       "host": "主機名稱",
-      "port": "通運埠 port (389 by default)",
+      "port": "通運埠 port (389)",
       "usessl": "使用 SSL (ldaps)",
       "admin_dn": "管理帳號 DN",
       "admin_password": "管理帳號密碼",
@@ -270,29 +296,34 @@
       "saved": "LDAP 設定成功"
     },
     "user": {
-      "title": "帳號 <small>管理</small>",
-      "add_user": "新增帳號",
-      "username": "帳號",
+      "title": "使用者 <small>管理</small>",
+      "add_user": "新增使用者",
+      "username": "使用者",
       "create_date": "建立日期",
       "totp_enabled": "啟用雙因身份驗證",
       "edit": {
-        "delete_user_title": "刪除帳號",
-        "delete_user_message": "您是否確認刪除該帳號? 所有相關文件，文件和標籤將被刪除",
-        "edit_user_failed_title": "帳號已經存在",
-        "edit_user_failed_message": "該帳號名已使用",
+        "delete_user_title": "刪除使用者",
+        "delete_user_message": "您是否確認刪除使用者? 所有相關文件，文件和標籤將被刪除",
+        "user_used_title": "正在使用中",
+        "user_used_message": "使用者已參與工作流程 \"{{ name }}\"",
+        "edit_user_failed_title": "使用者已經存在",
+        "edit_user_failed_message": "該使用者正在使用中",
         "edit_user_title": "<small>編輯</small> \"{{ username }}\"",
-        "add_user_title": "<small>新增</small> 帳號",
-        "username": "帳號名",
-        "email": "郵箱",
+        "add_user_title": "<small>新增</small> 使用者",
+        "username": "使用者",
+        "email": "郵件",
         "groups": "群組",
         "storage_quota": "儲存限額",
         "storage_quota_placeholder": "儲存限額 (單位MB)",
         "password": "密碼",
         "password_confirm": "密碼 (確認)",
-        "disabled": "禁用帳號",
-        "password_reset_btn": "給該帳號發送密碼重置電子郵件",
-        "password_lost_sent_title": "密碼重置郵件已發送",
-        "password_lost_sent_message": "密碼重置電子郵件已發送至 <strong>{{ username }}</strong>"
+        "disabled": "禁用",
+        "password_reset_btn": "發送重置密碼電子郵件",
+        "password_lost_sent_title": "重置密碼郵件已發送",
+        "password_lost_sent_message": "重置密碼電子郵件已發送至 <strong>{{ username }}</strong>",
+        "disable_totp_btn": "停用該使用者的雙因認證",
+        "disable_totp_title": "停用雙因認證",
+        "disable_totp_message": "您確定要為此使用者停用雙因認證嗎？"
       }
     },
     "workflow": {
@@ -304,33 +335,33 @@
         "delete_workflow_title": "刪除工作流程",
         "delete_workflow_message": "你真的想刪除這個工作流程嗎？目前正在運行的工作流程不會被刪除",
         "edit_workflow_title": "<small>編輯</small>\"{{name}}\"",
-        "add_workflow_title": "<small>新增一個</small>工作流程",
+        "add_workflow_title": "<small>新增</small>工作流程",
         "name": "名稱",
         "name_placeholder": "步驟名稱或說明",
         "drag_help": "拖放以重新排序步驟",
         "type": "類型",
         "type_approve": "核准",
-        "type_validate": "確認",
+        "type_validate": "檢查",
         "target": "指派",
-        "target_help": "<strong>確認：</strong>檢閱並繼續工作流程<br/><strong>核准：</strong>接受或拒絕",
+        "target_help": "<strong>檢查：</strong>檢閱並繼續工作流程<br/><strong>核准：</strong>接受或拒絕",
         "add_step": "新增工作流程",
-        "acl_info": "只有此處定義的使用者和群組才能在文件上啟動此工作流程",
-        "actions": "設定下一步"
-
+        "actions": "設定下一步驟",
+        "remove_action": "移除步驟",
+        "acl_info": "只有此處定義的使用者和群組才能在文件上啟動此工作流程"
       }
     },
     "security": {
       "enable_totp": "啟用雙因身份驗證",
-      "enable_totp_message": "請確保您的手機上已經擁有相容TOTP的應用程序方可新增帳號",
+      "enable_totp_message": "請確保您的手機上已經擁有相容TOTP的應用程序方可啟用",
       "title": "雙因身份 <small>驗證</small>",
-      "message_1": "雙因身份驗證將讓您的<strong>{{ appName }}</strong> 帳號獲得多一層的安全保障.<br/>在啟用該功能前, 請確保在您的手機上擁有TOTP相容的應用程序:",
+      "message_1": "雙因身份驗證將讓您的<strong>{{ appName }}</strong> 帳號獲得多一層的安全保障.<br/>在啟用該功能前, 請確保在您的手機上擁有TOTP相容的應用程式:",
       "message_google_authenticator": "給安卓, 蘋果, 和 黑莓系統: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">谷歌認證</a>",
       "message_duo_mobile": "給 安卓 和 蘋果系統: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
       "message_authenticator": "給 Windows 系統手機: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">認證</a>",
-      "message_2": "這些應用程序會自動生成一個驗證碼，且該驗證碼在一段時間內會變化.<br/>每次登錄 <strong>{{ appName }}</strong>時您都需要輸入該驗證碼.",
+      "message_2": "這些應用程式會自動生成驗證碼，且該驗證碼在一段時間內會變化.<br/>每次登入 <strong>{{ appName }}</strong>時您都需要輸入該驗證碼.",
       "secret_key": "您的金鑰是: <strong>{{ secret }}</strong>",
       "secret_key_warning": "現在用金鑰設定您的手機應用程序上的TOTP, 您之後將無法存取本金鑰.",
-      "totp_enabled_message": "雙因身份驗證將確保您的帳號.<br/>每次您登錄 <strong>{{ appName }}</strong>時, 您都需要從您設定的手機應用程序的驗證碼.<br/>如果您丟失您的手機, 您將無法登錄您的帳號但有效連線將允許您重新生成密鑰.",
+      "totp_enabled_message": "雙因身份驗證將確保您的帳號.<br/>每次您登入 <strong>{{ appName }}</strong>時, 您都需要從您設定的手機應用程序的驗證碼.<br/>如果您丟失您的手機, 您將無法登入您的帳號但有效連線將允許您重新生成密鑰.",
       "disable_totp": {
         "disable_totp": "不啟用雙因身份驗證",
         "message": "您的帳號將不再受雙因身份驗證保護.",
@@ -350,6 +381,8 @@
         "delete_group_message": "您是否確認刪除該群組?",
         "edit_group_failed_title": "群組已經存在",
         "edit_group_failed_message": "這個群組名已經被使用",
+        "group_used_title": "Group in use",
+        "group_used_message": "This group is used in the workflow \"{{ name }}\"",
         "edit_group_title": "編輯 <small>\"{{ name }}\"</small>",
         "add_group_title": "新增 <small>組</small>",
         "name": "名稱",
@@ -373,18 +406,18 @@
       "disable_guest_access": "不啟用訪客權限",
       "title_theme": "主題 <small>定制</small>",
       "title_general": "一般設定",
-      "default_language": "新文件的預設語言",
-      "application_name": "申請名",
+      "default_language": "新文件預設語言",
+      "application_name": "名稱",
       "main_color": "主顏色",
-      "custom_css": "帳號樣式表",
-      "custom_css_placeholder": "在主樣式表之後新增客戶自定義樣式表",
-      "logo": "圖標 (正方形)",
+      "custom_css": "自訂CSS",
+      "custom_css_placeholder": "在主要stylesheet之後新增自訂CSS",
+      "logo": "標誌 (正方形)",
       "background_image": "背景圖片",
       "uploading_image": "上傳圖片中...",
       "title_smtp": "電子郵件<small>設定</ small>",
-      "smtp_hostname": "SMTP主機名",
+      "smtp_hostname": "SMTP主機名稱",
       "smtp_port": "SMTP埠",
-      "smtp_from": "發件人的電子郵件",
+      "smtp_from": "寄件者電子郵件",
       "smtp_username": "SMTP帳號",
       "smtp_password": "SMTP密碼",
       "smtp_updated": "SMTP設定已成功更新",
@@ -409,10 +442,10 @@
       "title": "收件匣掃描",
       "message": "通過啟用此功能，系統會定期掃描指定收件匣中的新電子郵件並自動匯入它們。",
       "enabled": "啟用收件匣掃描功能",
-      "hostname": "IMAP主機名",
+      "hostname": "IMAP主機名稱",
       "port": "IMAP埠（143或993）",
       "starttls": "啟用STARTTLS",
-      "username": "IMAP帳號名",
+      "username": "IMAP帳號",
       "password": "IMAP密碼",
       "folder": "IMAP 資料夾",
       "tag": "新增標籤到匯入的文件",
@@ -422,7 +455,7 @@
       "test_fail": "連接到收件匣時發生錯誤，請檢查參數",
       "saved": "設定成功",
       "autoTagsEnabled": "自動從標有 # 的主旨新增標籤",
-      "deleteImported": "匯入後從郵箱中刪除郵件"
+      "deleteImported": "匯入後從郵件匣中刪除郵件"
     },
     "monitoring": {
       "background_tasks": "背景任務",
@@ -434,38 +467,32 @@
       "log_message": "訊息",
       "indexing": "索引",
       "indexing_info": "如果您發現搜尋結果有差異，可以嘗試進行完整的重新索引。在完成此操作之前，搜尋結果將不完整。",
-      "start_reindexing": "開始重建全部索引",
+      "start_reindexing": "重建全部索引",
       "reindexing_started": "重建索引開始, 請耐心等待直至無任務排列"
-    },
-    "log": {
-      "title": "伺服器 <small>日誌</small>",
-      "date": "日期",
-      "tag": "標籤",
-      "message": "訊息"
     },
     "session": {
       "title": "已開啟 <small>連線</small>",
       "created_date": "建立日期",
-      "last_connection_date": "最後登錄時間",
+      "last_connection_date": "最後登入時間",
       "user_agent": "從",
       "current": "目前",
       "current_session": "這是目前連線",
-      "clear_message": "該帳號的所有其他連接將終止",
-      "clear": "清除所有其他連線"
+      "clear_message": "該帳號的所有其他連線將中斷",
+      "clear": "清除其他連線"
     },
     "vocabulary": {
       "title": "詞彙 <small>輸入</small>",
-      "choose_vocabulary": "選擇一個詞彙編輯",
-      "type": "類型",
-      "coverage": "範圍",
-      "rights": "版權",
-      "value": "值",
+      "choose_vocabulary": "選擇詞彙編輯",
+      "type": "一般類型",
+      "coverage": "國家地區",
+      "rights": "授權類",
+      "value": "詞彙",
       "order": "顺序",
-      "new_entry": "新輸入"
+      "new_entry": "新增詞彙"
     },
     "fileimporter": {
       "title": "匯入大量檔案",
-      "advanced_users": "進階使用!",
+      "advanced_users": "進階使用者專用!",
       "need_intro": "阿你如果要:",
       "need_1": "一次性匯入整個目錄內檔案",
       "need_2": "掃描目錄內新的檔案並且匯入",
@@ -477,10 +504,10 @@
     }
   },
   "feedback": {
-    "title": "歡迎提供反饋意見",
-    "message": "對Teedy文件管理系統有任何建議或疑問？我們靜候您的反饋意見！",
-    "sent_title": "反饋已發送",
-    "sent_message": "感謝您的反饋意見！這將幫助我們進一步優化Teedy文件管理系統以便更好的為您提供服務。"
+    "title": "歡迎提供回饋意見",
+    "message": "對Teedy文件管理系統有任何建議或疑問？我們靜候您的回饋意見！",
+    "sent_title": "回饋已發送",
+    "sent_message": "感謝您的回饋意見！這將幫助我們進一步優化Teedy文件管理系統以便更好的為您提供服務。"
   },
   "import": {
     "title": "輸入",
@@ -488,7 +515,7 @@
     "error_general": "嘗試匯入文件時發生錯誤，請確保它是有效的EML文件"
   },
   "app_share": {
-    "main": "請求一個共享的文件鏈接來存取該文件",
+    "main": "請求文件共享的連結來存取該文件",
     "403": {
       "title": "未經授權",
       "message": "您正在查看的文件已經被取消共享"
@@ -496,7 +523,7 @@
   },
   "directive": {
     "acledit": {
-      "acl_target": "用於",
+      "acl_target": "對象",
       "acl_permission": "權限",
       "add_permission": "新增權限",
       "search_user_group": "搜尋帳號或群組"
@@ -510,10 +537,11 @@
       "Document": "文件",
       "File": "文件",
       "Group": "組",
+      "Route": "工作流程",
+      "RouteModel": "工作流程",
       "Tag": "標籤",
       "User": "帳號",
-      "RouteModel": "工作流程",
-      "Route": "工作流程"
+      "Webhook": "Webhook"
     },
     "selectrelation": {
       "typeahead": "請輸入文件名稱"
@@ -542,34 +570,59 @@
     "SHARE": "已共享"
   },
   "workflow_type": {
-    "VALIDATE": "確認",
+    "VALIDATE": "檢查",
     "APPROVE": "核准"
   },
   "workflow_transition": {
     "APPROVED": "核准",
-    "REJECTED": "拒絕",
+    "REJECTED": "退回",
     "VALIDATED": "確認"
   },
   "validation": {
     "required": "必填",
     "too_short": "過短",
     "too_long": "過長",
-    "email": "必須是有效郵箱地址",
-    "password_confirm": "密碼和確認密碼必須一致",
+    "email": "必須是有效郵件地址",
+    "password_confirm": "密碼必須一致",
     "number": "必須為數字",
-    "no_space": "不允許空格"
+    "no_space": "不允許空格",
+    "alphanumeric": "只允許使用字母和數字"
   },
   "action_type": {
     "ADD_TAG": "加入標籤",
     "REMOVE_TAG": "移除標籤",
-    "PROCESS_FILES": "傳遞檔案"
+    "PROCESS_FILES": "處理檔案"
   },
   "pagination": {
-    "previous": "以前",
-    "next": "下一個",
-    "first": "首先",
-    "last": "最後"
+    "previous": "上一頁",
+    "next": "下一頁",
+    "first": "頁首",
+    "last": "頁尾"
   },
+  "onboarding": {
+    "step1": {
+      "title": "首次造訪?",
+      "description": "如果這是您第一次使用 Teedy，請按「下一步」按鈕，或取消本導覽。"
+    },
+    "step2": {
+      "title": "文件",
+      "description": "Teedy 以文件的形式組成，每個文件含多個檔案。"
+    },
+    "step3": {
+      "title": "檔案",
+      "description": "您可以在新增文件之後加入檔案，或使用快速上傳區域上傳檔案。"
+    },
+    "step4": {
+      "title": "搜尋",
+      "description": "這是搜尋文件方式，也可以使用放大鏡進行進階搜尋。"
+    },
+    "step5": {
+      "title": "標籤",
+      "description": "可以用利用標籤模擬目錄結構（就像超級資料夾）。請在此進行設定作業。"
+    }
+  },
+  "yes": "Yes",
+  "no": "No",
   "ok": "確認",
   "cancel": "取消",
   "share": "共享",
@@ -582,7 +635,9 @@
   "export": "匯出",
   "edit": "編輯",
   "delete": "刪除",
-  "loading": "加載中...",
+  "rename": "修改名稱",
+  "download": "下載",
+  "loading": "載入中...",
   "send": "發送",
   "enabled": "啟用",
   "disabled": "未啟用"

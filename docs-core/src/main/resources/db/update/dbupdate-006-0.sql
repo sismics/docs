@@ -241,7 +241,7 @@ insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values(
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('coverage-swe', 'coverage', 'Sweden', 214);
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('coverage-che', 'coverage', 'Switzerland', 215);
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('coverage-syr', 'coverage', 'Syrian Arab Republic', 216);
-insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('coverage-twn', 'coverage', 'Taiwan, Province of China', 217);
+insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('coverage-twn', 'coverage', 'Taiwan', 217);
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('coverage-tjk', 'coverage', 'Tajikistan', 218);
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('coverage-tza', 'coverage', 'Tanzania, United Republic of', 219);
 insert into T_VOCABULARY(VOC_ID_C, VOC_NAME_C, VOC_VALUE_C, VOC_ORDER_N) values('coverage-tha', 'coverage', 'Thailand', 220);
