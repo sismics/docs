@@ -39,13 +39,21 @@
     "global_quota_warning": "<strong>提醒!</strong> 全球配额存储空间已经使用 {{ current | number: 0 }}MB 占总存储配额 {{ total | number: 0 }}MB 的 ({{ percent | number: 1 }}%)"
   },
   "document": {
+    "navigation_up": "上一层",
+    "toggle_navigation": "切换文件夹导航",
+    "display_mode_list": "在列表中显示文件",
+    "display_mode_grid": "以网格显示文件",
     "search_simple": "简单搜索",
     "search_fulltext": "全文搜索",
     "search_creator": "创建者",
     "search_language": "语言",
     "search_before_date": "在此日期之前",
     "search_after_date": "在此日期之后",
+    "search_before_update_date": "在此日期之前更新",
+    "search_after_update_date": "在此日期之后更新",
     "search_tags": "标签",
+    "search_shared": "仅共享文件",
+    "search_workflow": "分配给我的工作流程",
     "search_clear": "清除",
     "any_language": "所有语言",
     "add_document": "添加一个文档",
@@ -56,6 +64,7 @@
     "search": "搜索",
     "search_empty": "无匹配 <strong>\"{{ search }}\"</strong>",
     "shared": "已共享",
+    "current_step_name": "当前步骤",
     "title": "标题",
     "description": "介绍",
     "contributors": "贡献者",
@@ -67,16 +76,17 @@
     "format": "格式",
     "source": "来源",
     "type": "类型",
-    "coverage": "覆盖",
-    "rights": "权利",
+    "coverage": "范围",
+    "rights": "版权",
     "relations": "关联",
     "page_size": "页面大小",
-    "page_size_10": "10 每页",
-    "page_size_20": "20 每页",
-    "page_size_30": "30 每页",
+    "page_size_10": "每页10列",
+    "page_size_20": "每页20列",
+    "page_size_30": "每页30列",
     "upgrade_quota": "如需要升级您的限额, 请联系管理员",
     "quota": "{{ current | number: 0 }}MB ({{ current | number: 1 }}%) 已使用 {{ total | number: 0 }}MB",
     "count": "找到{{ count }}个文件",
+    "last_updated": "最后更新 {{ date | timeAgo: dateFormat }}",
     "view": {
       "delete_comment_title": "删除评论",
       "delete_comment_message": "您是否确认删除此评论?",
@@ -106,7 +116,13 @@
         "upload_error": "上传失败",
         "upload_error_quota": "已达到您的限额",
         "drop_zone": "将文件拖放至此处上传",
-        "add_files": "添加文件"
+        "add_files": "添加文件",
+        "file_processing_indicator": "此文件正在处理中。该文件正在处理中。在处理完毕之前，将无法进行搜索。",
+        "reprocess_file": "重新处理该文件",
+        "upload_new_version": "传新版本",
+        "open_versions": "显示历史版本",
+        "display_mode_list": "以列表形式显示文件",
+        "display_mode_grid": "以网格方式显示文件"
       },
       "workflow": {
         "workflow": "工作流程",
@@ -117,7 +133,8 @@
         "full_name": "<strong>{{ name }}</strong>开始于{{ create_date | date }}",
         "cancel_workflow": "取消当前的工作流程",
         "cancel_workflow_title": "取消工作流程",
-        "cancel_workflow_message": "你真的想取消当前的工作流程吗？"
+        "cancel_workflow_message": "你真的想取消当前的工作流程吗？",
+        "no_workflow": "您不能在此文档上启动任何工作流程。"
       },
       "permissions": {
         "permissions": "权限",
@@ -136,7 +153,6 @@
     "edit": {
       "document_edited_with_errors": "文档编辑成功但部分文件没能上传",
       "document_added_with_errors": "文档成功添加但部分文件没能上传",
-      "document_added": "文档成功上传 (与{{ count }}个文件)",
       "quota_reached": "达到限额",
       "primary_metadata": "主要元数据",
       "title_placeholder": "资源的性质或类型",
@@ -163,7 +179,10 @@
       "latest_activity": "最新活动",
       "footer_sismics": "由<a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>精心制作",
       "api_documentation": "API 存档",
-      "feedback": "欢迎提供反馈意见"
+      "feedback": "欢迎提供反馈意见",
+      "workflow_document_list": "分配给您的文件",
+      "select_all": "全选",
+      "select_none": "不选"
     },
     "pdf": {
       "export_title": "以PDF形式导出",
@@ -184,12 +203,22 @@
       "previous": "上一个",
       "next": "下一个",
       "not_found": "文件未找到"
+    },
+    "edit": {
+      "title": "编辑档案",
+      "name": "文档名称"
+    },
+    "versions": {
+      "title": "历史版本",
+      "filename": "文档名称",
+      "mimetype": "类型",
+      "create_date": "创建日期",
+      "version": "版本"
     }
   },
   "tag": {
     "new_tag": "新标签",
     "search": "搜索",
-    "edit_tag": "更改标签",
     "default": {
       "title": "标签",
       "message_1": "<strong>标签</strong> 是和文档相关的标示.",
@@ -204,7 +233,9 @@
       "name": "名称",
       "color": "颜色",
       "parent": "母",
-      "info": "此标记的权限也将应用于已标记的文档 <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>"
+      "info": "此标记的权限也将应用于已标记的文档 <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>",
+      "circular_reference_title": "重复引用",
+      "circular_reference_message": "父标签的层级结构形成了一个循环，请选择另一个父标签。"
     }
   },
   "group": {
@@ -239,6 +270,7 @@
     "menu_user_account": "用户帐号",
     "menu_two_factor_auth": "双重身份验证",
     "menu_opened_sessions": "已打开会话",
+    "menu_file_importer": "批量文件导入程序",
     "menu_general_settings": "一般设置",
     "menu_workflow": "工作流程",
     "menu_users": "用户",
@@ -246,7 +278,23 @@
     "menu_vocabularies": "词条",
     "menu_configuration": "配置",
     "menu_inbox": "收件箱扫描",
-    "menu_server_logs": "服务器日志",
+    "menu_ldap": "LDAP 身份验证",
+    "menu_metadata": "自定义元数据",
+    "menu_monitoring": "监控",
+    "ldap": {
+      "title": "LDAP 身份验证",
+      "enabled": "启用 LDAP 身份验证",
+      "host": "LDAP 主机名",
+      "port": "LDAP 端口（默认为 389）",
+      "usessl": "启用 SSL (ldaps)",
+      "admin_dn": "管理员 DN",
+      "admin_password": "管理员密码",
+      "base_dn": "基本搜索 DN",
+      "filter": "搜索过滤器（必须包含 USERNAME, eg. \"(uid=USERNAME)\")",
+      "default_email": "LDAP 用户的默认电子邮件",
+      "default_storage": "LDAP 用户的默认存储空间",
+      "saved": "成功保存 LDAP 配置"
+    },
     "user": {
       "title": "用户 <small>管理</small>",
       "add_user": "添加用户",
@@ -256,6 +304,8 @@
       "edit": {
         "delete_user_title": "删除用户",
         "delete_user_message": "您是否确认删除该用户? 所有相关文档，文件和标签将被删除",
+        "user_used_title": "用户使用中",
+        "user_used_message": "该用户用于工作流程 \"{{ name }}\"",
         "edit_user_failed_title": "用户已存在",
         "edit_user_failed_message": "该用户名已被占用",
         "edit_user_title": "<small>编辑</small> \"{{ username }}\"",
@@ -270,7 +320,10 @@
         "disabled": "禁用用户",
         "password_reset_btn": "给该用户发送密码重置电子邮件",
         "password_lost_sent_title": "密码重置邮件已发送",
-        "password_lost_sent_message": "密码重置电子邮件已发送至 <strong>{{ username }}</strong>"
+        "password_lost_sent_message": "密码重置电子邮件已发送至 <strong>{{ username }}</strong>",
+        "disable_totp_btn": "为该用户禁用双因素身份验证",
+        "disable_totp_title": "禁用双因素身份验证",
+        "disable_totp_message": "您确定要禁用该用户的双因素身份验证吗？"
       }
     },
     "workflow": {
@@ -291,7 +344,10 @@
         "type_validate": "验证",
         "target": "分配给",
         "target_help": "<strong>批准：</strong>审核并继续工作流程<strong>验证：</strong>接受或拒绝审核",
-        "add_step": "添加工作流程步骤"
+        "add_step": "添加工作流程步骤",
+        "actions": "之后会发生什么呢？",
+        "remove_action": "移除行动",
+        "acl_info": "只有在此定义的用户和组才能在文档上启动此工作流程"
       }
     },
     "security": {
@@ -311,7 +367,10 @@
         "message": "您的帐户将不再受双重身份验证保护.",
         "confirm_password": "确认您的密码",
         "submit": "不激活双重身份验证"
-      }
+      },
+      "test_totp": "请输入手机上显示的验证码：",
+      "test_code_success": "验证码 OK",
+      "test_code_fail": "此代码无效，请仔细检查您的手机是否正确配置或禁用双因素身份验证"
     },
     "group": {
       "title": "群组 <small>管理</small>",
@@ -322,6 +381,8 @@
         "delete_group_message": "您是否确认删除该组?",
         "edit_group_failed_title": "组已存在",
         "edit_group_failed_message": "该组名已经被占用",
+        "group_used_title": "使用中的组",
+        "group_used_message": "组用于工作流程 \"{{ name }}\"",
         "edit_group_title": "编辑 <small>\"{{ name }}\"</small>",
         "add_group_title": "<small>添加一个</small>组",
         "name": "名称",
@@ -359,7 +420,23 @@
       "smtp_from": "发送邮件",
       "smtp_username": "SMTP 用户名",
       "smtp_password": "SMTP密码",
-      "smtp_updated": "SMTP组态更新成功"
+      "smtp_updated": "SMTP组态更新成功",
+      "title_ocr": "光学字符识别 (OCR)",
+      "message_ocr": "OCR 是一种从图像和 PDF 文件中提取文本的功能。该功能需要在服务器上安装一个正常运行的 Tesseract。",
+      "enable_ocr": "启用 OCR",
+      "disable_ocr": "禁用 OCR",
+      "webhooks": "Webhooks",
+      "webhooks_explain": "当指定事件发生时，Webhooks 将被调用。给定的 URL 将与包含事件名称和相关资源 ID 的 JSON 有效负载一起被 POST。",
+      "webhook_event": "事件",
+      "webhook_url": "URL",
+      "webhook_create_date": "创建日期",
+      "webhook_add": "添加 Webhook"
+    },
+    "metadata": {
+      "title": "自定义元数据配置",
+      "message": "在这里，您可以为文档添加自定义元数据，如内部标识符或过期日期。请注意，元数据类型在创建后无法更改。",
+      "name": "元数据名称",
+      "type": "元数据类型"
     },
     "inbox": {
       "title": "收件箱扫描",
@@ -367,6 +444,7 @@
       "enabled": "启用收件箱扫描",
       "hostname": "IMAP主机名",
       "port": "IMAP端口（143或993）",
+      "starttls": "启用 STARTTLS",
       "username": "IMAP用户名",
       "password": "IMAP密码",
       "folder": "IMAP 件夹中",
@@ -374,13 +452,23 @@
       "test": "测试参数",
       "last_sync": "上次同步：{{ data.date | date }}，{{ data.count }}消息导入",
       "test_success": "与收件箱的连接成功（{{count}}消息）",
-      "test_fail": "连接到收件箱时发生错误，请检查参数"
+      "test_fail": "连接到收件箱时发生错误，请检查参数",
+      "saved": "IMAP 配置保存成功",
+      "autoTagsEnabled": "从标有 # 的主题行自动添加标签",
+      "deleteImported": "导入后从邮箱中删除邮件"
     },
-    "log": {
-      "title": "服务器 <small>日志</small>",
-      "date": "日期",
-      "tag": "标签",
-      "message": "信息"
+    "monitoring": {
+      "background_tasks": "后台任务",
+      "queued_tasks": "当前有 {{ count }} 队列任务。",
+      "queued_tasks_explain": "文件处理、缩略图创建、索引更新、光学字符识别都是后台任务。大量未处理的任务会导致搜索结果不完整。",
+      "server_logs": "服务器日志",
+      "log_date": "日期",
+      "log_tag": "标签",
+      "log_message": "信息",
+      "indexing": "编制索引",
+      "indexing_info": "如果发现搜索结果存在差异，可以尝试进行全面的重新索引。在完成此操作之前，搜索结果将是不完整的。",
+      "start_reindexing": "开始全面重新索引",
+      "reindexing_started": "重新索引已开始，请等待后台任务结束。"
     },
     "session": {
       "title": "打开 <small>会话</small>",
@@ -401,6 +489,18 @@
       "value": "值",
       "order": "顺序",
       "new_entry": "新输入"
+    },
+    "fileimporter": {
+      "title": "批量文件导入程序",
+      "advanced_users": "面向高级用户！",
+      "need_intro": "如果您需要：",
+      "need_1": "一次性导入一个文件目录",
+      "need_2": "扫描目录以查找新文件并将其导入",
+      "line_1": "转到 <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> 并为你的系统下载文件导入工具。",
+      "line_2": "请按照<a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">此处的说明</a>使用该工具。",
+      "line_3": "您的文件将根据文件导入器的配置导入到文档中。",
+      "download": "下载",
+      "instructions": "使用说明"
     }
   },
   "feedback": {
@@ -437,16 +537,17 @@
       "Document": "文档",
       "File": "文件",
       "Group": "组",
+      "RouteModel": "工作流程",
+      "Route": "工作流程",
       "Tag": "标签",
       "User": "用户",
-      "RouteModel": "工作流程",
-      "Route": "工作流程"
+      "Webhook": "Webhook"
     },
     "selectrelation": {
-      "typeahead": "请输入一个文档名称"
+      "typeahead": "请输入文档名称"
     },
     "selecttag": {
-      "typeahead": "请输入一个标签"
+      "typeahead": "请输入标签"
     },
     "datepicker": {
       "current": "今天",
@@ -470,7 +571,7 @@
   },
   "workflow_type": {
     "VALIDATE": "验证",
-    "APPROVE": "赞许"
+    "APPROVE": "批准"
   },
   "workflow_transition": {
     "APPROVED": "批准",
@@ -484,14 +585,44 @@
     "email": "必须是一个有效邮箱地址",
     "password_confirm": "密码和确认密码必须完全一致",
     "number": "必须为数字",
-    "no_space": "不允许空格"
+    "no_space": "不允许空格",
+    "alphanumeric": "只允许使用字母和数字"
+  },
+  "action_type": {
+    "ADD_TAG": "添加标签",
+    "REMOVE_TAG": "移除标签",
+    "PROCESS_FILES": "处理文件"
   },
   "pagination": {
     "previous": "上一个",
     "next": "下一个",
-    "first": "第一",
-    "last": "持续"
+    "first": "页首",
+    "last": "尾页"
   },
+  "onboarding": {
+    "step1": {
+      "title": "第一次来？",
+      "description": "如果您是第一次访问 Teedy，请单击 “下一步 ”按钮，否则请随时关闭我。"
+    },
+    "step2": {
+      "title": "文件",
+      "description": "Teedy 以文件形式组织，每个文件包含多个文件。"
+    },
+    "step3": {
+      "title": "文档",
+      "description": "您可以在创建文档后或之前使用快速上传区域添加文件。"
+    },
+    "step4": {
+      "title": "检索",
+      "description": "这是找回文件的主要方法。还可以使用放大镜按钮进行高级搜索。"
+    },
+    "step5": {
+      "title": "标签",
+      "description": "您可以使用标签来模拟目录结构（如超级文件夹）。请在此处进行配置。"
+    }
+  },
+  "yes": "Yes",
+  "no": "No",
   "ok": "确认",
   "cancel": "取消",
   "share": "共享",
@@ -504,6 +635,8 @@
   "export": "导出",
   "edit": "编辑",
   "delete": "删除",
+  "rename": "Rename",
+  "download": "Download",
   "loading": "加载中...",
   "send": "发送",
   "enabled": "激活",

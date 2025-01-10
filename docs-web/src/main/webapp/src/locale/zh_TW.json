@@ -3,7 +3,7 @@
     "username": "帳號",
     "password": "密碼",
     "validation_code_required": "請輸入驗證碼",
-    "validation_code_title": "您的帳號已經啟用雙因身份驗證. 請輸入您手機app提供的驗證碼.",
+    "validation_code_title": "您的帳號已經啟用雙因素驗證. 請輸入您手機app提供的驗證碼.",
     "validation_code": "驗證碼",
     "remember_me": "記住我",
     "submit": "登入",
@@ -39,10 +39,10 @@
     "global_quota_warning": "<strong>提醒！</ strong>儲存空間已經使用{{current | number: 0}} MB（{{percent | number: 1}}％）總計{{total | number: 0}} MB"
   },
   "document": {
-    "navigation_up": "往上一層",
+    "navigation_up": "上一层",
     "toggle_navigation": "切換資料夾顯示方式",
-    "display_mode_list": "以清單顯示",
-    "display_mode_grid": "以網格顯示",
+    "display_mode_list": "清單顯示",
+    "display_mode_grid": "網格顯示",
     "search_simple": "簡易搜尋",
     "search_fulltext": "全文檢索",
     "search_creator": "建立者",
@@ -60,11 +60,11 @@
     "import_eml": "從電子郵件匯入（EML格式）",
     "tags": "標籤",
     "no_tags": "無標籤",
-    "no_documents": "没有文件",
+    "no_documents": "無此文件",
     "search": "搜尋",
     "search_empty": "搜尋不到 <strong>\"{{ search }}\"</strong>",
     "shared": "分享",
-    "current_step_name": "Current step",
+    "current_step_name": "當前步驟",
     "title": "文件名稱",
     "description": "簡介",
     "contributors": "貢獻者",
@@ -121,8 +121,8 @@
         "reprocess_file": "重新更新檔案",
         "upload_new_version": "上傳新的版本",
         "open_versions": "顯示歷史版本",
-        "display_mode_list": "檔案以列表方式顯示",
-        "display_mode_grid": "檔案以網格方式顯示"
+        "display_mode_list": "以列表方式顯示",
+        "display_mode_grid": "以網格方式顯示"
       },
       "workflow": {
         "workflow": "工作流程",
@@ -268,7 +268,7 @@
   "settings": {
     "menu_personal_settings": "個人設定",
     "menu_user_account": "帳號",
-    "menu_two_factor_auth": "雙因身份驗證",
+    "menu_two_factor_auth": "雙因素驗證",
     "menu_opened_sessions": "已開啟之連線",
     "menu_file_importer": "匯入大量檔案",
     "menu_general_settings": "一般設定",
@@ -300,7 +300,7 @@
       "add_user": "新增使用者",
       "username": "使用者",
       "create_date": "建立日期",
-      "totp_enabled": "啟用雙因身份驗證",
+      "totp_enabled": "啟用雙因素驗證",
       "edit": {
         "delete_user_title": "刪除使用者",
         "delete_user_message": "您是否確認刪除使用者? 所有相關文件，文件和標籤將被刪除",
@@ -321,9 +321,9 @@
         "password_reset_btn": "發送重置密碼電子郵件",
         "password_lost_sent_title": "重置密碼郵件已發送",
         "password_lost_sent_message": "重置密碼電子郵件已發送至 <strong>{{ username }}</strong>",
-        "disable_totp_btn": "停用該使用者的雙因認證",
-        "disable_totp_title": "停用雙因認證",
-        "disable_totp_message": "您確定要為此使用者停用雙因認證嗎？"
+        "disable_totp_btn": "停用該使用者的雙因素驗證",
+        "disable_totp_title": "停用雙因素驗證",
+        "disable_totp_message": "您確定要為此使用者停用雙因素驗證嗎？"
       }
     },
     "workflow": {
@@ -351,26 +351,26 @@
       }
     },
     "security": {
-      "enable_totp": "啟用雙因身份驗證",
+      "enable_totp": "啟用雙因素驗證",
       "enable_totp_message": "請確保您的手機上已經擁有相容TOTP的應用程序方可啟用",
-      "title": "雙因身份 <small>驗證</small>",
-      "message_1": "雙因身份驗證將讓您的<strong>{{ appName }}</strong> 帳號獲得多一層的安全保障.<br/>在啟用該功能前, 請確保在您的手機上擁有TOTP相容的應用程式:",
+      "title": "雙因素 <small>驗證</small>",
+      "message_1": "雙因素驗證將讓您的<strong>{{ appName }}</strong> 帳號獲得多一層的安全保障.<br/>在啟用該功能前, 請確保在您的手機上擁有TOTP相容的應用程式:",
       "message_google_authenticator": "給安卓, 蘋果, 和 黑莓系統: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">谷歌認證</a>",
       "message_duo_mobile": "給 安卓 和 蘋果系統: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
       "message_authenticator": "給 Windows 系統手機: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">認證</a>",
       "message_2": "這些應用程式會自動生成驗證碼，且該驗證碼在一段時間內會變化.<br/>每次登入 <strong>{{ appName }}</strong>時您都需要輸入該驗證碼.",
       "secret_key": "您的金鑰是: <strong>{{ secret }}</strong>",
       "secret_key_warning": "現在用金鑰設定您的手機應用程序上的TOTP, 您之後將無法存取本金鑰.",
-      "totp_enabled_message": "雙因身份驗證將確保您的帳號.<br/>每次您登入 <strong>{{ appName }}</strong>時, 您都需要從您設定的手機應用程序的驗證碼.<br/>如果您丟失您的手機, 您將無法登入您的帳號但有效連線將允許您重新生成密鑰.",
+      "totp_enabled_message": "雙因素驗證將確保您的帳號.<br/>每次您登入 <strong>{{ appName }}</strong>時, 您都需要從您設定的手機應用程序的驗證碼.<br/>如果您丟失您的手機, 您將無法登入您的帳號但有效連線將允許您重新生成密鑰.",
       "disable_totp": {
-        "disable_totp": "不啟用雙因身份驗證",
-        "message": "您的帳號將不再受雙因身份驗證保護.",
+        "disable_totp": "不啟用雙因素驗證",
+        "message": "您的帳號將不再受雙因素驗證保護.",
         "confirm_password": "確認您的密碼",
-        "submit": "不啟用雙因身份驗證"
+        "submit": "不啟用雙因素驗證"
       },
       "test_totp": "請輸入手機上顯示的驗證碼：",
       "test_code_success": "驗證碼正確",
-      "test_code_fail": "驗證碼無效，請仔細檢查您的手機設定是否正確或停用雙因認證"
+      "test_code_fail": "驗證碼無效，請仔細檢查您的手機設定是否正確或停用雙因素驗證"
     },
     "group": {
       "title": "群組 <small>管理</small>",
