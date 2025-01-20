@@ -1,12 +1,19 @@
 package com.sismics.docs.core.dao;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import at.favre.lib.crypto.bcrypt.BCrypt;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.sismics.docs.core.constant.AuditLogType;
 import com.sismics.docs.core.constant.Constants;
 import com.sismics.docs.core.dao.criteria.UserCriteria;
@@ -19,11 +26,10 @@ import com.sismics.docs.core.util.jpa.QueryUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.context.ThreadLocalContext;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
-import java.sql.Timestamp;
-import java.util.*;
 
 /**
  * User DAO.
@@ -228,6 +234,23 @@ public class UserDao {
         try {
             Query q = em.createQuery("select u from User u where u.username = :username and u.deleteDate is null");
             q.setParameter("username", username);
+            return (User) q.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets an active user by its email.
+     * 
+     * @param email User's email
+     * @return User
+     */
+    public User getByEmail(String email) {
+        EntityManager em = ThreadLocalContext.get().getEntityManager();
+        try {
+            Query q = em.createQuery("select u from User u where u.email = :email and u.deleteDate is null");
+            q.setParameter("email", email);
             return (User) q.getSingleResult();
         } catch (NoResultException e) {
             return null;
