@@ -1,8 +1,32 @@
 package com.sismics.docs.core.service;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.mail.Flags;
+import javax.mail.Folder;
+import javax.mail.FolderClosedException;
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Store;
+import javax.mail.internet.InternetAddress;
+import javax.mail.search.FlagTerm;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.docs.core.dao.TagDao;
+import com.sismics.docs.core.dao.UserDao;
 import com.sismics.docs.core.dao.criteria.TagCriteria;
 import com.sismics.docs.core.dao.dto.TagDto;
 import com.sismics.docs.core.event.DocumentCreatedAsyncEvent;
@@ -15,16 +39,6 @@ import com.sismics.docs.core.util.TransactionUtil;
 import com.sismics.docs.core.util.jpa.SortCriteria;
 import com.sismics.util.EmailUtil;
 import com.sismics.util.context.ThreadLocalContext;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.mail.*;
-import javax.mail.search.FlagTerm;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Inbox scanning service.
@@ -88,7 +102,8 @@ public class InboxService extends AbstractScheduledService {
                 Message[] messages = inbox.search(new FlagTerm(new Flags(Flags.Flag.SEEN), false));
                 log.info(messages.length + " messages found");
                 for (Message message : messages) {
-                    importMessage(message, tagsNameToId);
+                    InternetAddress sender = (InternetAddress) message.getFrom()[0];
+                    importMessage(message, tagsNameToId,sender);
                     lastSyncMessageCount++;
                 }
             } catch (FolderClosedException e) {
@@ -190,8 +205,8 @@ public class InboxService extends AbstractScheduledService {
      * @param message Message
      * @throws Exception e
      */
-    private void importMessage(Message message, Map<String, String> tags) throws Exception {
-        log.info("Importing message: " + message.getSubject());
+    private void importMessage(Message message, Map<String, String> tags,InternetAddress sender) throws Exception {
+        log.info("Importing message: " + message.getSubject()+",sender="+sender.getAddress());
 
         // Parse the mail
         EmailUtil.MailContent mailContent = new EmailUtil.MailContent();
@@ -219,8 +234,12 @@ public class InboxService extends AbstractScheduledService {
             log.debug("Tags found: " + String.join(", ", tagsFound));
             subject = subject.trim().replaceAll(" +", " ");
         }
-
-        document.setUserId("admin");
+        UserDao userDao = new UserDao();
+        com.sismics.docs.core.model.jpa.User user = userDao.getByEmail(sender.getAddress());
+        if(user!=null)
+          document.setUserId(user.getId());
+        else
+          document.setUserId("admin");
         document.setTitle(StringUtils.abbreviate(subject, 100));
         document.setDescription(StringUtils.abbreviate(mailContent.getMessage(), 4000));
         document.setSubject(StringUtils.abbreviate(mailContent.getSubject(), 500));
@@ -232,9 +251,13 @@ public class InboxService extends AbstractScheduledService {
         } else {
             document.setCreateDate(mailContent.getDate());
         }
+        if(user!=null)
+          DocumentUtil.createDocument(document, user.getId());
+        else{
+          // Save the document, create the base ACLs
+          DocumentUtil.createDocument(document, "admin");
+        }  
 
-        // Save the document, create the base ACLs
-        DocumentUtil.createDocument(document, "admin");
 
         // Add the tag
         String tagId = ConfigUtil.getConfigStringValue(ConfigType.INBOX_TAG);
@@ -253,12 +276,19 @@ public class InboxService extends AbstractScheduledService {
 
         // Raise a document created event
         DocumentCreatedAsyncEvent documentCreatedAsyncEvent = new DocumentCreatedAsyncEvent();
-        documentCreatedAsyncEvent.setUserId("admin");
+        if(user!=null)
+          documentCreatedAsyncEvent.setUserId(user.getId());
+        else
+          documentCreatedAsyncEvent.setUserId("admin");
         documentCreatedAsyncEvent.setDocumentId(document.getId());
         ThreadLocalContext.get().addAsyncEvent(documentCreatedAsyncEvent);
 
         // Add files to the document
         for (EmailUtil.FileContent fileContent : mailContent.getFileContentList()) {
+          if(user!=null)
+            FileUtil.createFile(fileContent.getName(), null, fileContent.getFile(), fileContent.getSize(),
+                    document.getLanguage(), user.getId(), document.getId());
+          else
             FileUtil.createFile(fileContent.getName(), null, fileContent.getFile(), fileContent.getSize(),
                     document.getLanguage(), "admin", document.getId());
         }
