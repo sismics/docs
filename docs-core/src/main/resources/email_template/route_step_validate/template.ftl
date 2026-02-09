@@ -4,5 +4,5 @@
   <p>${messages('email.template.route_step_validate.hello', user_name)}</p>
   <p>${messages['email.template.route_step_validate.instruction1']}</p>
   <p>${messages['email.template.route_step_validate.instruction2']}</p>
-  <a href="${base_url}/#/document/${document_id}">${document_title}</a>
+  <a href="${base_url}/#/document/view/${document_id}">${document_title}</a>
 </@layout.email>
