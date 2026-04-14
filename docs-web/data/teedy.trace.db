@@ -1,0 +1,898 @@
+2026-04-13 23:57:44 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONFIG" not found; SQL statement:
+select c.CFG_VALUE_C from T_CONFIG c where c.CFG_ID_C='DB_VERSION' [42102-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ACL" already exists; SQL statement:
+create table T_ACL (ACL_ID_C varchar(36) not null, ACL_DELETEDATE_D timestamp(6), ACL_PERM_C varchar(30) not null check (ACL_PERM_C in ('READ','WRITE')), ACL_SOURCEID_C varchar(36) not null, ACL_TARGETID_C varchar(36) not null, ACL_TYPE_C varchar(30) not null check (ACL_TYPE_C in ('USER','ROUTING')), primary key (ACL_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUDIT_LOG" already exists; SQL statement:
+create table T_AUDIT_LOG (LOG_ID_C varchar(36) not null, LOG_CREATEDATE_D timestamp(6) not null, LOG_CLASSENTITY_C varchar(50) not null, LOG_IDENTITY_C varchar(36) not null, LOG_MESSAGE_C varchar(1000), LOG_TYPE_C varchar(50) not null check (LOG_TYPE_C in ('CREATE','UPDATE','DELETE')), LOG_IDUSER_C varchar(36) not null, primary key (LOG_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUTHENTICATION_TOKEN" already exists; SQL statement:
+create table T_AUTHENTICATION_TOKEN (AUT_ID_C varchar(36) not null, AUT_CREATIONDATE_D timestamp(6) not null, AUT_IP_C varchar(45), AUT_LASTCONNECTIONDATE_D timestamp(6), AUT_LONGLASTED_B boolean not null, AUT_UA_C varchar(1000), AUT_IDUSER_C varchar(36) not null, primary key (AUT_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_BASE_FUNCTION" already exists; SQL statement:
+create table T_BASE_FUNCTION (BAF_ID_C varchar(10) not null, primary key (BAF_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_COMMENT" already exists; SQL statement:
+create table T_COMMENT (COM_ID_C varchar(36) not null, COM_CONTENT_C varchar(255) not null, COM_CREATEDATE_D timestamp(6) not null, COM_DELETEDATE_D timestamp(6), COM_IDDOC_C varchar(36) not null, COM_IDUSER_C varchar(36) not null, primary key (COM_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONFIG" already exists; SQL statement:
+create table T_CONFIG (CFG_ID_C varchar(50) not null check (CFG_ID_C in ('LUCENE_DIRECTORY_STORAGE','THEME','GUEST_LOGIN','OCR_ENABLED','DEFAULT_LANGUAGE','SMTP_HOSTNAME','SMTP_PORT','SMTP_FROM','SMTP_USERNAME','SMTP_PASSWORD','INBOX_ENABLED','INBOX_HOSTNAME','INBOX_PORT','INBOX_STARTTLS','INBOX_USERNAME','INBOX_PASSWORD','INBOX_FOLDER','INBOX_TAG','INBOX_AUTOMATIC_TAGS','INBOX_DELETE_IMPORTED','LDAP_ENABLED','LDAP_HOST','LDAP_PORT','LDAP_USESSL','LDAP_ADMIN_DN','LDAP_ADMIN_PASSWORD','LDAP_BASE_DN','LDAP_FILTER','LDAP_DEFAULT_EMAIL','LDAP_DEFAULT_STORAGE')), CFG_VALUE_C varchar(250), primary key (CFG_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONTRIBUTOR" already exists; SQL statement:
+create table T_CONTRIBUTOR (CTR_ID_C varchar(36) not null, CTR_IDDOC_C varchar(36) not null, CTR_IDUSER_C varchar(36) not null, primary key (CTR_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT" already exists; SQL statement:
+create table T_DOCUMENT (DOC_ID_C varchar(36) not null, DOC_COVERAGE_C varchar(100), DOC_CREATEDATE_D timestamp(6) not null, DOC_DELETEDATE_D timestamp(6), DOC_DESCRIPTION_C varchar(4000), DOC_IDFILE_C varchar(36), DOC_FORMAT_C varchar(500), DOC_IDENTIFIER_C varchar(500), DOC_LANGUAGE_C varchar(3) not null, DOC_PUBLISHER_C varchar(500), DOC_RIGHTS_C varchar(100), DOC_SOURCE_C varchar(500), DOC_SUBJECT_C varchar(500), DOC_TITLE_C varchar(100) not null, DOC_TYPE_C varchar(100), DOC_UPDATEDATE_D timestamp(6) not null, DOC_IDUSER_C varchar(36) not null, primary key (DOC_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_METADATA" already exists; SQL statement:
+create table T_DOCUMENT_METADATA (DME_ID_C varchar(36) not null, DME_IDDOCUMENT_C varchar(36) not null, DME_IDMETADATA_C varchar(36) not null, DME_VALUE_C varchar(4000), primary key (DME_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_TAG" already exists; SQL statement:
+create table T_DOCUMENT_TAG (DOT_ID_C varchar(36) not null, DOT_DELETEDATE_D timestamp(6), DOT_IDDOCUMENT_C varchar(36) not null, DOT_IDTAG_C varchar(36) not null, primary key (DOT_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_FILE" already exists; SQL statement:
+create table T_FILE (FIL_ID_C varchar(36) not null, FIL_CONTENT_C varchar(255), FIL_CREATEDATE_D timestamp(6) not null, FIL_DELETEDATE_D timestamp(6), FIL_IDDOC_C varchar(36), FIL_LATESTVERSION_B boolean not null, FIL_MIMETYPE_C varchar(100), FIL_NAME_C varchar(200), FIL_ORDER_N integer, FIL_SIZE_N bigint not null, FIL_IDUSER_C varchar(36) not null, FIL_VERSION_N integer not null, FIL_IDVERSION_C varchar(255), primary key (FIL_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_GROUP" already exists; SQL statement:
+create table T_GROUP (GRP_ID_C varchar(36) not null, GRP_DELETEDATE_D timestamp(6), GRP_NAME_C varchar(50) not null, GRP_IDPARENT_C varchar(36), GRP_IDROLE_C varchar(36), primary key (GRP_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_METADATA" already exists; SQL statement:
+create table T_METADATA (MET_ID_C varchar(36) not null, MET_DELETEDATE_D timestamp(6), MET_NAME_C varchar(50) not null, MET_TYPE_C varchar(20) not null check (MET_TYPE_C in ('STRING','INTEGER','FLOAT','DATE','BOOLEAN')), primary key (MET_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_PASSWORD_RECOVERY" already exists; SQL statement:
+create table T_PASSWORD_RECOVERY (PWR_ID_C varchar(36) not null, PWR_CREATEDATE_D timestamp(6) not null, PWR_DELETEDATE_D timestamp(6), PWR_USERNAME_C varchar(50) not null, primary key (PWR_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_RELATION" already exists; SQL statement:
+create table T_RELATION (REL_ID_C varchar(36) not null, REL_DELETEDATE_D timestamp(6), REL_IDDOCFROM_C varchar(36) not null, REL_IDDOCTO_C varchar(36) not null, primary key (REL_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE" already exists; SQL statement:
+create table T_ROLE (ROL_ID_C varchar(36) not null, ROL_CREATEDATE_D timestamp(6) not null, ROL_DELETEDATE_D timestamp(6), ROL_NAME_C varchar(50) not null, primary key (ROL_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE_BASE_FUNCTION" already exists; SQL statement:
+create table T_ROLE_BASE_FUNCTION (RBF_ID_C varchar(36) not null, RBF_IDBASEFUNCTION_C varchar(36) not null, RBF_CREATEDATE_D timestamp(6) not null, RBF_DELETEDATE_D timestamp(6), RBF_IDROLE_C varchar(36) not null, primary key (RBF_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE" already exists; SQL statement:
+create table T_ROUTE (RTE_ID_C varchar(36) not null, RTE_CREATEDATE_D timestamp(6) not null, RTE_DELETEDATE_D timestamp(6), RTE_IDDOCUMENT_C varchar(36) not null, RTE_NAME_C varchar(50) not null, primary key (RTE_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_MODEL" already exists; SQL statement:
+create table T_ROUTE_MODEL (RTM_ID_C varchar(36) not null, RTM_CREATEDATE_D timestamp(6) not null, RTM_DELETEDATE_D timestamp(6), RTM_NAME_C varchar(50) not null, RTM_STEPS_C varchar(5000) not null, primary key (RTM_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_STEP" already exists; SQL statement:
+create table T_ROUTE_STEP (RTP_ID_C varchar(36) not null, RTP_COMMENT_C varchar(500), RTP_CREATEDATE_D timestamp(6) not null, RTP_DELETEDATE_D timestamp(6), RTP_ENDDATE_D timestamp(6), RTP_NAME_C varchar(200) not null, RTP_ORDER_N integer not null, RTP_IDROUTE_C varchar(36) not null, RTP_IDTARGET_C varchar(36) not null, RTP_TRANSITION_C varchar(50) check (RTP_TRANSITION_C in ('APPROVED','REJECTED','VALIDATED')), RTP_TRANSITIONS_C varchar(2000), RTP_TYPE_C varchar(50) not null check (RTP_TYPE_C in ('APPROVE','VALIDATE')), RTP_IDVALIDATORUSER_C varchar(36), primary key (RTP_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_SHARE" already exists; SQL statement:
+create table T_SHARE (SHA_ID_C varchar(36) not null, SHA_CREATEDATE_D timestamp(6) not null, SHA_DELETEDATE_D timestamp(6), SHA_NAME_C varchar(36), primary key (SHA_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_TAG" already exists; SQL statement:
+create table T_TAG (TAG_ID_C varchar(36) not null, TAG_COLOR_C varchar(7) not null, TAG_CREATEDATE_D timestamp(6) not null, TAG_DELETEDATE_D timestamp(6), TAG_NAME_C varchar(36) not null, TAG_IDPARENT_C varchar(36), TAG_IDUSER_C varchar(36) not null, primary key (TAG_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER" already exists; SQL statement:
+create table T_USER (USE_ID_C varchar(36) not null, USE_CREATEDATE_D timestamp(6) not null, USE_DELETEDATE_D timestamp(6), USE_DISABLEDATE_D timestamp(6), USE_EMAIL_C varchar(100) not null, USE_ONBOARDING_B boolean not null, USE_PASSWORD_C varchar(100) not null, USE_PRIVATEKEY_C varchar(100) not null, USE_IDROLE_C varchar(36) not null, USE_STORAGECURRENT_N bigint not null, USE_STORAGEQUOTA_N bigint not null, USE_TOTPKEY_C varchar(100), USE_USERNAME_C varchar(50) not null, primary key (USE_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER_GROUP" already exists; SQL statement:
+create table T_USER_GROUP (UGP_ID_C varchar(36) not null, UGP_DELETEDATE_D timestamp(6), UGP_IDGROUP_C varchar(36) not null, UGP_IDUSER_C varchar(36) not null, primary key (UGP_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_VOCABULARY" already exists; SQL statement:
+create table T_VOCABULARY (VOC_ID_C varchar(36) not null, VOC_NAME_C varchar(50) not null, VOC_ORDER_N integer, VOC_VALUE_C varchar(500) not null, primary key (VOC_ID_C)) [42101-199]
+2026-04-13 23:57:45 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_WEBHOOK" already exists; SQL statement:
+create table T_WEBHOOK (WHK_ID_C varchar(36) not null, WHK_CREATEDATE_D timestamp(6) not null, WHK_DELETEDATE_D timestamp(6), WHK_EVENT_C varchar(50) not null check (WHK_EVENT_C in ('DOCUMENT_CREATED','DOCUMENT_UPDATED','DOCUMENT_DELETED','FILE_CREATED','FILE_UPDATED','FILE_DELETED')), WHK_URL_C varchar(1024) not null, primary key (WHK_ID_C)) [42101-199]
+2026-04-13 23:59:10 database: flush
+org.h2.message.DbException: General error: "java.lang.IllegalStateException: The file is locked: nio:/home/lovage/Teedy/docs-web/data/teedy.mv.db [1.4.199/7]" [50000-199]
+	at org.h2.message.DbException.get(DbException.java:194)
+	at org.h2.message.DbException.convert(DbException.java:347)
+	at org.h2.mvstore.db.MVTableEngine$1.uncaughtException(MVTableEngine.java:90)
+	at org.h2.mvstore.MVStore.handleException(MVStore.java:2787)
+	at org.h2.mvstore.MVStore.panic(MVStore.java:441)
+	at org.h2.mvstore.MVStore.<init>(MVStore.java:404)
+	at org.h2.mvstore.MVStore$Builder.open(MVStore.java:3343)
+	at org.h2.mvstore.db.MVTableEngine$Store.open(MVTableEngine.java:162)
+	at org.h2.mvstore.db.MVTableEngine.init(MVTableEngine.java:95)
+	at org.h2.engine.Database.getPageStore(Database.java:2739)
+	at org.h2.engine.Database.open(Database.java:769)
+	at org.h2.engine.Database.openDatabase(Database.java:319)
+	at org.h2.engine.Database.<init>(Database.java:313)
+	at org.h2.engine.Engine.openSession(Engine.java:69)
+	at org.h2.engine.Engine.openSession(Engine.java:201)
+	at org.h2.engine.Engine.createSessionAndValidate(Engine.java:178)
+	at org.h2.engine.Engine.createSession(Engine.java:161)
+	at org.h2.engine.Engine.createSession(Engine.java:31)
+	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:336)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:169)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:148)
+	at org.h2.Driver.connect(Driver.java:69)
+	at org.hibernate.engine.jdbc.connections.internal.DriverConnectionCreator.makeConnection(DriverConnectionCreator.java:40)
+	at org.hibernate.engine.jdbc.connections.internal.BasicConnectionCreator.createConnection(BasicConnectionCreator.java:61)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.addConnections(DriverManagerConnectionProviderImpl.java:494)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections.<init>(DriverManagerConnectionProviderImpl.java:367)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl$PooledConnections$Builder.build(DriverManagerConnectionProviderImpl.java:545)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.buildPool(DriverManagerConnectionProviderImpl.java:101)
+	at org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionProviderImpl.configure(DriverManagerConnectionProviderImpl.java:81)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.configureService(StandardServiceRegistryImpl.java:135)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:247)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.buildJdbcConnectionAccess(JdbcEnvironmentInitiator.java:391)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:259)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:105)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:66)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:129)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:238)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at org.hibernate.engine.jdbc.internal.JdbcServicesImpl.configure(JdbcServicesImpl.java:52)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.configureService(StandardServiceRegistryImpl.java:135)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:247)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:215)
+	at com.sismics.util.jpa.DbOpenHelper.<init>(DbOpenHelper.java:50)
+	at com.sismics.util.jpa.EMF$1.<init>(EMF.java:40)
+	at com.sismics.util.jpa.EMF.<clinit>(EMF.java:40)
+	at com.sismics.docs.core.util.TransactionUtil.handle(TransactionUtil.java:37)
+	at com.sismics.util.filter.RequestContextFilter.init(RequestContextFilter.java:65)
+	at org.eclipse.jetty.servlet.FilterHolder.initialize(FilterHolder.java:133)
+	at org.eclipse.jetty.servlet.ServletHandler.lambda$initialize$2(ServletHandler.java:725)
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)
+	at java.base/java.util.stream.Streams$ConcatSpliterator.forEachRemaining(Streams.java:734)
+	at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762)
+	at org.eclipse.jetty.servlet.ServletHandler.initialize(ServletHandler.java:749)
+	at org.eclipse.jetty.servlet.ServletContextHandler.startContext(ServletContextHandler.java:392)
+	at org.eclipse.jetty.webapp.WebAppContext.startContext(WebAppContext.java:1305)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStart(ContextHandler.java:902)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStart(ServletContextHandler.java:306)
+	at org.eclipse.jetty.webapp.WebAppContext.doStart(WebAppContext.java:533)
+	at org.eclipse.jetty.maven.plugin.MavenWebAppContext.doStart(MavenWebAppContext.java:294)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:93)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:171)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:121)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:89)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:93)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:171)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:121)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:89)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:93)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.start(ContainerLifeCycle.java:171)
+	at org.eclipse.jetty.server.Server.start(Server.java:470)
+	at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart(ContainerLifeCycle.java:114)
+	at org.eclipse.jetty.server.handler.AbstractHandler.doStart(AbstractHandler.java:89)
+	at org.eclipse.jetty.server.Server.doStart(Server.java:415)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:93)
+	at org.eclipse.jetty.maven.plugin.JettyEmbedder.doStart(JettyEmbedder.java:224)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:93)
+	at org.eclipse.jetty.maven.plugin.JettyRunMojo.startJettyEmbedded(JettyRunMojo.java:97)
+	at org.eclipse.jetty.maven.plugin.AbstractWebAppMojo.startJetty(AbstractWebAppMojo.java:441)
+	at org.eclipse.jetty.maven.plugin.AbstractWebAppMojo.execute(AbstractWebAppMojo.java:419)
+	at org.eclipse.jetty.maven.plugin.JettyRunMojo.execute(JettyRunMojo.java:85)
+	at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo(DefaultBuildPluginManager.java:137)
+	at org.apache.maven.lifecycle.internal.MojoExecutor.doExecute2(MojoExecutor.java:370)
+	at org.apache.maven.lifecycle.internal.MojoExecutor.doExecute(MojoExecutor.java:351)
+	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:215)
+	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:171)
+	at org.apache.maven.lifecycle.internal.MojoExecutor.execute(MojoExecutor.java:163)
+	at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject(LifecycleModuleBuilder.java:117)
+	at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject(LifecycleModuleBuilder.java:81)
+	at org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder.build(SingleThreadedBuilder.java:56)
+	at org.apache.maven.lifecycle.internal.LifecycleStarter.execute(LifecycleStarter.java:128)
+	at org.apache.maven.DefaultMaven.doExecute(DefaultMaven.java:298)
+	at org.apache.maven.DefaultMaven.doExecute(DefaultMaven.java:192)
+	at org.apache.maven.DefaultMaven.execute(DefaultMaven.java:105)
+	at org.apache.maven.cli.MavenCli.execute(MavenCli.java:960)
+	at org.apache.maven.cli.MavenCli.doMain(MavenCli.java:293)
+	at org.apache.maven.cli.MavenCli.main(MavenCli.java:196)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced(Launcher.java:283)
+	at org.codehaus.plexus.classworlds.launcher.Launcher.launch(Launcher.java:226)
+	at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode(Launcher.java:407)
+	at org.codehaus.plexus.classworlds.launcher.Launcher.main(Launcher.java:348)
+Caused by: org.h2.jdbc.JdbcSQLNonTransientException: General error: "java.lang.IllegalStateException: The file is locked: nio:/home/lovage/Teedy/docs-web/data/teedy.mv.db [1.4.199/7]" [50000-199]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:502)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:427)
+	... 104 more
+Caused by: java.lang.IllegalStateException: The file is locked: nio:/home/lovage/Teedy/docs-web/data/teedy.mv.db [1.4.199/7]
+	at org.h2.mvstore.DataUtils.newIllegalStateException(DataUtils.java:883)
+	at org.h2.mvstore.FileStore.open(FileStore.java:172)
+	at org.h2.mvstore.MVStore.<init>(MVStore.java:390)
+	... 98 more
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ACL" already exists; SQL statement:
+create table T_ACL (ACL_ID_C varchar(36) not null, ACL_DELETEDATE_D timestamp(6), ACL_PERM_C varchar(30) not null check (ACL_PERM_C in ('READ','WRITE')), ACL_SOURCEID_C varchar(36) not null, ACL_TARGETID_C varchar(36) not null, ACL_TYPE_C varchar(30) not null check (ACL_TYPE_C in ('USER','ROUTING')), primary key (ACL_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUDIT_LOG" already exists; SQL statement:
+create table T_AUDIT_LOG (LOG_ID_C varchar(36) not null, LOG_CREATEDATE_D timestamp(6) not null, LOG_CLASSENTITY_C varchar(50) not null, LOG_IDENTITY_C varchar(36) not null, LOG_MESSAGE_C varchar(1000), LOG_TYPE_C varchar(50) not null check (LOG_TYPE_C in ('CREATE','UPDATE','DELETE')), LOG_IDUSER_C varchar(36) not null, primary key (LOG_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUTHENTICATION_TOKEN" already exists; SQL statement:
+create table T_AUTHENTICATION_TOKEN (AUT_ID_C varchar(36) not null, AUT_CREATIONDATE_D timestamp(6) not null, AUT_IP_C varchar(45), AUT_LASTCONNECTIONDATE_D timestamp(6), AUT_LONGLASTED_B boolean not null, AUT_UA_C varchar(1000), AUT_IDUSER_C varchar(36) not null, primary key (AUT_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_BASE_FUNCTION" already exists; SQL statement:
+create table T_BASE_FUNCTION (BAF_ID_C varchar(10) not null, primary key (BAF_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_COMMENT" already exists; SQL statement:
+create table T_COMMENT (COM_ID_C varchar(36) not null, COM_CONTENT_C varchar(255) not null, COM_CREATEDATE_D timestamp(6) not null, COM_DELETEDATE_D timestamp(6), COM_IDDOC_C varchar(36) not null, COM_IDUSER_C varchar(36) not null, primary key (COM_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONFIG" already exists; SQL statement:
+create table T_CONFIG (CFG_ID_C varchar(50) not null check (CFG_ID_C in ('LUCENE_DIRECTORY_STORAGE','THEME','GUEST_LOGIN','OCR_ENABLED','DEFAULT_LANGUAGE','SMTP_HOSTNAME','SMTP_PORT','SMTP_FROM','SMTP_USERNAME','SMTP_PASSWORD','INBOX_ENABLED','INBOX_HOSTNAME','INBOX_PORT','INBOX_STARTTLS','INBOX_USERNAME','INBOX_PASSWORD','INBOX_FOLDER','INBOX_TAG','INBOX_AUTOMATIC_TAGS','INBOX_DELETE_IMPORTED','LDAP_ENABLED','LDAP_HOST','LDAP_PORT','LDAP_USESSL','LDAP_ADMIN_DN','LDAP_ADMIN_PASSWORD','LDAP_BASE_DN','LDAP_FILTER','LDAP_DEFAULT_EMAIL','LDAP_DEFAULT_STORAGE')), CFG_VALUE_C varchar(250), primary key (CFG_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONTRIBUTOR" already exists; SQL statement:
+create table T_CONTRIBUTOR (CTR_ID_C varchar(36) not null, CTR_IDDOC_C varchar(36) not null, CTR_IDUSER_C varchar(36) not null, primary key (CTR_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT" already exists; SQL statement:
+create table T_DOCUMENT (DOC_ID_C varchar(36) not null, DOC_COVERAGE_C varchar(100), DOC_CREATEDATE_D timestamp(6) not null, DOC_DELETEDATE_D timestamp(6), DOC_DESCRIPTION_C varchar(4000), DOC_IDFILE_C varchar(36), DOC_FORMAT_C varchar(500), DOC_IDENTIFIER_C varchar(500), DOC_LANGUAGE_C varchar(3) not null, DOC_PUBLISHER_C varchar(500), DOC_RIGHTS_C varchar(100), DOC_SOURCE_C varchar(500), DOC_SUBJECT_C varchar(500), DOC_TITLE_C varchar(100) not null, DOC_TYPE_C varchar(100), DOC_UPDATEDATE_D timestamp(6) not null, DOC_IDUSER_C varchar(36) not null, primary key (DOC_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_METADATA" already exists; SQL statement:
+create table T_DOCUMENT_METADATA (DME_ID_C varchar(36) not null, DME_IDDOCUMENT_C varchar(36) not null, DME_IDMETADATA_C varchar(36) not null, DME_VALUE_C varchar(4000), primary key (DME_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_TAG" already exists; SQL statement:
+create table T_DOCUMENT_TAG (DOT_ID_C varchar(36) not null, DOT_DELETEDATE_D timestamp(6), DOT_IDDOCUMENT_C varchar(36) not null, DOT_IDTAG_C varchar(36) not null, primary key (DOT_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_FILE" already exists; SQL statement:
+create table T_FILE (FIL_ID_C varchar(36) not null, FIL_CONTENT_C varchar(255), FIL_CREATEDATE_D timestamp(6) not null, FIL_DELETEDATE_D timestamp(6), FIL_IDDOC_C varchar(36), FIL_LATESTVERSION_B boolean not null, FIL_MIMETYPE_C varchar(100), FIL_NAME_C varchar(200), FIL_ORDER_N integer, FIL_SIZE_N bigint not null, FIL_IDUSER_C varchar(36) not null, FIL_VERSION_N integer not null, FIL_IDVERSION_C varchar(255), primary key (FIL_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_GROUP" already exists; SQL statement:
+create table T_GROUP (GRP_ID_C varchar(36) not null, GRP_DELETEDATE_D timestamp(6), GRP_NAME_C varchar(50) not null, GRP_IDPARENT_C varchar(36), GRP_IDROLE_C varchar(36), primary key (GRP_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_METADATA" already exists; SQL statement:
+create table T_METADATA (MET_ID_C varchar(36) not null, MET_DELETEDATE_D timestamp(6), MET_NAME_C varchar(50) not null, MET_TYPE_C varchar(20) not null check (MET_TYPE_C in ('STRING','INTEGER','FLOAT','DATE','BOOLEAN')), primary key (MET_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_PASSWORD_RECOVERY" already exists; SQL statement:
+create table T_PASSWORD_RECOVERY (PWR_ID_C varchar(36) not null, PWR_CREATEDATE_D timestamp(6) not null, PWR_DELETEDATE_D timestamp(6), PWR_USERNAME_C varchar(50) not null, primary key (PWR_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_RELATION" already exists; SQL statement:
+create table T_RELATION (REL_ID_C varchar(36) not null, REL_DELETEDATE_D timestamp(6), REL_IDDOCFROM_C varchar(36) not null, REL_IDDOCTO_C varchar(36) not null, primary key (REL_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE" already exists; SQL statement:
+create table T_ROLE (ROL_ID_C varchar(36) not null, ROL_CREATEDATE_D timestamp(6) not null, ROL_DELETEDATE_D timestamp(6), ROL_NAME_C varchar(50) not null, primary key (ROL_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE_BASE_FUNCTION" already exists; SQL statement:
+create table T_ROLE_BASE_FUNCTION (RBF_ID_C varchar(36) not null, RBF_IDBASEFUNCTION_C varchar(36) not null, RBF_CREATEDATE_D timestamp(6) not null, RBF_DELETEDATE_D timestamp(6), RBF_IDROLE_C varchar(36) not null, primary key (RBF_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE" already exists; SQL statement:
+create table T_ROUTE (RTE_ID_C varchar(36) not null, RTE_CREATEDATE_D timestamp(6) not null, RTE_DELETEDATE_D timestamp(6), RTE_IDDOCUMENT_C varchar(36) not null, RTE_NAME_C varchar(50) not null, primary key (RTE_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_MODEL" already exists; SQL statement:
+create table T_ROUTE_MODEL (RTM_ID_C varchar(36) not null, RTM_CREATEDATE_D timestamp(6) not null, RTM_DELETEDATE_D timestamp(6), RTM_NAME_C varchar(50) not null, RTM_STEPS_C varchar(5000) not null, primary key (RTM_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_STEP" already exists; SQL statement:
+create table T_ROUTE_STEP (RTP_ID_C varchar(36) not null, RTP_COMMENT_C varchar(500), RTP_CREATEDATE_D timestamp(6) not null, RTP_DELETEDATE_D timestamp(6), RTP_ENDDATE_D timestamp(6), RTP_NAME_C varchar(200) not null, RTP_ORDER_N integer not null, RTP_IDROUTE_C varchar(36) not null, RTP_IDTARGET_C varchar(36) not null, RTP_TRANSITION_C varchar(50) check (RTP_TRANSITION_C in ('APPROVED','REJECTED','VALIDATED')), RTP_TRANSITIONS_C varchar(2000), RTP_TYPE_C varchar(50) not null check (RTP_TYPE_C in ('APPROVE','VALIDATE')), RTP_IDVALIDATORUSER_C varchar(36), primary key (RTP_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_SHARE" already exists; SQL statement:
+create table T_SHARE (SHA_ID_C varchar(36) not null, SHA_CREATEDATE_D timestamp(6) not null, SHA_DELETEDATE_D timestamp(6), SHA_NAME_C varchar(36), primary key (SHA_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_TAG" already exists; SQL statement:
+create table T_TAG (TAG_ID_C varchar(36) not null, TAG_COLOR_C varchar(7) not null, TAG_CREATEDATE_D timestamp(6) not null, TAG_DELETEDATE_D timestamp(6), TAG_NAME_C varchar(36) not null, TAG_IDPARENT_C varchar(36), TAG_IDUSER_C varchar(36) not null, primary key (TAG_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER" already exists; SQL statement:
+create table T_USER (USE_ID_C varchar(36) not null, USE_CREATEDATE_D timestamp(6) not null, USE_DELETEDATE_D timestamp(6), USE_DISABLEDATE_D timestamp(6), USE_EMAIL_C varchar(100) not null, USE_ONBOARDING_B boolean not null, USE_PASSWORD_C varchar(100) not null, USE_PRIVATEKEY_C varchar(100) not null, USE_IDROLE_C varchar(36) not null, USE_STORAGECURRENT_N bigint not null, USE_STORAGEQUOTA_N bigint not null, USE_TOTPKEY_C varchar(100), USE_USERNAME_C varchar(50) not null, primary key (USE_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER_GROUP" already exists; SQL statement:
+create table T_USER_GROUP (UGP_ID_C varchar(36) not null, UGP_DELETEDATE_D timestamp(6), UGP_IDGROUP_C varchar(36) not null, UGP_IDUSER_C varchar(36) not null, primary key (UGP_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_VOCABULARY" already exists; SQL statement:
+create table T_VOCABULARY (VOC_ID_C varchar(36) not null, VOC_NAME_C varchar(50) not null, VOC_ORDER_N integer, VOC_VALUE_C varchar(500) not null, primary key (VOC_ID_C)) [42101-199]
+2026-04-14 00:00:48 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_WEBHOOK" already exists; SQL statement:
+create table T_WEBHOOK (WHK_ID_C varchar(36) not null, WHK_CREATEDATE_D timestamp(6) not null, WHK_DELETEDATE_D timestamp(6), WHK_EVENT_C varchar(50) not null check (WHK_EVENT_C in ('DOCUMENT_CREATED','DOCUMENT_UPDATED','DOCUMENT_DELETED','FILE_CREATED','FILE_UPDATED','FILE_DELETED')), WHK_URL_C varchar(1024) not null, primary key (WHK_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ACL" already exists; SQL statement:
+create table T_ACL (ACL_ID_C varchar(36) not null, ACL_DELETEDATE_D timestamp(6), ACL_PERM_C varchar(30) not null check (ACL_PERM_C in ('READ','WRITE')), ACL_SOURCEID_C varchar(36) not null, ACL_TARGETID_C varchar(36) not null, ACL_TYPE_C varchar(30) not null check (ACL_TYPE_C in ('USER','ROUTING')), primary key (ACL_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUDIT_LOG" already exists; SQL statement:
+create table T_AUDIT_LOG (LOG_ID_C varchar(36) not null, LOG_CREATEDATE_D timestamp(6) not null, LOG_CLASSENTITY_C varchar(50) not null, LOG_IDENTITY_C varchar(36) not null, LOG_MESSAGE_C varchar(1000), LOG_TYPE_C varchar(50) not null check (LOG_TYPE_C in ('CREATE','UPDATE','DELETE')), LOG_IDUSER_C varchar(36) not null, primary key (LOG_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUTHENTICATION_TOKEN" already exists; SQL statement:
+create table T_AUTHENTICATION_TOKEN (AUT_ID_C varchar(36) not null, AUT_CREATIONDATE_D timestamp(6) not null, AUT_IP_C varchar(45), AUT_LASTCONNECTIONDATE_D timestamp(6), AUT_LONGLASTED_B boolean not null, AUT_UA_C varchar(1000), AUT_IDUSER_C varchar(36) not null, primary key (AUT_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_BASE_FUNCTION" already exists; SQL statement:
+create table T_BASE_FUNCTION (BAF_ID_C varchar(10) not null, primary key (BAF_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_COMMENT" already exists; SQL statement:
+create table T_COMMENT (COM_ID_C varchar(36) not null, COM_CONTENT_C varchar(255) not null, COM_CREATEDATE_D timestamp(6) not null, COM_DELETEDATE_D timestamp(6), COM_IDDOC_C varchar(36) not null, COM_IDUSER_C varchar(36) not null, primary key (COM_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONFIG" already exists; SQL statement:
+create table T_CONFIG (CFG_ID_C varchar(50) not null check (CFG_ID_C in ('LUCENE_DIRECTORY_STORAGE','THEME','GUEST_LOGIN','OCR_ENABLED','DEFAULT_LANGUAGE','SMTP_HOSTNAME','SMTP_PORT','SMTP_FROM','SMTP_USERNAME','SMTP_PASSWORD','INBOX_ENABLED','INBOX_HOSTNAME','INBOX_PORT','INBOX_STARTTLS','INBOX_USERNAME','INBOX_PASSWORD','INBOX_FOLDER','INBOX_TAG','INBOX_AUTOMATIC_TAGS','INBOX_DELETE_IMPORTED','LDAP_ENABLED','LDAP_HOST','LDAP_PORT','LDAP_USESSL','LDAP_ADMIN_DN','LDAP_ADMIN_PASSWORD','LDAP_BASE_DN','LDAP_FILTER','LDAP_DEFAULT_EMAIL','LDAP_DEFAULT_STORAGE')), CFG_VALUE_C varchar(250), primary key (CFG_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONTRIBUTOR" already exists; SQL statement:
+create table T_CONTRIBUTOR (CTR_ID_C varchar(36) not null, CTR_IDDOC_C varchar(36) not null, CTR_IDUSER_C varchar(36) not null, primary key (CTR_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT" already exists; SQL statement:
+create table T_DOCUMENT (DOC_ID_C varchar(36) not null, DOC_COVERAGE_C varchar(100), DOC_CREATEDATE_D timestamp(6) not null, DOC_DELETEDATE_D timestamp(6), DOC_DESCRIPTION_C varchar(4000), DOC_IDFILE_C varchar(36), DOC_FORMAT_C varchar(500), DOC_IDENTIFIER_C varchar(500), DOC_LANGUAGE_C varchar(3) not null, DOC_PUBLISHER_C varchar(500), DOC_RIGHTS_C varchar(100), DOC_SOURCE_C varchar(500), DOC_SUBJECT_C varchar(500), DOC_TITLE_C varchar(100) not null, DOC_TYPE_C varchar(100), DOC_UPDATEDATE_D timestamp(6) not null, DOC_IDUSER_C varchar(36) not null, primary key (DOC_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_METADATA" already exists; SQL statement:
+create table T_DOCUMENT_METADATA (DME_ID_C varchar(36) not null, DME_IDDOCUMENT_C varchar(36) not null, DME_IDMETADATA_C varchar(36) not null, DME_VALUE_C varchar(4000), primary key (DME_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_TAG" already exists; SQL statement:
+create table T_DOCUMENT_TAG (DOT_ID_C varchar(36) not null, DOT_DELETEDATE_D timestamp(6), DOT_IDDOCUMENT_C varchar(36) not null, DOT_IDTAG_C varchar(36) not null, primary key (DOT_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_FILE" already exists; SQL statement:
+create table T_FILE (FIL_ID_C varchar(36) not null, FIL_CONTENT_C varchar(255), FIL_CREATEDATE_D timestamp(6) not null, FIL_DELETEDATE_D timestamp(6), FIL_IDDOC_C varchar(36), FIL_LATESTVERSION_B boolean not null, FIL_MIMETYPE_C varchar(100), FIL_NAME_C varchar(200), FIL_ORDER_N integer, FIL_SIZE_N bigint not null, FIL_IDUSER_C varchar(36) not null, FIL_VERSION_N integer not null, FIL_IDVERSION_C varchar(255), primary key (FIL_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_GROUP" already exists; SQL statement:
+create table T_GROUP (GRP_ID_C varchar(36) not null, GRP_DELETEDATE_D timestamp(6), GRP_NAME_C varchar(50) not null, GRP_IDPARENT_C varchar(36), GRP_IDROLE_C varchar(36), primary key (GRP_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_METADATA" already exists; SQL statement:
+create table T_METADATA (MET_ID_C varchar(36) not null, MET_DELETEDATE_D timestamp(6), MET_NAME_C varchar(50) not null, MET_TYPE_C varchar(20) not null check (MET_TYPE_C in ('STRING','INTEGER','FLOAT','DATE','BOOLEAN')), primary key (MET_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_PASSWORD_RECOVERY" already exists; SQL statement:
+create table T_PASSWORD_RECOVERY (PWR_ID_C varchar(36) not null, PWR_CREATEDATE_D timestamp(6) not null, PWR_DELETEDATE_D timestamp(6), PWR_USERNAME_C varchar(50) not null, primary key (PWR_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_RELATION" already exists; SQL statement:
+create table T_RELATION (REL_ID_C varchar(36) not null, REL_DELETEDATE_D timestamp(6), REL_IDDOCFROM_C varchar(36) not null, REL_IDDOCTO_C varchar(36) not null, primary key (REL_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE" already exists; SQL statement:
+create table T_ROLE (ROL_ID_C varchar(36) not null, ROL_CREATEDATE_D timestamp(6) not null, ROL_DELETEDATE_D timestamp(6), ROL_NAME_C varchar(50) not null, primary key (ROL_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE_BASE_FUNCTION" already exists; SQL statement:
+create table T_ROLE_BASE_FUNCTION (RBF_ID_C varchar(36) not null, RBF_IDBASEFUNCTION_C varchar(36) not null, RBF_CREATEDATE_D timestamp(6) not null, RBF_DELETEDATE_D timestamp(6), RBF_IDROLE_C varchar(36) not null, primary key (RBF_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE" already exists; SQL statement:
+create table T_ROUTE (RTE_ID_C varchar(36) not null, RTE_CREATEDATE_D timestamp(6) not null, RTE_DELETEDATE_D timestamp(6), RTE_IDDOCUMENT_C varchar(36) not null, RTE_NAME_C varchar(50) not null, primary key (RTE_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_MODEL" already exists; SQL statement:
+create table T_ROUTE_MODEL (RTM_ID_C varchar(36) not null, RTM_CREATEDATE_D timestamp(6) not null, RTM_DELETEDATE_D timestamp(6), RTM_NAME_C varchar(50) not null, RTM_STEPS_C varchar(5000) not null, primary key (RTM_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_STEP" already exists; SQL statement:
+create table T_ROUTE_STEP (RTP_ID_C varchar(36) not null, RTP_COMMENT_C varchar(500), RTP_CREATEDATE_D timestamp(6) not null, RTP_DELETEDATE_D timestamp(6), RTP_ENDDATE_D timestamp(6), RTP_NAME_C varchar(200) not null, RTP_ORDER_N integer not null, RTP_IDROUTE_C varchar(36) not null, RTP_IDTARGET_C varchar(36) not null, RTP_TRANSITION_C varchar(50) check (RTP_TRANSITION_C in ('APPROVED','REJECTED','VALIDATED')), RTP_TRANSITIONS_C varchar(2000), RTP_TYPE_C varchar(50) not null check (RTP_TYPE_C in ('APPROVE','VALIDATE')), RTP_IDVALIDATORUSER_C varchar(36), primary key (RTP_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_SHARE" already exists; SQL statement:
+create table T_SHARE (SHA_ID_C varchar(36) not null, SHA_CREATEDATE_D timestamp(6) not null, SHA_DELETEDATE_D timestamp(6), SHA_NAME_C varchar(36), primary key (SHA_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_TAG" already exists; SQL statement:
+create table T_TAG (TAG_ID_C varchar(36) not null, TAG_COLOR_C varchar(7) not null, TAG_CREATEDATE_D timestamp(6) not null, TAG_DELETEDATE_D timestamp(6), TAG_NAME_C varchar(36) not null, TAG_IDPARENT_C varchar(36), TAG_IDUSER_C varchar(36) not null, primary key (TAG_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER" already exists; SQL statement:
+create table T_USER (USE_ID_C varchar(36) not null, USE_CREATEDATE_D timestamp(6) not null, USE_DELETEDATE_D timestamp(6), USE_DISABLEDATE_D timestamp(6), USE_EMAIL_C varchar(100) not null, USE_ONBOARDING_B boolean not null, USE_PASSWORD_C varchar(100) not null, USE_PRIVATEKEY_C varchar(100) not null, USE_IDROLE_C varchar(36) not null, USE_STORAGECURRENT_N bigint not null, USE_STORAGEQUOTA_N bigint not null, USE_TOTPKEY_C varchar(100), USE_USERNAME_C varchar(50) not null, primary key (USE_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER_GROUP" already exists; SQL statement:
+create table T_USER_GROUP (UGP_ID_C varchar(36) not null, UGP_DELETEDATE_D timestamp(6), UGP_IDGROUP_C varchar(36) not null, UGP_IDUSER_C varchar(36) not null, primary key (UGP_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_VOCABULARY" already exists; SQL statement:
+create table T_VOCABULARY (VOC_ID_C varchar(36) not null, VOC_NAME_C varchar(50) not null, VOC_ORDER_N integer, VOC_VALUE_C varchar(500) not null, primary key (VOC_ID_C)) [42101-199]
+2026-04-14 00:12:30 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_WEBHOOK" already exists; SQL statement:
+create table T_WEBHOOK (WHK_ID_C varchar(36) not null, WHK_CREATEDATE_D timestamp(6) not null, WHK_DELETEDATE_D timestamp(6), WHK_EVENT_C varchar(50) not null check (WHK_EVENT_C in ('DOCUMENT_CREATED','DOCUMENT_UPDATED','DOCUMENT_DELETED','FILE_CREATED','FILE_UPDATED','FILE_DELETED')), WHK_URL_C varchar(1024) not null, primary key (WHK_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ACL" already exists; SQL statement:
+create table T_ACL (ACL_ID_C varchar(36) not null, ACL_DELETEDATE_D timestamp(6), ACL_PERM_C varchar(30) not null check (ACL_PERM_C in ('READ','WRITE')), ACL_SOURCEID_C varchar(36) not null, ACL_TARGETID_C varchar(36) not null, ACL_TYPE_C varchar(30) not null check (ACL_TYPE_C in ('USER','ROUTING')), primary key (ACL_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUDIT_LOG" already exists; SQL statement:
+create table T_AUDIT_LOG (LOG_ID_C varchar(36) not null, LOG_CREATEDATE_D timestamp(6) not null, LOG_CLASSENTITY_C varchar(50) not null, LOG_IDENTITY_C varchar(36) not null, LOG_MESSAGE_C varchar(1000), LOG_TYPE_C varchar(50) not null check (LOG_TYPE_C in ('CREATE','UPDATE','DELETE')), LOG_IDUSER_C varchar(36) not null, primary key (LOG_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUTHENTICATION_TOKEN" already exists; SQL statement:
+create table T_AUTHENTICATION_TOKEN (AUT_ID_C varchar(36) not null, AUT_CREATIONDATE_D timestamp(6) not null, AUT_IP_C varchar(45), AUT_LASTCONNECTIONDATE_D timestamp(6), AUT_LONGLASTED_B boolean not null, AUT_UA_C varchar(1000), AUT_IDUSER_C varchar(36) not null, primary key (AUT_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_BASE_FUNCTION" already exists; SQL statement:
+create table T_BASE_FUNCTION (BAF_ID_C varchar(10) not null, primary key (BAF_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_COMMENT" already exists; SQL statement:
+create table T_COMMENT (COM_ID_C varchar(36) not null, COM_CONTENT_C varchar(255) not null, COM_CREATEDATE_D timestamp(6) not null, COM_DELETEDATE_D timestamp(6), COM_IDDOC_C varchar(36) not null, COM_IDUSER_C varchar(36) not null, primary key (COM_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONFIG" already exists; SQL statement:
+create table T_CONFIG (CFG_ID_C varchar(50) not null check (CFG_ID_C in ('LUCENE_DIRECTORY_STORAGE','THEME','GUEST_LOGIN','OCR_ENABLED','DEFAULT_LANGUAGE','SMTP_HOSTNAME','SMTP_PORT','SMTP_FROM','SMTP_USERNAME','SMTP_PASSWORD','INBOX_ENABLED','INBOX_HOSTNAME','INBOX_PORT','INBOX_STARTTLS','INBOX_USERNAME','INBOX_PASSWORD','INBOX_FOLDER','INBOX_TAG','INBOX_AUTOMATIC_TAGS','INBOX_DELETE_IMPORTED','LDAP_ENABLED','LDAP_HOST','LDAP_PORT','LDAP_USESSL','LDAP_ADMIN_DN','LDAP_ADMIN_PASSWORD','LDAP_BASE_DN','LDAP_FILTER','LDAP_DEFAULT_EMAIL','LDAP_DEFAULT_STORAGE')), CFG_VALUE_C varchar(250), primary key (CFG_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONTRIBUTOR" already exists; SQL statement:
+create table T_CONTRIBUTOR (CTR_ID_C varchar(36) not null, CTR_IDDOC_C varchar(36) not null, CTR_IDUSER_C varchar(36) not null, primary key (CTR_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT" already exists; SQL statement:
+create table T_DOCUMENT (DOC_ID_C varchar(36) not null, DOC_COVERAGE_C varchar(100), DOC_CREATEDATE_D timestamp(6) not null, DOC_DELETEDATE_D timestamp(6), DOC_DESCRIPTION_C varchar(4000), DOC_IDFILE_C varchar(36), DOC_FORMAT_C varchar(500), DOC_IDENTIFIER_C varchar(500), DOC_LANGUAGE_C varchar(3) not null, DOC_PUBLISHER_C varchar(500), DOC_RIGHTS_C varchar(100), DOC_SOURCE_C varchar(500), DOC_SUBJECT_C varchar(500), DOC_TITLE_C varchar(100) not null, DOC_TYPE_C varchar(100), DOC_UPDATEDATE_D timestamp(6) not null, DOC_IDUSER_C varchar(36) not null, primary key (DOC_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_METADATA" already exists; SQL statement:
+create table T_DOCUMENT_METADATA (DME_ID_C varchar(36) not null, DME_IDDOCUMENT_C varchar(36) not null, DME_IDMETADATA_C varchar(36) not null, DME_VALUE_C varchar(4000), primary key (DME_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_TAG" already exists; SQL statement:
+create table T_DOCUMENT_TAG (DOT_ID_C varchar(36) not null, DOT_DELETEDATE_D timestamp(6), DOT_IDDOCUMENT_C varchar(36) not null, DOT_IDTAG_C varchar(36) not null, primary key (DOT_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_FILE" already exists; SQL statement:
+create table T_FILE (FIL_ID_C varchar(36) not null, FIL_CONTENT_C varchar(255), FIL_CREATEDATE_D timestamp(6) not null, FIL_DELETEDATE_D timestamp(6), FIL_IDDOC_C varchar(36), FIL_LATESTVERSION_B boolean not null, FIL_MIMETYPE_C varchar(100), FIL_NAME_C varchar(200), FIL_ORDER_N integer, FIL_SIZE_N bigint not null, FIL_IDUSER_C varchar(36) not null, FIL_VERSION_N integer not null, FIL_IDVERSION_C varchar(255), primary key (FIL_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_GROUP" already exists; SQL statement:
+create table T_GROUP (GRP_ID_C varchar(36) not null, GRP_DELETEDATE_D timestamp(6), GRP_NAME_C varchar(50) not null, GRP_IDPARENT_C varchar(36), GRP_IDROLE_C varchar(36), primary key (GRP_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_METADATA" already exists; SQL statement:
+create table T_METADATA (MET_ID_C varchar(36) not null, MET_DELETEDATE_D timestamp(6), MET_NAME_C varchar(50) not null, MET_TYPE_C varchar(20) not null check (MET_TYPE_C in ('STRING','INTEGER','FLOAT','DATE','BOOLEAN')), primary key (MET_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_PASSWORD_RECOVERY" already exists; SQL statement:
+create table T_PASSWORD_RECOVERY (PWR_ID_C varchar(36) not null, PWR_CREATEDATE_D timestamp(6) not null, PWR_DELETEDATE_D timestamp(6), PWR_USERNAME_C varchar(50) not null, primary key (PWR_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_RELATION" already exists; SQL statement:
+create table T_RELATION (REL_ID_C varchar(36) not null, REL_DELETEDATE_D timestamp(6), REL_IDDOCFROM_C varchar(36) not null, REL_IDDOCTO_C varchar(36) not null, primary key (REL_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE" already exists; SQL statement:
+create table T_ROLE (ROL_ID_C varchar(36) not null, ROL_CREATEDATE_D timestamp(6) not null, ROL_DELETEDATE_D timestamp(6), ROL_NAME_C varchar(50) not null, primary key (ROL_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE_BASE_FUNCTION" already exists; SQL statement:
+create table T_ROLE_BASE_FUNCTION (RBF_ID_C varchar(36) not null, RBF_IDBASEFUNCTION_C varchar(36) not null, RBF_CREATEDATE_D timestamp(6) not null, RBF_DELETEDATE_D timestamp(6), RBF_IDROLE_C varchar(36) not null, primary key (RBF_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE" already exists; SQL statement:
+create table T_ROUTE (RTE_ID_C varchar(36) not null, RTE_CREATEDATE_D timestamp(6) not null, RTE_DELETEDATE_D timestamp(6), RTE_IDDOCUMENT_C varchar(36) not null, RTE_NAME_C varchar(50) not null, primary key (RTE_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_MODEL" already exists; SQL statement:
+create table T_ROUTE_MODEL (RTM_ID_C varchar(36) not null, RTM_CREATEDATE_D timestamp(6) not null, RTM_DELETEDATE_D timestamp(6), RTM_NAME_C varchar(50) not null, RTM_STEPS_C varchar(5000) not null, primary key (RTM_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_STEP" already exists; SQL statement:
+create table T_ROUTE_STEP (RTP_ID_C varchar(36) not null, RTP_COMMENT_C varchar(500), RTP_CREATEDATE_D timestamp(6) not null, RTP_DELETEDATE_D timestamp(6), RTP_ENDDATE_D timestamp(6), RTP_NAME_C varchar(200) not null, RTP_ORDER_N integer not null, RTP_IDROUTE_C varchar(36) not null, RTP_IDTARGET_C varchar(36) not null, RTP_TRANSITION_C varchar(50) check (RTP_TRANSITION_C in ('APPROVED','REJECTED','VALIDATED')), RTP_TRANSITIONS_C varchar(2000), RTP_TYPE_C varchar(50) not null check (RTP_TYPE_C in ('APPROVE','VALIDATE')), RTP_IDVALIDATORUSER_C varchar(36), primary key (RTP_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_SHARE" already exists; SQL statement:
+create table T_SHARE (SHA_ID_C varchar(36) not null, SHA_CREATEDATE_D timestamp(6) not null, SHA_DELETEDATE_D timestamp(6), SHA_NAME_C varchar(36), primary key (SHA_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_TAG" already exists; SQL statement:
+create table T_TAG (TAG_ID_C varchar(36) not null, TAG_COLOR_C varchar(7) not null, TAG_CREATEDATE_D timestamp(6) not null, TAG_DELETEDATE_D timestamp(6), TAG_NAME_C varchar(36) not null, TAG_IDPARENT_C varchar(36), TAG_IDUSER_C varchar(36) not null, primary key (TAG_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER" already exists; SQL statement:
+create table T_USER (USE_ID_C varchar(36) not null, USE_CREATEDATE_D timestamp(6) not null, USE_DELETEDATE_D timestamp(6), USE_DISABLEDATE_D timestamp(6), USE_EMAIL_C varchar(100) not null, USE_ONBOARDING_B boolean not null, USE_PASSWORD_C varchar(100) not null, USE_PRIVATEKEY_C varchar(100) not null, USE_IDROLE_C varchar(36) not null, USE_STORAGECURRENT_N bigint not null, USE_STORAGEQUOTA_N bigint not null, USE_TOTPKEY_C varchar(100), USE_USERNAME_C varchar(50) not null, primary key (USE_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER_GROUP" already exists; SQL statement:
+create table T_USER_GROUP (UGP_ID_C varchar(36) not null, UGP_DELETEDATE_D timestamp(6), UGP_IDGROUP_C varchar(36) not null, UGP_IDUSER_C varchar(36) not null, primary key (UGP_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_VOCABULARY" already exists; SQL statement:
+create table T_VOCABULARY (VOC_ID_C varchar(36) not null, VOC_NAME_C varchar(50) not null, VOC_ORDER_N integer, VOC_VALUE_C varchar(500) not null, primary key (VOC_ID_C)) [42101-199]
+2026-04-14 00:15:33 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_WEBHOOK" already exists; SQL statement:
+create table T_WEBHOOK (WHK_ID_C varchar(36) not null, WHK_CREATEDATE_D timestamp(6) not null, WHK_DELETEDATE_D timestamp(6), WHK_EVENT_C varchar(50) not null check (WHK_EVENT_C in ('DOCUMENT_CREATED','DOCUMENT_UPDATED','DOCUMENT_DELETED','FILE_CREATED','FILE_UPDATED','FILE_DELETED')), WHK_URL_C varchar(1024) not null, primary key (WHK_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ACL" already exists; SQL statement:
+create table T_ACL (ACL_ID_C varchar(36) not null, ACL_DELETEDATE_D timestamp(6), ACL_PERM_C varchar(30) not null check (ACL_PERM_C in ('READ','WRITE')), ACL_SOURCEID_C varchar(36) not null, ACL_TARGETID_C varchar(36) not null, ACL_TYPE_C varchar(30) not null check (ACL_TYPE_C in ('USER','ROUTING')), primary key (ACL_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUDIT_LOG" already exists; SQL statement:
+create table T_AUDIT_LOG (LOG_ID_C varchar(36) not null, LOG_CREATEDATE_D timestamp(6) not null, LOG_CLASSENTITY_C varchar(50) not null, LOG_IDENTITY_C varchar(36) not null, LOG_MESSAGE_C varchar(1000), LOG_TYPE_C varchar(50) not null check (LOG_TYPE_C in ('CREATE','UPDATE','DELETE')), LOG_IDUSER_C varchar(36) not null, primary key (LOG_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUTHENTICATION_TOKEN" already exists; SQL statement:
+create table T_AUTHENTICATION_TOKEN (AUT_ID_C varchar(36) not null, AUT_CREATIONDATE_D timestamp(6) not null, AUT_IP_C varchar(45), AUT_LASTCONNECTIONDATE_D timestamp(6), AUT_LONGLASTED_B boolean not null, AUT_UA_C varchar(1000), AUT_IDUSER_C varchar(36) not null, primary key (AUT_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_BASE_FUNCTION" already exists; SQL statement:
+create table T_BASE_FUNCTION (BAF_ID_C varchar(10) not null, primary key (BAF_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_COMMENT" already exists; SQL statement:
+create table T_COMMENT (COM_ID_C varchar(36) not null, COM_CONTENT_C varchar(255) not null, COM_CREATEDATE_D timestamp(6) not null, COM_DELETEDATE_D timestamp(6), COM_IDDOC_C varchar(36) not null, COM_IDUSER_C varchar(36) not null, primary key (COM_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONFIG" already exists; SQL statement:
+create table T_CONFIG (CFG_ID_C varchar(50) not null check (CFG_ID_C in ('LUCENE_DIRECTORY_STORAGE','THEME','GUEST_LOGIN','OCR_ENABLED','DEFAULT_LANGUAGE','SMTP_HOSTNAME','SMTP_PORT','SMTP_FROM','SMTP_USERNAME','SMTP_PASSWORD','INBOX_ENABLED','INBOX_HOSTNAME','INBOX_PORT','INBOX_STARTTLS','INBOX_USERNAME','INBOX_PASSWORD','INBOX_FOLDER','INBOX_TAG','INBOX_AUTOMATIC_TAGS','INBOX_DELETE_IMPORTED','LDAP_ENABLED','LDAP_HOST','LDAP_PORT','LDAP_USESSL','LDAP_ADMIN_DN','LDAP_ADMIN_PASSWORD','LDAP_BASE_DN','LDAP_FILTER','LDAP_DEFAULT_EMAIL','LDAP_DEFAULT_STORAGE')), CFG_VALUE_C varchar(250), primary key (CFG_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONTRIBUTOR" already exists; SQL statement:
+create table T_CONTRIBUTOR (CTR_ID_C varchar(36) not null, CTR_IDDOC_C varchar(36) not null, CTR_IDUSER_C varchar(36) not null, primary key (CTR_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT" already exists; SQL statement:
+create table T_DOCUMENT (DOC_ID_C varchar(36) not null, DOC_COVERAGE_C varchar(100), DOC_CREATEDATE_D timestamp(6) not null, DOC_DELETEDATE_D timestamp(6), DOC_DESCRIPTION_C varchar(4000), DOC_IDFILE_C varchar(36), DOC_FORMAT_C varchar(500), DOC_IDENTIFIER_C varchar(500), DOC_LANGUAGE_C varchar(3) not null, DOC_PUBLISHER_C varchar(500), DOC_RIGHTS_C varchar(100), DOC_SOURCE_C varchar(500), DOC_SUBJECT_C varchar(500), DOC_TITLE_C varchar(100) not null, DOC_TYPE_C varchar(100), DOC_UPDATEDATE_D timestamp(6) not null, DOC_IDUSER_C varchar(36) not null, primary key (DOC_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_METADATA" already exists; SQL statement:
+create table T_DOCUMENT_METADATA (DME_ID_C varchar(36) not null, DME_IDDOCUMENT_C varchar(36) not null, DME_IDMETADATA_C varchar(36) not null, DME_VALUE_C varchar(4000), primary key (DME_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_TAG" already exists; SQL statement:
+create table T_DOCUMENT_TAG (DOT_ID_C varchar(36) not null, DOT_DELETEDATE_D timestamp(6), DOT_IDDOCUMENT_C varchar(36) not null, DOT_IDTAG_C varchar(36) not null, primary key (DOT_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_FILE" already exists; SQL statement:
+create table T_FILE (FIL_ID_C varchar(36) not null, FIL_CONTENT_C varchar(255), FIL_CREATEDATE_D timestamp(6) not null, FIL_DELETEDATE_D timestamp(6), FIL_IDDOC_C varchar(36), FIL_LATESTVERSION_B boolean not null, FIL_MIMETYPE_C varchar(100), FIL_NAME_C varchar(200), FIL_ORDER_N integer, FIL_SIZE_N bigint not null, FIL_IDUSER_C varchar(36) not null, FIL_VERSION_N integer not null, FIL_IDVERSION_C varchar(255), primary key (FIL_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_GROUP" already exists; SQL statement:
+create table T_GROUP (GRP_ID_C varchar(36) not null, GRP_DELETEDATE_D timestamp(6), GRP_NAME_C varchar(50) not null, GRP_IDPARENT_C varchar(36), GRP_IDROLE_C varchar(36), primary key (GRP_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_METADATA" already exists; SQL statement:
+create table T_METADATA (MET_ID_C varchar(36) not null, MET_DELETEDATE_D timestamp(6), MET_NAME_C varchar(50) not null, MET_TYPE_C varchar(20) not null check (MET_TYPE_C in ('STRING','INTEGER','FLOAT','DATE','BOOLEAN')), primary key (MET_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_PASSWORD_RECOVERY" already exists; SQL statement:
+create table T_PASSWORD_RECOVERY (PWR_ID_C varchar(36) not null, PWR_CREATEDATE_D timestamp(6) not null, PWR_DELETEDATE_D timestamp(6), PWR_USERNAME_C varchar(50) not null, primary key (PWR_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_RELATION" already exists; SQL statement:
+create table T_RELATION (REL_ID_C varchar(36) not null, REL_DELETEDATE_D timestamp(6), REL_IDDOCFROM_C varchar(36) not null, REL_IDDOCTO_C varchar(36) not null, primary key (REL_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE" already exists; SQL statement:
+create table T_ROLE (ROL_ID_C varchar(36) not null, ROL_CREATEDATE_D timestamp(6) not null, ROL_DELETEDATE_D timestamp(6), ROL_NAME_C varchar(50) not null, primary key (ROL_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE_BASE_FUNCTION" already exists; SQL statement:
+create table T_ROLE_BASE_FUNCTION (RBF_ID_C varchar(36) not null, RBF_IDBASEFUNCTION_C varchar(36) not null, RBF_CREATEDATE_D timestamp(6) not null, RBF_DELETEDATE_D timestamp(6), RBF_IDROLE_C varchar(36) not null, primary key (RBF_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE" already exists; SQL statement:
+create table T_ROUTE (RTE_ID_C varchar(36) not null, RTE_CREATEDATE_D timestamp(6) not null, RTE_DELETEDATE_D timestamp(6), RTE_IDDOCUMENT_C varchar(36) not null, RTE_NAME_C varchar(50) not null, primary key (RTE_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_MODEL" already exists; SQL statement:
+create table T_ROUTE_MODEL (RTM_ID_C varchar(36) not null, RTM_CREATEDATE_D timestamp(6) not null, RTM_DELETEDATE_D timestamp(6), RTM_NAME_C varchar(50) not null, RTM_STEPS_C varchar(5000) not null, primary key (RTM_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_STEP" already exists; SQL statement:
+create table T_ROUTE_STEP (RTP_ID_C varchar(36) not null, RTP_COMMENT_C varchar(500), RTP_CREATEDATE_D timestamp(6) not null, RTP_DELETEDATE_D timestamp(6), RTP_ENDDATE_D timestamp(6), RTP_NAME_C varchar(200) not null, RTP_ORDER_N integer not null, RTP_IDROUTE_C varchar(36) not null, RTP_IDTARGET_C varchar(36) not null, RTP_TRANSITION_C varchar(50) check (RTP_TRANSITION_C in ('APPROVED','REJECTED','VALIDATED')), RTP_TRANSITIONS_C varchar(2000), RTP_TYPE_C varchar(50) not null check (RTP_TYPE_C in ('APPROVE','VALIDATE')), RTP_IDVALIDATORUSER_C varchar(36), primary key (RTP_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_SHARE" already exists; SQL statement:
+create table T_SHARE (SHA_ID_C varchar(36) not null, SHA_CREATEDATE_D timestamp(6) not null, SHA_DELETEDATE_D timestamp(6), SHA_NAME_C varchar(36), primary key (SHA_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_TAG" already exists; SQL statement:
+create table T_TAG (TAG_ID_C varchar(36) not null, TAG_COLOR_C varchar(7) not null, TAG_CREATEDATE_D timestamp(6) not null, TAG_DELETEDATE_D timestamp(6), TAG_NAME_C varchar(36) not null, TAG_IDPARENT_C varchar(36), TAG_IDUSER_C varchar(36) not null, primary key (TAG_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER" already exists; SQL statement:
+create table T_USER (USE_ID_C varchar(36) not null, USE_CREATEDATE_D timestamp(6) not null, USE_DELETEDATE_D timestamp(6), USE_DISABLEDATE_D timestamp(6), USE_EMAIL_C varchar(100) not null, USE_ONBOARDING_B boolean not null, USE_PASSWORD_C varchar(100) not null, USE_PRIVATEKEY_C varchar(100) not null, USE_IDROLE_C varchar(36) not null, USE_STORAGECURRENT_N bigint not null, USE_STORAGEQUOTA_N bigint not null, USE_TOTPKEY_C varchar(100), USE_USERNAME_C varchar(50) not null, primary key (USE_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER_GROUP" already exists; SQL statement:
+create table T_USER_GROUP (UGP_ID_C varchar(36) not null, UGP_DELETEDATE_D timestamp(6), UGP_IDGROUP_C varchar(36) not null, UGP_IDUSER_C varchar(36) not null, primary key (UGP_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_VOCABULARY" already exists; SQL statement:
+create table T_VOCABULARY (VOC_ID_C varchar(36) not null, VOC_NAME_C varchar(50) not null, VOC_ORDER_N integer, VOC_VALUE_C varchar(500) not null, primary key (VOC_ID_C)) [42101-199]
+2026-04-14 00:20:49 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_WEBHOOK" already exists; SQL statement:
+create table T_WEBHOOK (WHK_ID_C varchar(36) not null, WHK_CREATEDATE_D timestamp(6) not null, WHK_DELETEDATE_D timestamp(6), WHK_EVENT_C varchar(50) not null check (WHK_EVENT_C in ('DOCUMENT_CREATED','DOCUMENT_UPDATED','DOCUMENT_DELETED','FILE_CREATED','FILE_UPDATED','FILE_DELETED')), WHK_URL_C varchar(1024) not null, primary key (WHK_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ACL" already exists; SQL statement:
+create table T_ACL (ACL_ID_C varchar(36) not null, ACL_DELETEDATE_D timestamp(6), ACL_PERM_C varchar(30) not null check (ACL_PERM_C in ('READ','WRITE')), ACL_SOURCEID_C varchar(36) not null, ACL_TARGETID_C varchar(36) not null, ACL_TYPE_C varchar(30) not null check (ACL_TYPE_C in ('USER','ROUTING')), primary key (ACL_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUDIT_LOG" already exists; SQL statement:
+create table T_AUDIT_LOG (LOG_ID_C varchar(36) not null, LOG_CREATEDATE_D timestamp(6) not null, LOG_CLASSENTITY_C varchar(50) not null, LOG_IDENTITY_C varchar(36) not null, LOG_MESSAGE_C varchar(1000), LOG_TYPE_C varchar(50) not null check (LOG_TYPE_C in ('CREATE','UPDATE','DELETE')), LOG_IDUSER_C varchar(36) not null, primary key (LOG_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUTHENTICATION_TOKEN" already exists; SQL statement:
+create table T_AUTHENTICATION_TOKEN (AUT_ID_C varchar(36) not null, AUT_CREATIONDATE_D timestamp(6) not null, AUT_IP_C varchar(45), AUT_LASTCONNECTIONDATE_D timestamp(6), AUT_LONGLASTED_B boolean not null, AUT_UA_C varchar(1000), AUT_IDUSER_C varchar(36) not null, primary key (AUT_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_BASE_FUNCTION" already exists; SQL statement:
+create table T_BASE_FUNCTION (BAF_ID_C varchar(10) not null, primary key (BAF_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_COMMENT" already exists; SQL statement:
+create table T_COMMENT (COM_ID_C varchar(36) not null, COM_CONTENT_C varchar(255) not null, COM_CREATEDATE_D timestamp(6) not null, COM_DELETEDATE_D timestamp(6), COM_IDDOC_C varchar(36) not null, COM_IDUSER_C varchar(36) not null, primary key (COM_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONFIG" already exists; SQL statement:
+create table T_CONFIG (CFG_ID_C varchar(50) not null check (CFG_ID_C in ('LUCENE_DIRECTORY_STORAGE','THEME','GUEST_LOGIN','OCR_ENABLED','DEFAULT_LANGUAGE','SMTP_HOSTNAME','SMTP_PORT','SMTP_FROM','SMTP_USERNAME','SMTP_PASSWORD','INBOX_ENABLED','INBOX_HOSTNAME','INBOX_PORT','INBOX_STARTTLS','INBOX_USERNAME','INBOX_PASSWORD','INBOX_FOLDER','INBOX_TAG','INBOX_AUTOMATIC_TAGS','INBOX_DELETE_IMPORTED','LDAP_ENABLED','LDAP_HOST','LDAP_PORT','LDAP_USESSL','LDAP_ADMIN_DN','LDAP_ADMIN_PASSWORD','LDAP_BASE_DN','LDAP_FILTER','LDAP_DEFAULT_EMAIL','LDAP_DEFAULT_STORAGE')), CFG_VALUE_C varchar(250), primary key (CFG_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONTRIBUTOR" already exists; SQL statement:
+create table T_CONTRIBUTOR (CTR_ID_C varchar(36) not null, CTR_IDDOC_C varchar(36) not null, CTR_IDUSER_C varchar(36) not null, primary key (CTR_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT" already exists; SQL statement:
+create table T_DOCUMENT (DOC_ID_C varchar(36) not null, DOC_COVERAGE_C varchar(100), DOC_CREATEDATE_D timestamp(6) not null, DOC_DELETEDATE_D timestamp(6), DOC_DESCRIPTION_C varchar(4000), DOC_IDFILE_C varchar(36), DOC_FORMAT_C varchar(500), DOC_IDENTIFIER_C varchar(500), DOC_LANGUAGE_C varchar(3) not null, DOC_PUBLISHER_C varchar(500), DOC_RIGHTS_C varchar(100), DOC_SOURCE_C varchar(500), DOC_SUBJECT_C varchar(500), DOC_TITLE_C varchar(100) not null, DOC_TYPE_C varchar(100), DOC_UPDATEDATE_D timestamp(6) not null, DOC_IDUSER_C varchar(36) not null, primary key (DOC_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_METADATA" already exists; SQL statement:
+create table T_DOCUMENT_METADATA (DME_ID_C varchar(36) not null, DME_IDDOCUMENT_C varchar(36) not null, DME_IDMETADATA_C varchar(36) not null, DME_VALUE_C varchar(4000), primary key (DME_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_TAG" already exists; SQL statement:
+create table T_DOCUMENT_TAG (DOT_ID_C varchar(36) not null, DOT_DELETEDATE_D timestamp(6), DOT_IDDOCUMENT_C varchar(36) not null, DOT_IDTAG_C varchar(36) not null, primary key (DOT_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_FILE" already exists; SQL statement:
+create table T_FILE (FIL_ID_C varchar(36) not null, FIL_CONTENT_C varchar(255), FIL_CREATEDATE_D timestamp(6) not null, FIL_DELETEDATE_D timestamp(6), FIL_IDDOC_C varchar(36), FIL_LATESTVERSION_B boolean not null, FIL_MIMETYPE_C varchar(100), FIL_NAME_C varchar(200), FIL_ORDER_N integer, FIL_SIZE_N bigint not null, FIL_IDUSER_C varchar(36) not null, FIL_VERSION_N integer not null, FIL_IDVERSION_C varchar(255), primary key (FIL_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_GROUP" already exists; SQL statement:
+create table T_GROUP (GRP_ID_C varchar(36) not null, GRP_DELETEDATE_D timestamp(6), GRP_NAME_C varchar(50) not null, GRP_IDPARENT_C varchar(36), GRP_IDROLE_C varchar(36), primary key (GRP_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_METADATA" already exists; SQL statement:
+create table T_METADATA (MET_ID_C varchar(36) not null, MET_DELETEDATE_D timestamp(6), MET_NAME_C varchar(50) not null, MET_TYPE_C varchar(20) not null check (MET_TYPE_C in ('STRING','INTEGER','FLOAT','DATE','BOOLEAN')), primary key (MET_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_PASSWORD_RECOVERY" already exists; SQL statement:
+create table T_PASSWORD_RECOVERY (PWR_ID_C varchar(36) not null, PWR_CREATEDATE_D timestamp(6) not null, PWR_DELETEDATE_D timestamp(6), PWR_USERNAME_C varchar(50) not null, primary key (PWR_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_RELATION" already exists; SQL statement:
+create table T_RELATION (REL_ID_C varchar(36) not null, REL_DELETEDATE_D timestamp(6), REL_IDDOCFROM_C varchar(36) not null, REL_IDDOCTO_C varchar(36) not null, primary key (REL_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE" already exists; SQL statement:
+create table T_ROLE (ROL_ID_C varchar(36) not null, ROL_CREATEDATE_D timestamp(6) not null, ROL_DELETEDATE_D timestamp(6), ROL_NAME_C varchar(50) not null, primary key (ROL_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE_BASE_FUNCTION" already exists; SQL statement:
+create table T_ROLE_BASE_FUNCTION (RBF_ID_C varchar(36) not null, RBF_IDBASEFUNCTION_C varchar(36) not null, RBF_CREATEDATE_D timestamp(6) not null, RBF_DELETEDATE_D timestamp(6), RBF_IDROLE_C varchar(36) not null, primary key (RBF_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE" already exists; SQL statement:
+create table T_ROUTE (RTE_ID_C varchar(36) not null, RTE_CREATEDATE_D timestamp(6) not null, RTE_DELETEDATE_D timestamp(6), RTE_IDDOCUMENT_C varchar(36) not null, RTE_NAME_C varchar(50) not null, primary key (RTE_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_MODEL" already exists; SQL statement:
+create table T_ROUTE_MODEL (RTM_ID_C varchar(36) not null, RTM_CREATEDATE_D timestamp(6) not null, RTM_DELETEDATE_D timestamp(6), RTM_NAME_C varchar(50) not null, RTM_STEPS_C varchar(5000) not null, primary key (RTM_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_STEP" already exists; SQL statement:
+create table T_ROUTE_STEP (RTP_ID_C varchar(36) not null, RTP_COMMENT_C varchar(500), RTP_CREATEDATE_D timestamp(6) not null, RTP_DELETEDATE_D timestamp(6), RTP_ENDDATE_D timestamp(6), RTP_NAME_C varchar(200) not null, RTP_ORDER_N integer not null, RTP_IDROUTE_C varchar(36) not null, RTP_IDTARGET_C varchar(36) not null, RTP_TRANSITION_C varchar(50) check (RTP_TRANSITION_C in ('APPROVED','REJECTED','VALIDATED')), RTP_TRANSITIONS_C varchar(2000), RTP_TYPE_C varchar(50) not null check (RTP_TYPE_C in ('APPROVE','VALIDATE')), RTP_IDVALIDATORUSER_C varchar(36), primary key (RTP_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_SHARE" already exists; SQL statement:
+create table T_SHARE (SHA_ID_C varchar(36) not null, SHA_CREATEDATE_D timestamp(6) not null, SHA_DELETEDATE_D timestamp(6), SHA_NAME_C varchar(36), primary key (SHA_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_TAG" already exists; SQL statement:
+create table T_TAG (TAG_ID_C varchar(36) not null, TAG_COLOR_C varchar(7) not null, TAG_CREATEDATE_D timestamp(6) not null, TAG_DELETEDATE_D timestamp(6), TAG_NAME_C varchar(36) not null, TAG_IDPARENT_C varchar(36), TAG_IDUSER_C varchar(36) not null, primary key (TAG_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER" already exists; SQL statement:
+create table T_USER (USE_ID_C varchar(36) not null, USE_CREATEDATE_D timestamp(6) not null, USE_DELETEDATE_D timestamp(6), USE_DISABLEDATE_D timestamp(6), USE_EMAIL_C varchar(100) not null, USE_ONBOARDING_B boolean not null, USE_PASSWORD_C varchar(100) not null, USE_PRIVATEKEY_C varchar(100) not null, USE_IDROLE_C varchar(36) not null, USE_STORAGECURRENT_N bigint not null, USE_STORAGEQUOTA_N bigint not null, USE_TOTPKEY_C varchar(100), USE_USERNAME_C varchar(50) not null, primary key (USE_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER_GROUP" already exists; SQL statement:
+create table T_USER_GROUP (UGP_ID_C varchar(36) not null, UGP_DELETEDATE_D timestamp(6), UGP_IDGROUP_C varchar(36) not null, UGP_IDUSER_C varchar(36) not null, primary key (UGP_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_VOCABULARY" already exists; SQL statement:
+create table T_VOCABULARY (VOC_ID_C varchar(36) not null, VOC_NAME_C varchar(50) not null, VOC_ORDER_N integer, VOC_VALUE_C varchar(500) not null, primary key (VOC_ID_C)) [42101-199]
+2026-04-14 00:23:20 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_WEBHOOK" already exists; SQL statement:
+create table T_WEBHOOK (WHK_ID_C varchar(36) not null, WHK_CREATEDATE_D timestamp(6) not null, WHK_DELETEDATE_D timestamp(6), WHK_EVENT_C varchar(50) not null check (WHK_EVENT_C in ('DOCUMENT_CREATED','DOCUMENT_UPDATED','DOCUMENT_DELETED','FILE_CREATED','FILE_UPDATED','FILE_DELETED')), WHK_URL_C varchar(1024) not null, primary key (WHK_ID_C)) [42101-199]
+2026-04-14 00:31:46 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ACL" already exists; SQL statement:
+create table T_ACL (ACL_ID_C varchar(36) not null, ACL_DELETEDATE_D timestamp(6), ACL_PERM_C varchar(30) not null check (ACL_PERM_C in ('READ','WRITE')), ACL_SOURCEID_C varchar(36) not null, ACL_TARGETID_C varchar(36) not null, ACL_TYPE_C varchar(30) not null check (ACL_TYPE_C in ('USER','ROUTING')), primary key (ACL_ID_C)) [42101-199]
+2026-04-14 00:31:46 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUDIT_LOG" already exists; SQL statement:
+create table T_AUDIT_LOG (LOG_ID_C varchar(36) not null, LOG_CREATEDATE_D timestamp(6) not null, LOG_CLASSENTITY_C varchar(50) not null, LOG_IDENTITY_C varchar(36) not null, LOG_MESSAGE_C varchar(1000), LOG_TYPE_C varchar(50) not null check (LOG_TYPE_C in ('CREATE','UPDATE','DELETE')), LOG_IDUSER_C varchar(36) not null, primary key (LOG_ID_C)) [42101-199]
+2026-04-14 00:31:46 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUTHENTICATION_TOKEN" already exists; SQL statement:
+create table T_AUTHENTICATION_TOKEN (AUT_ID_C varchar(36) not null, AUT_CREATIONDATE_D timestamp(6) not null, AUT_IP_C varchar(45), AUT_LASTCONNECTIONDATE_D timestamp(6), AUT_LONGLASTED_B boolean not null, AUT_UA_C varchar(1000), AUT_IDUSER_C varchar(36) not null, primary key (AUT_ID_C)) [42101-199]
+2026-04-14 00:31:46 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_BASE_FUNCTION" already exists; SQL statement:
+create table T_BASE_FUNCTION (BAF_ID_C varchar(10) not null, primary key (BAF_ID_C)) [42101-199]
+2026-04-14 00:31:46 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_COMMENT" already exists; SQL statement:
+create table T_COMMENT (COM_ID_C varchar(36) not null, COM_CONTENT_C varchar(255) not null, COM_CREATEDATE_D timestamp(6) not null, COM_DELETEDATE_D timestamp(6), COM_IDDOC_C varchar(36) not null, COM_IDUSER_C varchar(36) not null, primary key (COM_ID_C)) [42101-199]
+2026-04-14 00:31:46 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONFIG" already exists; SQL statement:
+create table T_CONFIG (CFG_ID_C varchar(50) not null check (CFG_ID_C in ('LUCENE_DIRECTORY_STORAGE','THEME','GUEST_LOGIN','OCR_ENABLED','DEFAULT_LANGUAGE','SMTP_HOSTNAME','SMTP_PORT','SMTP_FROM','SMTP_USERNAME','SMTP_PASSWORD','INBOX_ENABLED','INBOX_HOSTNAME','INBOX_PORT','INBOX_STARTTLS','INBOX_USERNAME','INBOX_PASSWORD','INBOX_FOLDER','INBOX_TAG','INBOX_AUTOMATIC_TAGS','INBOX_DELETE_IMPORTED','LDAP_ENABLED','LDAP_HOST','LDAP_PORT','LDAP_USESSL','LDAP_ADMIN_DN','LDAP_ADMIN_PASSWORD','LDAP_BASE_DN','LDAP_FILTER','LDAP_DEFAULT_EMAIL','LDAP_DEFAULT_STORAGE')), CFG_VALUE_C varchar(250), primary key (CFG_ID_C)) [42101-199]
+2026-04-14 00:31:46 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONTRIBUTOR" already exists; SQL statement:
+create table T_CONTRIBUTOR (CTR_ID_C varchar(36) not null, CTR_IDDOC_C varchar(36) not null, CTR_IDUSER_C varchar(36) not null, primary key (CTR_ID_C)) [42101-199]
+2026-04-14 00:31:46 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT" already exists; SQL statement:
+create table T_DOCUMENT (DOC_ID_C varchar(36) not null, DOC_COVERAGE_C varchar(100), DOC_CREATEDATE_D timestamp(6) not null, DOC_DELETEDATE_D timestamp(6), DOC_DESCRIPTION_C varchar(4000), DOC_IDFILE_C varchar(36), DOC_FORMAT_C varchar(500), DOC_IDENTIFIER_C varchar(500), DOC_LANGUAGE_C varchar(3) not null, DOC_PUBLISHER_C varchar(500), DOC_RIGHTS_C varchar(100), DOC_SOURCE_C varchar(500), DOC_SUBJECT_C varchar(500), DOC_TITLE_C varchar(100) not null, DOC_TYPE_C varchar(100), DOC_UPDATEDATE_D timestamp(6) not null, DOC_IDUSER_C varchar(36) not null, primary key (DOC_ID_C)) [42101-199]
+2026-04-14 00:31:46 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_METADATA" already exists; SQL statement:
+create table T_DOCUMENT_METADATA (DME_ID_C varchar(36) not null, DME_IDDOCUMENT_C varchar(36) not null, DME_IDMETADATA_C varchar(36) not null, DME_VALUE_C varchar(4000), primary key (DME_ID_C)) [42101-199]
+2026-04-14 00:31:46 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_TAG" already exists; SQL statement:
+create table T_DOCUMENT_TAG (DOT_ID_C varchar(36) not null, DOT_DELETEDATE_D timestamp(6), DOT_IDDOCUMENT_C varchar(36) not null, DOT_IDTAG_C varchar(36) not null, primary key (DOT_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_FILE" already exists; SQL statement:
+create table T_FILE (FIL_ID_C varchar(36) not null, FIL_CONTENT_C varchar(255), FIL_CREATEDATE_D timestamp(6) not null, FIL_DELETEDATE_D timestamp(6), FIL_IDDOC_C varchar(36), FIL_LATESTVERSION_B boolean not null, FIL_MIMETYPE_C varchar(100), FIL_NAME_C varchar(200), FIL_ORDER_N integer, FIL_SIZE_N bigint not null, FIL_IDUSER_C varchar(36) not null, FIL_VERSION_N integer not null, FIL_IDVERSION_C varchar(255), primary key (FIL_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_GROUP" already exists; SQL statement:
+create table T_GROUP (GRP_ID_C varchar(36) not null, GRP_DELETEDATE_D timestamp(6), GRP_NAME_C varchar(50) not null, GRP_IDPARENT_C varchar(36), GRP_IDROLE_C varchar(36), primary key (GRP_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_METADATA" already exists; SQL statement:
+create table T_METADATA (MET_ID_C varchar(36) not null, MET_DELETEDATE_D timestamp(6), MET_NAME_C varchar(50) not null, MET_TYPE_C varchar(20) not null check (MET_TYPE_C in ('STRING','INTEGER','FLOAT','DATE','BOOLEAN')), primary key (MET_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_PASSWORD_RECOVERY" already exists; SQL statement:
+create table T_PASSWORD_RECOVERY (PWR_ID_C varchar(36) not null, PWR_CREATEDATE_D timestamp(6) not null, PWR_DELETEDATE_D timestamp(6), PWR_USERNAME_C varchar(50) not null, primary key (PWR_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_RELATION" already exists; SQL statement:
+create table T_RELATION (REL_ID_C varchar(36) not null, REL_DELETEDATE_D timestamp(6), REL_IDDOCFROM_C varchar(36) not null, REL_IDDOCTO_C varchar(36) not null, primary key (REL_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE" already exists; SQL statement:
+create table T_ROLE (ROL_ID_C varchar(36) not null, ROL_CREATEDATE_D timestamp(6) not null, ROL_DELETEDATE_D timestamp(6), ROL_NAME_C varchar(50) not null, primary key (ROL_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE_BASE_FUNCTION" already exists; SQL statement:
+create table T_ROLE_BASE_FUNCTION (RBF_ID_C varchar(36) not null, RBF_IDBASEFUNCTION_C varchar(36) not null, RBF_CREATEDATE_D timestamp(6) not null, RBF_DELETEDATE_D timestamp(6), RBF_IDROLE_C varchar(36) not null, primary key (RBF_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE" already exists; SQL statement:
+create table T_ROUTE (RTE_ID_C varchar(36) not null, RTE_CREATEDATE_D timestamp(6) not null, RTE_DELETEDATE_D timestamp(6), RTE_IDDOCUMENT_C varchar(36) not null, RTE_NAME_C varchar(50) not null, primary key (RTE_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_MODEL" already exists; SQL statement:
+create table T_ROUTE_MODEL (RTM_ID_C varchar(36) not null, RTM_CREATEDATE_D timestamp(6) not null, RTM_DELETEDATE_D timestamp(6), RTM_NAME_C varchar(50) not null, RTM_STEPS_C varchar(5000) not null, primary key (RTM_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_STEP" already exists; SQL statement:
+create table T_ROUTE_STEP (RTP_ID_C varchar(36) not null, RTP_COMMENT_C varchar(500), RTP_CREATEDATE_D timestamp(6) not null, RTP_DELETEDATE_D timestamp(6), RTP_ENDDATE_D timestamp(6), RTP_NAME_C varchar(200) not null, RTP_ORDER_N integer not null, RTP_IDROUTE_C varchar(36) not null, RTP_IDTARGET_C varchar(36) not null, RTP_TRANSITION_C varchar(50) check (RTP_TRANSITION_C in ('APPROVED','REJECTED','VALIDATED')), RTP_TRANSITIONS_C varchar(2000), RTP_TYPE_C varchar(50) not null check (RTP_TYPE_C in ('APPROVE','VALIDATE')), RTP_IDVALIDATORUSER_C varchar(36), primary key (RTP_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_SHARE" already exists; SQL statement:
+create table T_SHARE (SHA_ID_C varchar(36) not null, SHA_CREATEDATE_D timestamp(6) not null, SHA_DELETEDATE_D timestamp(6), SHA_NAME_C varchar(36), primary key (SHA_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_TAG" already exists; SQL statement:
+create table T_TAG (TAG_ID_C varchar(36) not null, TAG_COLOR_C varchar(7) not null, TAG_CREATEDATE_D timestamp(6) not null, TAG_DELETEDATE_D timestamp(6), TAG_NAME_C varchar(36) not null, TAG_IDPARENT_C varchar(36), TAG_IDUSER_C varchar(36) not null, primary key (TAG_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER" already exists; SQL statement:
+create table T_USER (USE_ID_C varchar(36) not null, USE_CREATEDATE_D timestamp(6) not null, USE_DELETEDATE_D timestamp(6), USE_DISABLEDATE_D timestamp(6), USE_EMAIL_C varchar(100) not null, USE_ONBOARDING_B boolean not null, USE_PASSWORD_C varchar(100) not null, USE_PRIVATEKEY_C varchar(100) not null, USE_IDROLE_C varchar(36) not null, USE_STORAGECURRENT_N bigint not null, USE_STORAGEQUOTA_N bigint not null, USE_TOTPKEY_C varchar(100), USE_USERNAME_C varchar(50) not null, primary key (USE_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER_GROUP" already exists; SQL statement:
+create table T_USER_GROUP (UGP_ID_C varchar(36) not null, UGP_DELETEDATE_D timestamp(6), UGP_IDGROUP_C varchar(36) not null, UGP_IDUSER_C varchar(36) not null, primary key (UGP_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_VOCABULARY" already exists; SQL statement:
+create table T_VOCABULARY (VOC_ID_C varchar(36) not null, VOC_NAME_C varchar(50) not null, VOC_ORDER_N integer, VOC_VALUE_C varchar(500) not null, primary key (VOC_ID_C)) [42101-199]
+2026-04-14 00:31:47 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_WEBHOOK" already exists; SQL statement:
+create table T_WEBHOOK (WHK_ID_C varchar(36) not null, WHK_CREATEDATE_D timestamp(6) not null, WHK_DELETEDATE_D timestamp(6), WHK_EVENT_C varchar(50) not null check (WHK_EVENT_C in ('DOCUMENT_CREATED','DOCUMENT_UPDATED','DOCUMENT_DELETED','FILE_CREATED','FILE_UPDATED','FILE_DELETED')), WHK_URL_C varchar(1024) not null, primary key (WHK_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ACL" already exists; SQL statement:
+create table T_ACL (ACL_ID_C varchar(36) not null, ACL_DELETEDATE_D timestamp(6), ACL_PERM_C varchar(30) not null check (ACL_PERM_C in ('READ','WRITE')), ACL_SOURCEID_C varchar(36) not null, ACL_TARGETID_C varchar(36) not null, ACL_TYPE_C varchar(30) not null check (ACL_TYPE_C in ('USER','ROUTING')), primary key (ACL_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUDIT_LOG" already exists; SQL statement:
+create table T_AUDIT_LOG (LOG_ID_C varchar(36) not null, LOG_CREATEDATE_D timestamp(6) not null, LOG_CLASSENTITY_C varchar(50) not null, LOG_IDENTITY_C varchar(36) not null, LOG_MESSAGE_C varchar(1000), LOG_TYPE_C varchar(50) not null check (LOG_TYPE_C in ('CREATE','UPDATE','DELETE')), LOG_IDUSER_C varchar(36) not null, primary key (LOG_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUTHENTICATION_TOKEN" already exists; SQL statement:
+create table T_AUTHENTICATION_TOKEN (AUT_ID_C varchar(36) not null, AUT_CREATIONDATE_D timestamp(6) not null, AUT_IP_C varchar(45), AUT_LASTCONNECTIONDATE_D timestamp(6), AUT_LONGLASTED_B boolean not null, AUT_UA_C varchar(1000), AUT_IDUSER_C varchar(36) not null, primary key (AUT_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_BASE_FUNCTION" already exists; SQL statement:
+create table T_BASE_FUNCTION (BAF_ID_C varchar(10) not null, primary key (BAF_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_COMMENT" already exists; SQL statement:
+create table T_COMMENT (COM_ID_C varchar(36) not null, COM_CONTENT_C varchar(255) not null, COM_CREATEDATE_D timestamp(6) not null, COM_DELETEDATE_D timestamp(6), COM_IDDOC_C varchar(36) not null, COM_IDUSER_C varchar(36) not null, primary key (COM_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONFIG" already exists; SQL statement:
+create table T_CONFIG (CFG_ID_C varchar(50) not null check (CFG_ID_C in ('LUCENE_DIRECTORY_STORAGE','THEME','GUEST_LOGIN','OCR_ENABLED','DEFAULT_LANGUAGE','SMTP_HOSTNAME','SMTP_PORT','SMTP_FROM','SMTP_USERNAME','SMTP_PASSWORD','INBOX_ENABLED','INBOX_HOSTNAME','INBOX_PORT','INBOX_STARTTLS','INBOX_USERNAME','INBOX_PASSWORD','INBOX_FOLDER','INBOX_TAG','INBOX_AUTOMATIC_TAGS','INBOX_DELETE_IMPORTED','LDAP_ENABLED','LDAP_HOST','LDAP_PORT','LDAP_USESSL','LDAP_ADMIN_DN','LDAP_ADMIN_PASSWORD','LDAP_BASE_DN','LDAP_FILTER','LDAP_DEFAULT_EMAIL','LDAP_DEFAULT_STORAGE')), CFG_VALUE_C varchar(250), primary key (CFG_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONTRIBUTOR" already exists; SQL statement:
+create table T_CONTRIBUTOR (CTR_ID_C varchar(36) not null, CTR_IDDOC_C varchar(36) not null, CTR_IDUSER_C varchar(36) not null, primary key (CTR_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT" already exists; SQL statement:
+create table T_DOCUMENT (DOC_ID_C varchar(36) not null, DOC_COVERAGE_C varchar(100), DOC_CREATEDATE_D timestamp(6) not null, DOC_DELETEDATE_D timestamp(6), DOC_DESCRIPTION_C varchar(4000), DOC_IDFILE_C varchar(36), DOC_FORMAT_C varchar(500), DOC_IDENTIFIER_C varchar(500), DOC_LANGUAGE_C varchar(3) not null, DOC_PUBLISHER_C varchar(500), DOC_RIGHTS_C varchar(100), DOC_SOURCE_C varchar(500), DOC_SUBJECT_C varchar(500), DOC_TITLE_C varchar(100) not null, DOC_TYPE_C varchar(100), DOC_UPDATEDATE_D timestamp(6) not null, DOC_IDUSER_C varchar(36) not null, primary key (DOC_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_METADATA" already exists; SQL statement:
+create table T_DOCUMENT_METADATA (DME_ID_C varchar(36) not null, DME_IDDOCUMENT_C varchar(36) not null, DME_IDMETADATA_C varchar(36) not null, DME_VALUE_C varchar(4000), primary key (DME_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_TAG" already exists; SQL statement:
+create table T_DOCUMENT_TAG (DOT_ID_C varchar(36) not null, DOT_DELETEDATE_D timestamp(6), DOT_IDDOCUMENT_C varchar(36) not null, DOT_IDTAG_C varchar(36) not null, primary key (DOT_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_FILE" already exists; SQL statement:
+create table T_FILE (FIL_ID_C varchar(36) not null, FIL_CONTENT_C varchar(255), FIL_CREATEDATE_D timestamp(6) not null, FIL_DELETEDATE_D timestamp(6), FIL_IDDOC_C varchar(36), FIL_LATESTVERSION_B boolean not null, FIL_MIMETYPE_C varchar(100), FIL_NAME_C varchar(200), FIL_ORDER_N integer, FIL_SIZE_N bigint not null, FIL_IDUSER_C varchar(36) not null, FIL_VERSION_N integer not null, FIL_IDVERSION_C varchar(255), primary key (FIL_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_GROUP" already exists; SQL statement:
+create table T_GROUP (GRP_ID_C varchar(36) not null, GRP_DELETEDATE_D timestamp(6), GRP_NAME_C varchar(50) not null, GRP_IDPARENT_C varchar(36), GRP_IDROLE_C varchar(36), primary key (GRP_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_METADATA" already exists; SQL statement:
+create table T_METADATA (MET_ID_C varchar(36) not null, MET_DELETEDATE_D timestamp(6), MET_NAME_C varchar(50) not null, MET_TYPE_C varchar(20) not null check (MET_TYPE_C in ('STRING','INTEGER','FLOAT','DATE','BOOLEAN')), primary key (MET_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_PASSWORD_RECOVERY" already exists; SQL statement:
+create table T_PASSWORD_RECOVERY (PWR_ID_C varchar(36) not null, PWR_CREATEDATE_D timestamp(6) not null, PWR_DELETEDATE_D timestamp(6), PWR_USERNAME_C varchar(50) not null, primary key (PWR_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_RELATION" already exists; SQL statement:
+create table T_RELATION (REL_ID_C varchar(36) not null, REL_DELETEDATE_D timestamp(6), REL_IDDOCFROM_C varchar(36) not null, REL_IDDOCTO_C varchar(36) not null, primary key (REL_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE" already exists; SQL statement:
+create table T_ROLE (ROL_ID_C varchar(36) not null, ROL_CREATEDATE_D timestamp(6) not null, ROL_DELETEDATE_D timestamp(6), ROL_NAME_C varchar(50) not null, primary key (ROL_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE_BASE_FUNCTION" already exists; SQL statement:
+create table T_ROLE_BASE_FUNCTION (RBF_ID_C varchar(36) not null, RBF_IDBASEFUNCTION_C varchar(36) not null, RBF_CREATEDATE_D timestamp(6) not null, RBF_DELETEDATE_D timestamp(6), RBF_IDROLE_C varchar(36) not null, primary key (RBF_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE" already exists; SQL statement:
+create table T_ROUTE (RTE_ID_C varchar(36) not null, RTE_CREATEDATE_D timestamp(6) not null, RTE_DELETEDATE_D timestamp(6), RTE_IDDOCUMENT_C varchar(36) not null, RTE_NAME_C varchar(50) not null, primary key (RTE_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_MODEL" already exists; SQL statement:
+create table T_ROUTE_MODEL (RTM_ID_C varchar(36) not null, RTM_CREATEDATE_D timestamp(6) not null, RTM_DELETEDATE_D timestamp(6), RTM_NAME_C varchar(50) not null, RTM_STEPS_C varchar(5000) not null, primary key (RTM_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_STEP" already exists; SQL statement:
+create table T_ROUTE_STEP (RTP_ID_C varchar(36) not null, RTP_COMMENT_C varchar(500), RTP_CREATEDATE_D timestamp(6) not null, RTP_DELETEDATE_D timestamp(6), RTP_ENDDATE_D timestamp(6), RTP_NAME_C varchar(200) not null, RTP_ORDER_N integer not null, RTP_IDROUTE_C varchar(36) not null, RTP_IDTARGET_C varchar(36) not null, RTP_TRANSITION_C varchar(50) check (RTP_TRANSITION_C in ('APPROVED','REJECTED','VALIDATED')), RTP_TRANSITIONS_C varchar(2000), RTP_TYPE_C varchar(50) not null check (RTP_TYPE_C in ('APPROVE','VALIDATE')), RTP_IDVALIDATORUSER_C varchar(36), primary key (RTP_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_SHARE" already exists; SQL statement:
+create table T_SHARE (SHA_ID_C varchar(36) not null, SHA_CREATEDATE_D timestamp(6) not null, SHA_DELETEDATE_D timestamp(6), SHA_NAME_C varchar(36), primary key (SHA_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_TAG" already exists; SQL statement:
+create table T_TAG (TAG_ID_C varchar(36) not null, TAG_COLOR_C varchar(7) not null, TAG_CREATEDATE_D timestamp(6) not null, TAG_DELETEDATE_D timestamp(6), TAG_NAME_C varchar(36) not null, TAG_IDPARENT_C varchar(36), TAG_IDUSER_C varchar(36) not null, primary key (TAG_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER" already exists; SQL statement:
+create table T_USER (USE_ID_C varchar(36) not null, USE_CREATEDATE_D timestamp(6) not null, USE_DELETEDATE_D timestamp(6), USE_DISABLEDATE_D timestamp(6), USE_EMAIL_C varchar(100) not null, USE_ONBOARDING_B boolean not null, USE_PASSWORD_C varchar(100) not null, USE_PRIVATEKEY_C varchar(100) not null, USE_IDROLE_C varchar(36) not null, USE_STORAGECURRENT_N bigint not null, USE_STORAGEQUOTA_N bigint not null, USE_TOTPKEY_C varchar(100), USE_USERNAME_C varchar(50) not null, primary key (USE_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER_GROUP" already exists; SQL statement:
+create table T_USER_GROUP (UGP_ID_C varchar(36) not null, UGP_DELETEDATE_D timestamp(6), UGP_IDGROUP_C varchar(36) not null, UGP_IDUSER_C varchar(36) not null, primary key (UGP_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_VOCABULARY" already exists; SQL statement:
+create table T_VOCABULARY (VOC_ID_C varchar(36) not null, VOC_NAME_C varchar(50) not null, VOC_ORDER_N integer, VOC_VALUE_C varchar(500) not null, primary key (VOC_ID_C)) [42101-199]
+2026-04-14 00:34:57 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_WEBHOOK" already exists; SQL statement:
+create table T_WEBHOOK (WHK_ID_C varchar(36) not null, WHK_CREATEDATE_D timestamp(6) not null, WHK_DELETEDATE_D timestamp(6), WHK_EVENT_C varchar(50) not null check (WHK_EVENT_C in ('DOCUMENT_CREATED','DOCUMENT_UPDATED','DOCUMENT_DELETED','FILE_CREATED','FILE_UPDATED','FILE_DELETED')), WHK_URL_C varchar(1024) not null, primary key (WHK_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ACL" already exists; SQL statement:
+create table T_ACL (ACL_ID_C varchar(36) not null, ACL_DELETEDATE_D timestamp(6), ACL_PERM_C varchar(30) not null check (ACL_PERM_C in ('READ','WRITE')), ACL_SOURCEID_C varchar(36) not null, ACL_TARGETID_C varchar(36) not null, ACL_TYPE_C varchar(30) not null check (ACL_TYPE_C in ('USER','ROUTING')), primary key (ACL_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUDIT_LOG" already exists; SQL statement:
+create table T_AUDIT_LOG (LOG_ID_C varchar(36) not null, LOG_CREATEDATE_D timestamp(6) not null, LOG_CLASSENTITY_C varchar(50) not null, LOG_IDENTITY_C varchar(36) not null, LOG_MESSAGE_C varchar(1000), LOG_TYPE_C varchar(50) not null check (LOG_TYPE_C in ('CREATE','UPDATE','DELETE')), LOG_IDUSER_C varchar(36) not null, primary key (LOG_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUTHENTICATION_TOKEN" already exists; SQL statement:
+create table T_AUTHENTICATION_TOKEN (AUT_ID_C varchar(36) not null, AUT_CREATIONDATE_D timestamp(6) not null, AUT_IP_C varchar(45), AUT_LASTCONNECTIONDATE_D timestamp(6), AUT_LONGLASTED_B boolean not null, AUT_UA_C varchar(1000), AUT_IDUSER_C varchar(36) not null, primary key (AUT_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_BASE_FUNCTION" already exists; SQL statement:
+create table T_BASE_FUNCTION (BAF_ID_C varchar(10) not null, primary key (BAF_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_COMMENT" already exists; SQL statement:
+create table T_COMMENT (COM_ID_C varchar(36) not null, COM_CONTENT_C varchar(255) not null, COM_CREATEDATE_D timestamp(6) not null, COM_DELETEDATE_D timestamp(6), COM_IDDOC_C varchar(36) not null, COM_IDUSER_C varchar(36) not null, primary key (COM_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONFIG" already exists; SQL statement:
+create table T_CONFIG (CFG_ID_C varchar(50) not null check (CFG_ID_C in ('LUCENE_DIRECTORY_STORAGE','THEME','GUEST_LOGIN','OCR_ENABLED','DEFAULT_LANGUAGE','SMTP_HOSTNAME','SMTP_PORT','SMTP_FROM','SMTP_USERNAME','SMTP_PASSWORD','INBOX_ENABLED','INBOX_HOSTNAME','INBOX_PORT','INBOX_STARTTLS','INBOX_USERNAME','INBOX_PASSWORD','INBOX_FOLDER','INBOX_TAG','INBOX_AUTOMATIC_TAGS','INBOX_DELETE_IMPORTED','LDAP_ENABLED','LDAP_HOST','LDAP_PORT','LDAP_USESSL','LDAP_ADMIN_DN','LDAP_ADMIN_PASSWORD','LDAP_BASE_DN','LDAP_FILTER','LDAP_DEFAULT_EMAIL','LDAP_DEFAULT_STORAGE')), CFG_VALUE_C varchar(250), primary key (CFG_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONTRIBUTOR" already exists; SQL statement:
+create table T_CONTRIBUTOR (CTR_ID_C varchar(36) not null, CTR_IDDOC_C varchar(36) not null, CTR_IDUSER_C varchar(36) not null, primary key (CTR_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT" already exists; SQL statement:
+create table T_DOCUMENT (DOC_ID_C varchar(36) not null, DOC_COVERAGE_C varchar(100), DOC_CREATEDATE_D timestamp(6) not null, DOC_DELETEDATE_D timestamp(6), DOC_DESCRIPTION_C varchar(4000), DOC_IDFILE_C varchar(36), DOC_FORMAT_C varchar(500), DOC_IDENTIFIER_C varchar(500), DOC_LANGUAGE_C varchar(3) not null, DOC_PUBLISHER_C varchar(500), DOC_RIGHTS_C varchar(100), DOC_SOURCE_C varchar(500), DOC_SUBJECT_C varchar(500), DOC_TITLE_C varchar(100) not null, DOC_TYPE_C varchar(100), DOC_UPDATEDATE_D timestamp(6) not null, DOC_IDUSER_C varchar(36) not null, primary key (DOC_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_METADATA" already exists; SQL statement:
+create table T_DOCUMENT_METADATA (DME_ID_C varchar(36) not null, DME_IDDOCUMENT_C varchar(36) not null, DME_IDMETADATA_C varchar(36) not null, DME_VALUE_C varchar(4000), primary key (DME_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_TAG" already exists; SQL statement:
+create table T_DOCUMENT_TAG (DOT_ID_C varchar(36) not null, DOT_DELETEDATE_D timestamp(6), DOT_IDDOCUMENT_C varchar(36) not null, DOT_IDTAG_C varchar(36) not null, primary key (DOT_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_FILE" already exists; SQL statement:
+create table T_FILE (FIL_ID_C varchar(36) not null, FIL_CONTENT_C varchar(255), FIL_CREATEDATE_D timestamp(6) not null, FIL_DELETEDATE_D timestamp(6), FIL_IDDOC_C varchar(36), FIL_LATESTVERSION_B boolean not null, FIL_MIMETYPE_C varchar(100), FIL_NAME_C varchar(200), FIL_ORDER_N integer, FIL_SIZE_N bigint not null, FIL_IDUSER_C varchar(36) not null, FIL_VERSION_N integer not null, FIL_IDVERSION_C varchar(255), primary key (FIL_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_GROUP" already exists; SQL statement:
+create table T_GROUP (GRP_ID_C varchar(36) not null, GRP_DELETEDATE_D timestamp(6), GRP_NAME_C varchar(50) not null, GRP_IDPARENT_C varchar(36), GRP_IDROLE_C varchar(36), primary key (GRP_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_METADATA" already exists; SQL statement:
+create table T_METADATA (MET_ID_C varchar(36) not null, MET_DELETEDATE_D timestamp(6), MET_NAME_C varchar(50) not null, MET_TYPE_C varchar(20) not null check (MET_TYPE_C in ('STRING','INTEGER','FLOAT','DATE','BOOLEAN')), primary key (MET_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_PASSWORD_RECOVERY" already exists; SQL statement:
+create table T_PASSWORD_RECOVERY (PWR_ID_C varchar(36) not null, PWR_CREATEDATE_D timestamp(6) not null, PWR_DELETEDATE_D timestamp(6), PWR_USERNAME_C varchar(50) not null, primary key (PWR_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_RELATION" already exists; SQL statement:
+create table T_RELATION (REL_ID_C varchar(36) not null, REL_DELETEDATE_D timestamp(6), REL_IDDOCFROM_C varchar(36) not null, REL_IDDOCTO_C varchar(36) not null, primary key (REL_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE" already exists; SQL statement:
+create table T_ROLE (ROL_ID_C varchar(36) not null, ROL_CREATEDATE_D timestamp(6) not null, ROL_DELETEDATE_D timestamp(6), ROL_NAME_C varchar(50) not null, primary key (ROL_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE_BASE_FUNCTION" already exists; SQL statement:
+create table T_ROLE_BASE_FUNCTION (RBF_ID_C varchar(36) not null, RBF_IDBASEFUNCTION_C varchar(36) not null, RBF_CREATEDATE_D timestamp(6) not null, RBF_DELETEDATE_D timestamp(6), RBF_IDROLE_C varchar(36) not null, primary key (RBF_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE" already exists; SQL statement:
+create table T_ROUTE (RTE_ID_C varchar(36) not null, RTE_CREATEDATE_D timestamp(6) not null, RTE_DELETEDATE_D timestamp(6), RTE_IDDOCUMENT_C varchar(36) not null, RTE_NAME_C varchar(50) not null, primary key (RTE_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_MODEL" already exists; SQL statement:
+create table T_ROUTE_MODEL (RTM_ID_C varchar(36) not null, RTM_CREATEDATE_D timestamp(6) not null, RTM_DELETEDATE_D timestamp(6), RTM_NAME_C varchar(50) not null, RTM_STEPS_C varchar(5000) not null, primary key (RTM_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_STEP" already exists; SQL statement:
+create table T_ROUTE_STEP (RTP_ID_C varchar(36) not null, RTP_COMMENT_C varchar(500), RTP_CREATEDATE_D timestamp(6) not null, RTP_DELETEDATE_D timestamp(6), RTP_ENDDATE_D timestamp(6), RTP_NAME_C varchar(200) not null, RTP_ORDER_N integer not null, RTP_IDROUTE_C varchar(36) not null, RTP_IDTARGET_C varchar(36) not null, RTP_TRANSITION_C varchar(50) check (RTP_TRANSITION_C in ('APPROVED','REJECTED','VALIDATED')), RTP_TRANSITIONS_C varchar(2000), RTP_TYPE_C varchar(50) not null check (RTP_TYPE_C in ('APPROVE','VALIDATE')), RTP_IDVALIDATORUSER_C varchar(36), primary key (RTP_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_SHARE" already exists; SQL statement:
+create table T_SHARE (SHA_ID_C varchar(36) not null, SHA_CREATEDATE_D timestamp(6) not null, SHA_DELETEDATE_D timestamp(6), SHA_NAME_C varchar(36), primary key (SHA_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_TAG" already exists; SQL statement:
+create table T_TAG (TAG_ID_C varchar(36) not null, TAG_COLOR_C varchar(7) not null, TAG_CREATEDATE_D timestamp(6) not null, TAG_DELETEDATE_D timestamp(6), TAG_NAME_C varchar(36) not null, TAG_IDPARENT_C varchar(36), TAG_IDUSER_C varchar(36) not null, primary key (TAG_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER" already exists; SQL statement:
+create table T_USER (USE_ID_C varchar(36) not null, USE_CREATEDATE_D timestamp(6) not null, USE_DELETEDATE_D timestamp(6), USE_DISABLEDATE_D timestamp(6), USE_EMAIL_C varchar(100) not null, USE_ONBOARDING_B boolean not null, USE_PASSWORD_C varchar(100) not null, USE_PRIVATEKEY_C varchar(100) not null, USE_IDROLE_C varchar(36) not null, USE_STORAGECURRENT_N bigint not null, USE_STORAGEQUOTA_N bigint not null, USE_TOTPKEY_C varchar(100), USE_USERNAME_C varchar(50) not null, primary key (USE_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER_GROUP" already exists; SQL statement:
+create table T_USER_GROUP (UGP_ID_C varchar(36) not null, UGP_DELETEDATE_D timestamp(6), UGP_IDGROUP_C varchar(36) not null, UGP_IDUSER_C varchar(36) not null, primary key (UGP_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_VOCABULARY" already exists; SQL statement:
+create table T_VOCABULARY (VOC_ID_C varchar(36) not null, VOC_NAME_C varchar(50) not null, VOC_ORDER_N integer, VOC_VALUE_C varchar(500) not null, primary key (VOC_ID_C)) [42101-199]
+2026-04-14 00:41:37 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_WEBHOOK" already exists; SQL statement:
+create table T_WEBHOOK (WHK_ID_C varchar(36) not null, WHK_CREATEDATE_D timestamp(6) not null, WHK_DELETEDATE_D timestamp(6), WHK_EVENT_C varchar(50) not null check (WHK_EVENT_C in ('DOCUMENT_CREATED','DOCUMENT_UPDATED','DOCUMENT_DELETED','FILE_CREATED','FILE_UPDATED','FILE_DELETED')), WHK_URL_C varchar(1024) not null, primary key (WHK_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ACL" already exists; SQL statement:
+create table T_ACL (ACL_ID_C varchar(36) not null, ACL_DELETEDATE_D timestamp(6), ACL_PERM_C varchar(30) not null check (ACL_PERM_C in ('READ','WRITE')), ACL_SOURCEID_C varchar(36) not null, ACL_TARGETID_C varchar(36) not null, ACL_TYPE_C varchar(30) not null check (ACL_TYPE_C in ('USER','ROUTING')), primary key (ACL_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUDIT_LOG" already exists; SQL statement:
+create table T_AUDIT_LOG (LOG_ID_C varchar(36) not null, LOG_CREATEDATE_D timestamp(6) not null, LOG_CLASSENTITY_C varchar(50) not null, LOG_IDENTITY_C varchar(36) not null, LOG_MESSAGE_C varchar(1000), LOG_TYPE_C varchar(50) not null check (LOG_TYPE_C in ('CREATE','UPDATE','DELETE')), LOG_IDUSER_C varchar(36) not null, primary key (LOG_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_AUTHENTICATION_TOKEN" already exists; SQL statement:
+create table T_AUTHENTICATION_TOKEN (AUT_ID_C varchar(36) not null, AUT_CREATIONDATE_D timestamp(6) not null, AUT_IP_C varchar(45), AUT_LASTCONNECTIONDATE_D timestamp(6), AUT_LONGLASTED_B boolean not null, AUT_UA_C varchar(1000), AUT_IDUSER_C varchar(36) not null, primary key (AUT_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_BASE_FUNCTION" already exists; SQL statement:
+create table T_BASE_FUNCTION (BAF_ID_C varchar(10) not null, primary key (BAF_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_COMMENT" already exists; SQL statement:
+create table T_COMMENT (COM_ID_C varchar(36) not null, COM_CONTENT_C varchar(255) not null, COM_CREATEDATE_D timestamp(6) not null, COM_DELETEDATE_D timestamp(6), COM_IDDOC_C varchar(36) not null, COM_IDUSER_C varchar(36) not null, primary key (COM_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONFIG" already exists; SQL statement:
+create table T_CONFIG (CFG_ID_C varchar(50) not null check (CFG_ID_C in ('LUCENE_DIRECTORY_STORAGE','THEME','GUEST_LOGIN','OCR_ENABLED','DEFAULT_LANGUAGE','SMTP_HOSTNAME','SMTP_PORT','SMTP_FROM','SMTP_USERNAME','SMTP_PASSWORD','INBOX_ENABLED','INBOX_HOSTNAME','INBOX_PORT','INBOX_STARTTLS','INBOX_USERNAME','INBOX_PASSWORD','INBOX_FOLDER','INBOX_TAG','INBOX_AUTOMATIC_TAGS','INBOX_DELETE_IMPORTED','LDAP_ENABLED','LDAP_HOST','LDAP_PORT','LDAP_USESSL','LDAP_ADMIN_DN','LDAP_ADMIN_PASSWORD','LDAP_BASE_DN','LDAP_FILTER','LDAP_DEFAULT_EMAIL','LDAP_DEFAULT_STORAGE')), CFG_VALUE_C varchar(250), primary key (CFG_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_CONTRIBUTOR" already exists; SQL statement:
+create table T_CONTRIBUTOR (CTR_ID_C varchar(36) not null, CTR_IDDOC_C varchar(36) not null, CTR_IDUSER_C varchar(36) not null, primary key (CTR_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT" already exists; SQL statement:
+create table T_DOCUMENT (DOC_ID_C varchar(36) not null, DOC_COVERAGE_C varchar(100), DOC_CREATEDATE_D timestamp(6) not null, DOC_DELETEDATE_D timestamp(6), DOC_DESCRIPTION_C varchar(4000), DOC_IDFILE_C varchar(36), DOC_FORMAT_C varchar(500), DOC_IDENTIFIER_C varchar(500), DOC_LANGUAGE_C varchar(3) not null, DOC_PUBLISHER_C varchar(500), DOC_RIGHTS_C varchar(100), DOC_SOURCE_C varchar(500), DOC_SUBJECT_C varchar(500), DOC_TITLE_C varchar(100) not null, DOC_TYPE_C varchar(100), DOC_UPDATEDATE_D timestamp(6) not null, DOC_IDUSER_C varchar(36) not null, primary key (DOC_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_METADATA" already exists; SQL statement:
+create table T_DOCUMENT_METADATA (DME_ID_C varchar(36) not null, DME_IDDOCUMENT_C varchar(36) not null, DME_IDMETADATA_C varchar(36) not null, DME_VALUE_C varchar(4000), primary key (DME_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_DOCUMENT_TAG" already exists; SQL statement:
+create table T_DOCUMENT_TAG (DOT_ID_C varchar(36) not null, DOT_DELETEDATE_D timestamp(6), DOT_IDDOCUMENT_C varchar(36) not null, DOT_IDTAG_C varchar(36) not null, primary key (DOT_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_FILE" already exists; SQL statement:
+create table T_FILE (FIL_ID_C varchar(36) not null, FIL_CONTENT_C varchar(255), FIL_CREATEDATE_D timestamp(6) not null, FIL_DELETEDATE_D timestamp(6), FIL_IDDOC_C varchar(36), FIL_LATESTVERSION_B boolean not null, FIL_MIMETYPE_C varchar(100), FIL_NAME_C varchar(200), FIL_ORDER_N integer, FIL_SIZE_N bigint not null, FIL_IDUSER_C varchar(36) not null, FIL_VERSION_N integer not null, FIL_IDVERSION_C varchar(255), primary key (FIL_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_GROUP" already exists; SQL statement:
+create table T_GROUP (GRP_ID_C varchar(36) not null, GRP_DELETEDATE_D timestamp(6), GRP_NAME_C varchar(50) not null, GRP_IDPARENT_C varchar(36), GRP_IDROLE_C varchar(36), primary key (GRP_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_METADATA" already exists; SQL statement:
+create table T_METADATA (MET_ID_C varchar(36) not null, MET_DELETEDATE_D timestamp(6), MET_NAME_C varchar(50) not null, MET_TYPE_C varchar(20) not null check (MET_TYPE_C in ('STRING','INTEGER','FLOAT','DATE','BOOLEAN')), primary key (MET_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_PASSWORD_RECOVERY" already exists; SQL statement:
+create table T_PASSWORD_RECOVERY (PWR_ID_C varchar(36) not null, PWR_CREATEDATE_D timestamp(6) not null, PWR_DELETEDATE_D timestamp(6), PWR_USERNAME_C varchar(50) not null, primary key (PWR_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_RELATION" already exists; SQL statement:
+create table T_RELATION (REL_ID_C varchar(36) not null, REL_DELETEDATE_D timestamp(6), REL_IDDOCFROM_C varchar(36) not null, REL_IDDOCTO_C varchar(36) not null, primary key (REL_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE" already exists; SQL statement:
+create table T_ROLE (ROL_ID_C varchar(36) not null, ROL_CREATEDATE_D timestamp(6) not null, ROL_DELETEDATE_D timestamp(6), ROL_NAME_C varchar(50) not null, primary key (ROL_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROLE_BASE_FUNCTION" already exists; SQL statement:
+create table T_ROLE_BASE_FUNCTION (RBF_ID_C varchar(36) not null, RBF_IDBASEFUNCTION_C varchar(36) not null, RBF_CREATEDATE_D timestamp(6) not null, RBF_DELETEDATE_D timestamp(6), RBF_IDROLE_C varchar(36) not null, primary key (RBF_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE" already exists; SQL statement:
+create table T_ROUTE (RTE_ID_C varchar(36) not null, RTE_CREATEDATE_D timestamp(6) not null, RTE_DELETEDATE_D timestamp(6), RTE_IDDOCUMENT_C varchar(36) not null, RTE_NAME_C varchar(50) not null, primary key (RTE_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_MODEL" already exists; SQL statement:
+create table T_ROUTE_MODEL (RTM_ID_C varchar(36) not null, RTM_CREATEDATE_D timestamp(6) not null, RTM_DELETEDATE_D timestamp(6), RTM_NAME_C varchar(50) not null, RTM_STEPS_C varchar(5000) not null, primary key (RTM_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_ROUTE_STEP" already exists; SQL statement:
+create table T_ROUTE_STEP (RTP_ID_C varchar(36) not null, RTP_COMMENT_C varchar(500), RTP_CREATEDATE_D timestamp(6) not null, RTP_DELETEDATE_D timestamp(6), RTP_ENDDATE_D timestamp(6), RTP_NAME_C varchar(200) not null, RTP_ORDER_N integer not null, RTP_IDROUTE_C varchar(36) not null, RTP_IDTARGET_C varchar(36) not null, RTP_TRANSITION_C varchar(50) check (RTP_TRANSITION_C in ('APPROVED','REJECTED','VALIDATED')), RTP_TRANSITIONS_C varchar(2000), RTP_TYPE_C varchar(50) not null check (RTP_TYPE_C in ('APPROVE','VALIDATE')), RTP_IDVALIDATORUSER_C varchar(36), primary key (RTP_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_SHARE" already exists; SQL statement:
+create table T_SHARE (SHA_ID_C varchar(36) not null, SHA_CREATEDATE_D timestamp(6) not null, SHA_DELETEDATE_D timestamp(6), SHA_NAME_C varchar(36), primary key (SHA_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_TAG" already exists; SQL statement:
+create table T_TAG (TAG_ID_C varchar(36) not null, TAG_COLOR_C varchar(7) not null, TAG_CREATEDATE_D timestamp(6) not null, TAG_DELETEDATE_D timestamp(6), TAG_NAME_C varchar(36) not null, TAG_IDPARENT_C varchar(36), TAG_IDUSER_C varchar(36) not null, primary key (TAG_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER" already exists; SQL statement:
+create table T_USER (USE_ID_C varchar(36) not null, USE_CREATEDATE_D timestamp(6) not null, USE_DELETEDATE_D timestamp(6), USE_DISABLEDATE_D timestamp(6), USE_EMAIL_C varchar(100) not null, USE_ONBOARDING_B boolean not null, USE_PASSWORD_C varchar(100) not null, USE_PRIVATEKEY_C varchar(100) not null, USE_IDROLE_C varchar(36) not null, USE_STORAGECURRENT_N bigint not null, USE_STORAGEQUOTA_N bigint not null, USE_TOTPKEY_C varchar(100), USE_USERNAME_C varchar(50) not null, primary key (USE_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_USER_GROUP" already exists; SQL statement:
+create table T_USER_GROUP (UGP_ID_C varchar(36) not null, UGP_DELETEDATE_D timestamp(6), UGP_IDGROUP_C varchar(36) not null, UGP_IDUSER_C varchar(36) not null, primary key (UGP_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_VOCABULARY" already exists; SQL statement:
+create table T_VOCABULARY (VOC_ID_C varchar(36) not null, VOC_NAME_C varchar(50) not null, VOC_ORDER_N integer, VOC_VALUE_C varchar(500) not null, primary key (VOC_ID_C)) [42101-199]
+2026-04-14 11:35:25 jdbc[4]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "T_WEBHOOK" already exists; SQL statement:
+create table T_WEBHOOK (WHK_ID_C varchar(36) not null, WHK_CREATEDATE_D timestamp(6) not null, WHK_DELETEDATE_D timestamp(6), WHK_EVENT_C varchar(50) not null check (WHK_EVENT_C in ('DOCUMENT_CREATED','DOCUMENT_UPDATED','DOCUMENT_DELETED','FILE_CREATED','FILE_UPDATED','FILE_DELETED')), WHK_URL_C varchar(1024) not null, primary key (WHK_ID_C)) [42101-199]
