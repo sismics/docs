@@ -180,6 +180,7 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-maven-plugin</artifactId>
             <configuration>
+              <webAppSourceDirectory>${project.basedir}/src/main/webapp</webAppSourceDirectory>
               <systemProperties>
                 <systemProperty>
                   <name>application.mode</name>
@@ -187,8 +188,12 @@
                 </systemProperty>
               </systemProperties>
               <webApp>
-                <contextPath>/docs-web</contextPath>
+                <contextPath>/</contextPath>
                 <overrideDescriptor>${project.basedir}/src/dev/main/webapp/web-override.xml</overrideDescriptor>
+                <resourceBases>
+                  <resourceBase>${project.basedir}/src/main/webapp</resourceBase>
+                  <resourceBase>${project.basedir}/src/main/webapp/dist</resourceBase>
+                </resourceBases>
               </webApp>
             </configuration>
           </plugin>

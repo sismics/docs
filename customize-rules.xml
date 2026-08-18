@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<ruleset name="Custom Ruleset"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+    <description>Custom rules for Practice 7</description>
+
+    <!-- 1. Lines of Code (LoC) - 通过限制方法长度来实现 -->
+    <rule ref="category/java/design.xml/ExcessiveMethodLength" />
+
+    <!-- 2. Cyclomatic Complexity (CC) - 圈复杂度 -->
+    <rule ref="category/java/design.xml/CyclomaticComplexity">
+        <properties>
+            <property name="methodReportLevel" value="10" />
+        </properties>
+    </rule>
+
+    <!-- 3. Weighted Methods per Class (WMC) -->
+    <!-- 在 PMD 中通常包含在 CyclomaticComplexity 的类评估中 -->
+
+    <!-- 4. Coupling Between Objects (CBO) - 耦合度 -->
+    <rule ref="category/java/design.xml/CouplingBetweenObjects">
+        <properties>
+            <property name="threshold" value="20" />
+        </properties>
+    </rule>
+
+    <!-- 5. Lack of Cohesion in Methods (LCOM) - 内聚度 -->
+    <!-- 注意：PMD 7.0 某些规则名有变动，这里使用通用的设计规则 -->
+    <rule ref="category/java/design.xml/NcssCount" />
+
+</ruleset>

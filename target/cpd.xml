@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd>
+   <duplication lines="34" tokens="346">
+      <file begintoken="67108" column="13" endcolumn="12" endline="694" endtoken="67453"
+            line="661"
+            path="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/DocumentResource.java"/>
+      <file begintoken="67755" column="13" endcolumn="12" endline="816" endtoken="68100"
+            line="783"
+            path="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/DocumentResource.java"/>
+      <codefragment><![CDATA[            @FormParam("title") String title,
+            @FormParam("description") String description,
+            @FormParam("subject") String subject,
+            @FormParam("identifier") String identifier,
+            @FormParam("publisher") String publisher,
+            @FormParam("format") String format,
+            @FormParam("source") String source,
+            @FormParam("type") String type,
+            @FormParam("coverage") String coverage,
+            @FormParam("rights") String rights,
+            @FormParam("tags") List<String> tagList,
+            @FormParam("relations") List<String> relationList,
+            @FormParam("metadata_id") List<String> metadataIdList,
+            @FormParam("metadata_value") List<String> metadataValueList,
+            @FormParam("language") String language,
+            @FormParam("create_date") String createDateStr) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Validate input data
+        title = ValidationUtil.validateLength(title, "title", 1, 100, false);
+        language = ValidationUtil.validateLength(language, "language", 3, 7, false);
+        description = ValidationUtil.validateLength(description, "description", 0, 4000, true);
+        subject = ValidationUtil.validateLength(subject, "subject", 0, 500, true);
+        identifier = ValidationUtil.validateLength(identifier, "identifier", 0, 500, true);
+        publisher = ValidationUtil.validateLength(publisher, "publisher", 0, 500, true);
+        format = ValidationUtil.validateLength(format, "format", 0, 500, true);
+        source = ValidationUtil.validateLength(source, "source", 0, 500, true);
+        type = ValidationUtil.validateLength(type, "type", 0, 100, true);
+        coverage = ValidationUtil.validateLength(coverage, "coverage", 0, 100, true);
+        rights = ValidationUtil.validateLength(rights, "rights", 0, 100, true);
+        Date createDate = ValidationUtil.validateDate(createDateStr, "create_date", true);
+        if (!Constants.SUPPORTED_LANGUAGES.contains(language)) {]]></codefragment>
+   </duplication>
+   <duplication lines="86" tokens="245">
+      <file begintoken="14578" column="24" endcolumn="10" endline="211" endtoken="14822"
+            line="126"
+            path="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/docs/core/dao/dto/DocumentDto.java"/>
+      <file begintoken="22862" column="21" endcolumn="10" endline="235" endtoken="23106"
+            line="150"
+            path="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/docs/core/model/jpa/Document.java"/>
+      <codefragment><![CDATA[    public DocumentDto setFileId(String fileId) {
+        this.fileId = fileId;
+        return this;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+    
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getCoverage() {
+        return coverage;
+    }
+
+    public void setCoverage(String coverage) {
+        this.coverage = coverage;
+    }
+
+    public String getRights() {
+        return rights;
+    }
+
+    public void setRights(String rights) {
+        this.rights = rights;
+    }
+
+    public Long getCreateTimestamp() {]]></codefragment>
+   </duplication>
+   <duplication lines="33" tokens="167">
+      <file begintoken="36559" column="40" endcolumn="87" endline="63" endtoken="36725"
+            line="31"
+            path="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/docs/core/util/format/DocxFormatHandler.java"/>
+      <file begintoken="37415" column="43" endcolumn="87" endline="63" endtoken="37581"
+            line="31"
+            path="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/docs/core/util/format/OdtFormatHandler.java"/>
+      <codefragment><![CDATA[        return MimeType.OFFICE_DOCUMENT.equals(mimeType);
+    }
+
+    @Override
+    public BufferedImage generateThumbnail(Path file) throws Exception {
+        // Use the PDF format handler
+        return new PdfFormatHandler().generateThumbnail(getGeneratedPdf(file));
+    }
+
+    @Override
+    public String extractContent(String language, Path file) throws Exception {
+        // Use the PDF format handler
+        return new PdfFormatHandler().extractContent(language, getGeneratedPdf(file));
+    }
+
+    @Override
+    public void appendToPdf(Path file, PDDocument doc, boolean fitImageToPage, int margin, MemoryUsageSetting memUsageSettings, Closer closer) throws Exception {
+        // Use the PDF format handler
+        new PdfFormatHandler().appendToPdf(getGeneratedPdf(file), doc, fitImageToPage, margin, memUsageSettings, closer);
+    }
+
+    /**
+     * Generate a PDF from this DOCX.
+     *
+     * @param file File
+     * @return PDF file
+     * @throws Exception e
+     */
+    private Path getGeneratedPdf(Path file) throws Exception {
+        if (temporaryPdfFile == null) {
+            temporaryPdfFile = AppContext.getInstance().getFileService().createTemporaryFile();
+            try (InputStream inputStream = Files.newInputStream(file);
+                 OutputStream outputStream = Files.newOutputStream(temporaryPdfFile)) {]]></codefragment>
+   </duplication>
+   <duplication lines="24" tokens="150">
+      <file begintoken="75176" column="33" endcolumn="5" endline="134" endtoken="75325"
+            line="111"
+            path="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/RouteModelResource.java"/>
+      <file begintoken="79114" column="38" endcolumn="5" endline="221" endtoken="79263"
+            line="199"
+            path="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/TagResource.java"/>
+      <codefragment><![CDATA[                .setSteps(steps), principal.getId());
+
+        // Create read ACL
+        AclDao aclDao = new AclDao();
+        Acl acl = new Acl();
+        acl.setPerm(PermType.READ);
+        acl.setType(AclType.USER);
+        acl.setSourceId(id);
+        acl.setTargetId(principal.getId());
+        aclDao.create(acl, principal.getId());
+
+        // Create write ACL
+        acl = new Acl();
+        acl.setPerm(PermType.WRITE);
+        acl.setType(AclType.USER);
+        acl.setSourceId(id);
+        acl.setTargetId(principal.getId());
+        aclDao.create(acl, principal.getId());
+
+        // Always return OK
+        JsonObjectBuilder response = Json.createObjectBuilder()
+                .add("id", id);
+        return Response.ok().entity(response.build()).build();
+    }]]></codefragment>
+   </duplication>
+   <duplication lines="40" tokens="119">
+      <file begintoken="25294" column="38" endcolumn="17" endline="81" endtoken="25412"
+            line="42"
+            path="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/docs/core/model/jpa/Role.java"/>
+      <file begintoken="26912" column="38" endcolumn="17" endline="79" endtoken="27030"
+            line="40"
+            path="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/docs/core/model/jpa/Share.java"/>
+      <codefragment><![CDATA[    @Column(name = "ROL_DELETEDATE_D")
+    private Date deleteDate;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Date getDeleteDate() {
+        return deleteDate;
+    }
+
+    public void setDeleteDate(Date deleteDate) {
+        this.deleteDate = deleteDate;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("id", id)
+                .add("name", name)]]></codefragment>
+   </duplication>
+   <duplication lines="23" tokens="117">
+      <file begintoken="73408" column="23" endcolumn="9" endline="271" endtoken="73524"
+            line="249"
+            path="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/GroupResource.java"/>
+      <file begintoken="73682" column="23" endcolumn="9" endline="340" endtoken="73798"
+            line="318"
+            path="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/GroupResource.java"/>
+      <codefragment><![CDATA[            @FormParam("username") String username) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        checkBaseFunction(BaseFunction.ADMIN);
+        
+        // Validate input
+        groupName = ValidationUtil.validateLength(groupName, "name", 1, 50, false);
+        username = ValidationUtil.validateLength(username, "username", 1, 50, false);
+        
+        // Get the group
+        GroupDao groupDao = new GroupDao();
+        Group group = groupDao.getActiveByName(groupName);
+        if (group == null) {
+            throw new NotFoundException();
+        }
+        
+        // Get the user
+        UserDao userDao = new UserDao();
+        User user = userDao.getActiveByUsername(username);
+        if (user == null) {
+            throw new NotFoundException();
+        }]]></codefragment>
+   </duplication>
+</pmd-cpd>

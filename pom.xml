@@ -9,6 +9,7 @@
   <version>1.12-SNAPSHOT</version>
 
   <name>Docs Parent</name>
+  <url>https://github.com/sismics/docs</url> 
 
   <properties>
     <maven.compiler.source>11</maven.compiler.source>
@@ -112,9 +113,82 @@
       </plugin>
 
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.21.0</version>
+        <configuration>
+          <!-- 改用 project.basedir 相对路径，多模块下更稳定 -->
+          <rulesets>
+            <ruleset>${project.parent.basedir}/customize-rules.xml</ruleset>
+          </rulesets>
+          <printFailingErrors>true</printFailingErrors>
+          <!-- 关键：不失败构建，仅警告（可选，方便调试） -->
+          <failOnViolation>false</failOnViolation>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+              <goal>cpd-check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${org.eclipse.jetty.jetty-maven-plugin.version}</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.12.1</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.21.0</version> <!-- 建议使用较新版本 -->
+        <configuration>
+          <!-- 核心：指向你刚才创建的文件 -->
+          <rulesets>
+            <ruleset>${project.basedir}/customize-rules.xml</ruleset>
+          </rulesets>
+          <printFailingErrors>true</printFailingErrors>
+          <!-- 即使发现问题也不让编译失败，方便查看报告 -->
+          <failOnViolation>false</failOnViolation> 
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+              <goal>cpd-check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.11</version> <!-- 建议使用较新版本 -->
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+                <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -490,5 +564,51 @@
 
     </dependencies>
   </dependencyManagement>
+
+  <distributionManagement>
+    <site>
+      <id>teedy-site</id>
+      <!-- 使用本地文件路径作为临时分发地址，确保 site:stage 能计算相对路径 -->
+      <url>file://${project.basedir}/target/staging</url>
+    </site>
+  </distributionManagement>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>3.12.1</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>3.4.1</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.21.0</version>
+        <configuration>
+          <rulesets>
+              <ruleset>${project.basedir}/customize-rules.xml</ruleset>
+          </rulesets>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.21.0</version>
+        <configuration>
+          <rulesets>
+            <ruleset>${project.basedir}/customize-rules.xml</ruleset>
+          </rulesets>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 
 </project>

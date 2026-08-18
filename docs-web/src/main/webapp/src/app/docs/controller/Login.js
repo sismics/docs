@@ -17,9 +17,11 @@ angular.module('docs').controller('Login', function(Restangular, $scope, $rootSc
       username: 'guest',
       password: ''
     };
+    // $state.go('document.default'); 
     $scope.login();
   };
-  
+
+
   // Login
   $scope.login = function() {
     User.login($scope.user).then(function() {

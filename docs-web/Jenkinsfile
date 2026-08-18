@@ -1,0 +1,59 @@
+pipeline {
+    agent any
+    tools {
+        maven 'maven' // 这里的名字要和你 Jenkins 全局工具配置里的 Maven 名字一致
+    }
+    stages {
+        stage('Checkout SCM') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Clean') {
+            steps {
+                sh 'mvn clean'
+            }
+        }
+        stage('Compile') {
+            steps {
+                sh 'mvn compile'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                }
+            }
+        }
+        stage('PMD') {
+            steps {
+                sh 'mvn pmd:pmd'
+            }
+        }
+        stage('JaCoCo') {
+            steps {
+                sh 'mvn jacoco:report'
+            }
+        }
+        stage('Site') {
+            steps {
+                sh 'mvn site -DskipTests'
+            }
+        }
+        stage('Package') {
+            steps {
+                sh 'mvn package -DskipTests'
+            }
+        }
+    }
+    post {
+        always {
+            // 归档制品和站点文档，这样你才能在网页上点击查看
+            archiveArtifacts artifacts: '**/target/*.jar, **/target/*.war, target/site/**', allowEmptyArchive: true
+        }
+    }
+}

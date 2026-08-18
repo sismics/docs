@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 http://pmd.sourceforge.net/report_2_0_0.xsd" version="6.55.0" timestamp="2026-05-12T15:23:50.271">
+<file name="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/docs/core/dao/GroupDao.java">
+<violation beginline="162" endline="223" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.core.dao" class="GroupDao" method="findByCriteria" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'findByCriteria(GroupCriteria, SortCriteria)' has a cyclomatic complexity of 11.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/docs/core/service/InboxService.java">
+<violation beginline="193" endline="269" begincolumn="13" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.core.service" class="InboxService" method="importMessage" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'importMessage(Message, Map)' has a cyclomatic complexity of 12.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/docs/core/util/DirectoryUtil.java">
+<violation beginline="23" endline="51" begincolumn="19" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.core.util" class="DirectoryUtil" method="getBaseDataDirectory" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'getBaseDataDirectory()' has a cyclomatic complexity of 10.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/docs/core/util/FileUtil.java">
+<violation beginline="120" endline="216" begincolumn="19" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.core.util" class="FileUtil" method="createFile" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'createFile(String, String, Path, long, String, String, String)' has a cyclomatic complexity of 15.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/docs/core/util/MetadataUtil.java">
+<violation beginline="33" endline="84" begincolumn="19" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.core.util" class="MetadataUtil" method="updateMetadata" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'updateMetadata(String, List, List)' has a cyclomatic complexity of 14.
+</violation>
+<violation beginline="93" endline="120" begincolumn="20" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.core.util" class="MetadataUtil" method="validateValue" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'validateValue(MetadataType, String)' has a cyclomatic complexity of 12.
+</violation>
+<violation beginline="158" endline="195" begincolumn="19" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.core.util" class="MetadataUtil" method="addMetadata" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'addMetadata(JsonObjectBuilder, String)' has a cyclomatic complexity of 10.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/docs/core/util/PdfUtil.java">
+<violation beginline="52" endline="119" begincolumn="19" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.core.util" class="PdfUtil" method="convertToPdf" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'convertToPdf(DocumentDto, List, boolean, boolean, int, OutputStream)' has a cyclomatic complexity of 12.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/docs/core/util/TransactionUtil.java">
+<violation beginline="27" endline="86" begincolumn="19" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.core.util" class="TransactionUtil" method="handle" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'handle(Runnable)' has a cyclomatic complexity of 13.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/docs/core/util/indexing/LuceneIndexingHandler.java">
+<violation beginline="74" endline="624" begincolumn="8" endcolumn="1" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.core.util.indexing" class="LuceneIndexingHandler" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The class 'LuceneIndexingHandler' has a total cyclomatic complexity of 86 (highest 24).
+</violation>
+<violation beginline="252" endline="386" begincolumn="12" endcolumn="5" rule="ExcessiveMethodLength" ruleset="Design" package="com.sismics.docs.core.util.indexing" class="LuceneIndexingHandler" method="findByCriteria" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#excessivemethodlength" priority="3">
+Avoid really long methods.
+</violation>
+<violation beginline="252" endline="386" begincolumn="12" endcolumn="5" rule="NcssCount" ruleset="Design" package="com.sismics.docs.core.util.indexing" class="LuceneIndexingHandler" method="findByCriteria" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#ncsscount" priority="3">
+The method 'findByCriteria(PaginatedList, List, DocumentCriteria, SortCriteria)' has a NCSS line count of 100.
+</violation>
+<violation beginline="252" endline="386" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.core.util.indexing" class="LuceneIndexingHandler" method="findByCriteria" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'findByCriteria(PaginatedList, List, DocumentCriteria, SortCriteria)' has a cyclomatic complexity of 24.
+</violation>
+<violation beginline="501" endline="535" begincolumn="13" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.core.util.indexing" class="LuceneIndexingHandler" method="getDocumentFromDocument" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'getDocumentFromDocument(Document)' has a cyclomatic complexity of 10.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/util/EmailUtil.java">
+<violation beginline="83" endline="169" begincolumn="20" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.util" class="EmailUtil" method="sendEmail" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'sendEmail(String, UserDto, String, Map)' has a cyclomatic complexity of 13.
+</violation>
+<violation beginline="193" endline="233" begincolumn="19" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.util" class="EmailUtil" method="parseMailContent" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'parseMailContent(Part, MailContent)' has a cyclomatic complexity of 10.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/util/ResourceUtil.java">
+<violation beginline="34" endline="89" begincolumn="19" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.util" class="ResourceUtil" method="list" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'list(Class, String, FilenameFilter)' has a cyclomatic complexity of 14.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/util/jpa/DbOpenHelper.java">
+<violation beginline="56" endline="125" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.util.jpa" class="DbOpenHelper" method="open" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'open()' has a cyclomatic complexity of 11.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/util/log4j/MemoryAppender.java">
+<violation beginline="101" endline="128" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.util.log4j" class="MemoryAppender" method="find" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'find(LogCriteria, PaginatedList)' has a cyclomatic complexity of 10.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-core/src/main/java/com/sismics/util/mime/MimeTypeUtil.java">
+<violation beginline="42" endline="69" begincolumn="19" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.util.mime" class="MimeTypeUtil" method="getFileExtension" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'getFileExtension(String)' has a cyclomatic complexity of 12.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-web-common/src/main/java/com/sismics/rest/util/ValidationUtil.java">
+<violation beginline="50" endline="65" begincolumn="19" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.rest.util" class="ValidationUtil" method="validateLength" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'validateLength(String, String, Integer, Integer, boolean)' has a cyclomatic complexity of 11.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-web-common/src/main/java/com/sismics/util/filter/RequestContextFilter.java">
+<violation beginline="74" endline="142" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.util.filter" class="RequestContextFilter" method="doFilter" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'doFilter(ServletRequest, ServletResponse, FilterChain)' has a cyclomatic complexity of 17.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/AclResource.java">
+<violation beginline="146" endline="194" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="AclResource" method="delete" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'delete(String, String, String)' has a cyclomatic complexity of 11.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/AppResource.java">
+<violation beginline="54" endline="888" begincolumn="8" endcolumn="1" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="AppResource" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The class 'AppResource' has a total cyclomatic complexity of 87 (highest 12).
+</violation>
+<violation beginline="224" endline="272" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="AppResource" method="getConfigSmtp" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'getConfigSmtp()' has a cyclomatic complexity of 12.
+</violation>
+<violation beginline="354" endline="421" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="AppResource" method="getConfigInbox" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'getConfigInbox()' has a cyclomatic complexity of 10.
+</violation>
+<violation beginline="454" endline="502" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="AppResource" method="configInbox" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'configInbox(Boolean, Boolean, Boolean, String, String, Boolean, String, String, String, String)' has a cyclomatic complexity of 10.
+</violation>
+<violation beginline="651" endline="751" begincolumn="12" endcolumn="5" rule="ExcessiveMethodLength" ruleset="Design" package="com.sismics.docs.rest.resource" class="AppResource" method="batchCleanStorage" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#excessivemethodlength" priority="3">
+Avoid really long methods.
+</violation>
+<violation beginline="651" endline="751" begincolumn="12" endcolumn="5" rule="NcssCount" ruleset="Design" package="com.sismics.docs.rest.resource" class="AppResource" method="batchCleanStorage" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#ncsscount" priority="3">
+The method 'batchCleanStorage()' has a NCSS line count of 71.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/DocumentResource.java">
+<violation beginline="98" endline="1100" begincolumn="8" endcolumn="1" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="DocumentResource" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The class 'DocumentResource' has a total cyclomatic complexity of 84 (highest 14).
+</violation>
+<violation beginline="177" endline="287" begincolumn="12" endcolumn="5" rule="ExcessiveMethodLength" ruleset="Design" package="com.sismics.docs.rest.resource" class="DocumentResource" method="get" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#excessivemethodlength" priority="3">
+Avoid really long methods.
+</violation>
+<violation beginline="177" endline="287" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="DocumentResource" method="get" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'get(String, String, Boolean)' has a cyclomatic complexity of 13.
+</violation>
+<violation beginline="429" endline="546" begincolumn="12" endcolumn="5" rule="ExcessiveMethodLength" ruleset="Design" package="com.sismics.docs.rest.resource" class="DocumentResource" method="list" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#excessivemethodlength" priority="3">
+Avoid really long methods.
+</violation>
+<violation beginline="429" endline="546" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="DocumentResource" method="list" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'list(Integer, Integer, Integer, Boolean, String, Boolean, String, String, String, String, String, String, Boolean, String, String, String, String, String, String, String)' has a cyclomatic complexity of 11.
+</violation>
+<violation beginline="781" endline="875" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="DocumentResource" method="update" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'update(String, String, String, String, String, String, String, String, String, String, String, List, List, List, List, String, String)' has a cyclomatic complexity of 13.
+</violation>
+<violation beginline="899" endline="972" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="DocumentResource" method="importEml" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'importEml(FormDataBodyPart)' has a cyclomatic complexity of 14.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/FileResource.java">
+<violation beginline="61" endline="812" begincolumn="8" endcolumn="1" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="FileResource" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The class 'FileResource' has a total cyclomatic complexity of 87 (highest 14).
+</violation>
+<violation beginline="92" endline="143" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="FileResource" method="add" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'add(String, String, FormDataBodyPart)' has a cyclomatic complexity of 14.
+</violation>
+<violation beginline="166" endline="223" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="FileResource" method="attach" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'attach(String, String)' has a cyclomatic complexity of 10.
+</violation>
+<violation beginline="286" endline="326" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="FileResource" method="process" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'process(String)' has a cyclomatic complexity of 10.
+</violation>
+<violation beginline="568" endline="652" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="FileResource" method="data" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'data(String, String, String)' has a cyclomatic complexity of 11.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/GroupResource.java">
+<violation beginline="119" endline="170" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="GroupResource" method="update" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'update(String, String, String)' has a cyclomatic complexity of 14.
+</violation>
+<violation beginline="190" endline="225" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="GroupResource" method="delete" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'delete(String)' has a cyclomatic complexity of 10.
+</violation>
+<violation beginline="248" endline="294" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="GroupResource" method="addMember" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'addMember(String, String)' has a cyclomatic complexity of 10.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/RouteModelResource.java">
+<violation beginline="141" endline="261" begincolumn="13" endcolumn="5" rule="ExcessiveMethodLength" ruleset="Design" package="com.sismics.docs.rest.resource" class="RouteModelResource" method="validateRouteModelSteps" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#excessivemethodlength" priority="3">
+Avoid really long methods.
+</violation>
+<violation beginline="141" endline="261" begincolumn="13" endcolumn="5" rule="NcssCount" ruleset="Design" package="com.sismics.docs.rest.resource" class="RouteModelResource" method="validateRouteModelSteps" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#ncsscount" priority="3">
+The method 'validateRouteModelSteps(String)' has a NCSS line count of 76.
+</violation>
+<violation beginline="141" endline="261" begincolumn="13" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="RouteModelResource" method="validateRouteModelSteps" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'validateRouteModelSteps(String)' has a cyclomatic complexity of 38.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/RouteResource.java">
+<violation beginline="54" endline="130" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="RouteResource" method="start" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'start(String, String)' has a cyclomatic complexity of 15.
+</violation>
+<violation beginline="151" endline="224" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="RouteResource" method="validate" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'validate(String, String, String)' has a cyclomatic complexity of 21.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/TagResource.java">
+<violation beginline="250" endline="305" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="TagResource" method="update" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'update(String, String, String, String)' has a cyclomatic complexity of 13.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/UserResource.java">
+<violation beginline="53" endline="1145" begincolumn="8" endcolumn="1" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="UserResource" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The class 'UserResource' has a total cyclomatic complexity of 133 (highest 15).
+</violation>
+<violation beginline="199" endline="257" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="UserResource" method="update" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'update(String, String, String, String, Boolean)' has a cyclomatic complexity of 15.
+</violation>
+<violation beginline="285" endline="347" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="UserResource" method="login" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'login(String, String, String, boolean)' has a cyclomatic complexity of 12.
+</violation>
+<violation beginline="468" endline="514" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="UserResource" method="delete" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'delete(String)' has a cyclomatic complexity of 11.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/resource/VocabularyResource.java">
+<violation beginline="150" endline="196" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.resource" class="VocabularyResource" method="update" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'update(String, String, String, String)' has a cyclomatic complexity of 10.
+</violation>
+</file>
+<file name="/home/lovage/Teedy/docs-web/src/main/java/com/sismics/docs/rest/util/DocumentSearchCriteriaUtil.java">
+<violation beginline="48" endline="115" begincolumn="19" endcolumn="5" rule="NcssCount" ruleset="Design" package="com.sismics.docs.rest.util" class="DocumentSearchCriteriaUtil" method="parseSearchQuery" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#ncsscount" priority="3">
+The method 'parseSearchQuery(String, List)' has a NCSS line count of 60.
+</violation>
+<violation beginline="48" endline="115" begincolumn="19" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.util" class="DocumentSearchCriteriaUtil" method="parseSearchQuery" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'parseSearchQuery(String, List)' has a cyclomatic complexity of 22.
+</violation>
+<violation beginline="138" endline="202" begincolumn="19" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="com.sismics.docs.rest.util" class="DocumentSearchCriteriaUtil" method="addHttpSearchParams" externalInfoUrl="https://pmd.github.io/pmd-6.55.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'addHttpSearchParams(DocumentCriteria, String, String, String, String, String, String, Boolean, String, String, String, String, String, String, String, List)' has a cyclomatic complexity of 18.
+</violation>
+</file>
+</pmd>
