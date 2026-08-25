@@ -85,7 +85,7 @@ To build external URL, the server is expecting a `DOCS_BASE_URL` environment var
 
 - Language
   - `DOCS_DEFAULT_LANGUAGE`: The language which will be used as default. Currently supported values are:
-    - `eng`, `fra`, `ita`, `deu`, `spa`, `por`, `pol`, `rus`, `ukr`, `ara`, `hin`, `chi_sim`, `chi_tra`, `jpn`, `tha`, `kor`, `nld`, `tur`, `heb`, `hun`, `fin`, `swe`, `lav`, `dan`
+    - `eng`, `fra`, `ita`, `deu`, `spa`, `por`, `pol`, `rus`, `ukr`, `ara`, `hin`, `chi_sim`, `chi_tra`, `jpn`, `tha`, `kor`, `nld`, `tur`, `heb`, `hun`, `fin`, `swe`, `lav`, `dan`, `srp`
 
 - E-Mail
   - `DOCS_SMTP_HOSTNAME`: Hostname of the SMTP-Server to be used by Teedy.

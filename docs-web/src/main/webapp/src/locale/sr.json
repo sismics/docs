@@ -1,0 +1,644 @@
+{
+  "login": {
+    "username": "Корисничко име",
+    "password": "Лозинка",
+    "validation_code_required": "Потребан је код за потврду",
+    "validation_code_title": "Активирали сте двофакторску аутентификацију на свом налогу. Молимо вас унесите код за потврду генерисан апликацијом на вашем телефону.",
+    "validation_code": "Код за потврду",
+    "remember_me": "Запамти ме",
+    "submit": "Пријава",
+    "login_as_guest": "Пријава као гост",
+    "login_failed_title": "Пријава неуспешна",
+    "login_failed_message": "Корисничко име или лозинка нису исправни",
+    "password_lost_btn": "Заборавили сте лозинку?",
+    "password_lost_sent_title": "Е-пошта за ресетовање лозинке је послата",
+    "password_lost_sent_message": "Е-пошта је послата на <strong>{{ username }}</strong> ради ресетовања лозинке",
+    "password_lost_error_title": "Грешка при ресетовању лозинке",
+    "password_lost_error_message": "Није могуће послати е-поруку за ресетовање лозинке. Молимо обратите се администратору за ручно ресетовање"
+  },
+  "passwordlost": {
+    "title": "Заборављена лозинка",
+    "message": "Молимо унесите корисничко име да бисте добили везу за ресетовање лозинке. Ако не памтите корисничко име, обратите се администратору",
+    "submit": "Ресетуј лозинку"
+  },
+  "passwordreset": {
+    "message": "Молимо унесите нову лозинку",
+    "submit": "Промени лозинку",
+    "error_title": "Грешка при промени лозинке",
+    "error_message": "Ваш захтев за опоравак лозинке је истекао. Молимо поново поднесите захтев на страници за пријаву"
+  },
+  "index": {
+    "toggle_navigation": "Прикажи/сакриј навигацију кроз фасцикле",
+    "nav_documents": "Документи",
+    "nav_tags": "Ознаке",
+    "nav_users_groups": "Корисници и групе",
+    "error_info": "Број нових грешака: {{ count }}",
+    "logged_as": "Пријављени сте као {{ username }}",
+    "nav_settings": "Подешавања",
+    "logout": "Одјава",
+    "global_quota_warning": "<strong>Упозорење!</strong> Глобална квота је скоро достигнута: {{ current | number: 0 }}MB ({{ percent | number: 1 }}%) искоришћено од {{ total | number: 0 }}MB"
+  },
+  "document": {
+    "navigation_up": "Иди један ниво навише",
+    "toggle_navigation": "Прикажи/сакриј навигацију кроз фасцикле",
+    "display_mode_list": "Прикажи документе у листи",
+    "display_mode_grid": "Прикажи документе у мрежи",
+    "search_simple": "Једноставна претрага",
+    "search_fulltext": "Претрага по пуном тексту",
+    "search_creator": "Аутор",
+    "search_language": "Језик",
+    "search_before_date": "Креирано пре овог датума",
+    "search_after_date": "Креирано после овог датума",
+    "search_before_update_date": "Ажурирано пре овог датума",
+    "search_after_update_date": "Ажурирано после овог датума",
+    "search_tags": "Ознаке",
+    "search_shared": "Само дељени документи",
+    "search_workflow": "Ток рада додељен мени",
+    "search_clear": "Обриши",
+    "any_language": "Било који језик",
+    "add_document": "Додај документ",
+    "import_eml": "Увези из е-поруке (EML формат)",
+    "tags": "Ознаке",
+    "no_tags": "Без ознака",
+    "no_documents": "Нема докумената у бази",
+    "search": "Претрага",
+    "search_empty": "Нема резултата за <strong>\"{{ search }}\"</strong>",
+    "shared": "Дељено",
+    "current_step_name": "Тренутни корак",
+    "title": "Наслов",
+    "description": "Опис",
+    "contributors": "Сарадници",
+    "language": "Језик",
+    "creation_date": "Датум креирања",
+    "subject": "Тема",
+    "identifier": "Идентификатор",
+    "publisher": "Издавач",
+    "format": "Формат",
+    "source": "Извор",
+    "type": "Тип",
+    "coverage": "Покривеност",
+    "rights": "Права",
+    "relations": "Везе",
+    "page_size": "Величина стране",
+    "page_size_10": "10 по страни",
+    "page_size_20": "20 по страни",
+    "page_size_30": "30 по страни",
+    "upgrade_quota": "За повећање квоте, обратите се администратору",
+    "quota": "{{ current | number: 0 }}МБ ({{ percent | number: 1 }}%) искоришћено од {{ total | number: 0 }}МБ",
+    "count": "Пронађено докумената: {{ count }}",
+    "last_updated": "Последња измена {{ date | timeAgo: dateFormat }}",
+    "view": {
+      "delete_comment_title": "Обриши коментар",
+      "delete_comment_message": "Да ли заиста желите да обришете овај коментар?",
+      "delete_document_title": "Обриши документ",
+      "delete_document_message": "Да ли заиста желите да обришете овај документ?",
+      "shared_document_title": "Дељени документ",
+      "shared_document_message": "Можете поделити овај документ путем следеће везе. Имајте на уму да свако ко има ову везу може видети документ.<br/><input class=\"form-control share-link\" type=\"text\" readonly=\"readonly\" value=\"{{ link }}\" onclick=\"this.select(); document.execCommand('copy');\" />",
+      "not_found": "Документ није пронађен",
+      "forbidden": "Приступ забрањен",
+      "download_files": "Преузми датотеке",
+      "export_pdf": "Извези у PDF",
+      "by_creator": "од",
+      "comments": "Коментари",
+      "no_comments": "Још нема коментара на овом документу",
+      "add_comment": "Додај коментар",
+      "error_loading_comments": "Грешка при учитавању коментара",
+      "workflow_current": "Тренутни корак тока рада",
+      "workflow_comment": "Додај коментар тока рада",
+      "workflow_validated_title": "Корак тока рада потврђен",
+      "workflow_validated_message": "Корак тока рада је успешно потврђен.",
+      "content": {
+        "content": "Садржај",
+        "delete_file_title": "Обриши датотеку",
+        "delete_file_message": "Да ли заиста желите да обришете ову датотеку?",
+        "upload_pending": "На чекању...",
+        "upload_progress": "Отпремање...",
+        "upload_error": "Грешка при отпремању",
+        "upload_error_quota": "Квота је достигнута",
+        "drop_zone": "Превуци и пусти датотеке овде за отпремање",
+        "add_files": "Додај датотеке",
+        "file_processing_indicator": "Ова датотека се тренутно обрађује. Претрага неће бити доступна све до завршетка обраде.",
+        "reprocess_file": "Поново обради ову датотеку",
+        "upload_new_version": "Отпреми нову верзију",
+        "open_versions": "Прикажи историју верзија",
+        "display_mode_list": "Прикажи датотеке у листи",
+        "display_mode_grid": "Прикажи датотеке у мрежи"
+      },
+      "workflow": {
+        "workflow": "Ток рада",
+        "message": "Верификујте или потврдите своје документе са људима из ваше организације користећи токове рада.",
+        "workflow_start_label": "Који ток рада покренути?",
+        "add_more_workflow": "Додај још токова рада",
+        "start_workflow_submit": "Покрени ток рада",
+        "full_name": "<strong>{{ name }}</strong> покренут {{ create_date | date }}",
+        "cancel_workflow": "Откажи тренутни ток рада",
+        "cancel_workflow_title": "Откажи ток рада",
+        "cancel_workflow_message": "Да ли заиста желите да откажете тренутни ток рада?",
+        "no_workflow": "Не можете покренути ниједан ток рада за овај документ."
+      },
+      "permissions": {
+        "permissions": "Дозволе",
+        "message": "Дозволе се могу применити директно на овај документ, или могу доћи путем <a href=\"#/tag\">ознака</a>.",
+        "title": "Дозволе за овај документ",
+        "inherited_tags": "Дозволе наслеђене путем ознака",
+        "acl_source": "Из",
+        "acl_target": "За",
+        "acl_permission": "Дозвола"
+      },
+      "activity": {
+        "activity": "Активност",
+        "message": "Све радње на овом документу су овде забележене."
+      }
+    },
+    "edit": {
+      "document_edited_with_errors": "Документ је успешно измењен, али неке датотеке није могуће отпремити",
+      "document_added_with_errors": "Документ је успешно додат, али неке датотеке није могуће отпремити",
+      "quota_reached": "Квота је достигнута",
+      "primary_metadata": "Примарни метаподаци",
+      "title_placeholder": "Назив додељен ресурсу",
+      "description_placeholder": "Опис ресурса",
+      "new_files": "Нове датотеке",
+      "orphan_files": "+ још датотека: {{ count }}",
+      "additional_metadata": "Додатни метаподаци",
+      "subject_placeholder": "Тема ресурса",
+      "identifier_placeholder": "Недвосмислена референца на ресурс у датом контексту",
+      "publisher_placeholder": "Субјект одговоран за доступност ресурса",
+      "format_placeholder": "Формат датотеке, физички медијум или димензије ресурса",
+      "source_placeholder": "Повезани ресурс из ког је изведен описани ресурс",
+      "uploading_files": "Отпремање датотека..."
+    },
+    "default": {
+      "upload_pending": "На чекању...",
+      "upload_progress": "Отпремање...",
+      "upload_error": "Грешка при отпремању",
+      "upload_error_quota": "Квота је достигнута",
+      "quick_upload": "Брзо отпремање",
+      "drop_zone": "Превуци и пусти датотеке овде за отпремање",
+      "add_files": "Додај датотеке",
+      "add_new_document": "Додај у нови документ",
+      "latest_activity": "Последња активност",
+      "footer_sismics": "Направљено са <span class=\"fas fa-heart\"></span> од стране <a href=\"https://www.sismics.com\" target=\"_blank\">Sismics</a>",
+      "api_documentation": "API документација",
+      "feedback": "Пошаљите нам повратну информацију",
+      "workflow_document_list": "Документи додељени вама",
+      "select_all": "Изабери све",
+      "select_none": "Одзначи све"
+    },
+    "pdf": {
+      "export_title": "Извези у PDF",
+      "export_metadata": "Извези метаподатке",
+      "export_comments": "Извези коментаре",
+      "fit_to_page": "Прилагоди слику страни",
+      "margin": "Маргина",
+      "millimeter": "мм"
+    },
+    "share": {
+      "title": "Подели документ",
+      "message": "Именујте дељење ако желите да исти документ поделите више пута.",
+      "submit": "Подели"
+    }
+  },
+  "file": {
+    "view": {
+      "previous": "Претходна",
+      "next": "Следећа",
+      "not_found": "Датотека није пронађена"
+    },
+    "edit": {
+      "title": "Измени датотеку",
+      "name": "Назив датотеке"
+    },
+    "versions": {
+      "title": "Историја верзија",
+      "filename": "Назив датотеке",
+      "mimetype": "Тип",
+      "create_date": "Датум креирања",
+      "version": "Верзија"
+    }
+  },
+  "tag": {
+    "new_tag": "Нова ознака",
+    "search": "Претрага",
+    "default": {
+      "title": "Ознаке",
+      "message_1": "<strong>Ознаке</strong> су налепнице повезане са документима.",
+      "message_2": "Документ може имати више ознака, а ознака може бити применљена на више докумената.",
+      "message_3": "Помоћу дугмета <span class=\"fas fa-pencil-alt\"></span> можете уређивати дозволе ознаке.",
+      "message_4": "Ако ознаку може да чита други корисник или група, повезани документи такође могу бити доступни тим особама.",
+      "message_5": "На пример, означите документе ваше компаније ознаком <span class=\"label label-info\">МојаКомпанија</span> и додајте дозволу <strong>Може да чита</strong> групи <span class=\"btn btn-default\">запослени</span>"
+    },
+    "edit": {
+      "delete_tag_title": "Обриши ознаку",
+      "delete_tag_message": "Да ли заиста желите да обришете ову ознаку?",
+      "name": "Назив",
+      "color": "Боја",
+      "parent": "Надређена",
+      "info": "Дозволе на овој ознаци ће бити примењене и на документе означене са <span class=\"label label-info\" ng-style=\"{ 'background': color }\">{{ name }}</span>",
+      "circular_reference_title": "Кружна референца",
+      "circular_reference_message": "Хијерархија надређених ознака прави петљу. Молимо изаберите другу надређену ознаку."
+    }
+  },
+  "group": {
+    "profile": {
+      "members": "Чланови",
+      "no_members": "Нема чланова",
+      "related_links": "Повезане везе",
+      "edit_group": "Уреди групу {{ name }}"
+    }
+  },
+  "user": {
+    "profile": {
+      "groups": "Групе",
+      "quota_used": "Искоришћена квота",
+      "percent_used": "{{ percent | number: 0 }}% искоришћено",
+      "related_links": "Повезане везе",
+      "document_created": "Документи које је креирао {{ username }}",
+      "edit_user": "Уреди корисника {{ username }}"
+    }
+  },
+  "usergroup": {
+    "search_groups": "Претражи групе",
+    "search_users": "Претражи кориснике",
+    "you": "То сте ви!",
+    "default": {
+      "title": "Корисници и групе",
+      "message": "Овде можете прегледати информације о корисницима и групама."
+    }
+  },
+  "settings": {
+    "menu_personal_settings": "Лична подешавања",
+    "menu_user_account": "Кориснички налог",
+    "menu_two_factor_auth": "Двофакторска аутентификација",
+    "menu_opened_sessions": "Отворене сесије",
+    "menu_file_importer": "Групни увоз датотека",
+    "menu_general_settings": "Општа подешавања",
+    "menu_workflow": "Ток рада",
+    "menu_users": "Корисници",
+    "menu_groups": "Групе",
+    "menu_vocabularies": "Речници",
+    "menu_configuration": "Конфигурација",
+    "menu_inbox": "Скенирање пријемног сандучета",
+    "menu_ldap": "LDAP аутентификација",
+    "menu_metadata": "Прилагођени метаподаци",
+    "menu_monitoring": "Надзор",
+    "ldap": {
+      "title": "LDAP аутентификација",
+      "enabled": "Омогући LDAP аутентификацију",
+      "host": "LDAP назив хоста",
+      "port": "LDAP порт (подразумевано 389)",
+      "usessl": "Омогући SSL (ldaps)",
+      "admin_dn": "Администраторски DN",
+      "admin_password": "Администраторска лозинка",
+      "base_dn": "Основни DN за претрагу",
+      "filter": "Филтер за претрагу (мора садржати USERNAME, нпр. \"(uid=USERNAME)\")",
+      "default_email": "Подразумевана е-пошта за LDAP корисника",
+      "default_storage": "Подразумевани простор за LDAP корисника",
+      "saved": "LDAP конфигурација је успешно сачувана"
+    },
+    "user": {
+      "title": "Управљање корисницима",
+      "add_user": "Додај корисника",
+      "username": "Корисничко име",
+      "create_date": "Датум креирања",
+      "totp_enabled": "Двофакторска аутентификација је омогућена за овај налог",
+      "edit": {
+        "delete_user_title": "Обриши корисника",
+        "delete_user_message": "Да ли заиста желите да обришете овог корисника? Сви повезани документи, датотеке и ознаке ће бити обрисани",
+        "user_used_title": "Корисник је у употреби",
+        "user_used_message": "Овај корисник се користи у току рада \"{{ name }}\"",
+        "edit_user_failed_title": "Корисник већ постоји",
+        "edit_user_failed_message": "Ово корисничко име је већ заузето другим корисником",
+        "edit_user_title": "Уреди \"{{ username }}\"",
+        "add_user_title": "Додај корисника",
+        "username": "Корисничко име",
+        "email": "Е-пошта",
+        "groups": "Групе",
+        "storage_quota": "Квота простора",
+        "storage_quota_placeholder": "Квота простора (у МБ)",
+        "password": "Лозинка",
+        "password_confirm": "Лозинка (потврда)",
+        "disabled": "Онемогућен корисник",
+        "password_reset_btn": "Пошаљи е-поруку за ресетовање лозинке овом кориснику",
+        "password_lost_sent_title": "Е-пошта за ресетовање лозинке је послата",
+        "password_lost_sent_message": "Е-пошта за ресетовање лозинке је послата на <strong>{{ username }}</strong>",
+        "disable_totp_btn": "Онемогући двофакторску аутентификацију за овог корисника",
+        "disable_totp_title": "Онемогући двофакторску аутентификацију",
+        "disable_totp_message": "Да ли сте сигурни да желите да онемогућите двофакторску аутентификацију за овог корисника?"
+      }
+    },
+    "workflow": {
+      "title": "Конфигурација тока рада",
+      "add_workflow": "Додај ток рада",
+      "name": "Назив",
+      "create_date": "Датум креирања",
+      "edit": {
+        "delete_workflow_title": "Обриши ток рада",
+        "delete_workflow_message": "Да ли заиста желите да обришете овај ток рада? Токови рада у току неће бити обрисани",
+        "edit_workflow_title": "Уреди \"{{ name }}\"",
+        "add_workflow_title": "Додај ток рада",
+        "name": "Назив",
+        "name_placeholder": "Назив или опис корака",
+        "drag_help": "Превуци и пусти за промену редоследа корака",
+        "type": "Тип корака",
+        "type_approve": "Одобри",
+        "type_validate": "Потврди",
+        "target": "Додељено кориснику/групи",
+        "target_help": "<strong>Одобрење:</strong> Прихвати или одбиј захтев<br/><strong>Потврда:</strong> Прегледај и настави ток рада",
+        "add_step": "Додај корак тока рада",
+        "actions": "Шта се дешава после?",
+        "remove_action": "Уклони радњу",
+        "acl_info": "Само корисници и групе дефинисани овде ће моћи да покрену овај ток рада на документу"
+      }
+    },
+    "security": {
+      "enable_totp": "Омогући двофакторску аутентификацију",
+      "enable_totp_message": "Уверите се да имате TOTP-компатибилну апликацију на телефону спремну за додавање новог налога",
+      "title": "Двофакторска аутентификација",
+      "message_1": "Двофакторска аутентификација вам омогућава да додате слој безбедности на ваш <strong>{{ appName }}</strong> налог.<br/>Пре него што активирате ову функцију, уверите се да имате TOTP-компатибилну апликацију на телефону:",
+      "message_google_authenticator": "За Android, iOS и Blackberry: <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>",
+      "message_duo_mobile": "За Android и iOS: <a href=\"https://guide.duo.com/third-party-accounts\" target=\"_blank\">Duo Mobile</a>",
+      "message_authenticator": "За Windows Phone: <a href=\"https://www.microsoft.com/en-US/store/apps/Authenticator/9WZDNCRFJ3RJ\" target=\"_blank\">Authenticator</a>",
+      "message_2": "Ове апликације аутоматски генеришу код за потврду који се мења након одређеног периода.<br/>Биће вам потребно да унесете овај код за потврду сваки пут када се пријавите на <strong>{{ appName }}</strong>.",
+      "secret_key": "Ваш тајни кључ је: <strong>{{ secret }}</strong>",
+      "secret_key_warning": "Конфигуришите своју TOTP апликацију на телефону са овим тајним кључем сада, јер касније нећете моћи да му приступите.",
+      "totp_enabled_message": "Двофакторска аутентификација је омогућена на вашем налогу.<br/>Сваки пут када се пријавите на <strong>{{ appName }}</strong>, биће затражен код за потврду из конфигурисане апликације на телефону.<br/>Ако изгубите телефон, нећете моћи да се пријавите на налог, али активне сесије ће вам омогућити да генеришете нови тајни кључ.",
+      "disable_totp": {
+        "disable_totp": "Онемогући двофакторску аутентификацију",
+        "message": "Ваш налог више неће бити заштићен двофакторском аутентификацијом.",
+        "confirm_password": "Потврди лозинку",
+        "submit": "Онемогући двофакторску аутентификацију"
+      },
+      "test_totp": "Молимо унесите код за потврду приказан на вашем телефону:",
+      "test_code_success": "Код за потврду је исправан",
+      "test_code_fail": "Овај код није важећи. Проверите да ли је ваш телефон исправно конфигурисан или онемогућите двофакторску аутентификацију"
+    },
+    "group": {
+      "title": "Управљање групама",
+      "add_group": "Додај групу",
+      "name": "Назив",
+      "edit": {
+        "delete_group_title": "Обриши групу",
+        "delete_group_message": "Да ли заиста желите да обришете ову групу?",
+        "edit_group_failed_title": "Група већ постоји",
+        "edit_group_failed_message": "Овај назив групе је већ заузет другом групом",
+        "group_used_title": "Група је у употреби",
+        "group_used_message": "Ова група се користи у току рада \"{{ name }}\"",
+        "edit_group_title": "Уреди \"{{ name }}\"",
+        "add_group_title": "Додај групу",
+        "name": "Назив",
+        "parent_group": "Надређена група",
+        "search_group": "Пронађи групу",
+        "members": "Чланови",
+        "new_member": "Нови члан",
+        "search_user": "Пронађи корисника"
+      }
+    },
+    "account": {
+      "title": "Кориснички налог",
+      "password": "Лозинка",
+      "password_confirm": "Лозинка (потврда)",
+      "updated": "Налог је успешно ажуриран"
+    },
+    "config": {
+      "title_guest_access": "Гостујући приступ",
+      "message_guest_access": "Гостујући приступ је режим у ком свако може приступити {{ appName }} без лозинке.<br/>Као и обичан корисник, гостујући корисник може приступити само својим документима и онима доступним путем дозвола.<br/>",
+      "enable_guest_access": "Омогући гостујући приступ",
+      "disable_guest_access": "Онемогући гостујући приступ",
+      "title_theme": "Прилагођавање теме",
+      "title_general": "Општа конфигурација",
+      "default_language": "Подразумевани језик за нове документе",
+      "application_name": "Назив апликације",
+      "main_color": "Главна боја",
+      "custom_css": "Прилагођени CSS",
+      "custom_css_placeholder": "Прилагођени CSS који се додаје после главног листа стилова",
+      "logo": "Логотип (квадратних димензија)",
+      "background_image": "Позадинска слика",
+      "uploading_image": "Отпремање слике...",
+      "title_smtp": "Конфигурација е-поште",
+      "smtp_hostname": "SMTP назив хоста",
+      "smtp_port": "SMTP порт",
+      "smtp_from": "Е-пошта пошиљаоца",
+      "smtp_username": "SMTP корисничко име",
+      "smtp_password": "SMTP лозинка",
+      "smtp_updated": "SMTP конфигурација је успешно ажурирана",
+      "title_ocr": "Оптичко препознавање знакова (OCR)",
+      "message_ocr": "OCR је функција која издваја текст из слика и PDF датотека. Ова функција захтева инсталацију Tesseract на серверу.",
+      "enable_ocr": "Омогући OCR",
+      "disable_ocr": "Онемогући OCR",
+      "webhooks": "Webhooks",
+      "webhooks_explain": "Webhooks ће бити позвани када се догоди наведени догађај. На задату URL адресу биће послат POST захтев са JSON садржајем који садржи назив догађаја и ID погођеног ресурса.",
+      "webhook_event": "Догађај",
+      "webhook_url": "URL",
+      "webhook_create_date": "Датум креирања",
+      "webhook_add": "Додај веб-куку"
+    },
+    "metadata": {
+      "title": "Конфигурација прилагођених метаподатака",
+      "message": "Овде можете додати прилагођене метаподатке документима, попут интерног идентификатора или датума истека. Имајте на уму да тип метаподатака не може бити промењен након креирања.",
+      "name": "Назив метаподатка",
+      "type": "Тип метаподатка"
+    },
+    "inbox": {
+      "title": "Скенирање пријемног сандучета",
+      "message": "Активирањем ове функције, систем ће сваки минут скенирати назначено пријемно сандуче у потрази за <strong>непрочитаним</strong> порукама и аутоматски их увозити.<br/>Након увоза е-поруке, она ће бити означена као прочитана.<br/>Подешавања за <a href=\"https://support.google.com/mail/answer/7126229?hl=en\" target=\"_blank\">Gmail</a>, <a href=\"https://support.office.com/en-us/article/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040\" target=\"_blank\">Outlook.com</a>, <a href=\"https://help.yahoo.com/kb/SLN4075.html\" target=\"_blank\">Yahoo</a>.",
+      "enabled": "Омогући скенирање пријемног сандучета",
+      "hostname": "IMAP назив хоста",
+      "port": "IMAP порт (143 или 993)",
+      "starttls": "Омогући STARTTLS",
+      "username": "IMAP корисничко име",
+      "password": "IMAP лозинка",
+      "folder": "IMAP фасцикла",
+      "tag": "Ознака додата увезеним документима",
+      "test": "Тестирај параметре",
+      "last_sync": "Последња синхронизација: {{ data.date | date: 'medium' }}, увезено порука: {{ data.count }}",
+      "test_success": "Повезивање са долазним сандучетом је успешно, непрочитаних порука: {{ count }})",
+      "test_fail": "Дошло је до грешке при повезивању са пријемним сандучетом. Молимо проверите параметре",
+      "saved": "IMAP конфигурација је успешно сачувана",
+      "autoTagsEnabled": "Аутоматски додај ознаке из реда за тему означене са #",
+      "deleteImported": "Обриши поруку из поштанског сандучета после увоза"
+    },
+    "monitoring": {
+      "background_tasks": "Позадински задаци",
+      "queued_tasks": "Задаци на чекању: {{ count }}",
+      "queued_tasks_explain": "Обрада датотека, креирање минијатура, ажурирање индекса и оптичко препознавање знакова су позадински задаци. Велики број необрађених задатака ће резултирати непотпуним резултатима претраге.",
+      "server_logs": "Серверски записи",
+      "log_date": "Датум",
+      "log_tag": "Ознака",
+      "log_message": "Порука",
+      "indexing": "Индексирање",
+      "indexing_info": "Ако приметите неслагања у резултатима претраге, можете покушати потпуно поновно индексирање. Резултати претраге ће бити непотпуни до завршетка ове операције.",
+      "start_reindexing": "Покрени потпуно поновно индексирање",
+      "reindexing_started": "Поновно индексирање је покренуто. Молимо сачекајте да не буде више позадинских задатака."
+    },
+    "session": {
+      "title": "Отворене сесије",
+      "created_date": "Датум креирања",
+      "last_connection_date": "Датум последње конекције",
+      "user_agent": "Из",
+      "current": "Тренутна",
+      "current_session": "Ово је тренутна сесија",
+      "clear_message": "Сви остали уређаји повезани са овим налогом ће бити одјављени",
+      "clear": "Уклони све остале сесије"
+    },
+    "vocabulary": {
+      "title": "Уноси речника",
+      "choose_vocabulary": "Изаберите речник за уређивање",
+      "type": "Тип",
+      "coverage": "Покривеност",
+      "rights": "Права",
+      "value": "Вредност",
+      "order": "Редослед",
+      "new_entry": "Нови унос"
+    },
+    "fileimporter": {
+      "title": "Групни увоз датотека",
+      "advanced_users": "За напредне кориснике!",
+      "need_intro": "Ако треба да:",
+      "need_1": "Увезете директоријум датотека одједном",
+      "need_2": "Скенирате директоријум за нове датотеке и увезете их",
+      "line_1": "Посетите <a href=\"https://github.com/sismics/docs/releases\">sismics/docs/releases</a> и преузмите алат за увоз датотека за свој систем.",
+      "line_2": "Следите <a href=\"https://github.com/sismics/docs/tree/master/docs-importer\">упутства овде</a> за коришћење овог алата.",
+      "line_3": "Ваше датотеке ће бити увезене у документе у складу са конфигурацијом увозника датотека.",
+      "download": "Преузми",
+      "instructions": "Упутства"
+    }
+  },
+  "feedback": {
+    "title": "Пошаљите нам повратну информацију",
+    "message": "Имате предлог или питање о Teedy-ју? Слушамо вас!",
+    "sent_title": "Повратна информација је послата",
+    "sent_message": "Хвала на повратној информацији! Помоћи ће нам да Teedy учинимо још бољим."
+  },
+  "import": {
+    "title": "Увоз у току",
+    "error_quota": "Достигнуто је ограничење квоте. Обратите се администратору за повећање квоте",
+    "error_general": "Дошло је до грешке приликом увоза датотеке. Молимо проверите да ли је у питању важећа EML датотека"
+  },
+  "app_share": {
+    "main": "Затражите везу до дељеног документа да бисте му приступили",
+    "403": {
+      "title": "Приступ одбијен",
+      "message": "Документ којем покушавате да приступите више није дељен"
+    }
+  },
+  "directive": {
+    "acledit": {
+      "acl_target": "За",
+      "acl_permission": "Дозвола",
+      "add_permission": "Додај дозволу",
+      "search_user_group": "Пронађи корисника или групу"
+    },
+    "auditlog": {
+      "log_created": "креирано",
+      "log_updated": "ажурирано",
+      "log_deleted": "обрисано",
+      "Acl": "ACL",
+      "Comment": "Коментар",
+      "Document": "Документ",
+      "File": "Датотека",
+      "Group": "Група",
+      "Route": "Ток рада",
+      "RouteModel": "Модел тока рада",
+      "Tag": "Ознака",
+      "User": "Корисник",
+      "Webhook": "Веб-кука"
+    },
+    "selectrelation": {
+      "typeahead": "Унесите наслов документа"
+    },
+    "selecttag": {
+      "typeahead": "Унесите ознаку"
+    },
+    "datepicker": {
+      "current": "Данас",
+      "clear": "Обриши",
+      "close": "Готово"
+    }
+  },
+  "filter": {
+    "filesize": {
+      "mb": "MB",
+      "kb": "kB"
+    }
+  },
+  "acl": {
+    "READ": "Може да чита",
+    "READWRITE": "Може да пише",
+    "WRITE": "Може да пише",
+    "USER": "Корисник",
+    "GROUP": "Група",
+    "SHARE": "Дељено"
+  },
+  "workflow_type": {
+    "VALIDATE": "Потврда",
+    "APPROVE": "Одобрење"
+  },
+  "workflow_transition": {
+    "APPROVED": "Одобрено",
+    "REJECTED": "Одбијено",
+    "VALIDATED": "Потврђено"
+  },
+  "validation": {
+    "required": "Обавезно",
+    "too_short": "Превише кратко",
+    "too_long": "Превише дуго",
+    "email": "Мора бити важећа е-пошта",
+    "password_confirm": "Лозинка и потврда лозинке морају се подударати",
+    "number": "Потребан је број",
+    "no_space": "Размаци и двотачке нису дозвољени",
+    "alphanumeric": "Дозвољена су само слова и бројеви"
+  },
+  "action_type": {
+    "ADD_TAG": "Додај ознаку",
+    "REMOVE_TAG": "Уклони ознаку",
+    "PROCESS_FILES": "Обради датотеке"
+  },
+  "pagination": {
+    "previous": "Претходна",
+    "next": "Следећа",
+    "first": "Прва",
+    "last": "Последња"
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Први пут?",
+      "description": "Ако је ово ваш први пут на Teedy-ју, кликните на дугме Даље, иначе слободно затворите ово."
+    },
+    "step2": {
+      "title": "Документи",
+      "description": "Teedy је организован у документе и сваки документ садржи више датотека."
+    },
+    "step3": {
+      "title": "Датотеке",
+      "description": "Датотеке можете додати након креирања документа или пре тога, коришћењем ове области за брзо отпремање."
+    },
+    "step4": {
+      "title": "Претрага",
+      "description": "Ово је главни начин за проналазак докумената. Постоји и напредна претрага помоћу дугмета са лупом."
+    },
+    "step5": {
+      "title": "Ознаке",
+      "description": "Документи могу бити организовани у ознаке (које су попут надфасцикли). Креирајте их овде."
+    }
+  },
+  "yes": "Да",
+  "no": "Не",
+  "ok": "У реду",
+  "cancel": "Откажи",
+  "share": "Подели",
+  "unshare": "Прекини дељење",
+  "close": "Затвори",
+  "add": "Додај",
+  "open": "Отвори",
+  "see": "Погледај",
+  "save": "Сачувај",
+  "export": "Извези",
+  "edit": "Уреди",
+  "delete": "Обриши",
+  "rename": "Преименуј",
+  "download": "Преузми",
+  "loading": "Учитавање...",
+  "send": "Пошаљи",
+  "enabled": "Омогућено",
+  "disabled": "Онемогућено"
+}
