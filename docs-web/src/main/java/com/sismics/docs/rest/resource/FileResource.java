@@ -54,7 +54,7 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * File REST resources.
- * 
+ *
  * @author bgamard
  */
 @Path("/file")
@@ -96,7 +96,7 @@ public class FileResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Validate input data
         ValidationUtil.validateRequired(fileBodyPart, "file");
 
@@ -111,7 +111,7 @@ public class FileResource extends BaseResource {
                 throw new NotFoundException();
             }
         }
-        
+
         // Keep unencrypted data temporary on disk
         String name = fileBodyPart.getContentDisposition() != null ?
                 URLDecoder.decode(fileBodyPart.getContentDisposition().getFileName(), StandardCharsets.UTF_8) : null;
@@ -141,7 +141,7 @@ public class FileResource extends BaseResource {
             throw new ServerException("FileError", "Error adding a file", e);
         }
     }
-    
+
     /**
      * Attach a file to a document.
      *
@@ -172,11 +172,11 @@ public class FileResource extends BaseResource {
 
         // Validate input data
         ValidationUtil.validateRequired(documentId, "documentId");
-        
+
         // Get the current user
         UserDao userDao = new UserDao();
         User user = userDao.getById(principal.getId());
-        
+
         // Get the document and the file
         DocumentDao documentDao = new DocumentDao();
         FileDao fileDao = new FileDao();
@@ -185,17 +185,17 @@ public class FileResource extends BaseResource {
         if (file == null || documentDto == null) {
             throw new NotFoundException();
         }
-        
+
         // Check that the file is orphan
         if (file.getDocumentId() != null) {
             throw new ClientException("IllegalFile", MessageFormat.format("File not orphan: {0}", id));
         }
-        
+
         // Update the file
         file.setDocumentId(documentId);
         file.setOrder(fileDao.getByDocumentId(principal.getId(), documentId).size());
         fileDao.update(file);
-        
+
         // Raise a new file updated event and document updated event (it wasn't sent during file creation)
         try {
             java.nio.file.Path storedFile = DirectoryUtil.getStorageDirectory().resolve(id);
@@ -207,7 +207,7 @@ public class FileResource extends BaseResource {
             fileUpdatedAsyncEvent.setFileId(file.getId());
             fileUpdatedAsyncEvent.setUnencryptedFile(unencryptedFile);
             ThreadLocalContext.get().addAsyncEvent(fileUpdatedAsyncEvent);
-            
+
             DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
             documentUpdatedAsyncEvent.setUserId(principal.getId());
             documentUpdatedAsyncEvent.setDocumentId(documentId);
@@ -324,7 +324,7 @@ public class FileResource extends BaseResource {
                 .add("status", "ok");
         return Response.ok().entity(response.build()).build();
     }
-    
+
     /**
      * Reorder files.
      *
@@ -352,17 +352,17 @@ public class FileResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+
         // Validate input data
         ValidationUtil.validateRequired(documentId, "id");
         ValidationUtil.validateRequired(idList, "order");
-        
+
         // Get the document
         AclDao aclDao = new AclDao();
         if (!aclDao.checkPermission(documentId, PermType.WRITE, getTargetIdList(null))) {
             throw new NotFoundException();
         }
-        
+
         // Reorder files
         FileDao fileDao = new FileDao();
         for (File file : fileDao.getByDocumentId(principal.getId(), documentId)) {
@@ -377,13 +377,13 @@ public class FileResource extends BaseResource {
         event.setUserId(principal.getId());
         event.setDocumentId(documentId);
         ThreadLocalContext.get().addAsyncEvent(event);
-        
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
         return Response.ok().entity(response.build()).build();
     }
-    
+
     /**
      * Returns files linked to a document or not linked to any document.
      *
@@ -417,7 +417,7 @@ public class FileResource extends BaseResource {
             @QueryParam("id") String documentId,
             @QueryParam("share") String shareId) {
         boolean authenticated = authenticate();
-        
+
         // Check document visibility
         if (documentId != null) {
             AclDao aclDao = new AclDao();
@@ -489,7 +489,7 @@ public class FileResource extends BaseResource {
                 .add("files", files);
         return Response.ok().entity(response.build()).build();
     }
-    
+
     /**
      * Deletes a file.
      *
@@ -520,14 +520,14 @@ public class FileResource extends BaseResource {
         // Delete the file
         FileDao fileDao = new FileDao();
         fileDao.delete(file.getId(), principal.getId());
-        
+
         // Raise a new file deleted event
         FileDeletedAsyncEvent fileDeletedAsyncEvent = new FileDeletedAsyncEvent();
         fileDeletedAsyncEvent.setUserId(principal.getId());
         fileDeletedAsyncEvent.setFileId(file.getId());
         fileDeletedAsyncEvent.setFileSize(file.getSize());
         ThreadLocalContext.get().addAsyncEvent(fileDeletedAsyncEvent);
-        
+
         if (file.getDocumentId() != null) {
             // Raise a new document updated
             DocumentUpdatedAsyncEvent documentUpdatedAsyncEvent = new DocumentUpdatedAsyncEvent();
@@ -535,13 +535,13 @@ public class FileResource extends BaseResource {
             documentUpdatedAsyncEvent.setDocumentId(file.getDocumentId());
             ThreadLocalContext.get().addAsyncEvent(documentUpdatedAsyncEvent);
         }
-        
+
         // Always return OK
         JsonObjectBuilder response = Json.createObjectBuilder()
                 .add("status", "ok");
         return Response.ok().entity(response.build()).build();
     }
-    
+
     /**
      * Returns a file.
      *
@@ -570,7 +570,7 @@ public class FileResource extends BaseResource {
             @QueryParam("share") String shareId,
             @QueryParam("size") String size) {
         authenticate();
-        
+
         if (size != null && !Lists.newArrayList("web", "thumb", "content").contains(size)) {
             throw new ClientException("SizeError", "Size must be web, thumb or content");
         }
@@ -607,19 +607,19 @@ public class FileResource extends BaseResource {
             mimeType = file.getMimeType();
             decrypt = true; // Original files are encrypted
         }
-        
+
         // Stream the output and decrypt it if necessary
         StreamingOutput stream;
-        
+
         // A file is always encrypted by the creator of it
         User user = userDao.getById(file.getUserId());
-        
+
         // Write the decrypted file to the output
         try {
             InputStream fileInputStream = Files.newInputStream(storedFile);
             final InputStream responseInputStream = decrypt ?
                     EncryptionUtil.decryptInputStream(fileInputStream, user.getPrivateKey()) : fileInputStream;
-                    
+
             stream = outputStream -> {
                 try {
                     ByteStreams.copy(responseInputStream, outputStream);
@@ -636,9 +636,16 @@ public class FileResource extends BaseResource {
             return Response.status(Status.SERVICE_UNAVAILABLE).build();
         }
 
+        // Remap active MIME types to prevent stored XSS via inline rendering (CWE-79).
+        // Files detected as text/html, JS, SVG, or XHTML are served as opaque downloads
+        // instead of being rendered in the application's origin.
+        String servedMime = isActiveMime(mimeType) ? "application/octet-stream" : mimeType;
+        String disposition = isActiveMime(mimeType) ? "attachment" : "inline";
+
         Response.ResponseBuilder builder = Response.ok(stream)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFullName("data") + "\"")
-                .header(HttpHeaders.CONTENT_TYPE, mimeType);
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + file.getFullName("data") + "\"")
+                .header(HttpHeaders.CONTENT_TYPE, servedMime)
+                .header("X-Content-Type-Options", "nosniff");
         if (decrypt) {
             // Cache real files
             builder.header(HttpHeaders.CACHE_CONTROL, "private")
@@ -676,7 +683,7 @@ public class FileResource extends BaseResource {
             @QueryParam("id") String documentId,
             @QueryParam("share") String shareId) {
         authenticate();
-        
+
         // Get the document
         DocumentDao documentDao = new DocumentDao();
         DocumentDto documentDto = documentDao.getDocument(documentId, PermType.READ, getTargetIdList(shareId));
@@ -748,12 +755,34 @@ public class FileResource extends BaseResource {
             }
             outputStream.close();
         };
-        
+
         // Write to the output
         return Response.ok(stream)
                 .header("Content-Type", "application/zip")
                 .header("Content-Disposition", "attachment; filename=\"" + zipFileName + ".zip\"")
                 .build();
+    }
+
+    /**
+     * MIME types that must never be served inline, as they execute scripts
+     * in the browser's rendering engine (CWE-79 / stored XSS via MIME confusion).
+     */
+    private static final List<String> ACTIVE_MIME_PREFIXES = List.of(
+            "text/html",
+            "text/javascript",
+            "application/javascript",
+            "application/xhtml+xml",
+            "image/svg+xml"
+    );
+
+    /**
+     * Returns true if the given MIME type can execute scripts when rendered
+     * inline by a browser. Such files must be forced to download as
+     * application/octet-stream with Content-Disposition: attachment.
+     */
+    private static boolean isActiveMime(String mimeType) {
+        if (mimeType == null) return false;
+        return ACTIVE_MIME_PREFIXES.stream().anyMatch(mimeType::startsWith);
     }
 
     /**
