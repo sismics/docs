@@ -12,6 +12,7 @@ import org.apache.directory.api.ldap.model.cursor.EntryCursor;
 import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.entry.Value;
+import org.apache.directory.api.ldap.model.filter.FilterEncoder;
 import org.apache.directory.api.ldap.model.message.SearchScope;
 import org.apache.directory.ldap.client.api.LdapConnection;
 import org.apache.directory.ldap.client.api.LdapConnectionConfig;
@@ -64,8 +65,11 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
             }
             ldapConnection.bind();
 
+            // Escape username per RFC 4515 before substitution to prevent LDAP injection (CWE-90).
+            // FilterEncoder.encodeFilterValue() escapes: \ * ( ) \x00 and other metacharacters.
+            String safeUsername = FilterEncoder.encodeFilterValue(username);
             EntryCursor cursor = ldapConnection.search(ConfigUtil.getConfigStringValue(ConfigType.LDAP_BASE_DN),
-                    ConfigUtil.getConfigStringValue(ConfigType.LDAP_FILTER).replace("USERNAME", username), SearchScope.SUBTREE);
+                    ConfigUtil.getConfigStringValue(ConfigType.LDAP_FILTER).replace("USERNAME", safeUsername), SearchScope.SUBTREE);
             if (cursor.next()) {
                 userEntry = cursor.get();
                 ldapConnection.bind(userEntry.getDn(), password);
