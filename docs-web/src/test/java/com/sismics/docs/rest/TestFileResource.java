@@ -338,6 +338,39 @@ public class TestFileResource extends BaseJerseyTest {
      * @throws Exception e
      */
     @Test
+    public void testReadOnlyShareCannotChangeFiles() throws Exception {
+        clientUtil.createUser("file_owner");
+        String ownerToken = clientUtil.login("file_owner");
+        clientUtil.createUser("file_reader");
+        String readerToken = clientUtil.login("file_reader");
+
+        String documentId = clientUtil.createDocument(ownerToken);
+        String fileId = clientUtil.addFileToDocument(FILE_PIA_00452_JPG, ownerToken, documentId);
+        target().path("/acl").request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, ownerToken)
+                .put(Entity.form(new Form()
+                        .param("source", documentId)
+                        .param("perm", "READ")
+                        .param("target", "file_reader")
+                        .param("type", "USER")), JsonObject.class);
+
+        Response response = target().path("/file/" + fileId).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, readerToken)
+                .post(Entity.form(new Form().param("name", "renamed")));
+        Assert.assertEquals(Status.FORBIDDEN, Status.fromStatusCode(response.getStatus()));
+
+        response = target().path("/file/" + fileId).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, readerToken)
+                .delete();
+        Assert.assertEquals(Status.FORBIDDEN, Status.fromStatusCode(response.getStatus()));
+
+        JsonObject json = target().path("/file/" + fileId).request()
+                .cookie(TokenBasedSecurityFilter.COOKIE_NAME, ownerToken)
+                .post(Entity.form(new Form().param("name", "renamed")), JsonObject.class);
+        Assert.assertEquals("ok", json.getString("status"));
+    }
+
+    @Test
     public void testOrphanFile() throws Exception {
         // Login file_orphan
         clientUtil.createUser("file_orphan");
