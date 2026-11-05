@@ -249,6 +249,7 @@ public class FileResource extends BaseResource {
 
         // Get the file
         File file = findFile(id, null);
+        checkFileWritable(file);
 
         // Validate input data
         name = ValidationUtil.validateLength(name, "name", 1, 200, false);
@@ -516,6 +517,7 @@ public class FileResource extends BaseResource {
 
         // Get the file
         File file = findFile(id, null);
+        checkFileWritable(file);
 
         // Delete the file
         FileDao fileDao = new FileDao();
@@ -816,6 +818,18 @@ public class FileResource extends BaseResource {
             checkFileAccessible(null, file);
         }
         return files;
+    }
+
+    /**
+     * Check that the file's document can be written. An orphan file only needs checkFileAccessible.
+     *
+     * @param file File
+     */
+    private void checkFileWritable(File file) {
+        if (file.getDocumentId() != null
+                && !new AclDao().checkPermission(file.getDocumentId(), PermType.WRITE, getTargetIdList(null))) {
+            throw new ForbiddenClientException();
+        }
     }
 
     /**
