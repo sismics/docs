@@ -439,6 +439,7 @@ angular.module('docs',
       'ru_*': 'ru',
       'it_*': 'it',
 	    'pl_*': 'pl',
+	  'sr_*': 'sr',
       '*': 'en'
     })
     .fallbackLanguage('en');
