@@ -46,6 +46,7 @@ RUN apt-get update && \
     tesseract-ocr-ukr \
     tesseract-ocr-vie \
     tesseract-ocr-sqi \
+    tesseract-ocr-srp \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 RUN dpkg-reconfigure -f noninteractive tzdata
