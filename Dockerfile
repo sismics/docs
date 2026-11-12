@@ -40,8 +40,6 @@ RUN apt-get update && \
     tesseract-ocr-por \
     tesseract-ocr-rus \
     tesseract-ocr-spa \
-    tesseract-ocr-srp \
-    tesseract-ocr-srp-latn \
     tesseract-ocr-swe \
     tesseract-ocr-tha \
     tesseract-ocr-tur \
