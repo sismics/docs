@@ -429,7 +429,7 @@ angular.module('docs',
       prefix: 'locale/',
       suffix: '.json?@build.date@'
     })
-    .registerAvailableLanguageKeys(['en', 'es', 'pt', 'fr', 'de', 'el', 'ru', 'it', 'pl', 'zh_CN', 'zh_TW', 'sq_AL'], {
+    .registerAvailableLanguageKeys(['en', 'es', 'pt', 'fr', 'de', 'el', 'ru', 'it', 'pl', 'zh_CN', 'zh_TW', 'sq_AL', 'sr'], {
       'en_*': 'en',
       'es_*': 'es',
       'pt_*': 'pt',
@@ -439,6 +439,7 @@ angular.module('docs',
       'ru_*': 'ru',
       'it_*': 'it',
 	    'pl_*': 'pl',
+	  'sr_*': 'sr',
       '*': 'en'
     })
     .fallbackLanguage('en');
@@ -548,7 +549,8 @@ angular.module('docs',
     { key: 'nor', label: 'Norsk' },
     { key: 'vie', label: 'Tiếng Việt' },
     { key: 'ces', label: 'Czech' },
-    { key: 'sqi', label: 'Shqip' }
+    { key: 'sqi', label: 'Shqip' },
+	{ key: 'srp', label: 'Српски' }  
   ];
 })
 /**
