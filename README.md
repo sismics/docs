@@ -53,6 +53,11 @@ A demo is available at [demo.teedy.io](https://demo.teedy.io)
 - [Bulk files importer](https://github.com/sismics/docs/tree/master/docs-importer) (single or scan mode)
 - Tested to one million documents
 
+# One-Click Deploy
+
+<a href="https://repocloud.io/details/Teedy/"><img src="https://d16t0pc4846x52.cloudfront.net/deploylobe.svg" alt="Deploy on RepoCloud" height="42"></a>
+<a href="https://railway.com/deploy/teedy"><img src="https://railway.com/button.svg" alt="Deploy on Railway" height="42"></a>
+
 # Install with Docker
 
 A preconfigured Docker image is available, including OCR and media conversion tools, listening on port 8080. If no PostgreSQL config is provided, the database is an embedded H2 database. The H2 embedded database should only be used for testing. For production usage use the provided PostgreSQL configuration (check the Docker Compose example)
