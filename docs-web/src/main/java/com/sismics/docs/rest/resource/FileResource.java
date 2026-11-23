@@ -647,7 +647,11 @@ public class FileResource extends BaseResource {
         Response.ResponseBuilder builder = Response.ok(stream)
                 .header(HttpHeaders.CONTENT_DISPOSITION, disposition + "; filename=\"" + file.getFullName("data") + "\"")
                 .header(HttpHeaders.CONTENT_TYPE, servedMime)
-                .header("X-Content-Type-Options", "nosniff");
+                .header("X-Content-Type-Options", "nosniff")
+                // Defense in depth: even if a future MIME type is served inline and
+                // rendered by the browser, a fully sandboxed CSP with no script-src
+                // blocks any script it contains from executing in the app origin.
+                .header("Content-Security-Policy", "sandbox; default-src 'none'");
         if (decrypt) {
             // Cache real files
             builder.header(HttpHeaders.CACHE_CONTROL, "private")
@@ -766,25 +770,45 @@ public class FileResource extends BaseResource {
     }
 
     /**
-     * MIME types that must never be served inline, as they execute scripts
+     * MIME type prefixes that must never be served inline, as they execute scripts
      * in the browser's rendering engine (CWE-79 / stored XSS via MIME confusion).
      */
     private static final List<String> ACTIVE_MIME_PREFIXES = List.of(
             "text/html",
             "text/javascript",
-            "application/javascript",
-            "application/xhtml+xml",
-            "image/svg+xml"
+            "application/javascript"
     );
 
     /**
      * Returns true if the given MIME type can execute scripts when rendered
      * inline by a browser. Such files must be forced to download as
      * application/octet-stream with Content-Disposition: attachment.
+     *
+     * This is intentionally an allowlist-shaped check for the XML family rather
+     * than an enumerated denylist: any XML-based MIME type (text/xml,
+     * application/xml, image/svg+xml, application/xhtml+xml, application/rss+xml,
+     * application/xslt+xml, ...) can carry an embedded xml-stylesheet processing
+     * instruction, an inline XSLT transform, or an XHTML/SVG namespace that the
+     * browser's native XML/XSLT engine will render and execute as a page when the
+     * file is opened inline from the application origin, independent of which
+     * specific XML subtype the server happened to enumerate. Only
+     * text/html, the two JS content types, and any MIME type containing "xml"
+     * are treated as active; everything else keeps the pre-existing inline
+     * behavior for genuinely passive types (images, PDFs, plain text, etc.).
      */
     private static boolean isActiveMime(String mimeType) {
-        if (mimeType == null) return false;
-        return ACTIVE_MIME_PREFIXES.stream().anyMatch(mimeType::startsWith);
+        if (mimeType == null) {
+            return false;
+        }
+        String lower = mimeType.toLowerCase(java.util.Locale.ROOT);
+        if (ACTIVE_MIME_PREFIXES.stream().anyMatch(lower::startsWith)) {
+            return true;
+        }
+        // Covers text/xml, application/xml, image/svg+xml, application/xhtml+xml,
+        // application/rss+xml, application/atom+xml, application/xslt+xml, text/xsl,
+        // and any other XML-family subtype, instead of maintaining a fixed denylist
+        // that the next new XML-based type can slip past (see #809).
+        return lower.contains("xml") || lower.contains("xsl");
     }
 
     /**
