@@ -26,18 +26,9 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.CheckIndex;
-import org.apache.lucene.index.ConcurrentMergeScheduler;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.simple.SimpleQueryParser;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
@@ -45,10 +36,10 @@ import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.spell.LuceneDictionary;
 import org.apache.lucene.search.suggest.Lookup;
 import org.apache.lucene.search.suggest.analyzing.FuzzySuggester;
+import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.store.NoLockFactory;
-import org.apache.lucene.store.RAMDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,12 +47,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Lucene indexing handler.
@@ -125,7 +111,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
 
         // RAM directory storage by default
         if (luceneStorage == null || luceneStorage.equals("RAM")) {
-            directory = new RAMDirectory();
+            directory = new ByteBuffersDirectory();
             log.info("Using RAM Lucene storage");
         } else if (luceneStorage.equals("FILE")) {
             Path luceneDirectory = DirectoryUtil.getLuceneDirectory();
@@ -457,7 +443,7 @@ public class LuceneIndexingHandler implements IndexingHandler {
 
         // Extract document IDs and highlights
         for (ScoreDoc doc : docs) {
-            org.apache.lucene.document.Document document = searcher.doc(doc.doc);
+            org.apache.lucene.document.Document document = searcher.storedFields().document(doc.doc);
             String type = document.get("doctype");
             String documentId = null;
             String highlight = null;

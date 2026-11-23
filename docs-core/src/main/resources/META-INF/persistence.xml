@@ -5,5 +5,31 @@
              version="3.0">
   <persistence-unit name="transactions-optional" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+    <class>com.sismics.docs.core.model.jpa.Acl</class>
+    <class>com.sismics.docs.core.model.jpa.AuditLog</class>
+    <class>com.sismics.docs.core.model.jpa.AuthenticationToken</class>
+    <class>com.sismics.docs.core.model.jpa.BaseFunction</class>
+    <class>com.sismics.docs.core.model.jpa.Comment</class>
+    <class>com.sismics.docs.core.model.jpa.Config</class>
+    <class>com.sismics.docs.core.model.jpa.Contributor</class>
+    <class>com.sismics.docs.core.model.jpa.Document</class>
+    <class>com.sismics.docs.core.model.jpa.DocumentMetadata</class>
+    <class>com.sismics.docs.core.model.jpa.DocumentTag</class>
+    <class>com.sismics.docs.core.model.jpa.File</class>
+    <class>com.sismics.docs.core.model.jpa.Group</class>
+    <class>com.sismics.docs.core.model.jpa.Metadata</class>
+    <class>com.sismics.docs.core.model.jpa.PasswordRecovery</class>
+    <class>com.sismics.docs.core.model.jpa.Relation</class>
+    <class>com.sismics.docs.core.model.jpa.Role</class>
+    <class>com.sismics.docs.core.model.jpa.RoleBaseFunction</class>
+    <class>com.sismics.docs.core.model.jpa.Route</class>
+    <class>com.sismics.docs.core.model.jpa.RouteModel</class>
+    <class>com.sismics.docs.core.model.jpa.RouteStep</class>
+    <class>com.sismics.docs.core.model.jpa.Share</class>
+    <class>com.sismics.docs.core.model.jpa.Tag</class>
+    <class>com.sismics.docs.core.model.jpa.User</class>
+    <class>com.sismics.docs.core.model.jpa.UserGroup</class>
+    <class>com.sismics.docs.core.model.jpa.Vocabulary</class>
+    <class>com.sismics.docs.core.model.jpa.Webhook</class>
   </persistence-unit>
 </persistence>

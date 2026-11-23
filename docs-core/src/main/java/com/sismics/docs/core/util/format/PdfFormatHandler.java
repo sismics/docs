@@ -5,7 +5,9 @@ import com.sismics.docs.core.util.FileUtil;
 import com.sismics.docs.core.util.ConfigUtil;
 import com.sismics.docs.core.constant.ConfigType;
 import com.sismics.util.mime.MimeType;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
@@ -37,8 +39,7 @@ public class PdfFormatHandler implements FormatHandler {
 
     @Override
     public BufferedImage generateThumbnail(Path file) throws Exception {
-        try (InputStream inputStream = Files.newInputStream(file);
-             PDDocument pdfDocument = PDDocument.load(inputStream)) {
+        try (PDDocument pdfDocument = Loader.loadPDF(new RandomAccessReadBufferedFile(file))) {
             PDFRenderer renderer = new PDFRenderer(pdfDocument);
             return renderer.renderImage(0);
         }
@@ -47,8 +48,7 @@ public class PdfFormatHandler implements FormatHandler {
     @Override
     public String extractContent(String language, Path file) {
         String content = null;
-        try (InputStream inputStream = Files.newInputStream(file);
-             PDDocument pdfDocument = PDDocument.load(inputStream)) {
+        try (PDDocument pdfDocument = Loader.loadPDF(new RandomAccessReadBufferedFile(file))) {
             content = new PDFTextStripper().getText(pdfDocument);
         } catch (Exception e) {
             log.error("Error while extracting text from the PDF", e);
@@ -57,8 +57,7 @@ public class PdfFormatHandler implements FormatHandler {
         // No text content, try to OCR it
         if (language != null && content != null && content.trim().isEmpty() && ConfigUtil.getConfigBooleanValue(ConfigType.OCR_ENABLED, true)) {
             StringBuilder sb = new StringBuilder();
-            try (InputStream inputStream = Files.newInputStream(file);
-                 PDDocument pdfDocument = PDDocument.load(inputStream)) {
+            try (PDDocument pdfDocument = Loader.loadPDF(new RandomAccessReadBufferedFile(file))) {
                 PDFRenderer renderer = new PDFRenderer(pdfDocument);
                 for (int pageIndex = 0; pageIndex < pdfDocument.getNumberOfPages(); pageIndex++) {
                     log.info("OCR page " + (pageIndex + 1) + "/" + pdfDocument.getNumberOfPages() + " of PDF file containing only images");
@@ -76,7 +75,7 @@ public class PdfFormatHandler implements FormatHandler {
 
     @Override
     public void appendToPdf(Path file, PDDocument doc, boolean fitImageToPage, int margin, MemoryUsageSetting memUsageSettings, Closer closer) throws Exception {
-        PDDocument mergeDoc = PDDocument.load(file.toFile(), memUsageSettings);
+        PDDocument mergeDoc = Loader.loadPDF(new RandomAccessReadBufferedFile(file), memUsageSettings.streamCache);
         closer.register(mergeDoc);
         PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
         pdfMergerUtility.appendDocument(doc, mergeDoc);

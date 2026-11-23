@@ -7,15 +7,15 @@ ENV DEBIAN_FRONTEND noninteractive
 # Configure env
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
-ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
+ENV JAVA_HOME /usr/lib/jvm/java-25-openjdk-amd64/
 ENV JAVA_OPTIONS -Dfile.encoding=UTF-8 -Xmx1g
-ENV JETTY_VERSION 11.0.20
+ENV JETTY_VERSION 12.1.6
 ENV JETTY_HOME /opt/jetty
 
 # Install packages
 RUN apt-get update && \
     apt-get -y -q --no-install-recommends install \
-    vim less procps unzip wget tzdata openjdk-11-jdk \
+    vim less procps unzip wget tzdata openjdk-25-jdk \
     ffmpeg \
     mediainfo \
     tesseract-ocr \
@@ -66,7 +66,7 @@ EXPOSE 8080
 # Install app
 RUN mkdir /app && \
     cd /app && \
-    java -jar /opt/jetty/start.jar --add-modules=server,http,webapp,deploy
+    java -jar /opt/jetty/start.jar --add-modules=server,http,ee11-webapp,ee11-deploy
 
 ADD docs.xml /app/webapps/docs.xml
 ADD docs-web/target/docs-web-*.war /app/webapps/docs.war

@@ -15,6 +15,7 @@ import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.font.DocsPDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,14 +58,14 @@ public class PdfUtil {
         memUsageSettings.setTempDir(new java.io.File(System.getProperty("java.io.tmpdir"))); // To OS temp
 
         // Create a blank PDF
-        try (PDDocument doc = new PDDocument(memUsageSettings)) {
+        try (PDDocument doc = new PDDocument(memUsageSettings.streamCache)) {
             // Add metadata
             if (metadata) {
                 PDPage page = new PDPage();
                 doc.addPage(page);
-                try (PdfPage pdfPage = new PdfPage(doc, page, margin * Constants.MM_PER_INCH, DocsPDType1Font.HELVETICA, 12)) {
+                try (PdfPage pdfPage = new PdfPage(doc, page, margin * Constants.MM_PER_INCH, new DocsPDType1Font(Standard14Fonts.FontName.HELVETICA), 12)) {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    pdfPage.addText(documentDto.getTitle(), true, DocsPDType1Font.HELVETICA_BOLD, 16)
+                    pdfPage.addText(documentDto.getTitle(), true, new DocsPDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 16)
                         .newLine()
                         .addText("Created by " + documentDto.getCreator()
                             + " on " + dateFormat.format(new Date(documentDto.getCreateTimestamp())), true)
@@ -97,7 +98,7 @@ public class PdfUtil {
                     }
                     pdfPage.addText("Language: " + documentDto.getLanguage())
                         .newLine()
-                        .addText("Files in this document : " + fileList.size(), false, DocsPDType1Font.HELVETICA_BOLD, 12);
+                        .addText("Files in this document : " + fileList.size(), false, new DocsPDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 12);
                 }
             }
             
