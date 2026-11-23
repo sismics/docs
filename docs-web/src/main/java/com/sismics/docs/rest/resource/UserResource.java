@@ -347,7 +347,9 @@ public class UserResource extends BaseResource {
 
         JsonObjectBuilder response = Json.createObjectBuilder();
         int maxAge = longLasted ? TokenBasedSecurityFilter.TOKEN_LONG_LIFETIME : -1;
-        NewCookie cookie = new NewCookie(TokenBasedSecurityFilter.COOKIE_NAME, token, "/", null, null, maxAge, false);
+        // HttpOnly prevents the auth_token cookie from being read via document.cookie,
+        // including by any script that manages to execute in the app's origin (see #809).
+        NewCookie cookie = new NewCookie(TokenBasedSecurityFilter.COOKIE_NAME, token, "/", null, 1, null, maxAge, null, false, true);
         return Response.ok().entity(response.build()).cookie(cookie).build();
     }
 
@@ -396,7 +398,7 @@ public class UserResource extends BaseResource {
 
         // Deletes the client token in the HTTP response
         JsonObjectBuilder response = Json.createObjectBuilder();
-        NewCookie cookie = new NewCookie(TokenBasedSecurityFilter.COOKIE_NAME, null, "/", null, 1, null, -1, new Date(1), false, false);
+        NewCookie cookie = new NewCookie(TokenBasedSecurityFilter.COOKIE_NAME, null, "/", null, 1, null, -1, new Date(1), false, true);
         return Response.ok().entity(response.build()).cookie(cookie).build();
     }
 
