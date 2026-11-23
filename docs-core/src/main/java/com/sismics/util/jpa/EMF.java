@@ -3,6 +3,7 @@ package com.sismics.util.jpa;
 import com.google.common.base.Strings;
 import com.sismics.docs.core.util.DirectoryUtil;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.QuerySettings;
 import org.hibernate.internal.util.config.ConfigurationHelper;
 import org.hibernate.service.ServiceRegistry;
 import org.slf4j.Logger;
@@ -60,6 +61,13 @@ public final class EMF {
     }
     
     private static Properties getEntityManagerProperties() {
+        Properties properties = getDatabaseProperties();
+        // Native-query DTO mappings expect JDBC dates, as returned before Hibernate 7.
+        properties.put(QuerySettings.NATIVE_PREFER_JDBC_DATETIME_TYPES, true);
+        return properties;
+    }
+
+    private static Properties getDatabaseProperties() {
         // Use properties file if exists
         try {
             URL hibernatePropertiesUrl = EMF.class.getResource("/hibernate.properties");
