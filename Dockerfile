@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:26.04
 LABEL maintainer="b.gamard@sismics.com"
 
 # Run Debian in non interactive mode

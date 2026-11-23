@@ -247,10 +247,10 @@
                     </exec>
                     <!-- grunt -->
                     <exec executable="cmd" dir="${project.basedir}/src/main/webapp" osfamily="windows" failonerror="true">
-                      <arg line="/c grunt --apiurl=api" />
+                      <arg line="/c npm run build -- --apiurl=api" />
                     </exec>
-                    <exec executable="grunt" dir="${project.basedir}/src/main/webapp" osfamily="unix" failonerror="true">
-                      <arg line="--apiurl=api" />
+                    <exec executable="npm" dir="${project.basedir}/src/main/webapp" osfamily="unix" failonerror="true">
+                      <arg line="run build -- --apiurl=api" />
                     </exec>
                   </target>
                 </configuration>

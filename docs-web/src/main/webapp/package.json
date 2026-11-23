@@ -35,6 +35,9 @@
       "filename": "header.md"
     }
   },
+  "scripts": {
+    "build": "grunt"
+  },
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-angular-templates": "^1.1.0",
